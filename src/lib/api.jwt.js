@@ -1,0 +1,150 @@
+/**
+ * API JWT Auth Functions
+ */
+ /* global fetch console */
+import { AsyncStorage } from 'react-native';
+import jwtDecode from 'jwt-decode';
+
+// Consts and Libs
+import AppAPI from '@lib/api';
+import { APIConfig } from '@constants/';
+
+export default class JWT {
+    static apiToken = '';
+    static jwt =      '';
+    apiCredentials =  {};
+
+    /**
+      * Authenticate
+      */
+    getToken = credentials => new Promise(async (resolve, reject) => {
+        // Check any existing tokens - if still valid, use it, otherwise login
+        const apiToken = this.getStoredToken ? await this.getStoredToken() : false;
+        if (apiToken) { return resolve(apiToken); }
+
+        // Use credentials or AsyncStore Creds?
+        if (credentials && typeof credentials === 'object' && credentials.email && credentials.password) {
+            this.apiCredentials.email = credentials.email;
+            this.apiCredentials.password = credentials.password;
+
+            // Save new Credentials to AsyncStorage
+            await AsyncStorage.setItem('api/credentials', JSON.stringify(this.apiCredentials));
+
+        // Check if credentials are in AsyncStorage
+        } else {
+            await this.getStoredCredentials();
+        }
+
+        // No credentials, we can't do anything
+        /* eslint-disable max-len */
+        if (!this.apiCredentials || !this.apiCredentials.email || !this.apiCredentials.password) {
+            return reject({
+                data:    { status: 403 },
+                message: 'Credentials missing (JWT.getToken).',
+            });
+        }
+
+        // Let's try logging in
+        return AppAPI[APIConfig.tokenKey].post(null, {
+            email:    this.apiCredentials.email,
+            password: this.apiCredentials.password,
+        }).then(async (res) => {
+            if (!res.auth_token || !res.jwt) {
+                return reject(res);
+            }
+
+            const tokenIsNowValid = this.tokenIsValid ? await this.tokenIsValid(res.jwt) : null;
+            if (!tokenIsNowValid) { return reject(res); }
+
+            // Set token in AsyncStorage + memory
+            if (this.storeToken) { await this.storeToken(res.auth_token, res.jwt); }
+
+            return resolve(res.jwt);
+        }).catch(err => reject(err));
+    })
+
+    /**
+      * Retrieves Token from Storage
+      */
+    getStoredToken = async () => {
+        if (!this.apiToken) { this.apiToken = await AsyncStorage.getItem('api/token'); }
+        if (!this.jwt) { this.jwt = await AsyncStorage.getItem('api/jwt'); }
+        const validToken = this.jwt ? await this.tokenIsValid(this.jwt) : false;
+        if (this.apiToken && !validToken) { this.apiToken = null; }
+
+        return this.apiToken;
+    }
+
+    /**
+      * Retrieves Stored Login Credentials from Storage
+      */
+    getStoredCredentials = async () => {
+        let storedCredsStr = '';
+        if (!this.apiCredentials) { storedCredsStr = await AsyncStorage.getItem('api/credentials'); }
+        const storedCreds = storedCredsStr ? JSON.parse(storedCredsStr) : false;
+
+        if (storedCreds && typeof storedCreds === 'object' && storedCreds.email && storedCreds.password) {
+            this.apiCredentials = storedCreds;
+        }
+
+        return this.apiCredentials;
+    }
+
+    /**
+      * Adds Token to AsyncStorage
+      */
+    storeToken = async (token, jwt) => {
+        await AsyncStorage.setItem('api/token', token);
+        await AsyncStorage.setItem('api/jwt', jwt);
+        this.apiToken = token;
+        this.jwt = jwt;
+    }
+
+    /**
+      * Deletes Token and saved credentials
+      * Used for logout
+      */
+    deleteToken = async () => {
+        await AsyncStorage.setItem('api/token', '');
+        await AsyncStorage.setItem('api/jwt', '');
+        await AsyncStorage.setItem('api/credentials', '');
+        this.apiToken = '';
+    }
+
+    /**
+      * Tests whether a token is valid
+      */
+    tokenIsValid = (token, userId = null) => {
+        let decodedToken;
+        try {
+            decodedToken = jwtDecode(token);
+        } catch (e) {
+            // Decode failed, must be invalid
+            return false;
+        }
+
+        // const NOW = (Date.now() / 1000) || 0; // current UTC time in whole seconds
+        // const eagerRenew = 60; // number of seconds prior to expiry that a token is considered 'old'
+
+        // Validate against 'expiry', 'not before' and 'sub' fields in token
+        // if (NOW > (decodedToken.exp - eagerRenew)) { return false; } // Expired
+        // if (NOW < decodedToken.nbf - 300) { return false; } // Not yet valid (too early!)
+
+        // Don't worry about http vs https - strip it out
+        // const thisHostname = APIConfig.hostname.replace(/.*?:\/\//g, '');
+        // const tokenHostname = decodedToken.iss.replace(/.*?:\/\//g, '').substr(0, thisHostname.length);
+        // if (thisHostname !== tokenHostname) {
+            // return false; // Issuing server is different
+        // }
+        if (this.apiCredentials.email !== decodedToken.email) {
+            console.log(decodedToken);
+            return false;
+        }
+
+        if (userId && decodedToken.sub > 0 && decodedToken.sub !== userId) {
+            return false; // Token is for another user
+        }
+
+        return true;
+    }
+}
