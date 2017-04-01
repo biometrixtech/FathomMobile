@@ -17,12 +17,12 @@ import RecipeCardRender from './CardView';
 /* Redux ==================================================================== */
 // What data from the store shall we send to the component?
 const mapStateToProps = state => ({
-  user: state.user,
+    user: state.user,
 });
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-  updateFavourites: UserActions.updateMe,
+    updateFavourites: UserActions.updateMe,
 };
 
 /* Component ==================================================================== */

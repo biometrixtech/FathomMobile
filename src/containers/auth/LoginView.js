@@ -1,10 +1,13 @@
 /**
  * Login Screen
+ *  - Entry screen for all authentication
+ *  - User can tap to login, forget password, or signUp...
  */
 import React, { Component, PropTypes } from 'react';
 import {
-  ScrollView,
+  Image,
   AsyncStorage,
+  StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 import FormValidation from 'tcomb-form-native';
@@ -12,10 +15,69 @@ import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
 import AppAPI from '@lib/api';
-import { AppStyles } from '@theme/';
+import { AppStyles, AppSizes } from '@theme/';
 
 // Components
-import { Alerts, Card, Spacer, Text, Button } from '@ui/';
+import { Spacer, Button, Card, Alerts, Text } from '@ui/';
+
+/* Styles ==================================================================== */
+const styles = StyleSheet.create({
+    background: {
+        backgroundColor: 'transparent',
+        height:          AppSizes.screen.height,
+        width:           AppSizes.screen.width,
+    },
+    logo: {
+        width:      AppSizes.screen.width * 0.85,
+        resizeMode: 'contain',
+    },
+    whiteText: {
+        color: '#FFF',
+    },
+});
+
+// <Spacer size={15} />
+// <Text p style={[AppStyles.textCenterAligned, styles.whiteText]}>
+//   - or -
+// </Text>
+// <Spacer size={10} />
+// <View style={[AppStyles.row, AppStyles.paddingHorizontal]}>
+//   <View style={[AppStyles.flex1]} />
+//   <View style={[AppStyles.flex2]}>
+//     <Button
+//       small
+//       title={'Skip'}
+//       onPress={Actions.app}
+//       backgroundColor={'#CB009E'}
+//       raised={false}
+//     />
+//   </View>
+//   <View style={[AppStyles.flex1]} />
+// </View>
+// <Spacer size={40} />
+
+
+// <View style={[AppStyles.row, AppStyles.paddingHorizontal]}>
+//   <View style={[AppStyles.flex1]}>
+//     <Button
+//       title={'Login'}
+//       icon={{ name: 'lock' }}
+//       onPress={Actions.login}
+//     />
+//   </View>
+// </View>
+//
+// <Spacer size={10} />
+//
+// <View style={[AppStyles.row, AppStyles.paddingHorizontal]}>
+//   <View style={[AppStyles.flex1]}>
+//     <Button
+//       title={'Sign up'}
+//       icon={{ name: 'person-add' }}
+//       onPress={Actions.signUp}
+//     />
+//   </View>
+// </View>
 
 /* Component ==================================================================== */
 class Login extends Component {
@@ -114,11 +176,11 @@ class Login extends Component {
                     password: credentials.Password,
                 }, true).then(() => {
                     this.setState({
-                        resultMsg: { success: 'Awesome, you\'re now logged in!' },
+                        resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
                         setTimeout(() => {
                             Actions.app({ type: 'reset' });
-                        }, 1000);
+                        }, 100);
                     });
                 }).catch((err) => {
                     const error = AppAPI.handleError(err);
@@ -132,12 +194,18 @@ class Login extends Component {
         const Form = FormValidation.form.Form;
 
         return (
-          <ScrollView
-            automaticallyAdjustContentInsets={false}
-            ref={(a) => { this.scrollView = a; }}
-            style={[AppStyles.container]}
-            contentContainerStyle={[AppStyles.container]}
+          <Image
+            source={require('../../images/login.jpg')}
+            style={[AppStyles.containerCentered, AppStyles.container, styles.background]}
           >
+
+            <Image
+              source={require('../../images/logo.png')}
+              style={[styles.logo]}
+            />
+
+            <Spacer size={10} />
+
             <Card>
               <Alerts
                 status={this.state.resultMsg.status}
@@ -176,7 +244,7 @@ class Login extends Component {
                 onPress={Actions.signUp}
               />
             </Card>
-          </ScrollView>
+          </Image>
         );
     }
 }

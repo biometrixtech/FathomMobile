@@ -33,23 +33,17 @@ export function login(credentials, freshLogin) {
                   return reject('Token decode failed.');
               }
 
-              dispatch({
-                  type: 'LOGIN_SUCCESS',
-                  data: decodedToken,
-              });
-
-              return resolve(decodedToken);
-
               // Get user details from API, using my token
-              // return AppAPI.users.get(decodedToken.data.user.id)
-              //   .then((userData) => {
-              //       dispatch({
-              //           type: 'USER_REPLACE',
-              //           data: userData,
-              //       });
-              //
-              //       return resolve(userData);
-              //   }).catch(err => reject(err));
+              return AppAPI.user.get()
+                  .then((userData) => {
+                      dispatch({
+                          type: 'USER_REPLACE',
+                          data: userData,
+                      });
+
+                      return resolve(userData);
+                  })
+                  .catch(err => reject(err));
           }).catch(err => reject(err));
     });
 }
@@ -70,8 +64,8 @@ export function logout() {
 /**
   * Get My User Data
   */
-export function getMe() {
-    return dispatch => AppAPI.me.get()
+export function getUser() {
+    return dispatch => AppAPI.user.get()
       .then((userData) => {
           dispatch({
               type: 'USER_REPLACE',
@@ -86,8 +80,8 @@ export function getMe() {
   * Update My User Data
   * - Receives complete user data in return
   */
-export function updateMe(payload) {
-    return dispatch => AppAPI.me.post(payload)
+export function updateUser(payload) {
+    return dispatch => AppAPI.user.patch(payload)
       .then((userData) => {
           dispatch({
               type: 'USER_REPLACE',
@@ -122,7 +116,7 @@ export function forgotPassword(email) {
   * POST SignUp form data
   */
 export function signUp(credentials) {
-    return dispatch => AppAPI.signUp.post(credentials)
+    return dispatch => AppAPI.user.post(credentials)
         .then((result) => {
             dispatch({
                 type: 'SIGN_UP_SUCCESS',

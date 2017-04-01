@@ -11,11 +11,10 @@ import { APIConfig } from '@constants/';
 
 export default class JWT {
     static apiToken = '';
-    static jwt =      '';
     apiCredentials =  {};
 
     /**
-      * Authenticate
+      * Login
       */
     getToken = credentials => new Promise(async (resolve, reject) => {
         // Check any existing tokens - if still valid, use it, otherwise login
@@ -49,7 +48,7 @@ export default class JWT {
             email:    this.apiCredentials.email,
             password: this.apiCredentials.password,
         }).then(async (res) => {
-            if (!res.auth_token || !res.jwt) {
+            if (!res.jwt) {
                 return reject(res);
             }
 
@@ -57,7 +56,7 @@ export default class JWT {
             if (!tokenIsNowValid) { return reject(res); }
 
             // Set token in AsyncStorage + memory
-            if (this.storeToken) { await this.storeToken(res.auth_token, res.jwt); }
+            if (this.storeToken) { await this.storeToken(res.jwt); }
 
             return resolve(res.jwt);
         }).catch(err => reject(err));
@@ -68,8 +67,7 @@ export default class JWT {
       */
     getStoredToken = async () => {
         if (!this.apiToken) { this.apiToken = await AsyncStorage.getItem('api/token'); }
-        if (!this.jwt) { this.jwt = await AsyncStorage.getItem('api/jwt'); }
-        const validToken = this.jwt ? await this.tokenIsValid(this.jwt) : false;
+        const validToken = this.apiToken ? await this.tokenIsValid(this.apiToken) : false;
         if (this.apiToken && !validToken) { this.apiToken = null; }
 
         return this.apiToken;
@@ -93,11 +91,9 @@ export default class JWT {
     /**
       * Adds Token to AsyncStorage
       */
-    storeToken = async (token, jwt) => {
+    storeToken = async (token) => {
         await AsyncStorage.setItem('api/token', token);
-        await AsyncStorage.setItem('api/jwt', jwt);
         this.apiToken = token;
-        this.jwt = jwt;
     }
 
     /**
@@ -105,9 +101,8 @@ export default class JWT {
       * Used for logout
       */
     deleteToken = async () => {
-        await AsyncStorage.setItem('api/token', '');
-        await AsyncStorage.setItem('api/jwt', '');
-        await AsyncStorage.setItem('api/credentials', '');
+        await AsyncStorage.removeItem('api/token');
+        await AsyncStorage.removeItem('api/credentials');
         this.apiToken = '';
     }
 
@@ -137,11 +132,10 @@ export default class JWT {
             // return false; // Issuing server is different
         // }
         if (this.apiCredentials.email !== decodedToken.email) {
-            console.log(decodedToken);
             return false;
         }
 
-        if (userId && decodedToken.sub > 0 && decodedToken.sub !== userId) {
+        if (userId && decodedToken.user_id !== userId) {
             return false; // Token is for another user
         }
 

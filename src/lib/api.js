@@ -101,7 +101,7 @@ function fetcher(method, inputEndpoint, inputParams, body) {
           reject(ErrorMessages.timeout)
         ), timeoutAfter * 1000);
 
-        if (!method || !endpoint) return reject('Missing params (AppAPI.fetcher).');
+        if (!method || !endpoint) { return reject('Missing params (AppAPI.fetcher).'); }
 
         // Build request
         const req = {
@@ -118,7 +118,7 @@ function fetcher(method, inputEndpoint, inputParams, body) {
         if (Token.getStoredToken && endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
             const apiToken = await Token.getStoredToken();
             if (apiToken) {
-                req.headers.Authorization = `Bearer ${apiToken}`;
+                req.headers.jwt = apiToken;
             }
         }
 
@@ -159,7 +159,7 @@ function fetcher(method, inputEndpoint, inputParams, body) {
         // Add Body
         if (body) req.body = JSON.stringify(body);
 
-        const thisUrl = HOSTNAME + endpoint + urlParams;
+        const thisUrl = `${HOSTNAME}${endpoint}${urlParams}`;
 
         debug('', `API Request #${requestNum} to ${thisUrl}`);
 
@@ -202,11 +202,11 @@ function fetcher(method, inputEndpoint, inputParams, body) {
                 Token.getToken
               ) {
                   return Token.getToken()
-                  .then(() => { fetcher(method, endpoint, params, body); })
-                  .catch(error => reject(error));
+                      .then(() => { fetcher(method, endpoint, params, body); })
+                      .catch(error => reject(error));
               }
 
-              debug(err, HOSTNAME + endpoint + urlParams);
+              debug(err, thisUrl);
               return reject(err);
           });
     });
