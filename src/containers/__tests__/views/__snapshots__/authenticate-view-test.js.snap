@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AuthenticateView renders correctly 1`] = `
+exports[`LoginView renders correctly 1`] = `
 <Image
   source={1}
   style={

@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import {
   View,
+  Image,
   Alert,
   StyleSheet,
   TouchableOpacity,
@@ -33,10 +34,14 @@ const styles = StyleSheet.create({
         flex:     1,
     },
     menuContainer: {
-        flex:            1,
+        flex:            3,
         left:            0,
         right:           0,
         backgroundColor: MENU_BG_COLOR,
+    },
+    imageContainer: {
+        flex:   1,
+        margin: 20,
     },
 
     // Main Menu
@@ -80,7 +85,12 @@ class Menu extends Component {
         logout:        PropTypes.func.isRequired,
         closeSideMenu: PropTypes.func.isRequired,
         user:          PropTypes.shape({
-            name: PropTypes.string,
+            user: PropTypes.shape({
+                role:       PropTypes.string,
+                first_name: PropTypes.string,
+                last_name:  PropTypes.string,
+                avatar_url: PropTypes.string,
+            }),
         }),
     }
 
@@ -98,16 +108,11 @@ class Menu extends Component {
                     onPress: () => { this.props.closeSideMenu(); Actions.app(); },
                 },
                 {
-                    title:   'Example Link',
+                    title:   'Settings',
                     onPress: () => { this.props.closeSideMenu(); Actions.comingSoon(); },
                 },
             ],
         };
-    }
-
-    login = () => {
-        this.props.closeSideMenu();
-        Actions.login();
     }
 
     logout = () => {
@@ -116,8 +121,8 @@ class Menu extends Component {
               .then(() => {
                   this.props.closeSideMenu();
                   Actions.login();
-              }).catch(() => {
-                  Alert.alert('Oh uh!', 'Something went wrong.');
+              }).catch((err) => {
+                  Alert.alert('Uh oh!', 'Something went wrong.');
               });
         }
     }
@@ -144,45 +149,37 @@ class Menu extends Component {
             );
         });
 
+        /* eslint-disable max-len */
         return (
           <View style={[styles.container]}>
             <View style={[styles.backgroundFill]} />
+
+            <Image resizeMode={Image.resizeMode.contain} style={[styles.imageContainer]} source={{ uri: this.props.user.user.avatar_url }} />
 
             <View style={[styles.menuContainer]}>
               <View style={[styles.menu]}>{menuItems}</View>
 
               <View style={[styles.menuBottom]}>
-                {this.props.user && this.props.user.name ?
-                  <View>
-                    <Text
-                      style={[
-                          styles.menuBottom_text,
-                          AppStyles.textCenterAligned,
-                      ]}
-                    >
-                      Logged in as:{'\n'}
-                      {this.props.user.name}
-                    </Text>
+                <View>
+                  <Text
+                    style={[
+                        styles.menuBottom_text,
+                        AppStyles.textCenterAligned,
+                    ]}
+                  >
+                    Logged in as:{'\n'}
+                    {this.props.user.user.first_name && this.props.user.user.last_name ? `${this.props.user.user.first_name} ${this.props.user.user.last_name}` : this.props.user.user.role}
+                  </Text>
 
-                    <Spacer size={10} />
+                  <Spacer size={10} />
 
-                    <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
-                      <Button
-                        small
-                        title={'Log Out'}
-                        onPress={this.logout}
-                      />
-                    </View>
-                  </View>
-                :
                   <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
                     <Button
-                      small
-                      title={'Log In'}
-                      onPress={this.login}
+                      title={'Log Out'}
+                      onPress={this.logout}
                     />
                   </View>
-                }
+                </View>
               </View>
             </View>
           </View>

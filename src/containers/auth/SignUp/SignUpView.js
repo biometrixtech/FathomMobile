@@ -135,7 +135,7 @@ class SignUp extends Component {
             automaticallyAdjustContentInsets={false}
             ref={(a) => { this.scrollView = a; }}
             style={[AppStyles.container]}
-            contentContainerStyle={[AppStyles.container]}
+            contentContainerStyle={[AppStyles.container, { alignItems: 'center' }]}
           >
             <Card>
               <Alerts

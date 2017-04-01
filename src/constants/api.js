@@ -17,8 +17,7 @@ export default {
     endpoints: new Map([
       ['login', '/v1/sign_in'], // If you change the key, update the reference below
       ['forgot_password', '/v1/user/forgot_password'],
-      ['signUp', 'v1/user'],
-      ['users', '/wp-json/wp/v2/users'],
+      ['user', '/v1/user'],
       ['me', '/wp-json/wp/v2/users/me'],
       ['recipes', '/wp-json/wp/v2/recipes'],
       ['meals', '/wp-json/wp/v2/recipe_meal'],

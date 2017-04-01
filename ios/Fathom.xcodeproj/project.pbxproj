@@ -29,6 +29,9 @@
 		5B60ED311A604EF1A3FC93C5 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13FDE031C7B44D98AA5957A6 /* libRNVectorIcons.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		73BC5F2123BC49C9932F59D9 /* libSMXCrashlytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4872AE29023D40C6B40B2ACC /* libSMXCrashlytics.a */; };
+		7C559C5B1E8E265E000C7EF7 /* ReactNativeCharts in Resources */ = {isa = PBXBuildFile; fileRef = 7C559C5A1E8E265E000C7EF7 /* ReactNativeCharts */; };
+		7C88E95C1E8E2AFC002E169A /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C88E95A1E8E2AFC002E169A /* Charts.framework */; };
+		7C88E95D1E8E2AFC002E169A /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C88E95B1E8E2AFC002E169A /* SwiftyJSON.framework */; };
 		7C8F52081E8C8D440065704A /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8F52061E8C8D440065704A /* Fabric.framework */; };
 		7C8F52091E8C8D440065704A /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8F52071E8C8D440065704A /* Crashlytics.framework */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
@@ -44,6 +47,7 @@
 		C97D70C51E2377B200C3C793 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C97D70C41E2377B200C3C793 /* libsqlite3.0.tbd */; };
 		DA02D5C4FF46466CBCDD993A /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 30EEF37A5E2B48A1A490E9DD /* EvilIcons.ttf */; };
 		DA1ECDE8A0534165A084946E /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECDE6F1FEC3D4E42B38084FF /* MaterialIcons.ttf */; };
+		F0520C2DDB3BE49788B6C853 /* Pods_Fathom.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DB08A413C776E48893BC659 /* Pods_Fathom.framework */; };
 		F2D5C432FE4244A1889B6DEA /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 621FED576505468EB9CFE175 /* MaterialCommunityIcons.ttf */; };
 /* End PBXBuildFile section */
 
@@ -286,17 +290,24 @@
 		2860D02B5F80404290871BF1 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		30EEF37A5E2B48A1A490E9DD /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		38E1B48013E04C56AB26705D /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
+		3DB08A413C776E48893BC659 /* Pods_Fathom.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Fathom.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4872AE29023D40C6B40B2ACC /* libSMXCrashlytics.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSMXCrashlytics.a; sourceTree = "<group>"; };
 		4FEFA3E53A5C4933B665FF7E /* libCodePush.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libCodePush.a; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		621FED576505468EB9CFE175 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		62A8EA882B184930825FDE66 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		67C921EF6F2E425487EAC840 /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = "<group>"; };
+		764A8B01A0CDBC39A3A59A2D /* Pods-Fathom.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fathom.release.xcconfig"; path = "Pods/Target Support Files/Pods-Fathom/Pods-Fathom.release.xcconfig"; sourceTree = "<group>"; };
 		76BC50C5ED02443CB1D32E96 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
+		7C559C5A1E8E265E000C7EF7 /* ReactNativeCharts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ReactNativeCharts; path = "../node_modules/react-native-charts-wrapper/ios/ReactNativeCharts"; sourceTree = "<group>"; };
+		7C559C7A1E8E2841000C7EF7 /* Fathom-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Fathom-Bridging-Header.h"; sourceTree = "<group>"; };
+		7C88E95A1E8E2AFC002E169A /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = "Pods/../build/Debug-iphoneos/Charts/Charts.framework"; sourceTree = "<group>"; };
+		7C88E95B1E8E2AFC002E169A /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = "Pods/../build/Debug-iphoneos/SwiftyJSON/SwiftyJSON.framework"; sourceTree = "<group>"; };
 		7C8F52061E8C8D440065704A /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		7C8F52071E8C8D440065704A /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		85D4F139C4D4B01A92A2CE41 /* Pods-Fathom.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fathom.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Fathom/Pods-Fathom.debug.xcconfig"; sourceTree = "<group>"; };
 		98DA833AC161470F8CDCADD5 /* CodePush.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = CodePush.xcodeproj; path = "../node_modules/react-native-code-push/ios/CodePush.xcodeproj"; sourceTree = "<group>"; };
 		ADFDC7BE083F410FA938884C /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		BA2A2B45BE844319B549C2DD /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -323,6 +334,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C88E95C1E8E2AFC002E169A /* Charts.framework in Frameworks */,
+				7C88E95D1E8E2AFC002E169A /* SwiftyJSON.framework in Frameworks */,
 				C97D70A31E23777B00C3C793 /* CoreData.framework in Frameworks */,
 				C97D70C51E2377B200C3C793 /* libsqlite3.0.tbd in Frameworks */,
 				7C8F52091E8C8D440065704A /* Crashlytics.framework in Frameworks */,
@@ -344,6 +357,7 @@
 				5B60ED311A604EF1A3FC93C5 /* libRNVectorIcons.a in Frameworks */,
 				73BC5F2123BC49C9932F59D9 /* libSMXCrashlytics.a in Frameworks */,
 				8E0421D5B6E94F55B6600882 /* libCodePush.a in Frameworks */,
+				F0520C2DDB3BE49788B6C853 /* Pods_Fathom.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -542,6 +556,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				7C559C7A1E8E2841000C7EF7 /* Fathom-Bridging-Header.h */,
+				7C559C5A1E8E265E000C7EF7 /* ReactNativeCharts */,
 				7C8F52061E8C8D440065704A /* Fabric.framework */,
 				7C8F52071E8C8D440065704A /* Crashlytics.framework */,
 				13B07FAE1A68108700A75B9A /* Fathom */,
@@ -550,6 +566,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				5AF35C8DD5E04D5D8A9EB48D /* Resources */,
 				C97D70A11E23777B00C3C793 /* Frameworks */,
+				DAB356E0CCC20486593C1BDD /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -583,12 +600,24 @@
 		C97D70A11E23777B00C3C793 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7C88E95A1E8E2AFC002E169A /* Charts.framework */,
+				7C88E95B1E8E2AFC002E169A /* SwiftyJSON.framework */,
 				C97D70C41E2377B200C3C793 /* libsqlite3.0.tbd */,
 				C97D70C21E2377A300C3C793 /* libz.tbd */,
 				C97D70C01E23779800C3C793 /* SystemConfiguration.framework */,
 				C97D70A21E23777B00C3C793 /* CoreData.framework */,
+				3DB08A413C776E48893BC659 /* Pods_Fathom.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DAB356E0CCC20486593C1BDD /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				85D4F139C4D4B01A92A2CE41 /* Pods-Fathom.debug.xcconfig */,
+				764A8B01A0CDBC39A3A59A2D /* Pods-Fathom.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -616,11 +645,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Fathom" */;
 			buildPhases = (
+				300FA493051F6F3CC95F7C89 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				7C8F52051E8C8BE10065704A /* ShellScript */,
+				0023DF749B88D0EDC1DE76ED /* [CP] Embed Pods Frameworks */,
+				5376EE119CAAACDEE3F6AE4B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -951,6 +983,7 @@
 				DA02D5C4FF46466CBCDD993A /* EvilIcons.ttf in Resources */,
 				34AD7DA8B67F4DDE9FF31B6A /* FontAwesome.ttf in Resources */,
 				96ED47E43A1F470884442922 /* Foundation.ttf in Resources */,
+				7C559C5B1E8E265E000C7EF7 /* ReactNativeCharts in Resources */,
 				377865A391264332817AE3C3 /* Ionicons.ttf in Resources */,
 				DA1ECDE8A0534165A084946E /* MaterialIcons.ttf in Resources */,
 				50BAB68A1EB84DA69372E99D /* Octicons.ttf in Resources */,
@@ -964,6 +997,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0023DF749B88D0EDC1DE76ED /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Fathom/Pods-Fathom-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -977,6 +1025,36 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh";
+		};
+		300FA493051F6F3CC95F7C89 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		5376EE119CAAACDEE3F6AE4B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Fathom/Pods-Fathom-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		7C8F52051E8C8BE10065704A /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1091,7 +1169,9 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 85D4F139C4D4B01A92A2CE41 /* Pods-Fathom.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
@@ -1099,6 +1179,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos/Charts",
+					"$(PROJECT_DIR)/build/Debug-iphoneos/SwiftyJSON",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1119,13 +1201,17 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 764A8B01A0CDBC39A3A59A2D /* Pods-Fathom.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos/Charts",
+					"$(PROJECT_DIR)/build/Debug-iphoneos/SwiftyJSON",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",

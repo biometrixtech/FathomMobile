@@ -8,26 +8,18 @@ import { Scene, ActionConst } from 'react-native-router-flux';
 import { AppConfig } from '@constants/';
 
 // Scenes
-import Authenticate from '@containers/auth/AuthenticateView';
-import AuthLogin from '@containers/auth/Login/LoginContainer';
+import Login from '@containers/auth/LoginContainer';
 import AuthForgotPassword from '@containers/auth/ForgotPassword/ForgotPasswordContainer';
 import AuthSignUp from '@containers/auth/SignUp/SignUpContainer';
 
 /* Routes ==================================================================== */
 const scenes = (
-  <Scene key={'authenticate'}>
+  <Scene key={'login'} type={ActionConst.RESET}>
     <Scene
       hideNavBar
       key={'authLanding'}
-      component={Authenticate}
+      component={Login}
       type={ActionConst.RESET}
-    />
-    <Scene
-      {...AppConfig.navbarProps}
-      key={'login'}
-      title={'Login'}
-      clone
-      component={AuthLogin}
     />
     <Scene
       {...AppConfig.navbarProps}

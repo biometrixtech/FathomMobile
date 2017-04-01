@@ -133,6 +133,7 @@ repositories {
 }
 
 dependencies {
+    compile project(':react-native-charts-wrapper')
     compile project(':react-native-code-push')
     compile project(':react-native-fabric')
     compile project(':react-native-vector-icons')
