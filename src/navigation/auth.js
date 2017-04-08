@@ -20,6 +20,7 @@ const scenes = (
       key={'authLanding'}
       component={Login}
       type={ActionConst.RESET}
+      analyticsDesc={'LoginView: Login'}
     />
     <Scene
       {...AppConfig.navbarProps}
@@ -27,6 +28,7 @@ const scenes = (
       title={'Sign Up'}
       clone
       component={AuthSignUp}
+      analyticsDesc={'SignUpView: Sign Up'}
     />
     <Scene
       {...AppConfig.navbarProps}
@@ -34,6 +36,7 @@ const scenes = (
       title={'Password Reset'}
       clone
       component={AuthForgotPassword}
+      analyticsDesc={'ForgotPasswordView: Forgot Password'}
     />
   </Scene>
 );

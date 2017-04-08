@@ -3582,10 +3582,6 @@ react-native-charts-wrapper@^0.2.5:
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/react-native-charts-wrapper/-/react-native-charts-wrapper-0.2.5.tgz#b39f0d8d3a8ff5599837ce09a1139a481fc24b43"
 
-react-native-circular-action-menu@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/react-native-circular-action-menu/-/react-native-circular-action-menu-0.4.0.tgz#ae182b31323ea3e943037fda30831ee56cfa30da"
-
 react-native-code-push@^1.17.3-beta:
   version "1.17.3-beta"
   resolved "https://registry.yarnpkg.com/react-native-code-push/-/react-native-code-push-1.17.3-beta.tgz#c92783f0087dda5e683f96a76ab76108c73b9015"
@@ -3595,6 +3591,10 @@ react-native-code-push@^1.17.3-beta:
     inquirer "1.1.2"
     plist "1.2.0"
     xcode "0.9.1"
+
+react-native-collapsible@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/react-native-collapsible/-/react-native-collapsible-0.8.0.tgz#169af4b2e596e45fa0df0769118e8a78d1491486"
 
 react-native-device-info@^0.10.1:
   version "0.10.1"
@@ -3621,6 +3621,18 @@ react-native-experimental-navigation@0.26.x:
 react-native-fabric@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/react-native-fabric/-/react-native-fabric-0.4.1.tgz#5fcb604daf17d0dff70603ff3eeba9e3f3160ddd"
+
+react-native-google-analytics-bridge@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-google-analytics-bridge/-/react-native-google-analytics-bridge-5.0.1.tgz#b4b4eb00e1316d1aaa9f02304912355f8a5797e2"
+
+react-native-keyboard-spacer@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-keyboard-spacer/-/react-native-keyboard-spacer-0.3.1.tgz#9580297ebfd078202dc4c65303d29cda35de67f1"
+
+react-native-radial-menu@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-radial-menu/-/react-native-radial-menu-1.1.0.tgz#e815a8ea89e50a5b0e96eaf99e08f29eb382a8e0"
 
 react-native-router-flux@^3.37.0:
   version "3.38.0"

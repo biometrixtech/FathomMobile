@@ -3,15 +3,16 @@
  */
 
 const app = {
-    background:         '#E9EBEE',
+    background:         '#888888',
     cardBackground:     '#FFFFFF',
     listItemBackground: '#FFFFFF',
+    transparent:        'rgba(0,0,0,0)',
 };
 
 const brand = {
     brand: {
-        primary:   '#0E4EF8',
-        secondary: '#17233D',
+        primary:   '#177896', // Blue: #177896, Red: #8e223a, Old: #0E4EF8
+        secondary: '#888888', // Grey: #5a5a5a, Old: #17233D
     },
 };
 
