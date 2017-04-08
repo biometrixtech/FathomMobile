@@ -18,9 +18,7 @@ export default {
       ['login', '/v1/sign_in'], // If you change the key, update the reference below
       ['forgot_password', '/v1/user/forgot_password'],
       ['user', '/v1/user'],
-      ['me', '/wp-json/wp/v2/users/me'],
-      ['recipes', '/wp-json/wp/v2/recipes'],
-      ['meals', '/wp-json/wp/v2/recipe_meal'],
+      ['team', '/v1/user/teams'],
     ]),
 
     // Which 'endpoint' key deals with our tokens?

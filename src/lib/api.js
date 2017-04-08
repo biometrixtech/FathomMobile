@@ -96,7 +96,7 @@ function fetcher(method, inputEndpoint, inputParams, body) {
         const requestNum = requestCounter;
 
         // After x seconds, let's call it a day!
-        const timeoutAfter = 7;
+        const timeoutAfter = 25;
         const apiTimedOut = setTimeout(() => (
           reject(ErrorMessages.timeout)
         ), timeoutAfter * 1000);
@@ -125,9 +125,9 @@ function fetcher(method, inputEndpoint, inputParams, body) {
         // Add Endpoint Params
         let urlParams = '';
         if (params) {
-            // Object - eg. /recipes?title=this&cat=2
+            // Object - eg. /users?title=this&cat=2
             if (typeof params === 'object') {
-                // Replace matching params in API routes eg. /recipes/{param}/foo
+                // Replace matching params in API routes eg. /users/{param}/foo
                 Object.keys(params).forEach((param) => {
                     if (endpoint.includes(`{${param}}`)) {
                         endpoint = endpoint.split(`{${param}}`).join(params[param]);
@@ -146,7 +146,7 @@ function fetcher(method, inputEndpoint, inputParams, body) {
                 // Add the rest of the params as a query string
                 urlParams = `?${serialize(params)}`;
 
-            // String or Number - eg. /recipes/23
+            // String or Number - eg. /users/23
             } else if (typeof params === 'string' || typeof params === 'number') {
                 urlParams = `/${params}`;
 
@@ -170,6 +170,7 @@ function fetcher(method, inputEndpoint, inputParams, body) {
               clearTimeout(apiTimedOut);
 
               let jsonRes = {};
+              console.log(rawRes);
 
               try {
                   jsonRes = await rawRes.json();
@@ -215,7 +216,7 @@ function fetcher(method, inputEndpoint, inputParams, body) {
 /* Create the API Export ==================================================================== */
 /**
   * Build services from Endpoints
-  * - So we can call AppAPI.recipes.get() for example
+  * - So we can call AppAPI.users.get() for example
   */
 const AppAPI = {
     handleError,

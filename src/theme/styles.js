@@ -8,7 +8,7 @@ import Sizes from './sizes';
 
 export default {
     appContainer: {
-        backgroundColor: '#000',
+        backgroundColor: Colors.background,
     },
 
     // Default
@@ -218,17 +218,17 @@ export default {
 
     // Navbar
     navbar: {
-        backgroundColor:   Colors.brand.primary,
+        backgroundColor:   Colors.transparent,
         borderBottomWidth: 0,
     },
     navbarTitle: {
-        color:      '#ffffff',
+        color:      '#FFFFFF',
         fontWeight: 'bold',
         fontFamily: Fonts.base.family,
-        fontSize:   Fonts.base.size,
+        fontSize:   Fonts.base.size+2,
     },
     navbarButton: {
-        tintColor: '#ffffff',
+        tintColor: '#FFFFFF',
     },
 
     // TabBar
@@ -236,5 +236,13 @@ export default {
         backgroundColor: Colors.tabbar.background,
         borderTopColor:  Colors.border,
         borderTopWidth:  1,
+    },
+
+    // Radial Menu
+    radialMenu: {
+        justifyContent: 'center',
+        alignItems:     'center',
+        height:         Sizes.screen.height,
+        width:          Sizes.screen.width,
     },
 };

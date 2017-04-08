@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
         left:            0,
         right:           0,
         backgroundColor: MENU_BG_COLOR,
-        padding:         20,
+        padding:         AppSizes.padding,
         paddingTop:      AppSizes.statusBarHeight,
     },
     menuItem: {
@@ -104,12 +104,16 @@ class Menu extends Component {
         this.state = {
             menu: [
                 {
-                    title:   'Recipes',
-                    onPress: () => { this.props.closeSideMenu(); Actions.app(); },
+                    title:   'Team Management',
+                    onPress: () => { this.props.closeSideMenu(); Actions.teamManagement(); },
+                },
+                {
+                    title:   'Kit Management',
+                    onPress: () => { this.props.closeSideMenu(); Actions.kitManagement(); },
                 },
                 {
                     title:   'Settings',
-                    onPress: () => { this.props.closeSideMenu(); Actions.comingSoon(); },
+                    onPress: () => { this.props.closeSideMenu(); Actions.settings(); },
                 },
             ],
         };
@@ -122,7 +126,7 @@ class Menu extends Component {
                   this.props.closeSideMenu();
                   Actions.login();
               }).catch((err) => {
-                  Alert.alert('Uh oh!', 'Something went wrong.');
+                  Alert.alert('Uh oh!', 'Something went wrong, please try again.');
               });
         }
     }

@@ -3,7 +3,7 @@
 I'm using [React Native Router Flux](https://github.com/aksonov/react-native-router-flux) to handle routing / navigation in the app. Please visit [the RNRF repo](https://github.com/aksonov/react-native-router-flux) to gain an understanding of the router API.
 
 I've setup the app so that you can manage the routes via `/src/navigation/index.js`.  
-I've split out particular areas into leaner files, for example all scenes related to the Tabbar, are manageable within `tabs.js`.
+I've split out particular areas into leaner files, for example all scenes related to the Management Radial Menus, are manageable within `management.js`.
 
 ## Basic usage
 
@@ -22,6 +22,7 @@ And add it within the main scene, eg:
     key={'blogListing'}
     title={'Our Blog'}
     component={BlogListing}
+    analyticsDesc={'BlogListing: Our Blog'}
   />
 ```
 
@@ -30,6 +31,7 @@ Props explained:
 - `key` - the unique reference we'll use to link to that scene
 - `title` - the text that'll appear in the navbar when we're on that scene
 - `component` - the component to show
+- `analyticsDesc` - [see Google Analytics](../../docs/google-analytics.md)
 
 ### 2. Linking to the Scene
 

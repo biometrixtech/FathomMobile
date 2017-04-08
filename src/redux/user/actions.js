@@ -33,6 +33,8 @@ export function login(credentials, freshLogin) {
                   return reject('Token decode failed.');
               }
 
+              // TODO: auth check on authorized account role
+
               // Get user details from API, using my token
               return AppAPI.user.get()
                   .then((userData) => {

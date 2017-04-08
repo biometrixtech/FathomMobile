@@ -5,17 +5,18 @@
  */
 import React, { Component, PropTypes } from 'react';
 import {
-  Image,
+  View,
   AsyncStorage,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 import FormValidation from 'tcomb-form-native';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
 import AppAPI from '@lib/api';
-import { AppStyles, AppSizes } from '@theme/';
+import { AppStyles, AppSizes, AppColors } from '@theme/';
 
 // Components
 import { Spacer, Button, Card, Alerts, Text } from '@ui/';
@@ -23,7 +24,7 @@ import { Spacer, Button, Card, Alerts, Text } from '@ui/';
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: 'transparent',
+        backgroundColor: AppColors.brand.secondary,
         height:          AppSizes.screen.height,
         width:           AppSizes.screen.width,
     },
@@ -35,49 +36,6 @@ const styles = StyleSheet.create({
         color: '#FFF',
     },
 });
-
-// <Spacer size={15} />
-// <Text p style={[AppStyles.textCenterAligned, styles.whiteText]}>
-//   - or -
-// </Text>
-// <Spacer size={10} />
-// <View style={[AppStyles.row, AppStyles.paddingHorizontal]}>
-//   <View style={[AppStyles.flex1]} />
-//   <View style={[AppStyles.flex2]}>
-//     <Button
-//       small
-//       title={'Skip'}
-//       onPress={Actions.app}
-//       backgroundColor={'#CB009E'}
-//       raised={false}
-//     />
-//   </View>
-//   <View style={[AppStyles.flex1]} />
-// </View>
-// <Spacer size={40} />
-
-
-// <View style={[AppStyles.row, AppStyles.paddingHorizontal]}>
-//   <View style={[AppStyles.flex1]}>
-//     <Button
-//       title={'Login'}
-//       icon={{ name: 'lock' }}
-//       onPress={Actions.login}
-//     />
-//   </View>
-// </View>
-//
-// <Spacer size={10} />
-//
-// <View style={[AppStyles.row, AppStyles.paddingHorizontal]}>
-//   <View style={[AppStyles.flex1]}>
-//     <Button
-//       title={'Sign up'}
-//       icon={{ name: 'person-add' }}
-//       onPress={Actions.signUp}
-//     />
-//   </View>
-// </View>
 
 /* Component ==================================================================== */
 class Login extends Component {
@@ -190,21 +148,19 @@ class Login extends Component {
         }
     }
 
+    // <Image
+    //           source={require('../../images/fathom_blue.png')}
+    //           style={[styles.logo]}
+    //         />
+    // <Spacer size={10} />
+
     render = () => {
         const Form = FormValidation.form.Form;
 
         return (
-          <Image
-            source={require('../../images/login.jpg')}
+          <View
             style={[AppStyles.containerCentered, AppStyles.container, styles.background]}
           >
-
-            <Image
-              source={require('../../images/logo.png')}
-              style={[styles.logo]}
-            />
-
-            <Spacer size={10} />
 
             <Card>
               <Alerts
@@ -244,7 +200,9 @@ class Login extends Component {
                 onPress={Actions.signUp}
               />
             </Card>
-          </Image>
+            {/* The view that will animate to match the keyboards height */}
+            <KeyboardSpacer />
+          </View>
         );
     }
 }

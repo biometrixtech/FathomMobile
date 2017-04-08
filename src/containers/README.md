@@ -14,7 +14,7 @@ So you'll notice that for each Container, there's:
 
 This way, we're keeping our complete scene bundled together in one directory.
 
-We recommend keeping the View file as lean as possible, by separating out components where you can. Eg. you'll see in `/src/containers/recipes/` - we've separated the card element into it's own Container and Component.
+We recommend keeping the View file as lean as possible, by separating out components where you can. Eg. you'll see in `/src/containers/auth/` - we've separated the login element into it's own Container and Component.
 
 ## Grouping
 
