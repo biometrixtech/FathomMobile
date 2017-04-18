@@ -11,8 +11,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import FormValidation from 'tcomb-form-native';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
+// import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { Actions } from 'react-native-router-flux';
+import * as Animatable from 'react-native-animatable';
 
 // Consts and Libs
 import AppAPI from '@lib/api';
@@ -24,7 +25,7 @@ import { Spacer, Button, Card, Alerts, Text } from '@ui/';
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: AppColors.brand.secondary,
+        backgroundColor: AppColors.brand.primary,
         height:          AppSizes.screen.height,
         width:           AppSizes.screen.width,
     },
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     whiteText: {
-        color: '#FFF',
+        color: '#FFFFFF',
     },
 });
 
@@ -86,11 +87,13 @@ class Login extends Component {
                         error:           'Please enter a valid email',
                         autoCapitalize:  'none',
                         clearButtonMode: 'while-editing',
+                        keyboardType:    'email-address',
                     },
                     Password: {
                         error:           'Your password must be 8 characters or more',
                         clearButtonMode: 'while-editing',
                         secureTextEntry: true,
+                        password:        true,
                     },
                 },
             },
@@ -109,6 +112,7 @@ class Login extends Component {
                     Password: jsonValues.password,
                 },
             });
+            this.login();
         }
     }
 
@@ -162,6 +166,10 @@ class Login extends Component {
             style={[AppStyles.containerCentered, AppStyles.container, styles.background]}
           >
 
+            <Animatable.Text animation="zoomIn" easing="ease-out" iterationCount="infinite" direction="alternate" style={[AppStyles.h0, styles.whiteText]}>Fathom</Animatable.Text>
+
+            <Spacer size={10} />
+
             <Card>
               <Alerts
                 status={this.state.resultMsg.status}
@@ -201,7 +209,7 @@ class Login extends Component {
               />
             </Card>
             {/* The view that will animate to match the keyboards height */}
-            <KeyboardSpacer />
+            {/* <KeyboardSpacer /> commented out while keyboard spacer is bad */}
           </View>
         );
     }

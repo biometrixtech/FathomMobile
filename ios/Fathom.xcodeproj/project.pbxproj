@@ -30,6 +30,8 @@
 		5D36B926D4734E9190576BC2 /* libRCTGoogleAnalyticsBridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D72471BB64364802A5903573 /* libRCTGoogleAnalyticsBridge.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		73BC5F2123BC49C9932F59D9 /* libSMXCrashlytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4872AE29023D40C6B40B2ACC /* libSMXCrashlytics.a */; };
+		7C09FF171EA110CF00DFE46E /* libBleManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C09FF161EA110CF00DFE46E /* libBleManager.a */; };
+		7C3C0AF41E9B3B04008B335E /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C3C0AD51E9B3AE6008B335E /* libART.a */; };
 		7C559C5B1E8E265E000C7EF7 /* ReactNativeCharts in Resources */ = {isa = PBXBuildFile; fileRef = 7C559C5A1E8E265E000C7EF7 /* ReactNativeCharts */; };
 		7C88E95C1E8E2AFC002E169A /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C88E95A1E8E2AFC002E169A /* Charts.framework */; };
 		7C88E95D1E8E2AFC002E169A /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C88E95B1E8E2AFC002E169A /* SwiftyJSON.framework */; };
@@ -228,6 +230,13 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RCTLinking;
 		};
+		7C3C0AD41E9B3AE6008B335E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7C3C0AD01E9B3AE6008B335E /* ART.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0CF68AC11AF0540F00FF9E5C;
+			remoteInfo = ART;
+		};
 		7CCEC7151E8CB7C20054E113 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CAD7B79DF2644058B9910022 /* SMXCrashlytics.xcodeproj */;
@@ -309,6 +318,8 @@
 		764A8B01A0CDBC39A3A59A2D /* Pods-Fathom.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fathom.release.xcconfig"; path = "Pods/Target Support Files/Pods-Fathom/Pods-Fathom.release.xcconfig"; sourceTree = "<group>"; };
 		76BC50C5ED02443CB1D32E96 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
+		7C09FF161EA110CF00DFE46E /* libBleManager.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBleManager.a; path = "../node_modules/react-native-ble-manager/ios/build/Debug-iphoneos/libBleManager.a"; sourceTree = "<group>"; };
+		7C3C0AD01E9B3AE6008B335E /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
 		7C559C5A1E8E265E000C7EF7 /* ReactNativeCharts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ReactNativeCharts; path = "../node_modules/react-native-charts-wrapper/ios/ReactNativeCharts"; sourceTree = "<group>"; };
 		7C559C7A1E8E2841000C7EF7 /* Fathom-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Fathom-Bridging-Header.h"; sourceTree = "<group>"; };
 		7C88E95A1E8E2AFC002E169A /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = "Pods/../build/Debug-iphoneos/Charts/Charts.framework"; sourceTree = "<group>"; };
@@ -344,6 +355,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C09FF171EA110CF00DFE46E /* libBleManager.a in Frameworks */,
+				7C3C0AF41E9B3B04008B335E /* libART.a in Frameworks */,
 				7C88E95C1E8E2AFC002E169A /* Charts.framework in Frameworks */,
 				7C88E95D1E8E2AFC002E169A /* SwiftyJSON.framework in Frameworks */,
 				C97D70A31E23777B00C3C793 /* CoreData.framework in Frameworks */,
@@ -517,6 +530,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		7C3C0AD11E9B3AE6008B335E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7C3C0AD51E9B3AE6008B335E /* libART.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		7CCEC6F71E8CB7C20054E113 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -544,6 +565,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				7C3C0AD01E9B3AE6008B335E /* ART.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
@@ -620,6 +642,7 @@
 		C97D70A11E23777B00C3C793 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7C09FF161EA110CF00DFE46E /* libBleManager.a */,
 				7C88E95A1E8E2AFC002E169A /* Charts.framework */,
 				7C88E95B1E8E2AFC002E169A /* SwiftyJSON.framework */,
 				C97D70C41E2377B200C3C793 /* libsqlite3.0.tbd */,
@@ -710,6 +733,10 @@
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = 7C3C0AD11E9B3AE6008B335E /* Products */;
+					ProjectRef = 7C3C0AD01E9B3AE6008B335E /* ART.xcodeproj */;
+				},
 				{
 					ProductGroup = 7CCEC7251E8CBB690054E113 /* Products */;
 					ProjectRef = 98DA833AC161470F8CDCADD5 /* CodePush.xcodeproj */;
@@ -952,6 +979,13 @@
 			remoteRef = 78C398B81ACF4ADC00677621 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		7C3C0AD51E9B3AE6008B335E /* libART.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libART.a;
+			remoteRef = 7C3C0AD41E9B3AE6008B335E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		7CCEC7161E8CB7C20054E113 /* libSMXCrashlytics.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1162,15 +1196,7 @@
 				INFOPLIST_FILE = FathomTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fathom.app/Fathom";
@@ -1185,15 +1211,7 @@
 				INFOPLIST_FILE = FathomTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fathom.app/Fathom";

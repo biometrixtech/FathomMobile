@@ -2,7 +2,7 @@
  * App Navigation
  */
 import React from 'react';
-import { Actions, Scene, ActionConst } from 'react-native-router-flux';
+import { Actions, Scene, ActionConst, Modal } from 'react-native-router-flux';
 
 // Consts and Libs
 import { AppConfig } from '@constants/';
@@ -35,6 +35,7 @@ export default Actions.create(
         {/* Radial Menus */}
         {Management}
       </Scene>
+      {/* </Scene>*/}
     </Scene>
   </Scene>,
 );

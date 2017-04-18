@@ -6,6 +6,8 @@ import jwtDecode from 'jwt-decode';
 
 import AppAPI from '@lib/api';
 
+const Actions = require('../actionTypes');
+
 /**
   * Login to API and receive Token
   */
@@ -39,12 +41,21 @@ export function login(credentials, freshLogin) {
               return AppAPI.user.get()
                   .then((userData) => {
                       dispatch({
-                          type: 'USER_REPLACE',
+                          type: Actions.USER_REPLACE,
                           data: userData,
                       });
 
                       return resolve(userData);
                   })
+                //   .then(() => AppAPI.training_group.get()
+                //   .then((trainingGroups) => {
+                //       dispatch({
+                //           type: Actions.GET_TRAINING_GROUPS,
+                //           data: trainingGroups,
+                //       });
+
+                //       return resolve(trainingGroups);
+                //   }))
                   .catch(err => reject(err));
           }).catch(err => reject(err));
     });
@@ -57,7 +68,7 @@ export function logout() {
     return dispatch => AppAPI.deleteToken()
       .then(() => {
           dispatch({
-              type: 'USER_REPLACE',
+              type: Actions.USER_REPLACE,
               data: {},
           });
       });
@@ -70,7 +81,7 @@ export function getUser() {
     return dispatch => AppAPI.user.get()
       .then((userData) => {
           dispatch({
-              type: 'USER_REPLACE',
+              type: Actions.USER_REPLACE,
               data: userData,
           });
 
@@ -86,7 +97,7 @@ export function updateUser(payload) {
     return dispatch => AppAPI.user.patch(payload)
       .then((userData) => {
           dispatch({
-              type: 'USER_REPLACE',
+              type: Actions.USER_REPLACE,
               data: userData,
           });
 
@@ -101,14 +112,14 @@ export function forgotPassword(email) {
     return dispatch => AppAPI.forgotPassword.post(email)
         .then((result) => {
             dispatch({
-                type: 'FORGOT_PASSWORD_SUCCESS',
+                type: Actions.FORGOT_PASSWORD_SUCCESS,
                 data: result,
             });
             return result;
         })
         .catch((err) => {
             dispatch({
-                type: 'FORGOT_PASSWORD_FAILED',
+                type: Actions.FORGOT_PASSWORD_FAILED,
             });
             return err;
         });
@@ -121,15 +132,83 @@ export function signUp(credentials) {
     return dispatch => AppAPI.user.post(credentials)
         .then((result) => {
             dispatch({
-                type: 'SIGN_UP_SUCCESS',
+                type: Actions.SIGN_UP_SUCCESS,
                 data: result,
             });
             return result;
         })
         .catch((err) => {
             dispatch({
-                type: 'SIGN_UP_FAILED',
+                type: Actions.SIGN_UP_FAILED,
             });
             return err;
         });
+}
+
+/**
+ * GET Training Groups
+ */
+export function getTrainingGroups() {
+    return dispatch => AppAPI.training_group.get()
+        .then((trainingGroups) => {
+            dispatch({
+                type: Actions.GET_TRAINING_GROUPS,
+                data: trainingGroups,
+            });
+            return trainingGroups;
+        });
+}
+
+/**
+ * Remove Training Group
+ */
+export function removeTrainingGroup() {
+    return dispatch => AppAPI.training_group.patch()
+        .then((trainingGroups) => {
+            dispatch({
+                type: Actions.UPDATE_TRAINING_GROUPS,
+                data: trainingGroups,
+            });
+        });
+}
+
+/**
+ * Remove Regimen Type
+ */
+export function removeRegimen() {
+    return dispatch => AppAPI.regimen.patch()
+        .then((regimens) => {
+            dispatch({
+                type: Actions.UPDATE_REGIMEN,
+                data: regimens,
+            });
+        });
+}
+
+export function addTG(data) {
+    return dispatch => dispatch({
+        type: Actions.ADD_TG,
+        data,
+    });
+}
+
+export function removeTG(id) {
+    return dispatch => dispatch({
+        type: Actions.REMOVE_TG,
+        data: id,
+    });
+}
+
+export function addR(data) {
+    return dispatch => dispatch({
+        type: Actions.ADD_R,
+        data,
+    });
+}
+
+export function removeR(id) {
+    return dispatch => dispatch({
+        type: Actions.REMOVE_R,
+        data: id,
+    });
 }

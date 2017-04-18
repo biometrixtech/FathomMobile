@@ -13,6 +13,8 @@ export default {
         height: screenHeight,
         width:  screenWidth,
 
+        heightHalf: screenHeight * 0.5,
+
         widthHalf:          screenWidth * 0.5,
         widthThird:         screenWidth * 0.333,
         widthTwoThirds:     screenWidth * 0.666,
