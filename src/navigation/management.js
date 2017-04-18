@@ -2,16 +2,19 @@
  * Menu Scenes
  */
 import React from 'react';
-import { Scene, ActionConst } from 'react-native-router-flux';
+import { Scene, ActionConst, Actions } from 'react-native-router-flux';
 
 // Consts and Libs
 import { AppConfig } from '@constants/';
-import { AppSizes } from '@theme/';
+import { Icon } from 'react-native-elements';
 
 // Scenes
-import TeamManagementView from '@containers/team/TeamManagementView';
-import KitManagementView from '@containers/kit/KitManagementView';
+import TeamManagementView from '@containers/team/TeamManagementContainer';
+import KitManagementView from '@containers/kit/KitManagementContainer';
 import AthletesView from '@containers/team/athletes/AthletesView';
+import DataView from '@containers/team/data/DataView';
+import GroupsView from '@containers/team/groups/GroupsView';
+import RegimensView from '@containers/team/regimens/RegimensView';
 
 // Components
 import { NavbarMenuButton } from '@containers/ui/NavbarMenuButton/NavbarMenuButtonContainer';
@@ -21,7 +24,24 @@ const navbarPropsTabs = {
     renderLeftButton: () => <NavbarMenuButton />,
     sceneStyle:       {
         ...AppConfig.navbarProps.sceneStyle,
-        paddingBottom: AppSizes.tabbarHeight,
+    },
+};
+
+const regimenView = {
+    ...AppConfig.navbarProps,
+    renderLeftButton:  () => <NavbarMenuButton />,
+    renderRightButton: () => <Icon onPress={() => Actions.refresh({ isModalVisible: true })} name="plus" type="material-community" size={34} color="#FFF" underlayColor="transparent" containerStyle={{ marginBottom: 12 }} />,
+    sceneStyle:        {
+        ...AppConfig.navbarProps.sceneStyle,
+    },
+};
+
+const groupView = {
+    ...AppConfig.navbarProps,
+    renderLeftButton:  () => <NavbarMenuButton />,
+    renderRightButton: () => <Icon onPress={() => Actions.refresh({ isModalVisible: true })} name="plus" type="material-community" size={34} color="#FFF" underlayColor="transparent" containerStyle={{ marginBottom: 12 }} />,
+    sceneStyle:        {
+        ...AppConfig.navbarProps.sceneStyle,
     },
 };
 
@@ -44,6 +64,30 @@ const scenes = (
       clone
       component={AthletesView}
       analyticsDesc={'AthletesView: Athletes'}
+    />
+    <Scene
+      {...groupView}
+      key={'groups'}
+      title={'Groups'}
+      clone
+      component={GroupsView}
+      analyticsDesc={'GroupsView: Groups'}
+    />
+    <Scene
+      {...regimenView}
+      key={'regimens'}
+      title={'Regimens'}
+      clone
+      component={RegimensView}
+      analyticsDesc={'RegimensView: Regimens'}
+    />
+    <Scene
+      {...regimenView}
+      key={'data'}
+      title={'Data'}
+      clone
+      component={DataView}
+      analyticsDesc={'DataView: Data'}
     />
     <Scene
       {...navbarPropsTabs}

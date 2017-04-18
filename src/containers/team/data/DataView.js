@@ -1,5 +1,5 @@
 /**
- * Team Management Screen
+ * Data Management Screen
  */
 import React, { Component, PropTypes } from 'react';
 import {
@@ -11,7 +11,6 @@ import { Icon } from 'react-native-elements';
 import Accordion from 'react-native-collapsible/Accordion';
 import { DoubleCircleLoader } from 'react-native-indicator';
 import ProgressBarClassic from 'react-native-progress-bar-classic';
-import ModalPicker from 'react-native-modal-picker';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors } from '@theme/';
@@ -40,29 +39,15 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-class AthletesView extends Component {
-    static componentName = 'AthletesView';
+class DataView extends Component {
+    static componentName = 'DataView';
 
-    /* eslint-disable react/forbid-prop-types, react/no-unused-prop-types */
     static propTypes = {
-        regimens:       PropTypes.array,
-        trainingGroups: PropTypes.array,
-        isModalVisible: PropTypes.bool,
-    };
+        user: PropTypes.object,
+    }
 
     static defaultProps = {
-        regimens:       [],
-        trainingGroups: [],
-        isModalVisible: false,
-    };
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            trainingGroups: this.props.trainingGroups,
-            isModalVisible: this.props.isModalVisible,
-        };
+        user: {},
     }
 
     status = {
@@ -72,30 +57,14 @@ class AthletesView extends Component {
     };
 
     // function call to start or stop a group training session
-    /* eslint-disable react/no-string-refs */
-    toggleGroupSession = (group) => {
+    toggleGroupSession = (trainingGroup) => {
+
     }
 
     // function call to start or stop a player's training session
-    /* eslint-disable react/no-string-refs */
-    toggleAthleteSession = (athlete) => {
-    }
+    togglePlayerSession = (athlete) => {
 
-    // function call to add a new player to a training group
-    addAthlete = () => {
     }
-
-    /* eslint-disable react/no-string-refs */
-    renderModal = (
-      <ModalPicker
-        ref="modal"
-        initValue="Pick a regimen to start"
-        data={this.props.regimens.map(regimen => ({
-            key:   regimen.id,
-            label: regimen.name,
-        }))}
-      />
-    )
 
     /* eslint-disable max-len */
     renderHeader = (section, index, isActive) => {
@@ -103,7 +72,7 @@ class AthletesView extends Component {
         const numberOfAthletes = section.athletes.length;
         return (
           <View>
-            <ListItem title={title} /* containerStyle={{ backgroundColor: section.color }} */ badge={{ value: numberOfAthletes, badgeTextStyle: styles.badgeTextStyle }} />
+            <ListItem title={title} containerStyle={{ backgroundColor: section.color }} badge={{ value: numberOfAthletes, badgeTextStyle: styles.badgeTextStyle }} />
           </View>
         );
     }
@@ -115,7 +84,7 @@ class AthletesView extends Component {
               <View style={[AppStyles.flex1, AppStyles.containerCentered]}>
                 {section.title !== 'Team' ? <Icon name="account-plus" type="material-community" /> : null}
               </View>
-              <Button style={[AppStyles.flex2]} raised onPress={() => { if (section.trainingActive) { this.toggleGroupSession(); } this.refs.modal.open(); }} icon={{ name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' }} title={`${section.trainingActive ? 'Stop' : 'Start'} Group Session`} backgroundColor={section.trainingActive ? AppColors.brand.red : AppColors.brand.primary} />
+              <Button style={[AppStyles.flex2]} raised onPress={() => this.toggleGroupSession} icon={{ name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' }} title={`${section.trainingActive ? 'Stop' : 'Start'} Group Session`} backgroundColor={section.trainingActive ? AppColors.brand.red : AppColors.brand.primary} />
               <View style={[AppStyles.flex1, AppStyles.containerCentered]}>
                 {section.title !== 'Team' ? <Icon name="account-remove" type="material-community" /> : null}
               </View>
@@ -124,13 +93,13 @@ class AthletesView extends Component {
               {
                 section.athletes.map(athlete =>
                   (
-                    <View key={athlete.id}>
+                    <View>
                       <Card title={athlete.name}>
                         {
                             section.title === 'Team' ?
                             (
                               <View>
-                                <Button style={[AppStyles.containerCentered]} raised onPress={() => { if (section.trainingActive) { this.toggleAthleteSession(); } this.refs.modal.open(); }} icon={{ name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' }} title={`${section.trainingActive ? 'Stop' : 'Start'} Athlete Session`} backgroundColor={section.trainingActive ? AppColors.brand.red : AppColors.brand.primary} />
+                                <Button style={[AppStyles.containerCentered]} raised onPress={() => this.togglePlayerSession} icon={{ name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' }} title={`${section.trainingActive ? 'Stop' : 'Start'} Athlete Session`} backgroundColor={section.trainingActive ? AppColors.brand.red : AppColors.brand.primary} />
                                 <Spacer size={5} />
                               </View>
                             ) : null
@@ -161,27 +130,15 @@ class AthletesView extends Component {
 
     render = () =>
         (
-          <View style={[AppStyles.container]}>
-            <ScrollView>
-              <Accordion
-                sections={this.props.trainingGroups}
-                renderHeader={this.renderHeader}
-                renderContent={this.renderContent}
-              />
-              <ModalPicker
-                ref="modal"
-                initValue=""
-                selectStyle={{ borderWidth: 0 }}
-                selectTextStyle={{ fontSize: 0 }}
-                data={[{ label: 'Select regimen to start',  key: 0, section: true }].concat(this.props.regimens.map(regimen => ({
-                    key:   regimen.id,
-                    label: regimen.name,
-                })))}
-              />
-            </ScrollView>
-          </View>
+          <ScrollView style={[AppStyles.container]}>
+            <Accordion
+              sections={this.props.user.trainingGroups}
+              renderHeader={this.renderHeader}
+              renderContent={this.renderContent}
+            />
+          </ScrollView>
         );
 }
 
 /* Export Component ==================================================================== */
-export default AthletesView;
+export default DataView;

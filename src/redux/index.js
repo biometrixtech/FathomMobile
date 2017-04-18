@@ -14,7 +14,7 @@ import user from '@redux/user/reducer';
 const appReducer = combineReducers({
     router,
     sideMenu,
-    user,
+    user
 });
 
 // Setup root reducer

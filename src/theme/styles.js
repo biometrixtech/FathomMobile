@@ -30,10 +30,6 @@ export default {
     leftAligned: {
         alignItems: 'flex-start',
     },
-    centerAligned: {
-        justifyContent: 'center',
-        alignItems:     'center',
-    },
     rightAligned: {
         alignItems: 'flex-end',
     },
@@ -53,6 +49,17 @@ export default {
         color:        Colors.textPrimary,
         fontWeight:   '500',
         marginBottom: 8,
+    },
+    h0: {
+        fontFamily:   Fonts.h0.family,
+        fontSize:     Fonts.h0.size,
+        lineHeight:   Fonts.h0.lineHeight,
+        color:        Colors.headingPrimary,
+        fontWeight:   '800',
+        margin:       0,
+        marginBottom: 4,
+        left:         0,
+        right:        0,
     },
     h1: {
         fontFamily:   Fonts.h1.family,
@@ -244,5 +251,11 @@ export default {
         alignItems:     'center',
         height:         Sizes.screen.height,
         width:          Sizes.screen.width,
+    },
+
+    deleteButton: {
+        justifyContent:  'center',
+        flex:            1,
+        backgroundColor: '#FF0000',
     },
 };

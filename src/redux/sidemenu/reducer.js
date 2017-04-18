@@ -2,6 +2,8 @@
  * Sidemenu Reducer
  */
 
+const Actions = require('../actionTypes');
+
 // Set initial state
 export const initialState = {
     isOpen:          false,
@@ -10,17 +12,17 @@ export const initialState = {
 
 export default function sideMenuReducer(state = initialState, action) {
     switch (action.type) {
-    case 'SIDEMENU_TOGGLE':
+    case Actions.SIDEMENU_TOGGLE:
         return {
             ...state,
             isOpen: !state.isOpen,
         };
-    case 'SIDEMENU_OPEN':
+    case Actions.SIDEMENU_OPEN:
         return {
             ...state,
             isOpen: true,
         };
-    case 'SIDEMENU_CLOSE':
+    case Actions.SIDEMENU_CLOSE:
         return {
             ...state,
             isOpen: false,
