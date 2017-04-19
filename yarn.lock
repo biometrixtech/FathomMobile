@@ -3654,10 +3654,6 @@ react-native-indicator@^0.6.7:
   version "0.6.7"
   resolved "https://registry.yarnpkg.com/react-native-indicator/-/react-native-indicator-0.6.7.tgz#7efd38494679e4a7d530c891f6c0ca39a5c3086b"
 
-react-native-keyboard-spacer@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/react-native-keyboard-spacer/-/react-native-keyboard-spacer-0.3.1.tgz#9580297ebfd078202dc4c65303d29cda35de67f1"
-
 react-native-modal-picker@^0.0.16:
   version "0.0.16"
   resolved "https://registry.yarnpkg.com/react-native-modal-picker/-/react-native-modal-picker-0.0.16.tgz#c9324d880a3bb8f36b772f378164977e2f431cbc"

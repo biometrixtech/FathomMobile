@@ -11,7 +11,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import FormValidation from 'tcomb-form-native';
-// import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { Actions } from 'react-native-router-flux';
 import * as Animatable from 'react-native-animatable';
 
@@ -208,8 +207,6 @@ class Login extends Component {
                 onPress={Actions.signUp}
               />
             </Card>
-            {/* The view that will animate to match the keyboards height */}
-            {/* <KeyboardSpacer /> commented out while keyboard spacer is bad */}
           </View>
         );
     }
