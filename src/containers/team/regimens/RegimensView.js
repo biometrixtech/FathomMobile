@@ -12,7 +12,7 @@ import Swipeable from 'react-native-swipeable';
 import Modal from 'react-native-modalbox';
 
 // Consts and Libs
-import { AppStyles, AppSizes, AppColors } from '@theme/';
+import { AppStyles, AppColors } from '@theme/';
 import { Actions } from 'react-native-router-flux';
 
 // Components
@@ -129,32 +129,6 @@ class RegimensView extends Component {
                 </Card>
               </View>
             </Modal>
-            {/* <Modal position={'center'} style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]} isOpen={this.props.isModalVisible} backButtonClose swipeToClose>
-              <View onLayout={(ev) => { this.resizeModal(ev); }}>
-                <Card title="Add Regimen">
-                  <Alerts
-                    status={this.state.resultMsg.status}
-                    success={this.state.resultMsg.success}
-                    error={this.state.resultMsg.error}
-                  />
-                  <Form
-                    ref={(b) => { this.form = b; }}
-                    type={this.state.form_fields}
-                    value={this.state.form_values}
-                    options={this.state.options}
-                  />
-                  <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000' }]} >Name</FormLabel>
-                  <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.name} onChangeText={name => this.setState({ name })} />
-
-                  <Spacer size={10} />
-
-                  <Button
-                    title={'Save'}
-                    onPress={() => { this.addRegimen({ name: this.state.name }); }}
-                  />
-                </Card>
-              </View>
-            </Modal> */}
           </View>
         );
 }

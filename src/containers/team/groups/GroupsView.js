@@ -12,7 +12,7 @@ import Swipeable from 'react-native-swipeable';
 import Modal from 'react-native-modalbox';
 
 // Consts and Libs
-import { AppStyles, AppSizes, AppColors } from '@theme/';
+import { AppStyles, AppColors } from '@theme/';
 import { Actions } from 'react-native-router-flux';
 
 // Components
@@ -135,28 +135,6 @@ class GroupsView extends Component {
                 </Card>
               </View>
             </Modal>
-            {/* <Modal position={'center'} style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]} isOpen={this.props.isModalVisible} backButtonClose>
-              <View onLayout={(ev) => { this.resizeModal(ev); }}>
-                <Card title="Add Training Group">
-                  <Alerts
-                    status={this.state.resultMsg.status}
-                    success={this.state.resultMsg.success}
-                    error={this.state.resultMsg.error}
-                  />
-                  <Form
-                    ref={(b) => { this.form = b; }}
-                    type={this.state.form_fields}
-                    value={this.state.form_values}
-                    options={this.state.options}
-                  />
-
-                  <Button
-                    title={'Save'}
-                    onPress={() => { this.addGroup(this.state.form_values); }}
-                  />
-                </Card>
-              </View>
-            </Modal> */}
           </View>
         );
 }
