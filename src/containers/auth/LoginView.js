@@ -21,6 +21,15 @@ import { AppStyles, AppSizes, AppColors } from '@theme/';
 // Components
 import { Spacer, Button, Card, Alerts, Text } from '@ui/';
 
+/* Biometrix Roles =========================================================== */
+const roles = {
+    admin:          'admin',
+    athlete:        'athlete',
+    biometrixAdmin: 'biometrix_admin',
+    manager:        'manager',
+    researcher:     'researcher',
+};
+
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     background: {
@@ -135,13 +144,29 @@ class Login extends Component {
                 this.props.login({
                     email:    credentials.Email,
                     password: credentials.Password,
-                }, true).then(() => {
+                }, true).then((userData) => {
                     this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
-                        setTimeout(() => {
-                            Actions.app({ type: 'reset' });
-                        }, 100);
+                        switch (userData.role) {
+                        case roles.admin:
+                            Actions.adminApp({ type: 'reset' });
+                            break;
+                        case roles.athlete:
+                            Actions.athleteApp({ type: 'reset' });
+                            break;
+                        case roles.biometrixAdmin:
+                            Actions.biometrixApp({ type: 'reset' }); // eventually changed to biometrixAdminApp?
+                            break;
+                        case roles.manager:
+                            Actions.managerApp({ type: 'reset' });
+                            break;
+                        case roles.researcher:
+                            Actions.researcherApp({ type: 'reset' });
+                            break;
+                        default:
+                            break;
+                        }
                     });
                 }).catch((err) => {
                     const error = AppAPI.handleError(err);

@@ -258,4 +258,9 @@ export default {
         flex:            1,
         backgroundColor: '#FF0000',
     },
+    editButton: {
+        justifyContent:  'center',
+        flex:            1,
+        backgroundColor: '#00FF00',
+    },
 };

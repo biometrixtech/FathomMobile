@@ -192,6 +192,13 @@ export function addTG(data) {
     });
 }
 
+export function editTG(data) {
+    return dispatch => dispatch({
+        type: Actions.EDIT_TG,
+        data,
+    });
+}
+
 export function removeTG(id) {
     return dispatch => dispatch({
         type: Actions.REMOVE_TG,
@@ -206,9 +213,30 @@ export function addR(data) {
     });
 }
 
+export function editR(data) {
+    return dispatch => dispatch({
+        type: Actions.EDIT_R,
+        data,
+    });
+}
+
 export function removeR(id) {
     return dispatch => dispatch({
         type: Actions.REMOVE_R,
         data: id,
+    });
+}
+
+export function addA(data) {
+    return dispatch => dispatch({
+        type: Actions.ADD_A,
+        data,
+    });
+}
+
+export function removeA(data) {
+    return dispatch => dispatch({
+        type: Actions.REMOVE_A,
+        data,
     });
 }

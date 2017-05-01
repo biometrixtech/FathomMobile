@@ -1,5 +1,5 @@
 /**
- * Menu Scenes
+ * Manager Navigation Scenes
  */
 import React from 'react';
 import { Scene, ActionConst, Actions } from 'react-native-router-flux';
@@ -9,12 +9,12 @@ import { AppConfig } from '@constants/';
 import { Icon } from 'react-native-elements';
 
 // Scenes
-import TeamManagementView from '@containers/team/TeamManagementContainer';
+import TeamManagementView from '@containers/management/TeamManagementContainer';
 import KitManagementView from '@containers/kit/KitManagementContainer';
-import AthletesView from '@containers/team/athletes/AthletesView';
-import DataView from '@containers/team/data/DataView';
-import GroupsView from '@containers/team/groups/GroupsView';
-import RegimensView from '@containers/team/regimens/RegimensView';
+import AthletesView from '@containers/management/athletes/AthletesContainer';
+import DataView from '@containers/management/data/DataContainer';
+import GroupsView from '@containers/management/groups/GroupsContainer';
+import RegimensView from '@containers/management/regimens/RegimensContainer';
 
 // Components
 import { NavbarMenuButton } from '@containers/ui/NavbarMenuButton/NavbarMenuButtonContainer';
@@ -50,44 +50,44 @@ const scenes = (
   <Scene key={'management'} >
     <Scene
       {...navbarPropsTabs}
-      key={'teamManagement'}
+      key={'managerTeamManagement'}
       title={'Team Management'}
       clone
       type={ActionConst.REPLACE}
       component={TeamManagementView}
-      analyticsDesc={'TeamManagementView: Team Management'}
+      analyticsDesc={'ManagerTeamManagementView: Manager Team Management'}
     />
     <Scene
       {...navbarPropsTabs}
-      key={'athletes'}
+      key={'managerAthletes'}
       title={'Athletes'}
       clone
       component={AthletesView}
-      analyticsDesc={'AthletesView: Athletes'}
+      analyticsDesc={'ManagerAthletesView: Manager Athletes'}
     />
     <Scene
       {...groupView}
-      key={'groups'}
+      key={'managerGroups'}
       title={'Groups'}
       clone
       component={GroupsView}
-      analyticsDesc={'GroupsView: Groups'}
+      analyticsDesc={'ManagerGroupsView: Manager Groups'}
     />
     <Scene
       {...regimenView}
-      key={'regimens'}
+      key={'managerRegimens'}
       title={'Regimens'}
       clone
       component={RegimensView}
-      analyticsDesc={'RegimensView: Regimens'}
+      analyticsDesc={'ManagerRegimensView: Manager Regimens'}
     />
     <Scene
       {...regimenView}
-      key={'data'}
+      key={'managerData'}
       title={'Data'}
       clone
       component={DataView}
-      analyticsDesc={'DataView: Data'}
+      analyticsDesc={'ManagerDataView: Manager Data'}
     />
     <Scene
       {...navbarPropsTabs}

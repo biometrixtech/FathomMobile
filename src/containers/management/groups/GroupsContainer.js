@@ -1,5 +1,5 @@
 /**
- * Athletes Screen Container
+ * Groups Screen Container
  */
 import { connect } from 'react-redux';
 
@@ -7,16 +7,18 @@ import { connect } from 'react-redux';
 import * as UserActions from '@redux/user/actions';
 
 // The component we're mapping to
-import AthletesRender from './AthletesView';
+import GroupsRender from './GroupsView';
 
 // What data from the store shall we send to the component?
 const mapStateToProps = state => ({
-    regimens:       state.regimens,
-    trainingGroups: state.trainingGroups,
+    trainingGroups: state.user.trainingGroups,
 });
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
+    addGroup:    UserActions.addTG,
+    editGroup:   UserActions.editTG,
+    removeGroup: UserActions.removeTG,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AthletesRender);
+export default connect(mapStateToProps, mapDispatchToProps)(GroupsRender);

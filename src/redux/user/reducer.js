@@ -2,17 +2,14 @@
  * User Reducer
  */
 
-// Consts and Libs
-import { AppColors } from '@theme/';
-
 const Actions = require('../actionTypes');
 
 // Set initial state
 const initialState = {
     regimens: [
-            { name: 'Weights',  id: 1 },
-            { name: 'Game',     id: 2 },
-            { name: 'Practice', id: 3 },
+            { name: 'Weights',  id: 1, trainingGroupIds: [1] },
+            { name: 'Game',     id: 2, trainingGroupIds: [1] },
+            { name: 'Practice', id: 3, trainingGroupIds: [1] },
     ],
     trainingGroups: [
         {
@@ -24,26 +21,31 @@ const initialState = {
                     id:         1,
                     name:       'John Doe 1',
                     avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
+                    collapsed:  true,
                 },
                 {
                     id:         2,
                     name:       'John Doe 2',
                     avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
+                    collapsed:  true,
                 },
                 {
                     id:         3,
                     name:       'John Doe 3',
                     avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
+                    collapsed:  true,
                 },
                 {
                     id:         4,
                     name:       'John Doe 4',
                     avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
+                    collapsed:  true,
                 },
                 {
                     id:         5,
                     name:       'John Doe 5',
                     avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
+                    collapsed:  true,
                 },
             ],
         },
@@ -56,6 +58,7 @@ const initialState = {
                     id:         6,
                     name:       'John Doe 6',
                     avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
+                    collapsed:  true,
                 },
             ],
         },
@@ -68,6 +71,7 @@ const initialState = {
                     id:         7,
                     name:       'John Doe 7',
                     avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
+                    collapsed:  true,
                 },
             ],
         },
@@ -80,6 +84,7 @@ const initialState = {
                     id:         8,
                     name:       'John Doe 8',
                     avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
+                    collapsed:  true,
                 },
             ],
         },
@@ -92,12 +97,14 @@ const initialState = {
                     id:         9,
                     name:       'John Doe 9',
                     avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
+                    collapsed:  true,
                 },
             ],
         },
     ],
 };
 
+/* eslint-disable max-len */
 export default function userReducer(state = initialState, action) {
     switch (action.type) {
     case Actions.USER_REPLACE:
@@ -125,6 +132,12 @@ export default function userReducer(state = initialState, action) {
             regimens:       state.regimens,
             trainingGroups: state.trainingGroups.concat([action.data]),
         };
+    case Actions.EDIT_TG:
+        return {
+            user:           state.user,
+            regimens:       state.regimens,
+            trainingGroups: (state.trainingGroups[state.trainingGroups.findIndex(trainingGroup => trainingGroup.id === action.data.id)] = action.data),
+        };
     case Actions.REMOVE_TG:
         return {
             user:           state.user,
@@ -137,13 +150,24 @@ export default function userReducer(state = initialState, action) {
             regimens:       state.regimens.concat([action.data]),
             trainingGroups: state.trainingGroups,
         };
+    case Actions.EDIT_R:
+        return {
+            user:           state.user,
+            regimens:       (state.regimens[state.regimens.findIndex(regimen => regimen.id === action.data.id)] = action.data),
+            trainingGroups: state.trainingGroups,
+        };
     case Actions.REMOVE_R:
         return {
             user:           state.user,
             regimens:       state.regimens.filter(regimen => regimen.id !== action.data),
             trainingGroups: state.trainingGroups,
         };
-
+    case Actions.ADD_A:
+        return { ...state };
+    case Actions.EDIT_A:
+        return { ...state };
+    case Actions.REMOVE_A:
+        return { ...state };
     default:
         return state;
     }
