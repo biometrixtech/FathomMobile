@@ -11,7 +11,12 @@ module.exports = {
     SIDEMENU_OPEN:           'SIDEMENU_OPEN',
     SIDEMENU_CLOSE:          'SIDEMENU_CLOSE',
     ADD_TG:                  'ADD_TG',
+    EDIT_TG:                 'EDIT_TG',
     REMOVE_TG:               'REMOVE_TG',
     ADD_R:                   'ADD_R',
+    EDIT_R:                  'EDIT_R',
     REMOVE_R:                'REMOVE_R',
+    ADD_A:                   'ADD_A',
+    EDIT_A:                  'EDIT_A',
+    REMOVE_A:                'REMOVE_A',
 };

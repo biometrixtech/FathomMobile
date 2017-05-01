@@ -17,6 +17,15 @@ import { AppStyles, AppSizes, AppColors } from '@theme/';
 // Components
 import { Spacer, Text, Button } from '@ui/';
 
+/* Biometrix Roles =========================================================== */
+const roles = {
+    admin:          'admin',
+    athlete:        'athlete',
+    biometrixAdmin: 'biometrix_admin',
+    manager:        'manager',
+    researcher:     'researcher',
+};
+
 /* Styles ==================================================================== */
 const MENU_BG_COLOR = '#2E3234';
 
@@ -98,14 +107,42 @@ class Menu extends Component {
         user: null,
     }
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+
+        let title = '';
+        let action;
+
+        switch (this.props.user.user.role) {
+        case roles.admin:
+            title = 'Team Management';
+            action = Actions.adminTeamManagement;
+            break;
+        case roles.athlete:
+            title = 'Athlete Management';
+            action = Actions.athleteAthleteManagement;
+            break;
+        case roles.biometrixAdmin:
+            title = 'Team Management';
+            action = Actions.managerTeamManagement;
+            break;
+        case roles.manager:
+            title = 'Team Management';
+            action = Actions.managerTeamManagement;
+            break;
+        case roles.researcher:
+            title = 'Athlete Management';
+            action = Actions.researcherAthleteManagement;
+            break;
+        default:
+            break;
+        }
 
         this.state = {
             menu: [
                 {
-                    title:   'Team Management',
-                    onPress: () => { this.props.closeSideMenu(); Actions.teamManagement(); },
+                    title:   title,
+                    onPress: () => { this.props.closeSideMenu(); action(); },
                 },
                 {
                     title:   'Kit Management',

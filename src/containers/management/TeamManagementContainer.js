@@ -18,9 +18,14 @@ const mapStateToProps = state => ({
 // Any actions to map to the component?
 const mapDispatchToProps = {
     addGroup:      UserActions.addTG,
+    editGroup:     UserActions.editTG,
     removeGroup:   UserActions.removeTG,
     addRegimen:    UserActions.addR,
+    editRegimen:   UserActions.editR,
     removeRegimen: UserActions.removeR,
+    addAthlete:    UserActions.addA,
+    editAthlete:   UserActions.editR,
+    removeAthlete: UserActions.removeA,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeamManagementRender);

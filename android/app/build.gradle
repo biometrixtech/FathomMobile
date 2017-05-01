@@ -133,6 +133,7 @@ repositories {
 }
 
 dependencies {
+    compile project(':react-native-calendar-events')
     compile project(':react-native-google-analytics-bridge')
     compile project(':react-native-charts-wrapper')
     compile project(':react-native-code-push')
