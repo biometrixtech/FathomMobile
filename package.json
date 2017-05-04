@@ -19,7 +19,7 @@
     "verbose": true
   },
   "dependencies": {
-    "html-entities": "^1.2.0",
+    "html-entities": "^1.2.1",
     "jwt-decode": "^2.1.0",
     "qs": "^6.3.0",
     "react": "^15.4.2",
