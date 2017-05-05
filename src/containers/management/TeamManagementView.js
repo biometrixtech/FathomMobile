@@ -42,10 +42,10 @@ class TeamManagementView extends Component {
           <View style={[AppStyles.container, AppStyles.containerCentered]}>
             <RadialMenu menuRadius={AppStyles.windowSize.width/3} style={[AppStyles.radialMenu]} onOpen={() => {}} onClose={() => {}}>
               <Icon raised type="ionicon" name="ios-people" color="#FFFFFF" containerStyle={{ backgroundColor: AppColors.brand.primary }} style={[AppStyles.containerCentered]} size={41} />
-              <Icon raised type="material-community" name="account-multiple-plus" color={AppColors.brand.primary} onSelect={() => Actions.managerGroups({ trainingGroups: this.props.trainingGroups, removeGroup: this.props.removeGroup, addGroup: this.props.addGroup, editGroup: this.props.editGroup })} size={40} />
-              <Icon raised type="octicon" name="graph" color={AppColors.brand.primary} onSelect={() => Actions.managerData({ trainingGroups: this.props.trainingGroups })} size={40} />
-              <Icon raised type="material-community" name="view-list" color={AppColors.brand.primary} onSelect={() => Actions.managerAthletes({ trainingGroups: this.props.trainingGroups, regimens: this.props.regimens, addAthlete: this.props.addAthlete, removeAthlete: this.props.removeAthlete, editAthlete: this.props.editAthlete })} size={40} />
-              <Icon raised type="material-community" name="dumbbell" color={AppColors.brand.primary} onSelect={() => Actions.managerRegimens({ regimens: this.props.regimens, removeRegimen: this.props.removeRegimen, addRegimen: this.props.addRegimen, editRegimen: this.props.editRegimen })} size={40} />
+              <Icon raised type="material-community" name="account-multiple-plus" color={AppColors.brand.primary} onSelect={Actions.managerGroups} size={40} />
+              <Icon raised type="octicon" name="graph" color={AppColors.brand.primary} onSelect={Actions.managerData} size={40} />
+              <Icon raised type="material-community" name="view-list" color={AppColors.brand.primary} onSelect={Actions.managerAthletes} size={40} />
+              <Icon raised type="material-community" name="dumbbell" color={AppColors.brand.primary} onSelect={Actions.managerRegimens} size={40} />
             </RadialMenu>
           </View>
         );
