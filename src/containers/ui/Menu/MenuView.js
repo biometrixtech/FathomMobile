@@ -131,8 +131,8 @@ class Menu extends Component {
             action = Actions.managerTeamManagement;
             break;
         case roles.researcher:
-            title = 'Athlete Management';
-            action = Actions.researcherAthleteManagement;
+            title = 'Subject Management';
+            action = Actions.researcherSubjectManagement;
             break;
         default:
             break;

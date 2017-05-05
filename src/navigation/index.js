@@ -75,7 +75,7 @@ export default Actions.create(
     {/* Main Researcher App */}
     <Scene key={'researcherApp'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}>
       {/* Drawer Side Menu */}
-      <Scene key={'researcherHome'} component={Drawer} initial={'researcherAthleteManagement'}>
+      <Scene key={'researcherHome'} component={Drawer} initial={'researcherSubjectManagement'}>
         {/* Radial Menus */}
         {ResearcherNavigation}
       </Scene>
