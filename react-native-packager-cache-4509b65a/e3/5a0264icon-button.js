@@ -77,12 +77,12 @@ function createIconButtonComponent(Icon) {
 
         return _react2.default.createElement(
           _reactNative.TouchableHighlight,
-          babelHelpers.extends({ style: [styles.touchable, blockStyle] }, touchableProps),
+          babelHelpers.extends({
+            style: [styles.touchable, blockStyle]
+          }, touchableProps),
           _react2.default.createElement(
             _reactNative.View,
-            babelHelpers.extends({
-              style: [styles.container, blockStyle, style]
-            }, props),
+            babelHelpers.extends({ style: [styles.container, blockStyle, style] }, props),
             _react2.default.createElement(Icon, iconProps),
             (0, _isString2.default)(children) ? _react2.default.createElement(
               _reactNative.Text,
@@ -94,12 +94,15 @@ function createIconButtonComponent(Icon) {
       }
     }]);
     return IconButton;
-  }(_react.Component), _class.propTypes = babelHelpers.extends({}, _reactNative.View.propTypes, {
+  }(_react.Component), _class.propTypes = {
     backgroundColor: _propTypes2.default.string,
     borderRadius: _propTypes2.default.number,
     color: _propTypes2.default.string,
-    size: _propTypes2.default.number
-  }), _class.defaultProps = {
+    size: _propTypes2.default.number,
+    iconStyle: _propTypes2.default.any,
+    style: _propTypes2.default.any,
+    children: _propTypes2.default.node
+  }, _class.defaultProps = {
     backgroundColor: IOS7_BLUE,
     borderRadius: 5,
     color: 'white',
