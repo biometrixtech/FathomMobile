@@ -1,7 +1,7 @@
 /**
  * Kit Management Screen
  */
-/* eslint-disable max-len */
+/* eslint-disable max-len, react/no-string-refs */
 import React, { Component, PropTypes } from 'react';
 import {
   View,
@@ -10,14 +10,18 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
-import RadialMenu from 'react-native-radial-menu';
 import BleManager from 'react-native-ble-manager';
+import Swiper from 'react-native-swiper';
+import ModalDropdown from 'react-native-modal-dropdown';
+import Collapsible from 'react-native-collapsible';
 
 // Consts and Libs
 import { AppStyles, AppColors } from '@theme/';
 
 // Components
-import { Alerts } from '@ui/';
+import { Spacer, Button, FormLabel, Text } from '@ui/';
+
+const accessoryDiscoverabilityInstruction = 'hold the ___ and ___ buttons simultaneously until the kit lights flash red and blue';
 
 /* Component ==================================================================== */
 class KitManagementView extends Component {
@@ -36,9 +40,12 @@ class KitManagementView extends Component {
         super(props);
 
         this.state = {
-            ble:       null,
-            scanning:  false,
-            resultMsg: {
+            ble:          null,
+            scanning:     false,
+            index:        0,
+            devicesFound: [],
+            isCollapsed:  true,
+            resultMsg:    {
                 status:  null,
                 success: null,
                 error:   null,
@@ -47,69 +54,84 @@ class KitManagementView extends Component {
     }
 
     componentDidMount = () => {
-        BleManager.start({ showAlert: true });
+        BleManager.checkState();
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
         this.handleBleStateChange     = this.handleBleStateChange.bind(this);
 
         NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
         NativeAppEventEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange);
+        NativeAppEventEmitter.addListener('BleManagerStopScan', () => { this.setState({ scanning: false, resultMsg: { success: 'Finished scanning' } }); });
+    }
+
+    turnOnBluetooth = () => {
+        BleManager.start({ showAlert: true });
 
         if (Platform.OS === 'android' && Platform.Version >= 23) {
             PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then((result) => {
-                if (result) {
-                    console.log('Permission is OK');
-                } else {
+                if (!result) {
                     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then((res) => {
                         if (res === 'denied') {
-                            this.setState({ resultMsg: { error: 'Bluetooth inactive' } });
+                            return this.setState({ resultMsg: { error: 'Bluetooth inactive' } });
                         }
+                        return null;
                     });
                 }
-                BleManager.enableBluetooth()
-                  // .then(() =>
-                      // Success code
-                      // console.log('The bluetooth is already enabled or the user confirm'))
-                  .catch((error) => {
-                      // Failure code
-                      this.setState({ resultMsg: { error: 'Bluetooth inactive' } });
-                  });
+                return BleManager.enableBluetooth()
+                  .catch(error => this.setState({ resultMsg: { error: 'Bluetooth inactive' } }));
             });
         }
     }
 
-    handleScan = () => {
-        BleManager.scan([], 30, true)
-            .then((results) => { console.log('Scanning...'); });
-    }
+    handleScan = () => BleManager.scan([], 30, false)
+            .then(() => { this.refs.swiper.scrollBy(1); this.setState({ scanning: true, resultMsg: { status: 'Scanning..' }, devicesFound: [] }); });
 
     toggleScanning = (bool) => {
         if (bool) {
             this.setState({ scanning: true });
-            this.scanning = setInterval(() => this.handleScan(), 3000);
-        } else {
-            this.setState({ scanning: false, ble: null });
-            clearInterval(this.scanning);
+            return this.handleScan();
         }
+        this.setState({ scanning: false, ble: null });
+        return BleManager.stopScan().then(res => BleManager.checkState());
     }
 
     handleDiscoverPeripheral = (data) => {
         console.log('Got ble data', data);
-        this.setState({ ble: data });
+        this.state.devicesFound.push(data);
+        return this.setState({ ble: data, devicesFound: this.state.devicesFound });
     }
 
     handleBleStateChange = (data) => {
         if (data.state === 'off') {
-            this.setState({ resultMsg: { error: 'Bluetooth inactive' } });
-        } else {
-            this.setState({ resultMsg: { error: null } });
+            if (this.refs.swiper.state.index > 1) {
+                this.refs.swiper.scrollBy(-this.refs.swiper.state.index+1);
+            }
+            return this.setState({ resultMsg: { error: 'Bluetooth inactive' } });
         }
+        if (this.refs.swiper.state.index === 1) {
+            this.turnOnBluetooth();
+            this.refs.swiper.scrollBy(1);
+        }
+        return this.setState({ resultMsg: { error: null } });
     }
 
     /* eslint-disable max-len */
     render = () =>
         (
-          <View style={[AppStyles.container]}>
-            {/* <View style={[AppStyles.container, AppStyles.containerCentered]}>
+          <Swiper ref="swiper" scrollEnabled={false} loop={false}>
+            <View style={[AppStyles.containerCentered]}>
+              <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#FFFFFF' }]} >
+                { accessoryDiscoverabilityInstruction }
+              </FormLabel>
+              <Spacer />
+              <Button title={'Next'} onPress={() => { this.refs.swiper.scrollBy(1); BleManager.checkState(); }} raised />
+            </View>
+            <View style={[AppStyles.containerCentered]}>
+              <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#FFFFFF' }]} >Step 2: Turn on bluetooth</FormLabel>
+              <Icon name="bluetooth" onPress={() => this.turnOnBluetooth()} raised />
+            </View>
+            <View style={[AppStyles.containerCentered]}>
+
+              {/* <View style={[AppStyles.container, AppStyles.containerCentered]}>
               <RadialMenu menuRadius={AppStyles.windowSize.width/3} style={[AppStyles.radialMenu]} onOpen={() => {}} onClose={() => {}}>
                 <Icon raised type="octicon" name="settings" color="#FFFFFF" containerStyle={{ backgroundColor: AppColors.brand.primary }} style={[AppStyles.containerCentered]} size={41} />
                 <Icon raised type="entypo" name="tools" color={AppColors.brand.primary} size={40} />
@@ -117,12 +139,26 @@ class KitManagementView extends Component {
                 <Icon raised type="material-community" name="replay" color={AppColors.brand.primary} size={40} />
               </RadialMenu>
             </View> */}
-            <Alerts
-              status={this.state.resultMsg.status}
-              success={this.state.resultMsg.success}
-              error={this.state.resultMsg.error}
-            />
-          </View>
+              <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#FFFFFF' }]} >Step 3: Scan for accessories</FormLabel>
+              <Button
+                title={this.state.scanning ? 'Stop Scan' : 'Start Scan'}
+                icon={{ name: `${this.state.scanning ? 'stop' : 'play-arrow'}` }}
+                buttonStyle={{ backgroundColor: `${this.state.scanning ? AppColors.red : AppColors.brand.primary}` }}
+                onPress={() => this.toggleScanning(!this.state.scanning)}
+                raised
+              />
+              <Spacer />
+              <ModalDropdown options={this.state.devicesFound.map(device => device.id)} />
+              <Spacer />
+              <Text labelStyle={[AppStyles.h5, { color: AppColors.primary }]} onPress={() => { this.setState({ isCollapsed: !this.state.isCollapsed }); }} >{'Can\'t find your device?'}</Text>
+              <Spacer />
+              <Collapsible collapsed={this.state.isCollapsed} >
+                <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#FFFFFF' }]} >
+                  { `${accessoryDiscoverabilityInstruction}. Then rescan.` }
+                </FormLabel>
+              </Collapsible>
+            </View>
+          </Swiper>
         );
 }
 

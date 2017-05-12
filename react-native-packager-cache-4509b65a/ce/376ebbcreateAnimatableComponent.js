@@ -43,6 +43,10 @@ function omit(keys, source) {
   return filtered;
 }
 
+function deepEquals(a, b) {
+  return a === b || JSON.stringify(a) === JSON.stringify(b);
+}
+
 function getAnimationTarget(iteration, direction) {
   switch (direction) {
     case 'reverse':
@@ -86,10 +90,12 @@ function makeInterpolatedStyle(compiledAnimation, animationValue) {
 
 function transitionToValue(transitionValue, toValue, duration, easing) {
   var useNativeDriver = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+  var delay = arguments[5];
 
-  if (duration || easing) {
+  if (duration || easing || delay) {
     _reactNative.Animated.timing(transitionValue, {
       toValue: toValue,
+      delay: delay,
       duration: duration || 1000,
       easing: typeof easing === 'function' ? easing : _easing2.default[easing || 'ease'],
       useNativeDriver: useNativeDriver
@@ -226,6 +232,7 @@ function createAnimatableComponent(WrappedComponent) {
       key: 'componentWillReceiveProps',
       value: function componentWillReceiveProps(props) {
         var animation = props.animation,
+            delay = props.delay,
             duration = props.duration,
             easing = props.easing,
             transition = props.transition,
@@ -235,8 +242,8 @@ function createAnimatableComponent(WrappedComponent) {
 
         if (transition) {
           var values = (0, _getStyleValues2.default)(transition, props.style);
-          this.transitionTo(values, duration, easing);
-        } else if (animation !== this.props.animation) {
+          this.transitionTo(values, duration, easing, delay);
+        } else if (!deepEquals(animation, this.props.animation)) {
           if (animation) {
             if (this.delayTimer) {
               this.setAnimation(animation);
@@ -366,12 +373,12 @@ function createAnimatableComponent(WrappedComponent) {
           }
         });
         this.setState({ transitionValues: transitionValues, transitionStyle: transitionStyle, currentTransitionValues: currentTransitionValues }, function () {
-          _this6.transitionToValues(toValuesFlat, duration || _this6.props.duration, easing);
+          _this6.transitionToValues(toValuesFlat, duration || _this6.props.duration, easing, _this6.props.delay);
         });
       }
     }, {
       key: 'transitionTo',
-      value: function transitionTo(toValues, duration, easing) {
+      value: function transitionTo(toValues, duration, easing, delay) {
         var _this7 = this;
 
         var currentTransitionValues = this.state.currentTransitionValues;
@@ -388,7 +395,7 @@ function createAnimatableComponent(WrappedComponent) {
           var transitionStyle = _this7.state.transitionStyle[property];
           var transitionValue = _this7.state.transitionValues[property];
           if (!needsInterpolation && transitionStyle && transitionStyle === transitionValue) {
-            transitionToValue(transitionValue, toValue, duration, easing, _this7.props.useNativeDriver);
+            transitionToValue(transitionValue, toValue, duration, easing, _this7.props.useNativeDriver, delay);
           } else {
             var currentTransitionValue = currentTransitionValues[property];
             if (typeof currentTransitionValue === 'undefined' && _this7.props.style) {
@@ -406,13 +413,13 @@ function createAnimatableComponent(WrappedComponent) {
       }
     }, {
       key: 'transitionToValues',
-      value: function transitionToValues(toValues, duration, easing) {
+      value: function transitionToValues(toValues, duration, easing, delay) {
         var _this8 = this;
 
         Object.keys(toValues).forEach(function (property) {
           var transitionValue = _this8.state.transitionValues[property];
           var toValue = toValues[property];
-          transitionToValue(transitionValue, toValue, duration, easing, _this8.props.useNativeDriver);
+          transitionToValue(transitionValue, toValue, duration, easing, _this8.props.useNativeDriver, delay);
         });
       }
     }, {
@@ -455,6 +462,7 @@ function createAnimatableComponent(WrappedComponent) {
     transition: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.arrayOf(_react.PropTypes.string)]),
     useNativeDriver: _react.PropTypes.bool
   }, _class.defaultProps = {
+    delay: 0,
     iterationCount: 1,
     onAnimationBegin: function onAnimationBegin() {},
     onAnimationEnd: function onAnimationEnd() {},

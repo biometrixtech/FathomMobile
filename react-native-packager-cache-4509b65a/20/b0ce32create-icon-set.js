@@ -110,11 +110,12 @@ function createIconSet(glyphMap, fontFamily, fontFile) {
     return Icon;
   }(_react.Component);
 
-  Icon.propTypes = babelHelpers.extends({}, _reactNative.Text.propTypes, {
+  Icon.propTypes = {
     name: IconNamePropType.isRequired,
     size: _propTypes2.default.number,
-    color: _propTypes2.default.string
-  });
+    color: _propTypes2.default.string,
+    children: _propTypes2.default.node,
+    style: _propTypes2.default.any };
   Icon.defaultProps = {
     size: DEFAULT_ICON_SIZE,
     allowFontScaling: false

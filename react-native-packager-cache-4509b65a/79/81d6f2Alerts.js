@@ -66,8 +66,7 @@ var Alerts = function Alerts(_ref) {
           { style: [styles.msg_text] },
           success
         )
-      ),
-      _react2.default.createElement(_ui.Spacer, { size: 20 })
+      )
     ),
     !!status && _react2.default.createElement(
       _reactNative.View,
@@ -80,8 +79,7 @@ var Alerts = function Alerts(_ref) {
           { style: [styles.msg_text, styles.msgStatus_text] },
           status
         )
-      ),
-      _react2.default.createElement(_ui.Spacer, { size: 20 })
+      )
     ),
     !!error && _react2.default.createElement(
       _reactNative.View,
@@ -96,8 +94,7 @@ var Alerts = function Alerts(_ref) {
           },
           error
         )
-      ),
-      _react2.default.createElement(_ui.Spacer, { size: 20 })
+      )
     )
   );
 };
