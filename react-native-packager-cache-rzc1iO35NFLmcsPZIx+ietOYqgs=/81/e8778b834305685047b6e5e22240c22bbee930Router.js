@@ -72,7 +72,7 @@ var Router = function (_Component) {
   }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
-      _reactNative.BackAndroid.addEventListener('hardwareBackPress', this.handleBackAndroid);
+      _reactNative.BackHandler.addEventListener('hardwareBackPress', this.handleBackAndroid);
     }
   }, {
     key: 'componentWillReceiveProps',
@@ -83,7 +83,7 @@ var Router = function (_Component) {
   }, {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
-      _reactNative.BackAndroid.removeEventListener('hardwareBackPress', this.handleBackAndroid);
+      _reactNative.BackHandler.removeEventListener('hardwareBackPress', this.handleBackAndroid);
     }
   }, {
     key: 'handleBackAndroid',

@@ -11,14 +11,13 @@ var NavigationPagerStyleInterpolator = require('./NavigationPagerStyleInterpolat
 var NavigationPointerEventsContainer = require('./NavigationPointerEventsContainer');
 var NavigationPropTypes = require('./NavigationPropTypes');
 var React = require('react');
-var ReactComponentWithPureRenderMixin = require('react-addons-pure-render-mixin');
 var StyleSheet = require('react-native').StyleSheet;
 var View = require('react-native').View;
 
 var PropTypes = React.PropTypes;
 
-var SceneView = function (_React$Component) {
-  babelHelpers.inherits(SceneView, _React$Component);
+var SceneView = function (_React$PureComponent) {
+  babelHelpers.inherits(SceneView, _React$PureComponent);
 
   function SceneView() {
     babelHelpers.classCallCheck(this, SceneView);
@@ -37,15 +36,15 @@ var SceneView = function (_React$Component) {
     }
   }]);
   return SceneView;
-}(React.Component);
+}(React.PureComponent);
 
 SceneView.propTypes = {
   sceneRenderer: PropTypes.func.isRequired,
   sceneRendererProps: NavigationPropTypes.SceneRenderer
 };
 
-var NavigationCard = function (_React$Component2) {
-  babelHelpers.inherits(NavigationCard, _React$Component2);
+var NavigationCard = function (_React$Component) {
+  babelHelpers.inherits(NavigationCard, _React$Component);
 
   function NavigationCard() {
     babelHelpers.classCallCheck(this, NavigationCard);
@@ -53,11 +52,6 @@ var NavigationCard = function (_React$Component2) {
   }
 
   babelHelpers.createClass(NavigationCard, [{
-    key: 'shouldComponentUpdate',
-    value: function shouldComponentUpdate(nextProps, nextState) {
-      return ReactComponentWithPureRenderMixin.shouldComponentUpdate.call(this, nextProps, nextState);
-    }
-  }, {
     key: 'render',
     value: function render() {
       var _props = this.props,
@@ -79,7 +73,7 @@ var NavigationCard = function (_React$Component2) {
           ref: this.props.onComponentRef,
           style: [styles.main, viewStyle], __source: {
             fileName: _jsxFileName,
-            lineNumber: 129
+            lineNumber: 120
           }
         }),
         React.createElement(SceneView, {
@@ -87,7 +81,7 @@ var NavigationCard = function (_React$Component2) {
           sceneRendererProps: props,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 134
+            lineNumber: 125
           }
         })
       );

@@ -9,7 +9,6 @@ var NavigationContainer = require('./NavigationContainer');
 var NavigationCardStackPanResponder = require('./NavigationCardStackPanResponder');
 var NavigationPropTypes = require('./NavigationPropTypes');
 var React = require('react');
-var ReactComponentWithPureRenderMixin = require('react-addons-pure-render-mixin');
 var StyleSheet = require('react-native').StyleSheet;
 
 var emptyFunction = require('fbjs/lib/emptyFunction');
@@ -17,8 +16,8 @@ var emptyFunction = require('fbjs/lib/emptyFunction');
 var PropTypes = React.PropTypes;
 var Directions = NavigationCardStackPanResponder.Directions;
 
-var NavigationCardStack = function (_React$Component) {
-  babelHelpers.inherits(NavigationCardStack, _React$Component);
+var NavigationCardStack = function (_React$PureComponent) {
+  babelHelpers.inherits(NavigationCardStack, _React$PureComponent);
 
   function NavigationCardStack(props, context) {
     babelHelpers.classCallCheck(this, NavigationCardStack);
@@ -31,11 +30,6 @@ var NavigationCardStack = function (_React$Component) {
       this._renderScene = this._renderScene.bind(this);
     }
   }, {
-    key: 'shouldComponentUpdate',
-    value: function shouldComponentUpdate(nextProps, nextState) {
-      return ReactComponentWithPureRenderMixin.shouldComponentUpdate.call(this, nextProps, nextState);
-    }
-  }, {
     key: 'render',
     value: function render() {
       return React.createElement(NavigationAnimatedView, {
@@ -46,7 +40,7 @@ var NavigationCardStack = function (_React$Component) {
         style: [styles.animatedView, this.props.style],
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 119
+          lineNumber: 110
         }
       });
     }
@@ -66,13 +60,13 @@ var NavigationCardStack = function (_React$Component) {
         style: style,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 141
+          lineNumber: 132
         }
       }));
     }
   }]);
   return NavigationCardStack;
-}(React.Component);
+}(React.PureComponent);
 
 NavigationCardStack.propTypes = {
   direction: PropTypes.oneOf([Directions.HORIZONTAL, Directions.VERTICAL]),

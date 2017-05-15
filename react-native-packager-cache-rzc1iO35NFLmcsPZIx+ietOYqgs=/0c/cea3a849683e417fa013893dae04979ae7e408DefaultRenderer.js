@@ -13,10 +13,6 @@ var _reactNativeExperimentalNavigation = require('react-native-experimental-navi
 
 var _reactNativeExperimentalNavigation2 = babelHelpers.interopRequireDefault(_reactNativeExperimentalNavigation);
 
-var _reactAddonsPureRenderMixin = require('react-addons-pure-render-mixin');
-
-var _reactAddonsPureRenderMixin2 = babelHelpers.interopRequireDefault(_reactAddonsPureRenderMixin);
-
 var _TabBar = require('./TabBar');
 
 var _TabBar2 = babelHelpers.interopRequireDefault(_TabBar);
@@ -94,9 +90,105 @@ function leftToRight(props) {
   };
 }
 
-var DefaultRenderer = function (_Component) {
-  babelHelpers.inherits(DefaultRenderer, _Component);
-  babelHelpers.createClass(DefaultRenderer, null, [{
+var DefaultRenderer = function (_PureComponent) {
+  babelHelpers.inherits(DefaultRenderer, _PureComponent);
+
+  function DefaultRenderer() {
+    babelHelpers.classCallCheck(this, DefaultRenderer);
+    return babelHelpers.possibleConstructorReturn(this, (DefaultRenderer.__proto__ || Object.getPrototypeOf(DefaultRenderer)).apply(this, arguments));
+  }
+
+  babelHelpers.createClass(DefaultRenderer, [{
+    key: 'getChildContext',
+    value: function getChildContext() {
+      return {
+        navigationState: this.props.navigationState
+      };
+    }
+  }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      DefaultRenderer.dispatchFocusAction(this.props);
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (nextProps.navigationState !== this.props.navigationState) {
+        DefaultRenderer.dispatchFocusAction(nextProps);
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props = this.props,
+          navigationState = _props.navigationState,
+          onNavigate = _props.onNavigate;
+
+
+      if (!navigationState || !onNavigate) {
+        console.error('navigationState and onNavigate property should be not null');
+        return null;
+      }
+
+      var SceneComponent = navigationState.component;
+
+      if (navigationState.tabs && !SceneComponent) {
+        SceneComponent = _TabBar2.default;
+      }
+
+      if (SceneComponent) {
+        return _react2.default.createElement(
+          _reactNative.View,
+          {
+            style: [styles.sceneStyle, navigationState.sceneStyle],
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 294
+            }
+          },
+          _react2.default.createElement(SceneComponent, babelHelpers.extends({}, this.props, navigationState, {
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 297
+            }
+          }))
+        );
+      }
+
+      var optionals = {};
+      var selected = navigationState.children[navigationState.index];
+      var applyAnimation = selected.applyAnimation || navigationState.applyAnimation;
+      var style = selected.style || navigationState.style;
+
+      if (applyAnimation) {
+        optionals.applyAnimation = applyAnimation;
+      } else {
+        var duration = selected.duration;
+        if (duration === null || duration === undefined) duration = navigationState.duration;
+        if (duration !== null && duration !== undefined) {
+          optionals.applyAnimation = function (pos, navState) {
+            if (duration === 0) {
+              pos.setValue(navState.index);
+            } else {
+              _reactNative.Animated.timing(pos, { toValue: navState.index, duration: duration }).start();
+            }
+          };
+        }
+      }
+
+      return _react2.default.createElement(NavigationAnimatedView, babelHelpers.extends({
+        navigationState: navigationState,
+        style: [styles.animatedView, style],
+        renderOverlay: DefaultRenderer.renderHeader,
+        renderScene: DefaultRenderer.renderCard
+      }, optionals, {
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 326
+        }
+      }));
+    }
+  }], [{
     key: 'getPanHandlers',
     value: function getPanHandlers(direction, props) {
       return direction === 'vertical' ? NavigationCardStackPanResponder.forVertical(props) : NavigationCardStackPanResponder.forHorizontal(props);
@@ -135,7 +227,7 @@ var DefaultRenderer = function (_Component) {
         navigationState: props.scene.navigationState,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 142
+          lineNumber: 141
         }
       });
     }
@@ -197,7 +289,7 @@ var DefaultRenderer = function (_Component) {
       };
       return _react2.default.createElement(HeaderComponent, babelHelpers.extends({}, props, navBarProps, { getTitle: getTitle, __source: {
           fileName: _jsxFileName,
-          lineNumber: 206
+          lineNumber: 205
         }
       }));
     }
@@ -208,8 +300,7 @@ var DefaultRenderer = function (_Component) {
           key = _props$scene$navigati.key,
           direction = _props$scene$navigati.direction,
           animation = _props$scene$navigati.animation,
-          getSceneStyle = _props$scene$navigati.getSceneStyle,
-          getPanHandlers = _props$scene$navigati.getPanHandlers;
+          getSceneStyle = _props$scene$navigati.getSceneStyle;
 
 
       var state = props.navigationState;
@@ -218,9 +309,13 @@ var DefaultRenderer = function (_Component) {
       while ({}.hasOwnProperty.call(selected, 'children')) {
         selected = selected.children[selected.index];
       }
+
       var _selected = selected,
-          panHandlers = _selected.panHandlers,
-          animationStyle = _selected.animationStyle;
+          getPanHandlers = _selected.getPanHandlers;
+      var _selected2 = selected,
+          panHandlers = _selected2.panHandlers;
+      var animationStyle = props.scene.navigationState.animationStyle;
+
 
       var isActive = child === selected;
       var computedProps = { isActive: isActive };
@@ -251,114 +346,13 @@ var DefaultRenderer = function (_Component) {
         renderScene: DefaultRenderer.renderScene,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 250
-        }
-      }));
-    }
-  }]);
-
-  function DefaultRenderer(props) {
-    babelHelpers.classCallCheck(this, DefaultRenderer);
-
-    var _this = babelHelpers.possibleConstructorReturn(this, (DefaultRenderer.__proto__ || Object.getPrototypeOf(DefaultRenderer)).call(this, props));
-
-    _this.shouldComponentUpdate = _reactAddonsPureRenderMixin2.default.shouldComponentUpdate.bind(_this);
-    return _this;
-  }
-
-  babelHelpers.createClass(DefaultRenderer, [{
-    key: 'getChildContext',
-    value: function getChildContext() {
-      return {
-        navigationState: this.props.navigationState
-      };
-    }
-  }, {
-    key: 'componentDidMount',
-    value: function componentDidMount() {
-      DefaultRenderer.dispatchFocusAction(this.props);
-    }
-  }, {
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
-      if (nextProps.navigationState !== this.props.navigationState) {
-        DefaultRenderer.dispatchFocusAction(nextProps);
-      }
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      var _props = this.props,
-          navigationState = _props.navigationState,
-          onNavigate = _props.onNavigate;
-
-
-      if (!navigationState || !onNavigate) {
-        console.error('navigationState and onNavigate property should be not null');
-        return null;
-      }
-
-      var SceneComponent = navigationState.component;
-
-      if (navigationState.tabs && !SceneComponent) {
-        SceneComponent = _TabBar2.default;
-      }
-
-      if (SceneComponent) {
-        return _react2.default.createElement(
-          _reactNative.View,
-          {
-            style: [styles.sceneStyle, navigationState.sceneStyle],
-            __source: {
-              fileName: _jsxFileName,
-              lineNumber: 298
-            }
-          },
-          _react2.default.createElement(SceneComponent, babelHelpers.extends({}, this.props, navigationState, {
-            __source: {
-              fileName: _jsxFileName,
-              lineNumber: 301
-            }
-          }))
-        );
-      }
-
-      var optionals = {};
-      var selected = navigationState.children[navigationState.index];
-      var applyAnimation = selected.applyAnimation || navigationState.applyAnimation;
-      var style = selected.style || navigationState.style;
-
-      if (applyAnimation) {
-        optionals.applyAnimation = applyAnimation;
-      } else {
-        var duration = selected.duration;
-        if (duration === null || duration === undefined) duration = navigationState.duration;
-        if (duration !== null && duration !== undefined) {
-          optionals.applyAnimation = function (pos, navState) {
-            if (duration === 0) {
-              pos.setValue(navState.index);
-            } else {
-              _reactNative.Animated.timing(pos, { toValue: navState.index, duration: duration }).start();
-            }
-          };
-        }
-      }
-
-      return _react2.default.createElement(NavigationAnimatedView, babelHelpers.extends({
-        navigationState: navigationState,
-        style: [styles.animatedView, style],
-        renderOverlay: DefaultRenderer.renderHeader,
-        renderScene: DefaultRenderer.renderCard
-      }, optionals, {
-        __source: {
-          fileName: _jsxFileName,
-          lineNumber: 330
+          lineNumber: 252
         }
       }));
     }
   }]);
   return DefaultRenderer;
-}(_react.Component);
+}(_react.PureComponent);
 
 DefaultRenderer.propTypes = {
   navigationState: _react.PropTypes.object,
