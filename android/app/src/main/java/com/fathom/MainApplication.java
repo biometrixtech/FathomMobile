@@ -4,7 +4,6 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
-import com.calendarevents.CalendarEventsPackage;
 import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import com.github.wuxudong.rncharts.MPAndroidChartPackage;
 import com.microsoft.codepush.react.CodePush;
@@ -38,7 +37,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new CalendarEventsPackage(),
           new GoogleAnalyticsBridgePackage(),
           new MPAndroidChartPackage(),
           new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
