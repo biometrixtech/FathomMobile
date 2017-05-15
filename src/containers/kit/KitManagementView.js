@@ -69,7 +69,7 @@ class KitManagementView extends Component {
         if (Platform.OS === 'android' && Platform.Version >= 23) {
             PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then((result) => {
                 if (!result) {
-                    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then((res) => {
+                    return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then((res) => {
                         if (res === 'denied') {
                             return this.setState({ resultMsg: { error: 'Bluetooth inactive' } });
                         }
@@ -118,18 +118,26 @@ class KitManagementView extends Component {
     render = () =>
         (
           <Swiper ref="swiper" scrollEnabled={false} loop={false}>
-            <View style={[AppStyles.containerCentered]}>
-              <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#FFFFFF' }]} >
-                { accessoryDiscoverabilityInstruction }
-              </FormLabel>
-              <Spacer />
-              <Button title={'Next'} onPress={() => { this.refs.swiper.scrollBy(1); BleManager.checkState(); }} raised />
+            <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+              <View style={{ flex: 1 }} />
+              <View style={{ flex: 1 }}>
+                <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#FFFFFF' }]} >
+                  { accessoryDiscoverabilityInstruction }
+                </FormLabel>
+                <Spacer />
+                <Button title={'Next'} onPress={() => { this.refs.swiper.scrollBy(1); BleManager.checkState(); }} raised />
+              </View>
+              <View style={{ flex: 1 }} />
             </View>
-            <View style={[AppStyles.containerCentered]}>
-              <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#FFFFFF' }]} >Step 2: Turn on bluetooth</FormLabel>
-              <Icon name="bluetooth" onPress={() => this.turnOnBluetooth()} raised />
+            <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+              <View style={{ flex: 1 }} />
+              <View style={{ flex: 1 }} >
+                <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#FFFFFF' }]} >Step 2: Turn on bluetooth</FormLabel>
+                <Icon name="bluetooth" containerStyle={{ alignSelf: 'center' }} size={30} color="blue" onPress={() => this.turnOnBluetooth()} raised />
+              </View>
+              <View style={{ flex: 1 }} />
             </View>
-            <View style={[AppStyles.containerCentered]}>
+            <View style={[AppStyles.containerCentered, { flex: 1 }]}>
 
               {/* <View style={[AppStyles.container, AppStyles.containerCentered]}>
               <RadialMenu menuRadius={AppStyles.windowSize.width/3} style={[AppStyles.radialMenu]} onOpen={() => {}} onClose={() => {}}>
@@ -139,24 +147,28 @@ class KitManagementView extends Component {
                 <Icon raised type="material-community" name="replay" color={AppColors.brand.primary} size={40} />
               </RadialMenu>
             </View> */}
-              <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#FFFFFF' }]} >Step 3: Scan for accessories</FormLabel>
-              <Button
-                title={this.state.scanning ? 'Stop Scan' : 'Start Scan'}
-                icon={{ name: `${this.state.scanning ? 'stop' : 'play-arrow'}` }}
-                buttonStyle={{ backgroundColor: `${this.state.scanning ? AppColors.red : AppColors.brand.primary}` }}
-                onPress={() => this.toggleScanning(!this.state.scanning)}
-                raised
-              />
-              <Spacer />
-              <ModalDropdown options={this.state.devicesFound.map(device => device.id)} />
-              <Spacer />
-              <Text labelStyle={[AppStyles.h5, { color: AppColors.primary }]} onPress={() => { this.setState({ isCollapsed: !this.state.isCollapsed }); }} >{'Can\'t find your device?'}</Text>
-              <Spacer />
-              <Collapsible collapsed={this.state.isCollapsed} >
-                <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#FFFFFF' }]} >
-                  { `${accessoryDiscoverabilityInstruction}. Then rescan.` }
-                </FormLabel>
-              </Collapsible>
+              <View style={{ flex: 1 }} />
+              <View style={{ flex: 1 }} >
+                <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#FFFFFF' }]} >Step 3: Scan for accessories</FormLabel>
+                <Button
+                  title={this.state.scanning ? 'Stop Scan' : 'Start Scan'}
+                  icon={{ name: `${this.state.scanning ? 'stop' : 'play-arrow'}` }}
+                  buttonStyle={{ backgroundColor: `${this.state.scanning ? AppColors.red : AppColors.brand.primary}` }}
+                  onPress={() => this.toggleScanning(!this.state.scanning)}
+                  raised
+                />
+                <Spacer />
+                <ModalDropdown options={this.state.devicesFound.map(device => device.id)} />
+                <Spacer />
+                <Text labelStyle={[AppStyles.h5, { color: AppColors.primary }]} onPress={() => { this.setState({ isCollapsed: !this.state.isCollapsed }); }} >{'Can\'t find your device?'}</Text>
+                <Spacer />
+                <Collapsible collapsed={this.state.isCollapsed} >
+                  <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#FFFFFF' }]} >
+                    { `${accessoryDiscoverabilityInstruction}. Then rescan.` }
+                  </FormLabel>
+                </Collapsible>
+              </View>
+              <View style={{ flex: 1 }} />
             </View>
           </Swiper>
         );

@@ -59,7 +59,7 @@ import com.android.build.OutputFile
  *   inputExcludes: ["android/**", "ios/**"],
  *
  *   // override which node gets called and with what additional arguments
- *   nodeExecutableAndArgs: ["node"]
+ *   nodeExecutableAndArgs: ["node"],
  *
  *   // supply additional arguments to the packager
  *   extraPackagerArgs: []
@@ -133,7 +133,6 @@ repositories {
 }
 
 dependencies {
-    compile project(':react-native-calendar-events')
     compile project(':react-native-google-analytics-bridge')
     compile project(':react-native-charts-wrapper')
     compile project(':react-native-code-push')
