@@ -9,7 +9,6 @@ var NavigationHeaderTitle = require('./NavigationHeaderTitle');
 var NavigationHeaderBackButton = require('./NavigationHeaderBackButton');
 var NavigationPropTypes = require('./NavigationPropTypes');
 var NavigationHeaderStyleInterpolator = require('./NavigationHeaderStyleInterpolator');
-var ReactComponentWithPureRenderMixin = require('react-addons-pure-render-mixin');
 
 var Animated = ReactNative.Animated,
     Platform = ReactNative.Platform,
@@ -21,8 +20,8 @@ var APPBAR_HEIGHT = Platform.OS === 'ios' ? 44 : 56;
 var STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : 0;
 var PropTypes = React.PropTypes;
 
-var NavigationHeader = function (_React$Component) {
-  babelHelpers.inherits(NavigationHeader, _React$Component);
+var NavigationHeader = function (_React$PureComponent) {
+  babelHelpers.inherits(NavigationHeader, _React$PureComponent);
 
   function NavigationHeader() {
     babelHelpers.classCallCheck(this, NavigationHeader);
@@ -30,11 +29,6 @@ var NavigationHeader = function (_React$Component) {
   }
 
   babelHelpers.createClass(NavigationHeader, [{
-    key: 'shouldComponentUpdate',
-    value: function shouldComponentUpdate(nextProps, nextState) {
-      return ReactComponentWithPureRenderMixin.shouldComponentUpdate.call(this, nextProps, nextState);
-    }
-  }, {
     key: 'render',
     value: function render() {
       var _this2 = this;
@@ -56,7 +50,7 @@ var NavigationHeader = function (_React$Component) {
         babelHelpers.extends({ style: [styles.appbar, style] }, viewProps, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 124
+            lineNumber: 115
           }
         }),
         scenesProps.map(this._renderLeft, this),
@@ -108,7 +102,7 @@ var NavigationHeader = function (_React$Component) {
           key: name + '_' + key,
           style: [styles[name], styleInterpolator(props)], __source: {
             fileName: _jsxFileName,
-            lineNumber: 191
+            lineNumber: 182
           }
         },
         subView
@@ -116,7 +110,7 @@ var NavigationHeader = function (_React$Component) {
     }
   }]);
   return NavigationHeader;
-}(React.Component);
+}(React.PureComponent);
 
 NavigationHeader.defaultProps = {
 
@@ -129,7 +123,7 @@ NavigationHeader.defaultProps = {
       {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 85
+          lineNumber: 84
         }
       },
       title
@@ -140,7 +134,7 @@ NavigationHeader.defaultProps = {
     return props.scene.index > 0 ? React.createElement(NavigationHeaderBackButton, {
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 89
+        lineNumber: 88
       }
     }) : null;
   },

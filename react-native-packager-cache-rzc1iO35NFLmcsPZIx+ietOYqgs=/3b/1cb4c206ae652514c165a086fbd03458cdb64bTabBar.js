@@ -123,7 +123,7 @@ var TabBar = function (_Component) {
           return el.icon;
         }).length > 0 && (state.tabBarBackgroundImage ? _react2.default.createElement(
           _reactNative.Image,
-          { source: state.tabBarBackgroundImage, __source: {
+          { source: state.tabBarBackgroundImage, style: state.tabBarBackgroundImageStyle, __source: {
               fileName: _jsxFileName,
               lineNumber: 85
             }

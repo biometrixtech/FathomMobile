@@ -8,12 +8,11 @@ var React = require('react');
 var StyleSheet = require('react-native').StyleSheet;
 var View = require('react-native').View;
 var NavigationScenesReducer = require('./NavigationScenesReducer');
-var ReactComponentWithPureRenderMixin = require('react-addons-pure-render-mixin');
 
 var PropTypes = React.PropTypes;
 
-var NavigationView = function (_React$Component) {
-  babelHelpers.inherits(NavigationView, _React$Component);
+var NavigationView = function (_React$PureComponent) {
+  babelHelpers.inherits(NavigationView, _React$PureComponent);
 
   function NavigationView(props, context) {
     babelHelpers.classCallCheck(this, NavigationView);
@@ -41,11 +40,6 @@ var NavigationView = function (_React$Component) {
   }
 
   babelHelpers.createClass(NavigationView, [{
-    key: 'shouldComponentUpdate',
-    value: function shouldComponentUpdate(nextProps, nextState) {
-      return ReactComponentWithPureRenderMixin.shouldComponentUpdate.call(this, nextProps, nextState);
-    }
-  }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
       var _this2 = this;
@@ -91,7 +85,7 @@ var NavigationView = function (_React$Component) {
           onLayout: this._onLayout,
           style: this.props.style, __source: {
             fileName: _jsxFileName,
-            lineNumber: 135
+            lineNumber: 126
           }
         },
         this._renderScene(sceneProps)
@@ -109,7 +103,7 @@ var NavigationView = function (_React$Component) {
         View,
         { key: props.scene.key, style: styles.scene, __source: {
             fileName: _jsxFileName,
-            lineNumber: 149
+            lineNumber: 140
           }
         },
         child
@@ -136,7 +130,7 @@ var NavigationView = function (_React$Component) {
     }
   }]);
   return NavigationView;
-}(React.Component);
+}(React.PureComponent);
 
 NavigationView.propTypes = {
   navigationState: PropTypes.object.isRequired,

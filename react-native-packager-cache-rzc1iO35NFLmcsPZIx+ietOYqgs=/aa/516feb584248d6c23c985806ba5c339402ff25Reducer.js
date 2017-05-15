@@ -6,6 +6,10 @@ exports.getCurrent = getCurrent;
 
 var _reactNative = require('react-native');
 
+var _lodash = require('lodash.isequal');
+
+var _lodash2 = babelHelpers.interopRequireDefault(_lodash);
+
 var _ActionConst = require('./ActionConst');
 
 var ActionConst = babelHelpers.interopRequireWildcard(_ActionConst);
@@ -17,7 +21,6 @@ var _Util = require('./Util');
 var _State = require('./State');
 
 function checkPropertiesEqual(action, lastAction) {
-  var isEqual = true;
   for (var _iterator = Object.keys(action), _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[typeof Symbol === 'function' ? Symbol.iterator : '@@iterator']();;) {
     var _ref;
 
@@ -33,12 +36,12 @@ function checkPropertiesEqual(action, lastAction) {
     var key = _ref;
 
     if (['key', 'type', 'parent'].indexOf(key) === -1) {
-      if (action[key] !== lastAction[key]) {
-        isEqual = false;
+      if (!(0, _lodash2.default)(action[key], lastAction[key]) && typeof action[key] !== 'function' && typeof lastAction[key] !== 'function') {
+        return false;
       }
     }
   }
-  return isEqual;
+  return true;
 }
 
 function resetHistoryStack(child) {
@@ -221,7 +224,7 @@ function inject(state, action, props, scenes) {
           resetHistoryStack(state.children[ind]);
         }
 
-        state.children[ind] = (0, _State.getInitialState)(props, scenes, state.index, action);
+        state.children[ind] = (0, _State.getInitialState)(props, scenes, state.index, babelHelpers.extends({}, action, { parentIndex: state.children[ind].parentIndex }));
 
         return babelHelpers.extends({}, state, { index: ind });
       }
