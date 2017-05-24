@@ -48,7 +48,7 @@ var TeamManagementView = function (_Component) {
               lineNumber: 43
             }
           },
-          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'ionicon', name: 'ios-people', color: '#FFFFFF', containerStyle: { backgroundColor: _theme.AppColors.brand.primary }, style: [_theme.AppStyles.containerCentered], size: 41, __source: {
+          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'ionicon', name: 'ios-people', color: _theme.AppColors.brand.primary, reverse: true, size: 41, __source: {
               fileName: _jsxFileName,
               lineNumber: 44
             }

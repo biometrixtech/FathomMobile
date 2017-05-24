@@ -194,7 +194,7 @@ var KitManagementView = function (_Component) {
                             },
                             'Step 2: Turn on bluetooth'
                         ),
-                        _react2.default.createElement(_reactNativeElements.Icon, { name: 'bluetooth', containerStyle: { alignSelf: 'center' }, size: 30, color: 'blue', onPress: function onPress() {
+                        _react2.default.createElement(_reactNativeElements.Icon, { name: 'bluetooth', containerStyle: { alignSelf: 'center' }, size: 30, color: _theme.AppColors.brand.primary, reverse: true, onPress: function onPress() {
                                 return _this.turnOnBluetooth();
                             }, raised: true, __source: {
                                 fileName: _jsxFileName,

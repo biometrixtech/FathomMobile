@@ -63,3 +63,6 @@ jest/*
 # Crashlytics
 crashlytics-build.properties
 com_crashlytics_export_strings.xml
+
+react-packager-cache**
+

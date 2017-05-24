@@ -12,7 +12,6 @@ import {
 import { Icon } from 'react-native-elements';
 import Accordion from 'react-native-collapsible/Accordion';
 import Collapsible from 'react-native-collapsible';
-import { DoubleCircleLoader } from 'react-native-indicator';
 import ProgressBarClassic from 'react-native-progress-bar-classic';
 import ModalPicker from 'react-native-modal-picker';
 
@@ -25,7 +24,7 @@ import { Text, ListItem, Card, Spacer, Button } from '@ui/';
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     whiteText: {
-        color: '#FFF',
+        color: '#FFFFFF',
     },
     start: {
         color: AppColors.brand.primary,
@@ -36,9 +35,13 @@ const styles = StyleSheet.create({
     badgeTextStyle: {
         fontWeight: 'bold',
     },
+    cardStyle: {
+        borderWidth:   0,
+        paddingTop:    0,
+        paddingBottom: 0,
+    },
     cardView: {
-        backgroundColor: '#31363D',
-        alignItems:      'center',
+        alignItems: 'center',
     },
 });
 
@@ -71,13 +74,49 @@ class AthletesView extends Component {
         };
     }
 
+    getTextColor = (athlete) => {
+        if (athlete.training) {
+            if (athlete.kitStatus === 'Inactive') {
+                return this.status.notReady;
+            }
+            return '#FFFFFF';
+        }
+        if (athlete.kitStatus === 'Inactive') {
+            return this.status.notReady;
+        }
+        return AppColors.brand.primary;
+    }
+
+    getIndicatorColor = (athlete) => {
+        if (athlete.training) {
+            if (athlete.kitStatus === 'Active') {
+                return this.status.allGood;
+            } else if (athlete.kitStatus === 'Error') {
+                return this.status.error;
+            }
+            return this.status.notReady;
+        }
+        if (athlete.kitStatus === 'Active') {
+            return this.status.ready;
+        }
+        return null;
+    }
+
+    getContainerColor = (athlete) => {
+        if (athlete.training) {
+            return AppColors.brand.primary;
+        }
+        return '#FFFFFF';
+    }
+
     status = {
-        ready:    '#00FF00',
-        error:    '#FF0000',
-        notReady: '#0000FF',
+        notReady: AppColors.brand.secondary,
+        error:    AppColors.red,
+        ready:    AppColors.brand.primary,
+        allGood:  '#00FF00',
     };
 
-    // function call to start or stop a group training session
+     // function call to start or stop a group training session
     /* eslint-disable react/no-string-refs */
     toggleGroupSession = (group) => {
         group.trainingActive = !group.trainingActive;
@@ -120,7 +159,7 @@ class AthletesView extends Component {
         const numberOfAthletes = section.athletes.length;
         return (
           <View>
-            <ListItem title={title} /* containerStyle={{ backgroundColor: section.color }} */ badge={{ value: numberOfAthletes, badgeTextStyle: styles.badgeTextStyle }} />
+            <ListItem title={title} containerStyle={{ backgroundColor: AppColors.lightGrey }} badge={{ value: numberOfAthletes, badgeTextStyle: styles.badgeTextStyle }} />
           </View>
         );
     }
@@ -132,7 +171,14 @@ class AthletesView extends Component {
               <View style={[AppStyles.flex1, AppStyles.containerCentered]}>
                 {section.title !== 'Team' ? <Icon name="account-plus" type="material-community" underlayColor="transparent" onPress={() => this.refs.addAthlete.open()} /> : null}
               </View>
-              <Button style={[AppStyles.flex2]} raised onPress={() => { if (section.trainingActive) { this.toggleGroupSession(section); } else { this.setState({ sectionIndex }); this.refs.startRegimen.open(); } }} icon={{ name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' }} title={`${section.trainingActive ? 'Stop' : 'Start'} Group Session`} backgroundColor={section.trainingActive ? AppColors.brand.red : AppColors.brand.primary} />
+              <Button
+                style={[AppStyles.flex2]}
+                raised
+                onPress={() => { if (section.trainingActive) { this.toggleGroupSession(section); } else { this.setState({ sectionIndex }); this.refs.startRegimen.open(); } }}
+                icon={{ name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' }}
+                title={`${section.trainingActive ? 'Stop' : 'Start'} Group Session`}
+                backgroundColor={section.trainingActive ? AppColors.brand.red : AppColors.brand.primary}
+              />
               <View style={[AppStyles.flex1, AppStyles.containerCentered]}>
                 {section.title !== 'Team' ? <Icon name="account-remove" type="material-community" underlayColor="transparent" onPress={() => { this.setState({ sectionIndex }); this.refs.removeAthlete.open(); }} /> : null}
               </View>
@@ -142,47 +188,51 @@ class AthletesView extends Component {
                 section.athletes.map((athlete, athleteIndex) =>
                   (
                     <View key={athlete.id}>
-                      <Card title={athlete.name}>
-                        {
-                            section.title === 'Team' ?
-                            (
-                              <View>
-                                <Button style={[AppStyles.containerCentered]} raised onPress={() => { if (section.trainingActive) { this.toggleAthleteSession(); } this.refs.modal.open(); }} icon={{ name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' }} title={`${section.trainingActive ? 'Stop' : 'Start'} Athlete Session`} backgroundColor={section.trainingActive ? AppColors.brand.red : AppColors.brand.primary} />
-                                <Spacer size={5} />
-                              </View>
-                            ) : null
-                        }
-                        <TouchableOpacity onPress={() => { this.toggleCollapsed(sectionIndex, athleteIndex); }} >
-                          <View style={[{ flexDirection: 'row',  width: AppSizes.screen.width }, AppStyles.containerCentered]}>
-                            <Text>
-                              Kit Status:
-                            </Text>
-                            <DoubleCircleLoader color={this.status.ready} />
-                          </View>
-                        </TouchableOpacity>
-                        <Spacer size={5} />
-                        <Collapsible collapsed={athlete.collapsed}>
-                          <Text>Kit Memory:</Text>
-                          <Spacer size={2} />
-                          <ProgressBarClassic progress={50} label={'1028/2048'} />
-                          <Spacer size={5} />
-                          <Text>Kit Battery:</Text>
-                          <Spacer size={2} />
-                          <ProgressBarClassic progress={75} />
-                        </Collapsible>
-                      </Card>
-                      <Spacer size={10} />
+                      <TouchableOpacity onPress={() => { if (athlete.training || athlete.kitStatus === 'Active') { this.toggleCollapsed(sectionIndex, athleteIndex); } }} >
+                        <Card containerStyle={[styles.cardStyle, { backgroundColor: this.getContainerColor(athlete) }]} >
+                          <ListItem
+                            title={athlete.name}
+                            titleStyle={{ color: this.getTextColor(athlete) }}
+                            leftIcon={<View style={{ backgroundColor: '#FF0000', width: 8 }} />}
+                            containerStyle={{ borderBottomWidth: 0, backgroundColor: this.getContainerColor(athlete) }}
+                          />
+                          <Collapsible collapsed={athlete.collapsed}>
+                            {
+                                section.title === 'Team' ?
+                                (
+                                  <Button
+                                    style={[AppStyles.containerCentered]}
+                                    raised
+                                    onPress={() => { if (section.trainingActive) { this.toggleAthleteSession(); } this.refs.modal.open(); }}
+                                    icon={{ name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' }}
+                                    title={`${section.trainingActive ? 'Stop' : 'Start'} Athlete Session`}
+                                    backgroundColor={section.trainingActive ? AppColors.brand.red : AppColors.brand.primary}
+                                  />
+                                ) : null
+                            }
+                            <Spacer size={5} />
+                            <Text style={{ color: this.getTextColor(athlete) }}>Kit Memory:</Text>
+                            <Spacer size={2} />
+                            <ProgressBarClassic progress={50} />
+                            <Spacer size={5} />
+                            <Text style={{ color: this.getTextColor(athlete) }}>Kit Battery:</Text>
+                            <Spacer size={2} />
+                            <ProgressBarClassic progress={75} />
+                          </Collapsible>
+                        </Card>
+                      </TouchableOpacity>
                     </View>
                   ),
                 )
               }
+              <Spacer size={15} />
             </View>
           </View>
         );
 
     render = () =>
         (
-          <View style={[AppStyles.container]}>
+          <View style={[AppStyles.container, { backgroundColor: 'white' }]}>
             <ScrollView>
               <Accordion
                 sections={this.props.trainingGroups}

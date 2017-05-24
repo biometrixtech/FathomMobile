@@ -47,8 +47,9 @@ class AppLaunch extends Component {
     render = () => (
       <View style={[AppStyles.container]}>
         <Image
-          source={require('../../images/fathom_red.png')}
+          source={require('../../images/fathom_colored.png')}
           style={[styles.launchImage, AppStyles.containerCentered]}
+          resizeMode={'contain'}
         >
           <ActivityIndicator
             animating

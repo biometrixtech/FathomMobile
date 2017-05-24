@@ -2,7 +2,7 @@
  * Whole App Container
  */
 import React, { Component, PropTypes } from 'react';
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import { connect } from 'react-redux';
 import SideMenu from 'react-native-side-menu';
 import { DefaultRenderer } from 'react-native-router-flux';
@@ -12,6 +12,8 @@ import { AppSizes } from '@theme/';
 
 // Containers
 import Menu from '@containers/ui/Menu/MenuContainer';
+
+import { Icon } from 'react-native-elements';
 
 /* Redux ==================================================================== */
 // Actions

@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Accordion from 'react-native-collapsible/Accordion';
-import { DoubleCircleLoader } from 'react-native-indicator';
 import ProgressBarClassic from 'react-native-progress-bar-classic';
 
 // Consts and Libs
@@ -108,7 +107,6 @@ class DataView extends Component {
                           <Text>
                             Kit Status:
                           </Text>
-                          <DoubleCircleLoader color={this.status.ready} />
                         </View>
                         <Spacer size={5} />
                         <Text>Kit Memory:</Text>

@@ -53,8 +53,9 @@ var AppLaunch = function (_Component) {
         _react2.default.createElement(
           _reactNative.Image,
           {
-            source: require('../../images/fathom_red.png'),
+            source: require('../../images/fathom_colored.png'),
             style: [styles.launchImage, _theme.AppStyles.containerCentered],
+            resizeMode: 'contain',
             __source: {
               fileName: _jsxFileName,
               lineNumber: 49
@@ -66,7 +67,7 @@ var AppLaunch = function (_Component) {
             color: '#C1C5C8',
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 53
+              lineNumber: 54
             }
           })
         )

@@ -16,27 +16,37 @@ var initialState = {
             id: 1,
             name: 'John Doe 1',
             avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
-            collapsed: true
+            collapsed: true,
+            training: true,
+            kitStatus: 'Active'
         }, {
             id: 2,
             name: 'John Doe 2',
             avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
-            collapsed: true
+            collapsed: true,
+            training: true,
+            kitStatus: 'Error'
         }, {
             id: 3,
             name: 'John Doe 3',
             avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
-            collapsed: true
+            collapsed: true,
+            training: false,
+            kitStatus: 'Range'
         }, {
             id: 4,
             name: 'John Doe 4',
             avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
-            collapsed: true
+            collapsed: true,
+            training: true,
+            kitStatus: 'Active'
         }, {
             id: 5,
             name: 'John Doe 5',
             avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
-            collapsed: true
+            collapsed: true,
+            training: true,
+            kitStatus: 'Inactive'
         }]
     }, {
         title: 'Injured',
@@ -46,7 +56,9 @@ var initialState = {
             id: 6,
             name: 'John Doe 6',
             avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
-            collapsed: true
+            collapsed: true,
+            training: false,
+            kitStatus: 'Inactive'
         }]
     }, {
         title: 'Healthy',
@@ -56,7 +68,9 @@ var initialState = {
             id: 7,
             name: 'John Doe 7',
             avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
-            collapsed: true
+            collapsed: true,
+            training: false,
+            kitStatus: 'Active'
         }]
     }, {
         title: 'Active',
@@ -66,7 +80,9 @@ var initialState = {
             id: 8,
             name: 'John Doe 8',
             avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
-            collapsed: true
+            collapsed: true,
+            training: false,
+            kitStatus: 'Active'
         }]
     }, {
         title: 'Inactive',
@@ -76,7 +92,9 @@ var initialState = {
             id: 9,
             name: 'John Doe 9',
             avatar_url: 'https://biometrix-useruploads.s3.amazonaws.com/users/avatars/481/1e0/fa-/full/diana.png?1481801448',
-            collapsed: true
+            collapsed: true,
+            training: false,
+            kitStatus: 'Inactive'
         }]
     }]
 };
