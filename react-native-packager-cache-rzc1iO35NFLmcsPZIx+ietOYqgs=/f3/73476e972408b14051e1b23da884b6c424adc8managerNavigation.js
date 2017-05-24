@@ -102,7 +102,6 @@ var scenes = _react2.default.createElement(
   },
   _react2.default.createElement(_reactNativeRouterFlux.Scene, babelHelpers.extends({}, navbarPropsTabs, {
     key: 'managerTeamManagement',
-    title: 'Team Management',
     clone: true,
     type: _reactNativeRouterFlux.ActionConst.REPLACE,
     component: _TeamManagementContainer2.default,
@@ -114,58 +113,53 @@ var scenes = _react2.default.createElement(
   })),
   _react2.default.createElement(_reactNativeRouterFlux.Scene, babelHelpers.extends({}, navbarPropsTabs, {
     key: 'managerAthletes',
-    title: 'Athletes',
     clone: true,
     component: _AthletesContainer2.default,
     analyticsDesc: 'ManagerAthletesView: Manager Athletes',
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 60
+      lineNumber: 59
     }
   })),
   _react2.default.createElement(_reactNativeRouterFlux.Scene, babelHelpers.extends({}, groupView, {
     key: 'managerGroups',
-    title: 'Groups',
     clone: true,
     component: _GroupsContainer2.default,
     analyticsDesc: 'ManagerGroupsView: Manager Groups',
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 68
+      lineNumber: 66
     }
   })),
   _react2.default.createElement(_reactNativeRouterFlux.Scene, babelHelpers.extends({}, regimenView, {
     key: 'managerRegimens',
-    title: 'Regimens',
     clone: true,
     component: _RegimensContainer2.default,
     analyticsDesc: 'ManagerRegimensView: Manager Regimens',
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 76
+      lineNumber: 73
     }
   })),
   _react2.default.createElement(_reactNativeRouterFlux.Scene, babelHelpers.extends({}, regimenView, {
     key: 'managerData',
-    title: 'Data',
     clone: true,
     component: _DataContainer2.default,
     analyticsDesc: 'ManagerDataView: Manager Data',
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 84
+      lineNumber: 80
     }
   })),
   _react2.default.createElement(_reactNativeRouterFlux.Scene, babelHelpers.extends({}, navbarPropsTabs, {
     key: 'kitManagement',
-    title: 'Kit Management',
     clone: true,
     type: _reactNativeRouterFlux.ActionConst.REPLACE,
     component: _KitManagementContainer2.default,
     analyticsDesc: 'KitManagementView: Kit Management',
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 92
+      lineNumber: 87
     }
   }))
 );

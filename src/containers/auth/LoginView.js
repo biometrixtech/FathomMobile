@@ -176,12 +176,6 @@ class Login extends Component {
         }
     }
 
-    // <Image
-    //           source={require('../../images/fathom_blue.png')}
-    //           style={[styles.logo]}
-    //         />
-    // <Spacer size={10} />
-
     render = () => {
         const Form = FormValidation.form.Form;
 
@@ -190,9 +184,7 @@ class Login extends Component {
             style={[AppStyles.containerCentered, AppStyles.container, styles.background]}
           >
 
-            <Animatable.Text animation="zoomIn" easing="ease-out" iterationCount="infinite" direction="alternate" style={[AppStyles.h0, styles.whiteText]}>Fathom</Animatable.Text>
-
-            <Spacer size={10} />
+            <Animatable.Image animation="zoomIn" easing="ease-out" source={require('../../images/fathom_white.png')} resizeMode={'contain'} iterationCount="infinite" direction="alternate" style={{ width: AppSizes.screen.widthHalf, height: AppSizes.screen.heightTenth }} />
 
             <Card>
               <Alerts

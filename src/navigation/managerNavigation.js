@@ -51,7 +51,6 @@ const scenes = (
     <Scene
       {...navbarPropsTabs}
       key={'managerTeamManagement'}
-      title={'Team Management'}
       clone
       type={ActionConst.REPLACE}
       component={TeamManagementView}
@@ -60,7 +59,6 @@ const scenes = (
     <Scene
       {...navbarPropsTabs}
       key={'managerAthletes'}
-      title={'Athletes'}
       clone
       component={AthletesView}
       analyticsDesc={'ManagerAthletesView: Manager Athletes'}
@@ -68,7 +66,6 @@ const scenes = (
     <Scene
       {...groupView}
       key={'managerGroups'}
-      title={'Groups'}
       clone
       component={GroupsView}
       analyticsDesc={'ManagerGroupsView: Manager Groups'}
@@ -76,7 +73,6 @@ const scenes = (
     <Scene
       {...regimenView}
       key={'managerRegimens'}
-      title={'Regimens'}
       clone
       component={RegimensView}
       analyticsDesc={'ManagerRegimensView: Manager Regimens'}
@@ -84,7 +80,6 @@ const scenes = (
     <Scene
       {...regimenView}
       key={'managerData'}
-      title={'Data'}
       clone
       component={DataView}
       analyticsDesc={'ManagerDataView: Manager Data'}
@@ -92,7 +87,6 @@ const scenes = (
     <Scene
       {...navbarPropsTabs}
       key={'kitManagement'}
-      title={'Kit Management'}
       clone
       type={ActionConst.REPLACE}
       component={KitManagementView}

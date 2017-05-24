@@ -37,6 +37,19 @@ var BleManager = function () {
       });
     }
   }, {
+    key: 'retrieveServices',
+    value: function retrieveServices(peripheralId) {
+      return new Promise(function (fulfill, reject) {
+        bleManager.retrieveServices(peripheralId, function (error, peripheral) {
+          if (error) {
+            reject(error);
+          } else {
+            fulfill(peripheral);
+          }
+        });
+      });
+    }
+  }, {
     key: 'write',
     value: function write(peripheralId, serviceUUID, characteristicUUID, data, maxByteSize) {
       if (maxByteSize == null) {
@@ -147,11 +160,26 @@ var BleManager = function () {
   }, {
     key: 'scan',
     value: function scan(serviceUUIDs, seconds, allowDuplicates) {
+      var scanningOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
       return new Promise(function (fulfill, reject) {
         if (allowDuplicates == null) {
           allowDuplicates = false;
         }
-        bleManager.scan(serviceUUIDs, seconds, allowDuplicates, function (error) {
+
+        if (scanningOptions.numberOfMatches == null) {
+          scanningOptions.numberOfMatches = 3;
+        }
+
+        if (scanningOptions.matchMode == null) {
+          scanningOptions.matchMode = 1;
+        }
+
+        if (scanningOptions.scanMode == null) {
+          scanningOptions.scanMode = 0;
+        }
+
+        bleManager.scan(serviceUUIDs, seconds, allowDuplicates, scanningOptions, function (error) {
           if (error) {
             reject(error);
           } else {

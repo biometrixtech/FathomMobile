@@ -3,11 +3,14 @@
  */
 
 const app = {
-    background:         '#888888',
+    background:         '#FFFFFF',
     cardBackground:     '#FFFFFF',
     listItemBackground: '#FFFFFF',
     transparent:        'rgba(0,0,0,0)',
     red:                '#FF0000',
+    green:              '#00FF00',
+    blue:               '#0000FF',
+    lightGrey:          '#E0E0E0',
 };
 
 const brand = {

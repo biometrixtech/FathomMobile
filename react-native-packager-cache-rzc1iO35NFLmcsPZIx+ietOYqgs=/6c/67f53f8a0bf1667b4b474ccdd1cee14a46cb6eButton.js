@@ -112,7 +112,7 @@ var Button = function Button(props) {
     Component = _reactNative.TouchableHighlight;
   }
 
-  if (borderRadius && !attributes.background) {
+  if (_reactNative.Platform.OS === 'android' && borderRadius && !attributes.background) {
     attributes.background = _reactNative.TouchableNativeFeedback.Ripple('ThemeAttrAndroid', true);
   }
 

@@ -23,6 +23,8 @@ var _MenuContainer = require('@containers/ui/Menu/MenuContainer');
 
 var _MenuContainer2 = babelHelpers.interopRequireDefault(_MenuContainer);
 
+var _reactNativeElements = require('react-native-elements');
+
 var _actions = require('@redux/sidemenu/actions');
 
 var SideMenuActions = babelHelpers.interopRequireWildcard(_actions);
@@ -81,26 +83,26 @@ var Drawer = function (_Component) {
                         },
                         __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 68
+                            lineNumber: 70
                         }
                     }),
                     isOpen: this.props.sideMenuIsOpen,
                     onChange: this.onSideMenuChange,
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 64
+                        lineNumber: 66
                     }
                 },
                 _react2.default.createElement(
                     _reactNative.View,
                     { style: { backgroundColor: '#000', flex: 1 }, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 76
+                            lineNumber: 78
                         }
                     },
                     _react2.default.createElement(_reactNativeRouterFlux.DefaultRenderer, { navigationState: children[0], onNavigate: this.props.onNavigate, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 77
+                            lineNumber: 79
                         }
                     })
                 )

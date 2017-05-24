@@ -147,21 +147,12 @@ var Login = function (_Component) {
                     style: [_theme.AppStyles.containerCentered, _theme.AppStyles.container, styles.background],
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 189
+                        lineNumber: 183
                     }
                 },
-                _react2.default.createElement(
-                    Animatable.Text,
-                    { animation: 'zoomIn', easing: 'ease-out', iterationCount: 'infinite', direction: 'alternate', style: [_theme.AppStyles.h0, styles.whiteText], __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 193
-                        }
-                    },
-                    'Fathom'
-                ),
-                _react2.default.createElement(_ui.Spacer, { size: 10, __source: {
+                _react2.default.createElement(Animatable.Image, { animation: 'zoomIn', easing: 'ease-out', source: require('../../images/fathom_white.png'), resizeMode: 'contain', iterationCount: 'infinite', direction: 'alternate', style: { width: _theme.AppSizes.screen.widthHalf, height: _theme.AppSizes.screen.heightTenth }, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 195
+                        lineNumber: 187
                     }
                 }),
                 _react2.default.createElement(
@@ -169,7 +160,7 @@ var Login = function (_Component) {
                     {
                         __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 197
+                            lineNumber: 189
                         }
                     },
                     _react2.default.createElement(_ui.Alerts, {
@@ -178,7 +169,7 @@ var Login = function (_Component) {
                         error: _this.state.resultMsg.error,
                         __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 198
+                            lineNumber: 190
                         }
                     }),
                     _react2.default.createElement(Form, {
@@ -190,7 +181,7 @@ var Login = function (_Component) {
                         options: _this.state.options,
                         __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 204
+                            lineNumber: 196
                         }
                     }),
                     _react2.default.createElement(_ui.Button, {
@@ -198,26 +189,26 @@ var Login = function (_Component) {
                         onPress: _this.login,
                         __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 211
+                            lineNumber: 203
                         }
                     }),
                     _react2.default.createElement(_ui.Spacer, { size: 10, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 216
+                            lineNumber: 208
                         }
                     }),
                     _react2.default.createElement(
                         _reactNative.TouchableOpacity,
                         { onPress: _reactNativeRouterFlux.Actions.passwordReset, __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 218
+                                lineNumber: 210
                             }
                         },
                         _react2.default.createElement(
                             _ui.Text,
                             { p: true, style: [_theme.AppStyles.textCenterAligned, _theme.AppStyles.link], __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 219
+                                    lineNumber: 211
                                 }
                             },
                             'Forgot Password'
@@ -225,14 +216,14 @@ var Login = function (_Component) {
                     ),
                     _react2.default.createElement(_ui.Spacer, { size: 10, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 224
+                            lineNumber: 216
                         }
                     }),
                     _react2.default.createElement(
                         _ui.Text,
                         { p: true, style: [_theme.AppStyles.textCenterAligned], __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 226
+                                lineNumber: 218
                             }
                         },
                         '- or -'
@@ -242,7 +233,7 @@ var Login = function (_Component) {
                         onPress: _reactNativeRouterFlux.Actions.signUp,
                         __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 230
+                            lineNumber: 222
                         }
                     })
                 )

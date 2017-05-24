@@ -225,17 +225,22 @@ export default {
 
     // Navbar
     navbar: {
-        backgroundColor:   Colors.transparent,
+        backgroundColor:   Colors.brand.primary,
         borderBottomWidth: 0,
     },
     navbarTitle: {
         color:      '#FFFFFF',
         fontWeight: 'bold',
         fontFamily: Fonts.base.family,
-        fontSize:   Fonts.base.size+2,
+        fontSize:   Fonts.base.size+5,
     },
     navbarButton: {
         tintColor: '#FFFFFF',
+    },
+    navbarImageTitle: {
+        height:     Sizes.navbarHeight/1.5,
+        resizeMode: 'contain',
+        bottom:     6,
     },
 
     // TabBar

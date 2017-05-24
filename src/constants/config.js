@@ -16,12 +16,14 @@ export default {
 
     // Navbar Props
     navbarProps: {
-        hideNavBar:           false,
-        titleStyle:           AppStyles.navbarTitle,
-        navigationBarStyle:   AppStyles.navbar,
-        leftButtonIconStyle:  AppStyles.navbarButton,
-        rightButtonIconStyle: AppStyles.navbarButton,
-        sceneStyle:           {
+        hideNavBar:                   false,
+        titleStyle:                   AppStyles.navbarTitle,
+        navigationBarStyle:           AppStyles.navbar,
+        leftButtonIconStyle:          AppStyles.navbarButton,
+        rightButtonIconStyle:         AppStyles.navbarButton,
+        navigationBarTitleImage:      require('../images/fathom_white.png'),
+        navigationBarTitleImageStyle: AppStyles.navbarImageTitle,
+        sceneStyle:                   {
             backgroundColor: AppColors.background,
             paddingTop:      AppSizes.navbarHeight,
         },

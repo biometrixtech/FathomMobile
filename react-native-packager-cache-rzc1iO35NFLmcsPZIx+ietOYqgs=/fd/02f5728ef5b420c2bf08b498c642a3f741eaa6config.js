@@ -17,6 +17,8 @@ exports.default = {
         navigationBarStyle: _theme.AppStyles.navbar,
         leftButtonIconStyle: _theme.AppStyles.navbarButton,
         rightButtonIconStyle: _theme.AppStyles.navbarButton,
+        navigationBarTitleImage: require('../images/fathom_white.png'),
+        navigationBarTitleImageStyle: _theme.AppStyles.navbarImageTitle,
         sceneStyle: {
             backgroundColor: _theme.AppColors.background,
             paddingTop: _theme.AppSizes.navbarHeight

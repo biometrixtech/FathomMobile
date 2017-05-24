@@ -133,7 +133,7 @@ class KitManagementView extends Component {
               <View style={{ flex: 1 }} />
               <View style={{ flex: 1 }} >
                 <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#FFFFFF' }]} >Step 2: Turn on bluetooth</FormLabel>
-                <Icon name="bluetooth" containerStyle={{ alignSelf: 'center' }} size={30} color="blue" onPress={() => this.turnOnBluetooth()} raised />
+                <Icon name="bluetooth" containerStyle={{ alignSelf: 'center' }} size={30} color={AppColors.brand.primary} reverse onPress={() => this.turnOnBluetooth()} raised />
               </View>
               <View style={{ flex: 1 }} />
             </View>
