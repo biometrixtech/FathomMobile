@@ -13,7 +13,7 @@ var _react2 = babelHelpers.interopRequireDefault(_react);
 
 var _reactNative = require('react-native');
 
-var TOUCHABLE_ELEMENTS = ['TouchableHighlight', 'TouchableOpacity', 'TouchableWithoutFeedback', 'TouchableWithNativeFeedback'];
+var TOUCHABLE_ELEMENTS = ['TouchableHighlight', 'TouchableOpacity', 'TouchableWithoutFeedback', 'TouchableNativeFeedback'];
 
 var ModalDropdown = function (_Component) {
   babelHelpers.inherits(ModalDropdown, _Component);
@@ -30,8 +30,8 @@ var ModalDropdown = function (_Component) {
 
     _this.state = {
       disabled: props.disabled,
-      accessible: props.accessible !== false,
-      loading: props.options == null,
+      accessible: !!props.accessible,
+      loading: props.options === null || props.options === undefined,
       showDropdown: false,
       buttonText: props.defaultValue,
       selectedIndex: props.defaultIndex
@@ -68,7 +68,7 @@ var ModalDropdown = function (_Component) {
         babelHelpers.extends({}, this.props, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 102
+            lineNumber: 103
           }
         }),
         this._renderButton(),
@@ -139,14 +139,14 @@ var ModalDropdown = function (_Component) {
           accessible: this.props.accessible,
           onPress: this._onButtonPress.bind(this), __source: {
             fileName: _jsxFileName,
-            lineNumber: 153
+            lineNumber: 154
           }
         },
         this.props.children || _react2.default.createElement(
           _reactNative.View,
           { style: styles.button, __source: {
               fileName: _jsxFileName,
-              lineNumber: 160
+              lineNumber: 161
             }
           },
           _react2.default.createElement(
@@ -154,7 +154,7 @@ var ModalDropdown = function (_Component) {
             { style: [styles.buttonText, this.props.textStyle],
               numberOfLines: 1, __source: {
                 fileName: _jsxFileName,
-                lineNumber: 161
+                lineNumber: 162
               }
             },
             this.state.buttonText
@@ -182,29 +182,30 @@ var ModalDropdown = function (_Component) {
             onRequestClose: this._onRequestClose.bind(this),
             supportedOrientations: ['portrait', 'portrait-upside-down', 'landscape', 'landscape-left', 'landscape-right'], __source: {
               fileName: _jsxFileName,
-              lineNumber: 184
+              lineNumber: 185
             }
           },
           _react2.default.createElement(
             _reactNative.TouchableWithoutFeedback,
             { accessible: this.props.accessible,
+              disabled: !this.state.showDropdown,
               onPress: this._onModalPress.bind(this), __source: {
                 fileName: _jsxFileName,
-                lineNumber: 188
+                lineNumber: 189
               }
             },
             _react2.default.createElement(
               _reactNative.View,
               { style: styles.modal, __source: {
                   fileName: _jsxFileName,
-                  lineNumber: 190
+                  lineNumber: 192
                 }
               },
               _react2.default.createElement(
                 _reactNative.View,
                 { style: [styles.dropdown, this.props.dropdownStyle, frameStyle], __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 191
+                    lineNumber: 193
                   }
                 },
                 this.state.loading ? this._renderLoading() : this._renderDropdown()
@@ -268,7 +269,7 @@ var ModalDropdown = function (_Component) {
     value: function _renderLoading() {
       return _react2.default.createElement(_reactNative.ActivityIndicator, { size: 'small', __source: {
           fileName: _jsxFileName,
-          lineNumber: 253
+          lineNumber: 255
         }
       });
     }
@@ -283,7 +284,7 @@ var ModalDropdown = function (_Component) {
         showsVerticalScrollIndicator: this.props.showsVerticalScrollIndicator,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 259
+          lineNumber: 261
         }
       });
     }
@@ -296,9 +297,10 @@ var ModalDropdown = function (_Component) {
       var highlighted = rowID == this.state.selectedIndex;
       var row = !this.props.renderRow ? _react2.default.createElement(
         _reactNative.Text,
-        { style: [styles.rowText, highlighted && styles.highlightedRowText], __source: {
+        { style: [styles.rowText, this.props.dropdownTextStyle, highlighted && styles.highlightedRowText, highlighted && this.props.dropdownTextHighlightStyle],
+          __source: {
             fileName: _jsxFileName,
-            lineNumber: 280
+            lineNumber: 282
           }
         },
         rowData
@@ -324,7 +326,7 @@ var ModalDropdown = function (_Component) {
                 babelHelpers.extends({}, props, {
                   __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 297
+                    lineNumber: 305
                   }
                 }),
                 row.props.children
@@ -338,7 +340,7 @@ var ModalDropdown = function (_Component) {
                 babelHelpers.extends({}, props, {
                   __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 306
+                    lineNumber: 314
                   }
                 }),
                 row.props.children
@@ -352,21 +354,21 @@ var ModalDropdown = function (_Component) {
                 babelHelpers.extends({}, props, {
                   __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 315
+                    lineNumber: 323
                   }
                 }),
                 row.props.children
               );
             }
             break;
-          case 'TouchableWithNativeFeedback':
+          case 'TouchableNativeFeedback':
             {
               return _react2.default.createElement(
-                _reactNative.TouchableWithNativeFeedback,
+                _reactNative.TouchableNativeFeedback,
                 babelHelpers.extends({}, props, {
                   __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 324
+                    lineNumber: 332
                   }
                 }),
                 row.props.children
@@ -382,7 +384,7 @@ var ModalDropdown = function (_Component) {
         babelHelpers.extends({}, preservedProps, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 335
+            lineNumber: 343
           }
         }),
         row
@@ -414,7 +416,7 @@ var ModalDropdown = function (_Component) {
         key: key,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 362
+          lineNumber: 370
         }
       });
     }
@@ -445,6 +447,8 @@ ModalDropdown.propTypes = {
   style: _react.PropTypes.oneOfType([_react.PropTypes.number, _react.PropTypes.object, _react.PropTypes.array]),
   textStyle: _react.PropTypes.oneOfType([_react.PropTypes.number, _react.PropTypes.object, _react.PropTypes.array]),
   dropdownStyle: _react.PropTypes.oneOfType([_react.PropTypes.number, _react.PropTypes.object, _react.PropTypes.array]),
+  dropdownTextStyle: _react.PropTypes.oneOfType([_react.PropTypes.number, _react.PropTypes.object, _react.PropTypes.array]),
+  dropdownTextHighlightStyle: _react.PropTypes.oneOfType([_react.PropTypes.number, _react.PropTypes.object, _react.PropTypes.array]),
 
   adjustFrame: _react.PropTypes.func,
   renderRow: _react.PropTypes.func,
