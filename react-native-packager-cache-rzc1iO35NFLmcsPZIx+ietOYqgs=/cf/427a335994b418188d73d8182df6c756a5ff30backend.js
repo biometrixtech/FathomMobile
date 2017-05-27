@@ -163,7 +163,7 @@
                     scroll: isReactDOM && "function" == typeof window.document.body.scrollIntoView,
                     dom: isReactDOM,
                     editTextContent: !1
-                }, capabilities), isReactDOM && (_this._updateScroll = _this._updateScroll.bind(_this), window.addEventListener("scroll", _this._onScroll.bind(_this), !0)), _this;
+                }, capabilities), isReactDOM && (_this._updateScroll = _this._updateScroll.bind(_this), window.addEventListener("scroll", _this._onScroll.bind(_this), !0), window.addEventListener("click", _this._onClick.bind(_this), !0), window.addEventListener("mouseover", _this._onMouseOver.bind(_this), !0), window.addEventListener("resize", _this._onResize.bind(_this), !0)), _this;
             }
             return _inherits(Agent, _EventEmitter), _createClass(Agent, [{
                 key: "sub",
@@ -196,6 +196,8 @@
                         return _this3.emit("stopInspecting");
                     }), bridge.on("selected", function (id) {
                         return _this3.emit("selected", id);
+                    }), bridge.on("setInspectEnabled", function (enabled) {
+                        _this3._inspectEnabled = enabled, _this3.emit("stopInspecting");
                     }), bridge.on("shutdown", function () {
                         return _this3.emit("shutdown");
                     }), bridge.on("changeTextContent", function (_ref) {
@@ -231,6 +233,8 @@
                         bridge.send("unmount", id), bridge.forget(id);
                     }), this.on("setSelection", function (data) {
                         return bridge.send("select", data);
+                    }), this.on("setInspectEnabled", function (data) {
+                        return bridge.send("setInspectEnabled", data);
                     });
                 }
             }, {
@@ -386,7 +390,31 @@
             }, {
                 key: "_updateScroll",
                 value: function value() {
-                    this.emit("refreshMultiOverlay"), this._scrollUpdate = !1;
+                    this.emit("refreshMultiOverlay"), this.emit("stopInspecting"), this._scrollUpdate = !1;
+                }
+            }, {
+                key: "_onClick",
+                value: function value(event) {
+                    if (this._inspectEnabled) {
+                        var id = this.getIDForNode(event.target);
+                        id && (event.stopPropagation(), event.preventDefault(), this.emit("setSelection", {
+                            id: id
+                        }), this.emit("setInspectEnabled", !1));
+                    }
+                }
+            }, {
+                key: "_onMouseOver",
+                value: function value(event) {
+                    if (this._inspectEnabled) {
+                        var id = this.getIDForNode(event.target);
+                        if (!id) return;
+                        this.highlight(id);
+                    }
+                }
+            }, {
+                key: "_onResize",
+                value: function value(event) {
+                    this.emit("stopInspecting");
                 }
             }]), Agent;
         }(EventEmitter);
@@ -2244,7 +2272,7 @@
             };
         }(),
             Overlay = __webpack_require__(48),
-            MultiOverlay = __webpack_require__(49),
+            MultiOverlay = __webpack_require__(50),
             Highlighter = function () {
             function Highlighter(win, onSelect) {
                 _classCallCheck(this, Highlighter), this._win = win, this._onSelect = onSelect, this._overlay = null, this._multiOverlay = null, this._subs = [];
@@ -2422,6 +2450,8 @@
             };
         }(),
             assign = __webpack_require__(3),
+            _require = __webpack_require__(49),
+            monospace = _require.monospace,
             Overlay = function () {
             function Overlay(window) {
                 _classCallCheck(this, Overlay);
@@ -2431,18 +2461,20 @@
                     pointerEvents: "none",
                     position: "fixed"
                 }), this.tip = doc.createElement("div"), assign(this.tip.style, {
-                    border: "1px solid #aaa",
-                    backgroundColor: "rgb(255, 255, 178)",
-                    fontFamily: "sans-serif",
-                    color: "orange",
+                    backgroundColor: "#333740",
+                    borderRadius: "2px",
+                    fontFamily: monospace.family,
+                    fontWeight: "bold",
                     padding: "3px 5px",
                     position: "fixed",
-                    fontSize: "10px"
+                    fontSize: monospace.sizes.normal
                 }), this.nameSpan = doc.createElement("span"), this.tip.appendChild(this.nameSpan), assign(this.nameSpan.style, {
-                    color: "rgb(136, 18, 128)",
-                    marginRight: "5px"
+                    color: "#ee78e6",
+                    borderRight: "1px solid #aaaaaa",
+                    paddingRight: "0.5rem",
+                    marginRight: "0.5rem"
                 }), this.dimSpan = doc.createElement("span"), this.tip.appendChild(this.dimSpan), assign(this.dimSpan.style, {
-                    color: "#888"
+                    color: "#d7d7d7"
                 }), this.container.style.zIndex = 1e7, this.node.style.zIndex = 1e7, this.tip.style.zIndex = 1e7, this.container.appendChild(this.node), this.container.appendChild(this.tip), this.node.appendChild(this.border), this.border.appendChild(this.padding), this.padding.appendChild(this.content), doc.body.appendChild(this.container);
             }
             return _createClass(Overlay, [{
@@ -2481,6 +2513,25 @@
             border: "rgba(255, 200, 50, 0.3)"
         };
         module.exports = Overlay;
+    }, function (module, exports) {
+        "use strict";
+
+        module.exports = {
+            monospace: {
+                family: "Menlo, Consolas, monospace",
+                sizes: {
+                    normal: 11
+                }
+            },
+            sansSerif: {
+                family: '"Helvetica Neue", "Lucida Grande", -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, sans-serif',
+                sizes: {
+                    small: 10,
+                    normal: 12,
+                    large: 14
+                }
+            }
+        };
     }, function (module, exports, __webpack_require__) {
         "use strict";
 

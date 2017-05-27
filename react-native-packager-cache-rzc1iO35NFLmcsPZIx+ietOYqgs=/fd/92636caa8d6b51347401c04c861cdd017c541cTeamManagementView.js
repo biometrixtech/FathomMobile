@@ -53,22 +53,22 @@ var TeamManagementView = function (_Component) {
               lineNumber: 44
             }
           }),
-          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'material-community', name: 'account-multiple-plus', color: _theme.AppColors.brand.primary, onSelect: _reactNativeRouterFlux.Actions.managerGroups, size: 40, __source: {
+          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'material-community', name: 'account-multiple-plus', color: _theme.AppColors.brand.primary, containerStyle: { backgroundColor: _theme.AppColors.lightGrey }, onSelect: _reactNativeRouterFlux.Actions.managerGroups, size: 40, __source: {
               fileName: _jsxFileName,
               lineNumber: 45
             }
           }),
-          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'octicon', name: 'graph', color: _theme.AppColors.brand.primary, onSelect: _reactNativeRouterFlux.Actions.managerData, size: 40, __source: {
+          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'octicon', name: 'graph', color: _theme.AppColors.brand.primary, containerStyle: { backgroundColor: _theme.AppColors.lightGrey }, onSelect: _reactNativeRouterFlux.Actions.managerData, size: 40, __source: {
               fileName: _jsxFileName,
               lineNumber: 46
             }
           }),
-          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'material-community', name: 'view-list', color: _theme.AppColors.brand.primary, onSelect: _reactNativeRouterFlux.Actions.managerAthletes, size: 40, __source: {
+          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'material-community', name: 'view-list', color: _theme.AppColors.brand.primary, containerStyle: { backgroundColor: _theme.AppColors.lightGrey }, onSelect: _reactNativeRouterFlux.Actions.managerAthletes, size: 40, __source: {
               fileName: _jsxFileName,
               lineNumber: 47
             }
           }),
-          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'material-community', name: 'dumbbell', color: _theme.AppColors.brand.primary, onSelect: _reactNativeRouterFlux.Actions.managerRegimens, size: 40, __source: {
+          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'material-community', name: 'dumbbell', color: _theme.AppColors.brand.primary, containerStyle: { backgroundColor: _theme.AppColors.lightGrey }, onSelect: _reactNativeRouterFlux.Actions.managerRegimens, size: 40, __source: {
               fileName: _jsxFileName,
               lineNumber: 48
             }
