@@ -26,12 +26,12 @@ var _class = function (_React$Component) {
 }(_react2.default.Component);
 
 _class.propTypes = {
-  tabBarStyle: _reactNative.View.propTypes.style,
-  tabBarSelectedItemStyle: _reactNative.View.propTypes.style,
-  tabBarIconContainerStyle: _reactNative.View.propTypes.style,
-  tabBarShadowStyle: _reactNative.View.propTypes.style,
-  tabSceneStyle: _reactNative.View.propTypes.style,
-  tabStyle: _reactNative.View.propTypes.style,
+  tabBarStyle: _reactNative.ViewPropTypes.style,
+  tabBarSelectedItemStyle: _reactNative.ViewPropTypes.style,
+  tabBarIconContainerStyle: _reactNative.ViewPropTypes.style,
+  tabBarShadowStyle: _reactNative.ViewPropTypes.style,
+  tabSceneStyle: _reactNative.ViewPropTypes.style,
+  tabStyle: _reactNative.ViewPropTypes.style,
   tabTitleStyle: _reactNative.Text.propTypes.style,
   tabSelectedTitleStyle: _reactNative.Text.propTypes.style,
   tabTitle: _react.PropTypes.string

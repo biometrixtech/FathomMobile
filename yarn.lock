@@ -3987,13 +3987,11 @@ react-native-radial-menu@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-native-radial-menu/-/react-native-radial-menu-1.1.0.tgz#e815a8ea89e50a5b0e96eaf99e08f29eb382a8e0"
 
-react-native-router-flux@^3.39.1:
-  version "3.39.1"
-  resolved "https://registry.yarnpkg.com/react-native-router-flux/-/react-native-router-flux-3.39.1.tgz#b59836da15be933f1213adba0cdeed0ea84df78d"
+react-native-router-flux@^3.39.2:
+  version "3.39.2"
+  resolved "https://registry.yarnpkg.com/react-native-router-flux/-/react-native-router-flux-3.39.2.tgz#f5373136440e627dfc39edc61cb4bf54581245e0"
   dependencies:
     lodash.isequal "^4.5.0"
-    react "16.0.0-alpha.6"
-    react-native "0.44.0"
     react-native-experimental-navigation "0.27.x"
     react-native-tabs "^1.0.9"
     react-static-container "1.0.1"
@@ -4020,9 +4018,9 @@ react-native-tabs@^1.0.9:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/react-native-tabs/-/react-native-tabs-1.0.9.tgz#75d3c35e8b5b6970869eab282372cb32e2a782cd"
 
-react-native-vector-icons@^4.1.0:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-4.1.1.tgz#9ac75bde77d9243346668c51dca7756775428087"
+react-native-vector-icons@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-4.2.0.tgz#0594b68debdd758dce4c565bf02e2d64d7004d82"
   dependencies:
     lodash "^4.0.0"
     prop-types "^15.5.8"

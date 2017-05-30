@@ -98,6 +98,6 @@ var TabbedView = function (_Component) {
 TabbedView.propTypes = {
   navigationState: _react.PropTypes.object.isRequired,
   renderScene: _react.PropTypes.func.isRequired,
-  style: _reactNative.View.propTypes.style
+  style: _reactNative.ViewPropTypes.style
 };
 exports.default = TabbedView;

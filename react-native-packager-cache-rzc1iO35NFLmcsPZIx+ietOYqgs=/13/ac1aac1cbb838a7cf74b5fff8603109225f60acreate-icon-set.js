@@ -81,7 +81,7 @@ function createIconSet(glyphMap, fontFamily, fontFile) {
             props = babelHelpers.objectWithoutProperties(_props, ['name', 'size', 'color', 'style']);
 
 
-        var glyph = glyphMap[name] || '?';
+        var glyph = name ? glyphMap[name] || '?' : '';
         if (typeof glyph === 'number') {
           glyph = String.fromCharCode(glyph);
         }
@@ -117,7 +117,7 @@ function createIconSet(glyphMap, fontFamily, fontFile) {
   }(_react.Component);
 
   Icon.propTypes = {
-    name: IconNamePropType.isRequired,
+    name: IconNamePropType,
     size: _propTypes2.default.number,
     color: _propTypes2.default.string,
     children: _propTypes2.default.node,
@@ -130,16 +130,20 @@ function createIconSet(glyphMap, fontFamily, fontFile) {
 
   var imageSourceCache = {};
 
+  function ensureNativeModuleAvailable() {
+    if (!NativeIconAPI) {
+      if (_reactNative.Platform.OS === 'android') {
+        throw new Error('RNVectorIconsModule not available, did you properly integrate the module? Try running `react-native link react-native-vector-icons` and recompiling.');
+      }
+      throw new Error('RNVectorIconsManager not available, did you add the library to your project and link with libRNVectorIcons.a? Try running `react-native link react-native-vector-icons` and recompiling.');
+    }
+  }
+
   function getImageSource(name) {
     var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DEFAULT_ICON_SIZE;
     var color = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_ICON_COLOR;
 
-    if (!NativeIconAPI) {
-      if (_reactNative.Platform.OS === 'android') {
-        throw new Error('RNVectorIconsModule not available, did you properly integrate the module?');
-      }
-      throw new Error('RNVectorIconsManager not available, did you add the library to your project and link with libRNVectorIcons.a?');
-    }
+    ensureNativeModuleAvailable();
 
     var glyph = glyphMap[name] || '?';
     if (typeof glyph === 'number') {
@@ -172,11 +176,25 @@ function createIconSet(glyphMap, fontFamily, fontFile) {
     });
   }
 
+  function loadFont() {
+    var file = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : fontFile;
+
+    if (_reactNative.Platform.OS === 'ios') {
+      ensureNativeModuleAvailable();
+      if (!file) {
+        return Promise.reject(new Error('Unable to load font, because no file was specified. '));
+      }
+      return NativeIconAPI.loadFontWithFileName.apply(NativeIconAPI, babelHelpers.toConsumableArray(file.split('.')));
+    }
+    return Promise.resolve();
+  }
+
   Icon.Button = (0, _iconButton2.default)(Icon);
   Icon.TabBarItem = (0, _tabBarItemIos2.default)(IconNamePropType, getImageSource);
   Icon.TabBarItemIOS = Icon.TabBarItem;
   Icon.ToolbarAndroid = (0, _toolbarAndroid2.default)(IconNamePropType, getImageSource);
   Icon.getImageSource = getImageSource;
+  Icon.loadFont = loadFont;
 
   return Icon;
 }

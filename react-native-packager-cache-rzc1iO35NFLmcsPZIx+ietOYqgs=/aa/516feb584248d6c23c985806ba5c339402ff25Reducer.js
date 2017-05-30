@@ -242,7 +242,7 @@ function inject(state, action, props, scenes) {
       }
 
       state.children = state.children.splice(0, 1);
-      state.children[0] = (0, _State.getInitialState)(props, scenes, state.index, action);
+      state.children[0] = (0, _State.getInitialState)(props, scenes, 0, action);
 
       return babelHelpers.extends({}, state, {
         index: 0,
