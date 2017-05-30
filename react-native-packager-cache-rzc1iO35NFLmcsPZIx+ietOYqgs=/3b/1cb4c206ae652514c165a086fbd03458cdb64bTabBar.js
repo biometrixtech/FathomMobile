@@ -31,11 +31,14 @@ var TabBar = function (_Component) {
   babelHelpers.inherits(TabBar, _Component);
   babelHelpers.createClass(TabBar, null, [{
     key: 'onSelect',
-    value: function onSelect(el) {
+    value: function onSelect(el, selectedSceneKey) {
       if (!_Actions2.default[el.props.name]) {
         throw new Error('No action is defined for name=' + el.props.name + ' ' + ('actions: ' + JSON.stringify(Object.keys(_Actions2.default))));
       }
-      if (typeof el.props.onPress === 'function') {
+      var active = selectedSceneKey == (el.props.name || el.key);
+      if (active && typeof el.props.onActivePress === 'function') {
+        el.props.onActivePress();
+      } else if (typeof el.props.onPress === 'function') {
         el.props.onPress();
       } else {
         _Actions2.default[el.props.name]();
@@ -61,7 +64,7 @@ var TabBar = function (_Component) {
         navigationState: navigationState,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 43
+          lineNumber: 47
         }
       });
     }
@@ -81,12 +84,14 @@ var TabBar = function (_Component) {
           style: state.tabBarStyle,
           selectedIconStyle: state.tabBarSelectedItemStyle,
           iconStyle: state.tabBarIconContainerStyle,
-          onSelect: TabBar.onSelect }, state, {
+          onSelect: function onSelect(el) {
+            return TabBar.onSelect(el, selected.sceneKey);
+          } }, state, {
           selected: selected.sceneKey,
           pressOpacity: this.props.pressOpacity,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 60
+            lineNumber: 64
           }
         }),
         state.children.filter(function (el) {
@@ -96,7 +101,7 @@ var TabBar = function (_Component) {
           return _react2.default.createElement(Icon, babelHelpers.extends({}, _this2.props, el, {
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 70
+              lineNumber: 74
             }
           }));
         })
@@ -107,7 +112,7 @@ var TabBar = function (_Component) {
           style: { flex: 1 },
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 75
+            lineNumber: 79
           }
         },
         _react2.default.createElement(_TabbedView2.default, {
@@ -116,7 +121,7 @@ var TabBar = function (_Component) {
           renderScene: this.renderScene,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 78
+            lineNumber: 82
           }
         }),
         !hideTabBar && state.children.filter(function (el) {
@@ -125,7 +130,7 @@ var TabBar = function (_Component) {
           _reactNative.Image,
           { source: state.tabBarBackgroundImage, style: state.tabBarBackgroundImageStyle, __source: {
               fileName: _jsxFileName,
-              lineNumber: 85
+              lineNumber: 89
             }
           },
           contents

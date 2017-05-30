@@ -156,7 +156,7 @@ var propTypes = {
   wrapBy: _react.PropTypes.any,
   component: _react.PropTypes.any,
   backButtonTextStyle: _reactNative.Text.propTypes.style,
-  leftButtonStyle: _reactNative.View.propTypes.style,
+  leftButtonStyle: _reactNative.ViewPropTypes.style,
   leftButtonIconStyle: _reactNative.Image.propTypes.style,
   getTitle: _react.PropTypes.func,
   titleWrapperStyle: _reactNative.Text.propTypes.style,
@@ -164,13 +164,13 @@ var propTypes = {
   titleOpacity: _react.PropTypes.number,
   titleProps: _react.PropTypes.any,
   position: _react.PropTypes.object,
-  navigationBarStyle: _reactNative.View.propTypes.style,
+  navigationBarStyle: _reactNative.ViewPropTypes.style,
   navigationBarBackgroundImage: _reactNative.Image.propTypes.source,
   navigationBarBackgroundImageStyle: _reactNative.Image.propTypes.style,
   navigationBarTitleImage: _reactNative.Image.propTypes.source,
   navigationBarTitleImageStyle: _reactNative.Image.propTypes.style,
   navigationBarShowImageSelection: _react.PropTypes.bool,
-  navigationBarSelecionStyle: _reactNative.View.propTypes.style,
+  navigationBarSelecionStyle: _reactNative.ViewPropTypes.style,
   renderTitle: _react.PropTypes.any
 };
 
@@ -221,7 +221,7 @@ var NavBar = function (_React$Component) {
           style: style,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 242
+            lineNumber: 243
           }
         }));
       }
@@ -237,7 +237,7 @@ var NavBar = function (_React$Component) {
         _reactNative.Text,
         { style: textButtonStyle, __source: {
             fileName: _jsxFileName,
-            lineNumber: 260
+            lineNumber: 261
           }
         },
         childState.backTitle
@@ -251,7 +251,7 @@ var NavBar = function (_React$Component) {
           onPress: onPress,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 266
+            lineNumber: 267
           }
         },
         buttonImage && !childState.hideBackImage && _react2.default.createElement(_reactNative.Image, {
@@ -259,7 +259,7 @@ var NavBar = function (_React$Component) {
           style: [styles.backButtonImage, this.props.leftButtonIconStyle, state.barButtonIconStyle, state.leftButtonIconStyle, childState.leftButtonIconStyle],
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 272
+            lineNumber: 273
           }
         }),
         text
@@ -295,7 +295,7 @@ var NavBar = function (_React$Component) {
             textButtonStyle: textStyle,
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 311
+              lineNumber: 312
             }
           }));
         }
@@ -311,7 +311,7 @@ var NavBar = function (_React$Component) {
               style: rightButtonStyle,
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 329
+                lineNumber: 330
               }
             });
           }
@@ -328,14 +328,14 @@ var NavBar = function (_React$Component) {
               onPress: onPress,
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 340
+                lineNumber: 341
               }
             },
             rightTitle && _react2.default.createElement(
               _reactNative.Text,
               { style: textStyle, __source: {
                   fileName: _jsxFileName,
-                  lineNumber: 347
+                  lineNumber: 348
                 }
               },
               rightTitle
@@ -344,7 +344,7 @@ var NavBar = function (_React$Component) {
               _reactNative.View,
               { style: { flex: 1, justifyContent: 'center', alignItems: 'flex-end' }, __source: {
                   fileName: _jsxFileName,
-                  lineNumber: 352
+                  lineNumber: 353
                 }
               },
               menuIcon || _react2.default.createElement(_reactNative.Image, {
@@ -352,7 +352,7 @@ var NavBar = function (_React$Component) {
                 style: state.rightButtonIconStyle || styles.defaultImageStyle,
                 __source: {
                   fileName: _jsxFileName,
-                  lineNumber: 353
+                  lineNumber: 354
                 }
               })
             )
@@ -391,7 +391,7 @@ var NavBar = function (_React$Component) {
             textStyle: textStyle,
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 394
+              lineNumber: 395
             }
           }));
         }
@@ -407,7 +407,7 @@ var NavBar = function (_React$Component) {
               style: leftButtonStyle,
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 412
+                lineNumber: 413
               }
             });
           }
@@ -424,14 +424,14 @@ var NavBar = function (_React$Component) {
               onPress: onPress,
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 423
+                lineNumber: 424
               }
             },
             leftTitle && _react2.default.createElement(
               _reactNative.Text,
               { style: textStyle, __source: {
                   fileName: _jsxFileName,
-                  lineNumber: 430
+                  lineNumber: 431
                 }
               },
               leftTitle
@@ -440,7 +440,7 @@ var NavBar = function (_React$Component) {
               _reactNative.View,
               { style: { flex: 1, justifyContent: 'center', alignItems: 'flex-start' }, __source: {
                   fileName: _jsxFileName,
-                  lineNumber: 435
+                  lineNumber: 436
                 }
               },
               menuIcon || _react2.default.createElement(_reactNative.Image, {
@@ -448,7 +448,7 @@ var NavBar = function (_React$Component) {
                 style: state.leftButtonIconStyle || styles.defaultImageStyle,
                 __source: {
                   fileName: _jsxFileName,
-                  lineNumber: 436
+                  lineNumber: 437
                 }
               })
             )
@@ -478,7 +478,7 @@ var NavBar = function (_React$Component) {
           style: [styles.titleWrapper, this.props.titleWrapperStyle],
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 466
+            lineNumber: 467
           }
         },
         _react2.default.createElement(
@@ -503,7 +503,7 @@ var NavBar = function (_React$Component) {
             }],
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 473
+              lineNumber: 474
             }
           }),
           title
@@ -524,7 +524,7 @@ var NavBar = function (_React$Component) {
           style: [styles.titleWrapper, this.props.titleWrapperStyle],
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 515
+            lineNumber: 516
           }
         },
         _react2.default.createElement(_reactNative.Animated.Image, {
@@ -532,12 +532,12 @@ var NavBar = function (_React$Component) {
           source: navigationBarTitleImage,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 521
+            lineNumber: 522
           }
         }),
         navigationBarShowImageSelection && _react2.default.createElement(_reactNative.Animated.View, { style: navigationBarSelecionStyle, __source: {
             fileName: _jsxFileName,
-            lineNumber: 525
+            lineNumber: 526
           }
         })
       );
@@ -562,7 +562,7 @@ var NavBar = function (_React$Component) {
             _reactNative.View,
             { style: wrapStyle, __source: {
                 fileName: _jsxFileName,
-                lineNumber: 541
+                lineNumber: 542
               }
             },
             component(props)
@@ -591,7 +591,7 @@ var NavBar = function (_React$Component) {
         {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 573
+            lineNumber: 574
           }
         },
         imageOrTitle,
@@ -604,14 +604,14 @@ var NavBar = function (_React$Component) {
           style: [styles.header, this.props.navigationBarStyle, state.navigationBarStyle, selected.navigationBarStyle],
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 580
+            lineNumber: 581
           }
         },
         navigationBarBackgroundImage ? _react2.default.createElement(
           _reactNative.Image,
           { style: navigationBarBackgroundImageStyle, source: navigationBarBackgroundImage, __source: {
               fileName: _jsxFileName,
-              lineNumber: 589
+              lineNumber: 590
             }
           },
           contents
