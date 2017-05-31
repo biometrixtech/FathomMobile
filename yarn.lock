@@ -3913,9 +3913,9 @@ react-native-animatable@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/react-native-animatable/-/react-native-animatable-1.2.0.tgz#fd279c6ee4b49161c6cc3b951ed7765b35a73467"
 
-react-native-ble-manager@^4.0.0:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-ble-manager/-/react-native-ble-manager-4.0.1.tgz#6017e6a1d3599234bfb21d2b207d9bfab56bda90"
+react-native-ble-manager@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-ble-manager/-/react-native-ble-manager-5.0.2.tgz#dde5cdb07dcf29486cf4cf9e62f07f2cbba98e5b"
 
 react-native-charts-wrapper@^0.2.10:
   version "0.2.10"
