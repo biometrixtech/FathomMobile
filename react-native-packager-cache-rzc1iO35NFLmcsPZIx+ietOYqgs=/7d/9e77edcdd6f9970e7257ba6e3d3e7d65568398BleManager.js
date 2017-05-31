@@ -88,11 +88,11 @@ var BleManager = function () {
     key: 'connect',
     value: function connect(peripheralId) {
       return new Promise(function (fulfill, reject) {
-        bleManager.connect(peripheralId, function (error, peripheral) {
+        bleManager.connect(peripheralId, function (error) {
           if (error) {
             reject(error);
           } else {
-            fulfill(peripheral);
+            fulfill();
           }
         });
       });
