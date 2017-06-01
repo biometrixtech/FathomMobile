@@ -15,10 +15,6 @@ var _Accordion = require('react-native-collapsible/Accordion');
 
 var _Accordion2 = babelHelpers.interopRequireDefault(_Accordion);
 
-var _reactNativeProgressBarClassic = require('react-native-progress-bar-classic');
-
-var _reactNativeProgressBarClassic2 = babelHelpers.interopRequireDefault(_reactNativeProgressBarClassic);
-
 var _theme = require('@theme/');
 
 var _ui = require('@ui/');
@@ -68,12 +64,12 @@ var DataView = function (_Component) {
         {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 73
+            lineNumber: 72
           }
         },
         _react2.default.createElement(_ui.ListItem, { title: title, containerStyle: { backgroundColor: section.color }, badge: { value: numberOfAthletes, badgeTextStyle: styles.badgeTextStyle }, __source: {
             fileName: _jsxFileName,
-            lineNumber: 74
+            lineNumber: 73
           }
         })
       );
@@ -83,26 +79,26 @@ var DataView = function (_Component) {
         {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 81
+            lineNumber: 80
           }
         },
         _react2.default.createElement(
           _reactNative.View,
           { style: { flexDirection: 'row', justifyContent: 'center', width: _theme.AppSizes.screen.width, height: 40 }, __source: {
               fileName: _jsxFileName,
-              lineNumber: 82
+              lineNumber: 81
             }
           },
           _react2.default.createElement(
             _reactNative.View,
             { style: [_theme.AppStyles.flex1, _theme.AppStyles.containerCentered], __source: {
                 fileName: _jsxFileName,
-                lineNumber: 83
+                lineNumber: 82
               }
             },
             section.title !== 'Team' ? _react2.default.createElement(_reactNativeElements.Icon, { name: 'account-plus', type: 'material-community', __source: {
                 fileName: _jsxFileName,
-                lineNumber: 84
+                lineNumber: 83
               }
             }) : null
           ),
@@ -110,19 +106,19 @@ var DataView = function (_Component) {
               return _this.toggleGroupSession;
             }, icon: { name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' }, title: (section.trainingActive ? 'Stop' : 'Start') + ' Group Session', backgroundColor: section.trainingActive ? _theme.AppColors.brand.red : _theme.AppColors.brand.primary, __source: {
               fileName: _jsxFileName,
-              lineNumber: 86
+              lineNumber: 85
             }
           }),
           _react2.default.createElement(
             _reactNative.View,
             { style: [_theme.AppStyles.flex1, _theme.AppStyles.containerCentered], __source: {
                 fileName: _jsxFileName,
-                lineNumber: 87
+                lineNumber: 86
               }
             },
             section.title !== 'Team' ? _react2.default.createElement(_reactNativeElements.Icon, { name: 'account-remove', type: 'material-community', __source: {
                 fileName: _jsxFileName,
-                lineNumber: 88
+                lineNumber: 87
               }
             }) : null
           )
@@ -131,7 +127,7 @@ var DataView = function (_Component) {
           _reactNative.View,
           { style: [styles.cardView], __source: {
               fileName: _jsxFileName,
-              lineNumber: 91
+              lineNumber: 90
             }
           },
           section.athletes.map(function (athlete) {
@@ -140,14 +136,14 @@ var DataView = function (_Component) {
               {
                 __source: {
                   fileName: _jsxFileName,
-                  lineNumber: 95
+                  lineNumber: 94
                 }
               },
               _react2.default.createElement(
                 _ui.Card,
                 { title: athlete.name, __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 96
+                    lineNumber: 95
                   }
                 },
                 section.title === 'Team' ? _react2.default.createElement(
@@ -155,19 +151,19 @@ var DataView = function (_Component) {
                   {
                     __source: {
                       fileName: _jsxFileName,
-                      lineNumber: 100
+                      lineNumber: 99
                     }
                   },
                   _react2.default.createElement(_ui.Button, { style: [_theme.AppStyles.containerCentered], raised: true, onPress: function onPress() {
                       return _this.togglePlayerSession;
                     }, icon: { name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' }, title: (section.trainingActive ? 'Stop' : 'Start') + ' Athlete Session', backgroundColor: section.trainingActive ? _theme.AppColors.brand.red : _theme.AppColors.brand.primary, __source: {
                       fileName: _jsxFileName,
-                      lineNumber: 101
+                      lineNumber: 100
                     }
                   }),
                   _react2.default.createElement(_ui.Spacer, { size: 5, __source: {
                       fileName: _jsxFileName,
-                      lineNumber: 102
+                      lineNumber: 101
                     }
                   })
                 ) : null,
@@ -175,7 +171,7 @@ var DataView = function (_Component) {
                   _reactNative.View,
                   { style: [{ flexDirection: 'row', width: _theme.AppSizes.screen.width }, _theme.AppStyles.containerCentered], __source: {
                       fileName: _jsxFileName,
-                      lineNumber: 106
+                      lineNumber: 105
                     }
                   },
                   _react2.default.createElement(
@@ -183,7 +179,7 @@ var DataView = function (_Component) {
                     {
                       __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 107
+                        lineNumber: 106
                       }
                     },
                     'Kit Status:'
@@ -191,58 +187,13 @@ var DataView = function (_Component) {
                 ),
                 _react2.default.createElement(_ui.Spacer, { size: 5, __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 111
-                  }
-                }),
-                _react2.default.createElement(
-                  _ui.Text,
-                  {
-                    __source: {
-                      fileName: _jsxFileName,
-                      lineNumber: 112
-                    }
-                  },
-                  'Kit Memory:'
-                ),
-                _react2.default.createElement(_ui.Spacer, { size: 2, __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 113
-                  }
-                }),
-                _react2.default.createElement(_reactNativeProgressBarClassic2.default, { progress: 50, label: '1028/2048', __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 114
-                  }
-                }),
-                _react2.default.createElement(_ui.Spacer, { size: 5, __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 115
-                  }
-                }),
-                _react2.default.createElement(
-                  _ui.Text,
-                  {
-                    __source: {
-                      fileName: _jsxFileName,
-                      lineNumber: 116
-                    }
-                  },
-                  'Kit Battery:'
-                ),
-                _react2.default.createElement(_ui.Spacer, { size: 2, __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 117
-                  }
-                }),
-                _react2.default.createElement(_reactNativeProgressBarClassic2.default, { progress: 75, __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 118
+                    lineNumber: 110
                   }
                 })
               ),
               _react2.default.createElement(_ui.Spacer, { size: 10, __source: {
                   fileName: _jsxFileName,
-                  lineNumber: 120
+                  lineNumber: 112
                 }
               })
             );
@@ -254,7 +205,7 @@ var DataView = function (_Component) {
         _reactNative.ScrollView,
         { style: [_theme.AppStyles.container], __source: {
             fileName: _jsxFileName,
-            lineNumber: 131
+            lineNumber: 123
           }
         },
         _react2.default.createElement(_Accordion2.default, {
@@ -263,7 +214,7 @@ var DataView = function (_Component) {
           renderContent: _this.renderContent,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 132
+            lineNumber: 124
           }
         })
       );

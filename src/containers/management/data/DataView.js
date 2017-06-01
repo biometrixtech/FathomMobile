@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Accordion from 'react-native-collapsible/Accordion';
-import ProgressBarClassic from 'react-native-progress-bar-classic';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors } from '@theme/';
@@ -109,13 +108,6 @@ class DataView extends Component {
                           </Text>
                         </View>
                         <Spacer size={5} />
-                        <Text>Kit Memory:</Text>
-                        <Spacer size={2} />
-                        <ProgressBarClassic progress={50} label={'1028/2048'} />
-                        <Spacer size={5} />
-                        <Text>Kit Battery:</Text>
-                        <Spacer size={2} />
-                        <ProgressBarClassic progress={75} />
                       </Card>
                       <Spacer size={10} />
                     </View>

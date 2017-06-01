@@ -12,11 +12,10 @@ import {
 import { Icon } from 'react-native-elements';
 import Accordion from 'react-native-collapsible/Accordion';
 import Collapsible from 'react-native-collapsible';
-import ProgressBarClassic from 'react-native-progress-bar-classic';
 import ModalPicker from 'react-native-modal-picker';
 
 // Consts and Libs
-import { AppStyles, AppSizes, AppColors, AppFonts } from '@theme/';
+import { AppStyles, AppSizes, AppColors } from '@theme/';
 
 // Components
 import { Text, ListItem, Card, Spacer, Button } from '@ui/';
@@ -170,7 +169,7 @@ class AthletesView extends Component {
             <Spacer />
             <View style={{ flexDirection: 'row', justifyContent: 'center', width: AppSizes.screen.width, height: 40 }}>
               <View style={[AppStyles.flex1, AppStyles.containerCentered]}>
-                {section.title !== 'Team' ? <Icon name="account-plus" type="material-community" underlayColor="transparent" onPress={() => this.refs.addAthlete.open()} /> : null}
+                {section.title !== 'Team' ? <Icon name="account-plus" type="material-community" color={AppColors.brand.primary} underlayColor="transparent" onPress={() => this.refs.addAthlete.open()} /> : null}
               </View>
               <Button
                 style={[AppStyles.flex2]}
@@ -180,7 +179,7 @@ class AthletesView extends Component {
                 backgroundColor={section.trainingActive ? styles.stop.color : styles.start.color}
               />
               <View style={[AppStyles.flex1, AppStyles.containerCentered]}>
-                {section.title !== 'Team' ? <Icon name="account-remove" type="material-community" underlayColor="transparent" onPress={() => { this.setState({ sectionIndex }); this.refs.removeAthlete.open(); }} /> : null}
+                {section.title !== 'Team' ? <Icon name="account-remove" type="material-community" color={AppColors.brand.primary} underlayColor="transparent" onPress={() => { this.setState({ sectionIndex }); this.refs.removeAthlete.open(); }} /> : null}
               </View>
             </View>
             <View style={[styles.cardView]} >
@@ -205,27 +204,40 @@ class AthletesView extends Component {
                                 </View>
                                 <Collapsible collapsed={athlete.collapsed}>
                                   <Spacer />
-                                  {
-                                    section.title === 'Team' ?
-                                    (
-                                      <Button
-                                        style={[AppStyles.containerCentered]}
-                                        raised
-                                        onPress={() => { if (section.trainingActive) { this.toggleAthleteSession(); } this.refs.modal.open(); }}
-                                        icon={{ name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' }}
-                                        title={`${section.trainingActive ? 'Stop' : 'Start'} Athlete Session`}
-                                        backgroundColor={section.trainingActive ? AppColors.brand.red : AppColors.brand.primary}
-                                      />
-                                    ) : null
-                                }
-                                  <Spacer size={5} />
-                                  <Text style={{ color: this.getTextColor(athlete) }}>Kit Memory:</Text>
-                                  <Spacer size={2} />
-                                  <ProgressBarClassic progress={50} />
-                                  <Spacer size={5} />
-                                  <Text style={{ color: this.getTextColor(athlete) }}>Kit Battery:</Text>
-                                  <Spacer size={2} />
-                                  <ProgressBarClassic progress={75} />
+                                  <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flex: 2, marginLeft: 10 }}>
+                                      <View style={{ backgroundColor: this.getIndicatorColor(athlete) }}>
+                                        <Text style={{ color: 'white', marginLeft: 5 }}>
+                                          READY TO START SESSION
+                                        </Text>
+                                      </View>
+                                      <Spacer size={15} />
+                                      <View style={{ flexDirection: 'row' }}>
+                                        <View style={{ flex: 75, backgroundColor: '#D0D0D0' }}><Text style={{ marginLeft: 5, color: 'white', fontSize: 10 }}>BATTERY</Text></View>
+                                        <View style={{ flex: 25 }} />
+                                      </View>
+                                      <View style={{ flexDirection: 'row' }}>
+                                        <View style={{ flex: 50, backgroundColor: '#B0B0B0' }}><Text style={{ marginLeft: 5, color: 'white', fontSize: 10 }}>MEMORY</Text></View>
+                                        <View style={{ flex: 50 }} />
+                                      </View>
+                                    </View>
+                                    <View style={{ flex: 1 }}>
+                                      {
+                                        section.title === 'Team' ?
+                                        (
+                                          <Button
+                                            style={[AppStyles.containerCentered]}
+                                            raised
+                                            onPress={() => { if (section.trainingActive) { this.toggleAthleteSession(); } this.refs.modal.open(); }}
+                                            textStyle={{ textAlign: 'center' }}
+                                            title={`${section.trainingActive ? 'Stop' : 'Start'}\nSession`}
+                                            backgroundColor={section.trainingActive ? AppColors.brand.red : AppColors.brand.primary}
+                                          />
+                                        ) : null
+                                      }
+                                    </View>
+                                  </View>
+                                  <Spacer />
                                 </Collapsible>
                               </Card>
                             </TouchableOpacity>
@@ -257,27 +269,40 @@ class AthletesView extends Component {
                                 </View>
                                 <Collapsible collapsed={athlete.collapsed}>
                                   <Spacer />
-                                  {
-                                    section.title === 'Team' ?
-                                    (
-                                      <Button
-                                        style={[AppStyles.containerCentered]}
-                                        raised
-                                        onPress={() => { if (section.trainingActive) { this.toggleAthleteSession(); } this.refs.modal.open(); }}
-                                        icon={{ name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' }}
-                                        title={`${section.trainingActive ? 'Stop' : 'Start'} Athlete Session`}
-                                        backgroundColor={section.trainingActive ? AppColors.brand.red : AppColors.brand.primary}
-                                      />
-                                    ) : null
-                                }
-                                  <Spacer size={5} />
-                                  <Text style={{ color: this.getTextColor(athlete) }}>Kit Memory:</Text>
-                                  <Spacer size={2} />
-                                  <ProgressBarClassic progress={50} />
-                                  <Spacer size={5} />
-                                  <Text style={{ color: this.getTextColor(athlete) }}>Kit Battery:</Text>
-                                  <Spacer size={2} />
-                                  <ProgressBarClassic progress={75} />
+                                  <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flex: 2, marginLeft: 10 }}>
+                                      <View style={{ backgroundColor: this.getIndicatorColor(athlete) }}>
+                                        <Text style={{ color: 'white', marginLeft: 5 }}>
+                                          READY TO START SESSION
+                                        </Text>
+                                      </View>
+                                      <Spacer size={15} />
+                                      <View style={{ flexDirection: 'row' }}>
+                                        <View style={{ flex: 75, backgroundColor: '#D0D0D0' }}><Text style={{ marginLeft: 5, color: 'white', fontSize: 10 }}>BATTERY</Text></View>
+                                        <View style={{ flex: 25 }} />
+                                      </View>
+                                      <View style={{ flexDirection: 'row' }}>
+                                        <View style={{ flex: 50, backgroundColor: '#B0B0B0' }}><Text style={{ marginLeft: 5, color: 'white', fontSize: 10 }}>MEMORY</Text></View>
+                                        <View style={{ flex: 50 }} />
+                                      </View>
+                                    </View>
+                                    <View style={{ flex: 1 }}>
+                                      {
+                                        section.title === 'Team' ?
+                                        (
+                                          <Button
+                                            style={[AppStyles.containerCentered]}
+                                            raised
+                                            onPress={() => { if (section.trainingActive) { this.toggleAthleteSession(); } this.refs.modal.open(); }}
+                                            textStyle={{ textAlign: 'center' }}
+                                            title={`${section.trainingActive ? 'Stop' : 'Start'}\nSession`}
+                                            backgroundColor={section.trainingActive ? AppColors.brand.red : AppColors.brand.primary}
+                                          />
+                                        ) : null
+                                      }
+                                    </View>
+                                  </View>
+                                  <Spacer />
                                 </Collapsible>
                               </Card>
                             </TouchableOpacity>
