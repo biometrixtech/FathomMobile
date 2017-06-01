@@ -1,9 +1,12 @@
 
 
-var striptags = require('striptags');
 var Entities = require('html-entities').AllHtmlEntities;
 
 var entities = new Entities();
+
+function striptags(input) {
+    return input.replace(/(<([^>]+)>)/ig, '');
+}
 
 var UTIL = {
     objIsEmpty: function objIsEmpty(obj) {
