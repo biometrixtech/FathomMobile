@@ -5,7 +5,7 @@
 import React from 'react';
 import { applyMiddleware, compose, createStore } from 'redux';
 import { connect, Provider } from 'react-redux';
-import logger from 'redux-logger';
+import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
 import { Router } from 'react-native-router-flux';
 import codePush from 'react-native-code-push';
@@ -31,7 +31,7 @@ if (__DEV__) {
     // Dev-only middleware
     middleware = [
         ...middleware,
-        logger(), // Logs state changes to the dev console
+        createLogger(), // Logs state changes to the dev console
     ];
 }
 

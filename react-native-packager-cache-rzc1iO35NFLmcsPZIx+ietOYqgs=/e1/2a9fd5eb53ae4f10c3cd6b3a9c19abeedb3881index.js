@@ -14,8 +14,6 @@ var _reactRedux = require('react-redux');
 
 var _reduxLogger = require('redux-logger');
 
-var _reduxLogger2 = babelHelpers.interopRequireDefault(_reduxLogger);
-
 var _reduxThunk = require('redux-thunk');
 
 var _reduxThunk2 = babelHelpers.interopRequireDefault(_reduxThunk);
@@ -45,7 +43,7 @@ var RouterWithRedux = (0, _reactRedux.connect)()(_reactNativeRouterFlux.Router);
 var middleware = [_analytics2.default, _reduxThunk2.default];
 
 if (__DEV__) {
-    middleware = [].concat(babelHelpers.toConsumableArray(middleware), [(0, _reduxLogger2.default)()]);
+    middleware = [].concat(babelHelpers.toConsumableArray(middleware), [(0, _reduxLogger.createLogger)()]);
 }
 
 var store = (0, _redux.compose)(_redux.applyMiddleware.apply(undefined, babelHelpers.toConsumableArray(middleware)))(_redux.createStore)(_index2.default);
