@@ -149,7 +149,7 @@ class KitManagementView extends Component {
               </RadialMenu>
             </View> */}
               <View style={{ flex: 1 }} />
-              <View style={{ flex: 1 }} >
+              <View style={{ flex: 1, alignItems: 'center' }} >
                 <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000' }]} >Step 3: Scan for accessories</FormLabel>
                 <Button
                   title={this.state.scanning ? 'Stop Scan' : 'Start Scan'}

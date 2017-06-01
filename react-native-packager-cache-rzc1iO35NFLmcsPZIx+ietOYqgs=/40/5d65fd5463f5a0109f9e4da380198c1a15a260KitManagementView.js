@@ -224,7 +224,7 @@ var KitManagementView = function (_Component) {
                     }),
                     _react2.default.createElement(
                         _reactNative.View,
-                        { style: { flex: 1 }, __source: {
+                        { style: { flex: 1, alignItems: 'center' }, __source: {
                                 fileName: _jsxFileName,
                                 lineNumber: 152
                             }

@@ -19,10 +19,6 @@ var _reactNativeCollapsible = require('react-native-collapsible');
 
 var _reactNativeCollapsible2 = babelHelpers.interopRequireDefault(_reactNativeCollapsible);
 
-var _reactNativeProgressBarClassic = require('react-native-progress-bar-classic');
-
-var _reactNativeProgressBarClassic2 = babelHelpers.interopRequireDefault(_reactNativeProgressBarClassic);
-
 var _reactNativeModalPicker = require('react-native-modal-picker');
 
 var _reactNativeModalPicker2 = babelHelpers.interopRequireDefault(_reactNativeModalPicker);
@@ -135,7 +131,7 @@ var AthletesView = function (_Component) {
       }),
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 146
+        lineNumber: 145
       }
     });
 
@@ -147,12 +143,12 @@ var AthletesView = function (_Component) {
         {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 161
+            lineNumber: 160
           }
         },
         _react2.default.createElement(_ui.ListItem, { title: title, containerStyle: { backgroundColor: _theme.AppColors.lightGrey }, badge: { value: numberOfAthletes, badgeTextStyle: styles.badgeTextStyle }, __source: {
             fileName: _jsxFileName,
-            lineNumber: 162
+            lineNumber: 161
           }
         })
       );
@@ -164,34 +160,34 @@ var AthletesView = function (_Component) {
         {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 169
+            lineNumber: 168
           }
         },
         _react2.default.createElement(_ui.Spacer, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 170
+            lineNumber: 169
           }
         }),
         _react2.default.createElement(
           _reactNative.View,
           { style: { flexDirection: 'row', justifyContent: 'center', width: _theme.AppSizes.screen.width, height: 40 }, __source: {
               fileName: _jsxFileName,
-              lineNumber: 171
+              lineNumber: 170
             }
           },
           _react2.default.createElement(
             _reactNative.View,
             { style: [_theme.AppStyles.flex1, _theme.AppStyles.containerCentered], __source: {
                 fileName: _jsxFileName,
-                lineNumber: 172
+                lineNumber: 171
               }
             },
-            section.title !== 'Team' ? _react2.default.createElement(_reactNativeElements.Icon, { name: 'account-plus', type: 'material-community', underlayColor: 'transparent', onPress: function onPress() {
+            section.title !== 'Team' ? _react2.default.createElement(_reactNativeElements.Icon, { name: 'account-plus', type: 'material-community', color: _theme.AppColors.brand.primary, underlayColor: 'transparent', onPress: function onPress() {
                 return _this.refs.addAthlete.open();
               }, __source: {
                 fileName: _jsxFileName,
-                lineNumber: 173
+                lineNumber: 172
               }
             }) : null
           ),
@@ -209,21 +205,21 @@ var AthletesView = function (_Component) {
             backgroundColor: section.trainingActive ? styles.stop.color : styles.start.color,
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 175
+              lineNumber: 174
             }
           }),
           _react2.default.createElement(
             _reactNative.View,
             { style: [_theme.AppStyles.flex1, _theme.AppStyles.containerCentered], __source: {
                 fileName: _jsxFileName,
-                lineNumber: 182
+                lineNumber: 181
               }
             },
-            section.title !== 'Team' ? _react2.default.createElement(_reactNativeElements.Icon, { name: 'account-remove', type: 'material-community', underlayColor: 'transparent', onPress: function onPress() {
+            section.title !== 'Team' ? _react2.default.createElement(_reactNativeElements.Icon, { name: 'account-remove', type: 'material-community', color: _theme.AppColors.brand.primary, underlayColor: 'transparent', onPress: function onPress() {
                 _this.setState({ sectionIndex: sectionIndex });_this.refs.removeAthlete.open();
               }, __source: {
                 fileName: _jsxFileName,
-                lineNumber: 183
+                lineNumber: 182
               }
             }) : null
           )
@@ -232,20 +228,20 @@ var AthletesView = function (_Component) {
           _reactNative.View,
           { style: [styles.cardView], __source: {
               fileName: _jsxFileName,
-              lineNumber: 186
+              lineNumber: 185
             }
           },
           _react2.default.createElement(_ui.Spacer, {
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 187
+              lineNumber: 186
             }
           }),
           _react2.default.createElement(
             _ui.Text,
             { style: { color: _theme.AppColors.brand.secondary, fontSize: 14 }, __source: {
                 fileName: _jsxFileName,
-                lineNumber: 188
+                lineNumber: 187
               }
             },
             'READY'
@@ -256,7 +252,7 @@ var AthletesView = function (_Component) {
                 _reactNative.View,
                 { key: athlete.id, __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 193
+                    lineNumber: 192
                   }
                 },
                 _react2.default.createElement(
@@ -267,38 +263,38 @@ var AthletesView = function (_Component) {
                       }
                     }, __source: {
                       fileName: _jsxFileName,
-                      lineNumber: 194
+                      lineNumber: 193
                     }
                   },
                   _react2.default.createElement(
                     _ui.Card,
                     { containerStyle: [styles.cardStyle, { backgroundColor: _theme.AppColors.lightGrey }], __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 195
+                        lineNumber: 194
                       }
                     },
                     _react2.default.createElement(
                       _reactNative.View,
                       { style: { borderRadius: 2, flexDirection: 'row', height: _theme.AppSizes.screen.heightTenth / 1.5 }, __source: {
                           fileName: _jsxFileName,
-                          lineNumber: 196
+                          lineNumber: 195
                         }
                       },
                       _react2.default.createElement(_reactNative.View, { style: { borderRadius: 2, backgroundColor: _this.getIndicatorColor(athlete), flex: 1 }, __source: {
                           fileName: _jsxFileName,
-                          lineNumber: 197
+                          lineNumber: 196
                         }
                       }),
                       _react2.default.createElement(_reactNative.View, { style: { flex: 1 }, __source: {
                           fileName: _jsxFileName,
-                          lineNumber: 198
+                          lineNumber: 197
                         }
                       }),
                       _react2.default.createElement(
                         _reactNative.View,
                         { style: { flex: 14, justifyContent: 'center' }, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 199
+                            lineNumber: 198
                           }
                         },
                         _react2.default.createElement(
@@ -306,7 +302,7 @@ var AthletesView = function (_Component) {
                           {
                             __source: {
                               fileName: _jsxFileName,
-                              lineNumber: 200
+                              lineNumber: 199
                             }
                           },
                           athlete.name
@@ -316,14 +312,14 @@ var AthletesView = function (_Component) {
                         _reactNative.View,
                         { style: { flex: 4, justifyContent: 'center' }, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 202
+                            lineNumber: 201
                           }
                         },
                         _react2.default.createElement(
                           _ui.Text,
                           { style: { fontSize: 10 }, __source: {
                               fileName: _jsxFileName,
-                              lineNumber: 203
+                              lineNumber: 202
                             }
                           },
                           'OFFLINE'
@@ -334,77 +330,141 @@ var AthletesView = function (_Component) {
                       _reactNativeCollapsible2.default,
                       { collapsed: athlete.collapsed, __source: {
                           fileName: _jsxFileName,
-                          lineNumber: 206
+                          lineNumber: 205
                         }
                       },
                       _react2.default.createElement(_ui.Spacer, {
                         __source: {
                           fileName: _jsxFileName,
-                          lineNumber: 207
+                          lineNumber: 206
                         }
                       }),
-                      section.title === 'Team' ? _react2.default.createElement(_ui.Button, {
-                        style: [_theme.AppStyles.containerCentered],
-                        raised: true,
-                        onPress: function onPress() {
-                          if (section.trainingActive) {
-                            _this.toggleAthleteSession();
-                          }_this.refs.modal.open();
+                      _react2.default.createElement(
+                        _reactNative.View,
+                        { style: { flexDirection: 'row' }, __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 207
+                          }
                         },
-                        icon: { name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' },
-                        title: (section.trainingActive ? 'Stop' : 'Start') + ' Athlete Session',
-                        backgroundColor: section.trainingActive ? _theme.AppColors.brand.red : _theme.AppColors.brand.primary,
+                        _react2.default.createElement(
+                          _reactNative.View,
+                          { style: { flex: 2, marginLeft: 10 }, __source: {
+                              fileName: _jsxFileName,
+                              lineNumber: 208
+                            }
+                          },
+                          _react2.default.createElement(
+                            _reactNative.View,
+                            { style: { backgroundColor: _this.getIndicatorColor(athlete) }, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 209
+                              }
+                            },
+                            _react2.default.createElement(
+                              _ui.Text,
+                              { style: { color: 'white', marginLeft: 5 }, __source: {
+                                  fileName: _jsxFileName,
+                                  lineNumber: 210
+                                }
+                              },
+                              'READY TO START SESSION'
+                            )
+                          ),
+                          _react2.default.createElement(_ui.Spacer, { size: 15, __source: {
+                              fileName: _jsxFileName,
+                              lineNumber: 214
+                            }
+                          }),
+                          _react2.default.createElement(
+                            _reactNative.View,
+                            { style: { flexDirection: 'row' }, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 215
+                              }
+                            },
+                            _react2.default.createElement(
+                              _reactNative.View,
+                              { style: { flex: 75, backgroundColor: '#D0D0D0' }, __source: {
+                                  fileName: _jsxFileName,
+                                  lineNumber: 216
+                                }
+                              },
+                              _react2.default.createElement(
+                                _ui.Text,
+                                { style: { marginLeft: 5, color: 'white', fontSize: 10 }, __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 216
+                                  }
+                                },
+                                'BATTERY'
+                              )
+                            ),
+                            _react2.default.createElement(_reactNative.View, { style: { flex: 25 }, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 217
+                              }
+                            })
+                          ),
+                          _react2.default.createElement(
+                            _reactNative.View,
+                            { style: { flexDirection: 'row' }, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 219
+                              }
+                            },
+                            _react2.default.createElement(
+                              _reactNative.View,
+                              { style: { flex: 50, backgroundColor: '#B0B0B0' }, __source: {
+                                  fileName: _jsxFileName,
+                                  lineNumber: 220
+                                }
+                              },
+                              _react2.default.createElement(
+                                _ui.Text,
+                                { style: { marginLeft: 5, color: 'white', fontSize: 10 }, __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 220
+                                  }
+                                },
+                                'MEMORY'
+                              )
+                            ),
+                            _react2.default.createElement(_reactNative.View, { style: { flex: 50 }, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 221
+                              }
+                            })
+                          )
+                        ),
+                        _react2.default.createElement(
+                          _reactNative.View,
+                          { style: { flex: 1 }, __source: {
+                              fileName: _jsxFileName,
+                              lineNumber: 224
+                            }
+                          },
+                          section.title === 'Team' ? _react2.default.createElement(_ui.Button, {
+                            style: [_theme.AppStyles.containerCentered],
+                            raised: true,
+                            onPress: function onPress() {
+                              if (section.trainingActive) {
+                                _this.toggleAthleteSession();
+                              }_this.refs.modal.open();
+                            },
+                            textStyle: { textAlign: 'center' },
+                            title: (section.trainingActive ? 'Stop' : 'Start') + '\nSession',
+                            backgroundColor: section.trainingActive ? _theme.AppColors.brand.red : _theme.AppColors.brand.primary,
+                            __source: {
+                              fileName: _jsxFileName,
+                              lineNumber: 228
+                            }
+                          }) : null
+                        )
+                      ),
+                      _react2.default.createElement(_ui.Spacer, {
                         __source: {
                           fileName: _jsxFileName,
-                          lineNumber: 211
-                        }
-                      }) : null,
-                      _react2.default.createElement(_ui.Spacer, { size: 5, __source: {
-                          fileName: _jsxFileName,
-                          lineNumber: 221
-                        }
-                      }),
-                      _react2.default.createElement(
-                        _ui.Text,
-                        { style: { color: _this.getTextColor(athlete) }, __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 222
-                          }
-                        },
-                        'Kit Memory:'
-                      ),
-                      _react2.default.createElement(_ui.Spacer, { size: 2, __source: {
-                          fileName: _jsxFileName,
-                          lineNumber: 223
-                        }
-                      }),
-                      _react2.default.createElement(_reactNativeProgressBarClassic2.default, { progress: 50, __source: {
-                          fileName: _jsxFileName,
-                          lineNumber: 224
-                        }
-                      }),
-                      _react2.default.createElement(_ui.Spacer, { size: 5, __source: {
-                          fileName: _jsxFileName,
-                          lineNumber: 225
-                        }
-                      }),
-                      _react2.default.createElement(
-                        _ui.Text,
-                        { style: { color: _this.getTextColor(athlete) }, __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 226
-                          }
-                        },
-                        'Kit Battery:'
-                      ),
-                      _react2.default.createElement(_ui.Spacer, { size: 2, __source: {
-                          fileName: _jsxFileName,
-                          lineNumber: 227
-                        }
-                      }),
-                      _react2.default.createElement(_reactNativeProgressBarClassic2.default, { progress: 75, __source: {
-                          fileName: _jsxFileName,
-                          lineNumber: 228
+                          lineNumber: 240
                         }
                       })
                     )
@@ -418,14 +478,14 @@ var AthletesView = function (_Component) {
           _react2.default.createElement(_ui.Spacer, {
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 239
+              lineNumber: 251
             }
           }),
           _react2.default.createElement(
             _ui.Text,
             { style: { color: _theme.AppColors.brand.secondary, fontSize: 14 }, __source: {
                 fileName: _jsxFileName,
-                lineNumber: 240
+                lineNumber: 252
               }
             },
             'NOT READY'
@@ -436,7 +496,7 @@ var AthletesView = function (_Component) {
                 _reactNative.View,
                 { key: athlete.id, __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 245
+                    lineNumber: 257
                   }
                 },
                 _react2.default.createElement(
@@ -447,38 +507,38 @@ var AthletesView = function (_Component) {
                       }
                     }, __source: {
                       fileName: _jsxFileName,
-                      lineNumber: 246
+                      lineNumber: 258
                     }
                   },
                   _react2.default.createElement(
                     _ui.Card,
                     { containerStyle: [styles.cardStyle, { backgroundColor: _theme.AppColors.lightGrey }], __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 247
+                        lineNumber: 259
                       }
                     },
                     _react2.default.createElement(
                       _reactNative.View,
                       { style: { borderRadius: 2, flexDirection: 'row', height: _theme.AppSizes.screen.heightTenth / 1.5 }, __source: {
                           fileName: _jsxFileName,
-                          lineNumber: 248
+                          lineNumber: 260
                         }
                       },
                       _react2.default.createElement(_reactNative.View, { style: { borderRadius: 2, backgroundColor: _this.getIndicatorColor(athlete), flex: 1 }, __source: {
                           fileName: _jsxFileName,
-                          lineNumber: 249
+                          lineNumber: 261
                         }
                       }),
                       _react2.default.createElement(_reactNative.View, { style: { flex: 1 }, __source: {
                           fileName: _jsxFileName,
-                          lineNumber: 250
+                          lineNumber: 262
                         }
                       }),
                       _react2.default.createElement(
                         _reactNative.View,
                         { style: { flex: 14, justifyContent: 'center' }, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 251
+                            lineNumber: 263
                           }
                         },
                         _react2.default.createElement(
@@ -486,7 +546,7 @@ var AthletesView = function (_Component) {
                           {
                             __source: {
                               fileName: _jsxFileName,
-                              lineNumber: 252
+                              lineNumber: 264
                             }
                           },
                           athlete.name
@@ -496,14 +556,14 @@ var AthletesView = function (_Component) {
                         _reactNative.View,
                         { style: { flex: 4, justifyContent: 'center' }, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 254
+                            lineNumber: 266
                           }
                         },
                         _react2.default.createElement(
                           _ui.Text,
                           { style: { fontSize: 10 }, __source: {
                               fileName: _jsxFileName,
-                              lineNumber: 255
+                              lineNumber: 267
                             }
                           },
                           'OFFLINE'
@@ -514,77 +574,141 @@ var AthletesView = function (_Component) {
                       _reactNativeCollapsible2.default,
                       { collapsed: athlete.collapsed, __source: {
                           fileName: _jsxFileName,
-                          lineNumber: 258
+                          lineNumber: 270
                         }
                       },
                       _react2.default.createElement(_ui.Spacer, {
                         __source: {
                           fileName: _jsxFileName,
-                          lineNumber: 259
+                          lineNumber: 271
                         }
                       }),
-                      section.title === 'Team' ? _react2.default.createElement(_ui.Button, {
-                        style: [_theme.AppStyles.containerCentered],
-                        raised: true,
-                        onPress: function onPress() {
-                          if (section.trainingActive) {
-                            _this.toggleAthleteSession();
-                          }_this.refs.modal.open();
+                      _react2.default.createElement(
+                        _reactNative.View,
+                        { style: { flexDirection: 'row' }, __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 272
+                          }
                         },
-                        icon: { name: section.trainingActive ? 'stop-circle' : 'play-circle', type: 'material-community' },
-                        title: (section.trainingActive ? 'Stop' : 'Start') + ' Athlete Session',
-                        backgroundColor: section.trainingActive ? _theme.AppColors.brand.red : _theme.AppColors.brand.primary,
+                        _react2.default.createElement(
+                          _reactNative.View,
+                          { style: { flex: 2, marginLeft: 10 }, __source: {
+                              fileName: _jsxFileName,
+                              lineNumber: 273
+                            }
+                          },
+                          _react2.default.createElement(
+                            _reactNative.View,
+                            { style: { backgroundColor: _this.getIndicatorColor(athlete) }, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 274
+                              }
+                            },
+                            _react2.default.createElement(
+                              _ui.Text,
+                              { style: { color: 'white', marginLeft: 5 }, __source: {
+                                  fileName: _jsxFileName,
+                                  lineNumber: 275
+                                }
+                              },
+                              'READY TO START SESSION'
+                            )
+                          ),
+                          _react2.default.createElement(_ui.Spacer, { size: 15, __source: {
+                              fileName: _jsxFileName,
+                              lineNumber: 279
+                            }
+                          }),
+                          _react2.default.createElement(
+                            _reactNative.View,
+                            { style: { flexDirection: 'row' }, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 280
+                              }
+                            },
+                            _react2.default.createElement(
+                              _reactNative.View,
+                              { style: { flex: 75, backgroundColor: '#D0D0D0' }, __source: {
+                                  fileName: _jsxFileName,
+                                  lineNumber: 281
+                                }
+                              },
+                              _react2.default.createElement(
+                                _ui.Text,
+                                { style: { marginLeft: 5, color: 'white', fontSize: 10 }, __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 281
+                                  }
+                                },
+                                'BATTERY'
+                              )
+                            ),
+                            _react2.default.createElement(_reactNative.View, { style: { flex: 25 }, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 282
+                              }
+                            })
+                          ),
+                          _react2.default.createElement(
+                            _reactNative.View,
+                            { style: { flexDirection: 'row' }, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 284
+                              }
+                            },
+                            _react2.default.createElement(
+                              _reactNative.View,
+                              { style: { flex: 50, backgroundColor: '#B0B0B0' }, __source: {
+                                  fileName: _jsxFileName,
+                                  lineNumber: 285
+                                }
+                              },
+                              _react2.default.createElement(
+                                _ui.Text,
+                                { style: { marginLeft: 5, color: 'white', fontSize: 10 }, __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 285
+                                  }
+                                },
+                                'MEMORY'
+                              )
+                            ),
+                            _react2.default.createElement(_reactNative.View, { style: { flex: 50 }, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 286
+                              }
+                            })
+                          )
+                        ),
+                        _react2.default.createElement(
+                          _reactNative.View,
+                          { style: { flex: 1 }, __source: {
+                              fileName: _jsxFileName,
+                              lineNumber: 289
+                            }
+                          },
+                          section.title === 'Team' ? _react2.default.createElement(_ui.Button, {
+                            style: [_theme.AppStyles.containerCentered],
+                            raised: true,
+                            onPress: function onPress() {
+                              if (section.trainingActive) {
+                                _this.toggleAthleteSession();
+                              }_this.refs.modal.open();
+                            },
+                            textStyle: { textAlign: 'center' },
+                            title: (section.trainingActive ? 'Stop' : 'Start') + '\nSession',
+                            backgroundColor: section.trainingActive ? _theme.AppColors.brand.red : _theme.AppColors.brand.primary,
+                            __source: {
+                              fileName: _jsxFileName,
+                              lineNumber: 293
+                            }
+                          }) : null
+                        )
+                      ),
+                      _react2.default.createElement(_ui.Spacer, {
                         __source: {
                           fileName: _jsxFileName,
-                          lineNumber: 263
-                        }
-                      }) : null,
-                      _react2.default.createElement(_ui.Spacer, { size: 5, __source: {
-                          fileName: _jsxFileName,
-                          lineNumber: 273
-                        }
-                      }),
-                      _react2.default.createElement(
-                        _ui.Text,
-                        { style: { color: _this.getTextColor(athlete) }, __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 274
-                          }
-                        },
-                        'Kit Memory:'
-                      ),
-                      _react2.default.createElement(_ui.Spacer, { size: 2, __source: {
-                          fileName: _jsxFileName,
-                          lineNumber: 275
-                        }
-                      }),
-                      _react2.default.createElement(_reactNativeProgressBarClassic2.default, { progress: 50, __source: {
-                          fileName: _jsxFileName,
-                          lineNumber: 276
-                        }
-                      }),
-                      _react2.default.createElement(_ui.Spacer, { size: 5, __source: {
-                          fileName: _jsxFileName,
-                          lineNumber: 277
-                        }
-                      }),
-                      _react2.default.createElement(
-                        _ui.Text,
-                        { style: { color: _this.getTextColor(athlete) }, __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 278
-                          }
-                        },
-                        'Kit Battery:'
-                      ),
-                      _react2.default.createElement(_ui.Spacer, { size: 2, __source: {
-                          fileName: _jsxFileName,
-                          lineNumber: 279
-                        }
-                      }),
-                      _react2.default.createElement(_reactNativeProgressBarClassic2.default, { progress: 75, __source: {
-                          fileName: _jsxFileName,
-                          lineNumber: 280
+                          lineNumber: 305
                         }
                       })
                     )
@@ -597,7 +721,7 @@ var AthletesView = function (_Component) {
           }, []),
           _react2.default.createElement(_ui.Spacer, { size: 15, __source: {
               fileName: _jsxFileName,
-              lineNumber: 291
+              lineNumber: 316
             }
           })
         )
@@ -609,7 +733,7 @@ var AthletesView = function (_Component) {
         _reactNative.View,
         { style: [_theme.AppStyles.container, { backgroundColor: 'white' }], __source: {
             fileName: _jsxFileName,
-            lineNumber: 298
+            lineNumber: 323
           }
         },
         _react2.default.createElement(
@@ -617,7 +741,7 @@ var AthletesView = function (_Component) {
           {
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 299
+              lineNumber: 324
             }
           },
           _react2.default.createElement(_Accordion2.default, {
@@ -626,7 +750,7 @@ var AthletesView = function (_Component) {
             renderContent: _this.renderContent,
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 300
+              lineNumber: 325
             }
           }),
           _react2.default.createElement(_reactNativeModalPicker2.default, {
@@ -646,7 +770,7 @@ var AthletesView = function (_Component) {
             })),
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 305
+              lineNumber: 330
             }
           }),
           _react2.default.createElement(_reactNativeModalPicker2.default, {
@@ -665,7 +789,7 @@ var AthletesView = function (_Component) {
             })),
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 316
+              lineNumber: 341
             }
           }),
           _react2.default.createElement(_reactNativeModalPicker2.default, {
@@ -684,7 +808,7 @@ var AthletesView = function (_Component) {
             })),
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 327
+              lineNumber: 352
             }
           })
         )
