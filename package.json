@@ -21,9 +21,7 @@
   "dependencies": {
     "html-entities": "^1.2.1",
     "jwt-decode": "^2.1.0",
-    "qs": "^6.3.0",
     "react": "16.0.0-alpha.6",
-    "react-addons-shallow-compare": "^15.4.2",
     "react-native": "0.44.2",
     "react-native-ble-manager": "^5.0.3",
     "react-native-charts-wrapper": "^0.2.10",
