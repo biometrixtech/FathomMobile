@@ -15,10 +15,6 @@ var _tcombFormNative2 = babelHelpers.interopRequireDefault(_tcombFormNative);
 
 var _reactNativeRouterFlux = require('react-native-router-flux');
 
-var _reactNativeAnimatable = require('react-native-animatable');
-
-var Animatable = babelHelpers.interopRequireWildcard(_reactNativeAnimatable);
-
 var _api = require('@lib/api');
 
 var _api2 = babelHelpers.interopRequireDefault(_api);
@@ -150,7 +146,7 @@ var Login = function (_Component) {
                         lineNumber: 183
                     }
                 },
-                _react2.default.createElement(Animatable.Image, { animation: 'zoomIn', easing: 'ease-out', source: require('../../images/fathom_white.png'), resizeMode: 'contain', iterationCount: 'infinite', direction: 'alternate', style: { width: _theme.AppSizes.screen.widthHalf, height: _theme.AppSizes.screen.heightTenth }, __source: {
+                _react2.default.createElement(_reactNative.Image, { source: require('../../images/fathom_white.png'), resizeMode: 'contain', style: { width: _theme.AppSizes.screen.widthHalf, height: _theme.AppSizes.screen.heightTenth }, __source: {
                         fileName: _jsxFileName,
                         lineNumber: 187
                     }
