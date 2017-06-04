@@ -165,7 +165,9 @@ function createAnimatableComponent(WrappedComponent) {
             transitionValues[key] = new _reactNative.Animated.Value(0);
             styleValues[key] = value;
           } else {
-            transitionValues[key] = styleValues[key] = new _reactNative.Animated.Value(value);
+            var animationValue = new _reactNative.Animated.Value(value);
+            transitionValues[key] = animationValue;
+            styleValues[key] = animationValue;
           }
         });
 
@@ -442,7 +444,7 @@ function createAnimatableComponent(WrappedComponent) {
         }, restProps, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 519
+            lineNumber: 527
           }
         }));
       }
@@ -468,11 +470,17 @@ function createAnimatableComponent(WrappedComponent) {
     transition: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.arrayOf(_react.PropTypes.string)]),
     useNativeDriver: _react.PropTypes.bool
   }, _class.defaultProps = {
+    animation: undefined,
     delay: 0,
+    direction: 'normal',
+    duration: undefined,
+    easing: undefined,
     iterationCount: 1,
     onAnimationBegin: function onAnimationBegin() {},
     onAnimationEnd: function onAnimationEnd() {},
 
+    style: undefined,
+    transition: undefined,
     useNativeDriver: false
   }, _initialiseProps = function _initialiseProps() {
     var _this9 = this;

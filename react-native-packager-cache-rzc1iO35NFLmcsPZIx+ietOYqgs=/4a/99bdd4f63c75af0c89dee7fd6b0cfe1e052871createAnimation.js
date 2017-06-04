@@ -51,7 +51,8 @@ function createAnimation(definition) {
     compiled.style = definition.style;
   }
 
-  var _loop = function _loop(position) {
+  var _loop = function _loop(i) {
+    var position = positions[i];
     var keyframe = definition[position];
     if (!keyframe) {
       if (position === 0) {
@@ -77,21 +78,8 @@ function createAnimation(definition) {
     });
   };
 
-  for (var _iterator = positions, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[typeof Symbol === 'function' ? Symbol.iterator : '@@iterator']();;) {
-    var _ref;
-
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      _i = _iterator.next();
-      if (_i.done) break;
-      _ref = _i.value;
-    }
-
-    var position = _ref;
-
-    _loop(position);
+  for (var i = 0; i < positions.length; i += 1) {
+    _loop(i);
   }
 
   cache[cacheKey] = compiled;

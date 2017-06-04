@@ -8,7 +8,7 @@ var _reactNative = require('react-native');
 function makeZoomOutTranslation(translationType, pivotPoint) {
   var modifier = Math.min(1, Math.max(-1, pivotPoint));
   return {
-    easing: _reactNative.Easing.bezier(0.175, 0.885, 0.320, 1),
+    easing: _reactNative.Easing.bezier(0.175, 0.885, 0.32, 1),
     0: babelHelpers.defineProperty({
       opacity: 1,
       scale: 1

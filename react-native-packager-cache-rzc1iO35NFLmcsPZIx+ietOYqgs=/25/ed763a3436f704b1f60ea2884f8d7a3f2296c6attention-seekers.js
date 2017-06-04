@@ -160,22 +160,22 @@ var shake = exports.shake = {
 
 var swing = exports.swing = {
   0: {
-    rotateZ: '0deg'
+    rotate: '0deg'
   },
   0.2: {
-    rotateZ: '15deg'
+    rotate: '15deg'
   },
   0.4: {
-    rotateZ: '-10deg'
+    rotate: '-10deg'
   },
   0.6: {
-    rotateZ: '5deg'
+    rotate: '5deg'
   },
   0.8: {
-    rotateZ: '-5deg'
+    rotate: '-5deg'
   },
   1: {
-    rotateZ: '0deg'
+    rotate: '0deg'
   }
 };
 
@@ -213,72 +213,72 @@ var rubberBand = exports.rubberBand = {
 var tada = exports.tada = {
   0: {
     scale: 1,
-    rotateZ: '0deg'
+    rotate: '0deg'
   },
   0.1: {
     scale: 0.9,
-    rotateZ: '-3deg'
+    rotate: '-3deg'
   },
   0.2: {
     scale: 0.9,
-    rotateZ: '-3deg'
+    rotate: '-3deg'
   },
   0.3: {
     scale: 1.1,
-    rotateZ: '-3deg'
+    rotate: '-3deg'
   },
   0.4: {
-    rotateZ: '3deg'
+    rotate: '3deg'
   },
   0.5: {
-    rotateZ: '-3deg'
+    rotate: '-3deg'
   },
   0.6: {
-    rotateZ: '3deg'
+    rotate: '3deg'
   },
   0.7: {
-    rotateZ: '-3deg'
+    rotate: '-3deg'
   },
   0.8: {
-    rotateZ: '3deg'
+    rotate: '3deg'
   },
   0.9: {
     scale: 1.1,
-    rotateZ: '3deg'
+    rotate: '3deg'
   },
   1: {
     scale: 1,
-    rotateZ: '0deg'
+    rotate: '0deg'
   }
 };
 
 var wobble = exports.wobble = {
   0: {
     translateX: 0,
-    rotateZ: '0deg'
+    rotate: '0deg'
   },
   0.15: {
     translateX: -25,
-    rotateZ: '-5deg'
+    rotate: '-5deg'
   },
   0.3: {
     translateX: 20,
-    rotateZ: '3deg'
+    rotate: '3deg'
   },
   0.45: {
     translateX: -15,
-    rotateZ: '-3deg'
+    rotate: '-3deg'
   },
   0.6: {
     translateX: 10,
-    rotateZ: '2deg'
+    rotate: '2deg'
   },
   0.75: {
     translateX: -5,
-    rotateZ: '-1deg'
+    rotate: '-1deg'
   },
   1: {
     translateX: 0,
-    rotateZ: '0deg'
+    rotate: '0deg'
   }
 };
