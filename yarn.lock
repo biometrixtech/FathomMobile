@@ -3878,10 +3878,6 @@ react-devtools-core@^2.0.8:
     shell-quote "^1.6.1"
     ws "^2.0.3"
 
-react-native-animatable@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/react-native-animatable/-/react-native-animatable-1.2.1.tgz#2758326b298dddecc8c065446f4185174bdaa4e3"
-
 react-native-ble-manager@^5.0.3:
   version "5.0.3"
   resolved "https://registry.yarnpkg.com/react-native-ble-manager/-/react-native-ble-manager-5.0.3.tgz#5dae5ad2b9bc47881bf1191198d17330ee473c31"

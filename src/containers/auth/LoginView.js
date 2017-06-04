@@ -9,10 +9,10 @@ import {
   AsyncStorage,
   StyleSheet,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import FormValidation from 'tcomb-form-native';
 import { Actions } from 'react-native-router-flux';
-import * as Animatable from 'react-native-animatable';
 
 // Consts and Libs
 import AppAPI from '@lib/api';
@@ -184,7 +184,7 @@ class Login extends Component {
             style={[AppStyles.containerCentered, AppStyles.container, styles.background]}
           >
 
-            <Animatable.Image animation="zoomIn" easing="ease-out" source={require('../../images/fathom_white.png')} resizeMode={'contain'} iterationCount="infinite" direction="alternate" style={{ width: AppSizes.screen.widthHalf, height: AppSizes.screen.heightTenth }} />
+            <Image source={require('../../images/fathom_white.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthHalf, height: AppSizes.screen.heightTenth }} />
 
             <Card>
               <Alerts
