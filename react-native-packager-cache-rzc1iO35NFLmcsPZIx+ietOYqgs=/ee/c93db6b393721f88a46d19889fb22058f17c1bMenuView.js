@@ -27,7 +27,7 @@ var MENU_BG_COLOR = '#2E3234';
 
 var styles = _reactNative.StyleSheet.create({
     backgroundFill: {
-        backgroundColor: MENU_BG_COLOR,
+        backgroundColor: _theme.AppColors.brand.primary,
         height: _theme.AppSizes.screen.height,
         width: _theme.AppSizes.screen.width,
         position: 'absolute',
@@ -42,7 +42,7 @@ var styles = _reactNative.StyleSheet.create({
         flex: 3,
         left: 0,
         right: 0,
-        backgroundColor: MENU_BG_COLOR
+        backgroundColor: _theme.AppColors.brand.primary
     },
     imageContainer: {
         flex: 1,
@@ -53,19 +53,17 @@ var styles = _reactNative.StyleSheet.create({
         flex: 3,
         left: 0,
         right: 0,
-        backgroundColor: MENU_BG_COLOR,
+        backgroundColor: _theme.AppColors.brand.primary,
         padding: _theme.AppSizes.padding,
         paddingTop: _theme.AppSizes.statusBarHeight
     },
     menuItem: {
-        borderBottomWidth: 1,
-        borderBottomColor: _theme.AppColors.border,
         paddingBottom: 10
     },
     menuItem_text: {
         fontSize: 18,
         lineHeight: parseInt(18 + 18 * 0.5, 10),
-        fontWeight: '500',
+        fontWeight: 'normal',
         marginTop: 10,
         color: '#EEEFF0'
     },
@@ -230,18 +228,41 @@ var _initialiseProps = function _initialiseProps() {
                     lineNumber: 198
                 }
             }),
+            _react2.default.createElement(_ui.Spacer, {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 200
+                }
+            }),
+            _react2.default.createElement(
+                _ui.Text,
+                {
+                    style: [styles.menuBottom_text, _theme.AppStyles.textCenterAligned],
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 202
+                    }
+                },
+                _this2.props.user.user.first_name && _this2.props.user.user.last_name ? _this2.props.user.user.first_name + ' ' + _this2.props.user.user.last_name : _this2.props.user.user.role
+            ),
+            _react2.default.createElement(_ui.Spacer, {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 211
+                }
+            }),
             _react2.default.createElement(
                 _reactNative.View,
                 { style: [styles.menuContainer], __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 200
+                        lineNumber: 213
                     }
                 },
                 _react2.default.createElement(
                     _reactNative.View,
                     { style: [styles.menu], __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 201
+                            lineNumber: 214
                         }
                     },
                     menuItems
@@ -250,51 +271,25 @@ var _initialiseProps = function _initialiseProps() {
                     _reactNative.View,
                     { style: [styles.menuBottom], __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 203
+                            lineNumber: 216
                         }
                     },
                     _react2.default.createElement(
                         _reactNative.View,
-                        {
-                            __source: {
+                        { style: [_theme.AppStyles.paddingHorizontal, _theme.AppStyles.paddingVerticalSml], __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 204
+                                lineNumber: 217
                             }
                         },
-                        _react2.default.createElement(
-                            _ui.Text,
-                            {
-                                style: [styles.menuBottom_text, _theme.AppStyles.textCenterAligned],
-                                __source: {
-                                    fileName: _jsxFileName,
-                                    lineNumber: 205
-                                }
-                            },
-                            'Logged in as:',
-                            '\n',
-                            _this2.props.user.user.first_name && _this2.props.user.user.last_name ? _this2.props.user.user.first_name + ' ' + _this2.props.user.user.last_name : _this2.props.user.user.role
-                        ),
-                        _react2.default.createElement(_ui.Spacer, { size: 10, __source: {
+                        _react2.default.createElement(_ui.Button, {
+                            backgroundColor: MENU_BG_COLOR,
+                            title: 'Log Out',
+                            onPress: _this2.logout,
+                            __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 215
+                                lineNumber: 218
                             }
-                        }),
-                        _react2.default.createElement(
-                            _reactNative.View,
-                            { style: [_theme.AppStyles.paddingHorizontal, _theme.AppStyles.paddingVerticalSml], __source: {
-                                    fileName: _jsxFileName,
-                                    lineNumber: 217
-                                }
-                            },
-                            _react2.default.createElement(_ui.Button, {
-                                title: 'Log Out',
-                                onPress: _this2.logout,
-                                __source: {
-                                    fileName: _jsxFileName,
-                                    lineNumber: 218
-                                }
-                            })
-                        )
+                        })
                     )
                 )
             )

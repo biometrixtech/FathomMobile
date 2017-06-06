@@ -13,8 +13,6 @@ import { AppSizes } from '@theme/';
 // Containers
 import Menu from '@containers/ui/Menu/MenuContainer';
 
-import { Icon } from 'react-native-elements';
-
 /* Redux ==================================================================== */
 // Actions
 import * as SideMenuActions from '@redux/sidemenu/actions';
