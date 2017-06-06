@@ -1,7 +1,6 @@
 package com.fathom;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.facebook.react.ReactApplication;
 import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
@@ -9,7 +8,6 @@ import com.github.wuxudong.rncharts.MPAndroidChartPackage;
 import com.microsoft.codepush.react.CodePush;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -35,7 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
+      return Arrays.asList(
           new MainReactPackage(),
           new GoogleAnalyticsBridgePackage(),
           new MPAndroidChartPackage(),

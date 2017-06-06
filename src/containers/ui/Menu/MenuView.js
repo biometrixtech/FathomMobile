@@ -31,7 +31,7 @@ const MENU_BG_COLOR = '#2E3234';
 
 const styles = StyleSheet.create({
     backgroundFill: {
-        backgroundColor: MENU_BG_COLOR,
+        backgroundColor: AppColors.brand.primary,
         height:          AppSizes.screen.height,
         width:           AppSizes.screen.width,
         position:        'absolute',
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         flex:            3,
         left:            0,
         right:           0,
-        backgroundColor: MENU_BG_COLOR,
+        backgroundColor: AppColors.brand.primary,
     },
     imageContainer: {
         flex:   1,
@@ -58,19 +58,19 @@ const styles = StyleSheet.create({
         flex:            3,
         left:            0,
         right:           0,
-        backgroundColor: MENU_BG_COLOR,
+        backgroundColor: AppColors.brand.primary,
         padding:         AppSizes.padding,
         paddingTop:      AppSizes.statusBarHeight,
     },
     menuItem: {
-        borderBottomWidth: 1,
-        borderBottomColor: AppColors.border,
-        paddingBottom:     10,
+        // borderBottomWidth: 1,
+        // borderBottomColor: AppColors.border,
+        paddingBottom: 10,
     },
     menuItem_text: {
         fontSize:   18,
         lineHeight: parseInt(18 + (18 * 0.5), 10),
-        fontWeight: '500',
+        fontWeight: 'normal',
         marginTop:  10,
         color:      '#EEEFF0',
     },
@@ -197,29 +197,29 @@ class Menu extends Component {
 
             <Image resizeMode={Image.resizeMode.contain} style={[styles.imageContainer]} source={{ uri: this.props.user.user.avatar_url }} />
 
+            <Spacer />
+
+            <Text
+              style={[
+                  styles.menuBottom_text,
+                  AppStyles.textCenterAligned,
+              ]}
+            >
+              {this.props.user.user.first_name && this.props.user.user.last_name ? `${this.props.user.user.first_name} ${this.props.user.user.last_name}` : this.props.user.user.role}
+            </Text>
+
+            <Spacer />
+
             <View style={[styles.menuContainer]}>
               <View style={[styles.menu]}>{menuItems}</View>
 
               <View style={[styles.menuBottom]}>
-                <View>
-                  <Text
-                    style={[
-                        styles.menuBottom_text,
-                        AppStyles.textCenterAligned,
-                    ]}
-                  >
-                    Logged in as:{'\n'}
-                    {this.props.user.user.first_name && this.props.user.user.last_name ? `${this.props.user.user.first_name} ${this.props.user.user.last_name}` : this.props.user.user.role}
-                  </Text>
-
-                  <Spacer size={10} />
-
-                  <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
-                    <Button
-                      title={'Log Out'}
-                      onPress={this.logout}
-                    />
-                  </View>
+                <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
+                  <Button
+                    backgroundColor={MENU_BG_COLOR}
+                    title={'Log Out'}
+                    onPress={this.logout}
+                  />
                 </View>
               </View>
             </View>
