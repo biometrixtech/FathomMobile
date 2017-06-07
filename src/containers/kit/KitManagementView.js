@@ -96,9 +96,12 @@ class KitManagementView extends Component {
     }
 
     handleDiscoverPeripheral = (data) => {
-        console.log('Got ble data', data);
-        this.state.devicesFound.push(data);
-        return this.setState({ ble: data, devicesFound: this.state.devicesFound });
+        if (data.name && data.name.indexOf('fathom') > -1 && this.state.devicesFound.every(device => device.id !== data.id)) {
+            console.log('Got new ble data', data);
+            this.state.devicesFound.push(data);
+            return this.setState({ ble: data, devicesFound: this.state.devicesFound });
+        }
+        return null;
     }
 
     handleBleStateChange = (data) => {
@@ -113,6 +116,29 @@ class KitManagementView extends Component {
             this.refs.swiper.scrollBy(1);
         }
         return this.setState({ resultMsg: { error: null } });
+    }
+
+    connect = (data) => {
+        console.log(data);
+        return BleManager.connect(data.id)
+            .then(() => {
+                data.connected = true;
+                return data;
+            })
+            .then(() => BleManager.isPeripheralConnected(data.id, []))
+            .then((isConnected) => {
+                console.log(`Is peripheral ${data.name} connected: ${isConnected}`);
+                data.connected = isConnected;
+                return data;
+            })
+            .then(peripheral => BleManager.retrieveServices(peripheral.id))
+            .then(peripheralData => console.log('Retrieved peripheral services', peripheralData))
+            .then(() => BleManager.read(data.id, '1800', '2a00'))
+            .then(readData => console.log(`Data read: ${readData}`))
+            .catch((err) => {
+                console.log(err);
+                return err;
+            });
     }
 
     /* eslint-disable max-len */
@@ -159,7 +185,7 @@ class KitManagementView extends Component {
                   raised
                 />
                 <Spacer />
-                <ModalDropdown options={this.state.devicesFound.map(device => device.id)} />
+                <ModalDropdown options={this.state.devicesFound.map(device => device.name)} onSelect={idx => this.connect(this.state.devicesFound[idx])} />
                 <Spacer />
                 <Text labelStyle={[AppStyles.h5, { color: AppColors.primary }]} onPress={() => { this.setState({ isCollapsed: !this.state.isCollapsed }); }} >{'Can\'t find your device?'}</Text>
                 <Spacer />
