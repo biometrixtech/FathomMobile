@@ -46,11 +46,11 @@ var KitManagementView = function (_Component) {
             _this.handleDiscoverPeripheral = _this.handleDiscoverPeripheral.bind(_this);
             _this.handleBleStateChange = _this.handleBleStateChange.bind(_this);
 
-            _reactNative.NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', function () {
-                return _this.handleDiscoverPeripheral;
+            _reactNative.NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', function (data) {
+                _this.handleDiscoverPeripheral(data);
             });
-            _reactNative.NativeAppEventEmitter.addListener('BleManagerDidUpdateState', function () {
-                return _this.handleBleStateChange;
+            _reactNative.NativeAppEventEmitter.addListener('BleManagerDidUpdateState', function (data) {
+                _this.handleBleStateChange(data);
             });
             _reactNative.NativeAppEventEmitter.addListener('BleManagerStopScan', function () {
                 _this.setState({ scanning: false, resultMsg: { success: 'Finished scanning' } });
