@@ -58,8 +58,8 @@ class KitManagementView extends Component {
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
         this.handleBleStateChange     = this.handleBleStateChange.bind(this);
 
-        NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', () => this.handleDiscoverPeripheral);
-        NativeAppEventEmitter.addListener('BleManagerDidUpdateState', () => this.handleBleStateChange);
+        NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', (data) => { this.handleDiscoverPeripheral(data); });
+        NativeAppEventEmitter.addListener('BleManagerDidUpdateState', (data) => { this.handleBleStateChange(data); });
         NativeAppEventEmitter.addListener('BleManagerStopScan', () => { this.setState({ scanning: false, resultMsg: { success: 'Finished scanning' } }); });
     }
 
