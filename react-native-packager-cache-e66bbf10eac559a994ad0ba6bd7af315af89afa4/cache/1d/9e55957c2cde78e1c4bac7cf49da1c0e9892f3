@@ -143,7 +143,7 @@ var KitManagementView = function (_Component) {
             }).then(function (peripheralData) {
                 return console.log('Retrieved peripheral services', peripheralData);
             }).then(function () {
-                return _reactNativeBleManager2.default.read(data.id, '1800', '2a00');
+                return _reactNativeBleManager2.default.read(data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de');
             }).then(function (readData) {
                 return console.log('Data read: ' + readData);
             }).catch(function (err) {

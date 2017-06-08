@@ -139,7 +139,7 @@ class KitManagementView extends Component {
             })
             .then(peripheral => BleManager.retrieveServices(peripheral.id))
             .then(peripheralData => console.log('Retrieved peripheral services', peripheralData))
-            .then(() => BleManager.read(data.id, '1800', '2a00'))
+            .then(() => BleManager.read(data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de'))
             .then(readData => console.log(`Data read: ${readData}`))
             .catch((err) => {
                 console.log(err);
