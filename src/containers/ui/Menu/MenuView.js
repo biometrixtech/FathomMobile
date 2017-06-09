@@ -1,6 +1,7 @@
 /**
  * Menu Contents
  */
+/* eslint-disable max-len */
 import React, { Component, PropTypes } from 'react';
 import {
   View,
@@ -47,6 +48,8 @@ const styles = StyleSheet.create({
         left:            0,
         right:           0,
         backgroundColor: AppColors.brand.primary,
+        paddingTop:      AppSizes.padding,
+        paddingBottom:   AppSizes.padding,
     },
     imageContainer: {
         flex:   1,
@@ -59,20 +62,20 @@ const styles = StyleSheet.create({
         left:            0,
         right:           0,
         backgroundColor: AppColors.brand.primary,
-        padding:         AppSizes.padding,
         paddingTop:      AppSizes.statusBarHeight,
     },
     menuItem: {
-        // borderBottomWidth: 1,
-        // borderBottomColor: AppColors.border,
-        paddingBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: AppColors.border,
+        paddingBottom:     10,
     },
     menuItem_text: {
-        fontSize:   18,
-        lineHeight: parseInt(18 + (18 * 0.5), 10),
-        fontWeight: 'normal',
-        marginTop:  10,
-        color:      '#EEEFF0',
+        fontSize:    18,
+        lineHeight:  parseInt(18 + (18 * 0.5), 10),
+        fontWeight:  'normal',
+        marginTop:   10,
+        color:       '#EEEFF0',
+        paddingLeft: AppSizes.padding*2.5,
     },
 
     // Menu Bottom
@@ -84,7 +87,8 @@ const styles = StyleSheet.create({
         paddingBottom:  10,
     },
     menuBottom_text: {
-        color: '#EEEFF0',
+        color:    '#EEEFF0',
+        fontSize: 23,
     },
 });
 
@@ -139,18 +143,19 @@ class Menu extends Component {
         }
 
         this.state = {
-            menu: [
+            active: 0,
+            menu:   [
                 {
-                    title:   title,
-                    onPress: () => { this.props.closeSideMenu(); action(); },
+                    title,
+                    onPress: () => { this.props.closeSideMenu(); action(); this.setState({ active: 0 }); },
                 },
                 {
                     title:   'Kit Management',
-                    onPress: () => { this.props.closeSideMenu(); Actions.kitManagement(); },
+                    onPress: () => { this.props.closeSideMenu(); this.setState({ active: 1 }); Actions.kitManagement(); },
                 },
                 {
                     title:   'Settings',
-                    onPress: () => { this.props.closeSideMenu(); Actions.settings(); },
+                    onPress: () => { this.props.closeSideMenu(); this.setState({ active: 2 }); Actions.settings(); },
                 },
             ],
         };
@@ -173,7 +178,7 @@ class Menu extends Component {
 
         // Build the actual Menu Items
         const menuItems = [];
-        menu.map((item) => {
+        menu.map((item, index) => {
             const { title, onPress } = item;
 
             return menuItems.push(
@@ -181,8 +186,8 @@ class Menu extends Component {
                 key={`menu-item-${title}`}
                 onPress={onPress}
               >
-                <View style={[styles.menuItem]}>
-                  <Text style={[styles.menuItem_text]}>
+                <View style={[styles.menuItem, { backgroundColor: this.state.active === index ? '#FFFFFF' : AppColors.brand.primary }]}>
+                  <Text style={[styles.menuItem_text, { color: this.state.active === index ? AppColors.brand.primary : '#FFFFFF' }]}>
                     {title}
                   </Text>
                 </View>
@@ -195,7 +200,7 @@ class Menu extends Component {
           <View style={[styles.container]}>
             <View style={[styles.backgroundFill]} />
 
-            <Image resizeMode={Image.resizeMode.contain} style={[styles.imageContainer]} source={{ uri: this.props.user.user.avatar_url }} />
+            <Image resizeMode={Image.resizeMode.contain} style={[styles.imageContainer, { borderRadius: 50 }]} source={{ uri: this.props.user.user.avatar_url }} />
 
             <Spacer />
 

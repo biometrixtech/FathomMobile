@@ -42,7 +42,9 @@ var styles = _reactNative.StyleSheet.create({
         flex: 3,
         left: 0,
         right: 0,
-        backgroundColor: _theme.AppColors.brand.primary
+        backgroundColor: _theme.AppColors.brand.primary,
+        paddingTop: _theme.AppSizes.padding,
+        paddingBottom: _theme.AppSizes.padding
     },
     imageContainer: {
         flex: 1,
@@ -54,10 +56,11 @@ var styles = _reactNative.StyleSheet.create({
         left: 0,
         right: 0,
         backgroundColor: _theme.AppColors.brand.primary,
-        padding: _theme.AppSizes.padding,
         paddingTop: _theme.AppSizes.statusBarHeight
     },
     menuItem: {
+        borderBottomWidth: 1,
+        borderBottomColor: _theme.AppColors.border,
         paddingBottom: 10
     },
     menuItem_text: {
@@ -65,7 +68,8 @@ var styles = _reactNative.StyleSheet.create({
         lineHeight: parseInt(18 + 18 * 0.5, 10),
         fontWeight: 'normal',
         marginTop: 10,
-        color: '#EEEFF0'
+        color: '#EEEFF0',
+        paddingLeft: _theme.AppSizes.padding * 2.5
     },
 
     menuBottom: {
@@ -76,7 +80,8 @@ var styles = _reactNative.StyleSheet.create({
         paddingBottom: 10
     },
     menuBottom_text: {
-        color: '#EEEFF0'
+        color: '#EEEFF0',
+        fontSize: 23
     }
 });
 
@@ -119,20 +124,21 @@ var Menu = function (_Component) {
         }
 
         _this.state = {
+            active: 0,
             menu: [{
                 title: title,
                 onPress: function onPress() {
-                    _this.props.closeSideMenu();action();
+                    _this.props.closeSideMenu();action();_this.setState({ active: 0 });
                 }
             }, {
                 title: 'Kit Management',
                 onPress: function onPress() {
-                    _this.props.closeSideMenu();_reactNativeRouterFlux.Actions.kitManagement();
+                    _this.props.closeSideMenu();_this.setState({ active: 1 });_reactNativeRouterFlux.Actions.kitManagement();
                 }
             }, {
                 title: 'Settings',
                 onPress: function onPress() {
-                    _this.props.closeSideMenu();_reactNativeRouterFlux.Actions.settings();
+                    _this.props.closeSideMenu();_this.setState({ active: 2 });_reactNativeRouterFlux.Actions.settings();
                 }
             }]
         };
@@ -176,7 +182,7 @@ var _initialiseProps = function _initialiseProps() {
         var menu = _this2.state.menu;
 
         var menuItems = [];
-        menu.map(function (item) {
+        menu.map(function (item, index) {
             var title = item.title,
                 onPress = item.onPress;
 
@@ -188,21 +194,21 @@ var _initialiseProps = function _initialiseProps() {
                     onPress: onPress,
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 180
+                        lineNumber: 185
                     }
                 },
                 _react2.default.createElement(
                     _reactNative.View,
-                    { style: [styles.menuItem], __source: {
+                    { style: [styles.menuItem, { backgroundColor: _this2.state.active === index ? '#FFFFFF' : _theme.AppColors.brand.primary }], __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 184
+                            lineNumber: 189
                         }
                     },
                     _react2.default.createElement(
                         _ui.Text,
-                        { style: [styles.menuItem_text], __source: {
+                        { style: [styles.menuItem_text, { color: _this2.state.active === index ? _theme.AppColors.brand.primary : '#FFFFFF' }], __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 185
+                                lineNumber: 190
                             }
                         },
                         title
@@ -215,23 +221,23 @@ var _initialiseProps = function _initialiseProps() {
             _reactNative.View,
             { style: [styles.container], __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 195
+                    lineNumber: 200
                 }
             },
             _react2.default.createElement(_reactNative.View, { style: [styles.backgroundFill], __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 196
+                    lineNumber: 201
                 }
             }),
-            _react2.default.createElement(_reactNative.Image, { resizeMode: _reactNative.Image.resizeMode.contain, style: [styles.imageContainer], source: { uri: _this2.props.user.user.avatar_url }, __source: {
+            _react2.default.createElement(_reactNative.Image, { resizeMode: _reactNative.Image.resizeMode.contain, style: [styles.imageContainer, { borderRadius: 50 }], source: { uri: _this2.props.user.user.avatar_url }, __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 198
+                    lineNumber: 203
                 }
             }),
             _react2.default.createElement(_ui.Spacer, {
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 200
+                    lineNumber: 205
                 }
             }),
             _react2.default.createElement(
@@ -240,7 +246,7 @@ var _initialiseProps = function _initialiseProps() {
                     style: [styles.menuBottom_text, _theme.AppStyles.textCenterAligned],
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 202
+                        lineNumber: 207
                     }
                 },
                 _this2.props.user.user.first_name && _this2.props.user.user.last_name ? _this2.props.user.user.first_name + ' ' + _this2.props.user.user.last_name : _this2.props.user.user.role
@@ -248,21 +254,21 @@ var _initialiseProps = function _initialiseProps() {
             _react2.default.createElement(_ui.Spacer, {
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 211
+                    lineNumber: 216
                 }
             }),
             _react2.default.createElement(
                 _reactNative.View,
                 { style: [styles.menuContainer], __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 213
+                        lineNumber: 218
                     }
                 },
                 _react2.default.createElement(
                     _reactNative.View,
                     { style: [styles.menu], __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 214
+                            lineNumber: 219
                         }
                     },
                     menuItems
@@ -271,14 +277,14 @@ var _initialiseProps = function _initialiseProps() {
                     _reactNative.View,
                     { style: [styles.menuBottom], __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 216
+                            lineNumber: 221
                         }
                     },
                     _react2.default.createElement(
                         _reactNative.View,
                         { style: [_theme.AppStyles.paddingHorizontal, _theme.AppStyles.paddingVerticalSml], __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 217
+                                lineNumber: 222
                             }
                         },
                         _react2.default.createElement(_ui.Button, {
@@ -287,7 +293,7 @@ var _initialiseProps = function _initialiseProps() {
                             onPress: _this2.logout,
                             __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 218
+                                lineNumber: 223
                             }
                         })
                     )
