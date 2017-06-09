@@ -2,7 +2,7 @@
  * Whole App Container
  */
 import React, { Component, PropTypes } from 'react';
-import { View, Image } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import SideMenu from 'react-native-side-menu';
 import { DefaultRenderer } from 'react-native-router-flux';
