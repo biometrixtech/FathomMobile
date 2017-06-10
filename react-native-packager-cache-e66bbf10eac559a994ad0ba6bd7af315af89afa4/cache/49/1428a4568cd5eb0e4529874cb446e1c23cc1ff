@@ -98,7 +98,13 @@ function datepicker(locals) {
         background: background,
         onPress: function onPress() {
           if (datePickerMode === 'time') {
-            TimePickerAndroid.open({ is24Hour: true }).then(function (time) {
+            var now = new Date();
+            var isDate = locals.value && locals.value instanceof Date;
+            var setTime = {
+              hour: isDate ? locals.value.getHours() : now.getHours(),
+              minute: isDate ? locals.value.getMinutes() : now.getMinutes()
+            };
+            TimePickerAndroid.open({ is24Hour: true, hour: setTime.hour, minute: setTime.minute }).then(function (time) {
               if (time.action !== TimePickerAndroid.dismissedAction) {
                 var newTime = new Date();
                 newTime.setHours(time.hour);
@@ -133,7 +139,7 @@ function datepicker(locals) {
         {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 89
+            lineNumber: 95
           }
         },
         label,
