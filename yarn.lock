@@ -4872,9 +4872,9 @@ table@^3.7.8:
     slice-ansi "0.0.4"
     string-width "^2.0.0"
 
-tcomb-form-native@^0.6.8:
-  version "0.6.8"
-  resolved "https://registry.yarnpkg.com/tcomb-form-native/-/tcomb-form-native-0.6.8.tgz#fccdd117d2712c338f6c3aae943690ec7357f061"
+tcomb-form-native@^0.6.9:
+  version "0.6.9"
+  resolved "https://registry.yarnpkg.com/tcomb-form-native/-/tcomb-form-native-0.6.9.tgz#12a9cdf40472c922b57ddb651215dfcd442c4af5"
   dependencies:
     tcomb-validation "^3.0.0"
 
