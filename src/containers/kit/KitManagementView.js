@@ -58,13 +58,11 @@ class KitManagementView extends Component {
     componentDidMount = () => {
         // Get SSID
         NetworkInfo.getSSID((ssid) => {
-        console.log('SSID: ', ssid);
+            console.log('SSID: ', ssid);
+            this.setState({ SSID: ssid });
+            return null;
         });
 
-        // Get BSSID
-        NetworkInfo.getBSSID((ssid) => {
-        console.log('BSSID: ', ssid);
-        });
         BleManager.checkState();
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
         this.handleBleStateChange     = this.handleBleStateChange.bind(this);
