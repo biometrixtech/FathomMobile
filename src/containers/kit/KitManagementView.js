@@ -10,6 +10,7 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
+import { NetworkInfo } from 'react-native-network-info';
 import BleManager from 'react-native-ble-manager';
 import Swiper from 'react-native-swiper';
 import ModalDropdown from 'react-native-modal-dropdown';
@@ -45,6 +46,7 @@ class KitManagementView extends Component {
             index:        0,
             devicesFound: [],
             isCollapsed:  true,
+            SSID:         null,
             resultMsg:    {
                 status:  null,
                 success: null,
@@ -54,6 +56,15 @@ class KitManagementView extends Component {
     }
 
     componentDidMount = () => {
+        // Get SSID
+        NetworkInfo.getSSID((ssid) => {
+        console.log('SSID: ', ssid);
+        });
+
+        // Get BSSID
+        NetworkInfo.getBSSID((ssid) => {
+        console.log('BSSID: ', ssid);
+        });
         BleManager.checkState();
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
         this.handleBleStateChange     = this.handleBleStateChange.bind(this);
