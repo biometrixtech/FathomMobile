@@ -11,6 +11,8 @@ var _reactNative = require('react-native');
 
 var _reactNativeElements = require('react-native-elements');
 
+var _reactNativeNetworkInfo = require('react-native-network-info');
+
 var _reactNativeBleManager = require('react-native-ble-manager');
 
 var _reactNativeBleManager2 = babelHelpers.interopRequireDefault(_reactNativeBleManager);
@@ -42,6 +44,13 @@ var KitManagementView = function (_Component) {
         var _this = babelHelpers.possibleConstructorReturn(this, (KitManagementView.__proto__ || Object.getPrototypeOf(KitManagementView)).call(this, props));
 
         _this.componentDidMount = function () {
+            _reactNativeNetworkInfo.NetworkInfo.getSSID(function (ssid) {
+                console.log('SSID: ', ssid);
+            });
+
+            _reactNativeNetworkInfo.NetworkInfo.getBSSID(function (ssid) {
+                console.log('BSSID: ', ssid);
+            });
             _reactNativeBleManager2.default.checkState();
             _this.handleDiscoverPeripheral = _this.handleDiscoverPeripheral.bind(_this);
             _this.handleBleStateChange = _this.handleBleStateChange.bind(_this);
@@ -157,57 +166,9 @@ var KitManagementView = function (_Component) {
                 _reactNativeSwiper2.default,
                 { ref: 'swiper', scrollEnabled: false, loop: false, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 153
+                        lineNumber: 164
                     }
                 },
-                _react2.default.createElement(
-                    _reactNative.View,
-                    { style: [_theme.AppStyles.containerCentered, { flex: 1 }], __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 154
-                        }
-                    },
-                    _react2.default.createElement(_reactNative.View, { style: { flex: 1 }, __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 155
-                        }
-                    }),
-                    _react2.default.createElement(
-                        _reactNative.View,
-                        { style: { flex: 1 }, __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 156
-                            }
-                        },
-                        _react2.default.createElement(
-                            _ui.FormLabel,
-                            { labelStyle: [_theme.AppStyles.h4, { fontWeight: 'bold', color: '#000000' }], __source: {
-                                    fileName: _jsxFileName,
-                                    lineNumber: 157
-                                }
-                            },
-                            accessoryDiscoverabilityInstruction
-                        ),
-                        _react2.default.createElement(_ui.Spacer, {
-                            __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 160
-                            }
-                        }),
-                        _react2.default.createElement(_ui.Button, { title: 'Next', onPress: function onPress() {
-                                _this.refs.swiper.scrollBy(1);_reactNativeBleManager2.default.checkState();
-                            }, raised: true, __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 161
-                            }
-                        })
-                    ),
-                    _react2.default.createElement(_reactNative.View, { style: { flex: 1 }, __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 163
-                        }
-                    })
-                ),
                 _react2.default.createElement(
                     _reactNative.View,
                     { style: [_theme.AppStyles.containerCentered, { flex: 1 }], __source: {
@@ -234,19 +195,25 @@ var KitManagementView = function (_Component) {
                                     lineNumber: 168
                                 }
                             },
-                            'Step 2: Turn on bluetooth'
+                            accessoryDiscoverabilityInstruction
                         ),
-                        _react2.default.createElement(_reactNativeElements.Icon, { name: 'bluetooth', containerStyle: { alignSelf: 'center' }, size: 30, color: _theme.AppColors.brand.primary, reverse: true, onPress: function onPress() {
-                                return _this.turnOnBluetooth();
+                        _react2.default.createElement(_ui.Spacer, {
+                            __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 171
+                            }
+                        }),
+                        _react2.default.createElement(_ui.Button, { title: 'Next', onPress: function onPress() {
+                                _this.refs.swiper.scrollBy(1);_reactNativeBleManager2.default.checkState();
                             }, raised: true, __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 169
+                                lineNumber: 172
                             }
                         })
                     ),
                     _react2.default.createElement(_reactNative.View, { style: { flex: 1 }, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 171
+                            lineNumber: 174
                         }
                     })
                 ),
@@ -254,26 +221,68 @@ var KitManagementView = function (_Component) {
                     _reactNative.View,
                     { style: [_theme.AppStyles.containerCentered, { flex: 1 }], __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 173
+                            lineNumber: 176
                         }
                     },
                     _react2.default.createElement(_reactNative.View, { style: { flex: 1 }, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 183
+                            lineNumber: 177
                         }
                     }),
                     _react2.default.createElement(
                         _reactNative.View,
-                        { style: { flex: 1, alignItems: 'center' }, __source: {
+                        { style: { flex: 1 }, __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 184
+                                lineNumber: 178
                             }
                         },
                         _react2.default.createElement(
                             _ui.FormLabel,
                             { labelStyle: [_theme.AppStyles.h4, { fontWeight: 'bold', color: '#000000' }], __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 185
+                                    lineNumber: 179
+                                }
+                            },
+                            'Step 2: Turn on bluetooth'
+                        ),
+                        _react2.default.createElement(_reactNativeElements.Icon, { name: 'bluetooth', containerStyle: { alignSelf: 'center' }, size: 30, color: _theme.AppColors.brand.primary, reverse: true, onPress: function onPress() {
+                                return _this.turnOnBluetooth();
+                            }, raised: true, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 180
+                            }
+                        })
+                    ),
+                    _react2.default.createElement(_reactNative.View, { style: { flex: 1 }, __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 182
+                        }
+                    })
+                ),
+                _react2.default.createElement(
+                    _reactNative.View,
+                    { style: [_theme.AppStyles.containerCentered, { flex: 1 }], __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 184
+                        }
+                    },
+                    _react2.default.createElement(_reactNative.View, { style: { flex: 1 }, __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 194
+                        }
+                    }),
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: { flex: 1, alignItems: 'center' }, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 195
+                            }
+                        },
+                        _react2.default.createElement(
+                            _ui.FormLabel,
+                            { labelStyle: [_theme.AppStyles.h4, { fontWeight: 'bold', color: '#000000' }], __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 196
                                 }
                             },
                             'Step 3: Scan for accessories'
@@ -288,13 +297,13 @@ var KitManagementView = function (_Component) {
                             raised: true,
                             __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 186
+                                lineNumber: 197
                             }
                         }),
                         _react2.default.createElement(_ui.Spacer, {
                             __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 193
+                                lineNumber: 204
                             }
                         }),
                         _react2.default.createElement(_reactNativeModalDropdown2.default, { options: _this.state.devicesFound.map(function (device) {
@@ -303,13 +312,13 @@ var KitManagementView = function (_Component) {
                                 return _this.connect(_this.state.devicesFound[idx]);
                             }, __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 194
+                                lineNumber: 205
                             }
                         }),
                         _react2.default.createElement(_ui.Spacer, {
                             __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 195
+                                lineNumber: 206
                             }
                         }),
                         _react2.default.createElement(
@@ -318,7 +327,7 @@ var KitManagementView = function (_Component) {
                                     _this.setState({ isCollapsed: !_this.state.isCollapsed });
                                 }, __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 196
+                                    lineNumber: 207
                                 }
                             },
                             'Can\'t find your device?'
@@ -326,21 +335,21 @@ var KitManagementView = function (_Component) {
                         _react2.default.createElement(_ui.Spacer, {
                             __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 197
+                                lineNumber: 208
                             }
                         }),
                         _react2.default.createElement(
                             _reactNativeCollapsible2.default,
                             { collapsed: _this.state.isCollapsed, __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 198
+                                    lineNumber: 209
                                 }
                             },
                             _react2.default.createElement(
                                 _ui.FormLabel,
                                 { labelStyle: [_theme.AppStyles.h4, { fontWeight: 'bold', color: '#000000' }], __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 199
+                                        lineNumber: 210
                                     }
                                 },
                                 accessoryDiscoverabilityInstruction + '. Then rescan.'
@@ -349,7 +358,7 @@ var KitManagementView = function (_Component) {
                     ),
                     _react2.default.createElement(_reactNative.View, { style: { flex: 1 }, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 204
+                            lineNumber: 215
                         }
                     })
                 )
@@ -362,6 +371,7 @@ var KitManagementView = function (_Component) {
             index: 0,
             devicesFound: [],
             isCollapsed: true,
+            SSID: null,
             resultMsg: {
                 status: null,
                 success: null,

@@ -53,6 +53,7 @@
 		F2D5C432FE4244A1889B6DEA /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 621FED576505468EB9CFE175 /* MaterialCommunityIcons.ttf */; };
 		FB386A0172034FBE90DAFB1C /* libBleManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C6E4FC2E774E7590A79E0F /* libBleManager.a */; };
 		D3EDC2C096F748268192E9E0 /* libRNCalendarEvents.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B965606E57714A36B4F6B98A /* libRNCalendarEvents.a */; };
+		0F484639A57C4BB6B5EBEB06 /* libRNNetworkInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4EC241AB034E13AF48336D /* libRNNetworkInfo.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -345,6 +346,8 @@
 		51C6E4FC2E774E7590A79E0F /* libBleManager.a */ = {isa = PBXFileReference; name = "libBleManager.a"; path = "libBleManager.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		5ECFB8D1FAF94EC7B8FF73C0 /* RNCalendarEvents.xcodeproj */ = {isa = PBXFileReference; name = "RNCalendarEvents.xcodeproj"; path = "../node_modules/react-native-calendar-events/RNCalendarEvents.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		B965606E57714A36B4F6B98A /* libRNCalendarEvents.a */ = {isa = PBXFileReference; name = "libRNCalendarEvents.a"; path = "libRNCalendarEvents.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		676898F0B4DF4578B7A9CF21 /* RNNetworkInfo.xcodeproj */ = {isa = PBXFileReference; name = "RNNetworkInfo.xcodeproj"; path = "../node_modules/react-native-network-info/ios/RNNetworkInfo.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		5D4EC241AB034E13AF48336D /* libRNNetworkInfo.a */ = {isa = PBXFileReference; name = "libRNNetworkInfo.a"; path = "libRNNetworkInfo.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -389,6 +392,7 @@
 				5D36B926D4734E9190576BC2 /* libRCTGoogleAnalyticsBridge.a in Frameworks */,
 				FB386A0172034FBE90DAFB1C /* libBleManager.a in Frameworks */,
 				D3EDC2C096F748268192E9E0 /* libRNCalendarEvents.a in Frameworks */,
+				0F484639A57C4BB6B5EBEB06 /* libRNNetworkInfo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -591,6 +595,7 @@
 				0242B8CEC5604E53A24EBDED /* RCTGoogleAnalyticsBridge.xcodeproj */,
 				FFC94F28D95C4DCDB50C1B35 /* BleManager.xcodeproj */,
 				5ECFB8D1FAF94EC7B8FF73C0 /* RNCalendarEvents.xcodeproj */,
+				676898F0B4DF4578B7A9CF21 /* RNNetworkInfo.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1208,7 +1213,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1226,7 +1230,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1256,6 +1259,7 @@
 					"$(SRCROOT)/../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/**",
 					"$(SRCROOT)/../node_modules/react-native-ble-manager/ios",
 					"$(SRCROOT)/../node_modules/react-native-calendar-events",
+					"$(SRCROOT)/../node_modules/react-native-network-info/ios",
 				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1290,6 +1294,7 @@
 					"$(SRCROOT)/../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/**",
 					"$(SRCROOT)/../node_modules/react-native-ble-manager/ios",
 					"$(SRCROOT)/../node_modules/react-native-calendar-events",
+					"$(SRCROOT)/../node_modules/react-native-network-info/ios",
 				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

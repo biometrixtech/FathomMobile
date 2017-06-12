@@ -140,6 +140,7 @@ dependencies {
     compile project(':react-native-vector-icons')
     compile project(':react-native-device-info')
     compile project(':react-native-ble-manager')
+    compile project(':react-native-network-info')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.facebook.react:react-native:+'
