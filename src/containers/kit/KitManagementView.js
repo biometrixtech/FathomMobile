@@ -1,7 +1,6 @@
 /**
  * Kit Management Screen
  */
-/* eslint-disable max-len, react/no-string-refs */
 import React, { Component, PropTypes } from 'react';
 import {
   View,
@@ -148,15 +147,24 @@ class KitManagementView extends Component {
             })
             .then(peripheral => BleManager.retrieveServices(peripheral.id))
             .then(peripheralData => console.log('Retrieved peripheral services', peripheralData))
+            .then(() => {
+                const dataArray = new Array(20);
+                dataArray[0] = parseInt('0x04', 16);
+                dataArray[1] = this.state.SSID.length;
+                for (let i = 2; i < 20; i++) {
+                    dataArray[i] = this.state.SSID.charCodeAt(i-2);
+                }
+                console.log('Data Array: ', dataArray);
+                return BleManager.write(data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
+            })
             .then(() => BleManager.read(data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de'))
-            .then(readData => console.log(`Data read: ${readData}`))
+            .then(readData => console.log('Data written: ', readData))
             .catch((err) => {
                 console.log(err);
                 return err;
             });
     }
 
-    /* eslint-disable max-len */
     render = () =>
         (
           <Swiper ref="swiper" scrollEnabled={false} loop={false}>
@@ -212,7 +220,7 @@ class KitManagementView extends Component {
               </View>
               <View style={{ flex: 1 }} />
             </View>
-          </Swiper>
+        </Swiper>
         );
 }
 

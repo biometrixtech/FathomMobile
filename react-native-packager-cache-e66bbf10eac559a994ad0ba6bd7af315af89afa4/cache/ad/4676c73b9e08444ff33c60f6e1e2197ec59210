@@ -13,12 +13,13 @@ var NavigationHeaderStyleInterpolator = require('./NavigationHeaderStyleInterpol
 var Animated = ReactNative.Animated,
     Platform = ReactNative.Platform,
     StyleSheet = ReactNative.StyleSheet,
-    View = ReactNative.View;
+    View = ReactNative.View,
+    ViewPropTypes = ReactNative.ViewPropTypes;
 
 
 var APPBAR_HEIGHT = Platform.OS === 'ios' ? 44 : 56;
 var STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : 0;
-var PropTypes = React.PropTypes;
+var PropTypes = require('prop-types');
 
 var NavigationHeader = function (_React$PureComponent) {
   babelHelpers.inherits(NavigationHeader, _React$PureComponent);
@@ -50,7 +51,7 @@ var NavigationHeader = function (_React$PureComponent) {
         babelHelpers.extends({ style: [styles.appbar, style] }, viewProps, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 115
+            lineNumber: 116
           }
         }),
         scenesProps.map(this._renderLeft, this),
@@ -102,7 +103,7 @@ var NavigationHeader = function (_React$PureComponent) {
           key: name + '_' + key,
           style: [styles[name], styleInterpolator(props)], __source: {
             fileName: _jsxFileName,
-            lineNumber: 182
+            lineNumber: 183
           }
         },
         subView
@@ -123,7 +124,7 @@ NavigationHeader.defaultProps = {
       {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 84
+          lineNumber: 85
         }
       },
       title
@@ -134,7 +135,7 @@ NavigationHeader.defaultProps = {
     return props.scene.index > 0 ? React.createElement(NavigationHeaderBackButton, {
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 88
+        lineNumber: 89
       }
     }) : null;
   },
@@ -147,8 +148,8 @@ NavigationHeader.propTypes = babelHelpers.extends({}, NavigationPropTypes.SceneR
   renderLeftComponent: PropTypes.func,
   renderRightComponent: PropTypes.func,
   renderTitleComponent: PropTypes.func,
-  style: View.propTypes.style,
-  viewProps: PropTypes.shape(View.propTypes)
+  style: ViewPropTypes.style,
+  viewProps: PropTypes.shape(ViewPropTypes)
 });
 
 

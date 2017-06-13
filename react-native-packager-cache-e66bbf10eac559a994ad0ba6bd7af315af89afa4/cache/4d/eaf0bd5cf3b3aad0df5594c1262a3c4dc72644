@@ -570,8 +570,8 @@ var NavBar = function (_React$Component) {
         };
       };
 
-      var leftButtonStyle = [styles.leftButton, { alignItems: 'flex-start' }];
-      var rightButtonStyle = [styles.rightButton, { alignItems: 'flex-end' }];
+      var leftButtonStyle = [styles.leftButton, { alignItems: 'flex-start' }, this.props.leftButtonStyle, state.leftButtonStyle];
+      var rightButtonStyle = [styles.rightButton, { alignItems: 'flex-end' }, this.props.rightButtonStyle, state.rightButtonStyle];
 
       var renderLeftButton = wrapByStyle(selected.renderLeftButton, leftButtonStyle) || wrapByStyle(selected.component.renderLeftButton, leftButtonStyle) || this.renderLeftButton;
       var renderRightButton = wrapByStyle(selected.renderRightButton, rightButtonStyle) || wrapByStyle(selected.component.renderRightButton, rightButtonStyle) || this.renderRightButton;

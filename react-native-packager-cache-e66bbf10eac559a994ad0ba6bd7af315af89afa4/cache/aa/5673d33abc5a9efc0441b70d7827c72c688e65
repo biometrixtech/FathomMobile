@@ -10,8 +10,7 @@ var React = require('react');
 var StyleSheet = require('react-native').StyleSheet;
 var View = require('react-native').View;
 
-var PropTypes = React.PropTypes;
-
+var PropTypes = require('prop-types');
 
 function applyDefaultAnimation(position, navigationState) {
   Animated.spring(position, {

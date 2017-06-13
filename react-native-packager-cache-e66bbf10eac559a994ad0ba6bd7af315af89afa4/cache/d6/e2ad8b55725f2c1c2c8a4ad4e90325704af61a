@@ -14,10 +14,10 @@ var React = require('react');
 var StyleSheet = require('react-native').StyleSheet;
 var View = require('react-native').View;
 
-var PropTypes = React.PropTypes;
+var PropTypes = require('prop-types');
 
-var SceneView = function (_React$PureComponent) {
-  babelHelpers.inherits(SceneView, _React$PureComponent);
+var SceneView = function (_React$Component) {
+  babelHelpers.inherits(SceneView, _React$Component);
 
   function SceneView() {
     babelHelpers.classCallCheck(this, SceneView);
@@ -36,15 +36,15 @@ var SceneView = function (_React$PureComponent) {
     }
   }]);
   return SceneView;
-}(React.PureComponent);
+}(React.Component);
 
 SceneView.propTypes = {
   sceneRenderer: PropTypes.func.isRequired,
   sceneRendererProps: NavigationPropTypes.SceneRenderer
 };
 
-var NavigationCard = function (_React$Component) {
-  babelHelpers.inherits(NavigationCard, _React$Component);
+var NavigationCard = function (_React$Component2) {
+  babelHelpers.inherits(NavigationCard, _React$Component2);
 
   function NavigationCard() {
     babelHelpers.classCallCheck(this, NavigationCard);
