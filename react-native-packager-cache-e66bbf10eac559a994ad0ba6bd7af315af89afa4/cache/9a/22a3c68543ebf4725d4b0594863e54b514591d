@@ -12,7 +12,7 @@ function getBackAction() {
   return { type: 'BackAction' };
 }
 
-var PropTypes = React.PropTypes;
+var PropTypes = require('prop-types');
 
 var NavigationRootContainer = function (_React$Component) {
   babelHelpers.inherits(NavigationRootContainer, _React$Component);

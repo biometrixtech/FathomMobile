@@ -13,7 +13,7 @@ var StyleSheet = require('react-native').StyleSheet;
 
 var emptyFunction = require('fbjs/lib/emptyFunction');
 
-var PropTypes = React.PropTypes;
+var PropTypes = require('prop-types');
 var Directions = NavigationCardStackPanResponder.Directions;
 
 var NavigationCardStack = function (_React$PureComponent) {

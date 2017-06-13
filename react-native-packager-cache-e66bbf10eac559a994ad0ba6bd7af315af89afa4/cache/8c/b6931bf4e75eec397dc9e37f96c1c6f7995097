@@ -224,7 +224,15 @@ function inject(state, action, props, scenes) {
           resetHistoryStack(state.children[ind]);
         }
 
-        state.children[ind] = (0, _State.getInitialState)(props, scenes, state.index, babelHelpers.extends({}, action, { parentIndex: state.children[ind].parentIndex }));
+        var activeChild = state.children[state.index];
+        var incomingChild = state.children[ind];
+
+        var incomingChildHadTabs = incomingChild.tabs;
+        var incomingChildWasActive = incomingChild.children.length > 1;
+        var activeChildIsIncomingChild = activeChild.sceneKey === action.key;
+        if (incomingChildHadTabs || !incomingChildWasActive || activeChildIsIncomingChild) {
+          state.children[ind] = (0, _State.getInitialState)(babelHelpers.extends({}, props), scenes, state.index, babelHelpers.extends({}, action, { parentIndex: state.children[ind].parentIndex }));
+        }
 
         return babelHelpers.extends({}, state, { index: ind });
       }

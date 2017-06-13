@@ -9,7 +9,7 @@ var StyleSheet = require('react-native').StyleSheet;
 var View = require('react-native').View;
 var NavigationScenesReducer = require('./NavigationScenesReducer');
 
-var PropTypes = React.PropTypes;
+var PropTypes = require('prop-types');
 
 var NavigationView = function (_React$PureComponent) {
   babelHelpers.inherits(NavigationView, _React$PureComponent);

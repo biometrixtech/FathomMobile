@@ -8,7 +8,8 @@ var ReactNative = require('react-native');
 var Platform = ReactNative.Platform,
     StyleSheet = ReactNative.StyleSheet,
     View = ReactNative.View,
-    Text = ReactNative.Text;
+    Text = ReactNative.Text,
+    ViewPropTypes = ReactNative.ViewPropTypes;
 
 
 var NavigationHeaderTitle = function NavigationHeaderTitle(_ref) {
@@ -21,14 +22,14 @@ var NavigationHeaderTitle = function NavigationHeaderTitle(_ref) {
     babelHelpers.extends({ style: [styles.title, style] }, viewProps, {
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 48
+        lineNumber: 49
       }
     }),
     React.createElement(
       Text,
       { style: [styles.titleText, textStyle], __source: {
           fileName: _jsxFileName,
-          lineNumber: 49
+          lineNumber: 50
         }
       },
       children
@@ -55,7 +56,7 @@ var styles = StyleSheet.create({
 
 NavigationHeaderTitle.propTypes = {
   children: React.PropTypes.string.isRequired,
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   textStyle: Text.propTypes.style
 };
 
