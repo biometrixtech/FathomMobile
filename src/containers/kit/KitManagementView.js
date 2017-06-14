@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import {
+  Image,
   View,
   NativeAppEventEmitter,
   Platform,
@@ -21,7 +22,7 @@ import { AppStyles, AppColors } from '@theme/';
 // Components
 import { Spacer, Button, FormLabel, Text } from '@ui/';
 
-const accessoryDiscoverabilityInstruction = 'hold the ___ and ___ buttons simultaneously until the kit lights flash red and blue';
+const accessoryDiscoverabilityInstruction = 'hold the top and bottom buttons simultaneously until the kit lights flash red and blue';
 
 /* Component ==================================================================== */
 class KitManagementView extends Component {
@@ -169,7 +170,9 @@ class KitManagementView extends Component {
         (
           <Swiper ref="swiper" scrollEnabled={false} loop={false}>
             <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-              <View style={{ flex: 1 }} />
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Image style={{resizeMode: 'contain', width: 400, height: 400}} source={require('@images/Instructions_Kit-Contents-Top_v01.png')}/>
+              </View>
               <View style={{ flex: 1 }}>
                 <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000' }]} >
                   { accessoryDiscoverabilityInstruction }
@@ -188,15 +191,6 @@ class KitManagementView extends Component {
               <View style={{ flex: 1 }} />
             </View>
             <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-
-              {/* <View style={[AppStyles.container, AppStyles.containerCentered]}>
-              <RadialMenu menuRadius={AppStyles.windowSize.width/3} style={[AppStyles.radialMenu]} onOpen={() => {}} onClose={() => {}}>
-                <Icon raised type="octicon" name="settings" color="#FFFFFF" containerStyle={{ backgroundColor: AppColors.brand.primary }} style={[AppStyles.containerCentered]} size={41} />
-                <Icon raised type="entypo" name="tools" color={AppColors.brand.primary} size={40} />
-                <Icon raised type="material-community" name="account-switch" color={AppColors.brand.primary} size={40} />
-                <Icon raised type="material-community" name="replay" color={AppColors.brand.primary} size={40} />
-              </RadialMenu>
-            </View> */}
               <View style={{ flex: 1 }} />
               <View style={{ flex: 1, alignItems: 'center' }} >
                 <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000' }]} >Step 3: Scan for accessories</FormLabel>
