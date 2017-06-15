@@ -194,7 +194,8 @@ var GroupsView = function (_Component) {
                                     lineNumber: 134
                                 }
                             }),
-                            _react2.default.createElement(_ui.Spacer, { size: 10, __source: {
+                            _react2.default.createElement(_ui.Spacer, {
+                                __source: {
                                     fileName: _jsxFileName,
                                     lineNumber: 136
                                 }
@@ -215,7 +216,8 @@ var GroupsView = function (_Component) {
                                     lineNumber: 139
                                 }
                             }),
-                            _react2.default.createElement(_ui.Spacer, { size: 10, __source: {
+                            _react2.default.createElement(_ui.Spacer, {
+                                __source: {
                                     fileName: _jsxFileName,
                                     lineNumber: 141
                                 }

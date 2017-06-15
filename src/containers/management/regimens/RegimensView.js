@@ -144,14 +144,14 @@ class RegimensView extends Component {
 
                     <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Name</FormLabel>
                     <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.regimen.name} onChangeText={name => this.setState({ regimen: { name, trainingGroupIds: this.state.regimen.trainingGroupIds } })} />
-                    <Spacer size={10} />
+                    <Spacer />
                     <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Training Groups</FormLabel>
                     {
                         this.state.trainingGroups.map(group => (
-                          <CheckBox title={group.title} onPress={() => { this.toggleTrainingGroup(group.id); }} checked={this.state.regimen.trainingGroupIds ? this.state.regimen.trainingGroupIds.some(id => id === group.id) : false} />
+                          <CheckBox key={group.id} title={group.title} onPress={() => { this.toggleTrainingGroup(group.id); }} checked={this.state.regimen.trainingGroupIds ? this.state.regimen.trainingGroupIds.some(id => id === group.id) : false} />
                         ))
                     }
-                    <Spacer size={10} />
+                    <Spacer />
 
                     <Button
                       title={'Save'}

@@ -11,6 +11,8 @@ var _reactNative = require('react-native');
 
 var _reactNativeRouterFlux = require('react-native-router-flux');
 
+var _reactNativeElements = require('react-native-elements');
+
 var _theme = require('@theme/');
 
 var _ui = require('@ui/');
@@ -61,13 +63,13 @@ var styles = _reactNative.StyleSheet.create({
     menuItem: {
         borderBottomWidth: 1,
         borderBottomColor: _theme.AppColors.border,
-        paddingBottom: 10
+        padding: 10,
+        flexDirection: 'row'
     },
     menuItem_text: {
         fontSize: 18,
         lineHeight: parseInt(18 + 18 * 0.5, 10),
         fontWeight: 'normal',
-        marginTop: 10,
         color: '#EEEFF0',
         paddingLeft: _theme.AppSizes.padding * 2.5
     },
@@ -93,30 +95,163 @@ var Menu = function (_Component) {
 
         var _this = babelHelpers.possibleConstructorReturn(this, (Menu.__proto__ || Object.getPrototypeOf(Menu)).call(this, props));
 
-        _initialiseProps.call(_this);
+        _this.logout = function () {
+            if (_this.props.logout) {
+                _this.props.logout().then(function () {
+                    _this.props.closeSideMenu();
+                    _reactNativeRouterFlux.Actions.login();
+                }).catch(function (err) {
+                    _reactNative.Alert.alert('Uh oh!', 'Something went wrong, please try again.');
+                });
+            }
+        };
 
-        var title = '';
+        _this.render = function () {
+            var menu = _this.state.menu;
+
+            var menuItems = [];
+            menu.map(function (item, index) {
+                var title = item.title,
+                    onPress = item.onPress,
+                    itemName = item.itemName;
+
+
+                return menuItems.push(_react2.default.createElement(
+                    _reactNative.TouchableOpacity,
+                    {
+                        key: 'menu-item-' + title,
+                        onPress: onPress,
+                        __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 193
+                        }
+                    },
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: [styles.menuItem, { backgroundColor: _this.state.active === index ? '#FFFFFF' : _theme.AppColors.brand.primary }], __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 197
+                            }
+                        },
+                        _react2.default.createElement(_reactNativeElements.Icon, { type: 'material-community', color: _this.state.active === index ? _theme.AppColors.brand.primary : '#FFFFFF', name: itemName, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 198
+                            }
+                        }),
+                        _react2.default.createElement(
+                            _ui.Text,
+                            { style: [styles.menuItem_text, { color: _this.state.active === index ? _theme.AppColors.brand.primary : '#FFFFFF' }], __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 199
+                                }
+                            },
+                            title
+                        )
+                    )
+                ));
+            });
+
+            return _react2.default.createElement(
+                _reactNative.View,
+                { style: [styles.container], __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 209
+                    }
+                },
+                _react2.default.createElement(_reactNative.View, { style: [styles.backgroundFill], __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 210
+                    }
+                }),
+                _react2.default.createElement(_reactNative.Image, { resizeMode: _reactNative.Image.resizeMode.contain, style: [styles.imageContainer, { borderRadius: 50 }], source: { uri: _this.props.user.user.avatar_url }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 212
+                    }
+                }),
+                _react2.default.createElement(_ui.Spacer, {
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 214
+                    }
+                }),
+                _react2.default.createElement(
+                    _ui.Text,
+                    {
+                        style: [styles.menuBottom_text, _theme.AppStyles.textCenterAligned],
+                        __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 216
+                        }
+                    },
+                    _this.props.user.user.first_name && _this.props.user.user.last_name ? _this.props.user.user.first_name + ' ' + _this.props.user.user.last_name : _this.props.user.user.role
+                ),
+                _react2.default.createElement(_ui.Spacer, {
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 225
+                    }
+                }),
+                _react2.default.createElement(
+                    _reactNative.View,
+                    { style: [styles.menuContainer], __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 227
+                        }
+                    },
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: [styles.menu], __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 228
+                            }
+                        },
+                        menuItems
+                    ),
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: [styles.menuBottom], __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 230
+                            }
+                        },
+                        _react2.default.createElement(
+                            _reactNative.View,
+                            { style: [_theme.AppStyles.paddingHorizontal, _theme.AppStyles.paddingVerticalSml], __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 231
+                                }
+                            },
+                            _react2.default.createElement(_ui.Button, {
+                                backgroundColor: MENU_BG_COLOR,
+                                title: 'Log Out',
+                                onPress: _this.logout,
+                                __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 232
+                                }
+                            })
+                        )
+                    )
+                )
+            );
+        };
+
         var action = void 0;
 
         switch (_this.props.user.user.role) {
             case roles.admin:
-                title = 'Team Management';
                 action = _reactNativeRouterFlux.Actions.adminTeamManagement;
                 break;
             case roles.athlete:
-                title = 'Athlete Management';
                 action = _reactNativeRouterFlux.Actions.athleteAthleteManagement;
                 break;
             case roles.biometrixAdmin:
-                title = 'Team Management';
                 action = _reactNativeRouterFlux.Actions.managerTeamManagement;
                 break;
             case roles.manager:
-                title = 'Team Management';
                 action = _reactNativeRouterFlux.Actions.managerTeamManagement;
                 break;
             case roles.researcher:
-                title = 'Subject Management';
                 action = _reactNativeRouterFlux.Actions.researcherSubjectManagement;
                 break;
             default:
@@ -126,19 +261,34 @@ var Menu = function (_Component) {
         _this.state = {
             active: 0,
             menu: [{
-                title: title,
+                itemName: 'view-dashboard',
+                title: 'Dashboard',
                 onPress: function onPress() {
                     _this.props.closeSideMenu();action();_this.setState({ active: 0 });
                 }
             }, {
-                title: 'Kit Management',
+                itemName: 'pulse',
+                title: 'Capture Session',
                 onPress: function onPress() {
-                    _this.props.closeSideMenu();_this.setState({ active: 1 });_reactNativeRouterFlux.Actions.kitManagement();
+                    _this.props.closeSideMenu();_this.setState({ active: 1 });
                 }
             }, {
-                title: 'Settings',
+                itemName: 'tooltip-edit',
+                title: 'Feedback Settings',
                 onPress: function onPress() {
                     _this.props.closeSideMenu();_this.setState({ active: 2 });_reactNativeRouterFlux.Actions.settings();
+                }
+            }, {
+                itemName: 'account-settings-variant',
+                title: 'Manage Account',
+                onPress: function onPress() {
+                    _this.props.closeSideMenu();_this.setState({ active: 3 });
+                }
+            }, {
+                itemName: 'mixcloud',
+                title: 'Manage Kit',
+                onPress: function onPress() {
+                    _this.props.closeSideMenu();_this.setState({ active: 4 });_reactNativeRouterFlux.Actions.kitManagement();
                 }
             }]
         };
@@ -163,144 +313,4 @@ Menu.propTypes = {
 Menu.defaultProps = {
     user: null
 };
-
-var _initialiseProps = function _initialiseProps() {
-    var _this2 = this;
-
-    this.logout = function () {
-        if (_this2.props.logout) {
-            _this2.props.logout().then(function () {
-                _this2.props.closeSideMenu();
-                _reactNativeRouterFlux.Actions.login();
-            }).catch(function (err) {
-                _reactNative.Alert.alert('Uh oh!', 'Something went wrong, please try again.');
-            });
-        }
-    };
-
-    this.render = function () {
-        var menu = _this2.state.menu;
-
-        var menuItems = [];
-        menu.map(function (item, index) {
-            var title = item.title,
-                onPress = item.onPress;
-
-
-            return menuItems.push(_react2.default.createElement(
-                _reactNative.TouchableOpacity,
-                {
-                    key: 'menu-item-' + title,
-                    onPress: onPress,
-                    __source: {
-                        fileName: _jsxFileName,
-                        lineNumber: 185
-                    }
-                },
-                _react2.default.createElement(
-                    _reactNative.View,
-                    { style: [styles.menuItem, { backgroundColor: _this2.state.active === index ? '#FFFFFF' : _theme.AppColors.brand.primary }], __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 189
-                        }
-                    },
-                    _react2.default.createElement(
-                        _ui.Text,
-                        { style: [styles.menuItem_text, { color: _this2.state.active === index ? _theme.AppColors.brand.primary : '#FFFFFF' }], __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 190
-                            }
-                        },
-                        title
-                    )
-                )
-            ));
-        });
-
-        return _react2.default.createElement(
-            _reactNative.View,
-            { style: [styles.container], __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 200
-                }
-            },
-            _react2.default.createElement(_reactNative.View, { style: [styles.backgroundFill], __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 201
-                }
-            }),
-            _react2.default.createElement(_reactNative.Image, { resizeMode: _reactNative.Image.resizeMode.contain, style: [styles.imageContainer, { borderRadius: 50 }], source: { uri: _this2.props.user.user.avatar_url }, __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 203
-                }
-            }),
-            _react2.default.createElement(_ui.Spacer, {
-                __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 205
-                }
-            }),
-            _react2.default.createElement(
-                _ui.Text,
-                {
-                    style: [styles.menuBottom_text, _theme.AppStyles.textCenterAligned],
-                    __source: {
-                        fileName: _jsxFileName,
-                        lineNumber: 207
-                    }
-                },
-                _this2.props.user.user.first_name && _this2.props.user.user.last_name ? _this2.props.user.user.first_name + ' ' + _this2.props.user.user.last_name : _this2.props.user.user.role
-            ),
-            _react2.default.createElement(_ui.Spacer, {
-                __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 216
-                }
-            }),
-            _react2.default.createElement(
-                _reactNative.View,
-                { style: [styles.menuContainer], __source: {
-                        fileName: _jsxFileName,
-                        lineNumber: 218
-                    }
-                },
-                _react2.default.createElement(
-                    _reactNative.View,
-                    { style: [styles.menu], __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 219
-                        }
-                    },
-                    menuItems
-                ),
-                _react2.default.createElement(
-                    _reactNative.View,
-                    { style: [styles.menuBottom], __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 221
-                        }
-                    },
-                    _react2.default.createElement(
-                        _reactNative.View,
-                        { style: [_theme.AppStyles.paddingHorizontal, _theme.AppStyles.paddingVerticalSml], __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 222
-                            }
-                        },
-                        _react2.default.createElement(_ui.Button, {
-                            backgroundColor: MENU_BG_COLOR,
-                            title: 'Log Out',
-                            onPress: _this2.logout,
-                            __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 223
-                            }
-                        })
-                    )
-                )
-            )
-        );
-    };
-};
-
 exports.default = Menu;
