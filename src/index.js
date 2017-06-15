@@ -8,7 +8,6 @@ import { connect, Provider } from 'react-redux';
 import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
 import { Router } from 'react-native-router-flux';
-import codePush from 'react-native-code-push';
 
 // Consts and Libs
 import { AppStyles } from '@theme/';
@@ -43,7 +42,6 @@ const store = compose(
 /* Component ==================================================================== */
 // Wrap App in Redux provider (makes Redux available to all sub-components)
 export default function AppContainer() {
-    codePush.sync();
     return (
       <Provider store={store}>
         <RouterWithRedux scenes={AppRoutes} style={AppStyles.appContainer} />
