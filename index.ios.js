@@ -3,6 +3,7 @@
  */
 
 import { AppRegistry } from 'react-native';
+import codePush from 'react-native-code-push';
 import AppContainer from './src/';
 
-AppRegistry.registerComponent('Fathom', () => AppContainer);
+AppRegistry.registerComponent('Fathom', () => codePush(AppContainer));
