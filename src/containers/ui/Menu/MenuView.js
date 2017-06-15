@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import { Icon } from 'react-native-elements';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors } from '@theme/';
@@ -67,13 +68,13 @@ const styles = StyleSheet.create({
     menuItem: {
         borderBottomWidth: 1,
         borderBottomColor: AppColors.border,
-        paddingBottom:     10,
+        padding:           10,
+        flexDirection:     'row',
     },
     menuItem_text: {
         fontSize:    18,
         lineHeight:  parseInt(18 + (18 * 0.5), 10),
         fontWeight:  'normal',
-        marginTop:   10,
         color:       '#EEEFF0',
         paddingLeft: AppSizes.padding*2.5,
     },
@@ -114,28 +115,22 @@ class Menu extends Component {
     constructor(props) {
         super(props);
 
-        let title = '';
         let action;
 
         switch (this.props.user.user.role) {
         case roles.admin:
-            title = 'Team Management';
             action = Actions.adminTeamManagement;
             break;
         case roles.athlete:
-            title = 'Athlete Management';
             action = Actions.athleteAthleteManagement;
             break;
         case roles.biometrixAdmin:
-            title = 'Team Management';
             action = Actions.managerTeamManagement;
             break;
         case roles.manager:
-            title = 'Team Management';
             action = Actions.managerTeamManagement;
             break;
         case roles.researcher:
-            title = 'Subject Management';
             action = Actions.researcherSubjectManagement;
             break;
         default:
@@ -146,16 +141,29 @@ class Menu extends Component {
             active: 0,
             menu:   [
                 {
-                    title,
-                    onPress: () => { this.props.closeSideMenu(); action(); this.setState({ active: 0 }); },
+                    itemName: 'view-dashboard',
+                    title:    'Dashboard',
+                    onPress:  () => { this.props.closeSideMenu(); action(); this.setState({ active: 0 }); },
                 },
                 {
-                    title:   'Kit Management',
-                    onPress: () => { this.props.closeSideMenu(); this.setState({ active: 1 }); Actions.kitManagement(); },
+                    itemName: 'pulse',
+                    title:    'Capture Session',
+                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 1 }); }
                 },
                 {
-                    title:   'Settings',
-                    onPress: () => { this.props.closeSideMenu(); this.setState({ active: 2 }); Actions.settings(); },
+                    itemName: 'tooltip-edit',
+                    title:    'Feedback Settings',
+                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 2 }); Actions.settings(); },
+                },
+                {
+                    itemName: 'account-settings-variant',
+                    title:    'Manage Account',
+                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 3 }); }
+                },
+                {
+                    itemName: 'mixcloud',
+                    title:    'Manage Kit',
+                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 4 }); Actions.kitManagement(); },
                 },
             ],
         };
@@ -179,7 +187,7 @@ class Menu extends Component {
         // Build the actual Menu Items
         const menuItems = [];
         menu.map((item, index) => {
-            const { title, onPress } = item;
+            const { title, onPress, itemName } = item;
 
             return menuItems.push(
               <TouchableOpacity
@@ -187,6 +195,7 @@ class Menu extends Component {
                 onPress={onPress}
               >
                 <View style={[styles.menuItem, { backgroundColor: this.state.active === index ? '#FFFFFF' : AppColors.brand.primary }]}>
+                  <Icon type={'material-community'} color={this.state.active === index ? AppColors.brand.primary : '#FFFFFF'} name={itemName}/>
                   <Text style={[styles.menuItem_text, { color: this.state.active === index ? AppColors.brand.primary : '#FFFFFF' }]}>
                     {title}
                   </Text>

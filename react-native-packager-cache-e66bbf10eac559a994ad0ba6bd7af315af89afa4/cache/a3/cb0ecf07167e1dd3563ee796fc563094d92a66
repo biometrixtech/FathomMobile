@@ -212,7 +212,8 @@ var RegimensView = function (_Component) {
                                         lineNumber: 146
                                     }
                                 }),
-                                _react2.default.createElement(_ui.Spacer, { size: 10, __source: {
+                                _react2.default.createElement(_ui.Spacer, {
+                                    __source: {
                                         fileName: _jsxFileName,
                                         lineNumber: 147
                                     }
@@ -227,7 +228,7 @@ var RegimensView = function (_Component) {
                                     'Training Groups'
                                 ),
                                 _this.state.trainingGroups.map(function (group) {
-                                    return _react2.default.createElement(_reactNativeElements.CheckBox, { title: group.title, onPress: function onPress() {
+                                    return _react2.default.createElement(_reactNativeElements.CheckBox, { key: group.id, title: group.title, onPress: function onPress() {
                                             _this.toggleTrainingGroup(group.id);
                                         }, checked: _this.state.regimen.trainingGroupIds ? _this.state.regimen.trainingGroupIds.some(function (id) {
                                             return id === group.id;
@@ -237,7 +238,8 @@ var RegimensView = function (_Component) {
                                         }
                                     });
                                 }),
-                                _react2.default.createElement(_ui.Spacer, { size: 10, __source: {
+                                _react2.default.createElement(_ui.Spacer, {
+                                    __source: {
                                         fileName: _jsxFileName,
                                         lineNumber: 154
                                     }

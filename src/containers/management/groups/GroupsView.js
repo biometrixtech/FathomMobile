@@ -133,12 +133,12 @@ class GroupsView extends Component {
                   <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Name</FormLabel>
                   <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.title} onChangeText={title => this.setState({ trainingGroup: (this.state.trainingGroup.title = title) })} />
 
-                  <Spacer size={10} />
+                  <Spacer />
 
                   <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Description</FormLabel>
                   <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.description} onChangeText={description => this.setState({ trainingGroup: (this.state.trainingGroup.description = description) })} />
 
-                  <Spacer size={10} />
+                  <Spacer />
 
                   <Button
                     title={'Save'}
