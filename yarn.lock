@@ -3911,6 +3911,10 @@ react-native-network-info@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-2.2.0.tgz#adce17f7f10ca48f3a479c91b0092a85a54fea9a"
 
+react-native-prompt@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-prompt/-/react-native-prompt-1.0.0.tgz#41e0ec2aa7dd8f12f3a3ee83af9d63c4b670f8a1"
+
 react-native-radial-menu@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-native-radial-menu/-/react-native-radial-menu-1.1.0.tgz#e815a8ea89e50a5b0e96eaf99e08f29eb382a8e0"

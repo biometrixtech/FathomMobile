@@ -1,0 +1,9 @@
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _Prompt = require('./Prompt');
+
+var _Prompt2 = babelHelpers.interopRequireDefault(_Prompt);
+
+exports.default = _Prompt2.default;
