@@ -15,6 +15,7 @@ import BleManager from 'react-native-ble-manager';
 import Swiper from 'react-native-swiper';
 import ModalDropdown from 'react-native-modal-dropdown';
 import Collapsible from 'react-native-collapsible';
+import Prompt from 'react-native-prompt';
 
 // Consts and Libs
 import { AppStyles, AppColors } from '@theme/';
@@ -47,6 +48,7 @@ class KitManagementView extends Component {
             devicesFound: [],
             isCollapsed:  true,
             SSID:         null,
+            data:         null,
             resultMsg:    {
                 status:  null,
                 success: null,
@@ -57,10 +59,8 @@ class KitManagementView extends Component {
 
     componentDidMount = () => {
         // Get SSID
-        NetworkInfo.getSSID((ssid) => {
-            console.log('SSID: ', ssid);
+        NetworkInfo.getSSID(ssid => {
             this.setState({ SSID: ssid });
-            return null;
         });
 
         BleManager.checkState();
@@ -133,33 +133,87 @@ class KitManagementView extends Component {
         return this.setState({ resultMsg: { error: null } });
     }
 
-    connect = (data) => {
-        console.log(data);
-        return BleManager.connect(data.id)
+    setSSID = (ssid) => {
+        let dataArray = new Array(20);
+        dataArray[0] = parseInt('0x04', 16);
+        dataArray[1] = ssid.length;
+        for (let i = 2; i < 20 && i-2 < ssid.length; i++) {
+            dataArray[i] = ssid.charCodeAt(i-2);
+        }
+        for (let i = ssid.length + 2; i < 20; i++) {
+            dataArray[i] = parseInt('0x00', 16);
+        }
+        console.log('SSID Data Array: ', dataArray);
+        return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
             .then(() => {
-                data.connected = true;
-                return data;
-            })
-            .then(() => BleManager.isPeripheralConnected(data.id, []))
-            .then((isConnected) => {
-                console.log(`Is peripheral ${data.name} connected: ${isConnected}`);
-                data.connected = isConnected;
-                return data;
-            })
-            .then(peripheral => BleManager.retrieveServices(peripheral.id))
-            .then(peripheralData => console.log('Retrieved peripheral services', peripheralData))
-            .then(() => {
-                const dataArray = new Array(20);
-                dataArray[0] = parseInt('0x04', 16);
-                dataArray[1] = this.state.SSID.length;
-                for (let i = 2; i < 20; i++) {
-                    dataArray[i] = this.state.SSID.charCodeAt(i-2);
+                if (ssid.length <= 18) {
+                    return;
                 }
-                console.log('Data Array: ', dataArray);
-                return BleManager.write(data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
+                let dataArray = new Array(20);
+                dataArray[0] = parseInt('0x05', 16);
+                dataArray[1] = ssid.length - 18;
+                for (let i = 2; i - 2 < ssid.length - 18; i++) {
+                    dataArray[i] = ssid.charCodeAt(i+16);
+                }
+                for (let i = ssid.length - 16; i < 20; i++) {
+                    dataArray[i] = parseInt('0x00', 16);
+                }
+                console.log('SSID Data Array 2: ', dataArray);
+                return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
+            });
+    }
+
+    setWiFiPassword = (passwordAttempt) => {
+        let dataArray = new Array(20);
+        dataArray[0] = parseInt('0x06', 16);
+        dataArray[1] = passwordAttempt.length;
+        for (let i = 2; i < 20 && i-2 < passwordAttempt.length; i++) {
+            dataArray[i] = passwordAttempt.charCodeAt(i-2);
+        }
+        for (let i = passwordAttempt.length + 2; i < 20; i++) {
+            dataArray[i] = parseInt('0x00', 16);
+        }
+        console.log('Password Data Array: ', dataArray);
+        return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
+            .then(() => {
+                if (passwordAttempt.length <= 18) {
+                    return;
+                }
+                let dataArray = new Array(20);
+                dataArray[0] = parseInt('0x07', 16);
+                dataArray[1] = passwordAttempt.length - 18;
+                for (let i = 2; i - 2 < passwordAttempt.length - 18; i++) {
+                    dataArray[i] = passwordAttempt.charCodeAt(i+16);
+                }
+                for (let i = passwordAttempt.length - 16; i < 20; i++) {
+                    dataArray[i] = parseInt('0x00', 16);
+                }
+                console.log('Password Data Array 2: ', dataArray);
+                return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
+            });
+    }
+
+    setupWiFi = (ssid, password) => {
+        return this.setSSID(ssid)
+            .then(() => this.setWiFiPassword(password))
+            .then(() => {
+                let dataArray = new Array(20);
+                dataArray[0] = parseInt('0x08', 16);
+                dataArray[1] = parseInt('0x00', 16);
+                for (let i = 2; i < 20; i++) {
+                    dataArray[i] = parseInt('0x00', 16);
+                }
+                return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
             })
-            .then(() => BleManager.read(data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de'))
-            .then(readData => console.log('Data written: ', readData))
+            .then(() => BleManager.read(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de'))
+            .then(readData => console.log(readData))
+            .catch(err => { console.log(err); this.setState({ promptVisible: true }) });
+    }
+
+    connect = (data) => {
+        return BleManager.connect(data.id)
+            .then(() => BleManager.retrieveServices(data.id))
+            .then(peripheralData => this.setState({ data, promptVisible: true }))
             .catch((err) => {
                 console.log(err);
                 return err;
@@ -191,6 +245,19 @@ class KitManagementView extends Component {
               <View style={{ flex: 1 }} />
             </View>
             <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+              <Prompt
+                title={`${this.state.SSID} Password:`}
+                placeholder={'Password'}
+                visible={this.state.promptVisible}
+                onCancel={() => this.setState({
+                        promptVisible: false
+                    })
+                }
+                onSubmit={value => {
+                    this.setState({ promptVisible: false });
+                    return this.setupWiFi(this.state.SSID, value);
+                }}
+              />
               <View style={{ flex: 1 }} />
               <View style={{ flex: 1, alignItems: 'center' }} >
                 <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000' }]} >Step 3: Scan for accessories</FormLabel>
