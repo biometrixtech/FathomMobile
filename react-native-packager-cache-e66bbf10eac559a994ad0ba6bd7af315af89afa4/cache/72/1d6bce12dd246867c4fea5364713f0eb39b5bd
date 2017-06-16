@@ -71,14 +71,17 @@ var ButtonGroup = function ButtonGroup(props) {
           } : function () {},
           key: i,
           style: [styles.button, i < buttons.length - 1 && {
-            borderRightWidth: innerBorderStyle && innerBorderStyle.width || 1,
+            borderRightWidth: i === 0 ? 0 : innerBorderStyle && innerBorderStyle.width || 1,
             borderRightColor: innerBorderStyle && innerBorderStyle.color || _colors2.default.grey4
+          }, i === 1 && {
+            borderLeftWidth: innerBorderStyle && innerBorderStyle.width || 1,
+            borderLeftColor: innerBorderStyle && innerBorderStyle.color || _colors2.default.grey4
           }, i === buttons.length - 1 && babelHelpers.extends({}, lastBorderStyle, {
-            borderTopRightRadius: containerBorderRadius || 0,
-            borderBottomRightRadius: containerBorderRadius || 0
+            borderTopRightRadius: containerBorderRadius || 3,
+            borderBottomRightRadius: containerBorderRadius || 3
           }), i === 0 && {
-            borderTopLeftRadius: containerBorderRadius || 0,
-            borderBottomLeftRadius: containerBorderRadius || 0
+            borderTopLeftRadius: containerBorderRadius || 3,
+            borderBottomLeftRadius: containerBorderRadius || 3
           }, selectedIndex === i && {
             backgroundColor: selectedBackgroundColor || 'white'
           }],
@@ -91,13 +94,13 @@ var ButtonGroup = function ButtonGroup(props) {
           _reactNative.View,
           { style: [styles.textContainer, buttonStyle && buttonStyle], __source: {
               fileName: _jsxFileName,
-              lineNumber: 76
+              lineNumber: 83
             }
           },
           button.element ? _react2.default.createElement(button.element, {
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 78
+              lineNumber: 85
             }
           }) : _react2.default.createElement(
             _Text2.default,
@@ -105,7 +108,7 @@ var ButtonGroup = function ButtonGroup(props) {
               style: [styles.buttonText, textStyle && textStyle, selectedIndex === i && { color: _colors2.default.grey1 }, selectedIndex === i && selectedTextStyle],
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 79
+                lineNumber: 86
               }
             },
             button

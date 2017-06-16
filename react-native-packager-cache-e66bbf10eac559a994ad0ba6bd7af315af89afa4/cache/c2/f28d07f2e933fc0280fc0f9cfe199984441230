@@ -113,7 +113,9 @@ var Avatar = function Avatar(props) {
       paddingTop: 10,
       paddingRight: 10,
       paddingBottom: 10,
-      backgroundColor: 'transparent'
+      backgroundColor: 'transparent',
+      width: width,
+      height: height
     },
     avatar: {
       width: width,
@@ -129,9 +131,7 @@ var Avatar = function Avatar(props) {
       top: 0,
       left: 0,
       right: 0,
-      bottom: 0,
-      width: width,
-      height: height
+      bottom: 0
     },
     title: {
       color: '#ffffff',

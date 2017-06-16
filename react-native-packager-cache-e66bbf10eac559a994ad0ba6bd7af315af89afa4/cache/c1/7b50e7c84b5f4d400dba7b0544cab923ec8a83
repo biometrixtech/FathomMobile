@@ -118,6 +118,10 @@ var _SwipeDeck = require('./swipedeck/SwipeDeck');
 
 var _SwipeDeck2 = babelHelpers.interopRequireDefault(_SwipeDeck);
 
+var _Header = require('./header/Header');
+
+var _Header2 = babelHelpers.interopRequireDefault(_Header);
+
 var Elements = {
   Badge: _badge2.default,
   Button: _Button2.default,
@@ -148,7 +152,8 @@ var Elements = {
   Slider: _Slider2.default,
   Avatar: _Avatar2.default,
   Rating: _Rating2.default,
-  SwipeDeck: _SwipeDeck2.default
+  SwipeDeck: _SwipeDeck2.default,
+  Header: _Header2.default
 };
 
 module.exports = Elements;

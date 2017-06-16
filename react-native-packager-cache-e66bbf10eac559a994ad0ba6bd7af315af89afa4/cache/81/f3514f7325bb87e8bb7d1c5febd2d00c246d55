@@ -67,9 +67,8 @@ var Search = function (_Component) {
           clearIcon = _props.clearIcon,
           containerRef = _props.containerRef,
           textInputRef = _props.textInputRef,
-          selectionColor = _props.selectionColor,
           underlineColorAndroid = _props.underlineColorAndroid,
-          attributes = babelHelpers.objectWithoutProperties(_props, ['containerStyle', 'inputStyle', 'icon', 'noIcon', 'lightTheme', 'round', 'showLoadingIcon', 'loadingIcon', 'clearIcon', 'containerRef', 'textInputRef', 'selectionColor', 'underlineColorAndroid']);
+          attributes = babelHelpers.objectWithoutProperties(_props, ['containerStyle', 'inputStyle', 'icon', 'noIcon', 'lightTheme', 'round', 'showLoadingIcon', 'loadingIcon', 'clearIcon', 'containerRef', 'textInputRef', 'underlineColorAndroid']);
 
       return _react2.default.createElement(
         _reactNative.View,
@@ -78,47 +77,46 @@ var Search = function (_Component) {
           style: [styles.container, lightTheme && styles.containerLight, containerStyle && containerStyle],
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 54
+            lineNumber: 53
           }
         },
         _react2.default.createElement(_reactNative.TextInput, babelHelpers.extends({
           ref: textInputRef,
-          selectionColor: selectionColor || _colors2.default.grey3,
           underlineColorAndroid: underlineColorAndroid ? underlineColorAndroid : 'transparent',
-          style: [styles.input, lightTheme && styles.inputLight, noIcon && { paddingLeft: 9 }, round && { borderRadius: _reactNative.Platform.OS === 'ios' ? 15 : 20 }, inputStyle && inputStyle]
+          style: [styles.input, lightTheme && styles.inputLight, noIcon && { paddingLeft: 9 }, round && { borderRadius: _reactNative.Platform.OS === 'ios' ? 15 : 20 }, inputStyle && inputStyle, clearIcon && showLoadingIcon && { paddingRight: 50 }, (clearIcon && !showLoadingIcon || !clearIcon && showLoadingIcon) && { paddingRight: 30 }]
         }, attributes, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 62
+            lineNumber: 61
           }
         })),
         !noIcon && _react2.default.createElement(_MaterialIcons2.default, {
           size: 16,
-          style: [styles.icon, icon.style && icon.style],
+          style: [styles.icon, styles.searchIcon, icon.style && icon.style],
           name: icon.name || 'search',
           color: icon.color || _colors2.default.grey3,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 78
+            lineNumber: 79
           }
         }),
         clearIcon && _react2.default.createElement(_MaterialIcons2.default, {
           size: 16,
-          style: [styles.clearIcon, clearIcon.style && clearIcon.style],
+          style: [styles.icon, styles.clearIcon, clearIcon.style && clearIcon.style],
           name: clearIcon.name || 'close',
           onPress: this.clearText.bind(this),
           color: clearIcon.color || _colors2.default.grey3,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 85
+            lineNumber: 86
           }
         }),
         showLoadingIcon && _react2.default.createElement(_reactNative.ActivityIndicator, {
-          style: [styles.loadingIcon, loadingIcon.style && loadingIcon.style],
+          style: [styles.loadingIcon, loadingIcon.style && loadingIcon.style, clearIcon && { right: 35 }],
           color: icon.color || _colors2.default.grey3,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 93
+            lineNumber: 98
           }
         })
       );
@@ -139,7 +137,6 @@ Search.propTypes = {
   clearIcon: _propTypes2.default.oneOfType([_propTypes2.default.object, _propTypes2.default.bool]),
   textInputRef: _propTypes2.default.string,
   containerRef: _propTypes2.default.string,
-  selectionColor: _propTypes2.default.string,
   underlineColorAndroid: _propTypes2.default.string,
   onChangeText: _propTypes2.default.func
 };
@@ -170,7 +167,6 @@ var styles = _reactNative.StyleSheet.create({
   icon: babelHelpers.extends({
     backgroundColor: 'transparent',
     position: 'absolute',
-    left: 16,
     top: 15.5
   }, _reactNative.Platform.select({
     android: {
@@ -184,7 +180,7 @@ var styles = _reactNative.StyleSheet.create({
     top: 13
   }, _reactNative.Platform.select({
     android: {
-      top: 17
+      top: 18
     }
   })),
   input: babelHelpers.extends({
@@ -208,16 +204,12 @@ var styles = _reactNative.StyleSheet.create({
   inputLight: {
     backgroundColor: _colors2.default.grey4
   },
-  clearIcon: babelHelpers.extends({
-    backgroundColor: 'transparent',
-    position: 'absolute',
-    right: 16,
-    top: 15.5
-  }, _reactNative.Platform.select({
-    android: {
-      top: 17
-    }
-  }))
+  searchIcon: {
+    left: 16
+  },
+  clearIcon: {
+    right: 16
+  }
 });
 
 exports.default = Search;

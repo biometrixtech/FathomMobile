@@ -13,6 +13,10 @@ var _react2 = babelHelpers.interopRequireDefault(_react);
 
 var _reactNative = require('react-native');
 
+var _Avatar = require('../avatar/Avatar');
+
+var _Avatar2 = babelHelpers.interopRequireDefault(_Avatar);
+
 var _badge = require('../badge/badge');
 
 var _badge2 = babelHelpers.interopRequireDefault(_badge);
@@ -42,6 +46,9 @@ var ListItem = function ListItem(props) {
       title = props.title,
       leftIcon = props.leftIcon,
       rightIcon = props.rightIcon,
+      leftIconOnPress = props.leftIconOnPress,
+      leftIconOnLongPress = props.leftIconOnLongPress,
+      leftIconUnderlayColor = props.leftIconUnderlayColor,
       leftIconContainerStyle = props.leftIconContainerStyle,
       avatarStyle = props.avatarStyle,
       underlayColor = props.underlayColor,
@@ -49,6 +56,7 @@ var ListItem = function ListItem(props) {
       subtitleStyle = props.subtitleStyle,
       containerStyle = props.containerStyle,
       wrapperStyle = props.wrapperStyle,
+      titleNumberOfLines = props.titleNumberOfLines,
       titleStyle = props.titleStyle,
       titleContainerStyle = props.titleContainerStyle,
       hideChevron = props.hideChevron,
@@ -59,7 +67,9 @@ var ListItem = function ListItem(props) {
       rightTitle = props.rightTitle,
       rightTitleContainerStyle = props.rightTitleContainerStyle,
       rightTitleStyle = props.rightTitleStyle,
+      rightTitleNumberOfLines = props.rightTitleNumberOfLines,
       subtitleContainerStyle = props.subtitleContainerStyle,
+      subtitleNumberOfLines = props.subtitleNumberOfLines,
       badge = props.badge,
       label = props.label,
       onLongPress = props.onLongPress,
@@ -87,11 +97,13 @@ var ListItem = function ListItem(props) {
       textInputSecure = props.textInputSecure,
       textInputStyle = props.textInputStyle,
       textInputContainerStyle = props.textInputContainerStyle,
-      attributes = babelHelpers.objectWithoutProperties(props, ['onPress', 'title', 'leftIcon', 'rightIcon', 'leftIconContainerStyle', 'avatarStyle', 'underlayColor', 'subtitle', 'subtitleStyle', 'containerStyle', 'wrapperStyle', 'titleStyle', 'titleContainerStyle', 'hideChevron', 'chevronColor', 'roundAvatar', 'component', 'fontFamily', 'rightTitle', 'rightTitleContainerStyle', 'rightTitleStyle', 'subtitleContainerStyle', 'badge', 'label', 'onLongPress', 'switchButton', 'onSwitch', 'switchDisabled', 'switchOnTintColor', 'switchThumbTintColor', 'switchTintColor', 'switched', 'textInput', 'textInputAutoCapitalize', 'textInputAutoCorrect', 'textInputAutoFocus', 'textInputEditable', 'textInputKeyboardType', 'textInputMaxLength', 'textInputMultiline', 'textInputOnChangeText', 'textInputOnFocus', 'textInputOnBlur', 'textInputSelectTextOnFocus', 'textInputReturnKeyType', 'textInputValue', 'textInputSecure', 'textInputStyle', 'textInputContainerStyle']);
+      onPressRightIcon = props.onPressRightIcon,
+      attributes = babelHelpers.objectWithoutProperties(props, ['onPress', 'title', 'leftIcon', 'rightIcon', 'leftIconOnPress', 'leftIconOnLongPress', 'leftIconUnderlayColor', 'leftIconContainerStyle', 'avatarStyle', 'underlayColor', 'subtitle', 'subtitleStyle', 'containerStyle', 'wrapperStyle', 'titleNumberOfLines', 'titleStyle', 'titleContainerStyle', 'hideChevron', 'chevronColor', 'roundAvatar', 'component', 'fontFamily', 'rightTitle', 'rightTitleContainerStyle', 'rightTitleStyle', 'rightTitleNumberOfLines', 'subtitleContainerStyle', 'subtitleNumberOfLines', 'badge', 'label', 'onLongPress', 'switchButton', 'onSwitch', 'switchDisabled', 'switchOnTintColor', 'switchThumbTintColor', 'switchTintColor', 'switched', 'textInput', 'textInputAutoCapitalize', 'textInputAutoCorrect', 'textInputAutoFocus', 'textInputEditable', 'textInputKeyboardType', 'textInputMaxLength', 'textInputMultiline', 'textInputOnChangeText', 'textInputOnFocus', 'textInputOnBlur', 'textInputSelectTextOnFocus', 'textInputReturnKeyType', 'textInputValue', 'textInputSecure', 'textInputStyle', 'textInputContainerStyle', 'onPressRightIcon']);
   var avatar = props.avatar;
 
 
   var Component = onPress || onLongPress ? _reactNative.TouchableHighlight : _reactNative.View;
+  var LeftIconWrapper = leftIconOnPress || leftIconOnLongPress ? _reactNative.TouchableHighlight : _reactNative.View;
   if (component) {
     Component = component;
   }
@@ -108,66 +120,88 @@ var ListItem = function ListItem(props) {
     }, attributes, {
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 83
+        lineNumber: 94
       }
     }),
     _react2.default.createElement(
       _reactNative.View,
       { style: [styles.wrapper, wrapperStyle && wrapperStyle], __source: {
           fileName: _jsxFileName,
-          lineNumber: 90
+          lineNumber: 101
         }
       },
       _react2.default.isValidElement(leftIcon) ? leftIcon : leftIcon && leftIcon.name && _react2.default.createElement(
-        _reactNative.View,
+        LeftIconWrapper,
         {
-          style: [styles.iconStyle, leftIconContainerStyle && leftIconContainerStyle],
+          onLongPress: leftIconOnLongPress,
+          onPress: leftIconOnPress,
+          underlayColor: leftIconUnderlayColor,
+          style: [styles.iconStyle, { flex: rightTitle && rightTitle !== '' ? 0.3 : 0.15 }, leftIconContainerStyle && leftIconContainerStyle],
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 95
+            lineNumber: 106
           }
         },
-        _react2.default.createElement(_Icon2.default, {
-          type: leftIcon.type,
-          iconStyle: [styles.icon, leftIcon.style && leftIcon.style],
-          name: leftIcon.name,
-          color: leftIcon.color || _colors2.default.grey4,
-          size: leftIcon.size || 24,
+        _react2.default.createElement(
+          _reactNative.View,
+          {
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 116
+            }
+          },
+          _react2.default.createElement(_Icon2.default, {
+            type: leftIcon.type,
+            iconStyle: [styles.icon, leftIcon.style && leftIcon.style],
+            name: leftIcon.name,
+            color: leftIcon.color || _colors2.default.grey4,
+            size: leftIcon.size || 24,
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 117
+            }
+          })
+        )
+      ),
+      avatar && _react2.default.createElement(
+        _reactNative.View,
+        { style: styles.avatar, __source: {
+            fileName: _jsxFileName,
+            lineNumber: 127
+          }
+        },
+        _react2.default.isValidElement(avatar) ? avatar : _react2.default.createElement(_Avatar2.default, {
+          containerStyle: avatarStyle && avatarStyle,
+          rounded: roundAvatar,
+          source: avatar,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 101
+            lineNumber: 130
           }
         })
       ),
-      avatar && _react2.default.createElement(_reactNative.Image, {
-        style: [styles.avatar, roundAvatar && { borderRadius: 17 }, avatarStyle && avatarStyle],
-        source: avatar,
-        __source: {
-          fileName: _jsxFileName,
-          lineNumber: 110
-        }
-      }),
       _react2.default.createElement(
         _reactNative.View,
         { style: styles.titleSubtitleContainer, __source: {
             fileName: _jsxFileName,
-            lineNumber: 118
+            lineNumber: 136
           }
         },
         _react2.default.createElement(
           _reactNative.View,
           { style: titleContainerStyle, __source: {
               fileName: _jsxFileName,
-              lineNumber: 119
+              lineNumber: 137
             }
           },
           title && (typeof title === 'string' || typeof title === 'number') ? _react2.default.createElement(
             _Text2.default,
             {
+              numberOfLines: titleNumberOfLines,
               style: [styles.title, !leftIcon && { marginLeft: 10 }, titleStyle && titleStyle, fontFamily && { fontFamily: fontFamily }],
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 121
+                lineNumber: 139
               }
             },
             title
@@ -176,7 +210,7 @@ var ListItem = function ListItem(props) {
             {
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 131
+                lineNumber: 150
               }
             },
             title
@@ -186,16 +220,17 @@ var ListItem = function ListItem(props) {
           _reactNative.View,
           { style: subtitleContainerStyle, __source: {
               fileName: _jsxFileName,
-              lineNumber: 135
+              lineNumber: 154
             }
           },
           subtitle && (typeof subtitle === 'string' || typeof subtitle === 'number') ? _react2.default.createElement(
             _Text2.default,
             {
+              numberOfLines: subtitleNumberOfLines,
               style: [styles.subtitle, !leftIcon && { marginLeft: 10 }, subtitleStyle && subtitleStyle, fontFamily && { fontFamily: fontFamily }],
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 138
+                lineNumber: 157
               }
             },
             subtitle
@@ -204,7 +239,7 @@ var ListItem = function ListItem(props) {
             {
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 148
+                lineNumber: 168
               }
             },
             subtitle
@@ -215,14 +250,17 @@ var ListItem = function ListItem(props) {
         _reactNative.View,
         { style: [styles.rightTitleContainer, rightTitleContainerStyle], __source: {
             fileName: _jsxFileName,
-            lineNumber: 156
+            lineNumber: 176
           }
         },
         _react2.default.createElement(
           _Text2.default,
-          { style: [styles.rightTitleStyle, rightTitleStyle], __source: {
+          {
+            numberOfLines: rightTitleNumberOfLines,
+            style: [styles.rightTitleStyle, rightTitleStyle],
+            __source: {
               fileName: _jsxFileName,
-              lineNumber: 157
+              lineNumber: 177
             }
           },
           rightTitle
@@ -232,7 +270,7 @@ var ListItem = function ListItem(props) {
         _reactNative.View,
         { style: [styles.rightTitleContainer, textInputContainerStyle], __source: {
             fileName: _jsxFileName,
-            lineNumber: 162
+            lineNumber: 185
           }
         },
         _react2.default.createElement(_reactNative.TextInput, {
@@ -254,15 +292,25 @@ var ListItem = function ListItem(props) {
           returnKeyType: textInputReturnKeyType,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 163
+            lineNumber: 186
           }
         })
       ),
+      badge && !rightTitle && _react2.default.createElement(_badge2.default, babelHelpers.extends({}, badge, {
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 205
+        }
+      })),
       !hideChevron && (_react2.default.isValidElement(rightIcon) ? rightIcon : _react2.default.createElement(
-        _reactNative.View,
-        { style: styles.chevronContainer, __source: {
+        _reactNative.TouchableOpacity,
+        {
+          onPress: onPressRightIcon,
+          disabled: !onPressRightIcon,
+          style: styles.chevronContainer,
+          __source: {
             fileName: _jsxFileName,
-            lineNumber: 185
+            lineNumber: 209
           }
         },
         _react2.default.createElement(_Icon2.default, {
@@ -273,7 +321,7 @@ var ListItem = function ListItem(props) {
           color: rightIcon.color || chevronColor,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 186
+            lineNumber: 214
           }
         })
       )),
@@ -281,7 +329,7 @@ var ListItem = function ListItem(props) {
         _reactNative.View,
         { style: styles.switchContainer, __source: {
             fileName: _jsxFileName,
-            lineNumber: 196
+            lineNumber: 224
           }
         },
         _react2.default.createElement(_reactNative.Switch, {
@@ -293,16 +341,10 @@ var ListItem = function ListItem(props) {
           value: switched,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 197
+            lineNumber: 225
           }
         })
       ),
-      badge && !rightTitle && _react2.default.createElement(_badge2.default, babelHelpers.extends({}, badge, {
-        __source: {
-          fileName: _jsxFileName,
-          lineNumber: 206
-        }
-      })),
       label && label
     )
   );
@@ -310,12 +352,16 @@ var ListItem = function ListItem(props) {
 
 ListItem.defaultProps = {
   underlayColor: 'white',
+  leftIconUnderlayColor: 'white',
   chevronColor: _colors2.default.grey4,
   rightIcon: { name: 'chevron-right' },
   hideChevron: false,
   roundAvatar: false,
   switchButton: false,
-  textInputEditable: true
+  textInputEditable: true,
+  titleNumberOfLines: 1,
+  subtitleNumberOfLines: 1,
+  rightTitleNumberOfLines: 1
 };
 
 ListItem.propTypes = {
@@ -327,10 +373,12 @@ ListItem.propTypes = {
   underlayColor: _propTypes2.default.string,
   subtitle: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.number, _propTypes2.default.object]),
   subtitleStyle: _propTypes2.default.any,
+  subtitleNumberOfLines: _propTypes2.default.number,
   containerStyle: _propTypes2.default.any,
   wrapperStyle: _propTypes2.default.any,
   titleStyle: _propTypes2.default.any,
   titleContainerStyle: _propTypes2.default.any,
+  titleNumberOfLines: _propTypes2.default.number,
   hideChevron: _propTypes2.default.bool,
   chevronColor: _propTypes2.default.string,
   roundAvatar: _propTypes2.default.bool,
@@ -364,12 +412,17 @@ ListItem.propTypes = {
   rightTitle: _propTypes2.default.string,
   rightTitleContainerStyle: _reactNative.View.propTypes.style,
   rightTitleStyle: _Text2.default.propTypes.style,
+  rightTitleNumberOfLines: _propTypes2.default.number,
   subtitleContainerStyle: _reactNative.View.propTypes.style,
   label: _propTypes2.default.any,
   onLongPress: _propTypes2.default.func,
   leftIcon: _propTypes2.default.oneOfType([_propTypes2.default.element, _propTypes2.default.object]),
+  leftIconOnPress: _propTypes2.default.func,
+  leftIconOnLongPress: _propTypes2.default.func,
+  leftIconUnderlayColor: _propTypes2.default.string,
   leftIconContainerStyle: _reactNative.View.propTypes.style,
-  avatarStyle: _reactNative.View.propTypes.style
+  avatarStyle: _reactNative.View.propTypes.style,
+  onPressRightIcon: _propTypes2.default.func
 };
 
 var styles = _reactNative.StyleSheet.create({
@@ -381,8 +434,8 @@ var styles = _reactNative.StyleSheet.create({
     paddingTop: 10,
     paddingRight: 10,
     paddingBottom: 10,
-    borderBottomColor: '#ededed',
-    borderBottomWidth: 1,
+    borderBottomColor: _colors2.default.greyOutline,
+    borderBottomWidth: 0.5,
     backgroundColor: 'transparent'
   },
   wrapper: {
@@ -390,7 +443,6 @@ var styles = _reactNative.StyleSheet.create({
     marginLeft: 10
   },
   iconStyle: {
-    flex: 0.15,
     justifyContent: 'center',
     alignItems: 'center'
   },
