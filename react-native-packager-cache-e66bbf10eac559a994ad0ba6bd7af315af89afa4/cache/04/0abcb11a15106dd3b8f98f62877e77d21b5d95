@@ -42,6 +42,8 @@ var CheckBox = function CheckBox(props) {
       right = props.right,
       containerStyle = props.containerStyle,
       textStyle = props.textStyle,
+      onPress = props.onPress,
+      onLongPress = props.onLongPress,
       onIconPress = props.onIconPress,
       onLongIconPress = props.onLongIconPress,
       checkedIcon = props.checkedIcon,
@@ -51,7 +53,7 @@ var CheckBox = function CheckBox(props) {
       uncheckedColor = props.uncheckedColor,
       checkedTitle = props.checkedTitle,
       fontFamily = props.fontFamily,
-      attributes = babelHelpers.objectWithoutProperties(props, ['component', 'checked', 'iconRight', 'title', 'center', 'right', 'containerStyle', 'textStyle', 'onIconPress', 'onLongIconPress', 'checkedIcon', 'uncheckedIcon', 'iconType', 'checkedColor', 'uncheckedColor', 'checkedTitle', 'fontFamily']);
+      attributes = babelHelpers.objectWithoutProperties(props, ['component', 'checked', 'iconRight', 'title', 'center', 'right', 'containerStyle', 'textStyle', 'onPress', 'onLongPress', 'onIconPress', 'onLongIconPress', 'checkedIcon', 'uncheckedIcon', 'iconType', 'checkedColor', 'uncheckedColor', 'checkedTitle', 'fontFamily']);
 
 
   var Icon = _FontAwesome2.default;
@@ -66,11 +68,13 @@ var CheckBox = function CheckBox(props) {
   return _react2.default.createElement(
     Component,
     babelHelpers.extends({
+      onLongPress: onLongPress,
+      onPress: onPress,
       style: [styles.container, containerStyle && containerStyle]
     }, attributes, {
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 48
+        lineNumber: 50
       }
     }),
     _react2.default.createElement(
@@ -79,7 +83,7 @@ var CheckBox = function CheckBox(props) {
         style: [styles.wrapper, right && { justifyContent: 'flex-end' }, center && { justifyContent: 'center' }],
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 52
+          lineNumber: 56
         }
       },
       !iconRight && _react2.default.createElement(Icon, {
@@ -90,7 +94,7 @@ var CheckBox = function CheckBox(props) {
         onPress: onIconPress,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 60
+          lineNumber: 64
         }
       }),
       _react2.default.createElement(
@@ -99,7 +103,7 @@ var CheckBox = function CheckBox(props) {
           style: [styles.text, textStyle && textStyle, fontFamily && { fontFamily: fontFamily }],
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 67
+            lineNumber: 71
           }
         },
         checked ? checkedTitle || title : title
@@ -108,9 +112,11 @@ var CheckBox = function CheckBox(props) {
         color: checked ? checkedColor : uncheckedColor,
         name: iconName,
         size: 24,
+        onLongPress: onLongIconPress,
+        onPress: onIconPress,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 77
+          lineNumber: 81
         }
       })
     )
@@ -137,6 +143,8 @@ CheckBox.propTypes = {
   right: _propTypes2.default.bool,
   containerStyle: _reactNative.View.propTypes.style,
   textStyle: _reactNative.Text.propTypes.style,
+  onPress: _propTypes2.default.func,
+  onLongPress: _propTypes2.default.func,
   checkedIcon: _propTypes2.default.string,
   uncheckedIcon: _propTypes2.default.string,
   iconType: _propTypes2.default.string,

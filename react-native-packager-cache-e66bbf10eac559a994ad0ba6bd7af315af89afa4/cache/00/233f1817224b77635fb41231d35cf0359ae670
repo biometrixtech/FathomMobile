@@ -65,7 +65,10 @@ var Button = function Button(props) {
       disabledStyle = props.disabledStyle,
       fontFamily = props.fontFamily,
       containerViewStyle = props.containerViewStyle,
-      attributes = babelHelpers.objectWithoutProperties(props, ['disabled', 'loading', 'loadingRight', 'activityIndicatorStyle', 'buttonStyle', 'borderRadius', 'title', 'onPress', 'icon', 'iconComponent', 'secondary', 'secondary2', 'secondary3', 'primary1', 'primary2', 'backgroundColor', 'color', 'fontSize', 'underlayColor', 'raised', 'textStyle', 'large', 'iconRight', 'fontWeight', 'disabledStyle', 'fontFamily', 'containerViewStyle']);
+      rounded = props.rounded,
+      outline = props.outline,
+      transparent = props.transparent,
+      attributes = babelHelpers.objectWithoutProperties(props, ['disabled', 'loading', 'loadingRight', 'activityIndicatorStyle', 'buttonStyle', 'borderRadius', 'title', 'onPress', 'icon', 'iconComponent', 'secondary', 'secondary2', 'secondary3', 'primary1', 'primary2', 'backgroundColor', 'color', 'fontSize', 'underlayColor', 'raised', 'textStyle', 'large', 'iconRight', 'fontWeight', 'disabledStyle', 'fontFamily', 'containerViewStyle', 'rounded', 'outline', 'transparent']);
   var Component = props.Component;
 
 
@@ -85,7 +88,7 @@ var Button = function Button(props) {
       style: [iconRight ? styles.iconRight : styles.icon, icon.style && icon.style],
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 66
+        lineNumber: 69
       }
     }));
   }
@@ -98,7 +101,7 @@ var Button = function Button(props) {
       size: large && 'large' || 'small',
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 80
+        lineNumber: 83
       }
     });
   }
@@ -116,13 +119,18 @@ var Button = function Button(props) {
     attributes.background = _reactNative.TouchableNativeFeedback.Ripple('ThemeAttrAndroid', true);
   }
 
+  var baseFont = {
+    color: textStyle && textStyle.color || color || stylesObject.text.color,
+    size: textStyle && textStyle.fontSize || fontSize || !large && stylesObject.smallFont.fontSize || stylesObject.text.fontSize
+  };
+
   return _react2.default.createElement(
     _reactNative.View,
     {
       style: [styles.container, raised && styles.raised, containerViewStyle],
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 106
+        lineNumber: 117
       }
     },
     _react2.default.createElement(
@@ -134,16 +142,26 @@ var Button = function Button(props) {
       }, attributes, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 109
+          lineNumber: 120
         }
       }),
       _react2.default.createElement(
         _reactNative.View,
         {
-          style: [styles.button, secondary && { backgroundColor: _colors2.default.secondary }, secondary2 && { backgroundColor: _colors2.default.secondary2 }, secondary3 && { backgroundColor: _colors2.default.secondary3 }, primary1 && { backgroundColor: _colors2.default.primary1 }, primary2 && { backgroundColor: _colors2.default.primary2 }, backgroundColor && { backgroundColor: backgroundColor }, borderRadius && { borderRadius: borderRadius }, !large && styles.small, buttonStyle && buttonStyle, disabled && { backgroundColor: _colors2.default.disabled }, disabled && disabledStyle && disabledStyle],
+          style: [styles.button, secondary && { backgroundColor: _colors2.default.secondary }, secondary2 && { backgroundColor: _colors2.default.secondary2 }, secondary3 && { backgroundColor: _colors2.default.secondary3 }, primary1 && { backgroundColor: _colors2.default.primary1 }, primary2 && { backgroundColor: _colors2.default.primary2 }, backgroundColor && { backgroundColor: backgroundColor }, borderRadius && { borderRadius: borderRadius }, !large && styles.small, rounded && {
+            borderRadius: baseFont.size * 3.8,
+            paddingHorizontal: !large ? stylesObject.small.padding * 1.5 : stylesObject.button.padding * 1.5
+          }, outline && {
+            borderWidth: 1,
+            backgroundColor: 'transparent',
+            borderColor: baseFont.color
+          }, transparent && {
+            borderWidth: 0,
+            backgroundColor: 'transparent'
+          }, buttonStyle && buttonStyle, disabled && { backgroundColor: _colors2.default.disabled }, disabled && disabledStyle && disabledStyle],
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 115
+            lineNumber: 126
           }
         },
         icon && !iconRight && iconElement,
@@ -154,7 +172,7 @@ var Button = function Button(props) {
             style: [styles.text, color && { color: color }, !large && styles.smallFont, fontSize && { fontSize: fontSize }, textStyle && textStyle, fontWeight && { fontWeight: fontWeight }, fontFamily && { fontFamily: fontFamily }],
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 133
+              lineNumber: 159
             }
           },
           title
@@ -196,7 +214,7 @@ Button.propTypes = {
   fontFamily: _propTypes2.default.string
 };
 
-var styles = _reactNative.StyleSheet.create({
+var stylesObject = {
   container: {
     marginLeft: 15,
     marginRight: 15
@@ -239,6 +257,8 @@ var styles = _reactNative.StyleSheet.create({
       elevation: 2
     }
   }))
-});
+};
+
+var styles = _reactNative.StyleSheet.create(stylesObject);
 
 exports.default = Button;

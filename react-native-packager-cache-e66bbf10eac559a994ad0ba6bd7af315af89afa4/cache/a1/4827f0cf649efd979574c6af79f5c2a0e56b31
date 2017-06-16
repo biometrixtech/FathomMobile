@@ -110,6 +110,7 @@ var Tile = function Tile(props) {
   return _react2.default.createElement(
     _reactNative.TouchableOpacity,
     babelHelpers.extends({
+      onPress: onPress,
       style: [styles.container, containerStyle && containerStyle]
     }, attributes, {
       __source: {
@@ -124,7 +125,7 @@ var Tile = function Tile(props) {
         style: [styles.imageContainer, imageContainerStyle && imageContainerStyle],
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 98
+          lineNumber: 99
         }
       },
       _react2.default.createElement(
@@ -133,13 +134,13 @@ var Tile = function Tile(props) {
           style: [styles.iconContainer, iconContainerStyle && iconContainerStyle],
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 105
+            lineNumber: 106
           }
         },
         icon && _react2.default.createElement(_Icon2.default, babelHelpers.extends({}, icon, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 111
+            lineNumber: 112
           }
         }))
       )
@@ -150,14 +151,14 @@ var Tile = function Tile(props) {
         style: [styles.contentContainer, contentContainerStyle && contentContainerStyle],
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 114
+          lineNumber: 115
         }
       },
       _react2.default.createElement(
         _Text2.default,
         { h4: true, style: [styles.text, titleStyle && titleStyle], __source: {
             fileName: _jsxFileName,
-            lineNumber: 120
+            lineNumber: 121
           }
         },
         title

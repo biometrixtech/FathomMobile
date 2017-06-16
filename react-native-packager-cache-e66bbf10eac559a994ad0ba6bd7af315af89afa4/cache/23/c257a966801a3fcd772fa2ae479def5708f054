@@ -59,23 +59,28 @@ var Rating = function (_Component) {
 
     var _this = babelHelpers.possibleConstructorReturn(this, (Rating.__proto__ || Object.getPrototypeOf(Rating)).call(this, props));
 
-    var onFinishRating = _this.props.onFinishRating;
+    var _this$props = _this.props,
+        onFinishRating = _this$props.onFinishRating,
+        fractions = _this$props.fractions;
 
 
     var position = new _reactNative.Animated.ValueXY();
-    var newValue = new _reactNative.Animated.ValueXY();
-    newValue.setValue({ x: 0, y: 500 });
 
     var panResponder = _reactNative.PanResponder.create({
       onStartShouldSetPanResponder: function onStartShouldSetPanResponder() {
         return true;
       },
       onPanResponderMove: function onPanResponderMove(event, gesture) {
-        position.setValue({ x: gesture.dx, y: gesture.dy });
-        _this.setState({ value: gesture.dx });
+        var newPosition = new _reactNative.Animated.ValueXY();
+        newPosition.setValue({ x: gesture.dx, y: 0 });
+        _this.setState({ position: newPosition, value: gesture.dx });
       },
       onPanResponderRelease: function onPanResponderRelease(event) {
-        onFinishRating(_this.getCurrentRating());
+        var rating = _this.getCurrentRating();
+        if (!fractions) {
+          _this.setCurrentRating(rating);
+        }
+        onFinishRating(rating);
       }
     });
 
@@ -84,6 +89,11 @@ var Rating = function (_Component) {
   }
 
   babelHelpers.createClass(Rating, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.setCurrentRating(this.props.startingValue);
+    }
+  }, {
     key: 'getPrimaryViewStyle',
     value: function getPrimaryViewStyle() {
       var position = this.state.position;
@@ -99,7 +109,7 @@ var Rating = function (_Component) {
         inputRange: [-ratingCount * (imageSize / 2), 0, ratingCount * (imageSize / 2)],
         outputRange: [0, ratingCount * imageSize / 2, ratingCount * imageSize],
         extrapolate: 'clamp'
-      });
+      }, { useNativeDriver: true });
 
       return {
         backgroundColor: color,
@@ -123,7 +133,7 @@ var Rating = function (_Component) {
         inputRange: [-ratingCount * (imageSize / 2), 0, ratingCount * (imageSize / 2)],
         outputRange: [ratingCount * imageSize, ratingCount * imageSize / 2, 0],
         extrapolate: 'clamp'
-      });
+      }, { useNativeDriver: true });
 
       return {
         backgroundColor: backgroundColor,
@@ -146,7 +156,7 @@ var Rating = function (_Component) {
           _reactNative.View,
           { key: index, style: styles.starContainer, __source: {
               fileName: _jsxFileName,
-              lineNumber: 130
+              lineNumber: 144
             }
           },
           _react2.default.createElement(_reactNative.Image, {
@@ -154,7 +164,7 @@ var Rating = function (_Component) {
             style: { width: imageSize, height: imageSize },
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 131
+              lineNumber: 145
             }
           })
         );
@@ -165,6 +175,7 @@ var Rating = function (_Component) {
     value: function getCurrentRating() {
       var value = this.state.value;
       var _props4 = this.props,
+          fractions = _props4.fractions,
           imageSize = _props4.imageSize,
           ratingCount = _props4.ratingCount;
 
@@ -173,75 +184,126 @@ var Rating = function (_Component) {
 
       if (value > ratingCount * imageSize / 2) {
         currentRating = ratingCount;
-      } else if (value > imageSize) {
-        currentRating = Math.ceil(startingValue + value / imageSize);
       } else if (value < -ratingCount * imageSize / 2) {
         currentRating = 0;
-      } else if (value < imageSize) {
-        currentRating = Math.ceil(startingValue + value / imageSize);
+      } else if (value < imageSize || value > imageSize) {
+        currentRating = startingValue + value / imageSize;
+        currentRating = !fractions ? Math.ceil(currentRating) : +currentRating.toFixed(fractions);
       } else {
-        currentRating = Math.ceil(startingValue);
+        currentRating = !fractions ? Math.ceil(startingValue) : +startingValue.toFixed(fractions);
       }
 
       return currentRating;
     }
   }, {
+    key: 'setCurrentRating',
+    value: function setCurrentRating(rating) {
+      var _props5 = this.props,
+          imageSize = _props5.imageSize,
+          ratingCount = _props5.ratingCount;
+
+      var initialRating = ratingCount / 2;
+      var value = null;
+
+      if (rating > ratingCount) {
+        value = ratingCount * imageSize / 2;
+      } else if (rating < 0) {
+        value = -ratingCount * imageSize / 2;
+      } else if (rating < ratingCount / 2 || rating > ratingCount / 2) {
+        value = (rating - initialRating) * imageSize;
+      } else {
+        value = 0;
+      }
+
+      var newPosition = new _reactNative.Animated.ValueXY();
+      newPosition.setValue({ x: value, y: 0 });
+      this.setState({ position: newPosition, value: value });
+    }
+  }, {
     key: 'displayCurrentRating',
     value: function displayCurrentRating() {
-      var _props5 = this.props,
-          ratingCount = _props5.ratingCount,
-          type = _props5.type;
+      var _props6 = this.props,
+          ratingCount = _props6.ratingCount,
+          type = _props6.type,
+          readonly = _props6.readonly;
 
 
       var color = TYPES[type].color;
 
       return _react2.default.createElement(
         _reactNative.View,
-        { style: styles.ratingView, __source: {
+        { style: styles.showRatingView, __source: {
             fileName: _jsxFileName,
-            lineNumber: 166
+            lineNumber: 205
           }
         },
         _react2.default.createElement(
-          _Text2.default,
-          { style: styles.ratingText, __source: {
+          _reactNative.View,
+          { style: styles.ratingView, __source: {
               fileName: _jsxFileName,
-              lineNumber: 167
+              lineNumber: 206
             }
           },
-          'Rating: '
+          _react2.default.createElement(
+            _Text2.default,
+            { style: styles.ratingText, __source: {
+                fileName: _jsxFileName,
+                lineNumber: 207
+              }
+            },
+            'Rating: '
+          ),
+          _react2.default.createElement(
+            _Text2.default,
+            { style: [styles.currentRatingText, { color: color }], __source: {
+                fileName: _jsxFileName,
+                lineNumber: 208
+              }
+            },
+            this.getCurrentRating()
+          ),
+          _react2.default.createElement(
+            _Text2.default,
+            { style: styles.maxRatingText, __source: {
+                fileName: _jsxFileName,
+                lineNumber: 211
+              }
+            },
+            '/',
+            ratingCount
+          )
         ),
         _react2.default.createElement(
-          _Text2.default,
-          { style: [styles.currentRatingText, { color: color }], __source: {
+          _reactNative.View,
+          {
+            __source: {
               fileName: _jsxFileName,
-              lineNumber: 168
+              lineNumber: 213
             }
           },
-          this.getCurrentRating()
-        ),
-        _react2.default.createElement(
-          _Text2.default,
-          { style: styles.maxRatingText, __source: {
-              fileName: _jsxFileName,
-              lineNumber: 171
-            }
-          },
-          '/',
-          ratingCount
+          readonly && _react2.default.createElement(
+            _Text2.default,
+            { style: styles.readonlyLabel, __source: {
+                fileName: _jsxFileName,
+                lineNumber: 214
+              }
+            },
+            '(readonly)'
+          )
         )
       );
     }
   }, {
     key: 'render',
     value: function render() {
-      var _props6 = this.props,
-          type = _props6.type,
-          ratingImage = _props6.ratingImage,
-          ratingColor = _props6.ratingColor,
-          ratingBackgroundColor = _props6.ratingBackgroundColor,
-          style = _props6.style,
-          showRating = _props6.showRating;
+      var _props7 = this.props,
+          readonly = _props7.readonly,
+          type = _props7.type,
+          ratingImage = _props7.ratingImage,
+          ratingColor = _props7.ratingColor,
+          ratingBackgroundColor = _props7.ratingBackgroundColor,
+          style = _props7.style,
+          showRating = _props7.showRating;
 
 
       if (type === 'custom') {
@@ -255,9 +317,9 @@ var Rating = function (_Component) {
 
       return _react2.default.createElement(
         _reactNative.View,
-        { style: style, __source: {
+        { pointerEvents: readonly ? 'none' : 'auto', style: style, __source: {
             fileName: _jsxFileName,
-            lineNumber: 196
+            lineNumber: 241
           }
         },
         showRating && this.displayCurrentRating(),
@@ -268,24 +330,24 @@ var Rating = function (_Component) {
           }, this.state.panResponder.panHandlers, {
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 198
+              lineNumber: 243
             }
           }),
           _react2.default.createElement(
             _reactNative.View,
             { style: styles.starsInsideWrapper, __source: {
                 fileName: _jsxFileName,
-                lineNumber: 202
+                lineNumber: 247
               }
             },
             _react2.default.createElement(_reactNative.Animated.View, { style: this.getPrimaryViewStyle(), __source: {
                 fileName: _jsxFileName,
-                lineNumber: 203
+                lineNumber: 248
               }
             }),
             _react2.default.createElement(_reactNative.Animated.View, { style: this.getSecondaryViewStyle(), __source: {
                 fileName: _jsxFileName,
-                lineNumber: 204
+                lineNumber: 249
               }
             })
           ),
@@ -321,6 +383,12 @@ var styles = _reactNative.StyleSheet.create({
     left: 0,
     flexDirection: 'row'
   },
+  showRatingView: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 5
+  },
   ratingView: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -332,6 +400,14 @@ var styles = _reactNative.StyleSheet.create({
     textAlign: 'center',
     fontFamily: _reactNative.Platform.OS === 'ios' ? 'Trebuchet MS' : null,
     color: '#34495e'
+  },
+  readonlyLabel: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 12,
+    textAlign: 'center',
+    fontFamily: _reactNative.Platform.OS === 'ios' ? 'Trebuchet MS' : null,
+    color: '#34495a'
   },
   currentRatingText: {
     fontSize: 30,
@@ -346,6 +422,17 @@ var styles = _reactNative.StyleSheet.create({
   }
 });
 
+var fractionsType = function fractionsType(props, propName, componentName) {
+  if (props[propName]) {
+    var value = props[propName];
+    if (typeof value === 'number') {
+      return value >= 0 && value <= 20 ? null : new Error('`' + propName + '` in `' + componentName + '` must be between 0 and 20');
+    }
+
+    return new Error('`' + propName + '` in `' + componentName + '` must be a number');
+  }
+};
+
 Rating.propTypes = {
   type: _propTypes2.default.string,
   ratingImage: _reactNative.Image.propTypes.source,
@@ -355,5 +442,8 @@ Rating.propTypes = {
   imageSize: _propTypes2.default.number,
   onFinishRating: _propTypes2.default.func,
   showRating: _propTypes2.default.bool,
-  style: _reactNative.View.propTypes.style
+  style: _reactNative.View.propTypes.style,
+  readonly: _propTypes2.default.bool,
+  startingValue: _propTypes2.default.number,
+  fractions: fractionsType
 };
