@@ -18,9 +18,8 @@ function _interopRequireDefault(obj) {
 
 var ActionTypes = exports.ActionTypes = {
   INIT: '@@redux/INIT'
-};
 
-function createStore(reducer, preloadedState, enhancer) {
+};function createStore(reducer, preloadedState, enhancer) {
   var _ref2;
 
   if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
@@ -101,7 +100,8 @@ function createStore(reducer, preloadedState, enhancer) {
 
     var listeners = currentListeners = nextListeners;
     for (var i = 0; i < listeners.length; i++) {
-      listeners[i]();
+      var listener = listeners[i];
+      listener();
     }
 
     return action;
