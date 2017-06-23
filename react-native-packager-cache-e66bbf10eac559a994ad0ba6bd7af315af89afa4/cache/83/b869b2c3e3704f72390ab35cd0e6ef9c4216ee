@@ -53,7 +53,7 @@ var AppLaunch = function (_Component) {
         _react2.default.createElement(
           _reactNative.Image,
           {
-            source: require('../../images/fathom_colored.png'),
+            source: require('@images/fathom_colored.png'),
             style: [styles.launchImage, _theme.AppStyles.containerCentered],
             resizeMode: 'contain',
             __source: {

@@ -141,7 +141,7 @@ class Login extends Component {
                     this.scrollView.scrollTo({ y: 0 });
                 }
 
-                this.props.login({
+                return this.props.login({
                     email:    credentials.Email,
                     password: credentials.Password,
                 }, true).then((userData) => {
@@ -184,7 +184,7 @@ class Login extends Component {
             style={[AppStyles.containerCentered, AppStyles.container, styles.background]}
           >
 
-            <Image source={require('../../images/fathom_white.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthHalf, height: AppSizes.screen.heightTenth }} />
+            <Image source={require('@images/fathom_white.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthHalf, height: AppSizes.screen.heightTenth }} />
 
             <Card>
               <Alerts

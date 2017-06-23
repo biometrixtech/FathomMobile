@@ -40,6 +40,11 @@ var GoogleAnalyticsTracker = exports.GoogleAnalyticsTracker = function () {
       _NativeBridges.GoogleAnalyticsBridge.trackScreenView(this.id, screenName);
     }
   }, {
+    key: 'trackCampaignFromUrl',
+    value: function trackCampaignFromUrl(urlString) {
+      _NativeBridges.GoogleAnalyticsBridge.trackCampaignFromUrl(this.id, urlString);
+    }
+  }, {
     key: 'trackEvent',
     value: function trackEvent(category, action) {
       var optionalValues = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
@@ -148,6 +153,11 @@ var GoogleAnalyticsTracker = exports.GoogleAnalyticsTracker = function () {
     key: 'setSamplingRate',
     value: function setSamplingRate(sampleRatio) {
       _NativeBridges.GoogleAnalyticsBridge.setSamplingRate(this.id, sampleRatio);
+    }
+  }, {
+    key: 'setCurrency',
+    value: function setCurrency(currencyCode) {
+      _NativeBridges.GoogleAnalyticsBridge.setCurrency(this.id, currencyCode);
     }
   }]);
   return GoogleAnalyticsTracker;

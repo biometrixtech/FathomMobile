@@ -88,8 +88,8 @@ const styles = StyleSheet.create({
         paddingBottom:  10,
     },
     menuBottom_text: {
-        color:    '#EEEFF0',
-        fontSize: 23,
+        color:      '#EEEFF0',
+        fontSize:   23,
     },
 });
 
@@ -230,6 +230,7 @@ class Menu extends Component {
               <View style={[styles.menuBottom]}>
                 <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
                   <Button
+                    style={{ fontFamily: 'ProximaNova-Regular' }}
                     backgroundColor={MENU_BG_COLOR}
                     title={'Log Out'}
                     onPress={this.logout}

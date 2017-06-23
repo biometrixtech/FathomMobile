@@ -1,0 +1,37 @@
+'use strict';
+
+var childProcess = require("child_process");
+
+module.exports = function () {
+    function WifiScanner(options, parser) {
+        babelHelpers.classCallCheck(this, WifiScanner);
+
+        this.parser = parser;
+        this.options = options;
+    }
+
+    babelHelpers.createClass(WifiScanner, [{
+        key: "scan",
+        value: function scan(callback, standardErrorCallback) {
+            var _this = this;
+
+            childProcess.exec(this.command, function (error, standardOut, standardError) {
+                if (standardError && typeof standardErrorCallback === "function") {
+                    standardErrorCallback(standardError);
+                }
+                callback(error, _this.parse(standardOut.toString()));
+            });
+        }
+    }, {
+        key: "parse",
+        value: function parse(data) {
+            return this.parser(data);
+        }
+    }, {
+        key: "command",
+        get: function get() {
+            return this.options.binaryPath + " " + this.options.args;
+        }
+    }]);
+    return WifiScanner;
+}();
