@@ -19,4 +19,5 @@ module.exports = {
     ADD_A:                   'ADD_A',
     EDIT_A:                  'EDIT_A',
     REMOVE_A:                'REMOVE_A',
+    UPSERT_ACCESSORY:        'UPSERT_ACCESSORY',
 };

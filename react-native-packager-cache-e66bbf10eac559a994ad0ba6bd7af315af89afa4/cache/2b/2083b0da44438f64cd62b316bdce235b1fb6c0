@@ -1,0 +1,23 @@
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = userReducer;
+
+
+var Actions = require('../actionTypes');
+
+var initialState = {};
+
+function userReducer() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+    var action = arguments[1];
+
+    switch (action.type) {
+        case Actions.UPSERT_ACCESSORY:
+            return babelHelpers.extends({}, state, {
+                accessory: action.data
+            });
+        default:
+            return state;
+    }
+}

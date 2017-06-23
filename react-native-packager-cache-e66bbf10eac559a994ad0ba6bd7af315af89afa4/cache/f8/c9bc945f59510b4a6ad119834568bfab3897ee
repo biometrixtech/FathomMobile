@@ -68,7 +68,7 @@ var ModalDropdown = function (_Component) {
         babelHelpers.extends({}, this.props, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 103
+            lineNumber: 105
           }
         }),
         this._renderButton(),
@@ -139,14 +139,14 @@ var ModalDropdown = function (_Component) {
           accessible: this.props.accessible,
           onPress: this._onButtonPress.bind(this), __source: {
             fileName: _jsxFileName,
-            lineNumber: 154
+            lineNumber: 156
           }
         },
         this.props.children || _react2.default.createElement(
           _reactNative.View,
           { style: styles.button, __source: {
               fileName: _jsxFileName,
-              lineNumber: 161
+              lineNumber: 163
             }
           },
           _react2.default.createElement(
@@ -154,7 +154,7 @@ var ModalDropdown = function (_Component) {
             { style: [styles.buttonText, this.props.textStyle],
               numberOfLines: 1, __source: {
                 fileName: _jsxFileName,
-                lineNumber: 162
+                lineNumber: 164
               }
             },
             this.state.buttonText
@@ -182,7 +182,7 @@ var ModalDropdown = function (_Component) {
             onRequestClose: this._onRequestClose.bind(this),
             supportedOrientations: ['portrait', 'portrait-upside-down', 'landscape', 'landscape-left', 'landscape-right'], __source: {
               fileName: _jsxFileName,
-              lineNumber: 185
+              lineNumber: 187
             }
           },
           _react2.default.createElement(
@@ -191,21 +191,21 @@ var ModalDropdown = function (_Component) {
               disabled: !this.state.showDropdown,
               onPress: this._onModalPress.bind(this), __source: {
                 fileName: _jsxFileName,
-                lineNumber: 189
+                lineNumber: 191
               }
             },
             _react2.default.createElement(
               _reactNative.View,
               { style: styles.modal, __source: {
                   fileName: _jsxFileName,
-                  lineNumber: 192
+                  lineNumber: 194
                 }
               },
               _react2.default.createElement(
                 _reactNative.View,
                 { style: [styles.dropdown, this.props.dropdownStyle, frameStyle], __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 193
+                    lineNumber: 195
                   }
                 },
                 this.state.loading ? this._renderLoading() : this._renderDropdown()
@@ -269,7 +269,7 @@ var ModalDropdown = function (_Component) {
     value: function _renderLoading() {
       return _react2.default.createElement(_reactNative.ActivityIndicator, { size: 'small', __source: {
           fileName: _jsxFileName,
-          lineNumber: 255
+          lineNumber: 257
         }
       });
     }
@@ -282,9 +282,10 @@ var ModalDropdown = function (_Component) {
         renderSeparator: this.props.renderSeparator || this._renderSeparator.bind(this),
         automaticallyAdjustContentInsets: false,
         showsVerticalScrollIndicator: this.props.showsVerticalScrollIndicator,
+        keyboardShouldPersistTaps: this.props.keyboardShouldPersistTaps,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 261
+          lineNumber: 263
         }
       });
     }
@@ -300,7 +301,7 @@ var ModalDropdown = function (_Component) {
         { style: [styles.rowText, this.props.dropdownTextStyle, highlighted && styles.highlightedRowText, highlighted && this.props.dropdownTextHighlightStyle],
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 282
+            lineNumber: 285
           }
         },
         rowData
@@ -326,7 +327,7 @@ var ModalDropdown = function (_Component) {
                 babelHelpers.extends({}, props, {
                   __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 305
+                    lineNumber: 308
                   }
                 }),
                 row.props.children
@@ -340,7 +341,7 @@ var ModalDropdown = function (_Component) {
                 babelHelpers.extends({}, props, {
                   __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 314
+                    lineNumber: 317
                   }
                 }),
                 row.props.children
@@ -354,7 +355,7 @@ var ModalDropdown = function (_Component) {
                 babelHelpers.extends({}, props, {
                   __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 323
+                    lineNumber: 326
                   }
                 }),
                 row.props.children
@@ -368,7 +369,7 @@ var ModalDropdown = function (_Component) {
                 babelHelpers.extends({}, props, {
                   __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 332
+                    lineNumber: 335
                   }
                 }),
                 row.props.children
@@ -384,7 +385,7 @@ var ModalDropdown = function (_Component) {
         babelHelpers.extends({}, preservedProps, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 343
+            lineNumber: 346
           }
         }),
         row
@@ -416,7 +417,7 @@ var ModalDropdown = function (_Component) {
         key: key,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 370
+          lineNumber: 373
         }
       });
     }
@@ -443,6 +444,7 @@ ModalDropdown.propTypes = {
   accessible: _react.PropTypes.bool,
   animated: _react.PropTypes.bool,
   showsVerticalScrollIndicator: _react.PropTypes.bool,
+  keyboardShouldPersistTaps: _react.PropTypes.string,
 
   style: _react.PropTypes.oneOfType([_react.PropTypes.number, _react.PropTypes.object, _react.PropTypes.array]),
   textStyle: _react.PropTypes.oneOfType([_react.PropTypes.number, _react.PropTypes.object, _react.PropTypes.array]),
@@ -464,7 +466,8 @@ ModalDropdown.defaultProps = {
   defaultValue: 'Please select...',
   options: null,
   animated: true,
-  showsVerticalScrollIndicator: true
+  showsVerticalScrollIndicator: true,
+  keyboardShouldPersistTaps: 'never'
 };
 exports.default = ModalDropdown;
 

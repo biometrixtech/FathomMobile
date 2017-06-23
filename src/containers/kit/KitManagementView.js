@@ -18,6 +18,7 @@ import Collapsible from 'react-native-collapsible';
 import Prompt from 'react-native-prompt';
 
 // Consts and Libs
+import AppAPI from '@lib/api';
 import { AppStyles, AppColors } from '@theme/';
 
 // Components
@@ -31,7 +32,8 @@ class KitManagementView extends Component {
 
     /* eslint-disable react/forbid-prop-types */
     static propTypes = {
-        user: PropTypes.object,
+        user:            PropTypes.object,
+        upsertAccessory: PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -207,6 +209,10 @@ class KitManagementView extends Component {
             })
             .then(() => BleManager.read(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de'))
             .then(readData => console.log(readData))
+            .then(() => setTimeout(() => this.props.upsertAccessory(this.state.data.id, {
+                name:    this.state.data.name,
+                team_id: this.props.user.team_id,
+            }), 3000))
             .catch(err => { console.log(err); this.setState({ promptVisible: true }) });
     }
 

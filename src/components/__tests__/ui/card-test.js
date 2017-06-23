@@ -26,7 +26,7 @@ it('Card w/ Title renders correctly', () => {
 
 it('Card w/ Image renders correctly', () => {
   const tree = renderer.create(
-    <Card image={require('../../../images/image.png')}><Text>Hello world</Text></Card>,
+    <Card image={require('@images/image.png')}><Text>Hello world</Text></Card>,
   ).toJSON();
 
   expect(tree).toMatchSnapshot();

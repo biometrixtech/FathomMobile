@@ -14,10 +14,10 @@ var base = babelHelpers.extends({
     lineHeight: lineHeight(14)
 }, _reactNative.Platform.select({
     ios: {
-        family: 'HelveticaNeue'
+        family: 'Proxima Nova'
     },
     android: {
-        family: 'Roboto'
+        family: 'Proxima Nova'
     }
 }));
 

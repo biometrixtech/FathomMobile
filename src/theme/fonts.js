@@ -13,10 +13,10 @@ const base = {
     lineHeight: lineHeight(14),
     ...Platform.select({
         ios: {
-            family: 'HelveticaNeue',
+            family: 'Proxima Nova',
         },
         android: {
-            family: 'Roboto',
+            family: 'Proxima Nova',
         },
     }),
 };

@@ -99,7 +99,7 @@ var Login = function (_Component) {
                         _this.scrollView.scrollTo({ y: 0 });
                     }
 
-                    _this.props.login({
+                    return _this.props.login({
                         email: credentials.Email,
                         password: credentials.Password
                     }, true).then(function (userData) {
@@ -146,7 +146,7 @@ var Login = function (_Component) {
                         lineNumber: 183
                     }
                 },
-                _react2.default.createElement(_reactNative.Image, { source: require('../../images/fathom_white.png'), resizeMode: 'contain', style: { width: _theme.AppSizes.screen.widthHalf, height: _theme.AppSizes.screen.heightTenth }, __source: {
+                _react2.default.createElement(_reactNative.Image, { source: require('@images/fathom_white.png'), resizeMode: 'contain', style: { width: _theme.AppSizes.screen.widthHalf, height: _theme.AppSizes.screen.heightTenth }, __source: {
                         fileName: _jsxFileName,
                         lineNumber: 187
                     }

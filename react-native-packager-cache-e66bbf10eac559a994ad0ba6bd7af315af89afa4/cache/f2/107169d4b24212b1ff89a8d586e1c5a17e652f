@@ -222,6 +222,7 @@ var Menu = function (_Component) {
                                 }
                             },
                             _react2.default.createElement(_ui.Button, {
+                                style: { fontFamily: 'ProximaNova-Regular' },
                                 backgroundColor: MENU_BG_COLOR,
                                 title: 'Log Out',
                                 onPress: _this.logout,

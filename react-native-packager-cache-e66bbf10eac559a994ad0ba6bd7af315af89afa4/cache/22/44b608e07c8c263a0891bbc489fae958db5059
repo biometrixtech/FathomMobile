@@ -152,6 +152,11 @@ var GoogleAnalyticsBackwardsCompability = exports.GoogleAnalyticsBackwardsCompab
     value: function setSamplingRate(sampleRatio) {
       this.tracker.setSamplingRate(sampleRatio);
     }
+  }, {
+    key: 'setCurrency',
+    value: function setCurrency(currencyCode) {
+      this.tracker.setCurrency(currencyCode);
+    }
   }]);
   return GoogleAnalyticsBackwardsCompability;
 }();
