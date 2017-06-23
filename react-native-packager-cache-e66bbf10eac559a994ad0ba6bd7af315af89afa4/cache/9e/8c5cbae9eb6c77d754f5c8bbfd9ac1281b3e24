@@ -58,8 +58,9 @@ function login(credentials, freshLogin) {
                             return _context.abrupt('return', resolve());
 
                         case 6:
-                            return _context.abrupt('return', _api2.default.getToken(userCreds).then(function (token) {
+                            return _context.abrupt('return', _api2.default.getToken(userCreds).then(function (response) {
                                 var decodedToken = '';
+                                var token = response.user.jwt;
 
                                 try {
                                     decodedToken = (0, _jwtDecode2.default)(token);
@@ -72,12 +73,14 @@ function login(credentials, freshLogin) {
                                 }
 
                                 return _api2.default.user.get().then(function (userData) {
+                                    delete response.user;
+                                    var storedObject = babelHelpers.extends({}, userData, response);
                                     dispatch({
                                         type: Actions.USER_REPLACE,
-                                        data: userData
+                                        data: storedObject
                                     });
 
-                                    return resolve(userData);
+                                    return resolve(storedObject);
                                 }).catch(function (err) {
                                     return reject(err);
                                 });

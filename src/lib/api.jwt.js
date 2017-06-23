@@ -44,21 +44,22 @@ export default class JWT {
         }
 
         // Let's try logging in
-        return AppAPI[APIConfig.tokenKey].post(null, {
+        return AppAPI[APIConfig.tokenKey].post('accessory', {
             email:    this.apiCredentials.email,
             password: this.apiCredentials.password,
         }).then(async (res) => {
-            if (!res.jwt) {
+            if (!res.user.jwt) {
                 return reject(res);
             }
+            const jwt = res.user.jwt;
 
-            const tokenIsNowValid = this.tokenIsValid ? await this.tokenIsValid(res.jwt) : null;
+            const tokenIsNowValid = this.tokenIsValid ? await this.tokenIsValid(jwt) : null;
             if (!tokenIsNowValid) { return reject(res); }
 
             // Set token in AsyncStorage + memory
-            if (this.storeToken) { await this.storeToken(res.jwt); }
+            if (this.storeToken) { await this.storeToken(jwt); }
 
-            return resolve(res.jwt);
+            return resolve(res);
         }).catch(err => reject(err));
     })
 

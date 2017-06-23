@@ -37,7 +37,7 @@ class KitManagementView extends Component {
     }
 
     static defaultProps = {
-        user: {},
+        user:  {},
     }
 
     constructor(props) {
@@ -60,6 +60,9 @@ class KitManagementView extends Component {
     }
 
     componentDidMount = () => {
+        console.log('------------------------------------');
+        console.log(this.props.user);
+        console.log('------------------------------------');
         // Get SSID
         NetworkInfo.getSSID(ssid => {
             this.setState({ SSID: ssid });
@@ -211,7 +214,7 @@ class KitManagementView extends Component {
             .then(readData => console.log(readData))
             .then(() => setTimeout(() => this.props.upsertAccessory(this.state.data.id, {
                 name:    this.state.data.name,
-                team_id: this.props.user.team_id,
+                team_id: this.props.user.teams[0].id,
             }), 3000))
             .catch(err => { console.log(err); this.setState({ promptVisible: true }) });
     }

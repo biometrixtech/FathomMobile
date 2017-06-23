@@ -10,9 +10,11 @@ import * as AccessoryActions from '@redux/accessory/actions';
 import KitManagementRender from './KitManagementView';
 
 // What data from the store shall we send to the component?
-const mapStateToProps = state => ({
-    user: state.user.user,
-});
+const mapStateToProps = state => {
+    return ({
+        user:  state.user,
+    });
+};
 
 // Any actions to map to the component?
 const mapDispatchToProps = {

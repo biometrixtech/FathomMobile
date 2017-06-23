@@ -31,7 +31,7 @@ function byteLength(b64) {
 }
 
 function toByteArray(b64) {
-  var i, j, l, tmp, placeHolders, arr;
+  var i, l, tmp, placeHolders, arr;
   var len = b64.length;
   placeHolders = placeHoldersCount(b64);
 
@@ -41,7 +41,7 @@ function toByteArray(b64) {
 
   var L = 0;
 
-  for (i = 0, j = 0; i < l; i += 4, j += 3) {
+  for (i = 0; i < l; i += 4) {
     tmp = revLookup[b64.charCodeAt(i)] << 18 | revLookup[b64.charCodeAt(i + 1)] << 12 | revLookup[b64.charCodeAt(i + 2)] << 6 | revLookup[b64.charCodeAt(i + 3)];
     arr[L++] = tmp >> 16 & 0xFF;
     arr[L++] = tmp >> 8 & 0xFF;

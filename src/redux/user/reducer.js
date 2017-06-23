@@ -129,7 +129,7 @@ export default function userReducer(state = initialState, action) {
         delete action.data.created_at;
         return {
             ...state,
-            user: action.data,
+            ...action.data,
         };
     case Actions.SIGN_UP_SUCCESS:
         return {

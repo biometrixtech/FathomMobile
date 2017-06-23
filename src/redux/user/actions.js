@@ -22,8 +22,9 @@ export function login(credentials, freshLogin) {
 
         // Get a new token from API
         return AppAPI.getToken(userCreds)
-          .then((token) => {
+          .then((response) => {
               let decodedToken = '';
+              let token = response.user.jwt;
 
               try {
                   decodedToken = jwtDecode(token);
@@ -40,12 +41,17 @@ export function login(credentials, freshLogin) {
               // Get user details from API, using my token
               return AppAPI.user.get()
                   .then((userData) => {
+                      delete response.user;
+                      let storedObject = {
+                          ...userData,
+                          ...response
+                      };
                       dispatch({
                           type: Actions.USER_REPLACE,
-                          data: userData,
+                          data: storedObject,
                       });
 
-                      return resolve(userData);
+                      return resolve(storedObject);
                   })
                 //   .then(() => AppAPI.training_group.get()
                 //   .then((trainingGroups) => {

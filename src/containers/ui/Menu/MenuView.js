@@ -99,12 +99,10 @@ class Menu extends Component {
         logout:        PropTypes.func.isRequired,
         closeSideMenu: PropTypes.func.isRequired,
         user:          PropTypes.shape({
-            user: PropTypes.shape({
-                role:       PropTypes.string,
-                first_name: PropTypes.string,
-                last_name:  PropTypes.string,
-                avatar_url: PropTypes.string,
-            }),
+            role:       PropTypes.string,
+            first_name: PropTypes.string,
+            last_name:  PropTypes.string,
+            avatar_url: PropTypes.string,
         }),
     }
 
@@ -117,7 +115,7 @@ class Menu extends Component {
 
         let action;
 
-        switch (this.props.user.user.role) {
+        switch (this.props.user.role) {
         case roles.admin:
             action = Actions.adminTeamManagement;
             break;
@@ -209,7 +207,7 @@ class Menu extends Component {
           <View style={[styles.container]}>
             <View style={[styles.backgroundFill]} />
 
-            <Image resizeMode={Image.resizeMode.contain} style={[styles.imageContainer, { borderRadius: 50 }]} source={{ uri: this.props.user.user.avatar_url }} />
+            <Image resizeMode={Image.resizeMode.contain} style={[styles.imageContainer, { borderRadius: 50 }]} source={{ uri: this.props.user.avatar_url }} />
 
             <Spacer />
 
@@ -219,7 +217,7 @@ class Menu extends Component {
                   AppStyles.textCenterAligned,
               ]}
             >
-              {this.props.user.user.first_name && this.props.user.user.last_name ? `${this.props.user.user.first_name} ${this.props.user.user.last_name}` : this.props.user.user.role}
+              {this.props.user.first_name && this.props.user.last_name ? `${this.props.user.first_name} ${this.props.user.last_name}` : this.props.user.role}
             </Text>
 
             <Spacer />
