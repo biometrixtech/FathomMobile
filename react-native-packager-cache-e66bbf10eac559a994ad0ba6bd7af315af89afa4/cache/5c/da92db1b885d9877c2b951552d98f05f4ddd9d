@@ -8,8 +8,8 @@ var enabled = false;
 exports.disable = disable;
 function disable() {
   enabled = false;
-  Promise._10 = null;
-  Promise._97 = null;
+  Promise._37 = null;
+  Promise._87 = null;
 }
 
 exports.enable = enable;
@@ -20,23 +20,23 @@ function enable(options) {
   var id = 0;
   var displayId = 0;
   var rejections = {};
-  Promise._10 = function (promise) {
-    if (promise._81 === 2 && rejections[promise._72]) {
-      if (rejections[promise._72].logged) {
-        onHandled(promise._72);
+  Promise._37 = function (promise) {
+    if (promise._65 === 2 && rejections[promise._51]) {
+      if (rejections[promise._51].logged) {
+        onHandled(promise._51);
       } else {
-        clearTimeout(rejections[promise._72].timeout);
+        clearTimeout(rejections[promise._51].timeout);
       }
-      delete rejections[promise._72];
+      delete rejections[promise._51];
     }
   };
-  Promise._97 = function (promise, err) {
-    if (promise._45 === 0) {
-      promise._72 = id++;
-      rejections[promise._72] = {
+  Promise._87 = function (promise, err) {
+    if (promise._40 === 0) {
+      promise._51 = id++;
+      rejections[promise._51] = {
         displayId: null,
         error: err,
-        timeout: setTimeout(onUnhandled.bind(null, promise._72), matchWhitelist(err, DEFAULT_WHITELIST) ? 100 : 2000),
+        timeout: setTimeout(onUnhandled.bind(null, promise._51), matchWhitelist(err, DEFAULT_WHITELIST) ? 100 : 2000),
         logged: false
       };
     }

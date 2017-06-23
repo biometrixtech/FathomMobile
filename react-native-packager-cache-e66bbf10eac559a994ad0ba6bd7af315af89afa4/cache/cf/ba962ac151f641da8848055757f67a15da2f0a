@@ -14,7 +14,7 @@ var _KitManagementView2 = babelHelpers.interopRequireDefault(_KitManagementView)
 
 var mapStateToProps = function mapStateToProps(state) {
     return {
-        user: state.user.user
+        user: state.user
     };
 };
 

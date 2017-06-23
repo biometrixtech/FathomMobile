@@ -106,9 +106,7 @@ function userReducer() {
     switch (action.type) {
         case Actions.USER_REPLACE:
             delete action.data.created_at;
-            return babelHelpers.extends({}, state, {
-                user: action.data
-            });
+            return babelHelpers.extends({}, state, action.data);
         case Actions.SIGN_UP_SUCCESS:
             return babelHelpers.extends({}, state);
         case Actions.FORGOT_PASSWORD_SUCCESS:
