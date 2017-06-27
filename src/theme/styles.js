@@ -225,8 +225,8 @@ export default {
 
     // Navbar
     navbar: {
-        backgroundColor:   Colors.brand.primary,
-        borderBottomWidth: 0,
+        backgroundColor:   "#FFFFFF",
+        borderBottomWidth: 1,
     },
     navbarTitle: {
         color:      '#FFFFFF',
@@ -235,7 +235,7 @@ export default {
         fontSize:   Fonts.base.size+5,
     },
     navbarButton: {
-        tintColor: '#FFFFFF',
+        tintColor: Colors.brand.primary,
     },
     navbarImageTitle: {
         height:     Sizes.navbarHeight/1.5,

@@ -11,6 +11,8 @@ var _reactNative = require('react-native');
 
 var _reactNativeElements = require('react-native-elements');
 
+var _theme = require('@theme/');
+
 var NavbarMenuButton = function NavbarMenuButton(_ref) {
   var toggleSideMenu = _ref.toggleSideMenu;
   return _react2.default.createElement(
@@ -22,12 +24,12 @@ var NavbarMenuButton = function NavbarMenuButton(_ref) {
       hitSlop: { top: 7, right: 7, bottom: 7, left: 7 },
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 10
+        lineNumber: 13
       }
     },
-    _react2.default.createElement(_reactNativeElements.Icon, { name: 'menu', size: 32, color: '#FFF', __source: {
+    _react2.default.createElement(_reactNativeElements.Icon, { name: 'menu', size: 32, color: _theme.AppColors.brand.primary, __source: {
         fileName: _jsxFileName,
-        lineNumber: 16
+        lineNumber: 19
       }
     })
   );
