@@ -213,7 +213,7 @@ class Login extends Component {
                 </Text>
               </TouchableOpacity>
 
-              <Spacer size={10} />
+              {/*<Spacer size={10} />
 
               <Text p style={[AppStyles.textCenterAligned]}>
                 - or -
@@ -222,7 +222,7 @@ class Login extends Component {
               <Button
                 title={'Sign Up'}
                 onPress={Actions.signUp}
-              />
+              />*/}
             </Card>
           </View>
         );
