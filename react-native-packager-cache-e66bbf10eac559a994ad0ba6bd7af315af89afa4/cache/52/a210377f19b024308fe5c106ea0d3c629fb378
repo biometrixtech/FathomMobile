@@ -1,4 +1,4 @@
-var _jsxFileName = '/Users/vdesai/Biometrix/FathomMobile/node_modules/react-native-side-menu/index.js';
+var _jsxFileName = '/Users/vdesai/Biometrix/FathomMobile/node_modules/react-native-elements/node_modules/react-native-side-menu/index.js';
 
 var styles = require('./styles');
 var ReactNative = require('react-native');
@@ -27,7 +27,7 @@ var SideMenu = function (_React$Component) {
     var _this = babelHelpers.possibleConstructorReturn(this, (SideMenu.__proto__ || Object.getPrototypeOf(SideMenu)).call(this, props));
 
     _this.prevLeft = 0;
-    _this.isOpen = !!props.isOpen;
+    _this.isOpen = props.isOpen;
 
     var initialMenuPositionMultiplier = props.menuPosition === 'right' ? -1 : 1;
     var openOffsetMenuPercentage = props.openMenuOffset / deviceScreen.width;
@@ -52,14 +52,13 @@ var SideMenu = function (_React$Component) {
         onStartShouldSetResponderCapture: this.props.onStartShouldSetResponderCapture.bind(this),
         onMoveShouldSetPanResponder: this.handleMoveShouldSetPanResponder.bind(this),
         onPanResponderMove: this.handlePanResponderMove.bind(this),
-        onPanResponderRelease: this.handlePanResponderEnd.bind(this),
-        onPanResponderTerminate: this.handlePanResponderEnd.bind(this)
+        onPanResponderRelease: this.handlePanResponderEnd.bind(this)
       });
     }
   }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(props) {
-      if (typeof props.isOpen !== 'undefined' && this.isOpen !== props.isOpen && (props.autoClosing || this.isOpen === false)) {
+      if (this.isOpen !== props.isOpen) {
         this.openMenu(props.isOpen);
       }
     }
@@ -158,12 +157,12 @@ var SideMenu = function (_React$Component) {
               return _this2.openMenu(false);
             }, __source: {
               fileName: _jsxFileName,
-              lineNumber: 192
+              lineNumber: 191
             }
           },
           React.createElement(View, { style: styles.overlay, __source: {
               fileName: _jsxFileName,
-              lineNumber: 193
+              lineNumber: 192
             }
           })
         );
@@ -183,7 +182,7 @@ var SideMenu = function (_React$Component) {
         babelHelpers.extends({ style: style, ref: ref }, this.responder.panHandlers, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 207
+            lineNumber: 206
           }
         }),
         this.props.children,
@@ -211,7 +210,7 @@ var SideMenu = function (_React$Component) {
         View,
         { style: [styles.menu, boundryStyle], __source: {
             fileName: _jsxFileName,
-            lineNumber: 231
+            lineNumber: 230
           }
         },
         this.props.menu
@@ -221,7 +220,7 @@ var SideMenu = function (_React$Component) {
         View,
         { style: styles.container, onLayout: this.onLayoutChange.bind(this), __source: {
             fileName: _jsxFileName,
-            lineNumber: 234
+            lineNumber: 233
           }
         },
         menu,
@@ -245,8 +244,7 @@ SideMenu.propTypes = {
   animationFunction: React.PropTypes.func,
   onStartShouldSetResponderCapture: React.PropTypes.func,
   isOpen: React.PropTypes.bool,
-  bounceBackOnOverdraw: React.PropTypes.bool,
-  autoClosing: React.PropTypes.bool
+  bounceBackOnOverdraw: React.PropTypes.bool
 };
 
 SideMenu.defaultProps = {
@@ -274,8 +272,7 @@ SideMenu.defaultProps = {
     });
   },
   isOpen: false,
-  bounceBackOnOverdraw: true,
-  autoClosing: true
+  bounceBackOnOverdraw: true
 };
 
 module.exports = SideMenu;
