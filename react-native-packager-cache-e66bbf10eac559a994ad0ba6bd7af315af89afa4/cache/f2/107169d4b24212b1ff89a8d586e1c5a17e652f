@@ -262,34 +262,16 @@ var Menu = function (_Component) {
         _this.state = {
             active: 0,
             menu: [{
-                itemName: 'view-dashboard',
-                title: 'Dashboard',
-                onPress: function onPress() {
-                    _this.props.closeSideMenu();action();_this.setState({ active: 0 });
-                }
-            }, {
                 itemName: 'pulse',
                 title: 'Capture Session',
                 onPress: function onPress() {
-                    _this.props.closeSideMenu();_this.setState({ active: 1 });
-                }
-            }, {
-                itemName: 'tooltip-edit',
-                title: 'Feedback Settings',
-                onPress: function onPress() {
-                    _this.props.closeSideMenu();_this.setState({ active: 2 });_reactNativeRouterFlux.Actions.settings();
-                }
-            }, {
-                itemName: 'account-settings-variant',
-                title: 'Manage Account',
-                onPress: function onPress() {
-                    _this.props.closeSideMenu();_this.setState({ active: 3 });
+                    _this.props.closeSideMenu();action();_this.setState({ active: 0 });
                 }
             }, {
                 itemName: 'mixcloud',
                 title: 'Manage Kit',
                 onPress: function onPress() {
-                    _this.props.closeSideMenu();_this.setState({ active: 4 });_reactNativeRouterFlux.Actions.kitManagement();
+                    _this.props.closeSideMenu();_this.setState({ active: 1 });_reactNativeRouterFlux.Actions.kitManagement();
                 }
             }]
         };

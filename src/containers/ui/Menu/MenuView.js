@@ -138,30 +138,30 @@ class Menu extends Component {
         this.state = {
             active: 0,
             menu:   [
-                {
-                    itemName: 'view-dashboard',
-                    title:    'Dashboard',
-                    onPress:  () => { this.props.closeSideMenu(); action(); this.setState({ active: 0 }); },
-                },
+                // {
+                //     itemName: 'view-dashboard',
+                //     title:    'Dashboard',
+                //     onPress:  () => { this.props.closeSideMenu(); action(); this.setState({ active: 0 }); },
+                // },
                 {
                     itemName: 'pulse',
                     title:    'Capture Session',
-                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 1 }); }
+                    onPress:  () => { this.props.closeSideMenu(); action(); this.setState({ active: 0 }); }
                 },
-                {
-                    itemName: 'tooltip-edit',
-                    title:    'Feedback Settings',
-                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 2 }); Actions.settings(); },
-                },
-                {
-                    itemName: 'account-settings-variant',
-                    title:    'Manage Account',
-                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 3 }); }
-                },
+                // {
+                //     itemName: 'tooltip-edit',
+                //     title:    'Feedback Settings',
+                //     onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 2 }); Actions.settings(); },
+                // },
+                // {
+                //     itemName: 'account-settings-variant',
+                //     title:    'Manage Account',
+                //     onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 3 }); }
+                // },
                 {
                     itemName: 'mixcloud',
                     title:    'Manage Kit',
-                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 4 }); Actions.kitManagement(); },
+                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 1 }); Actions.kitManagement(); },
                 },
             ],
         };

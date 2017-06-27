@@ -209,29 +209,7 @@ var Login = function (_Component) {
                             },
                             'Forgot Password'
                         )
-                    ),
-                    _react2.default.createElement(_ui.Spacer, { size: 10, __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 216
-                        }
-                    }),
-                    _react2.default.createElement(
-                        _ui.Text,
-                        { p: true, style: [_theme.AppStyles.textCenterAligned], __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 218
-                            }
-                        },
-                        '- or -'
-                    ),
-                    _react2.default.createElement(_ui.Button, {
-                        title: 'Sign Up',
-                        onPress: _reactNativeRouterFlux.Actions.signUp,
-                        __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 222
-                        }
-                    })
+                    )
                 )
             );
         };
