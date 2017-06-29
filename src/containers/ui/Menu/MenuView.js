@@ -18,15 +18,9 @@ import { AppStyles, AppSizes, AppColors } from '@theme/';
 
 // Components
 import { Spacer, Text, Button } from '@ui/';
+import { Roles } from '@constants/';
 
 /* Biometrix Roles =========================================================== */
-const roles = {
-    admin:          'admin',
-    athlete:        'athlete',
-    biometrixAdmin: 'biometrix_admin',
-    manager:        'manager',
-    researcher:     'researcher',
-};
 
 /* Styles ==================================================================== */
 const MENU_BG_COLOR = '#2E3234';
@@ -116,19 +110,19 @@ class Menu extends Component {
         let action;
 
         switch (this.props.user.role) {
-        case roles.admin:
+        case Roles.admin:
             action = Actions.adminTeamManagement;
             break;
-        case roles.athlete:
+        case Roles.athlete:
             action = Actions.athleteAthleteManagement;
             break;
-        case roles.biometrixAdmin:
+        case Roles.biometrixAdmin:
             action = Actions.managerCaptureSession;
             break;
-        case roles.manager:
+        case Roles.manager:
             action = Actions.managerTeamManagement;
             break;
-        case roles.researcher:
+        case Roles.researcher:
             action = Actions.researcherSubjectManagement;
             break;
         default:

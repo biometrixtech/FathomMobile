@@ -1,0 +1,10 @@
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    admin: 'admin',
+    athlete: 'athlete',
+    biometrixAdmin: 'biometrix_admin',
+    manager: 'manager',
+    researcher: 'researcher'
+};

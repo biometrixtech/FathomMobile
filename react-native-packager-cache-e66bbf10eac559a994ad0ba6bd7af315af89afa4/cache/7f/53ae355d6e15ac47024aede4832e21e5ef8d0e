@@ -1,7 +1,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.ErrorMessages = exports.APIConfig = exports.AppConfig = undefined;
+exports.Roles = exports.ErrorMessages = exports.APIConfig = exports.AppConfig = undefined;
 
 var _config = require('./config');
 
@@ -15,6 +15,11 @@ var _errors = require('./errors');
 
 var _errors2 = babelHelpers.interopRequireDefault(_errors);
 
+var _roles = require('./roles');
+
+var _roles2 = babelHelpers.interopRequireDefault(_roles);
+
 exports.AppConfig = _config2.default;
 exports.APIConfig = _api2.default;
 exports.ErrorMessages = _errors2.default;
+exports.Roles = _roles2.default;
