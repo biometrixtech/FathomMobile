@@ -32,6 +32,21 @@ export default function userReducer(state = initialState, action) {
             ...state,
             ...action.data,
         };
+    case Actions.CREATE_TRAINING_GROUPS:
+        return {
+            ...state,
+            ...action.data,
+        };
+    case Actions.PATCH_TRAINING_GROUPS:
+        return {
+            ...state,
+            ...action.data,
+        };
+    case Actions.REMOVE_TRAINING_GROUPS:
+        return {
+            ...state,
+            ...action.data,
+        };
     case Actions.GET_TEAMS:
         return {
             ...state,
@@ -39,39 +54,33 @@ export default function userReducer(state = initialState, action) {
         };
     case Actions.ADD_TG:
         return {
-            user:           state.user,
-            regimens:       state.regimens,
-            trainingGroups: state.trainingGroups.concat([action.data]),
+            ...state,
+            ...action.data
         };
     case Actions.EDIT_TG:
         return {
-            user:           state.user,
-            regimens:       state.regimens,
-            trainingGroups: (state.trainingGroups[state.trainingGroups.findIndex(trainingGroup => trainingGroup.id === action.data.id)] = action.data),
+            ...state,
+            ...action.data
         };
     case Actions.REMOVE_TG:
         return {
-            user:           state.user,
-            regimens:       state.regimens,
-            trainingGroups: state.trainingGroups.filter(group => group.id !== action.data),
+            ...state,
+            ...action.data
         };
     case Actions.ADD_R:
         return {
-            user:           state.user,
-            regimens:       state.regimens.concat([action.data]),
-            trainingGroups: state.trainingGroups,
+            ...state,
+            ...action.data
         };
     case Actions.EDIT_R:
         return {
-            user:           state.user,
-            regimens:       (state.regimens[state.regimens.findIndex(regimen => regimen.id === action.data.id)] = action.data),
-            trainingGroups: state.trainingGroups,
+            ...state,
+            ...action.data
         };
     case Actions.REMOVE_R:
         return {
-            user:           state.user,
-            regimens:       state.regimens.filter(regimen => regimen.id !== action.data),
-            trainingGroups: state.trainingGroups,
+            ...state,
+            ...action.data
         };
     case Actions.ADD_A:
         return { ...state };

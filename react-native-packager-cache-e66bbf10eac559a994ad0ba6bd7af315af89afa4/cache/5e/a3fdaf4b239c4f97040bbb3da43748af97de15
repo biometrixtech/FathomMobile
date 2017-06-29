@@ -1,0 +1,27 @@
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _reactRedux = require('react-redux');
+
+var _actions = require('@redux/user/actions');
+
+var UserActions = babelHelpers.interopRequireWildcard(_actions);
+
+var _TeamCaptureSessionView = require('./TeamCaptureSessionView');
+
+var _TeamCaptureSessionView2 = babelHelpers.interopRequireDefault(_TeamCaptureSessionView);
+
+var mapStateToProps = function mapStateToProps(state) {
+    return {
+        user: state.user
+    };
+};
+
+var mapDispatchToProps = {
+    createTrainingGroup: UserActions.createTrainingGroup,
+    patchTrainingGroup: UserActions.patchTrainingGroup,
+    removeTrainingGroup: UserActions.removeTrainingGroup
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_TeamCaptureSessionView2.default);

@@ -9,7 +9,8 @@ import { AppConfig } from '@constants/';
 import { Icon } from 'react-native-elements';
 
 // Scenes
-import CaptureSessionView from '@containers/capture/CaptureSessionContainer';
+import TeamCaptureSessionView from '@containers/capture/team/TeamCaptureSessionContainer';
+import GroupCaptureSessionView from '@containers/capture/group/GroupCaptureSessionContainer';
 import KitManagementView from '@containers/kit/KitManagementContainer';
 
 // Components
@@ -46,13 +47,25 @@ const scenes = (
   <Scene key={'biometrixAdmin'} >
     <Scene
       {...navbarPropsTabs}
-      key={'biometrixAdminCaptureSession'}
-      clone
-      initial={true}
-      type={ActionConst.REPLACE}
-      component={CaptureSessionView}
-      analyticsDesc={'BiometrixAdminCaptureSessiontView: Biometrix Admin Capture Session'}
-    />
+      key={'biometrixAdminCaptureSession'}>
+      <Scene
+        {...navbarPropsTabs}
+        key={'biometrixAdminTeamCaptureSession'}
+        clone
+        initial={true}
+        type={ActionConst.REPLACE}
+        component={TeamCaptureSessionView}
+        analyticsDesc={'BiometrixAdminTeamCaptureSessiontView: Biometrix Admin Team Capture Session'}
+      />
+      <Scene
+        {...navbarPropsTabs}
+        key={'biometrixAdminGroupCaptureSession'}
+        clone
+        type={ActionConst.REPLACE}
+        component={GroupCaptureSessionView}
+        analyticsDesc={'BiometrixAdminGroupCaptureSessiontView: Biometrix Admin Group Capture Session'}
+      />
+    </Scene>
     <Scene
       {...navbarPropsTabs}
       key={'kitManagement'}

@@ -150,7 +150,7 @@ class AthletesView extends Component {
             label: regimen.name,
         }))}
       />
-    )
+    );
 
     /* eslint-disable max-len */
     renderHeader = (section, index, isActive) => {

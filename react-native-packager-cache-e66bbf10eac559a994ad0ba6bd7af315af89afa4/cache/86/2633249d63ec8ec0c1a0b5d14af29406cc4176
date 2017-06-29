@@ -44,14 +44,14 @@ exports.default = {
         fontFamily: _fonts2.default.base.family,
         fontSize: _fonts2.default.base.size,
         lineHeight: _fonts2.default.base.lineHeight,
-        color: _colors2.default.textPrimary,
+        color: _colors2.default.brand.primary,
         fontWeight: '500'
     },
     p: {
         fontFamily: _fonts2.default.base.family,
         fontSize: _fonts2.default.base.size,
         lineHeight: _fonts2.default.base.lineHeight,
-        color: _colors2.default.textPrimary,
+        color: _colors2.default.brand.primary,
         fontWeight: '500',
         marginBottom: 8
     },
@@ -59,7 +59,7 @@ exports.default = {
         fontFamily: _fonts2.default.h0.family,
         fontSize: _fonts2.default.h0.size,
         lineHeight: _fonts2.default.h0.lineHeight,
-        color: _colors2.default.headingPrimary,
+        color: _colors2.default.brand.primary,
         fontWeight: '800',
         margin: 0,
         marginBottom: 4,
@@ -133,7 +133,7 @@ exports.default = {
         fontFamily: _fonts2.default.base.family,
         fontSize: _fonts2.default.base.size * 0.8,
         lineHeight: parseInt(_fonts2.default.base.lineHeight * 0.8, 10),
-        color: _colors2.default.textSecondary,
+        color: _colors2.default.brand.primary,
         fontWeight: '500'
     },
 
@@ -259,11 +259,11 @@ exports.default = {
     deleteButton: {
         justifyContent: 'center',
         flex: 1,
-        backgroundColor: '#FF0000'
+        backgroundColor: _colors2.default.brand.red
     },
     editButton: {
         justifyContent: 'center',
         flex: 1,
-        backgroundColor: '#00FF00'
+        backgroundColor: _colors2.default.brand.yellow
     }
 };

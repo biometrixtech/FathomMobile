@@ -25,52 +25,26 @@ function userReducer() {
             return babelHelpers.extends({}, state);
         case Actions.GET_TRAINING_GROUPS:
             return babelHelpers.extends({}, state, action.data);
+        case Actions.CREATE_TRAINING_GROUPS:
+            return babelHelpers.extends({}, state, action.data);
+        case Actions.PATCH_TRAINING_GROUPS:
+            return babelHelpers.extends({}, state, action.data);
+        case Actions.REMOVE_TRAINING_GROUPS:
+            return babelHelpers.extends({}, state, action.data);
         case Actions.GET_TEAMS:
             return babelHelpers.extends({}, state, action.data);
         case Actions.ADD_TG:
-            return {
-                user: state.user,
-                regimens: state.regimens,
-                trainingGroups: state.trainingGroups.concat([action.data])
-            };
+            return babelHelpers.extends({}, state, action.data);
         case Actions.EDIT_TG:
-            return {
-                user: state.user,
-                regimens: state.regimens,
-                trainingGroups: state.trainingGroups[state.trainingGroups.findIndex(function (trainingGroup) {
-                    return trainingGroup.id === action.data.id;
-                })] = action.data
-            };
+            return babelHelpers.extends({}, state, action.data);
         case Actions.REMOVE_TG:
-            return {
-                user: state.user,
-                regimens: state.regimens,
-                trainingGroups: state.trainingGroups.filter(function (group) {
-                    return group.id !== action.data;
-                })
-            };
+            return babelHelpers.extends({}, state, action.data);
         case Actions.ADD_R:
-            return {
-                user: state.user,
-                regimens: state.regimens.concat([action.data]),
-                trainingGroups: state.trainingGroups
-            };
+            return babelHelpers.extends({}, state, action.data);
         case Actions.EDIT_R:
-            return {
-                user: state.user,
-                regimens: state.regimens[state.regimens.findIndex(function (regimen) {
-                    return regimen.id === action.data.id;
-                })] = action.data,
-                trainingGroups: state.trainingGroups
-            };
+            return babelHelpers.extends({}, state, action.data);
         case Actions.REMOVE_R:
-            return {
-                user: state.user,
-                regimens: state.regimens.filter(function (regimen) {
-                    return regimen.id !== action.data;
-                }),
-                trainingGroups: state.trainingGroups
-            };
+            return babelHelpers.extends({}, state, action.data);
         case Actions.ADD_A:
             return babelHelpers.extends({}, state);
         case Actions.EDIT_A:
