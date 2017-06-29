@@ -168,13 +168,39 @@ export function getTrainingGroups() {
 }
 
 /**
+ * Create Training Group
+ */
+export function createTrainingGroup(trainingGroup) {
+    return dispatch => AppAPI.training_group.post(trainingGroup)
+        .then(newTrainingGroup => {
+            dispatch({
+                type: Actions.CREATE_TRAINING_GROUP,
+                data: newTrainingGroup,
+            });
+        });
+}
+
+/**
+ * Patch Training Group
+ */
+export function patchTrainingGroup(trainingGroup) {
+    return dispatch => AppAPI.training_group.patch(trainingGroup)
+        .then(patchedTrainingGroup => {
+            dispatch({
+                type: Actions.PATCH_TRAINING_GROUP,
+                data: patchedTrainingGroup,
+            });
+        });
+}
+
+/**
  * Remove Training Group
  */
-export function removeTrainingGroup() {
-    return dispatch => AppAPI.training_group.patch()
-        .then((trainingGroups) => {
+export function removeTrainingGroup(trainingGroupId) {
+    return dispatch => AppAPI.training_group.patch(trainingGroupId)
+        .then(trainingGroups => {
             dispatch({
-                type: Actions.UPDATE_TRAINING_GROUPS,
+                type: Actions.REMOVE_TRAINING_GROUP,
                 data: trainingGroups,
             });
         });

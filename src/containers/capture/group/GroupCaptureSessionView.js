@@ -6,8 +6,6 @@ import {
   View,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
-import ModalDropdown from 'react-native-modal-dropdown';
-import Collapsible from 'react-native-collapsible';
 
 // Consts and Libs
 import AppAPI from '@lib/api';
@@ -18,11 +16,9 @@ import { Spacer, Text } from '@ui/';
 import { Placeholder } from '@general/';
 import { Roles } from '@constants/';
 
-const accessoryDiscoverabilityInstruction = 'hold the top and bottom buttons simultaneously until the kit lights flash red and blue';
-
 /* Component ==================================================================== */
-class CaptureSessionView extends Component {
-    static componentName = 'CaptureSessionView';
+class GroupCaptureSessionView extends Component {
+    static componentName = 'GroupCaptureSessionView';
 
     /* eslint-disable react/forbid-prop-types */
     static propTypes = {
@@ -111,4 +107,4 @@ class CaptureSessionView extends Component {
 }
 
 /* Export Component ==================================================================== */
-export default CaptureSessionView;
+export default GroupCaptureSessionView;

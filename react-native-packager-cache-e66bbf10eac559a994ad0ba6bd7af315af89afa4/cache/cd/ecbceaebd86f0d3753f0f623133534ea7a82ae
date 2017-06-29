@@ -8,9 +8,9 @@ var _actions = require('@redux/user/actions');
 
 var AccessoryActions = babelHelpers.interopRequireWildcard(_actions);
 
-var _CaptureSessionView = require('./CaptureSessionView');
+var _GroupCaptureSessionView = require('./GroupCaptureSessionView');
 
-var _CaptureSessionView2 = babelHelpers.interopRequireDefault(_CaptureSessionView);
+var _GroupCaptureSessionView2 = babelHelpers.interopRequireDefault(_GroupCaptureSessionView);
 
 var mapStateToProps = function mapStateToProps(state) {
     return {
@@ -22,4 +22,4 @@ var mapDispatchToProps = {
     upsertAccessory: AccessoryActions.upsertAccessory
 };
 
-exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_CaptureSessionView2.default);
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_GroupCaptureSessionView2.default);

@@ -1,5 +1,5 @@
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 var _jsxFileName = '/Users/vdesai/Biometrix/FathomMobile/src/navigation/biometrixAdminNavigation.js';
 
@@ -13,9 +13,13 @@ var _constants = require('@constants/');
 
 var _reactNativeElements = require('react-native-elements');
 
-var _CaptureSessionContainer = require('@containers/capture/CaptureSessionContainer');
+var _TeamCaptureSessionContainer = require('@containers/capture/team/TeamCaptureSessionContainer');
 
-var _CaptureSessionContainer2 = babelHelpers.interopRequireDefault(_CaptureSessionContainer);
+var _TeamCaptureSessionContainer2 = babelHelpers.interopRequireDefault(_TeamCaptureSessionContainer);
+
+var _GroupCaptureSessionContainer = require('@containers/capture/group/GroupCaptureSessionContainer');
+
+var _GroupCaptureSessionContainer2 = babelHelpers.interopRequireDefault(_GroupCaptureSessionContainer);
 
 var _KitManagementContainer = require('@containers/kit/KitManagementContainer');
 
@@ -24,89 +28,109 @@ var _KitManagementContainer2 = babelHelpers.interopRequireDefault(_KitManagement
 var _NavbarMenuButtonContainer = require('@containers/ui/NavbarMenuButton/NavbarMenuButtonContainer');
 
 var navbarPropsTabs = babelHelpers.extends({}, _constants.AppConfig.navbarProps, {
-    renderLeftButton: function renderLeftButton() {
-        return _react2.default.createElement(_NavbarMenuButtonContainer.NavbarMenuButton, {
-            __source: {
-                fileName: _jsxFileName,
-                lineNumber: 20
-            }
-        });
-    },
-    sceneStyle: babelHelpers.extends({}, _constants.AppConfig.navbarProps.sceneStyle)
+  renderLeftButton: function renderLeftButton() {
+    return _react2.default.createElement(_NavbarMenuButtonContainer.NavbarMenuButton, {
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 21
+      }
+    });
+  },
+  sceneStyle: babelHelpers.extends({}, _constants.AppConfig.navbarProps.sceneStyle)
 });
 
 var regimenView = babelHelpers.extends({}, _constants.AppConfig.navbarProps, {
-    renderLeftButton: function renderLeftButton() {
-        return _react2.default.createElement(_NavbarMenuButtonContainer.NavbarMenuButton, {
-            __source: {
-                fileName: _jsxFileName,
-                lineNumber: 28
-            }
-        });
-    },
-    renderRightButton: function renderRightButton() {
-        return _react2.default.createElement(_reactNativeElements.Icon, { onPress: function onPress() {
-                return _reactNativeRouterFlux.Actions.refresh({ isModalVisible: true });
-            }, name: 'plus', type: 'material-community', size: 34, color: '#FFF', underlayColor: 'transparent', containerStyle: { marginBottom: 12 }, __source: {
-                fileName: _jsxFileName,
-                lineNumber: 29
-            }
-        });
-    },
-    sceneStyle: babelHelpers.extends({}, _constants.AppConfig.navbarProps.sceneStyle)
+  renderLeftButton: function renderLeftButton() {
+    return _react2.default.createElement(_NavbarMenuButtonContainer.NavbarMenuButton, {
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 29
+      }
+    });
+  },
+  renderRightButton: function renderRightButton() {
+    return _react2.default.createElement(_reactNativeElements.Icon, { onPress: function onPress() {
+        return _reactNativeRouterFlux.Actions.refresh({ isModalVisible: true });
+      }, name: 'plus', type: 'material-community', size: 34, color: '#FFF', underlayColor: 'transparent', containerStyle: { marginBottom: 12 }, __source: {
+        fileName: _jsxFileName,
+        lineNumber: 30
+      }
+    });
+  },
+  sceneStyle: babelHelpers.extends({}, _constants.AppConfig.navbarProps.sceneStyle)
 });
 
 var groupView = babelHelpers.extends({}, _constants.AppConfig.navbarProps, {
-    renderLeftButton: function renderLeftButton() {
-        return _react2.default.createElement(_NavbarMenuButtonContainer.NavbarMenuButton, {
-            __source: {
-                fileName: _jsxFileName,
-                lineNumber: 37
-            }
-        });
-    },
-    renderRightButton: function renderRightButton() {
-        return _react2.default.createElement(_reactNativeElements.Icon, { onPress: function onPress() {
-                return _reactNativeRouterFlux.Actions.refresh({ isModalVisible: true });
-            }, name: 'plus', type: 'material-community', size: 34, color: '#FFF', underlayColor: 'transparent', containerStyle: { marginBottom: 12 }, __source: {
-                fileName: _jsxFileName,
-                lineNumber: 38
-            }
-        });
-    },
-    sceneStyle: babelHelpers.extends({}, _constants.AppConfig.navbarProps.sceneStyle)
+  renderLeftButton: function renderLeftButton() {
+    return _react2.default.createElement(_NavbarMenuButtonContainer.NavbarMenuButton, {
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 38
+      }
+    });
+  },
+  renderRightButton: function renderRightButton() {
+    return _react2.default.createElement(_reactNativeElements.Icon, { onPress: function onPress() {
+        return _reactNativeRouterFlux.Actions.refresh({ isModalVisible: true });
+      }, name: 'plus', type: 'material-community', size: 34, color: '#FFF', underlayColor: 'transparent', containerStyle: { marginBottom: 12 }, __source: {
+        fileName: _jsxFileName,
+        lineNumber: 39
+      }
+    });
+  },
+  sceneStyle: babelHelpers.extends({}, _constants.AppConfig.navbarProps.sceneStyle)
 });
 
 var scenes = _react2.default.createElement(
+  _reactNativeRouterFlux.Scene,
+  { key: 'biometrixAdmin', __source: {
+      fileName: _jsxFileName,
+      lineNumber: 47
+    }
+  },
+  _react2.default.createElement(
     _reactNativeRouterFlux.Scene,
-    { key: 'biometrixAdmin', __source: {
-            fileName: _jsxFileName,
-            lineNumber: 46
-        }
-    },
+    babelHelpers.extends({}, navbarPropsTabs, {
+      key: 'biometrixAdminCaptureSession', __source: {
+        fileName: _jsxFileName,
+        lineNumber: 48
+      }
+    }),
     _react2.default.createElement(_reactNativeRouterFlux.Scene, babelHelpers.extends({}, navbarPropsTabs, {
-        key: 'biometrixAdminCaptureSession',
-        clone: true,
-        initial: true,
-        type: _reactNativeRouterFlux.ActionConst.REPLACE,
-        component: _CaptureSessionContainer2.default,
-        analyticsDesc: 'BiometrixAdminCaptureSessiontView: Biometrix Admin Capture Session',
-        __source: {
-            fileName: _jsxFileName,
-            lineNumber: 47
-        }
+      key: 'biometrixAdminTeamCaptureSession',
+      clone: true,
+      initial: true,
+      type: _reactNativeRouterFlux.ActionConst.REPLACE,
+      component: _TeamCaptureSessionContainer2.default,
+      analyticsDesc: 'BiometrixAdminTeamCaptureSessiontView: Biometrix Admin Team Capture Session',
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 51
+      }
     })),
     _react2.default.createElement(_reactNativeRouterFlux.Scene, babelHelpers.extends({}, navbarPropsTabs, {
-        key: 'kitManagement',
-        clone: true,
-        type: _reactNativeRouterFlux.ActionConst.REPLACE,
-        component: _KitManagementContainer2.default,
-        analyticsDesc: 'KitManagementView: Kit Management',
-        __source: {
-            fileName: _jsxFileName,
-            lineNumber: 56
-        }
+      key: 'biometrixAdminGroupCaptureSession',
+      clone: true,
+      type: _reactNativeRouterFlux.ActionConst.REPLACE,
+      component: _GroupCaptureSessionContainer2.default,
+      analyticsDesc: 'BiometrixAdminGroupCaptureSessiontView: Biometrix Admin Group Capture Session',
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 60
+      }
     }))
+  ),
+  _react2.default.createElement(_reactNativeRouterFlux.Scene, babelHelpers.extends({}, navbarPropsTabs, {
+    key: 'kitManagement',
+    clone: true,
+    type: _reactNativeRouterFlux.ActionConst.REPLACE,
+    component: _KitManagementContainer2.default,
+    analyticsDesc: 'KitManagementView: Kit Management',
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 69
+    }
+  }))
 );
 
 exports.default = scenes;

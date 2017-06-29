@@ -8,6 +8,8 @@ exports.updateUser = updateUser;
 exports.forgotPassword = forgotPassword;
 exports.signUp = signUp;
 exports.getTrainingGroups = getTrainingGroups;
+exports.createTrainingGroup = createTrainingGroup;
+exports.patchTrainingGroup = patchTrainingGroup;
 exports.removeTrainingGroup = removeTrainingGroup;
 exports.removeRegimen = removeRegimen;
 exports.addTG = addTG;
@@ -191,11 +193,33 @@ function getTrainingGroups() {
     };
 }
 
-function removeTrainingGroup() {
+function createTrainingGroup(trainingGroup) {
     return function (dispatch) {
-        return _api2.default.training_group.patch().then(function (trainingGroups) {
+        return _api2.default.training_group.post(trainingGroup).then(function (newTrainingGroup) {
             dispatch({
-                type: Actions.UPDATE_TRAINING_GROUPS,
+                type: Actions.CREATE_TRAINING_GROUP,
+                data: newTrainingGroup
+            });
+        });
+    };
+}
+
+function patchTrainingGroup(trainingGroup) {
+    return function (dispatch) {
+        return _api2.default.training_group.patch(trainingGroup).then(function (patchedTrainingGroup) {
+            dispatch({
+                type: Actions.PATCH_TRAINING_GROUP,
+                data: patchedTrainingGroup
+            });
+        });
+    };
+}
+
+function removeTrainingGroup(trainingGroupId) {
+    return function (dispatch) {
+        return _api2.default.training_group.patch(trainingGroupId).then(function (trainingGroups) {
+            dispatch({
+                type: Actions.REMOVE_TRAINING_GROUP,
                 data: trainingGroups
             });
         });
