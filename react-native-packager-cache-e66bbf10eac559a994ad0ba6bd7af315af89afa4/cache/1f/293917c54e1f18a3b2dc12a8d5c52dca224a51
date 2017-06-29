@@ -27,6 +27,10 @@ var _theme = require('@theme/');
 
 var _ui = require('@ui/');
 
+var _general = require('@general/');
+
+var _constants = require('@constants/');
+
 var accessoryDiscoverabilityInstruction = 'hold the top and bottom buttons simultaneously until the kit lights flash red and blue';
 
 var CaptureSessionView = function (_Component) {
@@ -37,48 +41,232 @@ var CaptureSessionView = function (_Component) {
 
         var _this = babelHelpers.possibleConstructorReturn(this, (CaptureSessionView.__proto__ || Object.getPrototypeOf(CaptureSessionView)).call(this, props));
 
-        _this.render = function () {
-            return _react2.default.createElement(
+        _this.adminView = _react2.default.createElement(
+            _reactNative.View,
+            {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 41
+                }
+            },
+            _react2.default.createElement(_ui.Spacer, {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 42
+                }
+            }),
+            _react2.default.createElement(
                 _reactNative.View,
-                {
-                    __source: {
+                { style: { justifyContent: 'center', flexDirection: 'row' }, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 40
+                        lineNumber: 43
                     }
                 },
-                _react2.default.createElement(_ui.Spacer, {
-                    __source: {
+                _react2.default.createElement(_reactNativeModalDropdown2.default, { options: _this.props.user.teams.map(function (team) {
+                        return team.name;
+                    }), defaultIndex: 0, defaultValue: _this.props.user.teams[0].name, textStyle: { fontSize: 20 }, dropdownTextStyle: { fontSize: 20 }, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 41
+                        lineNumber: 44
                     }
                 }),
-                _react2.default.createElement(
-                    _reactNative.View,
-                    { style: { justifyContent: 'center', flexDirection: 'row' }, __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 42
-                        }
-                    },
-                    _react2.default.createElement(_reactNativeModalDropdown2.default, { options: _this.props.user.teams.map(function (team) {
-                            return team.name;
-                        }), defaultIndex: 0, defaultValue: _this.props.user.teams[0].name, textStyle: { fontSize: 20 }, dropdownTextStyle: { fontSize: 20 }, __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 43
-                        }
-                    }),
-                    _react2.default.createElement(_reactNativeElements.Icon, { name: 'caret-down', type: 'font-awesome', size: 16, containerStyle: { marginLeft: 5 }, __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 44
-                        }
-                    })
-                ),
-                _react2.default.createElement(_ui.Spacer, {
-                    __source: {
+                _react2.default.createElement(_reactNativeElements.Icon, { name: 'caret-down', type: 'font-awesome', size: 16, containerStyle: { marginLeft: 5 }, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 46
+                        lineNumber: 45
                     }
                 })
-            );
+            ),
+            _react2.default.createElement(_ui.Spacer, {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 47
+                }
+            })
+        );
+        _this.athleteView = _react2.default.createElement(
+            _reactNative.View,
+            {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 52
+                }
+            },
+            _react2.default.createElement(_ui.Spacer, {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 53
+                }
+            }),
+            _react2.default.createElement(
+                _reactNative.View,
+                { style: { justifyContent: 'center', flexDirection: 'row' }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 54
+                    }
+                },
+                _react2.default.createElement(_reactNativeModalDropdown2.default, { options: _this.props.user.teams.map(function (team) {
+                        return team.name;
+                    }), defaultIndex: 0, defaultValue: _this.props.user.teams[0].name, textStyle: { fontSize: 20 }, dropdownTextStyle: { fontSize: 20 }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 55
+                    }
+                }),
+                _react2.default.createElement(_reactNativeElements.Icon, { name: 'caret-down', type: 'font-awesome', size: 16, containerStyle: { marginLeft: 5 }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 56
+                    }
+                })
+            ),
+            _react2.default.createElement(_ui.Spacer, {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 58
+                }
+            })
+        );
+        _this.biometrixAdminView = _react2.default.createElement(
+            _reactNative.View,
+            {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 63
+                }
+            },
+            _react2.default.createElement(_ui.Spacer, {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 64
+                }
+            }),
+            _react2.default.createElement(
+                _reactNative.View,
+                { style: { justifyContent: 'center', flexDirection: 'row' }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 65
+                    }
+                },
+                _react2.default.createElement(_reactNativeModalDropdown2.default, { options: _this.props.user.teams.map(function (team) {
+                        return team.name;
+                    }), defaultIndex: 0, defaultValue: _this.props.user.teams[0].name, textStyle: { fontSize: 20 }, dropdownTextStyle: { fontSize: 20 }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 66
+                    }
+                }),
+                _react2.default.createElement(_reactNativeElements.Icon, { name: 'caret-down', type: 'font-awesome', size: 16, containerStyle: { marginLeft: 5 }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 67
+                    }
+                })
+            ),
+            _react2.default.createElement(_ui.Spacer, {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 69
+                }
+            })
+        );
+        _this.managerView = _react2.default.createElement(
+            _reactNative.View,
+            {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 74
+                }
+            },
+            _react2.default.createElement(_ui.Spacer, {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 75
+                }
+            }),
+            _react2.default.createElement(
+                _reactNative.View,
+                { style: { justifyContent: 'center', flexDirection: 'row' }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 76
+                    }
+                },
+                _react2.default.createElement(_reactNativeModalDropdown2.default, { options: _this.props.user.teams.map(function (team) {
+                        return team.name;
+                    }), defaultIndex: 0, defaultValue: _this.props.user.teams[0].name, textStyle: { fontSize: 20 }, dropdownTextStyle: { fontSize: 20 }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 77
+                    }
+                }),
+                _react2.default.createElement(_reactNativeElements.Icon, { name: 'caret-down', type: 'font-awesome', size: 16, containerStyle: { marginLeft: 5 }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 78
+                    }
+                })
+            ),
+            _react2.default.createElement(_ui.Spacer, {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 80
+                }
+            })
+        );
+        _this.researcherView = _react2.default.createElement(
+            _reactNative.View,
+            {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 85
+                }
+            },
+            _react2.default.createElement(_ui.Spacer, {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 86
+                }
+            }),
+            _react2.default.createElement(
+                _reactNative.View,
+                { style: { justifyContent: 'center', flexDirection: 'row' }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 87
+                    }
+                },
+                _react2.default.createElement(_reactNativeModalDropdown2.default, { options: _this.props.user.teams.map(function (team) {
+                        return team.name;
+                    }), defaultIndex: 0, defaultValue: _this.props.user.teams[0].name, textStyle: { fontSize: 20 }, dropdownTextStyle: { fontSize: 20 }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 88
+                    }
+                }),
+                _react2.default.createElement(_reactNativeElements.Icon, { name: 'caret-down', type: 'font-awesome', size: 16, containerStyle: { marginLeft: 5 }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 89
+                    }
+                })
+            ),
+            _react2.default.createElement(_ui.Spacer, {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 91
+                }
+            })
+        );
+
+        _this.render = function () {
+            switch (_this.props.user.role) {
+                case _constants.Roles.admin:
+                    return _this.adminView;
+                case _constants.Roles.athlete:
+                    return _this.athleteView;
+                case _constants.Roles.biometrixAdmin:
+                    return _this.biometrixAdminView;
+                case _constants.Roles.manager:
+                    return _this.managerView;
+                case _constants.Roles.researcher:
+                    return _this.researcherView;
+                default:
+                    return _react2.default.createElement(_general.Placeholder, {
+                        __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 108
+                        }
+                    });
+            }
         };
 
         return _this;
