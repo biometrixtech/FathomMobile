@@ -33,6 +33,7 @@ var scenes = _react2.default.createElement(
   _react2.default.createElement(_reactNativeRouterFlux.Scene, {
     hideNavBar: true,
     key: 'authLanding',
+    initial: true,
     component: _LoginContainer2.default,
     type: _reactNativeRouterFlux.ActionConst.RESET,
     analyticsDesc: 'LoginView: Login',
@@ -49,7 +50,7 @@ var scenes = _react2.default.createElement(
     analyticsDesc: 'SignUpView: Sign Up',
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 25
+      lineNumber: 26
     }
   })),
   _react2.default.createElement(_reactNativeRouterFlux.Scene, babelHelpers.extends({}, _constants.AppConfig.navbarProps, {
@@ -60,7 +61,7 @@ var scenes = _react2.default.createElement(
     analyticsDesc: 'ForgotPasswordView: Forgot Password',
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 33
+      lineNumber: 34
     }
   }))
 );

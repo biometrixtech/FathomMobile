@@ -9,12 +9,8 @@ import { AppConfig } from '@constants/';
 import { Icon } from 'react-native-elements';
 
 // Scenes
-import TeamManagementView from '@containers/management/TeamManagementContainer';
+import CaptureSessionView from '@containers/capture/CaptureSessionContainer';
 import KitManagementView from '@containers/kit/KitManagementContainer';
-import AthletesView from '@containers/management/athletes/AthletesContainer';
-import DataView from '@containers/management/data/DataContainer';
-import GroupsView from '@containers/management/groups/GroupsContainer';
-import RegimensView from '@containers/management/regimens/RegimensContainer';
 
 // Components
 import { NavbarMenuButton } from '@containers/ui/NavbarMenuButton/NavbarMenuButtonContainer';
@@ -47,42 +43,15 @@ const groupView = {
 
 /* Routes ==================================================================== */
 const scenes = (
-  <Scene key={'management'} >
+  <Scene key={'biometrixAdmin'} >
     <Scene
       {...navbarPropsTabs}
-      key={'managerTeamManagement'}
+      key={'biometrixAdminCaptureSession'}
       clone
+      initial={true}
       type={ActionConst.REPLACE}
-      component={TeamManagementView}
-      analyticsDesc={'ManagerTeamManagementView: Manager Team Management'}
-    />
-    <Scene
-      {...navbarPropsTabs}
-      key={'managerAthletes'}
-      clone
-      component={AthletesView}
-      analyticsDesc={'ManagerAthletesView: Manager Athletes'}
-    />
-    <Scene
-      {...groupView}
-      key={'managerGroups'}
-      clone
-      component={GroupsView}
-      analyticsDesc={'ManagerGroupsView: Manager Groups'}
-    />
-    <Scene
-      {...regimenView}
-      key={'managerRegimens'}
-      clone
-      component={RegimensView}
-      analyticsDesc={'ManagerRegimensView: Manager Regimens'}
-    />
-    <Scene
-      {...regimenView}
-      key={'managerData'}
-      clone
-      component={DataView}
-      analyticsDesc={'ManagerDataView: Manager Data'}
+      component={CaptureSessionView}
+      analyticsDesc={'BiometrixAdminCaptureSessiontView: Biometrix Admin Capture Session'}
     />
     <Scene
       {...navbarPropsTabs}

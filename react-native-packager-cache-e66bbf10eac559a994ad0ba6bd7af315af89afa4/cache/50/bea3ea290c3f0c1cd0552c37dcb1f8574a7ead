@@ -17,8 +17,11 @@ var app = {
 var brand = {
     brand: {
         primary: '#0b587c',
-        secondary: '#888888',
-        red: '#8E223A'
+        red: '#f17b20',
+        yellow: '#e0af12',
+        blue: '#0b587c',
+        grey: '#dee1e9',
+        light: '#e6f5f7'
     }
 };
 

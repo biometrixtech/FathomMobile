@@ -19,8 +19,8 @@ export default {
       ['login',           '/v1/sign_in'], // If you change the key, update the reference below
       ['forgot_password', '/v1/user/forgot_password'],
       ['user',            '/v1/user'],
-      ['team',            '/v1/user/teams'],
-      ['training_group',  '/v1/training_groups'],
+      ['teams',           '/v1/user/teams'],
+      ['training_groups', '/v1/training_groups'],
       ['accessories',     '/v1/accessories'],
       ['training_events', '/v1/training_events'],
     ]),

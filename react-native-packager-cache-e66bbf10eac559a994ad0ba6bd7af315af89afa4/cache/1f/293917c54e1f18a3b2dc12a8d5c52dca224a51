@@ -1,0 +1,97 @@
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var _jsxFileName = '/Users/vdesai/Biometrix/FathomMobile/src/containers/capture/CaptureSessionView.js';
+
+var _react = require('react');
+
+var _react2 = babelHelpers.interopRequireDefault(_react);
+
+var _reactNative = require('react-native');
+
+var _reactNativeElements = require('react-native-elements');
+
+var _reactNativeModalDropdown = require('react-native-modal-dropdown');
+
+var _reactNativeModalDropdown2 = babelHelpers.interopRequireDefault(_reactNativeModalDropdown);
+
+var _reactNativeCollapsible = require('react-native-collapsible');
+
+var _reactNativeCollapsible2 = babelHelpers.interopRequireDefault(_reactNativeCollapsible);
+
+var _api = require('@lib/api');
+
+var _api2 = babelHelpers.interopRequireDefault(_api);
+
+var _theme = require('@theme/');
+
+var _ui = require('@ui/');
+
+var accessoryDiscoverabilityInstruction = 'hold the top and bottom buttons simultaneously until the kit lights flash red and blue';
+
+var CaptureSessionView = function (_Component) {
+    babelHelpers.inherits(CaptureSessionView, _Component);
+
+    function CaptureSessionView(props) {
+        babelHelpers.classCallCheck(this, CaptureSessionView);
+
+        var _this = babelHelpers.possibleConstructorReturn(this, (CaptureSessionView.__proto__ || Object.getPrototypeOf(CaptureSessionView)).call(this, props));
+
+        _this.render = function () {
+            return _react2.default.createElement(
+                _reactNative.View,
+                {
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 40
+                    }
+                },
+                _react2.default.createElement(_ui.Spacer, {
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 41
+                    }
+                }),
+                _react2.default.createElement(
+                    _reactNative.View,
+                    { style: { justifyContent: 'center', flexDirection: 'row' }, __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 42
+                        }
+                    },
+                    _react2.default.createElement(_reactNativeModalDropdown2.default, { options: _this.props.user.teams.map(function (team) {
+                            return team.name;
+                        }), defaultIndex: 0, defaultValue: _this.props.user.teams[0].name, textStyle: { fontSize: 20 }, dropdownTextStyle: { fontSize: 20 }, __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 43
+                        }
+                    }),
+                    _react2.default.createElement(_reactNativeElements.Icon, { name: 'caret-down', type: 'font-awesome', size: 16, containerStyle: { marginLeft: 5 }, __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 44
+                        }
+                    })
+                ),
+                _react2.default.createElement(_ui.Spacer, {
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 46
+                    }
+                })
+            );
+        };
+
+        return _this;
+    }
+
+    return CaptureSessionView;
+}(_react.Component);
+
+CaptureSessionView.componentName = 'CaptureSessionView';
+CaptureSessionView.propTypes = {
+    user: _react.PropTypes.object
+};
+CaptureSessionView.defaultProps = {
+    user: {}
+};
+exports.default = CaptureSessionView;

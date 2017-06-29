@@ -14,6 +14,7 @@ const Actions = require('../actionTypes');
 export function login(credentials, freshLogin) {
     return dispatch => new Promise(async (resolve, reject) => {
         const userCreds = credentials || null;
+        let storedObject = {};
 
         // Force logout, before logging in
         if (freshLogin && AppAPI.deleteToken) { await AppAPI.deleteToken(); }
@@ -40,9 +41,10 @@ export function login(credentials, freshLogin) {
 
               // Get user details from API, using my token
               return AppAPI.user.get()
-                  .then((userData) => {
+                  .then(userData => {
                       delete response.user;
-                      let storedObject = {
+                      storedObject = {
+                          ...storedObject,
                           ...userData,
                           ...response
                       };
@@ -51,17 +53,17 @@ export function login(credentials, freshLogin) {
                           data: storedObject,
                       });
 
+                      return;
+                  })
+                  .then(() => AppAPI.teams.get())
+                  .then(teams => {
+                      dispatch({
+                          type: Actions.GET_TEAMS,
+                          data: teams,
+                      });
+
                       return resolve(storedObject);
                   })
-                //   .then(() => AppAPI.training_group.get()
-                //   .then((trainingGroups) => {
-                //       dispatch({
-                //           type: Actions.GET_TRAINING_GROUPS,
-                //           data: trainingGroups,
-                //       });
-
-                //       return resolve(trainingGroups);
-                //   }))
                   .catch(err => reject(err));
           }).catch(err => reject(err));
     });
