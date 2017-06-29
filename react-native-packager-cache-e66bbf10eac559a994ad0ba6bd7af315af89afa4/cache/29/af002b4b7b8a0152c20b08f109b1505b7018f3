@@ -71,7 +71,7 @@ exports.default = _reactNativeRouterFlux.Actions.create(_react2.default.createEl
     }),
     _react2.default.createElement(
       _reactNativeRouterFlux.Scene,
-      { key: 'adminHome', component: _DrawerContainer2.default, initial: 'adminTeamManagement', __source: {
+      { key: 'adminHome', component: _DrawerContainer2.default, __source: {
           fileName: _jsxFileName,
           lineNumber: 38
         }
@@ -88,7 +88,7 @@ exports.default = _reactNativeRouterFlux.Actions.create(_react2.default.createEl
     }),
     _react2.default.createElement(
       _reactNativeRouterFlux.Scene,
-      { key: 'athleteHome', component: _DrawerContainer2.default, initial: 'athleteAthleteManagement', __source: {
+      { key: 'athleteHome', component: _DrawerContainer2.default, __source: {
           fileName: _jsxFileName,
           lineNumber: 48
         }
@@ -105,7 +105,7 @@ exports.default = _reactNativeRouterFlux.Actions.create(_react2.default.createEl
     }),
     _react2.default.createElement(
       _reactNativeRouterFlux.Scene,
-      { key: 'biometrixHome', component: _DrawerContainer2.default, initial: 'managerTeamManagement', __source: {
+      { key: 'biometrixHome', component: _DrawerContainer2.default, __source: {
           fileName: _jsxFileName,
           lineNumber: 58
         }
@@ -122,7 +122,7 @@ exports.default = _reactNativeRouterFlux.Actions.create(_react2.default.createEl
     }),
     _react2.default.createElement(
       _reactNativeRouterFlux.Scene,
-      { key: 'managerHome', component: _DrawerContainer2.default, initial: 'managerTeamManagement', __source: {
+      { key: 'managerHome', component: _DrawerContainer2.default, __source: {
           fileName: _jsxFileName,
           lineNumber: 68
         }
@@ -139,7 +139,7 @@ exports.default = _reactNativeRouterFlux.Actions.create(_react2.default.createEl
     }),
     _react2.default.createElement(
       _reactNativeRouterFlux.Scene,
-      { key: 'researcherHome', component: _DrawerContainer2.default, initial: 'researcherSubjectManagement', __source: {
+      { key: 'researcherHome', component: _DrawerContainer2.default, __source: {
           fileName: _jsxFileName,
           lineNumber: 78
         }

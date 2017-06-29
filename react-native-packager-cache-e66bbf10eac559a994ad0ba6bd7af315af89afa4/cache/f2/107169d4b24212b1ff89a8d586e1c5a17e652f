@@ -247,7 +247,7 @@ var Menu = function (_Component) {
                 action = _reactNativeRouterFlux.Actions.athleteAthleteManagement;
                 break;
             case roles.biometrixAdmin:
-                action = _reactNativeRouterFlux.Actions.managerTeamManagement;
+                action = _reactNativeRouterFlux.Actions.managerCaptureSession;
                 break;
             case roles.manager:
                 action = _reactNativeRouterFlux.Actions.managerTeamManagement;

@@ -123,7 +123,7 @@ class Menu extends Component {
             action = Actions.athleteAthleteManagement;
             break;
         case roles.biometrixAdmin:
-            action = Actions.managerTeamManagement;
+            action = Actions.managerCaptureSession;
             break;
         case roles.manager:
             action = Actions.managerTeamManagement;

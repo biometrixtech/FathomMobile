@@ -18,6 +18,7 @@ const scenes = (
     <Scene
       hideNavBar
       key={'authLanding'}
+      initial={true}
       component={Login}
       type={ActionConst.RESET}
       analyticsDesc={'LoginView: Login'}

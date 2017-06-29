@@ -109,7 +109,7 @@ class AthletesView extends Component {
     }
 
     status = {
-        notReady: AppColors.brand.secondary,
+        notReady: AppColors.brand.grey,
         error:    AppColors.red,
         ready:    AppColors.brand.primary,
         allGood:  '#00FF00',
@@ -184,7 +184,7 @@ class AthletesView extends Component {
             </View>
             <View style={[styles.cardView]} >
               <Spacer />
-              <Text style={{ color: AppColors.brand.secondary, fontSize: 14 }}>READY</Text>
+              <Text style={{ color: AppColors.brand.grey, fontSize: 14 }}>READY</Text>
               {
                 section.athletes.reduce((array, athlete, athleteIndex) => {
                     if (athlete.training) {
@@ -249,7 +249,7 @@ class AthletesView extends Component {
                 }, [])
               }
               <Spacer />
-              <Text style={{ color: AppColors.brand.secondary, fontSize: 14 }}>NOT READY</Text>
+              <Text style={{ color: AppColors.brand.grey, fontSize: 14 }}>NOT READY</Text>
               {
                 section.athletes.reduce((array, athlete, athleteIndex) => {
                     if (!athlete.training) {

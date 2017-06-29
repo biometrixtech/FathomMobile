@@ -1,0 +1,25 @@
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _reactRedux = require('react-redux');
+
+var _actions = require('@redux/user/actions');
+
+var AccessoryActions = babelHelpers.interopRequireWildcard(_actions);
+
+var _CaptureSessionView = require('./CaptureSessionView');
+
+var _CaptureSessionView2 = babelHelpers.interopRequireDefault(_CaptureSessionView);
+
+var mapStateToProps = function mapStateToProps(state) {
+    return {
+        user: state.user
+    };
+};
+
+var mapDispatchToProps = {
+    upsertAccessory: AccessoryActions.upsertAccessory
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_CaptureSessionView2.default);

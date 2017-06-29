@@ -34,30 +34,31 @@ function login(credentials, freshLogin) {
 
     return function (dispatch) {
         return new Promise(function _callee(resolve, reject) {
-            var userCreds;
+            var userCreds, storedObject;
             return regeneratorRuntime.async(function _callee$(_context) {
                 while (1) {
                     switch (_context.prev = _context.next) {
                         case 0:
                             userCreds = credentials || null;
+                            storedObject = {};
 
                             if (!(freshLogin && _api2.default.deleteToken)) {
-                                _context.next = 4;
+                                _context.next = 5;
                                 break;
                             }
 
-                            _context.next = 4;
+                            _context.next = 5;
                             return regeneratorRuntime.awrap(_api2.default.deleteToken());
 
-                        case 4:
+                        case 5:
                             if (_api2.default.getToken) {
-                                _context.next = 6;
+                                _context.next = 7;
                                 break;
                             }
 
                             return _context.abrupt('return', resolve());
 
-                        case 6:
+                        case 7:
                             return _context.abrupt('return', _api2.default.getToken(userCreds).then(function (response) {
                                 var decodedToken = '';
                                 var token = response.user.jwt;
@@ -74,10 +75,19 @@ function login(credentials, freshLogin) {
 
                                 return _api2.default.user.get().then(function (userData) {
                                     delete response.user;
-                                    var storedObject = babelHelpers.extends({}, userData, response);
+                                    storedObject = babelHelpers.extends({}, storedObject, userData, response);
                                     dispatch({
                                         type: Actions.USER_REPLACE,
                                         data: storedObject
+                                    });
+
+                                    return;
+                                }).then(function () {
+                                    return _api2.default.teams.get();
+                                }).then(function (teams) {
+                                    dispatch({
+                                        type: Actions.GET_TEAMS,
+                                        data: teams
                                     });
 
                                     return resolve(storedObject);
@@ -88,7 +98,7 @@ function login(credentials, freshLogin) {
                                 return reject(err);
                             }));
 
-                        case 7:
+                        case 8:
                         case 'end':
                             return _context.stop();
                     }

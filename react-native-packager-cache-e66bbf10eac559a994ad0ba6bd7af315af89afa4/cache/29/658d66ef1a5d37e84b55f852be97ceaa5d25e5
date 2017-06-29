@@ -13,7 +13,9 @@ var _require = require('react-native'),
     Easing = _require.Easing,
     BackAndroid = _require.BackAndroid,
     BackHandler = _require.BackHandler,
-    Platform = _require.Platform;
+    Platform = _require.Platform,
+    Modal = _require.Modal,
+    Keyboard = _require.Keyboard;
 
 var BackButton = BackHandler || BackAndroid;
 
@@ -61,6 +63,8 @@ var ModalBox = React.createClass({
     animationDuration: React.PropTypes.number,
     backButtonClose: React.PropTypes.bool,
     easing: React.PropTypes.func,
+    coverScreen: React.PropTypes.bool,
+    keyboardTopOffset: React.PropTypes.number,
 
     onClosed: React.PropTypes.func,
     onOpened: React.PropTypes.func,
@@ -80,7 +84,9 @@ var ModalBox = React.createClass({
       backdropContent: null,
       animationDuration: 400,
       backButtonClose: false,
-      easing: Easing.elastic(0.8)
+      easing: Easing.elastic(0.8),
+      coverScreen: false,
+      keyboardTopOffset: Platform.OS == 'ios' ? 22 : 0
     };
   },
 
@@ -97,7 +103,8 @@ var ModalBox = React.createClass({
       width: screen.width,
       containerHeight: screen.height,
       containerWidth: screen.width,
-      isInitialized: false
+      isInitialized: false,
+      keyboardOffset: 0
     };
   },
 
@@ -110,6 +117,16 @@ var ModalBox = React.createClass({
   componentWillMount: function componentWillMount() {
     this.createPanResponder();
     this.handleOpenning(this.props);
+
+    if (Platform.OS === 'ios') {
+      this.subscriptions = [Keyboard.addListener('keyboardWillChangeFrame', this.onKeyboardChange), Keyboard.addListener('keyboardDidHide', this.onKeyboardHide)];
+    }
+  },
+
+  componentWillUnmount: function componentWillUnmount() {
+    if (this.subscriptions) this.subscriptions.forEach(function (sub) {
+      return sub.remove();
+    });
   },
 
   componentWillReceiveProps: function componentWillReceiveProps(props) {
@@ -121,6 +138,20 @@ var ModalBox = React.createClass({
   handleOpenning: function handleOpenning(props) {
     if (typeof props.isOpen == "undefined") return;
     if (props.isOpen) this.open();else this.close();
+  },
+
+  onKeyboardHide: function onKeyboardHide(evt) {
+    this.state.keyboardOffset = 0;
+  },
+
+  onKeyboardChange: function onKeyboardChange(evt) {
+    if (!evt) return;
+    if (!this.state.isOpen) return;
+    var keyboardFrame = evt.endCoordinates;
+    var keyboardHeight = this.state.containerHeight - keyboardFrame.screenY;
+
+    this.state.keyboardOffset = keyboardHeight;
+    this.animateOpen();
   },
 
   animateBackdropOpen: function animateBackdropOpen() {
@@ -176,17 +207,19 @@ var ModalBox = React.createClass({
     this.state.isAnimateOpen = true;
 
     requestAnimationFrame(function () {
-      _this3.state.positionDest = _this3.calculateModalPosition(_this3.state.containerHeight, _this3.state.containerWidth);
-
+      _this3.state.positionDest = _this3.calculateModalPosition(_this3.state.containerHeight - _this3.state.keyboardOffset, _this3.state.containerWidth);
+      if (_this3.state.keyboardOffset && _this3.state.positionDest < _this3.props.keyboardTopOffset) {
+        _this3.state.positionDest = _this3.props.keyboardTopOffset;
+      }
       _this3.state.animOpen = Animated.timing(_this3.state.position, {
         toValue: _this3.state.positionDest,
         duration: _this3.props.animationDuration,
         easing: _this3.props.easing
       });
       _this3.state.animOpen.start(function () {
+        if (!_this3.state.isOpen && _this3.props.onOpened) _this3.props.onOpened();
         _this3.state.isAnimateOpen = false;
         _this3.state.isOpen = true;
-        if (_this3.props.onOpened) _this3.props.onOpened();
       });
     });
   },
@@ -211,6 +244,7 @@ var ModalBox = React.createClass({
       duration: this.props.animationDuration
     });
     this.state.animClose.start(function () {
+      Keyboard.dismiss();
       _this4.state.isAnimateClose = false;
       _this4.state.isOpen = false;
       _this4.setState({});
@@ -293,51 +327,39 @@ var ModalBox = React.createClass({
       return;
     }
 
-    var modalPosition = this.calculateModalPosition(height, width);
-    var coords = {};
-
-    if (this.state.isInitialized && (this.state.isOpen || this.state.isAnimateOpen || this.state.isAnimateClose)) {
-      var position = this.state.isOpen ? modalPosition : this.state.containerHeight;
-
-      if (this.state.isAnimateOpen) {
-        position = modalPosition;
-        this.stopAnimateOpen();
-      } else if (this.state.isAnimateClose) {
-        position = this.state.containerHeight;
-        this.stopAnimateClose();
-      }
-      this.state.position.setValue(position);
-      coords = { positionDest: position };
+    if (this.state.isOpen || this.state.isAnimateOpen) {
+      this.animateOpen();
     }
 
-    this.setState(babelHelpers.extends({
+    if (this.props.onLayout) this.props.onLayout(evt);
+    this.setState({
       isInitialized: true,
       containerHeight: height,
       containerWidth: width
-    }, coords));
+    });
   },
 
-  renderBackdrop: function renderBackdrop(size) {
-    var backdrop = [];
+  renderBackdrop: function renderBackdrop() {
+    var backdrop = null;
 
     if (this.props.backdrop) {
       backdrop = React.createElement(
         TouchableWithoutFeedback,
         { onPress: this.props.backdropPressToClose ? this.close : null, __source: {
             fileName: _jsxFileName,
-            lineNumber: 379
+            lineNumber: 404
           }
         },
         React.createElement(
           Animated.View,
-          { style: [styles.absolute, size, { opacity: this.state.backdropOpacity }], __source: {
+          { style: [styles.absolute, { opacity: this.state.backdropOpacity }], __source: {
               fileName: _jsxFileName,
-              lineNumber: 380
+              lineNumber: 405
             }
           },
           React.createElement(View, { style: [styles.absolute, { backgroundColor: this.props.backdropColor, opacity: this.props.backdropOpacity }], __source: {
               fileName: _jsxFileName,
-              lineNumber: 381
+              lineNumber: 406
             }
           }),
           this.props.backdropContent || []
@@ -348,53 +370,81 @@ var ModalBox = React.createClass({
     return backdrop;
   },
 
-  render: function render() {
-    var visible = this.state.isOpen || this.state.isAnimateOpen || this.state.isAnimateClose;
+  renderContent: function renderContent() {
     var size = { height: this.state.containerHeight, width: this.state.containerWidth };
     var offsetX = (this.state.containerWidth - this.state.width) / 2;
-    var backdrop = this.renderBackdrop(size);
+
+    return React.createElement(
+      Animated.View,
+      babelHelpers.extends({
+        onLayout: this.onViewLayout,
+        style: [styles.wrapper, size, this.props.style, { transform: [{ translateY: this.state.position }, { translateX: offsetX }] }]
+      }, this.state.pan.panHandlers, {
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 421
+        }
+      }),
+      this.props.children
+    );
+  },
+
+  render: function render() {
+    var _this6 = this;
+
+    var visible = this.state.isOpen || this.state.isAnimateOpen || this.state.isAnimateClose;
 
     if (!visible) return React.createElement(View, {
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 400
+        lineNumber: 436
       }
     });
 
-    return React.createElement(
+    var content = React.createElement(
       View,
-      { style: [styles.transparent, styles.absolute], pointerEvents: 'box-none', onLayout: this.onContainerLayout, __source: {
+      { style: [styles.transparent, styles.absolute], pointerEvents: 'box-none', __source: {
           fileName: _jsxFileName,
-          lineNumber: 403
+          lineNumber: 439
         }
       },
-      backdrop,
       React.createElement(
-        Animated.View,
-        babelHelpers.extends({
-          onLayout: this.onViewLayout,
-          style: [styles.wrapper, size, this.props.style, { transform: [{ translateY: this.state.position }, { translateX: offsetX }] }]
-        }, this.state.pan.panHandlers, {
-          __source: {
+        View,
+        { style: { flex: 1 }, onLayout: this.onContainerLayout, __source: {
             fileName: _jsxFileName,
-            lineNumber: 405
+            lineNumber: 440
           }
-        }),
-        this.props.children
+        },
+        visible && this.renderBackdrop(),
+        visible && this.renderContent()
       )
+    );
+
+    if (!this.props.coverScreen) return content;
+
+    return React.createElement(
+      Modal,
+      { onRequestClose: function onRequestClose() {
+          return _this6.close();
+        }, supportedOrientations: ['landscape', 'portrait'], transparent: true, visible: visible, __source: {
+          fileName: _jsxFileName,
+          lineNumber: 450
+        }
+      },
+      content
     );
   },
 
   open: function open() {
-    var _this6 = this;
+    var _this7 = this;
 
     if (this.props.isDisabled) return;
     if (!this.state.isAnimateOpen && (!this.state.isOpen || this.state.isAnimateClose)) {
       this.onViewLayoutCalculated = function () {
-        _this6.setState({});
-        _this6.animateOpen();
-        if (_this6.props.backButtonClose && Platform.OS === 'android') BackButton.addEventListener('hardwareBackPress', _this6.onBackPress);
-        delete _this6.onViewLayoutCalculated;
+        _this7.setState({});
+        _this7.animateOpen();
+        if (_this7.props.backButtonClose && Platform.OS === 'android') BackButton.addEventListener('hardwareBackPress', _this7.onBackPress);
+        delete _this7.onViewLayoutCalculated;
       };
       this.setState({ isAnimateOpen: true });
     }

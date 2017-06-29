@@ -60,9 +60,6 @@ class KitManagementView extends Component {
     }
 
     componentDidMount = () => {
-        console.log('------------------------------------');
-        console.log(this.props.user);
-        console.log('------------------------------------');
         // Get SSID
         NetworkInfo.getSSID(ssid => {
             this.setState({ SSID: ssid });
