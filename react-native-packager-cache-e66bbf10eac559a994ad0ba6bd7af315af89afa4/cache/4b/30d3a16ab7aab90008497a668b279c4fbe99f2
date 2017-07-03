@@ -1,0 +1,25 @@
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.upsertAccessory = upsertAccessory;
+
+var _api = require('@lib/api');
+
+var _api2 = _interopRequireDefault(_api);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Actions = require('../actionTypes');
+
+function upsertAccessory(params, payload) {
+    return function (dispatch) {
+        return _api2.default.accessories.patch(params, payload).then(function (accessoryData) {
+            dispatch({
+                type: Actions.UPSERT_ACCESSORY,
+                data: accessoryData
+            });
+
+            return accessoryData;
+        });
+    };
+}

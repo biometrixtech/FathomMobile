@@ -11,14 +11,15 @@ function lineHeight(fontSize) {
 const base = {
     size:       16,
     lineHeight: lineHeight(14),
-    ...Platform.select({
-        ios: {
-            family: 'Proxima Nova',
-        },
-        android: {
-            family: 'Proxima Nova',
-        },
-    }),
+    family:     'Proxima Nova'
+    // ...Platform.select({
+    //     ios: {
+    //         family: 'Proxima Nova',
+    //     },
+    //     android: {
+    //         family: 'Proxima Nova',
+    //     },
+    // }),
 };
 
 export default {

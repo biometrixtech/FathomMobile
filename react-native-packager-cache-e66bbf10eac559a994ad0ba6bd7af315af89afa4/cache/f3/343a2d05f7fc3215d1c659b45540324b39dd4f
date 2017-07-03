@@ -1,0 +1,171 @@
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var _jsxFileName = '/Users/vdesai/Biometrix/FathomMobile/src/navigation/researcherNavigation.js';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactNativeRouterFlux = require('react-native-router-flux');
+
+var _constants = require('@constants/');
+
+var _reactNativeElements = require('react-native-elements');
+
+var _TeamManagementContainer = require('@containers/management/TeamManagementContainer');
+
+var _TeamManagementContainer2 = _interopRequireDefault(_TeamManagementContainer);
+
+var _KitManagementContainer = require('@containers/kit/KitManagementContainer');
+
+var _KitManagementContainer2 = _interopRequireDefault(_KitManagementContainer);
+
+var _AthletesContainer = require('@containers/management/athletes/AthletesContainer');
+
+var _AthletesContainer2 = _interopRequireDefault(_AthletesContainer);
+
+var _DataContainer = require('@containers/management/data/DataContainer');
+
+var _DataContainer2 = _interopRequireDefault(_DataContainer);
+
+var _GroupsContainer = require('@containers/management/groups/GroupsContainer');
+
+var _GroupsContainer2 = _interopRequireDefault(_GroupsContainer);
+
+var _RegimensContainer = require('@containers/management/regimens/RegimensContainer');
+
+var _RegimensContainer2 = _interopRequireDefault(_RegimensContainer);
+
+var _NavbarMenuButtonContainer = require('@containers/ui/NavbarMenuButton/NavbarMenuButtonContainer');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var navbarPropsTabs = _extends({}, _constants.AppConfig.navbarProps, {
+  renderLeftButton: function renderLeftButton() {
+    return _react2.default.createElement(_NavbarMenuButtonContainer.NavbarMenuButton, {
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 24
+      }
+    });
+  },
+  sceneStyle: _extends({}, _constants.AppConfig.navbarProps.sceneStyle)
+});
+
+var regimenView = _extends({}, _constants.AppConfig.navbarProps, {
+  renderLeftButton: function renderLeftButton() {
+    return _react2.default.createElement(_NavbarMenuButtonContainer.NavbarMenuButton, {
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 32
+      }
+    });
+  },
+  renderRightButton: function renderRightButton() {
+    return _react2.default.createElement(_reactNativeElements.Icon, { onPress: function onPress() {
+        return _reactNativeRouterFlux.Actions.refresh({ isModalVisible: true });
+      }, name: 'plus', type: 'material-community', size: 34, color: '#FFF', underlayColor: 'transparent', containerStyle: { marginBottom: 12 }, __source: {
+        fileName: _jsxFileName,
+        lineNumber: 33
+      }
+    });
+  },
+  sceneStyle: _extends({}, _constants.AppConfig.navbarProps.sceneStyle)
+});
+
+var groupView = _extends({}, _constants.AppConfig.navbarProps, {
+  renderLeftButton: function renderLeftButton() {
+    return _react2.default.createElement(_NavbarMenuButtonContainer.NavbarMenuButton, {
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 41
+      }
+    });
+  },
+  renderRightButton: function renderRightButton() {
+    return _react2.default.createElement(_reactNativeElements.Icon, { onPress: function onPress() {
+        return _reactNativeRouterFlux.Actions.refresh({ isModalVisible: true });
+      }, name: 'plus', type: 'material-community', size: 34, color: '#FFF', underlayColor: 'transparent', containerStyle: { marginBottom: 12 }, __source: {
+        fileName: _jsxFileName,
+        lineNumber: 42
+      }
+    });
+  },
+  sceneStyle: _extends({}, _constants.AppConfig.navbarProps.sceneStyle)
+});
+
+var scenes = _react2.default.createElement(
+  _reactNativeRouterFlux.Scene,
+  { key: 'management', __source: {
+      fileName: _jsxFileName,
+      lineNumber: 50
+    }
+  },
+  _react2.default.createElement(_reactNativeRouterFlux.Scene, _extends({}, navbarPropsTabs, {
+    key: 'managerTeamManagement',
+    clone: true,
+    type: _reactNativeRouterFlux.ActionConst.REPLACE,
+    component: _TeamManagementContainer2.default,
+    analyticsDesc: 'ManagerTeamManagementView: Manager Team Management',
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 51
+    }
+  })),
+  _react2.default.createElement(_reactNativeRouterFlux.Scene, _extends({}, navbarPropsTabs, {
+    key: 'managerAthletes',
+    clone: true,
+    component: _AthletesContainer2.default,
+    analyticsDesc: 'ManagerAthletesView: Manager Athletes',
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 59
+    }
+  })),
+  _react2.default.createElement(_reactNativeRouterFlux.Scene, _extends({}, groupView, {
+    key: 'managerGroups',
+    clone: true,
+    component: _GroupsContainer2.default,
+    analyticsDesc: 'ManagerGroupsView: Manager Groups',
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 66
+    }
+  })),
+  _react2.default.createElement(_reactNativeRouterFlux.Scene, _extends({}, regimenView, {
+    key: 'managerRegimens',
+    clone: true,
+    component: _RegimensContainer2.default,
+    analyticsDesc: 'ManagerRegimensView: Manager Regimens',
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 73
+    }
+  })),
+  _react2.default.createElement(_reactNativeRouterFlux.Scene, _extends({}, regimenView, {
+    key: 'managerData',
+    clone: true,
+    component: _DataContainer2.default,
+    analyticsDesc: 'ManagerDataView: Manager Data',
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 80
+    }
+  })),
+  _react2.default.createElement(_reactNativeRouterFlux.Scene, _extends({}, navbarPropsTabs, {
+    key: 'kitManagement',
+    clone: true,
+    type: _reactNativeRouterFlux.ActionConst.REPLACE,
+    component: _KitManagementContainer2.default,
+    analyticsDesc: 'KitManagementView: Kit Management',
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 87
+    }
+  }))
+);
+
+exports.default = scenes;

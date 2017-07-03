@@ -1,0 +1,140 @@
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var _jsxFileName = '/Users/vdesai/Biometrix/FathomMobile/src/navigation/biometrixAdminNavigation.js';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactNativeRouterFlux = require('react-native-router-flux');
+
+var _constants = require('@constants/');
+
+var _reactNativeElements = require('react-native-elements');
+
+var _TeamCaptureSessionContainer = require('@containers/capture/team/TeamCaptureSessionContainer');
+
+var _TeamCaptureSessionContainer2 = _interopRequireDefault(_TeamCaptureSessionContainer);
+
+var _GroupCaptureSessionContainer = require('@containers/capture/group/GroupCaptureSessionContainer');
+
+var _GroupCaptureSessionContainer2 = _interopRequireDefault(_GroupCaptureSessionContainer);
+
+var _KitManagementContainer = require('@containers/kit/KitManagementContainer');
+
+var _KitManagementContainer2 = _interopRequireDefault(_KitManagementContainer);
+
+var _NavbarMenuButtonContainer = require('@containers/ui/NavbarMenuButton/NavbarMenuButtonContainer');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var navbarPropsTabs = _extends({}, _constants.AppConfig.navbarProps, {
+    renderLeftButton: function renderLeftButton() {
+        return _react2.default.createElement(_NavbarMenuButtonContainer.NavbarMenuButton, {
+            __source: {
+                fileName: _jsxFileName,
+                lineNumber: 21
+            }
+        });
+    },
+    sceneStyle: _extends({}, _constants.AppConfig.navbarProps.sceneStyle)
+});
+
+var regimenView = _extends({}, _constants.AppConfig.navbarProps, {
+    renderLeftButton: function renderLeftButton() {
+        return _react2.default.createElement(_NavbarMenuButtonContainer.NavbarMenuButton, {
+            __source: {
+                fileName: _jsxFileName,
+                lineNumber: 29
+            }
+        });
+    },
+    renderRightButton: function renderRightButton() {
+        return _react2.default.createElement(_reactNativeElements.Icon, { onPress: function onPress() {
+                return _reactNativeRouterFlux.Actions.refresh({ isModalVisible: true });
+            }, name: 'plus', type: 'material-community', size: 34, color: '#FFF', underlayColor: 'transparent', containerStyle: { marginBottom: 12 }, __source: {
+                fileName: _jsxFileName,
+                lineNumber: 30
+            }
+        });
+    },
+    sceneStyle: _extends({}, _constants.AppConfig.navbarProps.sceneStyle)
+});
+
+var groupView = _extends({}, _constants.AppConfig.navbarProps, {
+    renderLeftButton: function renderLeftButton() {
+        return _react2.default.createElement(_NavbarMenuButtonContainer.NavbarMenuButton, {
+            __source: {
+                fileName: _jsxFileName,
+                lineNumber: 38
+            }
+        });
+    },
+    renderRightButton: function renderRightButton() {
+        return _react2.default.createElement(_reactNativeElements.Icon, { onPress: function onPress() {
+                return _reactNativeRouterFlux.Actions.refresh({ isModalVisible: true });
+            }, name: 'plus', type: 'material-community', size: 34, color: '#FFF', underlayColor: 'transparent', containerStyle: { marginBottom: 12 }, __source: {
+                fileName: _jsxFileName,
+                lineNumber: 39
+            }
+        });
+    },
+    sceneStyle: _extends({}, _constants.AppConfig.navbarProps.sceneStyle)
+});
+
+var scenes = _react2.default.createElement(
+    _reactNativeRouterFlux.Scene,
+    { key: 'biometrixAdmin', __source: {
+            fileName: _jsxFileName,
+            lineNumber: 47
+        }
+    },
+    _react2.default.createElement(
+        _reactNativeRouterFlux.Scene,
+        _extends({}, navbarPropsTabs, {
+            key: 'biometrixAdminCaptureSession', __source: {
+                fileName: _jsxFileName,
+                lineNumber: 48
+            }
+        }),
+        _react2.default.createElement(_reactNativeRouterFlux.Scene, _extends({}, navbarPropsTabs, {
+            key: 'biometrixAdminTeamCaptureSession',
+            clone: true,
+            initial: true,
+            type: _reactNativeRouterFlux.ActionConst.REPLACE,
+            component: _TeamCaptureSessionContainer2.default,
+            analyticsDesc: 'BiometrixAdminTeamCaptureSessiontView: Biometrix Admin Team Capture Session',
+            __source: {
+                fileName: _jsxFileName,
+                lineNumber: 51
+            }
+        })),
+        _react2.default.createElement(_reactNativeRouterFlux.Scene, _extends({}, navbarPropsTabs, {
+            key: 'biometrixAdminGroupCaptureSession',
+            clone: true,
+            type: _reactNativeRouterFlux.ActionConst.REPLACE,
+            component: _GroupCaptureSessionContainer2.default,
+            analyticsDesc: 'BiometrixAdminGroupCaptureSessiontView: Biometrix Admin Group Capture Session',
+            __source: {
+                fileName: _jsxFileName,
+                lineNumber: 60
+            }
+        }))
+    ),
+    _react2.default.createElement(_reactNativeRouterFlux.Scene, _extends({}, navbarPropsTabs, {
+        key: 'kitManagement',
+        clone: true,
+        type: _reactNativeRouterFlux.ActionConst.REPLACE,
+        component: _KitManagementContainer2.default,
+        analyticsDesc: 'KitManagementView: Kit Management',
+        __source: {
+            fileName: _jsxFileName,
+            lineNumber: 69
+        }
+    }))
+);
+
+exports.default = scenes;

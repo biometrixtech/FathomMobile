@@ -1,0 +1,11 @@
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _reactNativeSideMenu = require('react-native-side-menu');
+
+var _reactNativeSideMenu2 = _interopRequireDefault(_reactNativeSideMenu);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _reactNativeSideMenu2.default;

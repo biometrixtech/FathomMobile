@@ -9,17 +9,11 @@ function lineHeight(fontSize) {
     return parseInt(fontSize + fontSize * multiplier, 10);
 }
 
-var base = babelHelpers.extends({
+var base = {
     size: 16,
-    lineHeight: lineHeight(14)
-}, _reactNative.Platform.select({
-    ios: {
-        family: 'Proxima Nova'
-    },
-    android: {
-        family: 'Proxima Nova'
-    }
-}));
+    lineHeight: lineHeight(14),
+    family: 'Proxima Nova'
+};
 
 exports.default = {
     base: babelHelpers.extends({}, base),

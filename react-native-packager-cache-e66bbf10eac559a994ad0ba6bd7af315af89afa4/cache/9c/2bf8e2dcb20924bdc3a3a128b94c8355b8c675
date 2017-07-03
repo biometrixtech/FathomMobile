@@ -1,0 +1,286 @@
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var React = require('react-native');
+var bleManager = React.NativeModules.BleManager;
+
+var BleManager = function () {
+  function BleManager() {
+    _classCallCheck(this, BleManager);
+
+    this.isPeripheralConnected = this.isPeripheralConnected.bind(this);
+  }
+
+  _createClass(BleManager, [{
+    key: 'read',
+    value: function read(peripheralId, serviceUUID, characteristicUUID) {
+      return new Promise(function (fulfill, reject) {
+        bleManager.read(peripheralId, serviceUUID, characteristicUUID, function (error, data) {
+          if (error) {
+            reject(error);
+          } else {
+            fulfill(data);
+          }
+        });
+      });
+    }
+  }, {
+    key: 'readRSSI',
+    value: function readRSSI(peripheralId) {
+      return new Promise(function (fulfill, reject) {
+        bleManager.readRSSI(peripheralId, function (error, rssi) {
+          if (error) {
+            reject(error);
+          } else {
+            fulfill(rssi);
+          }
+        });
+      });
+    }
+  }, {
+    key: 'retrieveServices',
+    value: function retrieveServices(peripheralId) {
+      return new Promise(function (fulfill, reject) {
+        bleManager.retrieveServices(peripheralId, function (error, peripheral) {
+          if (error) {
+            reject(error);
+          } else {
+            fulfill(peripheral);
+          }
+        });
+      });
+    }
+  }, {
+    key: 'write',
+    value: function write(peripheralId, serviceUUID, characteristicUUID, data, maxByteSize) {
+      if (maxByteSize == null) {
+        maxByteSize = 20;
+      }
+      return new Promise(function (fulfill, reject) {
+        bleManager.write(peripheralId, serviceUUID, characteristicUUID, data, maxByteSize, function (error) {
+          if (error) {
+            reject(error);
+          } else {
+            fulfill();
+          }
+        });
+      });
+    }
+  }, {
+    key: 'writeWithoutResponse',
+    value: function writeWithoutResponse(peripheralId, serviceUUID, characteristicUUID, data, maxByteSize, queueSleepTime) {
+      if (maxByteSize == null) {
+        maxByteSize = 20;
+      }
+      if (queueSleepTime == null) {
+        queueSleepTime = 10;
+      }
+      return new Promise(function (fulfill, reject) {
+        bleManager.writeWithoutResponse(peripheralId, serviceUUID, characteristicUUID, data, maxByteSize, queueSleepTime, function (error) {
+          if (error) {
+            reject(error);
+          } else {
+            fulfill();
+          }
+        });
+      });
+    }
+  }, {
+    key: 'connect',
+    value: function connect(peripheralId) {
+      return new Promise(function (fulfill, reject) {
+        bleManager.connect(peripheralId, function (error) {
+          if (error) {
+            reject(error);
+          } else {
+            fulfill();
+          }
+        });
+      });
+    }
+  }, {
+    key: 'disconnect',
+    value: function disconnect(peripheralId) {
+      return new Promise(function (fulfill, reject) {
+        bleManager.disconnect(peripheralId, function (error) {
+          if (error) {
+            reject(error);
+          } else {
+            fulfill();
+          }
+        });
+      });
+    }
+  }, {
+    key: 'startNotification',
+    value: function startNotification(peripheralId, serviceUUID, characteristicUUID) {
+      return new Promise(function (fulfill, reject) {
+        bleManager.startNotification(peripheralId, serviceUUID, characteristicUUID, function (error) {
+          if (error) {
+            reject(error);
+          } else {
+            fulfill();
+          }
+        });
+      });
+    }
+  }, {
+    key: 'stopNotification',
+    value: function stopNotification(peripheralId, serviceUUID, characteristicUUID) {
+      return new Promise(function (fulfill, reject) {
+        bleManager.stopNotification(peripheralId, serviceUUID, characteristicUUID, function (error) {
+          if (error) {
+            reject(error);
+          } else {
+            fulfill();
+          }
+        });
+      });
+    }
+  }, {
+    key: 'checkState',
+    value: function checkState() {
+      bleManager.checkState();
+    }
+  }, {
+    key: 'start',
+    value: function start(options) {
+      return new Promise(function (fulfill, reject) {
+        if (options == null) {
+          options = {};
+        }
+        bleManager.start(options, function (error) {
+          if (error) {
+            reject(error);
+          } else {
+            fulfill();
+          }
+        });
+      });
+    }
+  }, {
+    key: 'scan',
+    value: function scan(serviceUUIDs, seconds, allowDuplicates) {
+      var scanningOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+      return new Promise(function (fulfill, reject) {
+        if (allowDuplicates == null) {
+          allowDuplicates = false;
+        }
+
+        if (scanningOptions.numberOfMatches == null) {
+          scanningOptions.numberOfMatches = 3;
+        }
+
+        if (scanningOptions.matchMode == null) {
+          scanningOptions.matchMode = 1;
+        }
+
+        if (scanningOptions.scanMode == null) {
+          scanningOptions.scanMode = 0;
+        }
+
+        bleManager.scan(serviceUUIDs, seconds, allowDuplicates, scanningOptions, function (error) {
+          if (error) {
+            reject(error);
+          } else {
+            fulfill();
+          }
+        });
+      });
+    }
+  }, {
+    key: 'stopScan',
+    value: function stopScan() {
+      return new Promise(function (fulfill, reject) {
+        bleManager.stopScan(function (error) {
+          if (error != null) {
+            reject(error);
+          } else {
+            fulfill();
+          }
+        });
+      });
+    }
+  }, {
+    key: 'enableBluetooth',
+    value: function enableBluetooth() {
+      return new Promise(function (fulfill, reject) {
+        bleManager.enableBluetooth(function (error) {
+          if (error != null) {
+            reject(error);
+          } else {
+            fulfill();
+          }
+        });
+      });
+    }
+  }, {
+    key: 'getConnectedPeripherals',
+    value: function getConnectedPeripherals(serviceUUIDs) {
+      return new Promise(function (fulfill, reject) {
+        bleManager.getConnectedPeripherals(serviceUUIDs, function (error, result) {
+          if (error) {
+            reject(error);
+          } else {
+            if (result != null) {
+              fulfill(result);
+            } else {
+              fulfill([]);
+            }
+          }
+        });
+      });
+    }
+  }, {
+    key: 'getDiscoveredPeripherals',
+    value: function getDiscoveredPeripherals() {
+      return new Promise(function (fulfill, reject) {
+        bleManager.getDiscoveredPeripherals(function (error, result) {
+          if (error) {
+            reject(error);
+          } else {
+            if (result != null) {
+              fulfill(result);
+            } else {
+              fulfill([]);
+            }
+          }
+        });
+      });
+    }
+  }, {
+    key: 'removePeripheral',
+    value: function removePeripheral(peripheralId) {
+      return new Promise(function (fulfill, reject) {
+        bleManager.removePeripheral(peripheralId, function (error) {
+          if (error) {
+            reject(error);
+          } else {
+            fulfill();
+          }
+        });
+      });
+    }
+  }, {
+    key: 'isPeripheralConnected',
+    value: function isPeripheralConnected(peripheralId, serviceUUIDs) {
+      return this.getConnectedPeripherals(serviceUUIDs).then(function (result) {
+        if (result.find(function (p) {
+          return p.id === peripheralId;
+        })) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    }
+  }]);
+
+  return BleManager;
+}();
+
+module.exports = new BleManager();

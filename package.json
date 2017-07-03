@@ -7,9 +7,9 @@
     "pretest": "./node_modules/.bin/eslint -c .eslintrc --ext .js src",
     "test": "jest"
   },
-  "rpmn": {
+  "rnpm": {
     "assets": [
-      "./assets/fonts"
+      "./src/assets/fonts"
     ]
   },
   "jest": {
@@ -36,16 +36,16 @@
     "react-native-elements": "^0.13.0",
     "react-native-fabric": "^0.4.1",
     "react-native-google-analytics-bridge": "^5.1.0",
+    "react-native-looped-carousel": "^0.1.7",
     "react-native-modal-dropdown": "^0.4.4",
     "react-native-modal-picker": "^0.0.16",
     "react-native-modalbox": "^1.4.0",
     "react-native-network-info": "^2.2.0",
     "react-native-prompt": "^1.0.0",
     "react-native-radial-menu": "^1.1.0",
-    "react-native-router-flux": "^3.40.1",
+    "react-native-router-flux": "^3.41.0",
     "react-native-side-menu": "^0.20.3",
     "react-native-swipeable": "^0.4.0",
-    "react-native-swiper": "^1.5.4",
     "react-native-vector-icons": "^4.2.0",
     "react-redux": "^5.0.5",
     "redux": "^3.7.1",
@@ -61,8 +61,7 @@
     "babel-preset-react-native": "^2.0.0",
     "babel-register": "^6.16.3",
     "eslint": "^4.1.1",
-    "eslint-config-airbnb": "^15.0.1",
-    "eslint-plugin-import": "^2.5.0",
+    "eslint-plugin-import": "^2.6.1",
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-react": "^7.1.0",
     "jest": "^20.0.3",

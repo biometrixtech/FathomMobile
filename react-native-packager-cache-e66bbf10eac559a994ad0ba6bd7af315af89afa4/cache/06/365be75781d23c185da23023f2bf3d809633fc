@@ -1,0 +1,128 @@
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var _jsxFileName = '/Users/vdesai/Biometrix/FathomMobile/src/components/ui/Button.js';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactNativeElements = require('react-native-elements');
+
+var _theme = require('@theme/');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var CustomButton = function (_Component) {
+    _inherits(CustomButton, _Component);
+
+    function CustomButton() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, CustomButton);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = CustomButton.__proto__ || Object.getPrototypeOf(CustomButton)).call.apply(_ref, [this].concat(args))), _this), _this.buttonProps = function () {
+            var props = _extends({
+                title: 'Coming Soon...',
+                color: '#fff',
+                fontWeight: 'bold',
+                onPress: _this.props.onPress,
+                fontFamily: _theme.AppFonts.base.family,
+                fontSize: _theme.AppFonts.base.size,
+                borderRadius: _theme.AppSizes.borderRadius,
+                raised: true,
+                buttonStyle: {
+                    padding: 12,
+                    marginLeft: 0,
+                    marginRight: 0
+                }
+            }, _this.props, {
+                backgroundColor: _this.props.backgroundColor || _theme.AppColors.brand.primary,
+                small: false,
+                large: false,
+                icon: _this.props.icon && _this.props.icon.name ? _extends({
+                    size: 14
+                }, _this.props.icon) : null
+            });
+
+            if (_this.props.small) {
+                props.fontSize = 12;
+                props.buttonStyle.padding = 8;
+
+                if (props.icon && props.icon.name) {
+                    props.icon = _extends({
+                        size: 14
+                    }, props.icon);
+                }
+            }
+            if (_this.props.large) {
+                props.fontSize = 20;
+                props.buttonStyle.padding = 15;
+
+                if (props.icon && props.icon.name) {
+                    props.icon = _extends({
+                        size: 20
+                    }, props.icon);
+                }
+            }
+
+            if (_this.props.outlined) {
+                props.raised = false;
+                props.backgroundColor = _this.props.backgroundColor || 'transparent';
+                props.color = _theme.AppColors.brand.primary;
+                props.buttonStyle.borderWidth = 1;
+                props.buttonStyle.borderColor = _theme.AppColors.brand.primary;
+
+                if (props.icon && props.icon.name) {
+                    props.icon = _extends({
+                        color: _theme.AppColors.brand.primary
+                    }, props.icon);
+                }
+            }
+
+            return props;
+        }, _this.render = function () {
+            return _react2.default.createElement(_reactNativeElements.Button, _extends({}, _this.buttonProps(), {
+                __source: {
+                    fileName: _jsxFileName,
+                    lineNumber: 105
+                }
+            }));
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    return CustomButton;
+}(_react.Component);
+
+CustomButton.propTypes = {
+    small: _react.PropTypes.bool,
+    large: _react.PropTypes.bool,
+    outlined: _react.PropTypes.bool,
+    backgroundColor: _react.PropTypes.string,
+    onPress: _react.PropTypes.func.isRequired,
+    icon: _react.PropTypes.shape({
+        name: _react.PropTypes.string
+    })
+};
+CustomButton.defaultProps = {
+    small: false,
+    large: false,
+    outlined: false,
+    icon: {},
+    backgroundColor: null
+};
+exports.default = CustomButton;

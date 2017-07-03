@@ -4,11 +4,11 @@
 /* eslint-disable max-len */
 import React, { Component, PropTypes } from 'react';
 import {
-  View,
-  Image,
-  Alert,
-  StyleSheet,
-  TouchableOpacity,
+    View,
+    Image,
+    Alert,
+    StyleSheet,
+    TouchableOpacity,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { Icon } from 'react-native-elements';
@@ -82,8 +82,8 @@ const styles = StyleSheet.create({
         paddingBottom:  10,
     },
     menuBottom_text: {
-        color:      '#EEEFF0',
-        fontSize:   23,
+        color:    '#EEEFF0',
+        fontSize: 23,
     },
 });
 
@@ -117,7 +117,7 @@ class Menu extends Component {
             action = Actions.athleteAthleteManagement;
             break;
         case Roles.biometrixAdmin:
-            action = Actions.managerCaptureSession;
+            action = Actions.biometrixAdminTeamCaptureSession;
             break;
         case Roles.manager:
             action = Actions.managerTeamManagement;
@@ -164,12 +164,12 @@ class Menu extends Component {
     logout = () => {
         if (this.props.logout) {
             this.props.logout()
-              .then(() => {
-                  this.props.closeSideMenu();
-                  Actions.login();
-              }).catch((err) => {
-                  Alert.alert('Uh oh!', 'Something went wrong, please try again.');
-              });
+                .then(() => {
+                    this.props.closeSideMenu();
+                    return Actions.login();
+                }).catch((err) => {
+                    return Alert.alert('Uh oh!', 'Something went wrong, please try again.');
+                });
         }
     }
 
@@ -177,60 +177,58 @@ class Menu extends Component {
         const { menu } = this.state;
 
         // Build the actual Menu Items
-        const menuItems = [];
-        menu.map((item, index) => {
+        const menuItems = menu.map((item, index) => {
             const { title, onPress, itemName } = item;
 
-            return menuItems.push(
-              <TouchableOpacity
-                key={`menu-item-${title}`}
-                onPress={onPress}
-              >
-                <View style={[styles.menuItem, { backgroundColor: this.state.active === index ? '#FFFFFF' : AppColors.brand.primary }]}>
-                  <Icon type={'material-community'} color={this.state.active === index ? AppColors.brand.primary : '#FFFFFF'} name={itemName}/>
-                  <Text style={[styles.menuItem_text, { color: this.state.active === index ? AppColors.brand.primary : '#FFFFFF' }]}>
-                    {title}
-                  </Text>
-                </View>
-              </TouchableOpacity>,
+            return (
+                <TouchableOpacity
+                    key={`menu-item-${title}`}
+                    onPress={onPress}
+                >
+                    <View style={[styles.menuItem, { backgroundColor: this.state.active === index ? '#FFFFFF' : AppColors.brand.primary }]}>
+                        <Icon type={'material-community'} color={this.state.active === index ? AppColors.brand.primary : '#FFFFFF'} name={itemName}/>
+                        <Text style={[styles.menuItem_text, { color: this.state.active === index ? AppColors.brand.primary : '#FFFFFF' }]}>
+                            {title}
+                        </Text>
+                    </View>
+                </TouchableOpacity>
             );
         });
 
-        /* eslint-disable max-len */
         return (
-          <View style={[styles.container]}>
-            <View style={[styles.backgroundFill]} />
+            <View style={[styles.container]}>
+                <View style={[styles.backgroundFill]} />
 
-            <Image resizeMode={Image.resizeMode.contain} style={[styles.imageContainer, { borderRadius: 50 }]} source={{ uri: this.props.user.avatar_url }} />
+                <Image resizeMode={Image.resizeMode.contain} style={[styles.imageContainer, { borderRadius: 50 }]} source={{ uri: this.props.user.avatar_url }} />
 
-            <Spacer />
+                <Spacer />
 
-            <Text
-              style={[
-                  styles.menuBottom_text,
-                  AppStyles.textCenterAligned,
-              ]}
-            >
-              {this.props.user.first_name && this.props.user.last_name ? `${this.props.user.first_name} ${this.props.user.last_name}` : this.props.user.role}
-            </Text>
+                <Text
+                    style={[
+                        styles.menuBottom_text,
+                        AppStyles.textCenterAligned,
+                    ]}
+                >
+                    {this.props.user.first_name && this.props.user.last_name ? `${this.props.user.first_name} ${this.props.user.last_name}` : this.props.user.role}
+                </Text>
 
-            <Spacer />
+                <Spacer />
 
-            <View style={[styles.menuContainer]}>
-              <View style={[styles.menu]}>{menuItems}</View>
+                <View style={[styles.menuContainer]}>
+                    <View style={[styles.menu]}>{menuItems}</View>
 
-              <View style={[styles.menuBottom]}>
-                <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
-                  <Button
-                    style={{ fontFamily: 'ProximaNova-Regular' }}
-                    backgroundColor={MENU_BG_COLOR}
-                    title={'Log Out'}
-                    onPress={this.logout}
-                  />
+                    <View style={[styles.menuBottom]}>
+                        <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
+                            <Button
+                                style={{ fontFamily: 'ProximaNova-Regular' }}
+                                backgroundColor={MENU_BG_COLOR}
+                                title={'Log Out'}
+                                onPress={this.logout}
+                            />
+                        </View>
+                    </View>
                 </View>
-              </View>
             </View>
-          </View>
         );
     }
 }

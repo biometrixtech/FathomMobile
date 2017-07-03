@@ -33,6 +33,7 @@ class CustomFormLabel extends Component {
             labelStyle: [{
                 color:      AppColors.textPrimary,
                 fontFamily: AppFonts.base.family,
+                fontWeight: AppFonts.h0.fontWeight
             }],
         };
 

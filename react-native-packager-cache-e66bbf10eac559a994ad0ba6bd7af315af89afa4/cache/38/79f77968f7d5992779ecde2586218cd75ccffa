@@ -1,0 +1,84 @@
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var _jsxFileName = '/Users/vdesai/Biometrix/FathomMobile/node_modules/react-native-elevated-view/index.js';
+
+var _react = require('react');
+
+var _react2 = babelHelpers.interopRequireDefault(_react);
+
+var _reactNative = require('react-native');
+
+var ElevatedView = function (_React$Component) {
+  babelHelpers.inherits(ElevatedView, _React$Component);
+
+  function ElevatedView() {
+    babelHelpers.classCallCheck(this, ElevatedView);
+    return babelHelpers.possibleConstructorReturn(this, (ElevatedView.__proto__ || Object.getPrototypeOf(ElevatedView)).apply(this, arguments));
+  }
+
+  babelHelpers.createClass(ElevatedView, [{
+    key: 'render',
+    value: function render() {
+      var _props = this.props,
+          elevation = _props.elevation,
+          style = _props.style,
+          otherProps = babelHelpers.objectWithoutProperties(_props, ['elevation', 'style']);
+
+
+      if (_reactNative.Platform.OS === 'android') {
+        return _react2.default.createElement(
+          _reactNative.View,
+          babelHelpers.extends({ elevation: elevation, style: style }, otherProps, {
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 17
+            }
+          }),
+          this.props.children
+        );
+      }
+
+      if (elevation === 0) {
+        return _react2.default.createElement(
+          _reactNative.View,
+          babelHelpers.extends({ style: style }, otherProps, {
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 25
+            }
+          }),
+          this.props.children
+        );
+      }
+
+      var iosShadowElevation = {
+        shadowOpacity: 0.0015 * elevation + 0.18,
+        shadowRadius: 0.54 * elevation,
+        shadowOffset: {
+          height: 0.6 * elevation
+        }
+      };
+
+      return _react2.default.createElement(
+        _reactNative.View,
+        babelHelpers.extends({ style: [iosShadowElevation, style] }, otherProps, {
+          __source: {
+            fileName: _jsxFileName,
+            lineNumber: 41
+          }
+        }),
+        this.props.children
+      );
+    }
+  }]);
+  return ElevatedView;
+}(_react2.default.Component);
+
+ElevatedView.propTypes = {
+  elevation: _react2.default.PropTypes.number
+};
+ElevatedView.defaultProps = {
+  elevation: 0
+};
+exports.default = ElevatedView;
