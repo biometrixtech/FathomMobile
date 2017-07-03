@@ -511,76 +511,19 @@ var KitManagementView = function (_Component) {
                                     }
                                 },
                                 _this.state.devicesFound.map(function (device) {
-                                    return _react2.default.createElement(
-                                        _reactNative.View,
-                                        { key: device.id, __source: {
-                                                fileName: _jsxFileName,
-                                                lineNumber: 332
-                                            }
-                                        },
-                                        _react2.default.createElement(_ui.ListItem, { key: device.id + '0', title: device.name + '0', onPress: function onPress() {
-                                                return _this.connect(device);
-                                            }, titleContainerStyle: { alignSelf: 'center' }, hideChevron: true, __source: {
-                                                fileName: _jsxFileName,
-                                                lineNumber: 333
-                                            }
-                                        }),
-                                        _react2.default.createElement(_ui.ListItem, { key: device.id + '1', title: device.name + '1', onPress: function onPress() {
-                                                return _this.connect(device);
-                                            }, titleContainerStyle: { alignSelf: 'center' }, hideChevron: true, __source: {
-                                                fileName: _jsxFileName,
-                                                lineNumber: 334
-                                            }
-                                        }),
-                                        _react2.default.createElement(_ui.ListItem, { key: device.id + '2', title: device.name + '2', onPress: function onPress() {
-                                                return _this.connect(device);
-                                            }, titleContainerStyle: { alignSelf: 'center' }, hideChevron: true, __source: {
-                                                fileName: _jsxFileName,
-                                                lineNumber: 335
-                                            }
-                                        }),
-                                        _react2.default.createElement(_ui.ListItem, { key: device.id + '3', title: device.name + '3', onPress: function onPress() {
-                                                return _this.connect(device);
-                                            }, titleContainerStyle: { alignSelf: 'center' }, hideChevron: true, __source: {
-                                                fileName: _jsxFileName,
-                                                lineNumber: 336
-                                            }
-                                        }),
-                                        _react2.default.createElement(_ui.ListItem, { key: device.id + '4', title: device.name + '4', onPress: function onPress() {
-                                                return _this.connect(device);
-                                            }, titleContainerStyle: { alignSelf: 'center' }, hideChevron: true, __source: {
-                                                fileName: _jsxFileName,
-                                                lineNumber: 337
-                                            }
-                                        }),
-                                        _react2.default.createElement(_ui.ListItem, { key: device.id + '5', title: device.name + '5', onPress: function onPress() {
-                                                return _this.connect(device);
-                                            }, titleContainerStyle: { alignSelf: 'center' }, hideChevron: true, __source: {
-                                                fileName: _jsxFileName,
-                                                lineNumber: 338
-                                            }
-                                        }),
-                                        _react2.default.createElement(_ui.ListItem, { key: device.id + '6', title: device.name + '6', onPress: function onPress() {
-                                                return _this.connect(device);
-                                            }, titleContainerStyle: { alignSelf: 'center' }, hideChevron: true, __source: {
-                                                fileName: _jsxFileName,
-                                                lineNumber: 339
-                                            }
-                                        }),
-                                        _react2.default.createElement(_ui.ListItem, { key: device.id + '7', title: device.name + '7', onPress: function onPress() {
-                                                return _this.connect(device);
-                                            }, titleContainerStyle: { alignSelf: 'center' }, hideChevron: true, __source: {
-                                                fileName: _jsxFileName,
-                                                lineNumber: 340
-                                            }
-                                        })
-                                    );
+                                    return _react2.default.createElement(_ui.ListItem, { key: device.id, title: device.name, onPress: function onPress() {
+                                            return _this.connect(device);
+                                        }, titleContainerStyle: { alignSelf: 'center' }, hideChevron: true, __source: {
+                                            fileName: _jsxFileName,
+                                            lineNumber: 332
+                                        }
+                                    });
                                 })
                             )
                         ),
                         _react2.default.createElement(_reactNative.View, { style: { flex: 1 }, __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 346
+                                lineNumber: 337
                             }
                         })
                     )

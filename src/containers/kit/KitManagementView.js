@@ -329,16 +329,7 @@ class KitManagementView extends Component {
                         <ScrollView>
                             {
                                 this.state.devicesFound.map(device => {
-                                    return <View key={device.id}>
-                                        <ListItem key={device.id+'0'} title={device.name+'0'} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
-                                        <ListItem key={device.id+'1'} title={device.name+'1'} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
-                                        <ListItem key={device.id+'2'} title={device.name+'2'} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
-                                        <ListItem key={device.id+'3'} title={device.name+'3'} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
-                                        <ListItem key={device.id+'4'} title={device.name+'4'} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
-                                        <ListItem key={device.id+'5'} title={device.name+'5'} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
-                                        <ListItem key={device.id+'6'} title={device.name+'6'} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
-                                        <ListItem key={device.id+'7'} title={device.name+'7'} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
-                                    </View>
+                                    return <ListItem key={device.id} title={device.name} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
                                 })
                             }
                         </ScrollView>
