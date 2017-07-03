@@ -1,4 +1,8 @@
 {
+  "env": {
+    "node": true,
+    "es6":  true
+  },
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 2017,
@@ -23,12 +27,11 @@
       "superInFunctions":                 true,
       "templateStrings":                  true,
       "unicodeCodePointEscapes":          true,
-      "globalReturn":                     true,
-    },
+      "globalReturn":                     true
+    }
   },
   "rules": {
     //Built-In from old projects
-    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
     "global-require": "off",
     "no-console": "off",
     "import/no-extraneous-dependencies": "off",
@@ -146,6 +149,6 @@
         "VariableDeclarator": true,
         "ImportDeclaration":  true } }],
     "key-spacing":       [1, { "align": "value" }],
-    "no-param-reassign": 0,
-  },
+    "no-param-reassign": 0
+  }
 }

@@ -11,7 +11,8 @@ var app = {
     red: '#FF0000',
     green: '#00FF00',
     blue: '#0000FF',
-    lightGrey: '#E0E0E0'
+    lightGrey: '#E0E0E0',
+    shadowColor: '#C8C8C8'
 };
 
 var brand = {

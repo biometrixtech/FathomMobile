@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 
 // Actions
-import * as AccessoryActions from '@redux/user/actions';
+import * as UserActions from '@redux/user/actions';
 
 // The component we're mapping to
 import GroupCaptureSessionView from './GroupCaptureSessionView';
@@ -18,7 +18,6 @@ const mapStateToProps = state => {
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-    upsertAccessory: AccessoryActions.upsertAccessory,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GroupCaptureSessionView);

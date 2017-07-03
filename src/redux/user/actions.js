@@ -23,49 +23,49 @@ export function login(credentials, freshLogin) {
 
         // Get a new token from API
         return AppAPI.getToken(userCreds)
-          .then((response) => {
-              let decodedToken = '';
-              let token = response.user.jwt;
+            .then((response) => {
+                let decodedToken = '';
+                let token = response.user.jwt;
 
-              try {
-                  decodedToken = jwtDecode(token);
-              } catch (err) {
-                  return reject('Token decode failed.');
-              }
+                try {
+                    decodedToken = jwtDecode(token);
+                } catch (err) {
+                    return reject('Token decode failed.');
+                }
 
-              if (!decodedToken || !decodedToken.role || !decodedToken.user_id) {
-                  return reject('Token decode failed.');
-              }
+                if (!decodedToken || !decodedToken.role || !decodedToken.user_id) {
+                    return reject('Token decode failed.');
+                }
 
-              // TODO: auth check on authorized account role
+                // TODO: auth check on authorized account role
 
-              // Get user details from API, using my token
-              return AppAPI.user.get()
-                  .then(userData => {
-                      delete response.user;
-                      storedObject = {
-                          ...storedObject,
-                          ...userData,
-                          ...response
-                      };
-                      dispatch({
-                          type: Actions.USER_REPLACE,
-                          data: storedObject,
-                      });
+                // Get user details from API, using my token
+                return AppAPI.user.get()
+                    .then(userData => {
+                        delete response.user;
+                        storedObject = {
+                            ...storedObject,
+                            ...userData,
+                            ...response
+                        };
+                        dispatch({
+                            type: Actions.USER_REPLACE,
+                            data: storedObject,
+                        });
 
-                      return;
-                  })
-                  .then(() => AppAPI.teams.get())
-                  .then(teams => {
-                      dispatch({
-                          type: Actions.GET_TEAMS,
-                          data: teams,
-                      });
+                        return;
+                    })
+                    .then(() => AppAPI.teams.get())
+                    .then(teams => {
+                        dispatch({
+                            type: Actions.GET_TEAMS,
+                            data: teams,
+                        });
 
-                      return resolve(storedObject);
-                  })
-                  .catch(err => reject(err));
-          }).catch(err => reject(err));
+                        return resolve(storedObject);
+                    })
+                    .catch(err => reject(err));
+            }).catch(err => reject(err));
     });
 }
 
@@ -74,12 +74,12 @@ export function login(credentials, freshLogin) {
   */
 export function logout() {
     return dispatch => AppAPI.deleteToken()
-      .then(() => {
-          dispatch({
-              type: Actions.USER_REPLACE,
-              data: {},
-          });
-      });
+        .then(() => {
+            dispatch({
+                type: Actions.USER_REPLACE,
+                data: {},
+            });
+        });
 }
 
 /**
@@ -87,14 +87,14 @@ export function logout() {
   */
 export function getUser() {
     return dispatch => AppAPI.user.get()
-      .then((userData) => {
-          dispatch({
-              type: Actions.USER_REPLACE,
-              data: userData,
-          });
+        .then((userData) => {
+            dispatch({
+                type: Actions.USER_REPLACE,
+                data: userData,
+            });
 
-          return userData;
-      });
+            return userData;
+        });
 }
 
 /**
@@ -103,14 +103,14 @@ export function getUser() {
   */
 export function updateUser(payload) {
     return dispatch => AppAPI.user.patch(payload)
-      .then((userData) => {
-          dispatch({
-              type: Actions.USER_REPLACE,
-              data: userData,
-          });
+        .then((userData) => {
+            dispatch({
+                type: Actions.USER_REPLACE,
+                data: userData,
+            });
 
-          return userData;
-      });
+            return userData;
+        });
 }
 
 /**

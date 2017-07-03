@@ -29,7 +29,8 @@ var CustomFormLabel = function (_Component) {
             var props = babelHelpers.extends({}, _this.props, {
                 labelStyle: [{
                     color: _theme.AppColors.textPrimary,
-                    fontFamily: _theme.AppFonts.base.family
+                    fontFamily: _theme.AppFonts.base.family,
+                    fontWeight: _theme.AppFonts.h0.fontWeight
                 }]
             });
 
@@ -44,7 +45,7 @@ var CustomFormLabel = function (_Component) {
                 babelHelpers.extends({}, _this.labelProps(), {
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 46
+                        lineNumber: 47
                     }
                 }),
                 _this.props.children

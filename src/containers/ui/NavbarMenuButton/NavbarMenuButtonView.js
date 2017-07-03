@@ -10,14 +10,14 @@ import { AppColors } from '@theme/';
 
 /* Component ==================================================================== */
 const NavbarMenuButton = ({ toggleSideMenu }) => (
-  <TouchableOpacity
-    onPress={toggleSideMenu}
-    activeOpacity={0.7}
-    style={{ top: 2 }}
-    hitSlop={{ top: 7, right: 7, bottom: 7, left: 7 }}
-  >
-    <Icon name={'menu'} size={32} color={AppColors.brand.primary} />
-  </TouchableOpacity>
+    <TouchableOpacity
+        onPress={toggleSideMenu}
+        activeOpacity={0.7}
+        style={{ top: 2 }}
+        hitSlop={{ top: 7, right: 7, bottom: 7, left: 7 }}
+    >
+        <Icon name={'menu'} size={32} color={AppColors.brand.primary} />
+    </TouchableOpacity>
 );
 
 NavbarMenuButton.propTypes = {

@@ -1,0 +1,156 @@
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react2 = require('react');
+
+var _react3 = _interopRequireDefault(_react2);
+
+var _index = require('./../../../react-transform-hmr/lib/index.js');
+
+var _index2 = _interopRequireDefault(_index);
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _jsxFileName = '/Users/vdesai/Biometrix/FathomMobile/node_modules/react-native-elements/src/form/FormInput.js';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _reactNative = require('react-native');
+
+var _colors = require('../config/colors');
+
+var _colors2 = _interopRequireDefault(_colors);
+
+var _normalizeText = require('../helpers/normalizeText');
+
+var _normalizeText2 = _interopRequireDefault(_normalizeText);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _components = {
+  FormInput: {
+    displayName: 'FormInput'
+  }
+};
+
+var _reactTransformHmrLibIndexJs2 = (0, _index2.default)({
+  filename: '/Users/vdesai/Biometrix/FathomMobile/node_modules/react-native-elements/src/form/FormInput.js',
+  components: _components,
+  locals: [module],
+  imports: [_react3.default]
+});
+
+function _wrapComponent(id) {
+  return function (Component) {
+    return _reactTransformHmrLibIndexJs2(Component, id);
+  };
+}
+
+var _Dimensions$get = _reactNative.Dimensions.get('window'),
+    width = _Dimensions$get.width;
+
+var FormInput = _wrapComponent('FormInput')(function (_Component) {
+  _inherits(FormInput, _Component);
+
+  function FormInput() {
+    _classCallCheck(this, FormInput);
+
+    return _possibleConstructorReturn(this, (FormInput.__proto__ || Object.getPrototypeOf(FormInput)).apply(this, arguments));
+  }
+
+  _createClass(FormInput, [{
+    key: 'focus',
+    value: function focus() {
+      var ref = this.props.textInputRef;
+      this.refs[ref].focus();
+    }
+  }, {
+    key: 'blur',
+    value: function blur() {
+      var ref = this.props.textInputRef;
+      this.refs[ref].blur();
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props = this.props,
+          containerStyle = _props.containerStyle,
+          inputStyle = _props.inputStyle,
+          textInputRef = _props.textInputRef,
+          containerRef = _props.containerRef,
+          attributes = _objectWithoutProperties(_props, ['containerStyle', 'inputStyle', 'textInputRef', 'containerRef']);
+
+      return _react3.default.createElement(
+        _reactNative.View,
+        {
+          ref: containerRef,
+          style: [styles.container, containerStyle && containerStyle],
+          __source: {
+            fileName: _jsxFileName,
+            lineNumber: 34
+          }
+        },
+        _react3.default.createElement(_reactNative.TextInput, _extends({
+          ref: textInputRef,
+          style: [styles.input, inputStyle && inputStyle]
+        }, attributes, {
+          __source: {
+            fileName: _jsxFileName,
+            lineNumber: 38
+          }
+        }))
+      );
+    }
+  }]);
+
+  return FormInput;
+}(_react2.Component));
+
+FormInput.propTypes = {
+  containerStyle: _reactNative.View.propTypes.style,
+  inputStyle: _reactNative.Text.propTypes.style,
+  textInputRef: _propTypes2.default.string,
+  containerRef: _propTypes2.default.string
+};
+
+var styles = _reactNative.StyleSheet.create({
+  container: _extends({
+    marginLeft: 15,
+    marginRight: 15
+  }, _reactNative.Platform.select({
+    ios: {
+      borderBottomColor: _colors2.default.grey4,
+      borderBottomWidth: 1,
+      marginLeft: 20,
+      marginRight: 20
+    }
+  })),
+  input: _extends({}, _reactNative.Platform.select({
+    android: {
+      height: 46,
+      width: width - 30
+    },
+    ios: {
+      height: 36,
+      width: width
+    }
+  }), {
+    color: _colors2.default.grey3,
+    fontSize: (0, _normalizeText2.default)(14)
+  })
+});
+
+exports.default = FormInput;

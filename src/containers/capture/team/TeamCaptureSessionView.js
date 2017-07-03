@@ -13,7 +13,7 @@ import Modal from 'react-native-modalbox';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
-import { AppStyles, AppColors } from '@theme/';
+import { AppStyles, AppColors, AppSizes } from '@theme/';
 
 // Components
 import { ListItem, Spacer, Text, Card, FormLabel, FormInput, Button } from '@ui/';
@@ -78,20 +78,14 @@ class TeamCaptureSessionView extends Component {
     }
 
     rightButton = (data) => (
-        <View style={[{ alignItems: 'flex-start', paddingLeft: 20 }, AppStyles.editButton]}>
-            <View>
-                <Text style={{ color: '#FFFFFF' }}>EDIT</Text>
-                <Icon name="pencil" onPress={() => { this.setState({ trainingGroup: data }); Actions.refresh({ isModalVisible: true }); }} type="material-community" color="#FFFFFF" />
-            </View>
+        <View style={[{ alignItems: 'flex-start', paddingLeft: 25 }, AppStyles.editButton]}>
+            <Icon name="pencil" onPress={() => { this.setState({ trainingGroup: data }); Actions.refresh({ isModalVisible: true }); }} type="material-community" color="#FFFFFF" />
         </View>
     );
 
     leftButton = (id) => (
-        <View style={[{ alignItems: 'flex-end', paddingRight: 10 }, AppStyles.deleteButton]}>
-            <View>
-                <Text style={{ color: '#FFFFFF' }}>DELETE</Text>
-                <Icon name="delete" onPress={() => { this.removeGroup(id); }} type="material-community" color="#FFFFFF" />
-            </View>
+        <View style={[{ alignItems: 'flex-end', paddingRight: 25 }, AppStyles.deleteButton]}>
+            <Icon name="delete" onPress={() => { this.removeGroup(id); }} type="material-community" color="#FFFFFF" />
         </View>
     );
 
@@ -118,19 +112,18 @@ class TeamCaptureSessionView extends Component {
     );
 
     biometrixAdminView = () => (
-        <View style={[AppStyles.container]}>
-            <Spacer size={15} />
-            <View style={{ justifyContent: 'center', flexDirection: 'row' }} >
-                <ModalDropdown options={this.state.teams.map(team => team.name)} defaultIndex={0} defaultValue={this.state.teams[0].name} textStyle={{ fontSize: 20 }} dropdownTextStyle={{ fontSize: 20 }} onSelect={index => { this.setState({teamIndex: index}); }} />
-                <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }}/>
+        <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]}>
+            <View style={{ justifyContent: 'center', flexDirection: 'row', backgroundColor: '#FFFFFF', paddingTop: 15, paddingBottom: 15 }} >
+                <ModalDropdown options={this.state.teams.map(team => team.name)} defaultIndex={0} defaultValue={this.state.teams[0].name} textStyle={AppStyles.baseText} dropdownTextStyle={AppStyles.baseText} onSelect={index => { this.setState({teamIndex: index}); }} />
+                <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }} color={AppColors.brand.blue}/>
             </View>
-            <Spacer size={15} />
             <ScrollView>
                 {/* Section for primary training groups */}
                 <ListItem title={'PRIMARY TRAINING GROUPS'} containerStyle={{ backgroundColor: AppColors.brand.light }} hideChevron/>
                 {
                     this.state.teams[this.state.teamIndex].training_groups.filter(trainingGroup => trainingGroup.description.match(/primary/i)).map(trainingGroup => {
-                        return <ListItem key={trainingGroup.id} title={trainingGroup.name} hideChevron/>;
+                        /* avatar={{uri: this.props.user.avatar_url }} */
+                        return <ListItem key={trainingGroup.id} title={trainingGroup.name} onPress={() => Actions.biometrixAdminGroupCaptureSession({ team: this.state.teams[this.state.teamIndex], trainingGroup })} hideChevron/>;
                     })
                 }
                 {/*Section for secondary training groups */}
@@ -139,32 +132,32 @@ class TeamCaptureSessionView extends Component {
                     this.state.teams[this.state.teamIndex].training_groups.filter(trainingGroup => trainingGroup.description.match(/secondary/i)).map(trainingGroup => {
                         return (
                             <Swipeable key={trainingGroup.id} leftButtons={[this.leftButton(trainingGroup.id)]} rightButtons={[this.rightButton(trainingGroup)]} >
-                                <ListItem title={trainingGroup.name} hideChevron/>
+                                <ListItem title={trainingGroup.name} onPress={() => Actions.biometrixAdminGroupCaptureSession({ team: this.state.teams[this.state.teamIndex], trainingGroup })} hideChevron/>
                             </Swipeable>
                         );
                     })
                 }
             </ScrollView>
             <Modal position={'center'} style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]} isOpen={this.props.isModalVisible} backButtonClose swipeToClose={false} onClosed={() => { this.setState({ trainingGroup: { name: '', description: '' } }); Actions.refresh({ isModalVisible: false }); }}>
-              <View onLayout={(ev) => { this.resizeModal(ev); }}>
-                <Card title={`${this.state.trainingGroup.id ? 'Edit' : 'Add'} Training Group`}>
+                <View onLayout={(ev) => { this.resizeModal(ev); }}>
+                    <Card title={`${this.state.trainingGroup.id ? 'Edit' : 'Add'} Training Group`}>
 
-                  <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Name</FormLabel>
-                  <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.name} onChangeText={name => this.setState({ trainingGroup: (this.state.trainingGroup.name = name) })} />
+                        <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Name</FormLabel>
+                        <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.name} onChangeText={name => this.setState({ trainingGroup: (this.state.trainingGroup.name = name) })} />
 
-                  <Spacer />
+                        <Spacer />
 
-                  <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Description</FormLabel>
-                  <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.description} onChangeText={description => this.setState({ trainingGroup: (this.state.trainingGroup.description = description) })} />
+                        <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Description</FormLabel>
+                        <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.description} onChangeText={description => this.setState({ trainingGroup: (this.state.trainingGroup.description = description) })} />
 
-                  <Spacer />
+                        <Spacer />
 
-                  <Button
-                    title={'Save'}
-                    onPress={() => { if (this.state.trainingGroup.id) { this.editGroup(); } else { this.addGroup(); } }}
-                  />
-                </Card>
-              </View>
+                        <Button
+                            title={'Save'}
+                            onPress={() => { if (this.state.trainingGroup.id) { this.editGroup(); } else { this.addGroup(); } }}
+                        />
+                    </Card>
+                </View>
             </Modal>
         </View>
     );
@@ -193,18 +186,18 @@ class TeamCaptureSessionView extends Component {
 
     render = () => {
         switch(this.props.user.role) {
-            case Roles.admin:
-                return this.adminView();
-            case Roles.athlete:
-                return this.athleteView();
-            case Roles.biometrixAdmin:
-                return this.biometrixAdminView();
-            case Roles.manager:
-                return this.managerView();
-            case Roles.researcher:
-                return this.researcherView();
-            default:
-                return <Placeholder />;
+        case Roles.admin:
+            return this.adminView();
+        case Roles.athlete:
+            return this.athleteView();
+        case Roles.biometrixAdmin:
+            return this.biometrixAdminView();
+        case Roles.manager:
+            return this.managerView();
+        case Roles.researcher:
+            return this.researcherView();
+        default:
+            return <Placeholder />;
         }
     }
 }

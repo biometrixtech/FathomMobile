@@ -1,0 +1,632 @@
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react2 = require('react');
+
+var _react3 = _interopRequireDefault(_react2);
+
+var _index = require('./../react-transform-hmr/lib/index.js');
+
+var _index2 = _interopRequireDefault(_index);
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _class,
+    _temp,
+    _jsxFileName = '/Users/vdesai/Biometrix/FathomMobile/node_modules/react-native-looped-carousel/index.js';
+
+var _reactNative = require('react-native');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _components = {
+  Carousel: {
+    displayName: 'Carousel'
+  }
+};
+
+var _reactTransformHmrLibIndexJs2 = (0, _index2.default)({
+  filename: '/Users/vdesai/Biometrix/FathomMobile/node_modules/react-native-looped-carousel/index.js',
+  components: _components,
+  locals: [module],
+  imports: [_react3.default]
+});
+
+function _wrapComponent(id) {
+  return function (Component) {
+    return _reactTransformHmrLibIndexJs2(Component, id);
+  };
+}
+
+var PAGE_CHANGE_DELAY = 4000;
+
+var Carousel = _wrapComponent('Carousel')((_temp = _class = function (_Component) {
+  _inherits(Carousel, _Component);
+
+  function Carousel(props) {
+    _classCallCheck(this, Carousel);
+
+    var _this = _possibleConstructorReturn(this, (Carousel.__proto__ || Object.getPrototypeOf(Carousel)).call(this, props));
+
+    _this._onScrollBegin = function () {
+      _this._clearTimer();
+    };
+
+    _this._setCurrentPage = function (currentPage) {
+      _this.setState({ currentPage: currentPage }, function () {
+        if (_this.props.onAnimateNextPage) {
+          _this.props.onAnimateNextPage(currentPage);
+        }
+      });
+    };
+
+    _this._onScrollEnd = function (event) {
+      var offset = _extends({}, event.nativeEvent.contentOffset);
+      var page = _this._calculateCurrentPage(offset.x);
+      _this._placeCritical(page);
+      _this._setCurrentPage(page);
+      _this._setUpTimer();
+    };
+
+    _this._onLayout = function () {
+      _this.container.measure(function (x, y, w, h) {
+        _this.setState({ size: { width: w, height: h } });
+
+        setTimeout(function () {
+          return _this._placeCritical(_this.state.currentPage);
+        }, 0);
+      });
+    };
+
+    _this._clearTimer = function () {
+      clearTimeout(_this.timer);
+    };
+
+    _this._setUpTimer = function () {
+      if (_this.props.autoplay && _react3.default.Children.count(_this.props.children) > 1) {
+        _this._clearTimer();
+        _this.timer = setTimeout(_this._animateNextPage, _this.props.delay);
+      }
+    };
+
+    _this._scrollTo = function (_ref) {
+      var offset = _ref.offset,
+          animated = _ref.animated,
+          nofix = _ref.nofix;
+
+      if (_this.scrollView) {
+        _this.scrollView.scrollTo({ y: 0, x: offset, animated: animated });
+
+        if (!nofix && _reactNative.Platform.OS === 'android' && !animated) {
+          _this.scrollView.scrollTo({ y: 0, x: offset, animated: true });
+        }
+      }
+    };
+
+    _this._animateNextPage = function () {
+      var currentPage = _this.state.currentPage;
+
+      _this.animateToPage(_this._normalizePageNumber(currentPage + 1));
+    };
+
+    _this.animateToPage = function (page) {
+      var currentPage = page;
+      _this._clearTimer();
+      var width = _this.state.size.width;
+      var childrenLength = _this.state.childrenLength;
+
+      if (currentPage >= childrenLength) {
+        currentPage = 0;
+      }
+      if (currentPage === 0) {
+        var scrollMultiplier = _this.state.currentPage === 1 ? 1 : -1;
+        _this._scrollTo({
+          offset: (childrenLength + 1 * scrollMultiplier) * width,
+          animated: false,
+          nofix: true
+        });
+        _this._scrollTo({ offset: childrenLength * width, animated: true });
+      } else if (currentPage === 1) {
+        var _scrollMultiplier = _this.state.currentPage === 0 ? 0 : 2;
+        _this._scrollTo({ offset: width * _scrollMultiplier, animated: false, nofix: true });
+        _this._scrollTo({ offset: width, animated: true });
+      } else {
+        _this._scrollTo({ offset: currentPage * width, animated: true });
+      }
+      _this._setCurrentPage(currentPage);
+      _this._setUpTimer();
+    };
+
+    _this._placeCritical = function (page) {
+      var childrenLength = _this.state.childrenLength;
+      var width = _this.state.size.width;
+
+      if (childrenLength === 1) {
+        _this._scrollTo({ offset: 0, animated: false });
+      } else if (page === 0) {
+        _this._scrollTo({ offset: childrenLength * width, animated: false });
+      } else if (page === 1) {
+        _this._scrollTo({ offset: width, animated: false });
+      } else {
+        _this._scrollTo({ offset: page * width, animated: false });
+      }
+    };
+
+    _this._normalizePageNumber = function (page) {
+      var childrenLength = _this.state.childrenLength;
+
+      if (page === childrenLength) {
+        return 0;
+      } else if (page >= childrenLength) {
+        return 1;
+      }
+      return page;
+    };
+
+    _this._calculateCurrentPage = function (offset) {
+      var width = _this.state.size.width;
+
+      var page = Math.floor(offset / width);
+      return _this._normalizePageNumber(page);
+    };
+
+    _this._renderPageInfo = function (pageLength) {
+      return _react3.default.createElement(
+        _reactNative.View,
+        { style: [styles.pageInfoBottomContainer, _this.props.pageInfoBottomContainerStyle], pointerEvents: 'none', __source: {
+            fileName: _jsxFileName,
+            lineNumber: 270
+          }
+        },
+        _react3.default.createElement(
+          _reactNative.View,
+          { style: styles.pageInfoContainer, __source: {
+              fileName: _jsxFileName,
+              lineNumber: 271
+            }
+          },
+          _react3.default.createElement(
+            _reactNative.View,
+            {
+              style: [styles.pageInfoPill, { backgroundColor: _this.props.pageInfoBackgroundColor }],
+              __source: {
+                fileName: _jsxFileName,
+                lineNumber: 272
+              }
+            },
+            _react3.default.createElement(
+              _reactNative.Text,
+              {
+                style: [styles.pageInfoText, _this.props.pageInfoTextStyle],
+                __source: {
+                  fileName: _jsxFileName,
+                  lineNumber: 275
+                }
+              },
+              '' + (_this.state.currentPage + 1) + _this.props.pageInfoTextSeparator + pageLength
+            )
+          )
+        )
+      );
+    };
+
+    _this._renderBullets = function (pageLength) {
+      var bullets = [];
+
+      var _loop = function _loop(i) {
+        bullets.push(_react3.default.createElement(
+          _reactNative.TouchableWithoutFeedback,
+          { onPress: function onPress() {
+              return _this.animateToPage(i);
+            }, key: 'bullet' + i, __source: {
+              fileName: _jsxFileName,
+              lineNumber: 288
+            }
+          },
+          _react3.default.createElement(_reactNative.View, {
+            style: i === _this.state.currentPage ? [styles.chosenBullet, _this.props.chosenBulletStyle] : [styles.bullet, _this.props.bulletStyle],
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 289
+            }
+          })
+        ));
+      };
+
+      for (var i = 0; i < pageLength; i += 1) {
+        _loop(i);
+      }
+      return _react3.default.createElement(
+        _reactNative.View,
+        { style: styles.bullets, __source: {
+            fileName: _jsxFileName,
+            lineNumber: 297
+          }
+        },
+        _react3.default.createElement(
+          _reactNative.View,
+          { style: [styles.bulletsContainer, _this.props.bulletsContainerStyle], __source: {
+              fileName: _jsxFileName,
+              lineNumber: 298
+            }
+          },
+          bullets
+        )
+      );
+    };
+
+    _this._renderArrows = function () {
+      var currentPage = _this.state.currentPage;
+      var childrenLength = _this.state.childrenLength;
+
+      if (currentPage < 1) {
+        currentPage = childrenLength;
+      }
+      return _react3.default.createElement(
+        _reactNative.View,
+        { style: styles.arrows, pointerEvents: 'box-none', __source: {
+            fileName: _jsxFileName,
+            lineNumber: 312
+          }
+        },
+        _react3.default.createElement(
+          _reactNative.View,
+          { style: [styles.arrowsContainer, _this.props.arrowsContainerStyle], pointerEvents: 'box-none', __source: {
+              fileName: _jsxFileName,
+              lineNumber: 313
+            }
+          },
+          _react3.default.createElement(
+            _reactNative.TouchableOpacity,
+            { onPress: function onPress() {
+                return _this.animateToPage(_this._normalizePageNumber(currentPage - 1));
+              }, style: _this.props.arrowstyle, __source: {
+                fileName: _jsxFileName,
+                lineNumber: 314
+              }
+            },
+            _react3.default.createElement(
+              _reactNative.Text,
+              {
+                __source: {
+                  fileName: _jsxFileName,
+                  lineNumber: 314
+                }
+              },
+              _this.props.leftArrowText ? _this.props.leftArrowText : 'Left'
+            )
+          ),
+          _react3.default.createElement(
+            _reactNative.TouchableOpacity,
+            { onPress: function onPress() {
+                return _this.animateToPage(_this._normalizePageNumber(currentPage + 1));
+              }, style: _this.props.arrowstyle, __source: {
+                fileName: _jsxFileName,
+                lineNumber: 315
+              }
+            },
+            _react3.default.createElement(
+              _reactNative.Text,
+              {
+                __source: {
+                  fileName: _jsxFileName,
+                  lineNumber: 315
+                }
+              },
+              _this.props.rightArrowText ? _this.props.rightArrowText : 'Right'
+            )
+          )
+        )
+      );
+    };
+
+    var size = { width: 0, height: 0 };
+    if (props.children) {
+      var childrenLength = _react3.default.Children.count(props.children) || 1;
+      _this.state = {
+        currentPage: props.currentPage,
+        size: size,
+        childrenLength: childrenLength,
+        contents: null
+      };
+    } else {
+      _this.state = { size: size };
+    }
+    return _this;
+  }
+
+  _createClass(Carousel, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      if (this.state.childrenLength) {
+        this._setUpTimer();
+      }
+
+      this._setUpPages().then(function () {
+        return _this2.setState({ contents: _this2.pages });
+      });
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      this._clearTimer();
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      var _this3 = this;
+
+      if (this.props.children !== nextProps.children) {
+        var childrenLength = 0;
+        if (nextProps.children) {
+          var length = _react3.default.Children.count(nextProps.children);
+          childrenLength = length || 1;
+        }
+        this.setState({ childrenLength: childrenLength }, function () {
+          _this3._setUpPages().then(function () {
+            return _this3.setState({ contents: _this3.pages });
+          });
+        });
+        this._setUpTimer();
+      }
+    }
+  }, {
+    key: '_setUpPages',
+    value: function _setUpPages() {
+      var _this4 = this;
+
+      return new Promise(function (resolve) {
+        var size = _this4.state.size;
+
+        var children = _react3.default.Children.toArray(_this4.props.children);
+        var pages = [];
+
+        if (children && children.length > 1) {
+          for (var i = 0; i < children.length; i += 1) {
+            pages.push(children[i]);
+          }
+
+          pages.push(children[0]);
+          pages.push(children[1]);
+        } else if (children) {
+          pages.push(children[0]);
+        } else {
+          pages.push(_react3.default.createElement(
+            _reactNative.View,
+            {
+              __source: {
+                fileName: _jsxFileName,
+                lineNumber: 137
+              }
+            },
+            _react3.default.createElement(
+              _reactNative.Text,
+              {
+                __source: {
+                  fileName: _jsxFileName,
+                  lineNumber: 137
+                }
+              },
+              'You are supposed to add children inside Carousel'
+            )
+          ));
+        }
+        _this4.pages = pages.map(function (page, i) {
+          return _react3.default.createElement(
+            _reactNative.TouchableWithoutFeedback,
+            { style: [_extends({}, size), _this4.props.pageStyle], key: 'page' + i, __source: {
+                fileName: _jsxFileName,
+                lineNumber: 142
+              }
+            },
+            page
+          );
+        });
+        resolve();
+      });
+    }
+  }, {
+    key: 'getCurrentPage',
+    value: function getCurrentPage() {
+      return this.state.currentPage;
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this5 = this;
+
+      var contents = this.state.contents;
+
+
+      var containerProps = {
+        ref: function ref(c) {
+          _this5.container = c;
+        },
+        onLayout: this._onLayout,
+        style: [this.props.style]
+      };
+
+      var size = this.state.size;
+
+      var childrenLength = _react3.default.Children.count(this.props.children);
+
+      return _react3.default.createElement(
+        _reactNative.View,
+        _extends({}, containerProps, {
+          __source: {
+            fileName: _jsxFileName,
+            lineNumber: 334
+          }
+        }),
+        _react3.default.createElement(
+          _reactNative.ScrollView,
+          {
+            ref: function ref(c) {
+              _this5.scrollView = c;
+            },
+            onScrollBeginDrag: this._onScrollBegin,
+            onMomentumScrollEnd: this._onScrollEnd,
+            alwaysBounceHorizontal: false,
+            alwaysBounceVertical: false,
+            contentInset: { top: 0 },
+            automaticallyAdjustContentInsets: false,
+            showsHorizontalScrollIndicator: false,
+            horizontal: true,
+            pagingEnabled: true,
+            bounces: false,
+            scrollEnabled: this.props.swipe,
+            contentContainerStyle: [styles.horizontalScroll, this.props.contentContainerStyle, {
+              width: size.width * (childrenLength + (childrenLength > 1 ? 2 : 0)),
+              height: size.height
+            }],
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 335
+            }
+          },
+          contents
+        ),
+        this.props.arrows && this._renderArrows(this.state.childrenLength),
+        this.props.bullets && this._renderBullets(this.state.childrenLength),
+        this.props.pageInfo && this._renderPageInfo(this.state.childrenLength)
+      );
+    }
+  }]);
+
+  return Carousel;
+}(_react2.Component), _class.propTypes = {
+  children: _react3.default.PropTypes.node.isRequired,
+  autoplay: _react3.default.PropTypes.bool,
+  delay: _react3.default.PropTypes.number,
+  currentPage: _react3.default.PropTypes.number,
+  style: _reactNative.View.propTypes.style,
+  pageStyle: _reactNative.View.propTypes.style,
+  contentContainerStyle: _reactNative.View.propTypes.style,
+  pageInfo: _react3.default.PropTypes.bool,
+  pageInfoBackgroundColor: _react3.default.PropTypes.string,
+  pageInfoTextStyle: _reactNative.Text.propTypes.style,
+  pageInfoBottomContainerStyle: _reactNative.View.propTypes.style,
+  pageInfoTextSeparator: _react3.default.PropTypes.string,
+  bullets: _react3.default.PropTypes.bool,
+  bulletsContainerStyle: _reactNative.Text.propTypes.style,
+  bulletStyle: _reactNative.Text.propTypes.style,
+  arrows: _react3.default.PropTypes.bool,
+  arrowsContainerStyle: _reactNative.Text.propTypes.style,
+  arrowstyle: _reactNative.Text.propTypes.style,
+  leftArrowText: _react3.default.PropTypes.oneOfType([_react3.default.PropTypes.string, _react3.default.PropTypes.element]),
+  rightArrowText: _react3.default.PropTypes.oneOfType([_react3.default.PropTypes.string, _react3.default.PropTypes.element]),
+  chosenBulletStyle: _reactNative.Text.propTypes.style,
+  onAnimateNextPage: _react3.default.PropTypes.func,
+  swipe: _react3.default.PropTypes.bool
+}, _class.defaultProps = {
+  delay: PAGE_CHANGE_DELAY,
+  autoplay: true,
+  pageInfo: false,
+  bullets: false,
+  arrows: false,
+  pageInfoBackgroundColor: 'rgba(0, 0, 0, 0.25)',
+  pageInfoTextSeparator: ' / ',
+  currentPage: 0,
+  style: undefined,
+  pageStyle: undefined,
+  contentContainerStyle: undefined,
+  pageInfoTextStyle: undefined,
+  pageInfoBottomContainerStyle: undefined,
+  bulletsContainerStyle: undefined,
+  chosenBulletStyle: undefined,
+  bulletStyle: undefined,
+  arrowsContainerStyle: undefined,
+  arrowstyle: undefined,
+  leftArrowText: '',
+  rightArrowText: '',
+  onAnimateNextPage: undefined,
+  swipe: true
+}, _temp));
+
+exports.default = Carousel;
+
+
+var styles = _reactNative.StyleSheet.create({
+  horizontalScroll: {
+    position: 'absolute'
+  },
+  pageInfoBottomContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    backgroundColor: 'transparent'
+  },
+  pageInfoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent'
+  },
+  pageInfoPill: {
+    width: 80,
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  pageInfoText: {
+    textAlign: 'center'
+  },
+  bullets: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 10,
+    height: 30,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row'
+  },
+  arrows: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 0,
+    backgroundColor: 'transparent'
+  },
+  arrowsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  bulletsContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row'
+  },
+  chosenBullet: {
+    margin: 10,
+    width: 10,
+    height: 10,
+    borderRadius: 20,
+    backgroundColor: 'white'
+  },
+  bullet: {
+    margin: 10,
+    width: 10,
+    height: 10,
+    borderRadius: 20,
+    backgroundColor: 'transparent',
+    borderColor: 'white',
+    borderWidth: 1
+  }
+});

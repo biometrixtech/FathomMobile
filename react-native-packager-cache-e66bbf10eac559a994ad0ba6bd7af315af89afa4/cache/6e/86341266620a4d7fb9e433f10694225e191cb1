@@ -1,0 +1,23 @@
+var _reactRedux = require('react-redux');
+
+var _actions = require('@redux/sidemenu/actions');
+
+var SideMenuActions = _interopRequireWildcard(_actions);
+
+var _NavbarMenuButtonView = require('./NavbarMenuButtonView');
+
+var _NavbarMenuButtonView2 = _interopRequireDefault(_NavbarMenuButtonView);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var mapStateToProps = function mapStateToProps() {
+  return {};
+};
+
+var mapDispatchToProps = {
+  toggleSideMenu: SideMenuActions.toggle
+};
+
+exports.NavbarMenuButton = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_NavbarMenuButtonView2.default);

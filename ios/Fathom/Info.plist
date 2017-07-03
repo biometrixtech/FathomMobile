@@ -68,6 +68,11 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 		<string>MaterialCommunityIcons.ttf</string>
+		<string>Proxima Nova_bold.ttf</string>
+		<string>Proxima Nova_light.ttf</string>
+		<string>Proxima Nova_regular_italic.ttf</string>
+		<string>Proxima Nova_regular.ttf</string>
+		<string>Proxima Nova_semi_bold.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

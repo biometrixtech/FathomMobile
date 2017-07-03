@@ -1,0 +1,60 @@
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports.default = userReducer;
+
+
+var Actions = require('../actionTypes');
+
+var initialState = {
+    teams: [],
+    trainingGroups: []
+};
+
+function userReducer() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+    var action = arguments[1];
+
+    switch (action.type) {
+        case Actions.USER_REPLACE:
+            delete action.data.created_at;
+            return _extends({}, state, action.data);
+        case Actions.SIGN_UP_SUCCESS:
+            return _extends({}, state);
+        case Actions.FORGOT_PASSWORD_SUCCESS:
+            return _extends({}, state);
+        case Actions.GET_TRAINING_GROUPS:
+            return _extends({}, state, action.data);
+        case Actions.CREATE_TRAINING_GROUPS:
+            return _extends({}, state, action.data);
+        case Actions.PATCH_TRAINING_GROUPS:
+            return _extends({}, state, action.data);
+        case Actions.REMOVE_TRAINING_GROUPS:
+            return _extends({}, state, action.data);
+        case Actions.GET_TEAMS:
+            return _extends({}, state, action.data);
+        case Actions.ADD_TG:
+            return _extends({}, state, action.data);
+        case Actions.EDIT_TG:
+            return _extends({}, state, action.data);
+        case Actions.REMOVE_TG:
+            return _extends({}, state, action.data);
+        case Actions.ADD_R:
+            return _extends({}, state, action.data);
+        case Actions.EDIT_R:
+            return _extends({}, state, action.data);
+        case Actions.REMOVE_R:
+            return _extends({}, state, action.data);
+        case Actions.ADD_A:
+            return _extends({}, state);
+        case Actions.EDIT_A:
+            return _extends({}, state);
+        case Actions.REMOVE_A:
+            return _extends({}, state);
+        default:
+            return state;
+    }
+}

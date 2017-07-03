@@ -9,7 +9,7 @@ I do this:
 
 ## Code Style Guide
 
-Using [Airbnb's](https://github.com/airbnb/javascript) JS/React Style Guide with ESLint linting
+Using JS/React Style Guide with ESLint linting
 
 ## React Native Directory Aliases
 

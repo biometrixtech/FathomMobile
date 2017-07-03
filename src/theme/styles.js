@@ -40,14 +40,14 @@ export default {
         fontSize:   Fonts.base.size,
         lineHeight: Fonts.base.lineHeight,
         color:      Colors.brand.primary,
-        fontWeight: '500',
+        fontWeight: '400',
     },
     p: {
         fontFamily:   Fonts.base.family,
         fontSize:     Fonts.base.size,
         lineHeight:   Fonts.base.lineHeight,
         color:        Colors.brand.primary,
-        fontWeight:   '500',
+        fontWeight:   '400',
         marginBottom: 8,
     },
     h0: {
@@ -88,7 +88,7 @@ export default {
         fontSize:     Fonts.h3.size,
         lineHeight:   Fonts.h3.lineHeight,
         color:        Colors.headingPrimary,
-        fontWeight:   '500',
+        fontWeight:   '400',
         margin:       0,
         marginBottom: 4,
         left:         0,
@@ -129,7 +129,7 @@ export default {
         fontSize:   Fonts.base.size * 0.8,
         lineHeight: parseInt(Fonts.base.lineHeight * 0.8, 10),
         color:      Colors.brand.primary,
-        fontWeight: '500',
+        fontWeight: '400',
     },
 
     // Helper Text Styles
@@ -225,7 +225,8 @@ export default {
 
     // Navbar
     navbar: {
-        backgroundColor:   "#FFFFFF",
+        backgroundColor:   '#FFFFFF',
+        borderBottomColor: Colors.shadowColor,
         borderBottomWidth: 1,
     },
     navbarTitle: {
@@ -238,9 +239,10 @@ export default {
         tintColor: Colors.brand.primary,
     },
     navbarImageTitle: {
-        height:     Sizes.navbarHeight/1.5,
-        resizeMode: 'contain',
-        bottom:     6,
+        height:      Sizes.navbarHeight/1.5,
+        resizeMode:  'contain',
+        bottom:      6,
+        marginRight: 10,
     },
 
     // TabBar

@@ -1,0 +1,110 @@
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var _jsxFileName = '/Users/vdesai/Biometrix/FathomMobile/src/containers/management/TeamManagementView.js';
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactNative = require('react-native');
+
+var _reactNativeElements = require('react-native-elements');
+
+var _reactNativeRadialMenu = require('react-native-radial-menu');
+
+var _reactNativeRadialMenu2 = _interopRequireDefault(_reactNativeRadialMenu);
+
+var _reactNativeRouterFlux = require('react-native-router-flux');
+
+var _theme = require('@theme/');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TeamManagementView = function (_Component) {
+  _inherits(TeamManagementView, _Component);
+
+  function TeamManagementView() {
+    var _ref;
+
+    var _temp, _this, _ret;
+
+    _classCallCheck(this, TeamManagementView);
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = TeamManagementView.__proto__ || Object.getPrototypeOf(TeamManagementView)).call.apply(_ref, [this].concat(args))), _this), _this.render = function () {
+      return _react2.default.createElement(
+        _reactNative.View,
+        { style: [_theme.AppStyles.container, _theme.AppStyles.containerCentered], __source: {
+            fileName: _jsxFileName,
+            lineNumber: 42
+          }
+        },
+        _react2.default.createElement(
+          _reactNativeRadialMenu2.default,
+          { menuRadius: _theme.AppStyles.windowSize.width / 3, style: [_theme.AppStyles.radialMenu], onOpen: function onOpen() {}, onClose: function onClose() {}, __source: {
+              fileName: _jsxFileName,
+              lineNumber: 43
+            }
+          },
+          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'ionicon', name: 'ios-people', color: _theme.AppColors.brand.primary, reverse: true, size: 41, __source: {
+              fileName: _jsxFileName,
+              lineNumber: 44
+            }
+          }),
+          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'material-community', name: 'account-multiple-plus', color: _theme.AppColors.brand.primary, containerStyle: { backgroundColor: _theme.AppColors.lightGrey }, onSelect: _reactNativeRouterFlux.Actions.managerGroups, size: 40, __source: {
+              fileName: _jsxFileName,
+              lineNumber: 45
+            }
+          }),
+          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'octicon', name: 'graph', color: _theme.AppColors.brand.primary, containerStyle: { backgroundColor: _theme.AppColors.lightGrey }, onSelect: _reactNativeRouterFlux.Actions.managerData, size: 40, __source: {
+              fileName: _jsxFileName,
+              lineNumber: 46
+            }
+          }),
+          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'material-community', name: 'view-list', color: _theme.AppColors.brand.primary, containerStyle: { backgroundColor: _theme.AppColors.lightGrey }, onSelect: _reactNativeRouterFlux.Actions.managerAthletes, size: 40, __source: {
+              fileName: _jsxFileName,
+              lineNumber: 47
+            }
+          }),
+          _react2.default.createElement(_reactNativeElements.Icon, { raised: true, type: 'material-community', name: 'dumbbell', color: _theme.AppColors.brand.primary, containerStyle: { backgroundColor: _theme.AppColors.lightGrey }, onSelect: _reactNativeRouterFlux.Actions.managerRegimens, size: 40, __source: {
+              fileName: _jsxFileName,
+              lineNumber: 48
+            }
+          })
+        )
+      );
+    }, _temp), _possibleConstructorReturn(_this, _ret);
+  }
+
+  return TeamManagementView;
+}(_react.Component);
+
+TeamManagementView.componentName = 'ManagerTeamManagementView';
+TeamManagementView.propTypes = {
+  regimens: _react.PropTypes.array,
+  trainingGroups: _react.PropTypes.array,
+  addGroup: _react.PropTypes.func.isRequired,
+  editGroup: _react.PropTypes.func.isRequired,
+  removeGroup: _react.PropTypes.func.isRequired,
+  addRegimen: _react.PropTypes.func.isRequired,
+  editRegimen: _react.PropTypes.func.isRequired,
+  removeRegimen: _react.PropTypes.func.isRequired,
+  addAthlete: _react.PropTypes.func.isRequired,
+  editAthlete: _react.PropTypes.func.isRequired,
+  removeAthlete: _react.PropTypes.func.isRequired
+};
+TeamManagementView.defaultProps = {
+  regimens: [],
+  trainingGroups: []
+};
+exports.default = TeamManagementView;
