@@ -18,8 +18,6 @@ Basic Building structure of the app
    1. [Routing / Navigating](/src/navigation/README.md)
    1. [Interacting with a REST API](/docs/api.md)
    1. [Testing](/docs/testing.md)
-1. [Contributing](/docs/contributing.md)
-1. [Licence](LICENSE)
 
 ---
 
