@@ -6,6 +6,7 @@ import {
     ScrollView,
     View,
 } from 'react-native';
+import { Platform } from 'react-native';
 import { Icon, Tab, Tabs } from 'react-native-elements';
 import Swipeable from 'react-native-swipeable';
 import ModalDropdown from 'react-native-modal-dropdown';
@@ -89,7 +90,7 @@ class GroupCaptureSessionView extends Component {
                     onPressRightIcon={() => Actions.refresh({ isModalVisible: true, team: this.props.team, trainingGroup: this.props.trainingGroup })}
                 />
                 <Spacer size={this.state.height}/>
-                <Tabs sceneStyle={{ backgroundColor: AppColors.brand.light, height: AppSizes.screen.height - AppSizes.navbarHeight - (2*this.state.height) + 15 }}
+                <Tabs sceneStyle={{ backgroundColor: AppColors.brand.light, height: AppSizes.screen.height - AppSizes.navbarHeight - (2*this.state.height) + (Platform.OS === 'ios' ? 35 : 15) }}
                     tabBarStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 2, borderColor: AppColors.shadowColor }}
                     tabBarShadowStyle={{ height: 0 }}
                 >
