@@ -82,8 +82,9 @@ const styles = StyleSheet.create({
         paddingBottom:  10,
     },
     menuBottom_text: {
-        color:    '#EEEFF0',
-        fontSize: 23,
+        color:      '#EEEFF0',
+        lineHeight: 23,
+        fontSize:   23,
     },
 });
 
@@ -207,6 +208,7 @@ class Menu extends Component {
                     style={[
                         styles.menuBottom_text,
                         AppStyles.textCenterAligned,
+                        { backgroundColor: AppColors.transparent }
                     ]}
                 >
                     {this.props.user.first_name && this.props.user.last_name ? `${this.props.user.first_name} ${this.props.user.last_name}` : this.props.user.role}
@@ -220,7 +222,7 @@ class Menu extends Component {
                     <View style={[styles.menuBottom]}>
                         <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
                             <Button
-                                style={{ fontFamily: 'ProximaNova-Regular' }}
+                                textStyle={{ fontFamily: 'ProximaNova' }}
                                 backgroundColor={MENU_BG_COLOR}
                                 title={'Log Out'}
                                 onPress={this.logout}

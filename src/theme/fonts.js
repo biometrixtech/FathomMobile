@@ -1,7 +1,6 @@
 /**
  * App Theme - Fonts
  */
-import { Platform } from 'react-native';
 
 function lineHeight(fontSize) {
     const multiplier = (fontSize > 20) ? 0.1 : 0.33;
