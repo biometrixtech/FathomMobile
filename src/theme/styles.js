@@ -1,6 +1,7 @@
 /**
  * App Styles
  */
+import { Platform } from 'react-native';
 
 import Colors from './colors';
 import Fonts from './fonts';
@@ -239,9 +240,9 @@ export default {
         tintColor: Colors.brand.primary,
     },
     navbarImageTitle: {
-        height:      Sizes.navbarHeight/1.5,
+        height:      Sizes.navbarHeight/(Platform.OS === 'ios' ? 1.8 : 1.5),
         resizeMode:  'contain',
-        bottom:      6,
+        bottom:      Platform.OS === 'ios' ? 10 : 6,
         marginRight: 10,
     },
 
