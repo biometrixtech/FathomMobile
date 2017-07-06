@@ -274,7 +274,7 @@ class KitManagementView extends Component {
                 <View style={[AppStyles.containerCentered, { flex: 1 }]}>
                     <View style={{ flex: 1 }} />
                     <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                        <Image style={{resizeMode: 'contain', width: 400, height: 400}} source={require('@images/Instructions_Kit-Contents-Top_v01.png')}/>
+                        <Image style={{resizeMode: 'contain', width: 400, height: 400}} source={require('@images/kit_activation.png')}/>
                     </View>
                     <View style={{ flex: 1 }}>
                         <FormLabel labelStyle={[AppStyles.h4]} >
