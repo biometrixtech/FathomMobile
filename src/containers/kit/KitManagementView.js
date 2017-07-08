@@ -42,8 +42,6 @@ class KitManagementView extends Component {
         super(props);
 
         this.state = {
-            BleManager:    this.props.accessory.BleManager,
-            accessoryData: this.props.accessory.accessoryData,
             SSID:          null,
         };
     }
@@ -58,7 +56,7 @@ class KitManagementView extends Component {
     //         this.setState({ SSID: ssid });
     //     });
 
-    //     this.state.BleManager.checkState();
+    //     this.props.accessory.BleManager.checkState();
     //     this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
     //     this.handleBleStateChange     = this.handleBleStateChange.bind(this);
 
@@ -190,18 +188,18 @@ class KitManagementView extends Component {
             <Text style={{ padding: 10, paddingLeft: 20, fontSize: 18 }}>MANAGE KIT</Text>
             <ListItem
                 title={'Owner'}
-                chevronColor={this.state.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}
-                titleStyle={{ color: this.state.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}}
+                chevronColor={this.props.accessory.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}
+                titleStyle={{ color: this.props.accessory.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}}
             />
             <ListItem
                 title={'WiFi'}
-                chevronColor={this.state.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}
-                titleStyle={{ color: this.state.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}}
+                chevronColor={this.props.accessory.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}
+                titleStyle={{ color: this.props.accessory.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}}
             />
             <ListItem
                 title={'Reset'}
-                chevronColor={this.state.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}
-                titleStyle={{ color: this.state.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}}
+                chevronColor={this.props.accessory.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}
+                titleStyle={{ color: this.props.accessory.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}}
             />
             <Text style={{ paddingLeft: 20, fontSize: 10 }}>Assign owner to the kit, change wifi network, or factory reset</Text>
         </View>
