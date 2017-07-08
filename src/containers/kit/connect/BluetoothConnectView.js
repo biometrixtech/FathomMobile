@@ -44,7 +44,6 @@ class BluetoothConnectView extends Component {
         super(props);
 
         this.state = {
-            BleManager:   this.props.BleManager,
             ble:          null,
             scanning:     false,
             index:        0,
@@ -61,7 +60,7 @@ class BluetoothConnectView extends Component {
     }
 
     componentDidMount = () => {
-        this.state.BleManager.checkState();
+        this.props.BleManager.checkState();
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
         this.handleBleStateChange     = this.handleBleStateChange.bind(this);
 
@@ -77,9 +76,9 @@ class BluetoothConnectView extends Component {
     }
 
     turnOnBluetooth = () => {
-        return this.state.BleManager.start({ showAlert: true })
+        return this.props.BleManager.start({ showAlert: true })
             .then(() => {
-                this.state.BleManager.checkState();
+                this.props.BleManager.checkState();
                 if (Platform.OS === 'android' && Platform.Version >= 23) {
                     return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
                         .then(result => {
@@ -94,7 +93,7 @@ class BluetoothConnectView extends Component {
                             }
                             return null;
                         })
-                        .then(() => this.state.BleManager.enableBluetooth())
+                        .then(() => this.props.BleManager.enableBluetooth())
                         .then(() => {
                             this.refs.carousel.animateToPage(2);
                             return this.setState({ index: 2 });
@@ -107,7 +106,7 @@ class BluetoothConnectView extends Component {
     }
 
     handleScan = () => {
-        return this.state.BleManager.scan([], 30, false)
+        return this.props.BleManager.scan([], 30, false)
             .then(() => this.setState({ scanning: true, resultMsg: { status: 'Scanning..' }, devicesFound: [] }))
             .catch(err => console.log(err));
     }
@@ -118,7 +117,7 @@ class BluetoothConnectView extends Component {
             return this.handleScan();
         }
         this.setState({ scanning: false, ble: null });
-        return this.state.BleManager.stopScan().then(res => this.state.BleManager.checkState());
+        return this.props.BleManager.stopScan().then(res => this.props.BleManager.checkState());
     }
 
     handleDiscoverPeripheral = (data) => {
@@ -153,7 +152,7 @@ class BluetoothConnectView extends Component {
             dataArray[i] = parseInt('0x00', 16);
         }
         console.log('SSID Data Array: ', dataArray);
-        return this.state.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
+        return this.props.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
             .then(() => {
                 if (ssid.length <= 18) {
                     return null;
@@ -168,7 +167,7 @@ class BluetoothConnectView extends Component {
                     dataArray[i] = parseInt('0x00', 16);
                 }
                 console.log('SSID Data Array 2: ', dataArray);
-                return this.state.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
+                return this.props.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
             });
     }
 
@@ -183,7 +182,7 @@ class BluetoothConnectView extends Component {
             dataArray[i] = parseInt('0x00', 16);
         }
         console.log('Password Data Array: ', dataArray);
-        return this.state.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
+        return this.props.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
             .then(() => {
                 if (passwordAttempt.length <= 18) {
                     return null;
@@ -198,7 +197,7 @@ class BluetoothConnectView extends Component {
                     dataArray[i] = parseInt('0x00', 16);
                 }
                 console.log('Password Data Array 2: ', dataArray);
-                return this.state.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
+                return this.props.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
             });
     }
 
@@ -212,9 +211,9 @@ class BluetoothConnectView extends Component {
                 for (let i = 2; i < 20; i+=1) {
                     dataArray[i] = parseInt('0x00', 16);
                 }
-                return this.state.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
+                return this.props.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
             })
-            .then(() => this.state.BleManager.read(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de'))
+            .then(() => this.props.BleManager.read(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de'))
             .then(readData => console.log(readData))
             .then(() => setTimeout(() => this.props.upsertAccessory(this.state.data.id, {
                 name:    this.state.data.name,
@@ -224,8 +223,8 @@ class BluetoothConnectView extends Component {
     }
 
     connect = (data) => {
-        return this.state.BleManager.connect(data.id)
-            .then(() => this.state.BleManager.retrieveServices(data.id))
+        return this.props.BleManager.connect(data.id)
+            .then(() => this.props.BleManager.retrieveServices(data.id))
             .then(peripheralData => { this.setState({ data, index: 3,  }); this.refs.carousel.animateToPage(3); return this.props.connectToAccessory(data) })
             .catch((err) => {
                 console.log(err);
@@ -281,7 +280,7 @@ class BluetoothConnectView extends Component {
                             { accessoryDiscoverabilityInstruction }
                         </FormLabel>
                         <Spacer />
-                        <Button title={'Next'} onPress={() => { this.refs.carousel.animateToPage(1); this.setState({ index: 1 }); return this.state.BleManager.checkState(); }} raised />
+                        <Button title={'Next'} onPress={() => { this.refs.carousel.animateToPage(1); this.setState({ index: 1 }); return this.props.BleManager.checkState(); }} raised />
                     </View>
                     <View style={{ flex: 1 }} />
                 </View>
