@@ -1,36 +1,21 @@
 /**
- * API Functions
+ * BLE Commands
  */
- /* global fetch console */
-import DeviceInfo from 'react-native-device-info';
-
-import JWT from '@lib/api.jwt';
 
 // Consts and Libs
 import { AppConfig, ErrorMessages, APIConfig } from '@constants/';
 import AppUtil from '@lib/util';
-
-// We'll use JWT for API Authentication
-// const Token = {};
-const Token = new JWT();
 
 // Config
 const HOSTNAME = APIConfig.hostname;
 const ENDPOINTS = APIConfig.endpoints;
 
 let USER_AGENT;
-try {
-    // Build user agent string
-    USER_AGENT = `${AppConfig.appName} ${DeviceInfo.getVersion()}; ${DeviceInfo.getSystemName()} ` +
-        `${DeviceInfo.getSystemVersion()}; ${DeviceInfo.getBrand()} ${DeviceInfo.getDeviceId()}`;
-} catch (e) {
-    USER_AGENT = `${AppConfig.appName}`;
-}
 
 // Enable debug output when in Debug mode
 const DEBUG_MODE = AppConfig.DEV;
 
-// Number each API request (used for debugging)
+// Number each BLE Command (used for debugging)
 let requestCounter = 0;
 
 
@@ -48,21 +33,6 @@ function debug(str, title) {
             console.log('%c ...', 'color: #CCC');
         }
     }
-}
-
-/**
-  * Sends requests to the API
-  */
-function handleError(err) {
-    let error = '';
-    if (typeof err === 'string') {
-        error = err;
-    } else if (err && err.message) {
-        error = err.message;
-    }
-
-    if (!error) { error = ErrorMessages.default; }
-    return error;
 }
 
 /**
