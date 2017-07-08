@@ -82,5 +82,5 @@ export default Actions.create(
             </Scene>
         </Scene>
 
-    </Scene>,
+    </Scene>
 );
