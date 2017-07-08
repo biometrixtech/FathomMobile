@@ -12,13 +12,14 @@ import BluetoothConnectRender from './BluetoothConnectView';
 // What data from the store shall we send to the component?
 const mapStateToProps = state => {
     return ({
-        user: state.user,
+        user:       state.user,
+        BleManager: state.accessory.BleManager
     });
 };
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-    upsertAccessory: AccessoryActions.upsertAccessory,
+    connectToAccessory: AccessoryActions.connectToAccessory
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BluetoothConnectRender);

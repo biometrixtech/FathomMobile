@@ -37,7 +37,7 @@ class CustomListItem extends Component {
         // Defaults
         const props = {
             title:          'Coming Soon...',
-            chevronColor:   AppColors.textSecondary,
+            chevronColor:   AppColors.brand.primary,
             underlayColor:  AppColors.border,
             ...this.props,
             containerStyle: [{

@@ -22,6 +22,9 @@ export function upsertAccessory(params, payload) {
         });
 }
 
-export function getBleManager() {
-    return dispatch => dispatch({ type: Actions.GET_BLE_MANAGER });
+export function connectToAccessory({name, id}) {
+    return dispatch => dispatch({
+        type: Actions.CONNECT_TO_ACCESSORY,
+        data: { name, id }
+    })
 }

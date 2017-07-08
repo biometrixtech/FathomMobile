@@ -5,11 +5,11 @@
  */
 import React, { Component, PropTypes } from 'react';
 import {
-  View,
-  AsyncStorage,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
+    KeyboardAvoidingView,
+    AsyncStorage,
+    StyleSheet,
+    TouchableOpacity,
+    Image,
 } from 'react-native';
 import FormValidation from 'tcomb-form-native';
 import { Actions } from 'react-native-router-flux';
@@ -180,51 +180,52 @@ class Login extends Component {
         const Form = FormValidation.form.Form;
 
         return (
-          <View
-            style={[AppStyles.containerCentered, AppStyles.container, styles.background]}
-          >
+            <KeyboardAvoidingView
+                behavior={'height'}
+                style={[AppStyles.containerCentered, AppStyles.container, styles.background]}
+            >
 
-            <Image source={require('@images/fathom_white.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthHalf, height: AppSizes.screen.heightTenth }} />
+                <Image source={require('@images/fathom_white.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthHalf, height: AppSizes.screen.heightTenth }} />
 
-            <Card>
-              <Alerts
-                status={this.state.resultMsg.status}
-                success={this.state.resultMsg.success}
-                error={this.state.resultMsg.error}
-              />
+                <Card>
+                    <Alerts
+                        status={this.state.resultMsg.status}
+                        success={this.state.resultMsg.success}
+                        error={this.state.resultMsg.error}
+                    />
 
-              <Form
-                ref={(b) => { this.form = b; }}
-                type={this.state.form_fields}
-                value={this.state.form_values}
-                options={this.state.options}
-              />
+                    <Form
+                        ref={(b) => { this.form = b; }}
+                        type={this.state.form_fields}
+                        value={this.state.form_values}
+                        options={this.state.options}
+                    />
 
-              <Button
-                title={'Login'}
-                onPress={this.login}
-              />
+                    <Button
+                        title={'Login'}
+                        onPress={this.login}
+                    />
 
-              <Spacer size={10} />
+                    <Spacer size={10} />
 
-              <TouchableOpacity onPress={Actions.passwordReset}>
-                <Text p style={[AppStyles.textCenterAligned, AppStyles.link]}>
-                  Forgot Password
+                    <TouchableOpacity onPress={Actions.passwordReset}>
+                        <Text p style={[AppStyles.textCenterAligned, AppStyles.link]}>
+                        Forgot Password
+                        </Text>
+                    </TouchableOpacity>
+
+                    {/*<Spacer size={10} />
+
+                <Text p style={[AppStyles.textCenterAligned]}>
+                    - or -
                 </Text>
-              </TouchableOpacity>
 
-              {/*<Spacer size={10} />
-
-              <Text p style={[AppStyles.textCenterAligned]}>
-                - or -
-              </Text>
-
-              <Button
-                title={'Sign Up'}
-                onPress={Actions.signUp}
-              />*/}
-            </Card>
-          </View>
+                <Button
+                    title={'Sign Up'}
+                    onPress={Actions.signUp}
+                />*/}
+                </Card>
+            </KeyboardAvoidingView>
         );
     }
 }
