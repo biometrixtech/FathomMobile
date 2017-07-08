@@ -36,15 +36,15 @@ if (__DEV__) {
 
 // Init redux store (using the given reducer & middleware)
 const store = compose(
-  applyMiddleware(...middleware),
+    applyMiddleware(...middleware),
 )(createStore)(rootReducer);
 
 /* Component ==================================================================== */
 // Wrap App in Redux provider (makes Redux available to all sub-components)
 export default function AppContainer() {
     return (
-      <Provider store={store}>
-        <RouterWithRedux scenes={AppRoutes} style={AppStyles.appContainer} />
-      </Provider>
+        <Provider store={store}>
+            <RouterWithRedux scenes={AppRoutes} style={AppStyles.appContainer} />
+        </Provider>
     );
 }
