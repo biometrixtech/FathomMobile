@@ -59,19 +59,19 @@ class Login extends Component {
 
         // Email Validation
         const validEmail = FormValidation.refinement(
-          FormValidation.String, (email) => {
-              const regularExpression = /^.+@.+\..+$/i;
+            FormValidation.String, (email) => {
+                const regularExpression = /^.+@.+\..+$/i;
 
-              return regularExpression.test(email);
-          },
+                return regularExpression.test(email);
+            },
         );
 
         // Password Validation - Must be 6 chars long
         const validPassword = FormValidation.refinement(
-          FormValidation.String, (password) => {
-              if (password.length < 8) { return false; }
-              return true;
-          },
+            FormValidation.String, (password) => {
+                if (password.length < 8) { return false; }
+                return true;
+            },
         );
 
         this.state = {
