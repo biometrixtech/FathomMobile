@@ -12,12 +12,16 @@ const Actions = require('../actionTypes');
   */
 export function upsertAccessory(params, payload) {
     return dispatch => AppAPI.accessories.patch(params, payload)
-      .then((accessoryData) => {
-          dispatch({
-              type: Actions.UPSERT_ACCESSORY,
-              data: accessoryData,
-          });
+        .then((accessoryData) => {
+            dispatch({
+                type: Actions.UPSERT_ACCESSORY,
+                data: accessoryData,
+            });
 
-          return accessoryData;
-      });
+            return accessoryData;
+        });
+}
+
+export function getBleManager() {
+    return dispatch => dispatch({ type: Actions.GET_BLE_MANAGER });
 }
