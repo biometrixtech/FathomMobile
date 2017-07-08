@@ -12,13 +12,13 @@ import KitManagementRender from './KitManagementView';
 // What data from the store shall we send to the component?
 const mapStateToProps = state => {
     return ({
-        user: state.user,
+        user:      state.user,
+        accessory: state.accessory
     });
 };
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-    getBleManager: AccessoryActions.getBleManager,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitManagementRender);

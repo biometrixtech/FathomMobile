@@ -17,8 +17,14 @@ export default function userReducer(state = initialState, action) {
             ...state,
             accessory: action.data,
         };
-    case Actions.GET_BLE_MANAGER:
-        return state.BleManager;
+    case Actions.CONNECT_TO_ACCESSORY:
+        return {
+            ...state,
+            accessoryData: {
+                name: action.data.name,
+                id:   action.data.id
+            }
+        }
     default:
         return state;
     }

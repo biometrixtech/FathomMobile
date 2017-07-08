@@ -19,13 +19,10 @@ import Prompt from 'react-native-prompt';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
-import AppAPI from '@lib/api';
 import { AppStyles, AppSizes, AppColors } from '@theme/';
 
 // Components
 import { Spacer, Button, FormLabel, Text, ListItem } from '@ui/';
-
-const accessoryDiscoverabilityInstruction = 'press & hold buttons simultaneously until the lights flash red and blue';
 
 /* Component ==================================================================== */
 class KitManagementView extends Component {
@@ -33,8 +30,8 @@ class KitManagementView extends Component {
 
     /* eslint-disable react/forbid-prop-types */
     static propTypes = {
-        user:          PropTypes.object,
-        getBleManager: PropTypes.func.isRequired,
+        user:      PropTypes.object,
+        accessory: PropTypes.object,
     }
 
     static defaultProps = {
@@ -45,20 +42,14 @@ class KitManagementView extends Component {
         super(props);
 
         this.state = {
-            BleManager:  this.props.getBleManager(),
-            ble:         null,
-            scanning:    false,
-            index:       0,
-            isCollapsed: true,
-            size:        {},
-            SSID:        null,
-            data:        null,
-            resultMsg:   {
-                status:  null,
-                success: null,
-                error:   null,
-            },
+            BleManager:    this.props.accessory.BleManager,
+            accessoryData: this.props.accessory.accessoryData,
+            SSID:          null,
         };
+    }
+
+    componentWillMount = () => {
+        console.log('will mount');
     }
 
     // componentDidMount = () => {
@@ -190,13 +181,28 @@ class KitManagementView extends Component {
         (
         <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]} >
             <Text style={{ padding: 10, paddingLeft: 20, fontSize: 18 }}>SETTINGS</Text>
-            <ListItem title={'Connect Kit'} onPress={Actions.bluetoothConnect} />
+            <ListItem
+                title={'Connect Kit'}
+                onPress={Actions.bluetoothConnect}
+            />
             <Text style={{ paddingLeft: 20, fontSize: 10 }}>Connect your Fathom Kit to WiFi</Text>
             <Spacer />
             <Text style={{ padding: 10, paddingLeft: 20, fontSize: 18 }}>MANAGE KIT</Text>
-            <ListItem title={'Owner'} />
-            <ListItem title={'WiFi'} />
-            <ListItem title={'Reset'} />
+            <ListItem
+                title={'Owner'}
+                chevronColor={this.state.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}
+                titleStyle={{ color: this.state.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}}
+            />
+            <ListItem
+                title={'WiFi'}
+                chevronColor={this.state.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}
+                titleStyle={{ color: this.state.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}}
+            />
+            <ListItem
+                title={'Reset'}
+                chevronColor={this.state.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}
+                titleStyle={{ color: this.state.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}}
+            />
             <Text style={{ paddingLeft: 20, fontSize: 10 }}>Assign owner to the kit, change wifi network, or factory reset</Text>
         </View>
         );

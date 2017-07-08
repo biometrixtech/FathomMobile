@@ -12,19 +12,18 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NetworkInfo } from 'react-native-network-info';
-import BleManager from 'react-native-ble-manager';
 import Carousel from 'react-native-looped-carousel';
 import Collapsible from 'react-native-collapsible';
 import Prompt from 'react-native-prompt';
 
 // Consts and Libs
-import AppAPI from '@lib/api';
 import { AppStyles, AppSizes, AppColors } from '@theme/';
 
 // Components
 import { Spacer, Button, FormLabel, Text, ListItem } from '@ui/';
 
 const accessoryDiscoverabilityInstruction = 'press & hold buttons simultaneously until the lights flash red and blue';
+const successfullyConnected = ['Your kit is connected!', 'Return to main menu to assign this kit to an athlete and their specific team.'];
 
 /* Component ==================================================================== */
 class BluetoothConnectView extends Component {
@@ -32,8 +31,9 @@ class BluetoothConnectView extends Component {
 
     /* eslint-disable react/forbid-prop-types */
     static propTypes = {
-        user:            PropTypes.object,
-        upsertAccessory: PropTypes.func.isRequired,
+        user:               PropTypes.object,
+        BleManager:         PropTypes.object,
+        connectToAccessory: PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -44,13 +44,13 @@ class BluetoothConnectView extends Component {
         super(props);
 
         this.state = {
+            BleManager:   this.props.BleManager,
             ble:          null,
             scanning:     false,
             index:        0,
             devicesFound: [],
             isCollapsed:  true,
             size:         {},
-            SSID:         null,
             data:         null,
             resultMsg:    {
                 status:  null,
@@ -61,12 +61,7 @@ class BluetoothConnectView extends Component {
     }
 
     componentDidMount = () => {
-        // Get SSID
-        NetworkInfo.getSSID(ssid => {
-            this.setState({ SSID: ssid });
-        });
-
-        BleManager.checkState();
+        this.state.BleManager.checkState();
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
         this.handleBleStateChange     = this.handleBleStateChange.bind(this);
 
@@ -82,8 +77,9 @@ class BluetoothConnectView extends Component {
     }
 
     turnOnBluetooth = () => {
-        return BleManager.start({ showAlert: true })
+        return this.state.BleManager.start({ showAlert: true })
             .then(() => {
+                this.state.BleManager.checkState();
                 if (Platform.OS === 'android' && Platform.Version >= 23) {
                     return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
                         .then(result => {
@@ -98,7 +94,7 @@ class BluetoothConnectView extends Component {
                             }
                             return null;
                         })
-                        .then(() => BleManager.enableBluetooth())
+                        .then(() => this.state.BleManager.enableBluetooth())
                         .then(() => {
                             this.refs.carousel.animateToPage(2);
                             return this.setState({ index: 2 });
@@ -111,7 +107,7 @@ class BluetoothConnectView extends Component {
     }
 
     handleScan = () => {
-        return BleManager.scan([], 30, false)
+        return this.state.BleManager.scan([], 30, false)
             .then(() => this.setState({ scanning: true, resultMsg: { status: 'Scanning..' }, devicesFound: [] }))
             .catch(err => console.log(err));
     }
@@ -122,7 +118,7 @@ class BluetoothConnectView extends Component {
             return this.handleScan();
         }
         this.setState({ scanning: false, ble: null });
-        return BleManager.stopScan().then(res => BleManager.checkState());
+        return this.state.BleManager.stopScan().then(res => this.state.BleManager.checkState());
     }
 
     handleDiscoverPeripheral = (data) => {
@@ -157,7 +153,7 @@ class BluetoothConnectView extends Component {
             dataArray[i] = parseInt('0x00', 16);
         }
         console.log('SSID Data Array: ', dataArray);
-        return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
+        return this.state.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
             .then(() => {
                 if (ssid.length <= 18) {
                     return null;
@@ -172,7 +168,7 @@ class BluetoothConnectView extends Component {
                     dataArray[i] = parseInt('0x00', 16);
                 }
                 console.log('SSID Data Array 2: ', dataArray);
-                return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
+                return this.state.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
             });
     }
 
@@ -187,7 +183,7 @@ class BluetoothConnectView extends Component {
             dataArray[i] = parseInt('0x00', 16);
         }
         console.log('Password Data Array: ', dataArray);
-        return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
+        return this.state.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
             .then(() => {
                 if (passwordAttempt.length <= 18) {
                     return null;
@@ -202,7 +198,7 @@ class BluetoothConnectView extends Component {
                     dataArray[i] = parseInt('0x00', 16);
                 }
                 console.log('Password Data Array 2: ', dataArray);
-                return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
+                return this.state.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
             });
     }
 
@@ -216,21 +212,21 @@ class BluetoothConnectView extends Component {
                 for (let i = 2; i < 20; i+=1) {
                     dataArray[i] = parseInt('0x00', 16);
                 }
-                return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
+                return this.state.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
             })
-            .then(() => BleManager.read(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de'))
+            .then(() => this.state.BleManager.read(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de'))
             .then(readData => console.log(readData))
             .then(() => setTimeout(() => this.props.upsertAccessory(this.state.data.id, {
                 name:    this.state.data.name,
                 team_id: this.props.user.teams[0].id,
             }), 3000))
-            .catch(err => { console.log(err); this.setState({ promptVisible: true }) });
+            .catch(err => console.log(err));
     }
 
     connect = (data) => {
-        return BleManager.connect(data.id)
-            .then(() => BleManager.retrieveServices(data.id))
-            .then(peripheralData => this.setState({ data, promptVisible: true }))
+        return this.state.BleManager.connect(data.id)
+            .then(() => this.state.BleManager.retrieveServices(data.id))
+            .then(peripheralData => { this.setState({ data, index: 3,  }); this.refs.carousel.animateToPage(3); return this.props.connectToAccessory(data) })
             .catch((err) => {
                 console.log(err);
                 return err;
@@ -247,7 +243,11 @@ class BluetoothConnectView extends Component {
         <View style={{ flex: 1 }} onLayout={this._onLayoutDidChange}>
             <View style={{ alignItems: 'center', backgroundColor: AppColors.brand.light }}>
                 <Spacer size={25}/>
-                <Text h1>{this.state.index === 0 ? 'Activate Kit' : this.state.index === 1 ? 'Turn on Bluetooth' : 'Scan for Kit'}</Text>
+                <Text h1>
+                    {
+                        this.state.index === 0 ? 'Activate Kit' : this.state.index === 1 ? 'Turn on Bluetooth' : this.state.index === 2 ? 'Scan for Kit' : 'Connected'
+                    }
+                </Text>
                 <Spacer size={50}/>
             </View>
             <Carousel
@@ -281,7 +281,7 @@ class BluetoothConnectView extends Component {
                             { accessoryDiscoverabilityInstruction }
                         </FormLabel>
                         <Spacer />
-                        <Button title={'Next'} onPress={() => { this.refs.carousel.animateToPage(1); this.setState({ index: 1 }); return BleManager.checkState(); }} raised />
+                        <Button title={'Next'} onPress={() => { this.refs.carousel.animateToPage(1); this.setState({ index: 1 }); return this.state.BleManager.checkState(); }} raised />
                     </View>
                     <View style={{ flex: 1 }} />
                 </View>
@@ -297,7 +297,7 @@ class BluetoothConnectView extends Component {
 
 
                 <View style={{ flex: 1 }}>
-                    <Prompt
+                    {/*<Prompt
                         title={`${this.state.SSID} Password:`}
                         placeholder={'Password'}
                         visible={this.state.promptVisible}
@@ -306,7 +306,7 @@ class BluetoothConnectView extends Component {
                             this.setState({ promptVisible: false });
                             return this.setupWiFi(this.state.SSID, value);
                         }}
-                    />
+                    />*/}
                     <View style={[AppStyles.containerCentered, { flex: 3 }]}>
                         <Button
                             title={this.state.scanning ? 'Stop Scan' : 'Start Scan'}
@@ -333,6 +333,18 @@ class BluetoothConnectView extends Component {
                                 })
                             }
                         </ScrollView>
+                    </View>
+                    <View style={{ flex: 1 }}/>
+                </View>
+
+                <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                    <View style={{ flex: 1 }}/>
+                    <View style={{ flex: 1 }}>
+                        <Text h2>{successfullyConnected[0]}</Text>
+                    </View>
+                    <Icon containerStyle={{ flex: 1 }} name={'checkbox-marked-circle'} type={'material-community'} color={AppColors.brand.yellow} size={100}/>
+                    <View style={[AppStyles.containerCentered, { flex: 1, paddingLeft: 25, paddingRight: 25 }]}>
+                        <Text>{successfullyConnected[1]}</Text>
                     </View>
                     <View style={{ flex: 1 }}/>
                 </View>
