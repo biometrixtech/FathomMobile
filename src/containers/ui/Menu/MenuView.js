@@ -15,6 +15,7 @@ import { Icon } from 'react-native-elements';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors } from '@theme/';
+import Fonts from '@theme/fonts'
 
 // Components
 import { Spacer, Text, Button } from '@ui/';
@@ -66,8 +67,8 @@ const styles = StyleSheet.create({
         flexDirection:     'row',
     },
     menuItem_text: {
-        fontSize:    18,
-        lineHeight:  parseInt(18 + (18 * 0.5), 10),
+        fontSize:    Fonts.scaleFont(18),
+        lineHeight:  Fonts.lineHeight(Fonts.scaleFont(18)),
         fontWeight:  'normal',
         color:       '#EEEFF0',
         paddingLeft: AppSizes.padding*2.5,
@@ -83,8 +84,8 @@ const styles = StyleSheet.create({
     },
     menuBottom_text: {
         color:      '#EEEFF0',
-        lineHeight: 23,
-        fontSize:   23,
+        lineHeight: Fonts.lineHeight(Fonts.scaleFont(23)),
+        fontSize:   Fonts.scaleFont(23),
     },
 });
 

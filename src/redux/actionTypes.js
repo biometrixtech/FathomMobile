@@ -23,5 +23,6 @@ module.exports = {
     EDIT_A:                  'EDIT_A',
     REMOVE_A:                'REMOVE_A',
     UPSERT_ACCESSORY:        'UPSERT_ACCESSORY',
-    GET_BLE_MANAGER:         'GET_BLE_MANAGER'
+    GET_BLE_MANAGER:         'GET_BLE_MANAGER',
+    CONNECT_TO_ACCESSORY:    'CONNECT_TO_ACCESSORY',
 };

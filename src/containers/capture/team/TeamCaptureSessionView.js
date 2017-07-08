@@ -122,7 +122,6 @@ class TeamCaptureSessionView extends Component {
                 <ListItem title={'PRIMARY TRAINING GROUPS'} containerStyle={{ backgroundColor: AppColors.brand.light }} hideChevron/>
                 {
                     this.state.teams[this.state.teamIndex].training_groups.filter(trainingGroup => trainingGroup.description.match(/primary/i)).map(trainingGroup => {
-                        /* avatar={{uri: this.props.user.avatar_url }} */
                         return <ListItem key={trainingGroup.id} title={trainingGroup.name} onPress={() => Actions.biometrixAdminGroupCaptureSession({ team: this.state.teams[this.state.teamIndex], trainingGroup })} hideChevron/>;
                     })
                 }
