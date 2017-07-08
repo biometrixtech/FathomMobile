@@ -1,5 +1,5 @@
 /**
- * Kit Management Screen Container
+ * Bluetooth Connect Screen Container
  */
 import { connect } from 'react-redux';
 
@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import * as AccessoryActions from '@redux/accessory/actions';
 
 // The component we're mapping to
-import KitManagementRender from './KitManagementView';
+import BluetoothConnectRender from './BluetoothConnectView';
 
 // What data from the store shall we send to the component?
 const mapStateToProps = state => {
@@ -18,7 +18,7 @@ const mapStateToProps = state => {
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-    getBleManager: AccessoryActions.getBleManager,
+    upsertAccessory: AccessoryActions.upsertAccessory,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(KitManagementRender);
+export default connect(mapStateToProps, mapDispatchToProps)(BluetoothConnectRender);

@@ -12,6 +12,7 @@ import { Icon } from 'react-native-elements';
 import TeamCaptureSessionView from '@containers/capture/team/TeamCaptureSessionContainer';
 import GroupCaptureSessionView from '@containers/capture/group/GroupCaptureSessionContainer';
 import KitManagementView from '@containers/kit/KitManagementContainer';
+import BluetoothConnectView from '@containers/kit/connect/BluetoothConnectContainer';
 
 // Components
 import { NavbarMenuButton } from '@containers/ui/NavbarMenuButton/NavbarMenuButtonContainer';
@@ -73,7 +74,16 @@ const scenes = (
             type={ActionConst.REPLACE}
             component={KitManagementView}
             analyticsDesc={'KitManagementView: Kit Management'}
-        />
+        >
+            <Scene
+                {...navbarPropsTabs}
+                key={'bluetoothConnect'}
+                clone
+                type={ActionConst.PUSH}
+                component={BluetoothConnectView}
+                analyticsDesc={'BluetoothConnectView: Kit Management Bluetooth Connect'}
+            />
+        </Scene>
     </Scene>
 );
 
