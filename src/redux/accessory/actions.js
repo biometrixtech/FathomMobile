@@ -22,9 +22,9 @@ export function upsertAccessory(params, payload) {
         });
 }
 
-export function connectToAccessory({name, id}) {
+export function updateAccessoryData({name, id}) {
     return dispatch => dispatch({
-        type: Actions.CONNECT_TO_ACCESSORY,
+        type: Actions.UPDATE_ACCESSORY_DATA,
         data: { name, id }
     })
 }

@@ -25,4 +25,11 @@ module.exports = {
     UPSERT_ACCESSORY:        'UPSERT_ACCESSORY',
     GET_BLE_MANAGER:         'GET_BLE_MANAGER',
     CONNECT_TO_ACCESSORY:    'CONNECT_TO_ACCESSORY',
+    CHANGE_STATE:            'CHANGE_STATE',
+    DEVICE_FOUND:            'DEVICE_FOUND',
+    START_SCAN:              'START_SCAN',
+    STOP_SCAN:               'STOP_SCAN',
+    CHECK_STATE:             'CHECK_STATE',
+    ENABLE_BLUETOOTH:        'ENABLE_BLUETOOTH',
+    START_BLUETOOTH:         'START_BLUETOOTH',
 };
