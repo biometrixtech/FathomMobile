@@ -30,7 +30,7 @@
     "react-native": "0.46.1",
     "react-native-ble-manager": "^5.1.1",
     "react-native-charts-wrapper": "^0.2.10",
-    "react-native-code-push": "^2.1.0-beta",
+    "react-native-code-push": "^3.0.1-beta",
     "react-native-collapsible": "^0.8.0",
     "react-native-device-info": "^0.10.1",
     "react-native-elements": "^0.14.0",
