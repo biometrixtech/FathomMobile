@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 
 // Actions
-import * as AccessoryActions from '@redux/accessory/actions';
+import * as BluetoothActions from '@redux/bluetooth/actions';
 
 // The component we're mapping to
 import KitManagementRender from './KitManagementView';
@@ -13,7 +13,7 @@ import KitManagementRender from './KitManagementView';
 const mapStateToProps = state => {
     return ({
         user:      state.user,
-        accessory: state.accessory
+        bluetooth: state.bluetooth
     });
 };
 

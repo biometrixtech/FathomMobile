@@ -32,8 +32,16 @@ class BluetoothConnectView extends Component {
     /* eslint-disable react/forbid-prop-types */
     static propTypes = {
         user:               PropTypes.object,
-        BleManager:         PropTypes.object,
+        devicesFound:       PropTypes.array,
+        scanning:           PropTypes.bool,
         connectToAccessory: PropTypes.func.isRequired,
+        checkState:         PropTypes.func.isRequired,
+        changeState:        PropTypes.func.isRequired,
+        startBluetooth:     PropTypes.func.isRequired,
+        enableBluetooth:    PropTypes.func.isRequired,
+        startScan:          PropTypes.func.isRequired,
+        stopScan:           PropTypes.func.isRequired,
+        deviceFound:        PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -44,29 +52,21 @@ class BluetoothConnectView extends Component {
         super(props);
 
         this.state = {
-            ble:          null,
-            scanning:     false,
-            index:        0,
-            devicesFound: [],
-            isCollapsed:  true,
-            size:         {},
-            data:         null,
-            resultMsg:    {
-                status:  null,
-                success: null,
-                error:   null,
-            },
+            index:       0,
+            isCollapsed: true,
+            size:        {},
+            data:        null,
         };
     }
 
     componentDidMount = () => {
-        this.props.BleManager.checkState();
+        this.props.checkState();
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
         this.handleBleStateChange     = this.handleBleStateChange.bind(this);
 
         NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', (data) => { this.handleDiscoverPeripheral(data); });
         NativeAppEventEmitter.addListener('BleManagerDidUpdateState', (data) => { this.handleBleStateChange(data); });
-        NativeAppEventEmitter.addListener('BleManagerStopScan', () => { this.setState({ scanning: false, resultMsg: { success: 'Finished scanning' } }); });
+        NativeAppEventEmitter.addListener('BleManagerStopScan', () => this.props.stopScan());
     }
 
     componentWillUnmount = () => {
@@ -75,10 +75,10 @@ class BluetoothConnectView extends Component {
         NativeAppEventEmitter.removeListener('BleManagerStopScan');
     }
 
-    turnOnBluetooth = () => {
-        return this.props.BleManager.start({ showAlert: true })
+    startBluetooth = () => {
+        return this.props.startBluetooth()
             .then(() => {
-                this.props.BleManager.checkState();
+                this.props.checkState();
                 if (Platform.OS === 'android' && Platform.Version >= 23) {
                     return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
                         .then(result => {
@@ -93,52 +93,41 @@ class BluetoothConnectView extends Component {
                             }
                             return null;
                         })
-                        .then(() => this.props.BleManager.enableBluetooth())
-                        .then(() => {
-                            this.refs.carousel.animateToPage(2);
-                            return this.setState({ index: 2 });
-                        });
+                        .then(() => this.props.enableBluetooth())
                 }
-                this.refs.carousel.animateToPage(2);
-                return this.setState({ index: 2 });
+                return null;
             })
-            .catch(error => { this.refs.animateToPage(1); return this.setState({ resultMsg: { error: 'Bluetooth inactive' }, index: 1 }); });
+            .catch(error => {
+                this.setState({ index: 1 });
+                this.refs.animateToPage(1);
+            });
     }
 
     handleScan = () => {
-        return this.props.BleManager.scan([], 30, false)
-            .then(() => this.setState({ scanning: true, resultMsg: { status: 'Scanning..' }, devicesFound: [] }))
-            .catch(err => console.log(err));
+        return this.props.startScan();
     }
 
     toggleScanning = (bool) => {
-        if (bool) {
-            this.setState({ scanning: true });
-            return this.handleScan();
-        }
-        this.setState({ scanning: false, ble: null });
-        return this.props.BleManager.stopScan().then(res => this.props.BleManager.checkState());
+        return bool ? this.props.startScan() : this.props.stopScan();
     }
 
     handleDiscoverPeripheral = (data) => {
-        if (data.name && data.name.indexOf('fathom') > -1 && this.state.devicesFound.every(device => device.id !== data.id)) {
-            console.log('Got new ble data', data);
-            this.state.devicesFound.push(data);
-            return this.setState({ ble: data, devicesFound: this.state.devicesFound });
-        }
-        return null;
+        return data.name && data.name.indexOf('fathom') > -1 ? this.props.deviceFound(data) : null;
     }
 
     handleBleStateChange = (data) => {
         if (data.state === 'off') {
-            const index = this.state.index > 1 ? 1 : this.state.index;
-            this.refs.carousel.animateToPage(index);
-            return this.setState({ resultMsg: { error: 'Bluetooth inactive' }, index });
+            if (this.refs.carousel.getCurrentPage() > 1) {
+                this.setState({ index: 1 });
+                this.refs.carousel.animateToPage(1);
+            }
+        } else {
+            if (this.refs.carousel.getCurrentPage() === 1) {
+                this.setState({ index: 2 });
+                this.refs.carousel.animateToPage(2);
+            }
         }
-        if (this.state.index === 1) {
-            return this.turnOnBluetooth();
-        }
-        return this.setState({ resultMsg: { error: null } });
+        return this.props.changeState(data.state);
     }
 
     setSSID = (ssid) => {
@@ -213,8 +202,6 @@ class BluetoothConnectView extends Component {
                 }
                 return this.props.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
             })
-            .then(() => this.props.BleManager.read(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de'))
-            .then(readData => console.log(readData))
             .then(() => setTimeout(() => this.props.upsertAccessory(this.state.data.id, {
                 name:    this.state.data.name,
                 team_id: this.props.user.teams[0].id,
@@ -223,13 +210,16 @@ class BluetoothConnectView extends Component {
     }
 
     connect = (data) => {
-        return this.props.BleManager.connect(data.id)
-            .then(() => this.props.BleManager.retrieveServices(data.id))
-            .then(peripheralData => { this.setState({ data, index: 3,  }); this.refs.carousel.animateToPage(3); return this.props.connectToAccessory(data) })
-            .catch((err) => {
-                console.log(err);
-                return err;
-            });
+        return this.props.stopScan()
+            .then(() => this.props.connectToAccessory(data, { role: this.props.user.role, id: this.props.user.id })
+                .then(() => {
+                    this.setState({ index: 3 });
+                    return this.refs.carousel.animateToPage(3);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    return err;
+                }));
     }
 
     _onLayoutDidChange = (e) => {
@@ -237,119 +227,119 @@ class BluetoothConnectView extends Component {
         this.setState({ size: { width: layout.width, height: layout.height } });
     }
 
-    render = () =>
-        (
-        <View style={{ flex: 1 }} onLayout={this._onLayoutDidChange}>
-            <View style={{ alignItems: 'center', backgroundColor: AppColors.brand.light }}>
-                <Spacer size={25}/>
-                <Text h1>
-                    {
-                        this.state.index === 0 ? 'Activate Kit' : this.state.index === 1 ? 'Turn on Bluetooth' : this.state.index === 2 ? 'Scan for Kit' : 'Connected'
-                    }
-                </Text>
-                <Spacer size={50}/>
-            </View>
-            <Carousel
-                ref={'carousel'}
-                autoplay={false}
-                currentPage={this.state.index}
-                swipe={false}
-                style={{
-                    position:        'absolute',
-                    elevation:       10,
-                    bottom:          15,
-                    backgroundColor: '#FFFFFF',
-                    alignSelf:       'center',
-                    shadowOffset:    { width: 1, height: 3 },
-                    shadowOpacity:   0.7,
-                    shadowRadius:    2,
-                    width:           AppSizes.screen.widthEightTenths,
-                    height:          AppSizes.screen.heightThreeQuarters
-                }}
-                bullets
-                bulletStyle={{ borderColor: AppColors.brand.blue }}
-                chosenBulletStyle={{ backgroundColor: AppColors.brand.blue }}
-            >
-                <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                    <View style={{ flex: 1 }} />
+    render = () => {
+        const index = this.state.index;
+        return (
+            <View style={{ flex: 1 }} onLayout={this._onLayoutDidChange}>
+                <View style={{ alignItems: 'center', backgroundColor: AppColors.brand.light }}>
+                    <Spacer size={25}/>
+                    <Text h1>
+                        {
+                            index === 0 ? 'Activate Kit' : index === 1 ? 'Turn on Bluetooth' : index === 2 ? 'Scan for Kit' : 'Connected'
+                        }
+                    </Text>
+                    <Spacer size={50}/>
+                </View>
+                <Carousel
+                    ref={'carousel'}
+                    autoplay={false}
+                    currentPage={index}
+                    swipe={false}
+                    style={{
+                        position:        'absolute',
+                        elevation:       10,
+                        bottom:          15,
+                        backgroundColor: '#FFFFFF',
+                        alignSelf:       'center',
+                        shadowOffset:    { width: 1, height: 3 },
+                        shadowOpacity:   0.7,
+                        shadowRadius:    2,
+                        width:           AppSizes.screen.widthEightTenths,
+                        height:          AppSizes.screen.heightThreeQuarters
+                    }}
+                    bullets
+                    bulletStyle={{ borderColor: AppColors.brand.blue }}
+                    chosenBulletStyle={{ backgroundColor: AppColors.brand.blue }}
+                >
                     <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                        <Image style={{resizeMode: 'contain', width: 400, height: 400}} source={require('@images/kit_activation.png')}/>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <FormLabel labelStyle={[AppStyles.h4]} >
-                            { accessoryDiscoverabilityInstruction }
-                        </FormLabel>
-                        <Spacer />
-                        <Button title={'Next'} onPress={() => { this.refs.carousel.animateToPage(1); this.setState({ index: 1 }); return this.props.BleManager.checkState(); }} raised />
-                    </View>
-                    <View style={{ flex: 1 }} />
-                </View>
-
-
-                <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                    <View style={{ flex: 1 }} />
-                    <View style={{ flex: 1 }} >
-                        <Icon name="bluetooth" containerStyle={{ alignSelf: 'center' }} size={30} color={AppColors.brand.primary} reverse onPress={() => this.turnOnBluetooth()} raised />
-                    </View>
-                    <View style={{ flex: 1 }} />
-                </View>
-
-
-                <View style={{ flex: 1 }}>
-                    {/*<Prompt
-                        title={`${this.state.SSID} Password:`}
-                        placeholder={'Password'}
-                        visible={this.state.promptVisible}
-                        onCancel={() => this.setState({ promptVisible: false })}
-                        onSubmit={value => {
-                            this.setState({ promptVisible: false });
-                            return this.setupWiFi(this.state.SSID, value);
-                        }}
-                    />*/}
-                    <View style={[AppStyles.containerCentered, { flex: 3 }]}>
-                        <Button
-                            title={this.state.scanning ? 'Stop Scan' : 'Start Scan'}
-                            icon={{ name: `${this.state.scanning ? 'stop' : 'play-arrow'}` }}
-                            buttonStyle={{ backgroundColor: `${this.state.scanning ? AppColors.brand.red : AppColors.brand.primary}` }}
-                            onPress={() => this.toggleScanning(!this.state.scanning)}
-                            raised
-                        />
-                        <Spacer size={5}/>
-                        <Text style={{ color: AppColors.brand.yellow }} onPress={() => this.setState({ isCollapsed: !this.state.isCollapsed })}>{'Can\'t find your device?'}</Text>
-                        <Spacer size={5}/>
-                        <Collapsible collapsed={this.state.isCollapsed} >
+                        <View style={{ flex: 1 }} />
+                        <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                            <Image style={{resizeMode: 'contain', width: 400, height: 400}} source={require('@images/kit_activation.png')}/>
+                        </View>
+                        <View style={{ flex: 1 }}>
                             <FormLabel labelStyle={[AppStyles.h4]} >
-                                { `${accessoryDiscoverabilityInstruction}. Then rescan.` }
+                                { accessoryDiscoverabilityInstruction }
                             </FormLabel>
-                        </Collapsible>
+                            <Spacer />
+                            <Button
+                                title={'Next'}
+                                onPress={() => {
+                                    this.setState({ index: 1 });
+                                    this.refs.carousel.animateToPage(1);
+                                    return this.props.checkState();
+                                }}
+                                raised
+                            />
+                        </View>
+                        <View style={{ flex: 1 }} />
                     </View>
-                    <Spacer />
-                    <View style={{ flex: 4 }}>
-                        <ScrollView>
-                            {
-                                this.state.devicesFound.map(device => {
-                                    return <ListItem key={device.id} title={device.name} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
-                                })
-                            }
-                        </ScrollView>
-                    </View>
-                    <View style={{ flex: 1 }}/>
-                </View>
 
-                <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                    <View style={{ flex: 1 }}/>
+
+                    <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                        <View style={{ flex: 1 }} />
+                        <View style={{ flex: 1 }} >
+                            <Icon name="bluetooth" containerStyle={{ alignSelf: 'center' }} size={30} color={AppColors.brand.primary} reverse onPress={() => this.startBluetooth()} raised />
+                        </View>
+                        <View style={{ flex: 1 }} />
+                    </View>
+
+
                     <View style={{ flex: 1 }}>
-                        <Text h2>{successfullyConnected[0]}</Text>
+                        <View style={[AppStyles.containerCentered, { flex: 3 }]}>
+                            <Button
+                                title={this.props.scanning ? 'Stop Scan' : 'Start Scan'}
+                                icon={{ name: `${this.props.scanning ? 'stop' : 'play-arrow'}` }}
+                                buttonStyle={{ backgroundColor: `${this.props.scanning ? AppColors.brand.red : AppColors.brand.primary}` }}
+                                onPress={() => this.toggleScanning(!this.props.scanning)}
+                                raised
+                            />
+                            <Spacer size={5}/>
+                            <Text style={{ color: AppColors.brand.yellow }} onPress={() => this.setState({ isCollapsed: !this.state.isCollapsed })}>{'Can\'t find your device?'}</Text>
+                            <Spacer size={5}/>
+                            <Collapsible collapsed={this.state.isCollapsed} >
+                                <FormLabel labelStyle={[AppStyles.h4]} >
+                                    { `${accessoryDiscoverabilityInstruction}. Then rescan.` }
+                                </FormLabel>
+                            </Collapsible>
+                        </View>
+                        <Spacer />
+                        <View style={{ flex: 4 }}>
+                            <ScrollView>
+                                {
+                                    this.props.devicesFound.map(device => {
+                                        return <ListItem key={device.id} title={device.name} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
+                                    })
+                                }
+                            </ScrollView>
+                        </View>
+                        <View style={{ flex: 1 }}/>
                     </View>
-                    <Icon containerStyle={{ flex: 1 }} name={'checkbox-marked-circle'} type={'material-community'} color={AppColors.brand.yellow} size={100}/>
-                    <View style={[AppStyles.containerCentered, { flex: 1, paddingLeft: 25, paddingRight: 25 }]}>
-                        <Text>{successfullyConnected[1]}</Text>
+
+                    <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                        <View style={{ flex: 1 }}/>
+                        <View style={{ flex: 1 }}>
+                            <Text h2>{successfullyConnected[0]}</Text>
+                        </View>
+                        <Icon containerStyle={{ flex: 1 }} name={'checkbox-marked-circle'} type={'material-community'} color={AppColors.brand.yellow} size={100}/>
+                        <View style={[AppStyles.containerCentered, { flex: 1, paddingLeft: 25, paddingRight: 25 }]}>
+                            <Text>{successfullyConnected[1]}</Text>
+                        </View>
+                        <View style={{ flex: 1 }}/>
                     </View>
-                    <View style={{ flex: 1 }}/>
-                </View>
-            </Carousel>
-        </View>
+                </Carousel>
+            </View>
         );
+    }
 }
 
 /* Export Component ==================================================================== */
