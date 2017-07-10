@@ -3833,9 +3833,9 @@ react-native-device-info@^0.10.1:
   version "0.10.2"
   resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.10.2.tgz#350cd68ed43839022ddea0a3a423439f16fa4fba"
 
-react-native-elements@^0.13.0:
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-0.13.0.tgz#1cec901105aa29d3d07c10f143c9c0cc39dfc8a5"
+react-native-elements@^0.14.0:
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-0.14.0.tgz#eb45073c706d8333cb3b05bd0d5d883198f0aeb4"
   dependencies:
     lodash.isempty "^4.4.0"
     lodash.times "^4.3.2"
@@ -3904,9 +3904,11 @@ react-native-side-menu@^0.20.1, react-native-side-menu@^0.20.3:
   version "0.20.3"
   resolved "https://registry.yarnpkg.com/react-native-side-menu/-/react-native-side-menu-0.20.3.tgz#5dffe3e237018360ed081433d505ea454cba9ca4"
 
-react-native-swipeable@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/react-native-swipeable/-/react-native-swipeable-0.5.0.tgz#0b958ec2bee2b743f1b75ee72134136c47da4f24"
+react-native-swipeable@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-swipeable/-/react-native-swipeable-0.6.0.tgz#0fe551330018b83c754d27f505709a594f554370"
+  dependencies:
+    prop-types "^15.5.10"
 
 react-native-tab-navigator@^0.3.3:
   version "0.3.3"
