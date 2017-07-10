@@ -1,13 +1,10 @@
 /**
  * Accessory Reducer
  */
-import BleManager from 'react-native-ble-manager';
-
 const Actions = require('../actionTypes');
 
 // Set initial state
 const initialState = {
-    BleManager
 };
 
 export default function userReducer(state = initialState, action) {
@@ -17,7 +14,7 @@ export default function userReducer(state = initialState, action) {
             ...state,
             accessory: action.data,
         };
-    case Actions.CONNECT_TO_ACCESSORY:
+    case Actions.UPDATE_ACCESSORY_DATA:
         return {
             ...state,
             accessoryData: {

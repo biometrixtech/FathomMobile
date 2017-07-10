@@ -31,7 +31,7 @@ class KitManagementView extends Component {
     /* eslint-disable react/forbid-prop-types */
     static propTypes = {
         user:      PropTypes.object,
-        accessory: PropTypes.object,
+        bluetooth: PropTypes.object,
     }
 
     static defaultProps = {
@@ -42,13 +42,13 @@ class KitManagementView extends Component {
         super(props);
 
         this.state = {
-            SSID:          null,
+            SSID: null,
         };
     }
 
-    componentWillMount = () => {
-        console.log('will mount');
-    }
+    // componentWillMount = () => {
+    //     console.log('will mount');
+    // }
 
     // componentDidMount = () => {
     //     // Get SSID
@@ -188,18 +188,18 @@ class KitManagementView extends Component {
             <Text style={{ padding: 10, paddingLeft: 20, fontSize: 18 }}>MANAGE KIT</Text>
             <ListItem
                 title={'Owner'}
-                chevronColor={this.props.accessory.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}
-                titleStyle={{ color: this.props.accessory.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}}
+                chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
+                titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
             />
             <ListItem
                 title={'WiFi'}
-                chevronColor={this.props.accessory.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}
-                titleStyle={{ color: this.props.accessory.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}}
+                chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
+                titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
             />
             <ListItem
                 title={'Reset'}
-                chevronColor={this.props.accessory.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}
-                titleStyle={{ color: this.props.accessory.accessoryData ? AppColors.brand.blue : AppColors.lightGrey}}
+                chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
+                titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
             />
             <Text style={{ paddingLeft: 20, fontSize: 10 }}>Assign owner to the kit, change wifi network, or factory reset</Text>
         </View>
