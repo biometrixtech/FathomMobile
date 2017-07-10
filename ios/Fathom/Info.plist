@@ -47,11 +47,6 @@
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 			</dict>
-			<key>wp-api.mcnam.ee</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
 		</dict>
 		<key>NSAllowsArbitraryLoads</key>
     	<true/>
