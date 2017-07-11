@@ -16,7 +16,6 @@ import { AppStyles, AppColors } from '@theme/';
 class TeamManagementView extends Component {
     static componentName = 'ManagerTeamManagementView';
 
-    /* eslint-disable react/forbid-prop-types */
     static propTypes = {
         regimens:       PropTypes.array,
         trainingGroups: PropTypes.array,

@@ -13,6 +13,7 @@ import TeamCaptureSessionView from '@containers/capture/team/TeamCaptureSessionC
 import GroupCaptureSessionView from '@containers/capture/group/GroupCaptureSessionContainer';
 import KitManagementView from '@containers/kit/KitManagementContainer';
 import BluetoothConnectView from '@containers/kit/connect/BluetoothConnectContainer';
+import KitOwnerView from '@containers/kit/owner/KitOwnerContainer';
 
 // Components
 import { NavbarMenuButton } from '@containers/ui/NavbarMenuButton/NavbarMenuButtonContainer';
@@ -21,24 +22,6 @@ const navbarPropsTabs = {
     ...AppConfig.navbarProps,
     renderLeftButton: () => <NavbarMenuButton />,
     sceneStyle:       {
-        ...AppConfig.navbarProps.sceneStyle,
-    },
-};
-
-const regimenView = {
-    ...AppConfig.navbarProps,
-    renderLeftButton:  () => <NavbarMenuButton />,
-    renderRightButton: () => <Icon onPress={() => Actions.refresh({ isModalVisible: true })} name="plus" type="material-community" size={34} color="#FFF" underlayColor="transparent" containerStyle={{ marginBottom: 12 }} />,
-    sceneStyle:        {
-        ...AppConfig.navbarProps.sceneStyle,
-    },
-};
-
-const groupView = {
-    ...AppConfig.navbarProps,
-    renderLeftButton:  () => <NavbarMenuButton />,
-    renderRightButton: () => <Icon onPress={() => Actions.refresh({ isModalVisible: true })} name="plus" type="material-community" size={34} color="#FFF" underlayColor="transparent" containerStyle={{ marginBottom: 12 }} />,
-    sceneStyle:        {
         ...AppConfig.navbarProps.sceneStyle,
     },
 };
@@ -82,6 +65,14 @@ const scenes = (
                 type={ActionConst.PUSH}
                 component={BluetoothConnectView}
                 analyticsDesc={'BluetoothConnectView: Kit Management Bluetooth Connect'}
+            />
+            <Scene
+                {...navbarPropsTabs}
+                key={'kitOwner'}
+                clone
+                type={ActionConst.PUSH}
+                component={KitOwnerView}
+                analyticsDesc={'OwnerView: Kit Owner View'}
             />
         </Scene>
     </Scene>

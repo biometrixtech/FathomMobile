@@ -19,19 +19,21 @@ import Prompt from 'react-native-prompt';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
-import { AppStyles, AppSizes, AppColors } from '@theme/';
+import { AppStyles, AppSizes, AppColors, AppFonts } from '@theme/';
 
 // Components
 import { Spacer, Button, FormLabel, Text, ListItem } from '@ui/';
+
+const font18 = AppFonts.scaleFont(18);
+const font10 = AppFonts.scaleFont(10);
 
 /* Component ==================================================================== */
 class KitManagementView extends Component {
     static componentName = 'KitManagementView';
 
-    /* eslint-disable react/forbid-prop-types */
     static propTypes = {
         user:      PropTypes.object,
-        bluetooth: PropTypes.object,
+        bluetooth: PropTypes.object
     }
 
     static defaultProps = {
@@ -178,18 +180,19 @@ class KitManagementView extends Component {
     render = () =>
         (
         <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]} >
-            <Text style={{ padding: 10, paddingLeft: 20, fontSize: 18 }}>SETTINGS</Text>
+            <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>SETTINGS</Text>
             <ListItem
                 title={'Connect Kit'}
                 onPress={Actions.bluetoothConnect}
             />
-            <Text style={{ paddingLeft: 20, fontSize: 10 }}>Connect your Fathom Kit to WiFi</Text>
+            <Text style={{ paddingLeft: 20, fontSize: font10 }}>Connect your Fathom Kit to WiFi</Text>
             <Spacer />
-            <Text style={{ padding: 10, paddingLeft: 20, fontSize: 18 }}>MANAGE KIT</Text>
+            <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>MANAGE KIT</Text>
             <ListItem
                 title={'Owner'}
                 chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                 titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
+                onPress={() => Actions.kitOwner()}
             />
             <ListItem
                 title={'WiFi'}
@@ -201,7 +204,7 @@ class KitManagementView extends Component {
                 chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                 titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
             />
-            <Text style={{ paddingLeft: 20, fontSize: 10 }}>Assign owner to the kit, change wifi network, or factory reset</Text>
+            <Text style={{ paddingLeft: 20, fontSize: font10 }}>Assign owner to the kit, change wifi network, or factory reset</Text>
         </View>
         );
 }

@@ -15,18 +15,19 @@ import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
 import AppAPI from '@lib/api';
-import { AppSizes, AppStyles, AppColors } from '@theme/';
+import { AppSizes, AppStyles, AppColors, AppFonts } from '@theme/';
 
 // Components
 import { Button, ListItem, Spacer, Text, Card, FormLabel, FormInput } from '@ui/';
 import { Placeholder } from '@general/';
 import { Roles } from '@constants/';
 
+const font20 = AppFonts.scaleFont(20);
+
 /* Component ==================================================================== */
 class GroupCaptureSessionView extends Component {
     static componentName = 'GroupCaptureSessionView';
 
-    /* eslint-disable react/forbid-prop-types */
     static propTypes = {
         user:           PropTypes.object,
         isModalVisible: PropTypes.bool,
@@ -67,7 +68,7 @@ class GroupCaptureSessionView extends Component {
         <View>
             <Spacer />
             <View style={{ justifyContent: 'center', flexDirection: 'row' }} >
-                <ModalDropdown options={this.props.user.teams.map(team => team.name)} defaultIndex={0} defaultValue={this.props.user.teams[0].name} textStyle={{ fontSize: 20 }} dropdownTextStyle={{ fontSize: 20 }} />
+                <ModalDropdown options={this.props.user.teams.map(team => team.name)} defaultIndex={0} defaultValue={this.props.user.teams[0].name} textStyle={{ fontSize: font20 }} dropdownTextStyle={{ fontSize: font20 }} />
                 <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }}/>
             </View>
             <Spacer />
@@ -232,7 +233,7 @@ class GroupCaptureSessionView extends Component {
         <View>
             <Spacer />
             <View style={{ justifyContent: 'center', flexDirection: 'row' }} >
-                <ModalDropdown options={this.props.user.teams.map(team => team.name)} defaultIndex={0} defaultValue={this.props.user.teams[0].name} textStyle={{ fontSize: 20 }} dropdownTextStyle={{ fontSize: 20 }} />
+                <ModalDropdown options={this.props.user.teams.map(team => team.name)} defaultIndex={0} defaultValue={this.props.user.teams[0].name} textStyle={{ fontSize: font20 }} dropdownTextStyle={{ fontSize: font20 }} />
                 <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }}/>
             </View>
             <Spacer />
@@ -243,7 +244,7 @@ class GroupCaptureSessionView extends Component {
         <View>
             <Spacer />
             <View style={{ justifyContent: 'center', flexDirection: 'row' }} >
-                <ModalDropdown options={this.props.user.teams.map(team => team.name)} defaultIndex={0} defaultValue={this.props.user.teams[0].name} textStyle={{ fontSize: 20 }} dropdownTextStyle={{ fontSize: 20 }} />
+                <ModalDropdown options={this.props.user.teams.map(team => team.name)} defaultIndex={0} defaultValue={this.props.user.teams[0].name} textStyle={{ fontSize: font20 }} dropdownTextStyle={{ fontSize: font20 }} />
                 <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }}/>
             </View>
             <Spacer />

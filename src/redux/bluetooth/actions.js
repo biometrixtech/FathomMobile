@@ -74,7 +74,6 @@ export function deviceFound(data) {
 }
 
 export function connectToAccessory(data, {role, id}) {
-    console.log({data});
     return dispatch => BleManager.connect(data.id)
         .then(() => BleManager.retrieveServices(data.id))
         // .then(() => {

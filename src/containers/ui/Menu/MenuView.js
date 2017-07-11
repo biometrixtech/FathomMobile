@@ -14,8 +14,7 @@ import { Actions } from 'react-native-router-flux';
 import { Icon } from 'react-native-elements';
 
 // Consts and Libs
-import { AppStyles, AppSizes, AppColors } from '@theme/';
-import Fonts from '@theme/fonts'
+import { AppStyles, AppSizes, AppColors, AppFonts } from '@theme/';
 
 // Components
 import { Spacer, Text, Button } from '@ui/';
@@ -67,8 +66,8 @@ const styles = StyleSheet.create({
         flexDirection:     'row',
     },
     menuItem_text: {
-        fontSize:    Fonts.scaleFont(18),
-        lineHeight:  Fonts.lineHeight(Fonts.scaleFont(18)),
+        fontSize:    AppFonts.scaleFont(18),
+        lineHeight:  AppFonts.lineHeight(AppFonts.scaleFont(18)),
         fontWeight:  'normal',
         color:       '#EEEFF0',
         paddingLeft: AppSizes.padding*2.5,
@@ -84,8 +83,8 @@ const styles = StyleSheet.create({
     },
     menuBottom_text: {
         color:      '#EEEFF0',
-        lineHeight: Fonts.lineHeight(Fonts.scaleFont(23)),
-        fontSize:   Fonts.scaleFont(23),
+        lineHeight: AppFonts.lineHeight(AppFonts.scaleFont(23)),
+        fontSize:   AppFonts.scaleFont(23),
     },
 });
 

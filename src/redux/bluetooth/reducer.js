@@ -17,7 +17,8 @@ export default function bluetoothReducer(state = initialState, action) {
         return Object.assign({}, state, {
             accessoryData: {
                 accessoryConnected: action.data.accessoryConnected,
-                id:                 action.data.id
+                id:                 action.data.id,
+                name:               action.data.name
             }
         });
     case Actions.CHANGE_STATE:
