@@ -47,7 +47,6 @@ const styles = StyleSheet.create({
 class RegimensView extends Component {
     static componentName = 'RegimensView';
 
-    /* eslint-disable react/forbid-prop-types */
     static propTypes = {
         regimens:       PropTypes.array,
         trainingGroups: PropTypes.array,

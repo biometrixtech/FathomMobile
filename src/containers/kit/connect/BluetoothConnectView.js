@@ -29,7 +29,6 @@ const successfullyConnected = ['Your kit is connected!', 'Return to main menu to
 class BluetoothConnectView extends Component {
     static componentName = 'BluetoothConnectView';
 
-    /* eslint-disable react/forbid-prop-types */
     static propTypes = {
         user:               PropTypes.object,
         devicesFound:       PropTypes.array,
@@ -123,6 +122,7 @@ class BluetoothConnectView extends Component {
             }
         } else {
             if (this.refs.carousel.getCurrentPage() === 1) {
+                this.startBluetooth();
                 this.setState({ index: 2 });
                 this.refs.carousel.animateToPage(2);
             }
