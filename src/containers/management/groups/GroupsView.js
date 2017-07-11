@@ -47,7 +47,6 @@ const styles = StyleSheet.create({
 class GroupsView extends Component {
     static componentName = 'GroupsView';
 
-    /* eslint-disable react/forbid-prop-types */
     static propTypes = {
         trainingGroups: PropTypes.array,
         isModalVisible: PropTypes.bool,

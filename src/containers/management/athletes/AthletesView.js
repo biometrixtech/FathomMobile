@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
 class AthletesView extends Component {
     static componentName = 'AthletesView';
 
-    /* eslint-disable react/forbid-prop-types */
     static propTypes = {
         regimens:       PropTypes.array,
         trainingGroups: PropTypes.array,
