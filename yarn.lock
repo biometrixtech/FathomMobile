@@ -3815,9 +3815,9 @@ react-native-charts-wrapper@^0.2.10:
   version "0.2.10"
   resolved "https://registry.yarnpkg.com/react-native-charts-wrapper/-/react-native-charts-wrapper-0.2.10.tgz#39485a29e6c3f1e9c76bb134305664754d03f9df"
 
-react-native-code-push@^3.0.1-beta:
-  version "3.0.1-beta"
-  resolved "https://registry.yarnpkg.com/react-native-code-push/-/react-native-code-push-3.0.1-beta.tgz#592b9bd579437b8d7e76c139571bda3a1975a0cb"
+react-native-code-push@^4.0.0-beta:
+  version "4.0.0-beta"
+  resolved "https://registry.yarnpkg.com/react-native-code-push/-/react-native-code-push-4.0.0-beta.tgz#c18ad53429aac3497ee1e2b56e90e7fbe888cfa3"
   dependencies:
     code-push "1.11.2-beta"
     glob "^5.0.15"
