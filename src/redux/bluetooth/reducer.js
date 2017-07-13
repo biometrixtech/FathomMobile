@@ -5,6 +5,7 @@ const Actions = require('../actionTypes');
 
 // Set initial state
 const initialState = {
+    assignType:    '',
     bluetoothOn:   false,
     scanning:      false,
     devicesFound:  [],
@@ -16,14 +17,13 @@ export default function bluetoothReducer(state = initialState, action) {
     case Actions.CONNECT_TO_ACCESSORY:
         return Object.assign({}, state, {
             accessoryData: {
-                accessoryConnected: action.data.accessoryConnected,
-                id:                 action.data.id,
-                name:               action.data.name
+                ...action.data
             }
         });
     case Actions.CHANGE_STATE:
         return Object.assign({}, state, {
-            bluetoothOn: action.data === 'on'
+            bluetoothOn:   action.data === 'on',
+            accessoryData: action.data === 'on' ? state.accessoryData : {}
         });
     case Actions.DEVICE_FOUND:
         if (state.devicesFound.every(device => device.id !== action.data.id)) {
@@ -41,6 +41,11 @@ export default function bluetoothReducer(state = initialState, action) {
         return Object.assign({}, state, {
             scanning: false
         });
+    case Actions.ASSIGN_TYPE:
+        return Object.assign({}, state, {
+            assignType: action.data
+        });
+    case Actions.LOGIN:
     case Actions.CHECK_STATE:
     case Actions.ENABLE_BLUETOOTH:
     case Actions.START_BLUETOOTH:

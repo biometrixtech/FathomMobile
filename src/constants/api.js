@@ -4,7 +4,7 @@
 
 export default {
     // The URL we're connecting to
-    // hostname: 'https://rails-api.biometrixtech.com', // deployment
+    // hostname: 'https://rails-api.fathomai.com', // deployment
     hostname: 'http://ec2-54-148-213-40.us-west-2.compute.amazonaws.com', // testing
 
     // Map shortnames to the actual endpoints, so that we can

@@ -3,10 +3,12 @@
  */
 import BleManager from 'react-native-ble-manager';
 import { BLEConfig } from '@constants';
+import AppAPI from '@lib/api';
 
 const Actions = require('../actionTypes');
+const commands = BLEConfig.commands;
 
-function write(id, data) {
+const write = (id, data) => {
     return BleManager.write(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID, data);
 }
 
@@ -16,79 +18,106 @@ function write(id, data) {
   *   'test'
   *   [116,101,115,116]
   */
-function convertStringToByteArray(string) {
+const convertStringToByteArray = (string) => {
     return string.split('').map(char => char.charCodeAt(0));
 }
 
-function convertHex(value) {
+const convertHex = (value) => {
     return parseInt(value, 16);
 }
 
-export function checkState() {
+const getOwnerOrganization = (id) => {
+    let dataArray = [convertHex(commands.GET_OWNER_ORG, '0x00')];
+    return write(id, dataArray);
+}
+
+const getOwnerTeam = (id) => {
+    let dataArray = [convertHex(commands.GET_OWNER_TEAM, '0x00')];
+    return write(id, dataArray);
+}
+
+const getOwnerUser = (id) => {
+    let dataArray = [convertHex(commands.GET_OWNER_USER, '0x00')];
+    return write(id, dataArray);
+}
+
+
+
+const assignType = (type) => {
+    return dispatch => dispatch({
+        type: Actions.ASSIGN_TYPE,
+        data: type
+    });
+}
+
+const checkState = () => {
     return dispatch => new Promise(resolve => resolve(BleManager.checkState()))
         .then(() => dispatch({
             type: Actions.CHECK_STATE
         }));
 }
 
-export function changeState(state) {
+const changeState = (state) => {
     return dispatch => dispatch({
         type: Actions.CHANGE_STATE,
         data: state
     });
 }
 
-export function enableBluetooth() {
+const enableBluetooth = () => {
     return dispatch => BleManager.enableBluetooth()
         .then(() => dispatch({
             type: Actions.ENABLE_BLUETOOTH
         }));
 }
 
-export function startBluetooth() {
+const startBluetooth = () => {
     return dispatch => BleManager.start({ showAlert: true })
         .then(() => dispatch({
             type: Actions.START_BLUETOOTH
         }));
 }
 
-export function startScan() {
+const startScan = () => {
     return dispatch => BleManager.scan([], 30, false)
         .then(() => dispatch({
             type: Actions.START_SCAN
         }));
 }
 
-export function stopScan () {
+const stopScan = () => {
     return dispatch => BleManager.stopScan()
         .then(() => dispatch({
             type: Actions.STOP_SCAN
         }));
 }
 
-export function deviceFound(data) {
+const deviceFound = (data) => {
     return dispatch => dispatch({
         type: Actions.DEVICE_FOUND,
         data
     });
 }
 
-export function connectToAccessory(data, {role, id}) {
+const connectToAccessory = (data, {role, id}) => {
     return dispatch => BleManager.connect(data.id)
         .then(() => BleManager.retrieveServices(data.id))
-        // .then(() => {
-        //     let dataArray = new Array(20);
-        //     dataArray[0] = BLEConfig.commands.LOGIN;
-        //     dataArray[1] = convertHex('0x11');
-        //     dataArray[2] = BLEConfig.roles[];
-        //     return BleManager.write(data.id, );
-        // })
-        .then(() => dispatch({
+        .then(() => BLEConfig.parse(id))
+        .then(convertedUUID => {
+            let dataArray = [];
+            let hexRole = BLEConfig.roles[role];
+            dataArray.push(commands.LOGIN);
+            dataArray.push(convertHex('0x11'));
+            dataArray.push(hexRole);
+            dataArray = dataArray.concat(convertedUUID);
+            return write(data.id, dataArray);
+        })
+        .then(() => AppAPI.accessory.patch(data.id, data))
+        .then(uploadedAccessory => dispatch({
             type: Actions.CONNECT_TO_ACCESSORY,
             data: {
                 accessoryConnected: true,
-                id:                 data.id,
-                name:               data.name
+                ...uploadedAccessory
             }
         }))
         .catch(err => {
@@ -96,3 +125,90 @@ export function connectToAccessory(data, {role, id}) {
             return err;
         })
 }
+
+const setWiFiSSID = (ssid) => {
+    let byteString = convertStringToByteArray(ssid);
+    let dataArray = [];
+    dataArray.push(commands.SET_WIFI_SSID_HEAD);
+    dataArray.push(byteString.length);
+    for (let i = 2; i < 20 && i-2 < byteString.length; i+=1) {
+        dataArray.push(byteString[i-2]);
+    }
+    for (let i = byteString.length + 2; i < 20; i+=1) {
+        dataArray.push(convertHex('0x00'));
+    }
+    console.log('SSID Data Array: ', dataArray);
+    return write(this.state.data.id, dataArray)
+        .then(() => {
+            if (byteString.length <= 18) {
+                return null;
+            }
+            dataArray = [];
+            dataArray.push(commands.SET_WIFI_SSID_CONT);
+            dataArray.push(byteString.length - 18);
+            for (let i = 2; i - 2 < byteString.length - 18; i+=1) {
+                dataArray.push(byteString[i+16]);
+            }
+            for (let i = byteString.length - 16; i < 20; i+=1) {
+                dataArray.push(convertHex('0x00'));
+            }
+            console.log('SSID Data Array 2: ', dataArray);
+            return write(this.state.data.id, dataArray);
+        });
+}
+
+const setWiFiPassword = (pass) => {
+    let byteString = convertStringToByteArray(pass);
+    let dataArray = [];
+    dataArray.push(commands.SET_WIFI_PSW_HEAD);
+    dataArray.push(byteString.length);
+    for (let i = 2; i < 20 && i-2 < byteString.length; i+=1) {
+        dataArray.push(byteString[i-2]);
+    }
+    for (let i = byteString.length + 2; i < 20; i+=1) {
+        dataArray.push(convertHex('0x00'));
+    }
+    console.log('Password Data Array: ', dataArray);
+    return write(this.state.data.id, dataArray)
+        .then(() => {
+            if (byteString.length <= 18) {
+                return null;
+            }
+            dataArray = [];
+            dataArray.push(commands.SET_WIFI_PSW_CONT);
+            dataArray.push(byteString.length - 18);
+            for (let i = 2; i - 2 < byteString.length - 18; i+=1) {
+                dataArray.push(byteString[i+16]);
+            }
+            for (let i = byteString.length - 16; i < 20; i+=1) {
+                dataArray.push(convertHex('0x00'));
+            }
+            console.log('Password Data Array 2: ', dataArray);
+            return write(this.state.data.id, dataArray);
+        });
+}
+
+const connectWiFi = () => {
+    let dataArray = [];
+    dataArray.push(convertHex('0x08'));
+    dataArray.push(convertHex('0x00'));
+    for (let i = 2; i < 20; i+=1) {
+        dataArray.push(convertHex('0x00'));
+    }
+    return write(this.state.data.id, dataArray);
+}
+
+export {
+    assignType,
+    checkState,
+    changeState,
+    enableBluetooth,
+    startBluetooth,
+    startScan,
+    stopScan,
+    deviceFound,
+    connectToAccessory,
+    setWiFiSSID,
+    setWiFiPassword,
+    connectWiFi
+};

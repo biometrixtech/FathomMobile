@@ -57,8 +57,8 @@ function handleError(err) {
     let error = '';
     if (typeof err === 'string') {
         error = err;
-    } else if (err && err.message) {
-        error = err.message;
+    } else if (err && err.error) {
+        error = err.error;
     }
 
     if (!error) { error = ErrorMessages.default; }

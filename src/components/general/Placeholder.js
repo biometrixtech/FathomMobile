@@ -15,13 +15,13 @@ import { Text } from '@ui/';
 
 /* Component ==================================================================== */
 const Placeholder = ({ text }) => (
-  <View style={[AppStyles.container, AppStyles.containerCentered]}>
-    <Text>{text}</Text>
-  </View>
+    <View style={[AppStyles.container, AppStyles.containerCentered]}>
+        <Text>{text}</Text>
+    </View>
 );
 
 Placeholder.propTypes = { text: PropTypes.string };
-Placeholder.defaultProps = { text: 'Coming soon...' };
+Placeholder.defaultProps = { text: 'Coming soon to this role...' };
 Placeholder.componentName = 'Placeholder';
 
 /* Export Component ==================================================================== */
