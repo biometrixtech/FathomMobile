@@ -60,16 +60,18 @@ class Login extends Component {
         // Email Validation
         const validEmail = FormValidation.refinement(
             FormValidation.String, (email) => {
-                const regularExpression = /^.+@.+\..+$/i;
+                if (email.length < 2) { return false; }
+                return true;
+                // const regularExpression = /^.+@.+\..+$/i;
 
-                return regularExpression.test(email);
+                // return regularExpression.test(email);
             },
         );
 
         // Password Validation - Must be 6 chars long
         const validPassword = FormValidation.refinement(
             FormValidation.String, (password) => {
-                if (password.length < 8) { return false; }
+                if (password.length < 2) { return false; }
                 return true;
             },
         );
@@ -92,13 +94,12 @@ class Login extends Component {
             options:     {
                 fields: {
                     Email: {
-                        error:           'Please enter a valid email',
-                        autoCapitalize:  'none',
+                        error:           'Your email must be 2 characters or more',
                         clearButtonMode: 'while-editing',
                         keyboardType:    'email-address',
                     },
                     Password: {
-                        error:           'Your password must be 8 characters or more',
+                        error:           'Your password must be 2 characters or more',
                         clearButtonMode: 'while-editing',
                         secureTextEntry: true,
                         password:        true,
@@ -148,25 +149,26 @@ class Login extends Component {
                     this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
-                        switch (userData.role) {
-                        case roles.admin:
-                            Actions.adminApp({ type: 'reset' });
-                            break;
-                        case roles.athlete:
-                            Actions.athleteApp({ type: 'reset' });
-                            break;
-                        case roles.biometrixAdmin:
-                            Actions.biometrixApp({ type: 'reset' }); // eventually changed to biometrixAdminApp?
-                            break;
-                        case roles.manager:
-                            Actions.managerApp({ type: 'reset' });
-                            break;
-                        case roles.researcher:
-                            Actions.researcherApp({ type: 'reset' });
-                            break;
-                        default:
-                            break;
-                        }
+                        Actions.app({ type: 'reset' });
+                        // switch (userData.role) {
+                        // case roles.admin:
+                        //     Actions.adminApp({ type: 'reset' });
+                        //     break;
+                        // case roles.athlete:
+                        //     Actions.athleteApp({ type: 'reset' });
+                        //     break;
+                        // case roles.biometrixAdmin:
+                        //     Actions.biometrixApp({ type: 'reset' }); // eventually changed to biometrixAdminApp?
+                        //     break;
+                        // case roles.manager:
+                        //     Actions.managerApp({ type: 'reset' });
+                        //     break;
+                        // case roles.researcher:
+                        //     Actions.researcherApp({ type: 'reset' });
+                        //     break;
+                        // default:
+                        //     break;
+                        // }
                     });
                 }).catch((err) => {
                     const error = AppAPI.handleError(err);

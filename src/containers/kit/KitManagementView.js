@@ -9,6 +9,7 @@ import {
     NativeAppEventEmitter,
     Platform,
     PermissionsAndroid,
+    BackHandler
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NetworkInfo } from 'react-native-network-info';
@@ -20,9 +21,11 @@ import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors, AppFonts } from '@theme/';
+import { Roles, BLEConfig } from '@constants/';
 
 // Components
 import { Spacer, Button, FormLabel, Text, ListItem } from '@ui/';
+import { Placeholder } from '@general/';
 
 const font18 = AppFonts.scaleFont(18);
 const font10 = AppFonts.scaleFont(10);
@@ -32,8 +35,8 @@ class KitManagementView extends Component {
     static componentName = 'KitManagementView';
 
     static propTypes = {
-        user:      PropTypes.object,
-        bluetooth: PropTypes.object
+        user:        PropTypes.object,
+        bluetooth:   PropTypes.object
     }
 
     static defaultProps = {
@@ -48,142 +51,24 @@ class KitManagementView extends Component {
         };
     }
 
-    // componentWillMount = () => {
-    //     console.log('will mount');
-    // }
+    componentWillMount = () => { BackHandler.addEventListener('backPress', () => Actions.pop()); };
 
-    // componentDidMount = () => {
-    //     // Get SSID
-    //     NetworkInfo.getSSID(ssid => {
-    //         this.setState({ SSID: ssid });
-    //     });
+    componentWillUnmount = () => { BackHandler.removeEventListener('backPress') };
 
-    //     this.props.accessory.BleManager.checkState();
-    //     this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
-    //     this.handleBleStateChange     = this.handleBleStateChange.bind(this);
+    adminView = () => (
+        <Placeholder />
+    );
 
-    //     NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', (data) => { this.handleDiscoverPeripheral(data); });
-    //     NativeAppEventEmitter.addListener('BleManagerDidUpdateState', (data) => { this.handleBleStateChange(data); });
-    // }
+    athleteView = () => (
+        <Placeholder />
+    );
 
-    // componentWillUnmount = () => {
-    //     NativeAppEventEmitter.removeListener('BleManagerDiscoverPeripheral');
-    //     NativeAppEventEmitter.removeListener('BleManagerDidUpdateState');
-    // }
-
-    // handleDiscoverPeripheral = (data) => {
-    //     if (data.name && data.name.indexOf('fathom') > -1 && this.state.devicesFound.every(device => device.id !== data.id)) {
-    //         console.log('Got new ble data', data);
-    //         this.state.devicesFound.push(data);
-    //         return this.setState({ ble: data, devicesFound: this.state.devicesFound });
-    //     }
-    //     return null;
-    // }
-
-    // handleBleStateChange = (data) => {
-    //     if (data.state === 'off') {
-    //         const index = this.state.index > 1 ? 1 : this.state.index;
-    //         return this.setState({ resultMsg: { error: 'Bluetooth inactive' }, index });
-    //     }
-    //     if (this.state.index === 1) {
-    //         return this.turnOnBluetooth();
-    //     }
-    //     return this.setState({ resultMsg: { error: null } });
-    // }
-
-    // setSSID = (ssid) => {
-    //     let dataArray = new Array(20);
-    //     dataArray[0] = parseInt('0x04', 16);
-    //     dataArray[1] = ssid.length;
-    //     for (let i = 2; i < 20 && i-2 < ssid.length; i+=1) {
-    //         dataArray[i] = ssid.charCodeAt(i-2);
-    //     }
-    //     for (let i = ssid.length + 2; i < 20; i+=1) {
-    //         dataArray[i] = parseInt('0x00', 16);
-    //     }
-    //     console.log('SSID Data Array: ', dataArray);
-    //     return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
-    //         .then(() => {
-    //             if (ssid.length <= 18) {
-    //                 return null;
-    //             }
-    //             dataArray = new Array(20);
-    //             dataArray[0] = parseInt('0x05', 16);
-    //             dataArray[1] = ssid.length - 18;
-    //             for (let i = 2; i - 2 < ssid.length - 18; i+=1) {
-    //                 dataArray[i] = ssid.charCodeAt(i+16);
-    //             }
-    //             for (let i = ssid.length - 16; i < 20; i+=1) {
-    //                 dataArray[i] = parseInt('0x00', 16);
-    //             }
-    //             console.log('SSID Data Array 2: ', dataArray);
-    //             return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
-    //         });
-    // }
-
-    // setWiFiPassword = (passwordAttempt) => {
-    //     let dataArray = new Array(20);
-    //     dataArray[0] = parseInt('0x06', 16);
-    //     dataArray[1] = passwordAttempt.length;
-    //     for (let i = 2; i < 20 && i-2 < passwordAttempt.length; i+=1) {
-    //         dataArray[i] = passwordAttempt.charCodeAt(i-2);
-    //     }
-    //     for (let i = passwordAttempt.length + 2; i < 20; i+=1) {
-    //         dataArray[i] = parseInt('0x00', 16);
-    //     }
-    //     console.log('Password Data Array: ', dataArray);
-    //     return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
-    //         .then(() => {
-    //             if (passwordAttempt.length <= 18) {
-    //                 return null;
-    //             }
-    //             dataArray = new Array(20);
-    //             dataArray[0] = parseInt('0x07', 16);
-    //             dataArray[1] = passwordAttempt.length - 18;
-    //             for (let i = 2; i - 2 < passwordAttempt.length - 18; i+=1) {
-    //                 dataArray[i] = passwordAttempt.charCodeAt(i+16);
-    //             }
-    //             for (let i = passwordAttempt.length - 16; i < 20; i+=1) {
-    //                 dataArray[i] = parseInt('0x00', 16);
-    //             }
-    //             console.log('Password Data Array 2: ', dataArray);
-    //             return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
-    //         });
-    // }
-
-    // setupWiFi = (ssid, password) => {
-    //     return this.setSSID(ssid)
-    //         .then(() => this.setWiFiPassword(password))
-    //         .then(() => {
-    //             let dataArray = new Array(20);
-    //             dataArray[0] = parseInt('0x08', 16);
-    //             dataArray[1] = parseInt('0x00', 16);
-    //             for (let i = 2; i < 20; i+=1) {
-    //                 dataArray[i] = parseInt('0x00', 16);
-    //             }
-    //             return BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
-    //         })
-    //         .then(() => BleManager.read(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de'))
-    //         .then(readData => console.log(readData))
-    //         .then(() => setTimeout(() => this.props.upsertAccessory(this.state.data.id, {
-    //             name:    this.state.data.name,
-    //             team_id: this.props.user.teams[0].id,
-    //         }), 3000))
-    //         .catch(err => { console.log(err); this.setState({ promptVisible: true }) });
-    // }
-
-    // _onLayoutDidChange = (e) => {
-    //     const layout = e.nativeEvent.layout;
-    //     this.setState({ size: { width: layout.width, height: layout.height } });
-    // }
-
-    render = () =>
-        (
+    biometrixAdminView = () => (
         <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]} >
             <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>SETTINGS</Text>
             <ListItem
                 title={'Connect Kit'}
-                onPress={Actions.bluetoothConnect}
+                onPress={() => Actions.bluetoothConnect()}
             />
             <Text style={{ paddingLeft: 20, fontSize: font10 }}>Connect your Fathom Kit to WiFi</Text>
             <Spacer />
@@ -192,9 +77,19 @@ class KitManagementView extends Component {
                 title={'Owner'}
                 chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                 titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                onPress={() => Actions.kitOwner()}
+                onPress={() => this.props.bluetooth.accessoryData.accessoryConnected ? Actions.kitOwner() : null}
             />
             <ListItem
+                title={'WiFi'}
+                chevronColor={ AppColors.lightGrey}
+                titleStyle={{ color: AppColors.lightGrey}}
+            />
+            <ListItem
+                title={'Reset'}
+                chevronColor={ AppColors.lightGrey}
+                titleStyle={{ color: AppColors.lightGrey}}
+            />
+            {/* <ListItem
                 title={'WiFi'}
                 chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                 titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
@@ -203,10 +98,37 @@ class KitManagementView extends Component {
                 title={'Reset'}
                 chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                 titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-            />
+            /> */}
             <Text style={{ paddingLeft: 20, fontSize: font10 }}>Assign owner to the kit, change wifi network, or factory reset</Text>
         </View>
-        );
+    );
+
+    managerView = () => (
+        <Placeholder />
+    );
+
+    researcherView = () => (
+        <Placeholder />
+    );
+
+    render = () => {
+        switch(this.props.user.role) {
+        case Roles.admin:
+            return this.adminView();
+        case Roles.athlete:
+            return this.athleteView();
+        case Roles.biometrixAdmin:
+            return this.biometrixAdminView();
+        case Roles.superAdmin:
+            return this.biometrixAdminView();
+        case Roles.manager:
+            return this.biometrixAdminView();
+        case Roles.researcher:
+            return this.researcherView();
+        default:
+            return <Placeholder />;
+        }
+    }
 }
 
 /* Export Component ==================================================================== */

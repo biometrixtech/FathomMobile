@@ -13,9 +13,11 @@ import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors, AppFonts } from '@theme/';
+import { Roles } from '@constants/';
 
 // Components
 import { Spacer, Button, FormLabel, Text, ListItem } from '@ui/';
+import { Placeholder } from '@general/';
 
 const font10 = AppFonts.scaleFont(10);
 const font18 = AppFonts.scaleFont(18);
@@ -25,8 +27,9 @@ class KitOwnerView extends Component {
     static componentName = 'KitOwnerView';
 
     static propTypes = {
-        user:      PropTypes.object,
-        bluetooth: PropTypes.object,
+        user:       PropTypes.object,
+        bluetooth:  PropTypes.object,
+        assignType: PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -40,10 +43,17 @@ class KitOwnerView extends Component {
         };
     }
 
-    render = () =>
-        (
+    adminView = () => (
+        <Placeholder />
+    );
+
+    athleteView = () => (
+        <Placeholder />
+    );
+
+    biometrixAdminView = () => (
         <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]} >
-            <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center' }}>
+            <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'flex-start', height: AppSizes.screen.heightOneThird }}>
                 <Image source={require('@images/kit-diagram.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthTwoThirds }}/>
                 <Text>{this.props.bluetooth.accessoryData.name}</Text>
                 <Text style={{ fontSize: font10 }}>{this.props.bluetooth.accessoryData.id}</Text>
@@ -64,6 +74,7 @@ class KitOwnerView extends Component {
                     rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
                     chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                     titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
+                    onPress={() => Actions.kitAssign()}
                 />
                 <ListItem
                     title={'Individual'}
@@ -71,11 +82,39 @@ class KitOwnerView extends Component {
                     rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
                     chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                     titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
+                    onPress={() => Actions.kitAssign()}
                 />
                 <Text style={{ paddingLeft: 20, fontSize: font10 }}>Edit your school, team, and name above.</Text>
             </View>
         </View>
-        );
+    );
+
+    managerView = () => (
+        <Placeholder />
+    );
+
+    researcherView = () => (
+        <Placeholder />
+    );
+
+    render = () => {
+        switch(this.props.user.role) {
+        case Roles.admin:
+            return this.adminView();
+        case Roles.athlete:
+            return this.athleteView();
+        case Roles.biometrixAdmin:
+            return this.biometrixAdminView();
+        case Roles.superAdmin:
+            return this.biometrixAdminView();
+        case Roles.manager:
+            return this.biometrixAdminView();
+        case Roles.researcher:
+            return this.researcherView();
+        default:
+            return <Placeholder />;
+        }
+    }
 }
 
 /* Export Component ==================================================================== */

@@ -157,7 +157,7 @@ export function signUp(credentials) {
  * GET Training Groups
  */
 export function getTrainingGroups() {
-    return dispatch => AppAPI.training_group.get()
+    return dispatch => AppAPI.training_groups.get()
         .then((trainingGroups) => {
             dispatch({
                 type: Actions.GET_TRAINING_GROUPS,
@@ -171,39 +171,35 @@ export function getTrainingGroups() {
  * Create Training Group
  */
 export function createTrainingGroup(trainingGroup) {
-    return dispatch => AppAPI.training_group.post(trainingGroup)
-        .then(newTrainingGroup => {
-            dispatch({
-                type: Actions.CREATE_TRAINING_GROUP,
-                data: newTrainingGroup,
-            });
-        });
+    return dispatch => AppAPI.training_groups.post(trainingGroup)
+        .then(newTrainingGroup => dispatch({
+            type: Actions.CREATE_TRAINING_GROUP,
+            data: newTrainingGroup,
+        }));
 }
 
 /**
  * Patch Training Group
  */
 export function patchTrainingGroup(trainingGroup) {
-    return dispatch => AppAPI.training_group.patch(trainingGroup)
-        .then(patchedTrainingGroup => {
-            dispatch({
-                type: Actions.PATCH_TRAINING_GROUP,
-                data: patchedTrainingGroup,
-            });
-        });
+    let id = trainingGroup.id;
+    delete trainingGroup.id;
+    return dispatch => AppAPI.training_groups.patch(id, trainingGroup)
+        .then(patchedTrainingGroup => dispatch({
+            type: Actions.PATCH_TRAINING_GROUP,
+            data: patchedTrainingGroup,
+        }));
 }
 
 /**
  * Remove Training Group
  */
 export function removeTrainingGroup(trainingGroupId) {
-    return dispatch => AppAPI.training_group.patch(trainingGroupId)
-        .then(trainingGroups => {
-            dispatch({
-                type: Actions.REMOVE_TRAINING_GROUP,
-                data: trainingGroups,
-            });
-        });
+    return dispatch => AppAPI.training_groups.delete(trainingGroupId)
+        .then(() => dispatch({
+            type: Actions.REMOVE_TRAINING_GROUP,
+            data: trainingGroupId,
+        }));
 }
 
 /**
@@ -273,4 +269,20 @@ export function removeA(data) {
         type: Actions.REMOVE_A,
         data,
     });
+}
+
+
+
+export function teamSelect(index) {
+    return dispatch => dispatch({
+        type: Actions.TEAM_SELECT,
+        data: index
+    });
+}
+
+export function selectTrainingGroup(trainingGroup) {
+    return dispatch => dispatch({
+        type: Actions.TRAINING_GROUP_SELECT,
+        data: trainingGroup
+    })
 }
