@@ -17,11 +17,13 @@ const app = {
 const brand = {
     brand: {
         primary: '#0b587c', // Blue: #177896, Red: #8e223a, Old: #0E4EF8, Blue(Jasmine): #0b587c
-        red:     '#f17b20',
+        red:     '#891e20',
         yellow:  '#e0af12',
         blue:    '#0b587c',
         grey:    '#dee1e9',
-        light:   '#e6f5f7'
+        light:   '#ebf5f7',
+        fogGrey: '#c8c8c8',
+        skyGrey: '#f0f0f0'
     },
 };
 
