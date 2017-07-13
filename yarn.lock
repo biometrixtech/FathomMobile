@@ -3859,9 +3859,9 @@ react-native-fabric@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/react-native-fabric/-/react-native-fabric-0.4.1.tgz#5fcb604daf17d0dff70603ff3eeba9e3f3160ddd"
 
-react-native-google-analytics-bridge@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-google-analytics-bridge/-/react-native-google-analytics-bridge-5.2.0.tgz#d08b34ff7e11c3b8cf2adea0b92be311b0e194ad"
+react-native-google-analytics-bridge@^5.2.1:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-google-analytics-bridge/-/react-native-google-analytics-bridge-5.2.1.tgz#95bc953660170716f8a70a577b35634a8ec936f3"
 
 react-native-looped-carousel@^0.1.7:
   version "0.1.7"
