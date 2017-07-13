@@ -62,8 +62,7 @@ class TeamCaptureSessionView extends Component {
     }
 
     addGroup = () => {
-        this.state.trainingGroup.athletes = [];
-        this.props.createTrainingGroup(this.state.trainingGroup)
+        return this.props.createTrainingGroup(this.state.trainingGroup)
             .then(() => Actions.refresh({ isModalVisible: false }));
     }
 
@@ -100,7 +99,7 @@ class TeamCaptureSessionView extends Component {
     biometrixAdminView = () => (
         <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]}>
             <View style={{ justifyContent: 'center', flexDirection: 'row', backgroundColor: '#FFFFFF', paddingTop: 15, paddingBottom: 15 }} >
-                <ModalDropdown options={this.props.user.teams.map(team => team.name)} defaultIndex={this.props.user.teamIndex} defaultValue={this.props.user.teams[this.props.user.teamIndex].name} textStyle={AppStyles.baseText} dropdownTextStyle={AppStyles.baseText} onSelect={index => this.props.teamSelect(index)} />
+                <ModalDropdown options={this.props.user.teams.map(team => team.name)} defaultIndex={this.props.user.teamIndex} defaultValue={this.props.user.teams[this.props.user.teamIndex].name} textStyle={AppStyles.h3} dropdownTextStyle={AppStyles.h3} onSelect={index => this.props.teamSelect(index)} />
                 <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }} color={AppColors.brand.blue}/>
             </View>
             <ScrollView>
@@ -151,7 +150,12 @@ class TeamCaptureSessionView extends Component {
 
                         <Button
                             title={'Save'}
-                            onPress={() => { if (this.state.trainingGroup.id) { this.editGroup(); } else { this.addGroup(); } }}
+                            onPress={() => {
+                                if (!this.state.trainingGroup.id && this.state.trainingGroup.name === '' && this.state.trainingGroup.description === '') {
+                                    return Actions.refresh({ isModalVisible: false });
+                                }
+                                return this.state.trainingGroup.id ? this.editGroup() : this.addGroup();
+                            }}
                         />
                     </Card>
                 </View>
