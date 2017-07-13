@@ -93,12 +93,7 @@ class Menu extends Component {
     static propTypes = {
         logout:        PropTypes.func.isRequired,
         closeSideMenu: PropTypes.func.isRequired,
-        user:          PropTypes.shape({
-            role:       PropTypes.string,
-            first_name: PropTypes.string,
-            last_name:  PropTypes.string,
-            avatar_url: PropTypes.string,
-        }),
+        user:          PropTypes.object
     }
 
     static defaultProps = {
@@ -108,27 +103,27 @@ class Menu extends Component {
     constructor(props) {
         super(props);
 
-        let action;
+        // let action;
 
-        switch (this.props.user.role) {
-        case Roles.admin:
-            action = Actions.adminTeamManagement;
-            break;
-        case Roles.athlete:
-            action = Actions.athleteAthleteManagement;
-            break;
-        case Roles.biometrixAdmin:
-            action = Actions.biometrixAdminTeamCaptureSession;
-            break;
-        case Roles.manager:
-            action = Actions.managerTeamManagement;
-            break;
-        case Roles.researcher:
-            action = Actions.researcherSubjectManagement;
-            break;
-        default:
-            break;
-        }
+        // switch (this.props.user.role) {
+        // case Roles.admin:
+        //     action = Actions.adminTeamManagement;
+        //     break;
+        // case Roles.athlete:
+        //     action = Actions.athleteAthleteManagement;
+        //     break;
+        // case Roles.biometrixAdmin:
+        //     action = Actions.biometrixAdminTeamCaptureSession;
+        //     break;
+        // case Roles.manager:
+        //     action = Actions.managerTeamManagement;
+        //     break;
+        // case Roles.researcher:
+        //     action = Actions.researcherSubjectManagement;
+        //     break;
+        // default:
+        //     break;
+        // }
 
         this.state = {
             active: 0,
@@ -141,7 +136,7 @@ class Menu extends Component {
                 {
                     itemName: 'pulse',
                     title:    'Capture Session',
-                    onPress:  () => { this.props.closeSideMenu(); action(); this.setState({ active: 0 }); }
+                    onPress:  () => { this.props.closeSideMenu(); Actions.teamCaptureSession(); this.setState({ active: 0 }); }
                 },
                 // {
                 //     itemName: 'tooltip-edit',

@@ -15,12 +15,15 @@ import { NetworkInfo } from 'react-native-network-info';
 import Carousel from 'react-native-looped-carousel';
 import Collapsible from 'react-native-collapsible';
 import Prompt from 'react-native-prompt';
+import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors } from '@theme/';
+import { Roles } from '@constants/';
 
 // Components
 import { Spacer, Button, FormLabel, Text, ListItem } from '@ui/';
+import { Placeholder } from '@general/';
 
 const accessoryDiscoverabilityInstruction = 'press & hold buttons simultaneously until the lights flash red and blue';
 const successfullyConnected = ['Your kit is connected!', 'Return to main menu to assign this kit to an athlete and their specific team.'];
@@ -111,21 +114,22 @@ class BluetoothConnectView extends Component {
     }
 
     handleDiscoverPeripheral = (data) => {
-        return data.name && data.name.indexOf('fathom') > -1 ? this.props.deviceFound(data) : null;
+        return data.name && /fathom/i.test(data.name) ? this.props.deviceFound(data) : null;
     }
 
     handleBleStateChange = (data) => {
         if (data.state === 'off') {
-            if (this.refs.carousel.getCurrentPage() > 1) {
+            if (this.refs.carousel && this.refs.carousel.getCurrentPage() > 1) {
                 this.setState({ index: 1 });
                 this.refs.carousel.animateToPage(1);
+            } else if (!this.refs.carousel) {
+                return Promise.resolve(this.props.changeState(data.state))
+                    .then(() => Actions.kitManagement());
             }
-        } else {
-            if (this.refs.carousel.getCurrentPage() === 1) {
-                this.startBluetooth();
-                this.setState({ index: 2 });
-                this.refs.carousel.animateToPage(2);
-            }
+        } else if (this.refs.carousel && this.refs.carousel.getCurrentPage() === 1) {
+            this.startBluetooth();
+            this.setState({ index: 2 });
+            this.refs.carousel.animateToPage(2);
         }
         return this.props.changeState(data.state);
     }
@@ -227,118 +231,150 @@ class BluetoothConnectView extends Component {
         this.setState({ size: { width: layout.width, height: layout.height } });
     }
 
-    render = () => {
-        const index = this.state.index;
-        return (
-            <View style={{ flex: 1 }} onLayout={this._onLayoutDidChange}>
-                <View style={{ alignItems: 'center', backgroundColor: AppColors.brand.light }}>
-                    <Spacer size={25}/>
-                    <Text h1>
-                        {
-                            index === 0 ? 'Activate Kit' : index === 1 ? 'Turn on Bluetooth' : index === 2 ? 'Scan for Kit' : 'Connected'
-                        }
-                    </Text>
-                    <Spacer size={50}/>
-                </View>
-                <Carousel
-                    ref={'carousel'}
-                    autoplay={false}
-                    currentPage={index}
-                    swipe={false}
-                    style={{
-                        position:        'absolute',
-                        elevation:       10,
-                        bottom:          15,
-                        backgroundColor: '#FFFFFF',
-                        alignSelf:       'center',
-                        shadowOffset:    { width: 1, height: 3 },
-                        shadowOpacity:   0.7,
-                        shadowRadius:    2,
-                        width:           AppSizes.screen.widthEightTenths,
-                        height:          AppSizes.screen.heightThreeQuarters
-                    }}
-                    bullets
-                    bulletStyle={{ borderColor: AppColors.brand.blue }}
-                    chosenBulletStyle={{ backgroundColor: AppColors.brand.blue }}
-                >
-                    <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                        <View style={{ flex: 1 }} />
-                        <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                            <Image style={{resizeMode: 'contain', width: 400, height: 400}} source={require('@images/kit_activation.png')}/>
-                        </View>
-                        <View style={{ flex: 1 }}>
-                            <FormLabel labelStyle={[AppStyles.h4]} >
-                                { accessoryDiscoverabilityInstruction }
-                            </FormLabel>
-                            <Spacer />
-                            <Button
-                                title={'Next'}
-                                onPress={() => {
-                                    this.setState({ index: 1 });
-                                    this.refs.carousel.animateToPage(1);
-                                    return this.props.checkState();
-                                }}
-                                raised
-                            />
-                        </View>
-                        <View style={{ flex: 1 }} />
-                    </View>
+    adminView = () => (
+        <Placeholder />
+    );
 
+    athleteView = () => (
+        <Placeholder />
+    );
 
-                    <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                        <View style={{ flex: 1 }} />
-                        <View style={{ flex: 1 }} >
-                            <Icon name="bluetooth" containerStyle={{ alignSelf: 'center' }} size={30} color={AppColors.brand.primary} reverse onPress={() => this.startBluetooth()} raised />
-                        </View>
-                        <View style={{ flex: 1 }} />
-                    </View>
-
-
-                    <View style={{ flex: 1 }}>
-                        <View style={[AppStyles.containerCentered, { flex: 3 }]}>
-                            <Button
-                                title={this.props.scanning ? 'Stop Scan' : 'Start Scan'}
-                                icon={{ name: `${this.props.scanning ? 'stop' : 'play-arrow'}` }}
-                                buttonStyle={{ backgroundColor: `${this.props.scanning ? AppColors.brand.red : AppColors.brand.primary}` }}
-                                onPress={() => this.toggleScanning(!this.props.scanning)}
-                                raised
-                            />
-                            <Spacer size={5}/>
-                            <Text style={{ color: AppColors.brand.yellow }} onPress={() => this.setState({ isCollapsed: !this.state.isCollapsed })}>{'Can\'t find your device?'}</Text>
-                            <Spacer size={5}/>
-                            <Collapsible collapsed={this.state.isCollapsed} >
-                                <FormLabel labelStyle={[AppStyles.h4]} >
-                                    { `${accessoryDiscoverabilityInstruction}. Then rescan.` }
-                                </FormLabel>
-                            </Collapsible>
-                        </View>
-                        <Spacer />
-                        <View style={{ flex: 4 }}>
-                            <ScrollView>
-                                {
-                                    this.props.devicesFound.map(device => {
-                                        return <ListItem key={device.id} title={device.name} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
-                                    })
-                                }
-                            </ScrollView>
-                        </View>
-                        <View style={{ flex: 1 }}/>
-                    </View>
-
-                    <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                        <View style={{ flex: 1 }}/>
-                        <View style={{ flex: 1 }}>
-                            <Text h2>{successfullyConnected[0]}</Text>
-                        </View>
-                        <Icon containerStyle={{ flex: 1 }} name={'checkbox-marked-circle'} type={'material-community'} color={AppColors.brand.yellow} size={100}/>
-                        <View style={[AppStyles.containerCentered, { flex: 1, paddingLeft: 25, paddingRight: 25 }]}>
-                            <Text>{successfullyConnected[1]}</Text>
-                        </View>
-                        <View style={{ flex: 1 }}/>
-                    </View>
-                </Carousel>
+    biometrixAdminView = () => (
+        <View style={{ flex: 1 }} onLayout={this._onLayoutDidChange}>
+            <View style={{ alignItems: 'center', backgroundColor: AppColors.brand.light }}>
+                <Spacer size={25}/>
+                <Text h1>
+                    {
+                        this.state.index === 0 ? 'Activate Kit' : this.state.index === 1 ? 'Turn on Bluetooth' : this.state.index === 2 ? 'Scan for Kit' : 'Connected'
+                    }
+                </Text>
+                <Spacer size={50}/>
             </View>
-        );
+            <Carousel
+                ref={'carousel'}
+                autoplay={false}
+                currentPage={this.state.index}
+                swipe={false}
+                style={{
+                    position:        'absolute',
+                    elevation:       10,
+                    bottom:          15,
+                    backgroundColor: '#FFFFFF',
+                    alignSelf:       'center',
+                    shadowOffset:    { width: 1, height: 3 },
+                    shadowOpacity:   0.7,
+                    shadowRadius:    2,
+                    width:           AppSizes.screen.widthEightTenths,
+                    height:          AppSizes.screen.heightThreeQuarters
+                }}
+                bullets
+                bulletStyle={{ borderColor: AppColors.brand.blue }}
+                chosenBulletStyle={{ backgroundColor: AppColors.brand.blue }}
+            >
+                <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                    <View style={{ flex: 1 }} />
+                    <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                        <Image style={{resizeMode: 'contain', width: 400, height: 400}} source={require('@images/kit_activation.png')}/>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <FormLabel labelStyle={[AppStyles.h4]} >
+                            { accessoryDiscoverabilityInstruction }
+                        </FormLabel>
+                        <Spacer />
+                        <Button
+                            title={'Next'}
+                            onPress={() => {
+                                this.setState({ index: 1 });
+                                this.refs.carousel.animateToPage(1);
+                                return this.props.checkState();
+                            }}
+                            raised
+                        />
+                    </View>
+                    <View style={{ flex: 1 }} />
+                </View>
+
+
+                <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                    <View style={{ flex: 1 }} />
+                    <View style={{ flex: 1 }} >
+                        <Icon name="bluetooth" containerStyle={{ alignSelf: 'center' }} size={30} color={AppColors.brand.primary} reverse onPress={() => this.startBluetooth()} raised />
+                    </View>
+                    <View style={{ flex: 1 }} />
+                </View>
+
+
+                <View style={{ flex: 1 }}>
+                    <View style={[AppStyles.containerCentered, { flex: 3 }]}>
+                        <Button
+                            title={this.props.scanning ? 'Stop Scan' : 'Start Scan'}
+                            icon={{ name: `${this.props.scanning ? 'stop' : 'play-arrow'}` }}
+                            buttonStyle={{ backgroundColor: `${this.props.scanning ? AppColors.brand.red : AppColors.brand.primary}` }}
+                            onPress={() => this.toggleScanning(!this.props.scanning)}
+                            raised
+                        />
+                        <Spacer size={5}/>
+                        <Text style={{ color: AppColors.brand.yellow }} onPress={() => this.setState({ isCollapsed: !this.state.isCollapsed })}>{'Can\'t find your device?'}</Text>
+                        <Spacer size={5}/>
+                        <Collapsible collapsed={this.state.isCollapsed} >
+                            <FormLabel labelStyle={[AppStyles.h4]} >
+                                { `${accessoryDiscoverabilityInstruction}. Then rescan.` }
+                            </FormLabel>
+                        </Collapsible>
+                    </View>
+                    <Spacer />
+                    <View style={{ flex: 4 }}>
+                        <ScrollView>
+                            {
+                                this.props.devicesFound.map(device => {
+                                    return <ListItem key={device.id} title={device.name} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
+                                })
+                            }
+                        </ScrollView>
+                    </View>
+                    <View style={{ flex: 1 }}/>
+                </View>
+
+                <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                    <View style={{ flex: 1 }}/>
+                    <View style={{ flex: 1 }}>
+                        <Text h2>{successfullyConnected[0]}</Text>
+                    </View>
+                    <Icon containerStyle={{ flex: 1 }} name={'checkbox-marked-circle'} type={'material-community'} color={AppColors.brand.yellow} size={100}/>
+                    <View style={[AppStyles.containerCentered, { flex: 1, paddingLeft: 25, paddingRight: 25 }]}>
+                        <Text>{successfullyConnected[1]}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}/>
+                </View>
+            </Carousel>
+        </View>
+    );
+
+    managerView = () => (
+        <Placeholder />
+    );
+
+    researcherView = () => (
+        <Placeholder />
+    );
+
+    render = () => {
+        switch(this.props.user.role) {
+        case Roles.admin:
+            return this.adminView();
+        case Roles.athlete:
+            return this.athleteView();
+        case Roles.biometrixAdmin:
+            return this.biometrixAdminView();
+        case Roles.superAdmin:
+            return this.biometrixAdminView();
+        case Roles.manager:
+            return this.biometrixAdminView();
+        case Roles.researcher:
+            return this.researcherView();
+        default:
+            return <Placeholder />;
+        }
     }
 }
 

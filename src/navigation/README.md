@@ -3,7 +3,7 @@
 I'm using [React Native Router Flux](https://github.com/aksonov/react-native-router-flux) to handle routing / navigation in the app. Please visit [the RNRF repo](https://github.com/aksonov/react-native-router-flux) to gain an understanding of the router API.
 
 I've setup the app so that you can manage the routes via `/src/navigation/index.js`.  
-I've split out particular areas into leaner files, for example all scenes related to the Management Radial Menus, are manageable within `management.js`.
+I've split out particular areas into leaner files, for example all scenes related to the Kit Management, are manageable within `management.js`.
 
 ## Basic usage
 
