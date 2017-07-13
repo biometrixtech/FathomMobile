@@ -40,7 +40,7 @@ public class MainApplication extends Application implements ReactApplication {
           new FabricPackage(),
           new GoogleAnalyticsBridgePackage(),
           new MPAndroidChartPackage(),
-          new CodePush(getResources().getString(BuildConfig.CODEPUSH_KEY, getApplicationContext(), BuildConfig.DEBUG),
+          new CodePush(BuildConfig.CODEPUSH_KEY, getApplicationContext(), BuildConfig.DEBUG),
           new VectorIconsPackage(),
           new RNDeviceInfo(),
           new RNNetworkInfoPackage(),
