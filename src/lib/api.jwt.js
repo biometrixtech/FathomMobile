@@ -35,7 +35,6 @@ export default class JWT {
         }
 
         // No credentials, we can't do anything
-        /* eslint-disable max-len */
         if (!this.apiCredentials || !this.apiCredentials.email || !this.apiCredentials.password) {
             return reject({
                 data:    { status: 403 },
@@ -130,7 +129,7 @@ export default class JWT {
         // const thisHostname = APIConfig.hostname.replace(/.*?:\/\//g, '');
         // const tokenHostname = decodedToken.iss.replace(/.*?:\/\//g, '').substr(0, thisHostname.length);
         // if (thisHostname !== tokenHostname) {
-            // return false; // Issuing server is different
+        // return false; // Issuing server is different
         // }
         if (this.apiCredentials.email !== decodedToken.email) {
             return false;

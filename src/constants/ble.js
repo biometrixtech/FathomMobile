@@ -2,6 +2,47 @@
  * BLE Config
  */
 
+var _byteToHex = [];
+var _hexToByte = {};
+for (let i = 0; i < 256; i++) {
+    _byteToHex[i] = (i + 0x100).toString(16).substr(1);
+    _hexToByte[_byteToHex[i]] = i;
+}
+
+const parse = function parse(s, buf, offset) {
+    return new Promise(resolve => {
+        let i = (buf && offset) || 0;
+        let ii = 0;
+
+        buf = buf || [];
+        s.toLowerCase().replace(/[0-9a-f]{2}/g, (oct) => {
+            if (ii < 16) { // Don't overflow!
+                buf[i + (ii++)] = _hexToByte[oct];
+            }
+        });
+
+        // Zero out remaining bytes if string was short
+        while (ii < 16) {
+            buf[i + (ii++)] = 0;
+        }
+
+        return resolve(buf);
+    });
+}
+
+function unparse(buf, offset) {
+    let i = offset || 0;
+    let bth = _byteToHex;
+    return  bth[buf[i++]] + bth[buf[i++]] +
+            bth[buf[i++]] + bth[buf[i++]] + '-' +
+            bth[buf[i++]] + bth[buf[i++]] + '-' +
+            bth[buf[i++]] + bth[buf[i++]] + '-' +
+            bth[buf[i++]] + bth[buf[i++]] + '-' +
+            bth[buf[i++]] + bth[buf[i++]] +
+            bth[buf[i++]] + bth[buf[i++]] +
+            bth[buf[i++]] + bth[buf[i++]];
+}
+
 export default {
     serviceUUID:        '3282ae19-ab8b-f495-7544-67e11bb6223f',
     characteristicUUID: 'a268ae6f-3433-d999-4e44-42e82070d3de',
@@ -60,5 +101,8 @@ export default {
         biometrix_admin: parseInt('0x02', 16),
         manager:         parseInt('0x01', 16),
         researcher:      parseInt('0x01', 16),
-    }
+    },
+
+    parse,
+    unparse
 };

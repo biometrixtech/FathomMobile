@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import {
     ScrollView,
     View,
+    BackHandler
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Swipeable from 'react-native-swipeable';
@@ -14,11 +15,11 @@ import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
 import { AppStyles, AppColors, AppSizes, AppFonts } from '@theme/';
+import { Roles } from '@constants/';
 
 // Components
 import { ListItem, Spacer, Text, Card, FormLabel, FormInput, Button } from '@ui/';
 import { Placeholder } from '@general/';
-import { Roles } from '@constants/';
 
 const font20 = AppFonts.scaleFont(20);
 
@@ -32,10 +33,14 @@ class TeamCaptureSessionView extends Component {
         createTrainingGroup: PropTypes.func.isRequired,
         patchTrainingGroup:  PropTypes.func.isRequired,
         removeTrainingGroup: PropTypes.func.isRequired,
+        teamSelect:          PropTypes.func.isRequired,
+        selectTrainingGroup: PropTypes.func.isRequired
     }
 
     static defaultProps = {
-        user:           {},
+        user: {
+            teamIndex: 0
+        },
         isModalVisible: false,
     }
 
@@ -43,39 +48,33 @@ class TeamCaptureSessionView extends Component {
         super(props);
 
         this.state = {
-            teamIndex:      0,
-            teams:          this.props.user.teams,
-            modalStyle:     {},
-            trainingGroup:  { name: '', description: '' },
-            trainingGroups: this.props.user.teams[0].training_groups,
+            modalStyle:    {},
+            trainingGroup: { name: '', description: '' },
         };
     }
+
+    componentWillMount = () => { BackHandler.addEventListener('backPress', () => Actions.pop()); };
+
+    componentWillUnmount = () => { BackHandler.removeEventListener('backPress') };
 
     resizeModal = (ev) => {
         this.setState({ modalStyle: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
     }
 
     addGroup = () => {
-        this.state.trainingGroup.id             = this.state.training_groups.length + 1;
-        this.state.trainingGroup.athletes       = [];
-        this.props.createTrainingGroup(this.state.trainingGroup);
-        this.setState({ trainingGroups: this.state.trainingGroups.concat([this.state.trainingGroup]), trainingGroup: { name: '', description: '' } });
-        Actions.refresh({ isModalVisible: false });
+        this.state.trainingGroup.athletes = [];
+        this.props.createTrainingGroup(this.state.trainingGroup)
+            .then(() => Actions.refresh({ isModalVisible: false }));
     }
 
     editGroup = () => {
-        const index = this.state.trainingGroups.findIndex(trainingGroup => trainingGroup.id === this.state.trainingGroup.id);
-        if (index > -1) {
-            this.state.trainingGroups[index] = this.state.trainingGroup;
-            this.props.patchTrainingGroup(this.state.trainingGroup);
-            this.setState({ trainingGroups: this.state.trainingGroups, trainingGroup: { name: '', description: '' } });
-        }
-        Actions.refresh({ isModalVisible: false });
+        return this.props.patchTrainingGroup(this.state.trainingGroup)
+            .then(() => Actions.refresh({ isModalVisible: false }));
     }
 
     removeGroup = (id) => {
-        this.props.removeTrainingGroup(id);
-        this.setState({ trainingGroups: this.state.trainingGroups.filter(trainingGroup => trainingGroup.id !== id) });
+        return this.props.removeTrainingGroup(id)
+            .then(() => Actions.refresh());
     }
 
     rightButton = (data) => (
@@ -91,48 +90,34 @@ class TeamCaptureSessionView extends Component {
     );
 
     adminView = () => (
-        <View>
-            <Spacer />
-            <View style={{ justifyContent: 'center', flexDirection: 'row' }} >
-                <ModalDropdown options={this.state.teams.map(team => team.name)} defaultIndex={0} defaultValue={this.state.teams[0].name} textStyle={{ fontSize: font20 }} dropdownTextStyle={{ fontSize: font20 }} />
-                <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }}/>
-            </View>
-            <Spacer />
-        </View>
+        <Placeholder />
     );
 
     athleteView = () => (
-        <View>
-            <Spacer />
-            <View style={{ justifyContent: 'center', flexDirection: 'row' }} >
-                <ModalDropdown options={this.state.teams.map(team => team.name)} defaultIndex={0} defaultValue={this.props.user.teams[0].name} textStyle={{ fontSize: font20 }} dropdownTextStyle={{ fontSize: font20 }} />
-                <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }}/>
-            </View>
-            <Spacer />
-        </View>
+        <Placeholder />
     );
 
     biometrixAdminView = () => (
         <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]}>
             <View style={{ justifyContent: 'center', flexDirection: 'row', backgroundColor: '#FFFFFF', paddingTop: 15, paddingBottom: 15 }} >
-                <ModalDropdown options={this.state.teams.map(team => team.name)} defaultIndex={0} defaultValue={this.state.teams[0].name} textStyle={AppStyles.baseText} dropdownTextStyle={AppStyles.baseText} onSelect={index => { this.setState({teamIndex: index}); }} />
+                <ModalDropdown options={this.props.user.teams.map(team => team.name)} defaultIndex={this.props.user.teamIndex} defaultValue={this.props.user.teams[this.props.user.teamIndex].name} textStyle={AppStyles.baseText} dropdownTextStyle={AppStyles.baseText} onSelect={index => this.props.teamSelect(index)} />
                 <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }} color={AppColors.brand.blue}/>
             </View>
             <ScrollView>
                 {/* Section for primary training groups */}
                 <ListItem title={'PRIMARY TRAINING GROUPS'} containerStyle={{ backgroundColor: AppColors.brand.light }} hideChevron/>
                 {
-                    this.state.teams[this.state.teamIndex].training_groups.filter(trainingGroup => trainingGroup.description.match(/primary/i)).map(trainingGroup => {
-                        return <ListItem key={trainingGroup.id} title={trainingGroup.name} onPress={() => Actions.biometrixAdminGroupCaptureSession({ team: this.state.teams[this.state.teamIndex], trainingGroup })} hideChevron/>;
+                    this.props.user.teams[this.props.user.teamIndex].training_groups.filter(trainingGroup => trainingGroup.tier !== 'secondary' && trainingGroup.tier !== null).map(trainingGroup => {
+                        return <ListItem key={trainingGroup.id} title={trainingGroup.name} onPress={() => Promise.resolve(this.props.selectTrainingGroup(trainingGroup)).then(() => Actions.groupCaptureSession())} hideChevron/>;
                     })
                 }
                 {/*Section for secondary training groups */}
                 <ListItem title={'SECONDARY TRAINING GROUPS'} containerStyle={{ backgroundColor: AppColors.brand.light }} rightIcon={{ name: 'plus-circle', type: 'material-community', color: AppColors.brand.yellow }} onPressRightIcon={() => Actions.refresh({ isModalVisible: true })}/>
                 {
-                    this.state.teams[this.state.teamIndex].training_groups.filter(trainingGroup => trainingGroup.description.match(/secondary/i)).map(trainingGroup => {
+                    this.props.user.teams[this.props.user.teamIndex].training_groups.filter(trainingGroup => trainingGroup.tier === 'secondary' || trainingGroup.tier === null).map(trainingGroup => {
                         return (
                             <Swipeable key={trainingGroup.id} leftButtons={[this.leftButton(trainingGroup.id)]} rightButtons={[this.rightButton(trainingGroup)]} >
-                                <ListItem title={trainingGroup.name} onPress={() => Actions.biometrixAdminGroupCaptureSession({ team: this.state.teams[this.state.teamIndex], trainingGroup })} hideChevron/>
+                                <ListItem title={trainingGroup.name} onPress={() => Promise.resolve(this.props.selectTrainingGroup(trainingGroup)).then(() => Actions.groupCaptureSession())} hideChevron/>
                             </Swipeable>
                         );
                     })
@@ -143,12 +128,24 @@ class TeamCaptureSessionView extends Component {
                     <Card title={`${this.state.trainingGroup.id ? 'Edit' : 'Add'} Training Group`}>
 
                         <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Name</FormLabel>
-                        <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.name} onChangeText={name => this.setState({ trainingGroup: (this.state.trainingGroup.name = name) })} />
+                        <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.name} onChangeText={name => this.setState({
+                            trainingGroup: {
+                                description: this.state.trainingGroup.description,
+                                id:          this.state.trainingGroup.id,
+                                name
+                            }
+                        })} />
 
                         <Spacer />
 
                         <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Description</FormLabel>
-                        <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.description} onChangeText={description => this.setState({ trainingGroup: (this.state.trainingGroup.description = description) })} />
+                        <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.description} onChangeText={description => this.setState({
+                            trainingGroup: {
+                                description,
+                                id:   this.state.trainingGroup.id,
+                                name: this.state.trainingGroup.name
+                            }
+                        })} />
 
                         <Spacer />
 
@@ -163,25 +160,11 @@ class TeamCaptureSessionView extends Component {
     );
 
     managerView = () => (
-        <View>
-            <Spacer />
-            <View style={{ justifyContent: 'center', flexDirection: 'row' }} >
-                <ModalDropdown options={this.state.teams.map(team => team.name)} defaultIndex={0} defaultValue={this.state.teams[0].name} textStyle={{ fontSize: font20 }} dropdownTextStyle={{ fontSize: font20 }} />
-                <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }}/>
-            </View>
-            <Spacer />
-        </View>
+        <Placeholder />
     );
 
     researcherView = () => (
-        <View>
-            <Spacer />
-            <View style={{ justifyContent: 'center', flexDirection: 'row' }} >
-                <ModalDropdown options={this.state.teams.map(team => team.name)} defaultIndex={0} defaultValue={this.state.teams[0].name} textStyle={{ fontSize: font20 }} dropdownTextStyle={{ fontSize: font20 }} />
-                <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }}/>
-            </View>
-            <Spacer />
-        </View>
+        <Placeholder />
     );
 
     render = () => {
@@ -192,8 +175,10 @@ class TeamCaptureSessionView extends Component {
             return this.athleteView();
         case Roles.biometrixAdmin:
             return this.biometrixAdminView();
+        case Roles.superAdmin:
+            return this.biometrixAdminView();
         case Roles.manager:
-            return this.managerView();
+            return this.biometrixAdminView();
         case Roles.researcher:
             return this.researcherView();
         default:

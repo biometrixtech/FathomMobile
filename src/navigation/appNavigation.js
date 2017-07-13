@@ -1,12 +1,11 @@
 /**
- * Manager Navigation Scenes
+ * App Navigation Scenes
  */
 import React from 'react';
 import { Scene, ActionConst } from 'react-native-router-flux';
 
 // Consts and Libs
 import { AppConfig } from '@constants/';
-import { Icon } from 'react-native-elements';
 
 // Scenes
 import TeamCaptureSessionView from '@containers/capture/team/TeamCaptureSessionContainer';
@@ -29,39 +28,38 @@ const navbarPropsTabs = {
 
 /* Routes ==================================================================== */
 const scenes = (
-    <Scene key={'biometrixAdmin'} >
+    <Scene key={'navigation'} >
         <Scene
             {...navbarPropsTabs}
-            key={'biometrixAdminCaptureSession'}>
+            key={'navroot'}>
             <Scene
                 {...navbarPropsTabs}
-                key={'biometrixAdminTeamCaptureSession'}
+                key={'teamCaptureSession'}
                 clone
                 initial={true}
                 type={ActionConst.REPLACE}
                 component={TeamCaptureSessionView}
-                analyticsDesc={'BiometrixAdminTeamCaptureSessiontView: Biometrix Admin Team Capture Session'}
+                analyticsDesc={'TeamCaptureSessiontView: Team Capture Session'}
             />
             <Scene
                 {...navbarPropsTabs}
-                key={'biometrixAdminGroupCaptureSession'}
+                key={'groupCaptureSession'}
+                clone
+                type={ActionConst.PUSH}
+                component={GroupCaptureSessionView}
+                analyticsDesc={'GroupCaptureSessiontView: Group Capture Session'}
+            />
+            <Scene
+                {...navbarPropsTabs}
+                key={'kitManagement'}
                 clone
                 type={ActionConst.REPLACE}
-                component={GroupCaptureSessionView}
-                analyticsDesc={'BiometrixAdminGroupCaptureSessiontView: Biometrix Admin Group Capture Session'}
+                component={KitManagementView}
+                analyticsDesc={'KitManagementView: Kit Management'}
             />
-        </Scene>
-        <Scene
-            {...navbarPropsTabs}
-            key={'baKitManagement'}
-            clone
-            type={ActionConst.REPLACE}
-            component={KitManagementView}
-            analyticsDesc={'KitManagementView: Kit Management'}
-        >
             <Scene
                 {...navbarPropsTabs}
-                key={'baBluetoothConnect'}
+                key={'bluetoothConnect'}
                 clone
                 type={ActionConst.PUSH}
                 component={BluetoothConnectView}
@@ -69,21 +67,20 @@ const scenes = (
             />
             <Scene
                 {...navbarPropsTabs}
-                key={'baKitOwner'}
+                key={'kitOwner'}
                 clone
                 type={ActionConst.PUSH}
                 component={KitOwnerView}
                 analyticsDesc={'OwnerView: Kit Owner View'}
-            >
-                <Scene
-                    {...navbarPropsTabs}
-                    key={'baKitAssign'}
-                    clone
-                    type={ActionConst.PUSH}
-                    component={KitAssignView}
-                    analyticsDesc={'KitAssignView: Kit Assign View'}
-                />
-            </Scene>
+            />
+            <Scene
+                {...navbarPropsTabs}
+                key={'kitAssign'}
+                clone
+                type={ActionConst.PUSH}
+                component={KitAssignView}
+                analyticsDesc={'KitAssignView: Kit Assign View'}
+            />
         </Scene>
     </Scene>
 );
