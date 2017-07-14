@@ -13,7 +13,7 @@ export default {
     DEV: __DEV__,
 
     // Google Analytics - uses a 'dev' account while we're testing
-    gaTrackingId: (__DEV__) ? 'UA-84284256-2' : 'UA-84284256-1',
+    gaTrackingId: (__DEV__) ? 'UA-102568973-1' : 'UA-102561813-1',
 
     // Navbar Props
     navbarProps: {
