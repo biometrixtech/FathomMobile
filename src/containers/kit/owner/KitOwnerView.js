@@ -53,11 +53,11 @@ class KitOwnerView extends Component {
 
     biometrixAdminView = () => (
         <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]} >
-            <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'flex-start', height: AppSizes.screen.heightOneThird }}>
-                <Image source={require('@images/kit-diagram.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthTwoThirds }}/>
-                <Text>{this.props.bluetooth.accessoryData.name}</Text>
-                <Text style={{ fontSize: font10 }}>{this.props.bluetooth.accessoryData.id}</Text>
-                <Spacer />
+            <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', height: AppSizes.screen.heightOneThird }}>
+                <Image source={require('@images/kit-diagram.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthTwoThirds, height: AppSizes.screen.widthTwoThirds * 268/509 }}/>
+                <Spacer size={5}/>
+                <Text>{this.props.bluetooth.accessoryData.name || 'test name'}</Text>
+                <Text style={{ fontSize: font10 }}>{this.props.bluetooth.accessoryData.id || '00:11:22:33:44'}</Text>
             </View>
             <View>
                 <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>OWNER</Text>
