@@ -77,7 +77,7 @@ class KitManagementView extends Component {
                 title={'Owner'}
                 chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                 titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                onPress={() => this.props.bluetooth.accessoryData.accessoryConnected ? Actions.kitOwner() : null}
+                onPress={() => Actions.kitOwner()}
             />
             <ListItem
                 title={'WiFi'}

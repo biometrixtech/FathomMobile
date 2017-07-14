@@ -8,7 +8,7 @@ import {
     View,
     Platform,
 } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Icon, SearchBar } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
@@ -61,6 +61,7 @@ class KitAssignView extends Component {
                     <Spacer />
                 </View>
                 <View>
+                    <SearchBar />
                     <ListItem
                         title={category}
                         containerStyle={{ padding: 10 }}
