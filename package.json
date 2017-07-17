@@ -44,7 +44,7 @@
     "react-native-prompt": "^1.0.0",
     "react-native-radial-menu": "^1.1.0",
     "react-native-router-flux": "^3.41.0",
-    "react-native-side-menu": "^0.20.3",
+    "react-native-side-menu": "^1.0.2",
     "react-native-swipeable": "^0.6.0",
     "react-native-vector-icons": "^4.2.0",
     "react-redux": "^5.0.5",
