@@ -7,7 +7,7 @@ import {
     View,
     BackHandler
 } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Icon, CheckBox } from 'react-native-elements';
 import Swipeable from 'react-native-swipeable';
 import ModalDropdown from 'react-native-modal-dropdown';
 import Modal from 'react-native-modalbox';
@@ -49,7 +49,7 @@ class TeamCaptureSessionView extends Component {
 
         this.state = {
             modalStyle:    {},
-            trainingGroup: { name: '', description: '' },
+            trainingGroup: { name: '', user_ids: [] },
         };
     }
 
@@ -76,15 +76,21 @@ class TeamCaptureSessionView extends Component {
             .then(() => Actions.refresh());
     }
 
-    rightButton = (data) => (
-        <View style={[{ alignItems: 'flex-start', paddingLeft: 25 }, AppStyles.editButton]}>
-            <Icon name="pencil" onPress={() => { this.setState({ trainingGroup: data }); Actions.refresh({ isModalVisible: true }); }} type="material-community" color="#FFFFFF" />
-        </View>
-    );
+    rightButton = (data) => {
+        data.user_ids = this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.reduce((returnObj, currentObj) => {
+            returnObj[currentObj.id] = currentObj.training_groups.some(currentUserTrainingGroup => currentUserTrainingGroup.id === data.id);
+            return returnObj;
+        }, {})
+        return (
+            <View style={[{ alignItems: 'flex-start', paddingLeft: 25 }, AppStyles.editButton]}>
+                <Icon name="pencil" onPress={() => { this.setState({ trainingGroup: data }); return Actions.refresh({ isModalVisible: true }); }} type="material-community" color="#FFFFFF" />
+            </View>
+        );
+    };
 
     leftButton = (id) => (
         <View style={[{ alignItems: 'flex-end', paddingRight: 25 }, AppStyles.deleteButton]}>
-            <Icon name="delete" onPress={() => { this.removeGroup(id); }} type="material-community" color="#FFFFFF" />
+            <Icon name="delete" onPress={() => this.removeGroup(id)} type="material-community" color="#FFFFFF" />
         </View>
     );
 
@@ -111,7 +117,12 @@ class TeamCaptureSessionView extends Component {
                     })
                 }
                 {/*Section for secondary training groups */}
-                <ListItem title={'SECONDARY TRAINING GROUPS'} containerStyle={{ backgroundColor: AppColors.brand.light }} rightIcon={{ name: 'plus-circle', type: 'material-community', color: AppColors.brand.yellow }} onPressRightIcon={() => Actions.refresh({ isModalVisible: true })}/>
+                <ListItem
+                    title={'SECONDARY TRAINING GROUPS'}
+                    containerStyle={{ backgroundColor: AppColors.brand.light }}
+                    rightIcon={{ name: 'plus-circle', type: 'material-community', color: AppColors.brand.yellow }}
+                    onPressRightIcon={() => Actions.refresh({ isModalVisible: true })}
+                />
                 {
                     this.props.user.teams[this.props.user.teamIndex].training_groups.filter(trainingGroup => trainingGroup.tier === 'secondary' || trainingGroup.tier === null).map(trainingGroup => {
                         return (
@@ -122,36 +133,55 @@ class TeamCaptureSessionView extends Component {
                     })
                 }
             </ScrollView>
-            <Modal position={'center'} style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]} isOpen={this.props.isModalVisible} backButtonClose swipeToClose={false} onClosed={() => { this.setState({ trainingGroup: { name: '', description: '' } }); Actions.refresh({ isModalVisible: false }); }}>
+            <Modal
+                position={'center'}
+                style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
+                isOpen={this.props.isModalVisible}
+                backButtonClose
+                swipeToClose={false}
+                onClosed={() => { this.setState({ trainingGroup: { name: '', user_ids: [] } }); return Actions.refresh({ isModalVisible: false }); }}
+            >
                 <View onLayout={(ev) => { this.resizeModal(ev); }}>
                     <Card title={`${this.state.trainingGroup.id ? 'Edit' : 'Add'} Training Group`}>
 
                         <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Name</FormLabel>
                         <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.name} onChangeText={name => this.setState({
                             trainingGroup: {
-                                description: this.state.trainingGroup.description,
-                                id:          this.state.trainingGroup.id,
+                                ...this.state.trainingGroup,
                                 name
                             }
                         })} />
 
-                        <Spacer />
-
-                        <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Description</FormLabel>
-                        <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.description} onChangeText={description => this.setState({
-                            trainingGroup: {
-                                description,
-                                id:   this.state.trainingGroup.id,
-                                name: this.state.trainingGroup.name
+                        <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Athletes</FormLabel>
+                        <Spacer size={5} />
+                        <ScrollView style={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border, height: AppSizes.screen.heightOneThird }}>
+                            {
+                                this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.map(user => {
+                                    return (
+                                        <CheckBox
+                                            key={user.id}
+                                            title={`${user.first_name} ${user.last_name}`}
+                                            checked={this.state.trainingGroup.user_ids[user.id]}
+                                            onPress={() => {
+                                                this.state.trainingGroup.user_ids[user.id] = !this.state.trainingGroup.user_ids[user.id];
+                                                return this.setState({
+                                                    trainingGroup: {
+                                                        ...this.state.trainingGroup
+                                                    }
+                                                });
+                                            }}
+                                        />
+                                    );
+                                })
                             }
-                        })} />
+                        </ScrollView>
 
                         <Spacer />
 
                         <Button
                             title={'Save'}
                             onPress={() => {
-                                if (!this.state.trainingGroup.id && this.state.trainingGroup.name === '' && this.state.trainingGroup.description === '') {
+                                if (!this.state.trainingGroup.id && this.state.trainingGroup.name === '') {
                                     return Actions.refresh({ isModalVisible: false });
                                 }
                                 return this.state.trainingGroup.id ? this.editGroup() : this.addGroup();

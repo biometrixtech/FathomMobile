@@ -60,11 +60,23 @@ export default function userReducer(state = initialState, action) {
         return Object.assign({}, state, {
             teams: postRemoveTeams
         });
+    case Actions.REMOVE_USER:
+        let updatedSelectedTrainingGroup = state.selectedTrainingGroup.users.filter(user => user.id !== action.data.userId);
+        let updatedUserIds = state.selectedTrainingGroup.user_ids[action.data.userId] = false;
+        return Object.assign({}, state, {
+            teams:                 action.data.newTeams.teams,
+            selectedTrainingGroup: {
+                ...state.selectedTrainingGroup,
+                user_ids: updatedUserIds,
+                users:    updatedSelectedTrainingGroup
+            }
+        });
     case Actions.TEAM_SELECT:
         return Object.assign({}, state, {
             teamIndex: parseInt(action.data, 10)
         });
     case Actions.TRAINING_GROUP_SELECT:
+        delete action.data.user_ids;
         return Object.assign({}, state, {
             selectedTrainingGroup: action.data
         });
