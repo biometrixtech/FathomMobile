@@ -19,6 +19,7 @@ const mapStateToProps = state => {
 // Any actions to map to the component?
 const mapDispatchToProps = {
     patchTrainingGroup: UserActions.patchTrainingGroup,
+    removeUser:         UserActions.removeUser
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GroupCaptureSessionView);

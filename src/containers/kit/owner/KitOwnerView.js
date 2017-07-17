@@ -27,9 +27,12 @@ class KitOwnerView extends Component {
     static componentName = 'KitOwnerView';
 
     static propTypes = {
-        user:       PropTypes.object,
-        bluetooth:  PropTypes.object,
-        assignType: PropTypes.func.isRequired,
+        user:                 PropTypes.object,
+        bluetooth:            PropTypes.object,
+        assignType:           PropTypes.func.isRequired,
+        getOwnerOrganization: PropTypes.func.isRequired,
+        getOwnerTeam:         PropTypes.func.isRequired,
+        getOwnerUser:         PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -42,6 +45,12 @@ class KitOwnerView extends Component {
         this.state = {
         };
     }
+
+    componentWillMount = () => {
+        this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id);
+        this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id);
+        this.props.getOwnerUser(this.props.bluetooth.accessoryData.id);
+    };
 
     adminView = () => (
         <Placeholder />

@@ -97,6 +97,7 @@ class Login extends Component {
                         error:           'Your email must be 2 characters or more',
                         clearButtonMode: 'while-editing',
                         keyboardType:    'email-address',
+                        autoCapitalize:  'none',
                     },
                     Password: {
                         error:           'Your password must be 2 characters or more',
