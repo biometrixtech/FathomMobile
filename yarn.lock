@@ -3946,9 +3946,15 @@ react-native-router-flux@^3.41.0:
     react-native-tabs "^1.0.9"
     react-static-container "^1.0.1"
 
-react-native-side-menu@^0.20.1, react-native-side-menu@^0.20.3:
+react-native-side-menu@^0.20.1:
   version "0.20.3"
   resolved "https://registry.yarnpkg.com/react-native-side-menu/-/react-native-side-menu-0.20.3.tgz#5dffe3e237018360ed081433d505ea454cba9ca4"
+
+react-native-side-menu@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-side-menu/-/react-native-side-menu-1.0.2.tgz#863f8bb253b7512c8c62cefc477aecd653383ddb"
+  dependencies:
+    prop-types "^15.5.10"
 
 react-native-swipeable@^0.6.0:
   version "0.6.0"
