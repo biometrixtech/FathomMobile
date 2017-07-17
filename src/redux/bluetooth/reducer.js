@@ -10,6 +10,7 @@ const initialState = {
     scanning:      false,
     devicesFound:  [],
     accessoryData: {},
+    resetCount:    0
 };
 
 export default function bluetoothReducer(state = initialState, action) {
@@ -44,6 +45,14 @@ export default function bluetoothReducer(state = initialState, action) {
     case Actions.ASSIGN_TYPE:
         return Object.assign({}, state, {
             assignType: action.data
+        });
+    case Actions.ACCESSORY_RESET:
+        return Object.assign({}, state, {
+            resetCount: state.resetCount + 1
+        });
+    case Actions.WIFI_SCAN:
+        return Object.assign({}, state, {
+            wifiScan: true
         });
     case Actions.LOGIN:
     case Actions.CHECK_STATE:

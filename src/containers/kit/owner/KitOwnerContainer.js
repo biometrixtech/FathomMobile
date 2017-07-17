@@ -19,7 +19,10 @@ const mapStateToProps = state => {
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-    assignType: BluetoothActions.assignType,
+    getOwnerOrganization: BluetoothActions.getOwnerOrganization,
+    getOwnerTeam:         BluetoothActions.getOwnerTeam,
+    getOwnerUser:         BluetoothActions.getOwnerUser,
+    assignType:           BluetoothActions.assignType
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitOwnerRender);

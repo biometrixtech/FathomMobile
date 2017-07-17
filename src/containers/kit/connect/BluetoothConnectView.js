@@ -6,7 +6,8 @@ import {
     Image,
     ScrollView,
     View,
-    NativeAppEventEmitter,
+    NativeEventEmitter,
+    NativeModules,
     Platform,
     PermissionsAndroid,
 } from 'react-native';
@@ -19,11 +20,14 @@ import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors } from '@theme/';
-import { Roles } from '@constants/';
+import { Roles, BLEConfig } from '@constants/';
 
 // Components
 import { Spacer, Button, FormLabel, Text, ListItem } from '@ui/';
 import { Placeholder } from '@general/';
+
+const BleManagerModule = NativeModules.BleManager;
+const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
 const accessoryDiscoverabilityInstruction = 'press & hold buttons simultaneously until the lights flash red and blue';
 const successfullyConnected = ['Your kit is connected!', 'Return to main menu to assign this kit to an athlete and their specific team.'];
@@ -59,22 +63,24 @@ class BluetoothConnectView extends Component {
             size:        {},
             data:        null,
         };
+
+        this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
+        this.handleStopScan = this.props.stopScan.bind(this);
+        this.handleBleStateChange = this.handleBleStateChange.bind(this);
     }
 
     componentDidMount = () => {
         this.props.checkState();
-        this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
-        this.handleBleStateChange     = this.handleBleStateChange.bind(this);
 
-        NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', (data) => { this.handleDiscoverPeripheral(data); });
-        NativeAppEventEmitter.addListener('BleManagerDidUpdateState', (data) => { this.handleBleStateChange(data); });
-        NativeAppEventEmitter.addListener('BleManagerStopScan', () => this.props.stopScan());
+        this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral );
+        this.handlerStop = bleManagerEmitter.addListener('BleManagerStopScan', this.handleStopScan );
+        this.handlerState = bleManagerEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange );
     }
 
     componentWillUnmount = () => {
-        NativeAppEventEmitter.removeListener('BleManagerDiscoverPeripheral');
-        NativeAppEventEmitter.removeListener('BleManagerDidUpdateState');
-        NativeAppEventEmitter.removeListener('BleManagerStopScan');
+        this.handlerDiscover.remove();
+        this.handlerStop.remove();
+        this.handlerState.remove();
     }
 
     startBluetooth = () => {
@@ -315,6 +321,8 @@ class BluetoothConnectView extends Component {
                         />
                         <Spacer size={5}/>
                         <Text style={{ color: AppColors.brand.yellow }} onPress={() => this.setState({ isCollapsed: !this.state.isCollapsed })}>{'Can\'t find your device?'}</Text>
+                        <Spacer size={5}/>
+                        <Text>{`Fathom pin: '${BLEConfig.pin}'`}</Text>
                         <Spacer size={5}/>
                         <Collapsible collapsed={this.state.isCollapsed} >
                             <FormLabel labelStyle={[AppStyles.h4]} >

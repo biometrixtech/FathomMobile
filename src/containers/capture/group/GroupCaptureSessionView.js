@@ -7,7 +7,7 @@ import {
     View,
 } from 'react-native';
 import { Platform } from 'react-native';
-import { Icon, Tab, Tabs } from 'react-native-elements';
+import { Icon, Tab, Tabs, CheckBox } from 'react-native-elements';
 import Swipeable from 'react-native-swipeable';
 import ModalDropdown from 'react-native-modal-dropdown';
 import Modal from 'react-native-modalbox';
@@ -31,7 +31,8 @@ class GroupCaptureSessionView extends Component {
     static propTypes = {
         user:               PropTypes.object,
         isModalVisible:     PropTypes.bool,
-        patchTrainingGroup: PropTypes.func.isRequired
+        patchTrainingGroup: PropTypes.func.isRequired,
+        removeUser:         PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -50,6 +51,12 @@ class GroupCaptureSessionView extends Component {
             modalStyle:    {}
         };
     }
+
+    leftButton = (id) => (
+        <View style={[{ alignItems: 'flex-end', paddingRight: 25 }, AppStyles.deleteButton]}>
+            <Icon name="delete" onPress={() => this.props.removeUser(this.props.user.selectedTrainingGroup.id, id)} type="material-community" color="#FFFFFF" />
+        </View>
+    );
 
     resizeModal = (ev) => {
         this.setState({ modalStyle: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
@@ -88,7 +95,7 @@ class GroupCaptureSessionView extends Component {
                         title={'CAPTURING'}
                         renderBadge={() => (
                             <Text style={{ color: this.state.selectedIndex === 0 ? AppColors.brand.blue : AppColors.lightGrey}}>
-                                {this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.filter(user => user.training_groups.some(group => group.id === this.props.user.selectedTrainingGroup.id)).length}
+                                {this.props.user.selectedTrainingGroup.users.length}
                             </Text>
                         )}
                         allowFontScaling
@@ -98,9 +105,9 @@ class GroupCaptureSessionView extends Component {
                         <View style={{ flex: 1, paddingTop: 2 }}>
                             <ScrollView>
                                 {
-                                    this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.filter(user => user.training_groups.some(group => group.id === this.props.user.selectedTrainingGroup.id)).map(user => {
+                                    this.props.user.selectedTrainingGroup.users.map(user => {
                                         return (
-                                            <Swipeable key={user.id+'0'} style={{padding: 2}}>
+                                            <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} style={{padding: 2}}>
                                                 <ListItem avatar={{uri: user.avatar_url }} title={`${user.first_name} ${user.last_name}`} hideChevron/>
                                             </Swipeable>
                                         );
@@ -123,7 +130,7 @@ class GroupCaptureSessionView extends Component {
                         title={'READY'}
                         renderBadge={() => (
                             <Text style={{ color: this.state.selectedIndex === 1 ? AppColors.brand.blue : AppColors.lightGrey}}>
-                                {this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.filter(user => user.training_groups.some(group => group.id === this.props.user.selectedTrainingGroup.id)).length}
+                                {this.props.user.selectedTrainingGroup.users.length}
                             </Text>
                         )}
                         allowFontScaling
@@ -133,9 +140,9 @@ class GroupCaptureSessionView extends Component {
                         <View style={{ flex: 1, paddingTop: 2 }}>
                             <ScrollView>
                                 {
-                                    this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.filter(user => user.training_groups.some(group => group.id === this.props.user.selectedTrainingGroup.id)).map(user => {
+                                    this.props.user.selectedTrainingGroup.users.map(user => {
                                         return (
-                                            <Swipeable key={user.id+'0'} style={{padding: 2}}>
+                                            <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} style={{padding: 2}}>
                                                 <ListItem avatar={{uri: user.avatar_url }} title={`${user.first_name} ${user.last_name}`} hideChevron/>
                                             </Swipeable>
                                         );
@@ -158,7 +165,7 @@ class GroupCaptureSessionView extends Component {
                         title={'NOT READY'}
                         renderBadge={() => (
                             <Text style={{ color: this.state.selectedIndex === 2 ? AppColors.brand.blue : AppColors.lightGrey}}>
-                                {this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.filter(user => user.training_groups.some(group => group.id === this.props.user.selectedTrainingGroup.id)).length}
+                                {this.props.user.selectedTrainingGroup.users.length}
                             </Text>
                         )}
                         allowFontScaling
@@ -168,9 +175,9 @@ class GroupCaptureSessionView extends Component {
                         <View style={{ flex: 1, paddingTop: 2 }}>
                             <ScrollView>
                                 {
-                                    this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.filter(user => user.training_groups.some(group => group.id === this.props.user.selectedTrainingGroup.id)).map(user => {
+                                    this.props.user.selectedTrainingGroup.users.map(user => {
                                         return (
-                                            <Swipeable key={user.id+'0'} style={{padding: 2}}>
+                                            <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} style={{padding: 2}}>
                                                 <ListItem avatar={{uri: user.avatar_url }} title={`${user.first_name} ${user.last_name}`} hideChevron/>
                                             </Swipeable>
                                         );
@@ -193,10 +200,10 @@ class GroupCaptureSessionView extends Component {
             <Modal position={'center'}
                 style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
                 isOpen={this.props.isModalVisible}
-                backButtonClose swipeToClose={false}
-                onClosed={() => {
-                    Actions.refresh({ isModalVisible: false }); 
-                }}
+                backButtonClose
+                swipeToClose={false}
+                onClosed={() => Actions.refresh({ isModalVisible: false })}
+                onOpened={() => this.setState({ trainingGroup: this.props.user.selectedTrainingGroup })}
             >
                 <View onLayout={(ev) => { this.resizeModal(ev); }}>
                     <Card title={'Edit Training Group'}>
@@ -212,18 +219,29 @@ class GroupCaptureSessionView extends Component {
                                 }})}
                         />
 
-                        <Spacer />
-
-                        <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]}>Description</FormLabel>
-                        <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }}
-                            inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }}
-                            value={this.state.trainingGroup.description}
-                            onChangeText={description => this.setState({
-                                trainingGroup: {
-                                    ...this.state.trainingGroup,
-                                    description
-                                }})}
-                        />
+                        <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]}>Athetes</FormLabel>
+                        <Spacer size={5} />
+                        <ScrollView style={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border, height: AppSizes.screen.heightOneThird }}>
+                            {
+                                this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.map(user => {
+                                    return (
+                                        <CheckBox
+                                            key={user.id}
+                                            title={`${user.first_name} ${user.last_name}`}
+                                            checked={this.state.trainingGroup.user_ids[user.id]}
+                                            onPress={() => {
+                                                this.state.trainingGroup.user_ids[user.id] = !this.state.trainingGroup.user_ids[user.id];
+                                                return this.setState({
+                                                    trainingGroup: {
+                                                        ...this.state.trainingGroup
+                                                    }
+                                                });
+                                            }}
+                                        />
+                                    );
+                                })
+                            }
+                        </ScrollView>
 
                         <Spacer />
 

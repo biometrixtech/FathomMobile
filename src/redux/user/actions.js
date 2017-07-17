@@ -48,22 +48,17 @@ export function login(credentials, freshLogin) {
                             ...userData,
                             ...response
                         };
-                        dispatch({
+                        return dispatch({
                             type: Actions.USER_REPLACE,
                             data: storedObject,
                         });
-
-                        return;
                     })
                     .then(() => AppAPI.teams.get())
-                    .then(teams => {
-                        dispatch({
-                            type: Actions.GET_TEAMS,
-                            data: teams,
-                        });
-
-                        return resolve(storedObject);
-                    })
+                    .then(teams => dispatch({
+                        type: Actions.GET_TEAMS,
+                        data: teams,
+                    }))
+                    .then(() => resolve(storedObject))
                     .catch(err => reject(err));
             }).catch(err => reject(err));
     });
@@ -202,77 +197,6 @@ export function removeTrainingGroup(trainingGroupId) {
         }));
 }
 
-/**
- * Remove Regimen Type
- */
-export function removeRegimen() {
-    return dispatch => AppAPI.regimen.patch()
-        .then((regimens) => {
-            dispatch({
-                type: Actions.UPDATE_REGIMEN,
-                data: regimens,
-            });
-        });
-}
-
-export function addTG(data) {
-    return dispatch => dispatch({
-        type: Actions.ADD_TG,
-        data,
-    });
-}
-
-export function editTG(data) {
-    return dispatch => dispatch({
-        type: Actions.EDIT_TG,
-        data,
-    });
-}
-
-export function removeTG(id) {
-    return dispatch => dispatch({
-        type: Actions.REMOVE_TG,
-        data: id,
-    });
-}
-
-export function addR(data) {
-    return dispatch => dispatch({
-        type: Actions.ADD_R,
-        data,
-    });
-}
-
-export function editR(data) {
-    return dispatch => dispatch({
-        type: Actions.EDIT_R,
-        data,
-    });
-}
-
-export function removeR(id) {
-    return dispatch => dispatch({
-        type: Actions.REMOVE_R,
-        data: id,
-    });
-}
-
-export function addA(data) {
-    return dispatch => dispatch({
-        type: Actions.ADD_A,
-        data,
-    });
-}
-
-export function removeA(data) {
-    return dispatch => dispatch({
-        type: Actions.REMOVE_A,
-        data,
-    });
-}
-
-
-
 export function teamSelect(index) {
     return dispatch => dispatch({
         type: Actions.TEAM_SELECT,
@@ -285,4 +209,16 @@ export function selectTrainingGroup(trainingGroup) {
         type: Actions.TRAINING_GROUP_SELECT,
         data: trainingGroup
     })
+}
+
+export function removeUser(trainingGroupId, userId) {
+    return dispatch => AppAPI.remove_user.post({ trainingGroupId }, { user_id: userId })
+        .then(() => AppAPI.teams.get())
+        .then(newTeams => dispatch({
+            type: Actions.REMOVE_USER,
+            data: {
+                newTeams,
+                userId
+            }
+        }));
 }

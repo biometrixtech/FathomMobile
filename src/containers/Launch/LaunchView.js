@@ -22,6 +22,11 @@ const styles = StyleSheet.create({
         width:  AppSizes.screen.width,
         height: AppSizes.screen.height,
     },
+    indicator: {
+        position: 'absolute',
+        left:     AppSizes.screen.widthHalf,
+        top:      AppSizes.screen.heightHalf
+    }
 });
 
 /* Component ==================================================================== */
@@ -50,13 +55,13 @@ class AppLaunch extends Component {
                 source={require('@images/fathom_colored.png')}
                 style={[styles.launchImage, AppStyles.containerCentered]}
                 resizeMode={'contain'}
-            >
-                <ActivityIndicator
-                    animating
-                    size={'large'}
-                    color={'#C1C5C8'}
-                />
-            </Image>
+            />
+            <ActivityIndicator
+                style={[styles.indicator]}
+                animating
+                size={'large'}
+                color={'#C1C5C8'}
+            />
         </View>
     );
 }
