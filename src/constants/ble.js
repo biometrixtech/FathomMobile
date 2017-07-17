@@ -46,6 +46,13 @@ function unparse(buf, offset) {
 export default {
     serviceUUID:        '3282ae19-ab8b-f495-7544-67e11bb6223f',
     characteristicUUID: 'a268ae6f-3433-d999-4e44-42e82070d3de',
+    dataUUID:           '4A8C2B82-5BB8-D4B8-D244-57280862C228',
+
+    pin: '135712',
+
+    errors: {
+        encryption: 'Encryption is insufficient.'
+    },
 
     commands: {
         SHUTDOWN:           parseInt('0x01', 16),

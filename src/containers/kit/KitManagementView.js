@@ -35,8 +35,10 @@ class KitManagementView extends Component {
     static componentName = 'KitManagementView';
 
     static propTypes = {
-        user:        PropTypes.object,
-        bluetooth:   PropTypes.object
+        user:           PropTypes.object,
+        bluetooth:      PropTypes.object,
+        resetAccessory: PropTypes.func.isRequired,
+        scanWiFi:       PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -81,24 +83,16 @@ class KitManagementView extends Component {
             />
             <ListItem
                 title={'WiFi'}
-                chevronColor={ AppColors.lightGrey}
-                titleStyle={{ color: AppColors.lightGrey}}
-            />
-            <ListItem
-                title={'Reset'}
-                chevronColor={ AppColors.lightGrey}
-                titleStyle={{ color: AppColors.lightGrey}}
-            />
-            {/* <ListItem
-                title={'WiFi'}
                 chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                 titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
+                onPress={() => this.props.scanWiFi(this.props.bluetooth.accessoryData.id)}
             />
             <ListItem
                 title={'Reset'}
                 chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                 titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-            /> */}
+                onPress={() => this.props.resetAccessory(this.props.bluetooth.accessoryData.id)}
+            />
             <Text style={{ paddingLeft: 20, fontSize: font10 }}>Assign owner to the kit, change wifi network, or factory reset</Text>
         </View>
     );

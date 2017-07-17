@@ -21,6 +21,7 @@ export default {
         ['user',            '/v1/user'],
         ['teams',           '/v1/user/teams'],
         ['training_groups', '/v1/training_groups'],
+        ['remove_user',     '/v1/training_groups/{trainingGroupId}/remove_user'],
         ['accessories',     '/v1/accessories'],
         ['training_events', '/v1/training_events']
     ]),

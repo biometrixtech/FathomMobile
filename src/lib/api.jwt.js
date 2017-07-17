@@ -52,7 +52,7 @@ export default class JWT {
             }
             const jwt = res.user.jwt;
 
-            const tokenIsNowValid = this.tokenIsValid ? await this.tokenIsValid(jwt) : null;
+            const tokenIsNowValid = this.tokenIsValid ? await this.tokenIsValid(jwt,res.user.id) : null;
             if (!tokenIsNowValid) { return reject(res); }
 
             // Set token in AsyncStorage + memory
@@ -131,7 +131,7 @@ export default class JWT {
         // if (thisHostname !== tokenHostname) {
         // return false; // Issuing server is different
         // }
-        if (this.apiCredentials.email !== decodedToken.email) {
+        if (this.apiCredentials.email && this.apiCredentials.email.toLowerCase() !== decodedToken.email) {
             return false;
         }
 

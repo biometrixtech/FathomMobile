@@ -15,6 +15,7 @@ export default {
 
         heightOneThird:      screenHeight * 0.333,
         heightTwoThirds:     screenHeight * 0.666,
+        heightTwoFifths:     screenHeight * 0.40,
         heightThreeQuarters: screenHeight * 0.75,
         heightHalf:          screenHeight * 0.5,
         heightTenth:         screenHeight * 0.1,
