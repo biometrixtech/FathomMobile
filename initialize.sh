@@ -36,7 +36,7 @@ then
     [ ${#watchman} == 0 ] && { echo "watchman does not exist, installing"; brew install watchman; } || continue
 
     nvmrc=`cat .nvmrc`
-    [ -e ~/.nvm/nvm.sh ] && continue || {
+    [ -e ~/.nvm/nvm.sh ] && . ~/.nvm/nvm.sh || {
         echo "nvm does not exist, installing";
         curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
         export NVM_DIR="$HOME/.nvm"
@@ -46,7 +46,7 @@ then
     }
     nvm install $nvmrc
     cd ..
-    cd spencer-assist-mobile
+    cd FathomMobile
 
     pod=$(which pod)
     [ ${#pod} == 0 ] && {
