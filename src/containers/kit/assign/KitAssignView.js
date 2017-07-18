@@ -27,8 +27,8 @@ class KitAssignView extends Component {
     static componentName = 'KitAssignView';
 
     static propTypes = {
-        user:       PropTypes.object,
-        bluetooth:  PropTypes.object,
+        user:      PropTypes.object,
+        bluetooth: PropTypes.object,
     }
 
     static defaultProps = {
@@ -61,28 +61,24 @@ class KitAssignView extends Component {
                     <Spacer />
                 </View>
                 <View>
-                    <SearchBar />
                     <ListItem
                         title={category}
-                        containerStyle={{ padding: 10 }}
+                        containerStyle={{ padding: 10, backgroundColor: AppColors.brand.light }}
                         rightTitle={'EDIT'}
                         rightTitleStyle={{ color: AppColors.brand.yellow }}
-                    />
-                    <ListItem
-                        title={'Organization'}
-                        titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
                         hideChevron
                     />
-                    <ListItem
-                        title={'Team'}
-                        titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                        hideChevron
+                    <SearchBar
+                        containerStyle={{ backgroundColor: '#FFFFFF', borderWidth: 0 }}
+                        inputStyle={{ backgroundColor: '#FFFFFF' }}
+                        placeholder={'Enter team'}
+                        lightTheme
                     />
-                    <ListItem
-                        title={'Individual'}
-                        titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                        hideChevron
-                    />
+                    {
+                        this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.map(user => {
+                            return <ListItem title={`${user.first_name} ${user.last_name}`} hideChevron/>
+                        })
+                    }
                     <Text style={{ paddingLeft: 20, fontSize: font10 }}>Edit your school, team, and name above.</Text>
                 </View>
             </View>
