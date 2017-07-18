@@ -41,7 +41,7 @@ Basic Building structure of the app
 ## Getting Started
 
 1. Ensure you've followed the [React Native - Get Started Guide](https://facebook.github.io/react-native/docs/getting-started.html) for the platform/s of choice
-1. Run `npm install` from root directory
+1. Run `npm run fathom` from root directory
 1. Start the app in [an emulator](/docs/quick-tips.md#running-in-an-emulator)
 
 ---
