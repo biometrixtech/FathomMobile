@@ -75,7 +75,7 @@ then
     pod install
     cd ..
     
-    echo "Everything checked, installed, and prepared.\nAttempting to start packager.."
+    echo "Everything checked, installed, and prepared.\nReady to start packager"
 else
     echo "${red}Error: Xcode does not exist in Applications folder, please download and install it${normal}"
 fi

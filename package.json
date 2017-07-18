@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "./initialize.sh && node node_modules/react-native/local-cli/cli.js start",
+    "build":"./initialize.sh",
+    "start": "./start.sh && node node_modules/react-native/local-cli/cli.js start",
     "pretest": "./node_modules/.bin/eslint -c .eslintrc --ext .js src",
     "test": "jest"
   },
