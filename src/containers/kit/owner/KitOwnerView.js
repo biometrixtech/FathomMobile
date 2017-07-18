@@ -46,11 +46,11 @@ class KitOwnerView extends Component {
         };
     }
 
-    componentWillMount = () => {
-        this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id);
-        this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id);
-        this.props.getOwnerUser(this.props.bluetooth.accessoryData.id);
-    };
+    // componentWillMount = () => {
+    //     this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id);
+    //     this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id);
+    //     this.props.getOwnerUser(this.props.bluetooth.accessoryData.id);
+    // };
 
     adminView = () => (
         <Placeholder />
@@ -79,7 +79,7 @@ class KitOwnerView extends Component {
                 />
                 <ListItem
                     title={'Team'}
-                    rightTitle={this.props.user.organization.name}
+                    rightTitle={this.props.user.teams[this.props.user.teamIndex].name}
                     rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
                     chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                     titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
