@@ -34,15 +34,16 @@ class CustomButton extends Component {
     buttonProps = () => {
         // Defaults
         const props = {
-            title:        'Coming Soon...',
-            color:        '#fff',
-            fontWeight:   'bold',
-            onPress:      this.props.onPress,
-            fontFamily:   AppFonts.base.family,
-            fontSize:     AppFonts.base.size,
-            borderRadius: AppSizes.borderRadius,
-            raised:       true,
-            buttonStyle:  {
+            title:              'Coming Soon...',
+            color:              '#fff',
+            fontWeight:         'bold',
+            onPress:            this.props.onPress,
+            fontFamily:         AppFonts.base.family,
+            fontSize:           AppFonts.base.size,
+            borderRadius:       AppSizes.borderRadius,
+            containerViewStyle: { borderRadius: AppSizes.borderRadius },
+            raised:             true,
+            buttonStyle:        {
                 padding:     12,
                 marginLeft:  0,
                 marginRight: 0,
@@ -52,10 +53,10 @@ class CustomButton extends Component {
             small:           false,
             large:           false,
             icon:            (this.props.icon && this.props.icon.name)
-              ? {
-                  size: 14,
-                  ...this.props.icon,
-              } : null,
+                ? {
+                    size: 14,
+                    ...this.props.icon,
+                } : null,
         };
 
         // Overrides
