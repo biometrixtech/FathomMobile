@@ -6,7 +6,6 @@ import {
     Image,
     ScrollView,
     View,
-    Platform,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -65,33 +64,34 @@ class KitOwnerView extends Component {
             <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', height: AppSizes.screen.heightOneThird }}>
                 <Image source={require('@images/kit-diagram.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthTwoThirds, height: AppSizes.screen.widthTwoThirds * 268/509 }}/>
                 <Spacer size={5}/>
-                <Text>{this.props.bluetooth.accessoryData.name || 'test name'}</Text>
-                <Text style={{ fontSize: font10 }}>{this.props.bluetooth.accessoryData.id || '00:11:22:33:44'}</Text>
+                <Text>{this.props.bluetooth.accessoryData.name || ''}</Text>
+                <Text style={{ fontSize: font10 }}>{this.props.bluetooth.accessoryData.id || ''}</Text>
             </View>
             <View>
                 <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>OWNER</Text>
                 <ListItem
                     title={'Organization'}
-                    rightTitle={this.props.user.organization.name}
+                    rightTitle={this.props.bluetooth.accessoryData.organization ? this.props.bluetooth.accessoryData.organization.name : null}
                     rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
+                    chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                     titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                    hideChevron
+                    onPress={() => { this.props.assignType('organization'); return Actions.kitAssign(); }}
                 />
                 <ListItem
                     title={'Team'}
-                    rightTitle={this.props.user.teams[this.props.user.teamIndex].name}
+                    rightTitle={this.props.bluetooth.accessoryData.team ? this.props.bluetooth.accessoryData.team.name : null}
                     rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
                     chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                     titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                    onPress={() => Actions.kitAssign()}
+                    onPress={() => { this.props.assignType('team'); return Actions.kitAssign(); }}
                 />
                 <ListItem
                     title={'Individual'}
-                    rightTitle={`${this.props.user.first_name} ${this.props.user.last_name}`}
+                    rightTitle={this.props.bluetooth.accessoryData.individual ? this.props.bluetooth.accessoryData.individual.name : null}
                     rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
                     chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                     titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                    onPress={() => Actions.kitAssign()}
+                    onPress={() => { this.props.assignType('individual'); return Actions.kitAssign(); }}
                 />
                 <Text style={{ paddingLeft: 20, fontSize: font10 }}>Edit your school, team, and name above.</Text>
             </View>
