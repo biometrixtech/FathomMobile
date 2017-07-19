@@ -54,7 +54,27 @@ export default function bluetoothReducer(state = initialState, action) {
         return Object.assign({}, state, {
             wifiScan: true
         });
-    case Actions.LOGIN:
+    case Actions.ASSIGN_KIT_INDIVIDUAL:
+        return Object.assign({}, state, {
+            accessoryData: {
+                ...state.accessoryData,
+                individual: action.data
+            }
+        });
+    case Actions.ASSIGN_KIT_TEAM:
+        return Object.assign({}, state, {
+            accessoryData: {
+                ...state.accessoryData,
+                team: action.data
+            }
+        });
+    case Actions.ASSIGN_KIT_ORGANIZATION:
+        return Object.assign({}, state, {
+            accessoryData: {
+                ...state.accessoryData,
+                organization: action.data
+            }
+        });
     case Actions.CHECK_STATE:
     case Actions.ENABLE_BLUETOOTH:
     case Actions.START_BLUETOOTH:

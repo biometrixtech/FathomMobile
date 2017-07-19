@@ -3,28 +3,17 @@
  */
 import React, { Component, PropTypes } from 'react';
 import {
-    Image,
-    ScrollView,
     View,
-    NativeAppEventEmitter,
-    Platform,
-    PermissionsAndroid,
     BackHandler
 } from 'react-native';
-import { Icon } from 'react-native-elements';
-import { NetworkInfo } from 'react-native-network-info';
-import BleManager from 'react-native-ble-manager';
-import Carousel from 'react-native-looped-carousel';
-import Collapsible from 'react-native-collapsible';
-import Prompt from 'react-native-prompt';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors, AppFonts } from '@theme/';
-import { Roles, BLEConfig } from '@constants/';
+import { Roles } from '@constants/';
 
 // Components
-import { Spacer, Button, FormLabel, Text, ListItem } from '@ui/';
+import { Spacer, Text, ListItem } from '@ui/';
 import { Placeholder } from '@general/';
 
 const font18 = AppFonts.scaleFont(18);
