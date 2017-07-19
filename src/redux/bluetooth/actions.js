@@ -47,8 +47,6 @@ const getOwnerUser = (id) => {
         .catch(err => Promise.reject(err));
 };
 
-
-
 const assignType = (type) => {
     return dispatch => dispatch({
         type: Actions.ASSIGN_TYPE,
@@ -204,14 +202,9 @@ const connectWiFi = (data) => {
 const scanWiFi = (id) => {
     let dataArray = [commands.WIFI_SCAN, convertHex('0x00')];
     return dispatch => write(id, dataArray)
-        .then(response => {
-            console.log('------------------------------------');
-            console.log({response});
-            console.log('------------------------------------');
-            return dispatch({
-                type: Actions.WIFI_SCAN
-            });
-        })
+        .then(response => dispatch({
+            type: Actions.WIFI_SCAN
+        }))
         .then(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.dataUUID))
         .then(response =>  console.log({response}))
         .catch(err => Promise.reject(err));
@@ -224,6 +217,39 @@ const resetAccessory = (id) => {
             type: Actions.ACCESSORY_RESET
         }))
         .catch(err => Promise.reject(err));
+};
+
+const assignKitIndividual = (id, user) => {
+    let dataArray = [commands.SET_OWNER_USER, convertHex('0x10'), ]
+    return dispatch => BLEConfig.parse(user.id)
+        .then(userUUID => write(id, dataArray.concat(userUUID)))
+        .then(response => dispatch({
+            type: Actions.ASSIGN_KIT_INDIVIDUAL,
+            data: user
+        }))
+        .catch(err => Promise.reject(err))
+};
+
+const assignKitTeam = (id, team) => {
+    let dataArray = [commands.SET_OWNER_TEAM, convertHex('0x10'), ]
+    return dispatch => BLEConfig.parse(team.id)
+        .then(teamUUID => write(id, dataArray.concat(teamUUID)))
+        .then(response => dispatch({
+            type: Actions.ASSIGN_KIT_TEAM,
+            data: team
+        }))
+        .catch(err => Promise.reject(err))
+};
+
+const assignKitOrganization = (id, organization) => {
+    let dataArray = [commands.SET_OWNER_ORG, convertHex('0x10'), ]
+    return dispatch => BLEConfig.parse(organization.id)
+        .then(orgUUID => write(id, dataArray.concat(orgUUID)))
+        .then(response => dispatch({
+            type: Actions.ASSIGN_KIT_ORGANIZATION,
+            data: organization
+        }))
+        .catch(err => Promise.reject(err))
 };
 
 export {
@@ -243,5 +269,8 @@ export {
     getOwnerTeam,
     getOwnerUser,
     resetAccessory,
-    scanWiFi
+    scanWiFi,
+    assignKitIndividual,
+    assignKitTeam,
+    assignKitOrganization
 };
