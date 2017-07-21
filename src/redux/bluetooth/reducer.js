@@ -100,6 +100,11 @@ export default function bluetoothReducer(state = initialState, action) {
                 organization
             }
         });
+    case Actions.NETWORKS_DISCOVERED:
+        return Object.assign({}, state, {
+            wifiScan: false,
+            networks: action.data
+        });
     case Actions.CHECK_STATE:
     case Actions.ENABLE_BLUETOOTH:
     case Actions.START_BLUETOOTH:
