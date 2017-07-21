@@ -23,6 +23,16 @@ const convertStringToByteArray = (string) => {
     return string.split('').map(char => char.charCodeAt(0));
 };
 
+/**
+  * Convert byte array to string
+  * eg.
+  *   [116,101,115,116]
+  *   'test'
+  */
+const convertByteArrayToString = (array) => {
+    return array.map(byte => String.fromCharCode(byte)).join('');
+}
+
 const convertHex = (value) => {
     return parseInt(value, 16);
 };
@@ -228,29 +238,41 @@ const connectWiFi = (data) => {
     return write(data.id, dataArray);
 };
 
-const checkResult = (id, result) => {
-    if (!result) { throw new Error('no result'); }
-    if(result[1] === 3) {
-        console.log('------------------------------------');
-        console.log(result);
-        console.log('------------------------------------');
-        return result;
+const readSSID = (id, loopsLeft, wifiList) => {
+    if (loopsLeft > 0) {
+        return wait(100)
+            .then(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID))
+            .then(response => {
+                wifiList.push(convertByteArrayToString(response.slice(3)));
+                return readSSID(id, loopsLeft-1, wifiList);
+            });
     }
-    return setTimeout(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID)
-        .then(res => checkResult(id, res)), 1000);
+    return wifiList;
 };
 
 const scanWiFi = (id) => {
     let dataArray = [commands.WIFI_SCAN, convertHex('0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
+            console.log('------------------------------------');
+            console.log({response});
+            console.log('------------------------------------');
             dispatch({
                 type: Actions.WIFI_SCAN
             });
-            return wait(1100);
+            return wait(1000);
         })
         .then(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID))
-        .then(response => checkResult(id, response))
+        .then(response => {
+            console.log('------------------------------------');
+            console.log({response});
+            console.log('------------------------------------');
+            return readSSID(id, response[4], []);
+        })
+        .then(response => dispatch({
+            type: Actions.NETWORKS_DISCOVERED,
+            data: response
+        }))
         .catch(err => Promise.reject(err));
 };
 
