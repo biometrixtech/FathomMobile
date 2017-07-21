@@ -65,7 +65,7 @@ class KitAssignView extends Component {
             category = this.props.bluetooth.accessoryData.team ? this.props.bluetooth.accessoryData.team.name : 'TEAM';
             break;
         case 'individual':
-            category = this.props.bluetooth.accessoryData.individual ? this.props.bluetooth.accessoryData.individual.name : 'INDIVIDUAL';
+            category = this.props.bluetooth.accessoryData.individual ? `${this.props.bluetooth.accessoryData.individual.first_name} ${this.props.bluetooth.accessoryData.individual.last_name}` : 'INDIVIDUAL';
             break;
         case 'organization':
             category = this.props.bluetooth.accessoryData.organization ? this.props.bluetooth.accessoryData.organization.name : 'ORGANIZATION';
