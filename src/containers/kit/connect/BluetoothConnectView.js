@@ -48,6 +48,7 @@ class BluetoothConnectView extends Component {
         startScan:          PropTypes.func.isRequired,
         stopScan:           PropTypes.func.isRequired,
         deviceFound:        PropTypes.func.isRequired,
+        assignKitName:      PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -120,7 +121,7 @@ class BluetoothConnectView extends Component {
     }
 
     handleDiscoverPeripheral = (data) => {
-        return data.name && /fathom/i.test(data.name) ? this.props.deviceFound(data) : null;
+        return data.name && /Fathom_kit_/i.test(data.name) ? this.props.deviceFound(data) : null;
     }
 
     handleBleStateChange = (data) => {
@@ -221,15 +222,16 @@ class BluetoothConnectView extends Component {
 
     connect = (data) => {
         return this.props.stopScan()
-            .then(() => this.props.connectToAccessory(data, { role: this.props.user.role, id: this.props.user.id })
-                .then(() => {
-                    this.setState({ index: 3 });
-                    return this.refs.carousel.animateToPage(3);
-                })
-                .catch((err) => {
-                    console.log(err);
-                    return err;
-                }));
+            .then(() => this.props.connectToAccessory(data))
+            .then(() => this.props.assignKitName(data.id, data.name))
+            .then(() => {
+                this.setState({ index: 3 });
+                return this.refs.carousel.animateToPage(3);
+            })
+            .catch((err) => {
+                console.log(err);
+                return err;
+            });
     }
 
     _onLayoutDidChange = (e) => {
