@@ -75,6 +75,31 @@ export default function bluetoothReducer(state = initialState, action) {
                 organization: action.data
             }
         });
+    case Actions.GET_KIT_INDIVIDUAL:
+        let assignIndividualTeam = action.data.user.teams.find(checkTeam => checkTeam.users_with_training_groups.some(user => user.id === action.data.id));
+        let individual = assignIndividualTeam ? assignIndividualTeam.users_with_training_groups.find(user => user.id === action.data.id) : null;
+        return Object.assign({}, state, {
+            accessoryData: {
+                ...state.accessoryData,
+                individual
+            }
+        });
+    case Actions.GET_KIT_TEAM:
+        let team = action.data.user.teams.find(checkTeam => checkTeam.id === action.data.id) || null;
+        return Object.assign({}, state, {
+            accessoryData: {
+                ...state.accessoryData,
+                team
+            }
+        });
+    case Actions.GET_KIT_ORGANIZATION:
+        let organization = action.data.user.organization.id === action.data.id ? action.data.user.organization : null;
+        return Object.assign({}, state, {
+            accessoryData: {
+                ...state.accessoryData,
+                organization
+            }
+        });
     case Actions.CHECK_STATE:
     case Actions.ENABLE_BLUETOOTH:
     case Actions.START_BLUETOOTH:

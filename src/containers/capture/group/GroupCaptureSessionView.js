@@ -58,6 +58,21 @@ class GroupCaptureSessionView extends Component {
         </View>
     );
 
+    rightButtons = () => {
+        // let buttons = [];
+        return [
+            <View style={[{ alignItems: 'flex-start', paddingLeft: 8, borderColor: '#FFFFFF', borderWidth: 1 }, AppStyles.deleteButton]}>
+                <Icon name={'sim-alert'} type={'material-community'} color={'#FFFFFF'} />
+            </View>,
+            <View style={[{ alignItems: 'flex-start', paddingLeft: 7, borderColor: '#FFFFFF', borderWidth: 1 }, AppStyles.deleteButton]}>
+                <Icon name={'battery-alert'} type={'material-community'} color={'#FFFFFF'} />
+            </View>,
+            <View style={[{ alignItems: 'flex-start', paddingLeft: 12, borderColor: '#FFFFFF', borderWidth: 1 }, AppStyles.editButton]}>
+                <Icon name={this.state.active ? 'stop' : 'play'} type={'font-awesome'} color={'#FFFFFF'} />
+            </View>
+        ]
+    };
+
     resizeModal = (ev) => {
         this.setState({ modalStyle: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
     }
@@ -107,7 +122,7 @@ class GroupCaptureSessionView extends Component {
                                 {
                                     this.props.user.selectedTrainingGroup.users.map(user => {
                                         return (
-                                            <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} style={{padding: 2}}>
+                                            <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} rightButtons={this.rightButtons()} rightButtonWidth={40} style={{padding: 2}}>
                                                 <ListItem avatar={{uri: user.avatar_url }} title={`${user.first_name} ${user.last_name}`} hideChevron/>
                                             </Swipeable>
                                         );
@@ -120,6 +135,7 @@ class GroupCaptureSessionView extends Component {
                                 backgroundColor={AppColors.brand.yellow}
                                 onPress={() => this.setState({ active: !this.state.active })}
                                 color={'#FFFFFF'}
+                                raised={false}
                                 title={`${this.state.active ? 'STOP' : 'START'} GROUP SESSION`}
                                 icon={{ name: this.state.active ? 'stop' : 'play', type: 'font-awesome', color: '#FFFFFF' }}
                             />
@@ -142,7 +158,7 @@ class GroupCaptureSessionView extends Component {
                                 {
                                     this.props.user.selectedTrainingGroup.users.map(user => {
                                         return (
-                                            <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} style={{padding: 2}}>
+                                            <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} rightButtons={this.rightButtons()} rightButtonWidth={40} style={{padding: 2}}>
                                                 <ListItem avatar={{uri: user.avatar_url }} title={`${user.first_name} ${user.last_name}`} hideChevron/>
                                             </Swipeable>
                                         );
@@ -155,6 +171,7 @@ class GroupCaptureSessionView extends Component {
                                 backgroundColor={AppColors.brand.yellow}
                                 onPress={() => this.setState({ active: !this.state.active })}
                                 color={'#FFFFFF'}
+                                raised={false}
                                 title={`${this.state.active ? 'STOP' : 'START'} GROUP SESSION`}
                                 icon={{ name: this.state.active ? 'stop' : 'play', type: 'font-awesome', color: '#FFFFFF' }}
                             />
@@ -177,7 +194,7 @@ class GroupCaptureSessionView extends Component {
                                 {
                                     this.props.user.selectedTrainingGroup.users.map(user => {
                                         return (
-                                            <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} style={{padding: 2}}>
+                                            <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} rightButtons={this.rightButtons()} rightButtonWidth={40} style={{padding: 2}}>
                                                 <ListItem avatar={{uri: user.avatar_url }} title={`${user.first_name} ${user.last_name}`} hideChevron/>
                                             </Swipeable>
                                         );
@@ -190,6 +207,7 @@ class GroupCaptureSessionView extends Component {
                                 backgroundColor={AppColors.brand.yellow}
                                 onPress={() => this.setState({ active: !this.state.active })}
                                 color={'#FFFFFF'}
+                                raised={false}
                                 title={`${this.state.active ? 'STOP' : 'START'} GROUP SESSION`}
                                 icon={{ name: this.state.active ? 'stop' : 'play', type: 'font-awesome', color: '#FFFFFF' }}
                             />

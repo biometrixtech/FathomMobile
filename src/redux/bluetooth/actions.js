@@ -9,7 +9,8 @@ const Actions = require('../actionTypes');
 const commands = BLEConfig.commands;
 
 const write = (id, data) => {
-    return BleManager.write(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID, data);
+    return BleManager.write(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID, data)
+        .then(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID));
 };
 
 /**
@@ -26,24 +27,52 @@ const convertHex = (value) => {
     return parseInt(value, 16);
 };
 
-const getOwnerOrganization = (id) => {
+// Creating a promise wrapper for setTimeout
+const wait = (delay = 0) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(resolve, delay);
+    });
+}
+
+const getOwnerOrganization = (id, user) => {
     let dataArray = [convertHex(commands.GET_OWNER_ORG, '0x00')];
     return dispatch => write(id, dataArray)
-        .then(response => console.log(response))
+        .then(response => BLEConfig.unparse(response.slice(4,20)))
+        .then(organizationUUID => dispatch({
+            type: Actions.GET_KIT_ORGANIZATION,
+            data: {
+                id: organizationUUID,
+                user
+            }
+        }))
         .catch(err => Promise.reject(err));
 };
 
-const getOwnerTeam = (id) => {
+const getOwnerTeam = (id, user) => {
     let dataArray = [convertHex(commands.GET_OWNER_TEAM, '0x00')];
     return dispatch => write(id, dataArray)
-        .then(response => console.log(response))
+        .then(response => BLEConfig.unparse(response.slice(4,20)))
+        .then(teamUUID => dispatch({
+            type: Actions.GET_KIT_TEAM,
+            data: {
+                id: teamUUID,
+                user
+            }
+        }))
         .catch(err => Promise.reject(err));
 };
 
-const getOwnerUser = (id) => {
+const getOwnerUser = (id, user) => {
     let dataArray = [convertHex(commands.GET_OWNER_USER, '0x00')];
     return dispatch => write(id, dataArray)
-        .then(response => console.log(response))
+        .then(response => BLEConfig.unparse(response.slice(4,20)))
+        .then(userUUID => dispatch({
+            type: Actions.GET_KIT_INDIVIDUAL,
+            data: {
+                id: userUUID,
+                user
+            }
+        }))
         .catch(err => Promise.reject(err));
 };
 
@@ -116,7 +145,7 @@ const connectToAccessory = (data, {role, id}) => {
             dataArray = dataArray.concat(convertedUUID);
             return write(data.id, dataArray);
         })
-        .then(() => AppAPI.accessories.patch(data.id, data))
+        .then(accessoryLoginResult => AppAPI.accessories.patch(data.id, data))
         .then(uploadedAccessory => dispatch({
             type: Actions.CONNECT_TO_ACCESSORY,
             data: {
@@ -199,14 +228,29 @@ const connectWiFi = (data) => {
     return write(data.id, dataArray);
 };
 
+const checkResult = (id, result) => {
+    if (!result) { throw new Error('no result'); }
+    if(result[1] === 3) {
+        console.log('------------------------------------');
+        console.log(result);
+        console.log('------------------------------------');
+        return result;
+    }
+    return setTimeout(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID)
+        .then(res => checkResult(id, res)), 1000);
+};
+
 const scanWiFi = (id) => {
     let dataArray = [commands.WIFI_SCAN, convertHex('0x00')];
     return dispatch => write(id, dataArray)
-        .then(response => dispatch({
-            type: Actions.WIFI_SCAN
-        }))
-        .then(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.dataUUID))
-        .then(response =>  console.log({response}))
+        .then(response => {
+            dispatch({
+                type: Actions.WIFI_SCAN
+            });
+            return wait(1100);
+        })
+        .then(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID))
+        .then(response => checkResult(id, response))
         .catch(err => Promise.reject(err));
 };
 
@@ -220,7 +264,7 @@ const resetAccessory = (id) => {
 };
 
 const assignKitIndividual = (id, user) => {
-    let dataArray = [commands.SET_OWNER_USER, convertHex('0x10'), ]
+    let dataArray = [commands.SET_OWNER_USER, convertHex('0x10')];
     return dispatch => BLEConfig.parse(user.id)
         .then(userUUID => write(id, dataArray.concat(userUUID)))
         .then(response => dispatch({
@@ -231,7 +275,7 @@ const assignKitIndividual = (id, user) => {
 };
 
 const assignKitTeam = (id, team) => {
-    let dataArray = [commands.SET_OWNER_TEAM, convertHex('0x10'), ]
+    let dataArray = [commands.SET_OWNER_TEAM, convertHex('0x10')];
     return dispatch => BLEConfig.parse(team.id)
         .then(teamUUID => write(id, dataArray.concat(teamUUID)))
         .then(response => dispatch({
@@ -242,13 +286,16 @@ const assignKitTeam = (id, team) => {
 };
 
 const assignKitOrganization = (id, organization) => {
-    let dataArray = [commands.SET_OWNER_ORG, convertHex('0x10'), ]
+    let dataArray = [commands.SET_OWNER_ORG, convertHex('0x10')];
     return dispatch => BLEConfig.parse(organization.id)
         .then(orgUUID => write(id, dataArray.concat(orgUUID)))
-        .then(response => dispatch({
-            type: Actions.ASSIGN_KIT_ORGANIZATION,
-            data: organization
-        }))
+        .then(response => {
+            console.log(response);
+            return dispatch({
+                type: Actions.ASSIGN_KIT_ORGANIZATION,
+                data: organization
+            });
+        })
         .catch(err => Promise.reject(err))
 };
 
