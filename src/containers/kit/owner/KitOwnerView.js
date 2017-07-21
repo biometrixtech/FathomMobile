@@ -87,7 +87,7 @@ class KitOwnerView extends Component {
                 />
                 <ListItem
                     title={'Individual'}
-                    rightTitle={this.props.bluetooth.accessoryData.individual ? this.props.bluetooth.accessoryData.individual.name : null}
+                    rightTitle={this.props.bluetooth.accessoryData.individual ? `${this.props.bluetooth.accessoryData.individual.first_name} ${this.props.bluetooth.accessoryData.individual.last_name}` : null}
                     rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
                     chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                     titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
