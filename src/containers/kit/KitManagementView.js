@@ -24,10 +24,11 @@ class KitManagementView extends Component {
     static componentName = 'KitManagementView';
 
     static propTypes = {
-        user:           PropTypes.object,
-        bluetooth:      PropTypes.object,
-        resetAccessory: PropTypes.func.isRequired,
-        scanWiFi:       PropTypes.func.isRequired
+        user:             PropTypes.object,
+        bluetooth:        PropTypes.object,
+        resetAccessory:   PropTypes.func.isRequired,
+        scanWiFi:         PropTypes.func.isRequired,
+        loginToAccessory: PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -74,7 +75,7 @@ class KitManagementView extends Component {
                 title={'WiFi'}
                 chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                 titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                onPress={() => this.props.scanWiFi(this.props.bluetooth.accessoryData.id)}
+                onPress={() => this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user).then(() => this.props.scanWiFi(this.props.bluetooth.accessoryData.id))}
             />
             <ListItem
                 title={'Reset'}

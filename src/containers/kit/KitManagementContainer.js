@@ -19,8 +19,9 @@ const mapStateToProps = state => {
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-    resetAccessory:       BluetoothActions.resetAccessory,
-    scanWiFi:             BluetoothActions.scanWiFi
+    resetAccessory:   BluetoothActions.resetAccessory,
+    scanWiFi:         BluetoothActions.scanWiFi,
+    loginToAccessory: BluetoothActions.loginToAccessory
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitManagementRender);
