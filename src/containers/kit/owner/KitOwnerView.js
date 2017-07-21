@@ -45,11 +45,11 @@ class KitOwnerView extends Component {
         };
     }
 
-    // componentWillMount = () => {
-    //     this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id);
-    //     this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id);
-    //     this.props.getOwnerUser(this.props.bluetooth.accessoryData.id);
-    // };
+    componentWillMount = () => {
+        return this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id, this.props.user)
+            .then(() => this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id, this.props.user))
+            .then(() => this.props.getOwnerUser(this.props.bluetooth.accessoryData.id, this.props.user));
+    };
 
     adminView = () => (
         <Placeholder />
