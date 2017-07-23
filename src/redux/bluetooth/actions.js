@@ -190,7 +190,7 @@ const loginToAccessory = (data, {role, id}) => {
         .catch(err => Promise.reject(err));
 }
 
-const setWiFiSSID = (data, ssid) => {
+const setWiFiSSID = (id, ssid) => {
     let byteString = convertStringToByteArray(ssid);
     let dataArray = [];
     dataArray.push(commands.SET_WIFI_SSID_HEAD);
@@ -202,7 +202,7 @@ const setWiFiSSID = (data, ssid) => {
         dataArray.push(convertHex('0x00'));
     }
     console.log('SSID Data Array: ', dataArray);
-    return write(data.id, dataArray)
+    return write(id, dataArray)
         .then(() => {
             if (byteString.length <= 18) {
                 return null;
@@ -217,11 +217,11 @@ const setWiFiSSID = (data, ssid) => {
                 dataArray.push(convertHex('0x00'));
             }
             console.log('SSID Data Array 2: ', dataArray);
-            return write(data.id, dataArray);
+            return write(id, dataArray);
         });
 };
 
-const setWiFiPassword = (data, pass) => {
+const setWiFiPassword = (id, pass) => {
     let byteString = convertStringToByteArray(pass);
     let dataArray = [];
     dataArray.push(commands.SET_WIFI_PSW_HEAD);
@@ -233,7 +233,7 @@ const setWiFiPassword = (data, pass) => {
         dataArray.push(convertHex('0x00'));
     }
     console.log('Password Data Array: ', dataArray);
-    return write(data.id, dataArray)
+    return write(id, dataArray)
         .then(() => {
             if (byteString.length <= 18) {
                 return null;
@@ -248,18 +248,18 @@ const setWiFiPassword = (data, pass) => {
                 dataArray.push(convertHex('0x00'));
             }
             console.log('Password Data Array 2: ', dataArray);
-            return write(data.id, dataArray);
+            return write(id, dataArray);
         });
 };
 
-const connectWiFi = (data) => {
+const connectWiFi = (id) => {
     let dataArray = [];
     dataArray.push(convertHex('0x08'));
     dataArray.push(convertHex('0x00'));
     for (let i = 2; i < 20; i+=1) {
         dataArray.push(convertHex('0x00'));
     }
-    return write(data.id, dataArray);
+    return write(id, dataArray);
 };
 
 const readSSID = (id, loopsLeft) => {
