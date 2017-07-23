@@ -10,7 +10,8 @@ const initialState = {
     scanning:      false,
     devicesFound:  [],
     accessoryData: {},
-    resetCount:    0
+    resetCount:    0,
+    networks:      []
 };
 
 export default function bluetoothReducer(state = initialState, action) {
@@ -111,6 +112,11 @@ export default function bluetoothReducer(state = initialState, action) {
         return Object.assign({}, state, {
             wifiScan: false,
             networks: action.data
+        });
+    case Actions.NETWORK_DISCOVERED:
+        let networks = state.networks.some(network => network.label === action.data) ? state.networks : state.networks.push({ key: state.networks.length, label: action.data });
+        return Object.assign({}, state, {
+            networks
         });
     case Actions.CHECK_STATE:
     case Actions.ENABLE_BLUETOOTH:
