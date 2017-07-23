@@ -7,6 +7,8 @@ import {
     BackHandler
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import Prompt from 'react-native-prompt';
+import Modal from 'react-native-modalbox';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors, AppFonts } from '@theme/';
@@ -28,7 +30,10 @@ class KitManagementView extends Component {
         bluetooth:        PropTypes.object,
         resetAccessory:   PropTypes.func.isRequired,
         scanWiFi:         PropTypes.func.isRequired,
-        loginToAccessory: PropTypes.func.isRequired
+        loginToAccessory: PropTypes.func.isRequired,
+        setWiFiSSID:      PropTypes.func.isRequired,
+        setWiFiPassword:  PropTypes.func.isRequired,
+        connectWiFi:      PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -39,13 +44,18 @@ class KitManagementView extends Component {
         super(props);
 
         this.state = {
-            SSID: null,
+            modalStyle: {},
+            SSID:       null
         };
     }
 
     componentWillMount = () => { BackHandler.addEventListener('backPress', () => Actions.pop()); };
 
     componentWillUnmount = () => { BackHandler.removeEventListener('backPress') };
+
+    resizeModal = (ev) => {
+        this.setState({ modalStyle: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
+    }
 
     adminView = () => (
         <Placeholder />
@@ -84,6 +94,40 @@ class KitManagementView extends Component {
                 onPress={() => this.props.resetAccessory(this.props.bluetooth.accessoryData.id)}
             />
             <Text style={{ paddingLeft: 20, fontSize: font10 }}>Assign owner to the kit, change wifi network, or factory reset</Text>
+            <Prompt
+                title={`${this.state.SSID} Password (if needed):`}
+                placeholder={'Password'}
+                visible={this.state.promptVisible}
+                onCancel={() => this.setState({
+                    promptVisible: false
+                })}
+                onSubmit={value => this.props.setWiFiSSID(this.props.bluetooth.accessoryData.id, this.state.SSID).then(() => this.props.setWiFiPassword(this.props.bluetooth.accessoryData.id, value)).then(() => this.props.connectWiFi(this.props.bluetooth.accessoryData.id)).then(() => this.setState({ promptVisible: false }))}
+            />
+            <Modal
+                position={'center'}
+                style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
+                isOpen={this.state.isModalVisible}
+                backButtonClose
+                swipeToClose={false}
+                onClosed={() => this.setState({ trainingGroup: { name: '', user_ids: [] }, isModalVisible: false })}
+            >
+                <View onLayout={(ev) => { this.resizeModal(ev); }}>
+                    <Card title={'Connect to WiFi'}>
+                        <Spacer size={5} />
+                        <ScrollView style={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border, height: AppSizes.screen.heightTwoThirds }}>
+                            {
+                                this.props.bluetooth.nertworks.map(network => (
+                                    <ListItem
+                                        key={network.index}
+                                        title={network.label}
+                                        onPress={() => this.setState({ promptVisible: true })}
+                                    />
+                                ))
+                            }
+                        </ScrollView>
+                    </Card>
+                </View>
+            </Modal>
         </View>
     );
 
