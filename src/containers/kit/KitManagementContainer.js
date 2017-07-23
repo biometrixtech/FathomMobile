@@ -21,7 +21,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
     resetAccessory:   BluetoothActions.resetAccessory,
     scanWiFi:         BluetoothActions.scanWiFi,
-    loginToAccessory: BluetoothActions.loginToAccessory
+    loginToAccessory: BluetoothActions.loginToAccessory,
+    setWiFiSSID:      BluetoothActions.setWiFiSSID,
+    setWiFiPassword:  BluetoothActions.setWiFiPassword,
+    connectWiFi:      BluetoothActions.connectWiFi
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitManagementRender);
