@@ -50,7 +50,7 @@ const getOwnerOrganization = (id, user) => {
     let dataArray = [convertHex(commands.GET_OWNER_ORG, '0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
-            console.log({response});
+            console.log(response);
             return BLEConfig.unparse(response.slice(4,20))
         })
         .then(organizationUUID => dispatch({
@@ -262,46 +262,32 @@ const connectWiFi = (data) => {
     return write(data.id, dataArray);
 };
 
-const readSSID = (id, loopsLeft, wifiList) => {
-    if (loopsLeft > 0) {
-        return wait(100)
+const readSSID = (id, loopsLeft) => {
+    if (loopsLeft >= 0) {
+        return dispatch => wait(100)
             .then(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID))
             .then(response => {
+                console.log((new Date().getTime()));
                 console.log(response);
-                wifiList.push(convertByteArrayToString(response.slice(3)));
-                return readSSID(id, loopsLeft-1, wifiList);
+                dispatch({
+                    type: Actions.NETWORK_DISCOVERED,
+                    data: convertByteArrayToString(response.slice(3))
+                })
+                return readSSID(id, loopsLeft-1);
             });
     }
-    return wifiList;
+    return loopsLeft;
 };
 
 const scanWiFi = (id) => {
     let dataArray = [commands.WIFI_SCAN, convertHex('0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
-            console.log('------------------------------------');
-            console.log({response});
-            console.log('------------------------------------');
-            dispatch({
+            return dispatch({
                 type: Actions.WIFI_SCAN
             });
-            console.log((new Date().getTime()));
-            return wait(1000);
         })
-        .then(() => {
-            console.log((new Date().getTime()));
-            return BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID);
-        })
-        .then(response => {
-            console.log('------------------------------------');
-            console.log({response});
-            console.log('------------------------------------');
-            return readSSID(id, response[4], []);
-        })
-        .then(response => dispatch({
-            type: Actions.NETWORKS_DISCOVERED,
-            data: response
-        }))
+        .then(() => readSSID(id, 100))
         .catch(err => Promise.reject(err));
 };
 
