@@ -30,12 +30,8 @@ const convertStringToByteArray = (string) => {
   *   'test'
   */
 const convertByteArrayToString = (array) => {
-    return array.map(byte => String.fromCharCode(byte)).join('');
+    return array.map(byte =>  byte ? String.fromCharCode(byte) : '').join('');
 };
-
-const wasSuccessful = (response) => {
-    return response[4];
-}
 
 const convertHex = (value) => {
     return parseInt(value, 16);
