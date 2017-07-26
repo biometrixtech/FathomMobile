@@ -47,8 +47,11 @@ class KitOwnerView extends Component {
 
     componentWillMount = () => {
         return this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id, this.props.user)
+            .catch(e => console.log(e))
             .then(() => this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id, this.props.user))
-            .then(() => this.props.getOwnerUser(this.props.bluetooth.accessoryData.id, this.props.user));
+            .catch(e => console.log(e))
+            .then(() => this.props.getOwnerUser(this.props.bluetooth.accessoryData.id, this.props.user))
+            .catch(e => console.log(e));
     };
 
     adminView = () => (
