@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         flex:   1,
-        margin: 20,
+        margin: 20
     },
 
     // Main Menu
@@ -195,7 +195,7 @@ class Menu extends Component {
             <View style={[styles.container]}>
                 <View style={[styles.backgroundFill]} />
 
-                <Image resizeMode={Image.resizeMode.contain} style={[styles.imageContainer, { borderRadius: 50 }]} source={{ uri: this.props.user.avatar_url }} />
+                <Image resizeMode={'contain'} style={[styles.imageContainer]} source={{ uri: this.props.user.avatar_url }} />
 
                 <Spacer />
 
@@ -217,7 +217,6 @@ class Menu extends Component {
                     <View style={[styles.menuBottom]}>
                         <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
                             <Button
-                                textStyle={{ fontFamily: 'ProximaNova' }}
                                 backgroundColor={MENU_BG_COLOR}
                                 title={'Log Out'}
                                 onPress={this.logout}

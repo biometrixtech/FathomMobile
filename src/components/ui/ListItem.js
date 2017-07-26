@@ -45,8 +45,8 @@ class CustomListItem extends Component {
                 borderTopColor:    AppColors.border,
                 borderBottomColor: AppColors.border,
             }],
-            titleStyle:    [AppStyles.baseText],
-            subtitleStyle: [AppStyles.subtext],
+            titleStyle:      [AppStyles.baseText],
+            subtitleStyle:   [AppStyles.subtext],
         };
 
         if (this.props.containerStyle) {

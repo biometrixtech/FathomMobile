@@ -34,7 +34,8 @@ class TeamCaptureSessionView extends Component {
         patchTrainingGroup:  PropTypes.func.isRequired,
         removeTrainingGroup: PropTypes.func.isRequired,
         teamSelect:          PropTypes.func.isRequired,
-        selectTrainingGroup: PropTypes.func.isRequired
+        selectTrainingGroup: PropTypes.func.isRequired,
+        getAccessories:      PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -49,13 +50,18 @@ class TeamCaptureSessionView extends Component {
 
         this.state = {
             modalStyle:    {},
-            trainingGroup: { name: '', user_ids: [] },
+            trainingGroup: { name: '', user_ids: {}, tier: 'secondary', team_id: this.props.user.teams[this.props.user.teamIndex].id },
         };
     }
 
-    componentWillMount = () => { BackHandler.addEventListener('backPress', () => Actions.pop()); };
+    componentWillMount = () => {
+        BackHandler.addEventListener('backPress', () => Actions.pop());
+        return this.props.getAccessories();
+    };
 
-    componentWillUnmount = () => { BackHandler.removeEventListener('backPress') };
+    componentWillUnmount = () => {
+        BackHandler.removeEventListener('backPress');
+    };
 
     resizeModal = (ev) => {
         this.setState({ modalStyle: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
@@ -112,9 +118,9 @@ class TeamCaptureSessionView extends Component {
                 {/* Section for primary training groups */}
                 <ListItem title={'PRIMARY TRAINING GROUPS'} containerStyle={{ backgroundColor: AppColors.brand.light }} hideChevron/>
                 {
-                    this.props.user.teams[this.props.user.teamIndex].training_groups.filter(trainingGroup => trainingGroup.tier !== 'secondary' && trainingGroup.tier !== null).map(trainingGroup => {
-                        return <ListItem key={trainingGroup.id} title={trainingGroup.name} onPress={() => Promise.resolve(this.props.selectTrainingGroup(trainingGroup)).then(() => Actions.groupCaptureSession())} hideChevron/>;
-                    })
+                    this.props.user.teams[this.props.user.teamIndex].training_groups.filter(trainingGroup => trainingGroup.tier !== 'secondary' && trainingGroup.tier !== null).map(trainingGroup =>
+                        <ListItem key={trainingGroup.id} title={trainingGroup.name} onPress={() => Promise.resolve(this.props.selectTrainingGroup(trainingGroup)).then(() => Actions.groupCaptureSession())} hideChevron/>
+                    )
                 }
                 {/*Section for secondary training groups */}
                 <ListItem
@@ -139,13 +145,13 @@ class TeamCaptureSessionView extends Component {
                 isOpen={this.props.isModalVisible}
                 backButtonClose
                 swipeToClose={false}
-                onClosed={() => { this.setState({ trainingGroup: { name: '', user_ids: [] } }); return Actions.refresh({ isModalVisible: false }); }}
+                onClosed={() => { this.setState({ trainingGroup: { name: '', user_ids: {}, tier: 'secondary', team_id: this.props.user.teams[this.props.user.teamIndex].id } }); return Actions.refresh({ isModalVisible: false }); }}
             >
                 <View onLayout={(ev) => { this.resizeModal(ev); }}>
                     <Card title={`${this.state.trainingGroup.id ? 'Edit' : 'Add'} Training Group`}>
 
                         <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Name</FormLabel>
-                        <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.name} onChangeText={name => this.setState({
+                        <FormInput containerStyle={{ borderWidth: 1, borderColor: AppColors.border }} inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }} value={this.state.trainingGroup.name} onChangeText={name => this.setState({
                             trainingGroup: {
                                 ...this.state.trainingGroup,
                                 name
@@ -154,7 +160,7 @@ class TeamCaptureSessionView extends Component {
 
                         <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Athletes</FormLabel>
                         <Spacer size={5} />
-                        <ScrollView style={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border, height: AppSizes.screen.heightOneThird }}>
+                        <ScrollView style={{ borderWidth: 1, borderColor: AppColors.border, height: AppSizes.screen.heightOneThird }}>
                             {
                                 this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.map(user => {
                                     return (
