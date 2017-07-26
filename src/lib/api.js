@@ -174,8 +174,10 @@ function fetcher(method, inputEndpoint, inputParams, body) {
                 try {
                     jsonRes = await rawRes.json();
                 } catch (error) {
-                    const err = { message: ErrorMessages.invalidJson };
-                    throw err;
+                    if (rawRes.status !== 200) {
+                        const err = { message: ErrorMessages.invalidJson };
+                        throw err;
+                    }
                 }
 
                 // Only continue if the header is successful

@@ -110,6 +110,21 @@ export default {
         researcher:      parseInt('0x01', 16),
     },
 
+    state: {
+        APP_NOTHING:     '0x00',
+        APP_IDLE:        '0x01',
+        APP_STARTUP:     '0X02',
+        APP_STOP:        '0x03',
+        APP_CALIBRATION: '0X04',
+        APP_PRACTICE:    '0x05',
+        APP_TIME_SYNC:   '0X06',
+        APP_READOUT:     '0x07',
+        APP_WAIT:        '0X20',
+        APP_KIT_SETUP:   '0x21',
+        APP_READY:       '0X22',
+        APP_ERROR:       '0xFF'
+    },
+
     parse,
     unparse
 };

@@ -22,7 +22,8 @@ const mapDispatchToProps = {
     patchTrainingGroup:  UserActions.patchTrainingGroup,
     removeTrainingGroup: UserActions.removeTrainingGroup,
     teamSelect:          UserActions.teamSelect,
-    selectTrainingGroup: UserActions.selectTrainingGroup
+    selectTrainingGroup: UserActions.selectTrainingGroup,
+    getAccessories:      UserActions.getAccessories
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeamCaptureSessionView);

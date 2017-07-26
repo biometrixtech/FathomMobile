@@ -11,9 +11,8 @@ import BluetoothConnectRender from './BluetoothConnectView';
 
 // What data from the store shall we send to the component?
 const mapStateToProps = state => ({
-    user:         state.user,
-    devicesFound: state.bluetooth.devicesFound,
-    scanning:     state.bluetooth.scanning,
+    user:      state.user,
+    bluetooth: state.bluetooth
 });
 
 // Any actions to map to the component?
@@ -27,7 +26,9 @@ const mapDispatchToProps = {
     startScan:           BluetoothActions.startScan,
     stopScan:            BluetoothActions.stopScan,
     deviceFound:         BluetoothActions.deviceFound,
-    assignKitName:       BluetoothActions.assignKitName
+    assignKitName:       BluetoothActions.assignKitName,
+    startConnect:        BluetoothActions.startConnect,
+    stopConnect:         BluetoothActions.stopConnect
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BluetoothConnectRender);
