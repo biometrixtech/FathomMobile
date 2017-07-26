@@ -36,8 +36,6 @@
 		7C09FF171EA110CF00DFE46E /* libBleManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C09FF161EA110CF00DFE46E /* libBleManager.a */; };
 		7C3C0AF41E9B3B04008B335E /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C3C0AD51E9B3AE6008B335E /* libART.a */; };
 		7C559C5B1E8E265E000C7EF7 /* ReactNativeCharts in Resources */ = {isa = PBXBuildFile; fileRef = 7C559C5A1E8E265E000C7EF7 /* ReactNativeCharts */; };
-		7C88E95C1E8E2AFC002E169A /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C88E95A1E8E2AFC002E169A /* Charts.framework */; };
-		7C88E95D1E8E2AFC002E169A /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C88E95B1E8E2AFC002E169A /* SwiftyJSON.framework */; };
 		7C8F52081E8C8D440065704A /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8F52061E8C8D440065704A /* Fabric.framework */; };
 		7C8F52091E8C8D440065704A /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8F52071E8C8D440065704A /* Crashlytics.framework */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
@@ -56,8 +54,10 @@
 		CAAD72554B064BCDA3755099 /* Proxima Nova_regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 126A8B3235434A88B96FEC91 /* Proxima Nova_regular.ttf */; };
 		DA02D5C4FF46466CBCDD993A /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 30EEF37A5E2B48A1A490E9DD /* EvilIcons.ttf */; };
 		DA1ECDE8A0534165A084946E /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECDE6F1FEC3D4E42B38084FF /* MaterialIcons.ttf */; };
-		F0520C2DDB3BE49788B6C853 /* Pods_Fathom.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DB08A413C776E48893BC659 /* Pods_Fathom.framework */; };
 		F2D5C432FE4244A1889B6DEA /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 621FED576505468EB9CFE175 /* MaterialCommunityIcons.ttf */; };
+		F52542F81F272A1200D3121B /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F52542F61F272A1200D3121B /* Charts.framework */; };
+		F52542F91F272A1200D3121B /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F52542F71F272A1200D3121B /* SwiftyJSON.framework */; };
+		F52542FA1F272B0500D3121B /* Pods_Fathom.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DB08A413C776E48893BC659 /* Pods_Fathom.framework */; };
 		FB386A0172034FBE90DAFB1C /* libBleManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C6E4FC2E774E7590A79E0F /* libBleManager.a */; };
 /* End PBXBuildFile section */
 
@@ -335,6 +335,13 @@
 			remoteGlobalIDString = 3D383D621EBD27B9005632C8;
 			remoteInfo = "double-conversion-tvOS";
 		};
+		F5FAACD21F271CA80066D3CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 98DA833AC161470F8CDCADD5 /* CodePush.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6463C8241EBA0CB60095B8CD;
+			remoteInfo = "CodePush-tvOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -377,6 +384,7 @@
 		62A8EA882B184930825FDE66 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		676898F0B4DF4578B7A9CF21 /* RNNetworkInfo.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNNetworkInfo.xcodeproj; path = "../node_modules/react-native-network-info/ios/RNNetworkInfo.xcodeproj"; sourceTree = "<group>"; };
 		67C921EF6F2E425487EAC840 /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = "<group>"; };
+		6E3E0B01AF777C9900F050FD /* Pods-Fathom.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fathom.staging.xcconfig"; path = "Pods/Target Support Files/Pods-Fathom/Pods-Fathom.staging.xcconfig"; sourceTree = "<group>"; };
 		764A8B01A0CDBC39A3A59A2D /* Pods-Fathom.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fathom.release.xcconfig"; path = "Pods/Target Support Files/Pods-Fathom/Pods-Fathom.release.xcconfig"; sourceTree = "<group>"; };
 		76BC50C5ED02443CB1D32E96 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -385,8 +393,6 @@
 		7C3C0AD01E9B3AE6008B335E /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
 		7C559C5A1E8E265E000C7EF7 /* ReactNativeCharts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ReactNativeCharts; path = "../node_modules/react-native-charts-wrapper/ios/ReactNativeCharts"; sourceTree = "<group>"; };
 		7C559C7A1E8E2841000C7EF7 /* Fathom-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Fathom-Bridging-Header.h"; sourceTree = "<group>"; };
-		7C88E95A1E8E2AFC002E169A /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = "Pods/../build/Debug-iphoneos/Charts/Charts.framework"; sourceTree = "<group>"; };
-		7C88E95B1E8E2AFC002E169A /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = "Pods/../build/Debug-iphoneos/SwiftyJSON/SwiftyJSON.framework"; sourceTree = "<group>"; };
 		7C8F52061E8C8D440065704A /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		7C8F52071E8C8D440065704A /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
@@ -403,6 +409,8 @@
 		D72471BB64364802A5903573 /* libRCTGoogleAnalyticsBridge.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTGoogleAnalyticsBridge.a; sourceTree = "<group>"; };
 		ECDE6F1FEC3D4E42B38084FF /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		F0DF70ABCEB64C34B8A3254D /* Proxima Nova_bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Proxima Nova_bold.ttf"; path = "../src/assets/fonts/Proxima Nova_bold.ttf"; sourceTree = "<group>"; };
+		F52542F61F272A1200D3121B /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = "../../../Library/Developer/Xcode/DerivedData/Fathom-bpxpenmdxkprgbcvazwplopiksin/Build/Products/Debug-iphoneos/Charts/Charts.framework"; sourceTree = "<group>"; };
+		F52542F71F272A1200D3121B /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = "../../../Library/Developer/Xcode/DerivedData/Fathom-bpxpenmdxkprgbcvazwplopiksin/Build/Products/Debug-iphoneos/SwiftyJSON/SwiftyJSON.framework"; sourceTree = "<group>"; };
 		FE710E9387E94BA1BF4AAB21 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		FFC94F28D95C4DCDB50C1B35 /* BleManager.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = BleManager.xcodeproj; path = "../node_modules/react-native-ble-manager/ios/BleManager.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -420,10 +428,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F52542FA1F272B0500D3121B /* Pods_Fathom.framework in Frameworks */,
+				F52542F81F272A1200D3121B /* Charts.framework in Frameworks */,
+				F52542F91F272A1200D3121B /* SwiftyJSON.framework in Frameworks */,
 				7C09FF171EA110CF00DFE46E /* libBleManager.a in Frameworks */,
 				7C3C0AF41E9B3B04008B335E /* libART.a in Frameworks */,
-				7C88E95C1E8E2AFC002E169A /* Charts.framework in Frameworks */,
-				7C88E95D1E8E2AFC002E169A /* SwiftyJSON.framework in Frameworks */,
 				C97D70A31E23777B00C3C793 /* CoreData.framework in Frameworks */,
 				C97D70C51E2377B200C3C793 /* libsqlite3.0.tbd in Frameworks */,
 				7C8F52091E8C8D440065704A /* Crashlytics.framework in Frameworks */,
@@ -445,7 +454,6 @@
 				5B60ED311A604EF1A3FC93C5 /* libRNVectorIcons.a in Frameworks */,
 				73BC5F2123BC49C9932F59D9 /* libSMXCrashlytics.a in Frameworks */,
 				8E0421D5B6E94F55B6600882 /* libCodePush.a in Frameworks */,
-				F0520C2DDB3BE49788B6C853 /* Pods_Fathom.framework in Frameworks */,
 				5D36B926D4734E9190576BC2 /* libRCTGoogleAnalyticsBridge.a in Frameworks */,
 				FB386A0172034FBE90DAFB1C /* libBleManager.a in Frameworks */,
 				0F484639A57C4BB6B5EBEB06 /* libRNNetworkInfo.a in Frameworks */,
@@ -627,6 +635,7 @@
 			isa = PBXGroup;
 			children = (
 				7CCEC7291E8CBB690054E113 /* libCodePush.a */,
+				F5FAACD31F271CA80066D3CA /* libCodePush.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -721,9 +730,9 @@
 		C97D70A11E23777B00C3C793 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F52542F61F272A1200D3121B /* Charts.framework */,
+				F52542F71F272A1200D3121B /* SwiftyJSON.framework */,
 				7C09FF161EA110CF00DFE46E /* libBleManager.a */,
-				7C88E95A1E8E2AFC002E169A /* Charts.framework */,
-				7C88E95B1E8E2AFC002E169A /* SwiftyJSON.framework */,
 				C97D70C41E2377B200C3C793 /* libsqlite3.0.tbd */,
 				C97D70C21E2377A300C3C793 /* libz.tbd */,
 				C97D70C01E23779800C3C793 /* SystemConfiguration.framework */,
@@ -738,6 +747,7 @@
 			children = (
 				85D4F139C4D4B01A92A2CE41 /* Pods-Fathom.debug.xcconfig */,
 				764A8B01A0CDBC39A3A59A2D /* Pods-Fathom.release.xcconfig */,
+				6E3E0B01AF777C9900F050FD /* Pods-Fathom.staging.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1184,6 +1194,13 @@
 			remoteRef = F587AF981F10D30400183E9B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		F5FAACD31F271CA80066D3CA /* libCodePush.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCodePush.a;
+			remoteRef = F5FAACD21F271CA80066D3CA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1394,6 +1411,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = FNWBQ5KPCK;
+				ENABLE_BITCODE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1430,6 +1448,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FNWBQ5KPCK;
+				ENABLE_BITCODE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1476,6 +1495,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODEPUSH_KEY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1521,6 +1541,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODEPUSH_KEY = "3XYOuPKDlJHXNWTHuEU7xaP65Lj288b8a0aa-79cf-45b3-a798-5a28cd275322";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1540,6 +1561,99 @@
 			};
 			name = Release;
 		};
+		F5FAACCA1F271CA80066D3CA /* Staging */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODEPUSH_KEY = "mL8o9qirBgxyGmFJWgYAy-PFz8uO88b8a0aa-79cf-45b3-a798-5a28cd275322";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Staging;
+		};
+		F5FAACCB1F271CA80066D3CA /* Staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6E3E0B01AF777C9900F050FD /* Pods-Fathom.staging.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FNWBQ5KPCK;
+				ENABLE_BITCODE = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-code-push/ios/CodePush/**",
+					"$(SRCROOT)/../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/**",
+					"$(SRCROOT)/../node_modules/react-native-ble-manager/ios",
+					"$(SRCROOT)/../node_modules/react-native-network-info/ios",
+				);
+				INFOPLIST_FILE = Fathom/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.biometrixtech.Fathom;
+				PRODUCT_NAME = Fathom;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Staging;
+		};
+		F5FAACCC1F271CA80066D3CA /* Staging */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COPY_PHASE_STRIP = NO;
+				INFOPLIST_FILE = FathomTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fathom.app/Fathom";
+			};
+			name = Staging;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1548,6 +1662,7 @@
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
 				00E356F71AD99517003FC87E /* Release */,
+				F5FAACCC1F271CA80066D3CA /* Staging */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1557,6 +1672,7 @@
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
 				13B07F951A680F5B00A75B9A /* Release */,
+				F5FAACCB1F271CA80066D3CA /* Staging */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1566,6 +1682,7 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+				F5FAACCA1F271CA80066D3CA /* Staging */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

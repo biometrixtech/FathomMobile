@@ -33,7 +33,7 @@ if (__DEV__) {
         createLogger(), // Logs state changes to the dev console
     ];
 } else {
-  console.log = () => {};
+    console.log = () => {};
 }
 
 // Init redux store (using the given reducer & middleware)

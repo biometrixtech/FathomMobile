@@ -20,7 +20,13 @@ import { AppSizes, AppStyles, AppColors, AppFonts } from '@theme/';
 // Components
 import { Button, ListItem, Spacer, Text, Card, FormLabel, FormInput } from '@ui/';
 import { Placeholder } from '@general/';
-import { Roles } from '@constants/';
+import { Roles, BLEConfig } from '@constants/';
+
+const bleStates = {
+    CAPTURING: [ BLEConfig.state.APP_PRACTICE, BLEConfig.state.APP_TIME_SYNC, BLEConfig.state.APP_READOUT ],
+    READY:     [ BLEConfig.state.APP_STOP, BLEConfig.state.APP_CALIBRATION, BLEConfig.state.APP_WAIT ],
+    NOT_READY: [ BLEConfig.state.APP_PRACTICE, BLEConfig.state.APP_TIME_SYNC, BLEConfig.state.APP_READOUT, BLEConfig.state.APP_STOP, BLEConfig.state.APP_CALIBRATION, BLEConfig.state.APP_WAIT ] // anything but these
+}
 
 const font20 = AppFonts.scaleFont(20);
 
@@ -32,7 +38,9 @@ class GroupCaptureSessionView extends Component {
         user:               PropTypes.object,
         isModalVisible:     PropTypes.bool,
         patchTrainingGroup: PropTypes.func.isRequired,
-        removeUser:         PropTypes.func.isRequired
+        removeUser:         PropTypes.func.isRequired,
+        startSession:       PropTypes.func.isRequired,
+        stopSession:        PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -52,25 +60,43 @@ class GroupCaptureSessionView extends Component {
         };
     }
 
+    startSession = (userIds) => {
+        return Promise.all(this.props.user.accessories.filter(accessory => userIds.some(userId => userId === accessory.last_user_id)).map(accessory => this.props.startSession(accessory.id)));
+    };
+
+    stopSession = (userIds) => {
+        return Promise.all(this.props.user.accessories.filter(accessory => userIds.some(userId => userId === accessory.last_user_id)).map(accessory => this.props.stopSession(accessory.id)));
+    };
+
     leftButton = (id) => (
         <View style={[{ alignItems: 'flex-end', paddingRight: 25 }, AppStyles.deleteButton]}>
             <Icon name="delete" onPress={() => this.props.removeUser(this.props.user.selectedTrainingGroup.id, id)} type="material-community" color="#FFFFFF" />
         </View>
     );
 
-    rightButtons = () => {
-        // let buttons = [];
-        return [
-            <View style={[{ alignItems: 'flex-start', paddingLeft: 8, borderColor: '#FFFFFF', borderWidth: 1 }, AppStyles.deleteButton]}>
-                <Icon name={'sim-alert'} type={'material-community'} color={'#FFFFFF'} />
-            </View>,
-            <View style={[{ alignItems: 'flex-start', paddingLeft: 7, borderColor: '#FFFFFF', borderWidth: 1 }, AppStyles.deleteButton]}>
-                <Icon name={'battery-alert'} type={'material-community'} color={'#FFFFFF'} />
-            </View>,
+    rightButtons = (id) => {
+        let buttons = [];
+        let accessory = this.props.user.accessories.find(access => access.last_user_id === id);
+        if (accessory && accessory.memory_level && accessory.memory_level > 0.85) {
+            buttons.push(
+                <View style={[{ alignItems: 'flex-start', paddingLeft: 8, borderColor: '#FFFFFF', borderWidth: 1 }, AppStyles.deleteButton]}>
+                    <Icon name={'sim-alert'} type={'material-community'} color={'#FFFFFF'} />
+                </View>
+            );
+        }
+        if (accessory && accessory.battery_level && accessory.battery_level < 0.15) {
+            buttons.push(
+                <View style={[{ alignItems: 'flex-start', paddingLeft: 7, borderColor: '#FFFFFF', borderWidth: 1 }, AppStyles.deleteButton]}>
+                    <Icon name={'battery-alert'} type={'material-community'} color={'#FFFFFF'} />
+                </View>
+            );
+        }
+        buttons.push(
             <View style={[{ alignItems: 'flex-start', paddingLeft: 12, borderColor: '#FFFFFF', borderWidth: 1 }, AppStyles.editButton]}>
-                <Icon name={this.state.active ? 'stop' : 'play'} type={'font-awesome'} color={'#FFFFFF'} />
+                <Icon name={this.state.active ? 'stop' : 'play'} type={'font-awesome'} color={'#FFFFFF'} onPress={() => (this.state.active ? this.stopSession([id]) : this.startSession([id])).then(() => this.setState({ active: !this.state.active }))} />
             </View>
-        ]
+        );
+        return buttons;
     };
 
     resizeModal = (ev) => {
@@ -96,7 +122,7 @@ class GroupCaptureSessionView extends Component {
                     subtitle={this.props.user.selectedTrainingGroup.name}
                     fontFamily={AppStyles.baseText.fontFamily}
                     leftIcon={{ name: this.state.active ? null : 'chevron-left', color: AppColors.brand.blue, type: 'material-community' }}
-                    leftIconOnPress={() => Actions.teamCaptureSession()}
+                    leftIconOnPress={() => Actions.pop()}
                     rightIcon={{ name: 'pencil-circle', color: AppColors.brand.yellow, type: 'material-community'}}
                     onPressRightIcon={() => Actions.refresh({ isModalVisible: true })}
                 />
@@ -110,7 +136,7 @@ class GroupCaptureSessionView extends Component {
                         title={'CAPTURING'}
                         renderBadge={() => (
                             <Text style={{ color: this.state.selectedIndex === 0 ? AppColors.brand.blue : AppColors.lightGrey}}>
-                                {this.props.user.selectedTrainingGroup.users.length}
+                                {this.props.user.selectedTrainingGroup.users.filter(user => this.props.user.accessories.some(accessory => accessory.last_user_id === user.id && bleStates.CAPTURING.some(state => state === accessory.state))).length}
                             </Text>
                         )}
                         allowFontScaling
@@ -120,20 +146,21 @@ class GroupCaptureSessionView extends Component {
                         <View style={{ flex: 1, paddingTop: 2 }}>
                             <ScrollView>
                                 {
-                                    this.props.user.selectedTrainingGroup.users.map(user => {
-                                        return (
-                                            <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} rightButtons={this.rightButtons()} rightButtonWidth={40} style={{padding: 2}}>
-                                                <ListItem avatar={{uri: user.avatar_url }} title={`${user.first_name} ${user.last_name}`} hideChevron/>
-                                            </Swipeable>
-                                        );
-                                    })
+                                    this.props.user.selectedTrainingGroup.users.filter(user => this.props.user.accessories.some(accessory => accessory.last_user_id === user.id && bleStates.CAPTURING.some(state => state === accessory.state))).map(user => (
+                                        <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} rightButtons={this.rightButtons(user.id)} rightButtonWidth={40} style={{padding: 2}}>
+                                            <ListItem avatar={{uri: user.avatar_url }} title={`${user.first_name} ${user.last_name}`} hideChevron/>
+                                        </Swipeable>
+                                    ))
                                 }
                             </ScrollView>
                             <Button
                                 containerViewStyle={{ bottom: 0 , height: 30, width: AppSizes.screen.width, alignSelf: 'center', paddingTop: 2 }}
                                 buttonStyle={{ borderRadius: 0 }}
                                 backgroundColor={AppColors.brand.yellow}
-                                onPress={() => this.setState({ active: !this.state.active })}
+                                onPress={() => {
+                                    let ids = this.props.user.selectedTrainingGroup.users.map(user => user.id);
+                                    return (this.state.action ? this.stopSession(ids) : this.startSession(ids)).then(() => this.setState({ active: !this.state.active }));
+                                }}
                                 color={'#FFFFFF'}
                                 raised={false}
                                 title={`${this.state.active ? 'STOP' : 'START'} GROUP SESSION`}
@@ -146,7 +173,7 @@ class GroupCaptureSessionView extends Component {
                         title={'READY'}
                         renderBadge={() => (
                             <Text style={{ color: this.state.selectedIndex === 1 ? AppColors.brand.blue : AppColors.lightGrey}}>
-                                {this.props.user.selectedTrainingGroup.users.length}
+                                {this.props.user.selectedTrainingGroup.users.filter(user => this.props.user.accessories.some(accessory => accessory.last_user_id === user.id && bleStates.READY.some(state => state === accessory.state))).length}
                             </Text>
                         )}
                         allowFontScaling
@@ -156,20 +183,21 @@ class GroupCaptureSessionView extends Component {
                         <View style={{ flex: 1, paddingTop: 2 }}>
                             <ScrollView>
                                 {
-                                    this.props.user.selectedTrainingGroup.users.map(user => {
-                                        return (
-                                            <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} rightButtons={this.rightButtons()} rightButtonWidth={40} style={{padding: 2}}>
-                                                <ListItem avatar={{uri: user.avatar_url }} title={`${user.first_name} ${user.last_name}`} hideChevron/>
-                                            </Swipeable>
-                                        );
-                                    })
+                                    this.props.user.selectedTrainingGroup.users.filter(user => this.props.user.accessories.some(accessory => accessory.last_user_id === user.id && bleStates.READY.some(state => state === accessory.state))).map(user => (
+                                        <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} rightButtons={this.rightButtons(user.id)} rightButtonWidth={40} style={{padding: 2}}>
+                                            <ListItem avatar={{uri: user.avatar_url }} title={`${user.first_name} ${user.last_name}`} hideChevron/>
+                                        </Swipeable>
+                                    ))
                                 }
                             </ScrollView>
                             <Button
                                 containerViewStyle={{ bottom: 0 , height: 30, width: AppSizes.screen.width, alignSelf: 'center', paddingTop: 2 }}
                                 buttonStyle={{ borderRadius: 0 }}
                                 backgroundColor={AppColors.brand.yellow}
-                                onPress={() => this.setState({ active: !this.state.active })}
+                                onPress={() => {
+                                    let ids = this.props.user.selectedTrainingGroup.users.map(user => user.id);
+                                    return (this.state.action ? this.stopSession(ids) : this.startSession(ids)).then(() => this.setState({ active: !this.state.active }));
+                                }}
                                 color={'#FFFFFF'}
                                 raised={false}
                                 title={`${this.state.active ? 'STOP' : 'START'} GROUP SESSION`}
@@ -182,7 +210,7 @@ class GroupCaptureSessionView extends Component {
                         title={'NOT READY'}
                         renderBadge={() => (
                             <Text style={{ color: this.state.selectedIndex === 2 ? AppColors.brand.blue : AppColors.lightGrey}}>
-                                {this.props.user.selectedTrainingGroup.users.length}
+                                {this.props.user.selectedTrainingGroup.users.filter(user => this.props.user.accessories.some(accessory => accessory.last_user_id === user.id && bleStates.NOT_READY.every(state => state !== accessory.state))).length}
                             </Text>
                         )}
                         allowFontScaling
@@ -192,20 +220,21 @@ class GroupCaptureSessionView extends Component {
                         <View style={{ flex: 1, paddingTop: 2 }}>
                             <ScrollView>
                                 {
-                                    this.props.user.selectedTrainingGroup.users.map(user => {
-                                        return (
-                                            <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} rightButtons={this.rightButtons()} rightButtonWidth={40} style={{padding: 2}}>
-                                                <ListItem avatar={{uri: user.avatar_url }} title={`${user.first_name} ${user.last_name}`} hideChevron/>
-                                            </Swipeable>
-                                        );
-                                    })
+                                    this.props.user.selectedTrainingGroup.users.filter(user => this.props.user.accessories.some(accessory => accessory.last_user_id === user.id && bleStates.NOT_READY.every(state => state !== accessory.state))).map(user => (
+                                        <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} rightButtons={this.rightButtons(user.id)} rightButtonWidth={40} style={{padding: 2}}>
+                                            <ListItem avatar={{uri: user.avatar_url }} title={`${user.first_name} ${user.last_name}`} hideChevron/>
+                                        </Swipeable>
+                                    ))
                                 }
                             </ScrollView>
                             <Button
                                 containerViewStyle={{ bottom: 0 , height: 30, width: AppSizes.screen.width, alignSelf: 'center', paddingTop: 2 }}
                                 buttonStyle={{ borderRadius: 0 }}
                                 backgroundColor={AppColors.brand.yellow}
-                                onPress={() => this.setState({ active: !this.state.active })}
+                                onPress={() => {
+                                    let ids = this.props.user.selectedTrainingGroup.users.map(user => user.id);
+                                    return (this.state.action ? this.stopSession(ids) : this.startSession(ids)).then(() => this.setState({ active: !this.state.active }));
+                                }}
                                 color={'#FFFFFF'}
                                 raised={false}
                                 title={`${this.state.active ? 'STOP' : 'START'} GROUP SESSION`}
@@ -227,7 +256,7 @@ class GroupCaptureSessionView extends Component {
                     <Card title={'Edit Training Group'}>
 
                         <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]}>Name</FormLabel>
-                        <FormInput containerStyle={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border }}
+                        <FormInput containerStyle={{ borderWidth: 1, borderColor: AppColors.border }}
                             inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }}
                             value={this.state.trainingGroup.name}
                             onChangeText={name => this.setState({
@@ -239,7 +268,7 @@ class GroupCaptureSessionView extends Component {
 
                         <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]}>Athetes</FormLabel>
                         <Spacer size={5} />
-                        <ScrollView style={{ borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border, height: AppSizes.screen.heightOneThird }}>
+                        <ScrollView style={{ borderWidth: 1, borderColor: AppColors.border, height: AppSizes.screen.heightOneThird }}>
                             {
                                 this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.map(user => {
                                     return (

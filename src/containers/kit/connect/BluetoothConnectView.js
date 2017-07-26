@@ -10,6 +10,8 @@ import {
     NativeModules,
     Platform,
     PermissionsAndroid,
+    StyleSheet,
+    ActivityIndicator
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NetworkInfo } from 'react-native-network-info';
@@ -32,14 +34,24 @@ const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 const accessoryDiscoverabilityInstruction = 'press & hold buttons simultaneously until the lights flash red and blue';
 const successfullyConnected = ['Your kit is connected!', 'Return to main menu to assign this kit to an athlete and their specific team.'];
 
+/* Styles ==================================================================== */
+const styles = StyleSheet.create({
+    indicator: {
+        position: 'absolute',
+        left:     0,
+        right:    0,
+        bottom:   0,
+        top:      0,
+    }
+});
+
 /* Component ==================================================================== */
 class BluetoothConnectView extends Component {
     static componentName = 'BluetoothConnectView';
 
     static propTypes = {
         user:               PropTypes.object,
-        devicesFound:       PropTypes.array,
-        scanning:           PropTypes.bool,
+        bluetooth:          PropTypes.object,
         connectToAccessory: PropTypes.func.isRequired,
         checkState:         PropTypes.func.isRequired,
         changeState:        PropTypes.func.isRequired,
@@ -48,7 +60,9 @@ class BluetoothConnectView extends Component {
         startScan:          PropTypes.func.isRequired,
         stopScan:           PropTypes.func.isRequired,
         deviceFound:        PropTypes.func.isRequired,
-        assignKitName:      PropTypes.func.isRequired
+        assignKitName:      PropTypes.func.isRequired,
+        startConnect:       PropTypes.func.isRequired,
+        stopConnect:        PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -141,96 +155,18 @@ class BluetoothConnectView extends Component {
         return this.props.changeState(data.state);
     }
 
-    setSSID = (ssid) => {
-        let dataArray = new Array(20);
-        dataArray[0] = parseInt('0x04', 16);
-        dataArray[1] = ssid.length;
-        for (let i = 2; i < 20 && i-2 < ssid.length; i+=1) {
-            dataArray[i] = ssid.charCodeAt(i-2);
-        }
-        for (let i = ssid.length + 2; i < 20; i+=1) {
-            dataArray[i] = parseInt('0x00', 16);
-        }
-        console.log('SSID Data Array: ', dataArray);
-        return this.props.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
-            .then(() => {
-                if (ssid.length <= 18) {
-                    return null;
-                }
-                dataArray = new Array(20);
-                dataArray[0] = parseInt('0x05', 16);
-                dataArray[1] = ssid.length - 18;
-                for (let i = 2; i - 2 < ssid.length - 18; i+=1) {
-                    dataArray[i] = ssid.charCodeAt(i+16);
-                }
-                for (let i = ssid.length - 16; i < 20; i+=1) {
-                    dataArray[i] = parseInt('0x00', 16);
-                }
-                console.log('SSID Data Array 2: ', dataArray);
-                return this.props.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
-            });
-    }
-
-    setWiFiPassword = (passwordAttempt) => {
-        let dataArray = new Array(20);
-        dataArray[0] = parseInt('0x06', 16);
-        dataArray[1] = passwordAttempt.length;
-        for (let i = 2; i < 20 && i-2 < passwordAttempt.length; i+=1) {
-            dataArray[i] = passwordAttempt.charCodeAt(i-2);
-        }
-        for (let i = passwordAttempt.length + 2; i < 20; i+=1) {
-            dataArray[i] = parseInt('0x00', 16);
-        }
-        console.log('Password Data Array: ', dataArray);
-        return this.props.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
-            .then(() => {
-                if (passwordAttempt.length <= 18) {
-                    return null;
-                }
-                dataArray = new Array(20);
-                dataArray[0] = parseInt('0x07', 16);
-                dataArray[1] = passwordAttempt.length - 18;
-                for (let i = 2; i - 2 < passwordAttempt.length - 18; i+=1) {
-                    dataArray[i] = passwordAttempt.charCodeAt(i+16);
-                }
-                for (let i = passwordAttempt.length - 16; i < 20; i+=1) {
-                    dataArray[i] = parseInt('0x00', 16);
-                }
-                console.log('Password Data Array 2: ', dataArray);
-                return this.props.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray);
-            });
-    }
-
-    setupWiFi = (ssid, password) => {
-        return this.setSSID(ssid)
-            .then(() => this.setWiFiPassword(password))
-            .then(() => {
-                let dataArray = new Array(20);
-                dataArray[0] = parseInt('0x08', 16);
-                dataArray[1] = parseInt('0x00', 16);
-                for (let i = 2; i < 20; i+=1) {
-                    dataArray[i] = parseInt('0x00', 16);
-                }
-                return this.props.BleManager.write(this.state.data.id, '3282ae19-ab8b-f495-7544-67e11bb6223f', 'a268ae6f-3433-d999-4e44-42e82070d3de', dataArray)
-            })
-            .then(() => setTimeout(() => this.props.upsertAccessory(this.state.data.id, {
-                name:    this.state.data.name,
-                team_id: this.props.user.teams[0].id,
-            }), 3000))
-            .catch(err => console.log(err));
-    }
-
     connect = (data) => {
         return this.props.stopScan()
             .then(() => this.props.connectToAccessory(data))
-            .then(() => this.props.assignKitName(data.id, data.name))
+            .then(() => this.props.assignKitName(data, data.name))
             .then(() => {
                 this.setState({ index: 3 });
-                return this.refs.carousel.animateToPage(3);
+                this.refs.carousel.animateToPage(3);
+                return this.props.stopConnect();
             })
             .catch((err) => {
                 console.log(err);
-                return err;
+                return this.props.stopConnect();
             });
     }
 
@@ -313,12 +249,21 @@ class BluetoothConnectView extends Component {
 
 
                 <View style={{ flex: 1 }}>
+                    { this.props.bluetooth.indicator ? 
+                        <View style={[styles.indicator, { justifyContent: 'center', alignItems: 'center'}]}>
+                            <ActivityIndicator
+                                animating={true}
+                                size={'large'}
+                                color={'#C1C5C8'}
+                            />
+                        </View> : null
+                    }
                     <View style={[AppStyles.containerCentered, { flex: 3 }]}>
                         <Button
-                            title={this.props.scanning ? 'Stop Scan' : 'Start Scan'}
-                            icon={{ name: `${this.props.scanning ? 'stop' : 'play-arrow'}` }}
-                            buttonStyle={{ backgroundColor: `${this.props.scanning ? AppColors.brand.red : AppColors.brand.primary}` }}
-                            onPress={() => this.toggleScanning(!this.props.scanning)}
+                            title={this.props.bluetooth.scanning ? 'Stop Scan' : 'Start Scan'}
+                            icon={{ name: `${this.props.bluetooth.scanning ? 'stop' : 'play-arrow'}` }}
+                            buttonStyle={{ backgroundColor: `${this.props.bluetooth.scanning ? AppColors.brand.red : AppColors.brand.primary}` }}
+                            onPress={() => this.toggleScanning(!this.props.bluetooth.scanning)}
                             raised
                         />
                         <Spacer size={5}/>
@@ -336,8 +281,14 @@ class BluetoothConnectView extends Component {
                     <View style={{ flex: 4 }}>
                         <ScrollView>
                             {
-                                this.props.devicesFound.map(device => {
-                                    return <ListItem key={device.id} title={device.name} onPress={() => this.connect(device)} titleContainerStyle={{ alignSelf: 'center' }} hideChevron/>
+                                this.props.bluetooth.devicesFound.map(device => {
+                                    return <ListItem
+                                        key={device.id}
+                                        title={device.name}
+                                        onPress={() => this.props.startConnect(device).then(() => this.connect(device))}
+                                        titleContainerStyle={{ alignSelf: 'center' }}
+                                        hideChevron
+                                    />
                                 })
                             }
                         </ScrollView>
