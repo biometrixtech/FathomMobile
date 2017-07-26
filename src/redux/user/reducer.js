@@ -16,7 +16,6 @@ export default function userReducer(state = initialState, action) {
     switch (action.type) {
     case Actions.USER_REPLACE:
     case Actions.GET_TRAINING_GROUPS:
-    case Actions.GET_TEAMS:
     case Actions.ADD_TG:
     case Actions.EDIT_TG:
     case Actions.REMOVE_TG:
@@ -25,6 +24,23 @@ export default function userReducer(state = initialState, action) {
     case Actions.REMOVE_R:
         return  Object.assign({}, state, {
             ...action.data,
+        });
+    case Actions.GET_TEAMS:
+        let teams = action.data.teams.map(team => {
+            let wholeTeamTrainingGroup = {
+                active: true,
+                id: 1,
+                name: 'Full Team',
+                team_id: team.id,
+                tier: 'primary',
+                user_id: null,
+                users: team.users_with_training_groups
+            };
+            team.training_groups.push(wholeTeamTrainingGroup);
+            return team;
+        });
+        return Object.assign({}, state, {
+            teams
         });
     case Actions.CREATE_TRAINING_GROUP:
         let postCreateTeams = state.teams.map((team, index) => {
@@ -62,7 +78,8 @@ export default function userReducer(state = initialState, action) {
         });
     case Actions.REMOVE_USER:
         let updatedSelectedTrainingGroup = state.selectedTrainingGroup.users.filter(user => user.id !== action.data.userId);
-        let updatedUserIds = state.selectedTrainingGroup.user_ids[action.data.userId] = false;
+        let updatedUserIds = state.selectedTrainingGroup.user_ids;
+        updatedUserIds[action.data.userId] = false;
         return Object.assign({}, state, {
             teams:                 action.data.newTeams.teams,
             selectedTrainingGroup: {
@@ -76,15 +93,18 @@ export default function userReducer(state = initialState, action) {
             teamIndex: parseInt(action.data, 10)
         });
     case Actions.TRAINING_GROUP_SELECT:
-        delete action.data.user_ids;
+        let trainingGroup = action.data;
+        trainingGroup.user_ids = trainingGroup.users.reduce((ids, user) => { ids[user.id] = true; return ids; }, {}) || {};
         return Object.assign({}, state, {
-            selectedTrainingGroup: action.data
+            selectedTrainingGroup: trainingGroup
+        });
+    case Actions.GET_ACCESSORIES:
+        let accessories = action.data.users.filter(user => user.accessories.length).reduce((totalAccessories, accessory) => totalAccessories.concat(accessory.accessories), []);
+        return Object.assign({}, state, {
+            accessories
         });
     case Actions.SIGN_UP_SUCCESS:
     case Actions.FORGOT_PASSWORD_SUCCESS:
-    case Actions.ADD_A:
-    case Actions.EDIT_A:
-    case Actions.REMOVE_A:
     default:
         return state;
     }

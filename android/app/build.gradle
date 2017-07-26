@@ -121,7 +121,15 @@ android {
             buildConfigField "String", "CODEPUSH_KEY", '""'
         }
         releaseStaging {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             buildConfigField "String", "CODEPUSH_KEY", '"yUip94F_KaezxSrrlFCDJDrnIRkHNy8a-_BnM"'
+            signingConfig signingConfigs.release
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    output.outputFile = new File(output.outputFile.parent, output.outputFile.name.replace(".apk", "_" + defaultConfig.versionName + ".apk"))
+                }
+            }
         }
         release {
             minifyEnabled true

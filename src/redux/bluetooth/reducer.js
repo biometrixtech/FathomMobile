@@ -10,17 +10,26 @@ const initialState = {
     scanning:      false,
     devicesFound:  [],
     accessoryData: {},
-    resetCount:    0,
-    networks:      []
+    networks:      [],
+    indicator:     false
 };
 
 export default function bluetoothReducer(state = initialState, action) {
     switch (action.type) {
+    case Actions.START_CONNECT:
+        return Object.assign({}, state, {
+            indicator: true
+        });
+    case Actions.STOP_CONNECT:
+        return Object.assign({}, state, {
+            indicator: false
+        });
     case Actions.CONNECT_TO_ACCESSORY:
         return Object.assign({}, state, {
             accessoryData: {
                 ...action.data
-            }
+            },
+            indicator: false
         });
     case Actions.CHANGE_STATE:
         return Object.assign({}, state, {
@@ -41,15 +50,20 @@ export default function bluetoothReducer(state = initialState, action) {
         });
     case Actions.STOP_SCAN:
         return Object.assign({}, state, {
-            scanning: false
+            scanning: false,
         });
     case Actions.ASSIGN_TYPE:
         return Object.assign({}, state, {
             assignType: action.data
         });
     case Actions.ACCESSORY_RESET:
+        let tempAccessory = state.accessoryData;
+        tempAccessory.organizationId = null;
+        tempAccessory.last_user_id = null;
+        tempAccessory.team_id = null;
+        tempAccessory.name = `Fathom_kit_${tempAccessory.id.slice(-2)}`;
         return Object.assign({}, state, {
-            resetCount: state.resetCount + 1
+            accessoryData: tempAccessory
         });
     case Actions.WIFI_SCAN:
         return Object.assign({}, state, {
@@ -60,27 +74,6 @@ export default function bluetoothReducer(state = initialState, action) {
             accessoryData: {
                 ...state.accessoryData,
                 name: action.data
-            }
-        });
-    case Actions.ASSIGN_KIT_INDIVIDUAL:
-        return Object.assign({}, state, {
-            accessoryData: {
-                ...state.accessoryData,
-                individual: action.data
-            }
-        });
-    case Actions.ASSIGN_KIT_TEAM:
-        return Object.assign({}, state, {
-            accessoryData: {
-                ...state.accessoryData,
-                team: action.data
-            }
-        });
-    case Actions.ASSIGN_KIT_ORGANIZATION:
-        return Object.assign({}, state, {
-            accessoryData: {
-                ...state.accessoryData,
-                organization: action.data
             }
         });
     case Actions.GET_KIT_INDIVIDUAL:
@@ -108,16 +101,12 @@ export default function bluetoothReducer(state = initialState, action) {
                 organization
             }
         });
-    case Actions.NETWORKS_DISCOVERED:
-        return Object.assign({}, state, {
-            wifiScan: false,
-            networks: action.data
-        });
     case Actions.NETWORK_DISCOVERED:
-        let networks = state.networks.some(network => network.label === action.data) ? state.networks : state.networks.push({ key: state.networks.length, label: action.data });
+        let networks = state.networks.some(network => network.label === action.data) || action.data === '' ? state.networks : state.networks.concat([{ key: state.networks.length, label: action.data }]);
         return Object.assign({}, state, {
             networks
         });
+    case Actions.WIFI:
     case Actions.CHECK_STATE:
     case Actions.ENABLE_BLUETOOTH:
     case Actions.START_BLUETOOTH:

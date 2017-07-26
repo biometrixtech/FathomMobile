@@ -23,6 +23,8 @@ export default {
         ['training_groups', '/v1/training_groups'],
         ['remove_user',     '/v1/training_groups/{trainingGroupId}/remove_user'],
         ['accessories',     '/v1/accessories'],
+        ['start_session',   '/v1/accessories/{accessoryId}/start_session_event'],
+        ['stop_session',    '/v1/accessories/{accessoryId}/stop_session_event'],
         ['training_events', '/v1/training_events']
     ]),
 

@@ -13,8 +13,6 @@ const write = (id, data) => {
         .then(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID));
 };
 
-
-
 /**
   * Convert string to byte array
   * eg.
@@ -44,15 +42,12 @@ const convertHex = (value) => {
 };
 
 // Creating a promise wrapper for setTimeout
-const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, 1000));
+const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay));
 
 const getOwnerOrganization = (id, user) => {
-    let dataArray = [convertHex(commands.GET_OWNER_ORG, '0x00')];
+    let dataArray = [commands.GET_OWNER_ORG, convertHex('0x00')];
     return dispatch => write(id, dataArray)
-        .then(response => {
-            console.log(response);
-            return BLEConfig.unparse(response.slice(4,20))
-        })
+        .then(response => BLEConfig.unparse(response.slice(4,20)))
         .then(organizationUUID => dispatch({
             type: Actions.GET_KIT_ORGANIZATION,
             data: {
@@ -64,7 +59,7 @@ const getOwnerOrganization = (id, user) => {
 };
 
 const getOwnerTeam = (id, user) => {
-    let dataArray = [convertHex(commands.GET_OWNER_TEAM, '0x00')];
+    let dataArray = [commands.GET_OWNER_TEAM, convertHex('0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
             console.log(response);
@@ -81,12 +76,9 @@ const getOwnerTeam = (id, user) => {
 };
 
 const getOwnerUser = (id, user) => {
-    let dataArray = [convertHex(commands.GET_OWNER_USER, '0x00')];
+    let dataArray = [commands.GET_OWNER_USER, convertHex('0x00')];
     return dispatch => write(id, dataArray)
-        .then(response => {
-            console.log(response);
-            return BLEConfig.unparse(response.slice(4,20));
-        })
+        .then(response => BLEConfig.unparse(response.slice(4,20)))
         .then(userUUID => dispatch({
             type: Actions.GET_KIT_INDIVIDUAL,
             data: {
@@ -153,6 +145,24 @@ const deviceFound = (data) => {
     });
 };
 
+const startConnect = () => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.START_CONNECT
+        })
+    )
+        .catch(err => Promise.reject(err));
+};
+
+const stopConnect = () => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.STOP_CONNECT
+        })
+    )
+        .catch(err => Promise.reject(err));
+};
+
 const connectToAccessory = (data) => {
     return dispatch => BleManager.connect(data.id)
         .then(() => BleManager.retrieveServices(data.id))
@@ -161,8 +171,8 @@ const connectToAccessory = (data) => {
             data: {
                 accessoryConnected: true,
                 ...data
-            }}
-        ))
+            }
+        }))
         .catch(err => Promise.reject(err));
 };
 
@@ -202,7 +212,7 @@ const setWiFiSSID = (id, ssid) => {
         dataArray.push(convertHex('0x00'));
     }
     console.log('SSID Data Array: ', dataArray);
-    return write(id, dataArray)
+    return dispatch => write(id, dataArray)
         .then(() => {
             if (byteString.length <= 18) {
                 return null;
@@ -218,7 +228,10 @@ const setWiFiSSID = (id, ssid) => {
             }
             console.log('SSID Data Array 2: ', dataArray);
             return write(id, dataArray);
-        });
+        })
+        .then(() => dispatch({
+            type: Actions.WIFI
+        }));
 };
 
 const setWiFiPassword = (id, pass) => {
@@ -233,7 +246,7 @@ const setWiFiPassword = (id, pass) => {
         dataArray.push(convertHex('0x00'));
     }
     console.log('Password Data Array: ', dataArray);
-    return write(id, dataArray)
+    return dispatch => write(id, dataArray)
         .then(() => {
             if (byteString.length <= 18) {
                 return null;
@@ -249,7 +262,10 @@ const setWiFiPassword = (id, pass) => {
             }
             console.log('Password Data Array 2: ', dataArray);
             return write(id, dataArray);
-        });
+        })
+        .then(() => dispatch({
+            type: Actions.WIFI
+        }));
 };
 
 const connectWiFi = (id) => {
@@ -259,24 +275,23 @@ const connectWiFi = (id) => {
     for (let i = 2; i < 20; i+=1) {
         dataArray.push(convertHex('0x00'));
     }
-    return write(id, dataArray);
+    return dispatch => write(id, dataArray)
+        .then(() => dispatch({
+            type: Actions.WIFI
+        }));
 };
 
-const readSSID = (id, loopsLeft) => {
-    if (loopsLeft >= 0) {
-        return dispatch => wait(100)
-            .then(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID))
-            .then(response => {
-                console.log((new Date().getTime()));
-                console.log(response);
-                dispatch({
-                    type: Actions.NETWORK_DISCOVERED,
-                    data: convertByteArrayToString(response.slice(3))
-                })
-                return readSSID(id, loopsLeft-1);
+const readSSID = (id) => {
+    return dispatch => wait(100)
+        .then(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID))
+        .then(response => {
+            console.log(response);
+            return dispatch({
+                type: Actions.NETWORK_DISCOVERED,
+                data: convertByteArrayToString(response.slice(3))
             });
-    }
-    return loopsLeft;
+        })
+        .catch(err => console.log(err));
 };
 
 const scanWiFi = (id) => {
@@ -287,69 +302,133 @@ const scanWiFi = (id) => {
                 type: Actions.WIFI_SCAN
             });
         })
-        .then(() => readSSID(id, 100))
         .catch(err => Promise.reject(err));
 };
 
 const resetAccessory = (id) => {
     let dataArray = [commands.FACTORY_RESET, convertHex('0x00')];
+    let resetCmd = [commands.SYS_RESET, convertHex('0x00')];
     return dispatch => write(id, dataArray)
-        .then(() => dispatch({
-            type: Actions.ACCESSORY_RESET
-        }))
+        .then(response => {
+            return write(id, resetCmd);
+        })
+        .then(response => {
+            return dispatch({
+                type: Actions.ACCESSORY_RESET
+            });
+        })
         .catch(err => Promise.reject(err));
 };
 
-const assignKitName = (id, name) => {
+const assignKitName = (accessory, name) => {
     let newName = name.split('Fathom_kit_')[1];
     let dataArray = [commands.SET_KIT_NAME, newName.length];
     dataArray = dataArray.concat(convertStringToByteArray(newName));
-    return dispatch => write(id, dataArray)
-        .then(response => write(id, [commands.STORE_PARAMS, convertHex('0X00')]))
-        .then(respones => dispatch({
+    return dispatch => write(accessory.id, dataArray)
+        .then(response => {
+            return write(accessory.id, [commands.STORE_PARAMS, convertHex('0X00')]);
+        })
+        .then(response => dispatch({
             type: Actions.ASSIGN_KIT_NAME,
             data: name
         }));
 };
 
-const assignKitIndividual = (id, user) => {
+const assignKitIndividual = (accessory, user) => {
     let dataArray = [commands.SET_OWNER_USER, convertHex('0x10')];
-    return dispatch => BLEConfig.parse(user.id)
-        .then(userUUID => write(id, dataArray.concat(userUUID)))
-        .then(response => write(id, [commands.STORE_PARAMS, convertHex('0X00')]))
-        .then(response => dispatch({
-            type: Actions.ASSIGN_KIT_INDIVIDUAL,
-            data: user
-        }))
-        .catch(err => Promise.reject(err))
-};
-
-const assignKitTeam = (id, team) => {
-    let dataArray = [commands.SET_OWNER_TEAM, convertHex('0x10')];
-    return dispatch => BLEConfig.parse(team.id)
-        .then(teamUUID => write(id, dataArray.concat(teamUUID)))
-        .then(response => write(id, [commands.STORE_PARAMS, convertHex('0X00')]))
-        .then(response => dispatch({
-            type: Actions.ASSIGN_KIT_TEAM,
-            data: team
-        }))
-        .catch(err => Promise.reject(err))
-};
-
-const assignKitOrganization = (id, organization) => {
-    let dataArray = [commands.SET_OWNER_ORG, convertHex('0x10')];
-    return dispatch => BLEConfig.parse(organization.id)
-        .then(orgUUID => {console.log(dataArray.concat(orgUUID)); return write(id, dataArray.concat(orgUUID)) })
+    let data;
+    return dispatch => Promise.resolve(dispatch({
+        type: Actions.START_CONNECT
+    }))
+        .then(() => BLEConfig.parse(user.id))
+        .then(userUUID => write(accessory.id, dataArray.concat(userUUID)))
         .then(response => {
-            console.log({response});
-            return write(id, [commands.STORE_PARAMS, convertHex('0X00')])
+            return write(accessory.id, [commands.STORE_PARAMS, convertHex('0X00')]);
         })
         .then(response => {
-            console.log(response);
-            return dispatch({
-                type: Actions.ASSIGN_KIT_ORGANIZATION,
-                data: organization
+            data = accessory;
+            data.individual = user;
+            data.last_user_id = user.id;
+            return AppAPI.accessories.patch(data.id, data);
+        })
+        .then(uploadedAccessory => {
+            dispatch({
+                type: Actions.CONNECT_TO_ACCESSORY,
+                data: {
+                    accessoryConnected: true,
+                    ...data
+                }
+            })
+            dispatch({
+                type: Actions.STOP_CONNECT
             });
+            return null;
+        })
+        .catch(err => Promise.reject(err))
+};
+
+const assignKitTeam = (accessory, team) => {
+    let dataArray = [commands.SET_OWNER_TEAM, convertHex('0x10')];
+    let data;
+    return dispatch => Promise.resolve(dispatch({
+        type: Actions.START_CONNECT
+    }))
+        .then(() => BLEConfig.parse(team.id))
+        .then(teamUUID => write(accessory.id, dataArray.concat(teamUUID)))
+        .then(response => {
+            return write(accessory.id, [commands.STORE_PARAMS, convertHex('0X00')]);
+        })
+        .then(response => {
+            data = accessory;
+            data.team = team;
+            data.team_id = team.id;
+            return AppAPI.accessories.patch(data.id, data);
+        })
+        .then(uploadedAccessory => {
+            dispatch({
+                type: Actions.CONNECT_TO_ACCESSORY,
+                data: {
+                    accessoryConnected: true,
+                    ...data
+                }
+            })
+            dispatch({
+                type: Actions.STOP_CONNECT
+            });
+            return null;
+        })
+        .catch(err => Promise.reject(err))
+};
+
+const assignKitOrganization = (accessory, organization) => {
+    let dataArray = [commands.SET_OWNER_ORG, convertHex('0x10')];
+    let data;
+    return dispatch => Promise.resolve(dispatch({
+        type: Actions.START_CONNECT
+    }))
+        .then(() => BLEConfig.parse(organization.id))
+        .then(orgUUID => write(accessory.id, dataArray.concat(orgUUID)))
+        .then(response => {
+            return write(accessory.id, [commands.STORE_PARAMS, convertHex('0X00')])
+        })
+        .then(response => {
+            data = accessory;
+            data.organization = organization;
+            data.organization_id = organization.id;
+            return AppAPI.accessories.patch(data.id, data);
+        })
+        .then(uploadedAccessory => {
+            dispatch({
+                type: Actions.CONNECT_TO_ACCESSORY,
+                data: {
+                    accessoryConnected: true,
+                    ...data
+                }
+            })
+            dispatch({
+                type: Actions.STOP_CONNECT
+            });
+            return null;
         })
         .catch(err => Promise.reject(err))
 };
@@ -363,6 +442,8 @@ export {
     startScan,
     stopScan,
     deviceFound,
+    startConnect,
+    stopConnect,
     connectToAccessory,
     loginToAccessory,
     setWiFiSSID,
@@ -372,6 +453,7 @@ export {
     getOwnerTeam,
     getOwnerUser,
     resetAccessory,
+    readSSID,
     scanWiFi,
     assignKitName,
     assignKitIndividual,
