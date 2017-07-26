@@ -23,9 +23,9 @@ import { Placeholder } from '@general/';
 import { Roles, BLEConfig } from '@constants/';
 
 const bleStates = {
-    CAPTURING: [ BLEConfig.state.APP_PRACTICE, BLEConfig.state.APP_TIME_SYNC, BLEConfig.state.APP_READOUT ],
-    READY:     [ BLEConfig.state.APP_STOP, BLEConfig.state.APP_CALIBRATION, BLEConfig.state.APP_WAIT ],
-    NOT_READY: [ BLEConfig.state.APP_PRACTICE, BLEConfig.state.APP_TIME_SYNC, BLEConfig.state.APP_READOUT, BLEConfig.state.APP_STOP, BLEConfig.state.APP_CALIBRATION, BLEConfig.state.APP_WAIT ] // anything but these
+    CAPTURING: [ BLEConfig.state.APP_PRACTICE ],
+    READY:     [ BLEConfig.state.APP_READY ],
+    NOT_READY: [ BLEConfig.state.APP_PRACTICE, BLEConfig.state.APP_READY ] // anything but these
 }
 
 const font20 = AppFonts.scaleFont(20);
