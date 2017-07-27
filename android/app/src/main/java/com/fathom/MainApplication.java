@@ -9,7 +9,6 @@ import com.github.wuxudong.rncharts.MPAndroidChartPackage;
 import com.microsoft.codepush.react.CodePush;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import com.pusherman.networkinfo.RNNetworkInfoPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -43,7 +42,6 @@ public class MainApplication extends Application implements ReactApplication {
           new CodePush(BuildConfig.CODEPUSH_KEY, getApplicationContext(), BuildConfig.DEBUG),
           new VectorIconsPackage(),
           new RNDeviceInfo(),
-          new RNNetworkInfoPackage(),
           new BleManagerPackage()
       );
     }
