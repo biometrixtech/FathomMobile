@@ -2,16 +2,97 @@ PODS:
   - Charts (3.0.2):
     - Charts/Core (= 3.0.2)
   - Charts/Core (3.0.2)
+  - CodePush (4.1.0):
+    - CodePush/Core (= 4.1.0)
+    - CodePush/SSZipArchive (= 4.1.0)
+    - React
+  - CodePush/Core (4.1.0):
+    - React
+  - CodePush/SSZipArchive (4.1.0):
+    - React
+  - React (0.46.4):
+    - React/Core (= 0.46.4)
+  - React/BatchedBridge (0.46.4):
+    - React/Core
+    - React/cxxreact_legacy
+  - React/Core (0.46.4):
+    - Yoga (= 0.46.4.React)
+  - React/cxxreact_legacy (0.46.4):
+    - React/jschelpers_legacy
+  - React/DevSupport (0.46.4):
+    - React/Core
+    - React/RCTWebSocket
+  - React/jschelpers_legacy (0.46.4)
+  - React/RCTActionSheet (0.46.4):
+    - React/Core
+  - React/RCTAnimation (0.46.4):
+    - React/Core
+  - React/RCTGeolocation (0.46.4):
+    - React/Core
+  - React/RCTImage (0.46.4):
+    - React/Core
+    - React/RCTNetwork
+  - React/RCTLinkingIOS (0.46.4):
+    - React/Core
+  - React/RCTNetwork (0.46.4):
+    - React/Core
+  - React/RCTSettings (0.46.4):
+    - React/Core
+  - React/RCTText (0.46.4):
+    - React/Core
+  - React/RCTVibration (0.46.4):
+    - React/Core
+  - React/RCTWebSocket (0.46.4):
+    - React/Core
+  - RNDeviceInfo (0.9.3):
+    - React
+  - RNVectorIcons (4.2.0):
+    - React
   - SwiftyJSON (3.1.4)
+  - Yoga (0.46.4.React)
 
 DEPENDENCIES:
   - Charts (= 3.0.2)
+  - CodePush (from `../node_modules/react-native-code-push`)
+  - React/BatchedBridge (from `../node_modules/react-native`)
+  - React/Core (from `../node_modules/react-native`)
+  - React/DevSupport (from `../node_modules/react-native`)
+  - React/RCTActionSheet (from `../node_modules/react-native`)
+  - React/RCTAnimation (from `../node_modules/react-native`)
+  - React/RCTGeolocation (from `../node_modules/react-native`)
+  - React/RCTImage (from `../node_modules/react-native`)
+  - React/RCTLinkingIOS (from `../node_modules/react-native`)
+  - React/RCTNetwork (from `../node_modules/react-native`)
+  - React/RCTSettings (from `../node_modules/react-native`)
+  - React/RCTText (from `../node_modules/react-native`)
+  - React/RCTVibration (from `../node_modules/react-native`)
+  - React/RCTWebSocket (from `../node_modules/react-native`)
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - SwiftyJSON (= 3.1.4)
+  - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
+
+EXTERNAL SOURCES:
+  CodePush:
+    :path: ../node_modules/react-native-code-push
+  React:
+    :path: ../node_modules/react-native
+  RNDeviceInfo:
+    :path: ../node_modules/react-native-device-info
+  RNVectorIcons:
+    :path: ../node_modules/react-native-vector-icons
+  Yoga:
+    :path: ../node_modules/react-native/ReactCommon/yoga
 
 SPEC CHECKSUMS:
   Charts: 236d6ccdd0ce6feae151d89e829a7397381a21fd
+  CodePush: 098e7c7405113c335374ac3219f30ab7656639b6
+  React: 596d8774642d10fea20b1f24cc591fcf633f73ad
+  RNDeviceInfo: dc3cbee96cd2392cf03d6ff6191dc15f1606a166
+  RNVectorIcons: 6d98d83e944d15014d8071dd9819beb094c61133
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
+  Yoga: 98e24da91afe33bb43fedaf27dafede269c04fe8
 
-PODFILE CHECKSUM: 5d99521675215bfa27c02b1777808fb41e44978e
+PODFILE CHECKSUM: 98acb67e33c51c03cd15821d30c0f2a8e354e5d6
 
 COCOAPODS: 1.2.1
