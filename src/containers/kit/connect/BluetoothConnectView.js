@@ -13,8 +13,7 @@ import {
     StyleSheet,
     ActivityIndicator
 } from 'react-native';
-import { Icon } from 'react-native-elements';
-import { NetworkInfo } from 'react-native-network-info';
+import { Icon } from 'react-native-elements'
 import Carousel from 'react-native-looped-carousel';
 import Collapsible from 'react-native-collapsible';
 import Prompt from 'react-native-prompt';
