@@ -18,7 +18,7 @@ function lineHeight(fontSize) {
 
 const base = {
     size:       scaleFont(16),
-    lineHeight: lineHeight(scaleFont(Platform.OS === 'ios' ? 12 : 14)),
+    lineHeight: lineHeight(scaleFont(Platform.OS === 'ios' ? 13 : 14)),
     family:     'Proxima Nova'
     // ...Platform.select({
     //     ios: {
