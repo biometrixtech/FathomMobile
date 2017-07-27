@@ -2,7 +2,7 @@
  * App Theme - Fonts
  */
 
-import { Dimensions } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 const { width, height } = Dimensions.get('window');
 const realWidth = height > width ? width : height;
 
@@ -18,7 +18,7 @@ function lineHeight(fontSize) {
 
 const base = {
     size:       scaleFont(16),
-    lineHeight: lineHeight(scaleFont(14)),
+    lineHeight: lineHeight(scaleFont(Platform.OS === 'ios' ? 12 : 14)),
     family:     'Proxima Nova'
     // ...Platform.select({
     //     ios: {
