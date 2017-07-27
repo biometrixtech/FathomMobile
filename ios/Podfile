@@ -19,6 +19,27 @@ use_frameworks!
 target 'Fathom' do
   pod 'SwiftyJSON', '3.1.4'
   pod 'Charts', '3.0.2'
+  pod 'CodePush', :path => '../node_modules/react-native-code-push'
+  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  pod 'React', :path => '../node_modules/react-native', :subspecs => [
+      'Core',
+      'DevSupport', # Include this to enable In-App Devmenu if RN >= 0.43
+      'RCTText',
+      'RCTNetwork',
+      'RCTWebSocket', # needed for debugging
+      'RCTActionSheet',
+      'RCTAnimation',
+      'RCTGeolocation',
+      'RCTImage',
+      'RCTLinkingIOS',
+      'RCTSettings',
+      'RCTVibration',
+      'BatchedBridge'
+      # Add any other subspecs you want to use in your project
+    ]
+    # Explicitly include Yoga if you are using RN >= 0.42.0
+    pod "Yoga", :path => "../node_modules/react-native/ReactCommon/yoga"
 end
 
 post_install do |installer|
