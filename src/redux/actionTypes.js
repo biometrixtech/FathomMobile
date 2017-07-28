@@ -39,5 +39,7 @@ module.exports = {
     NETWORK_DISCOVERED:      'NETWORK_DISCOVERED',
     START_SESSION:           'START_SESSION',
     STOP_SESSION:            'STOP_SESSION',
-    WIFI:                    'WIFI'
+    WIFI:                    'WIFI',
+    BLUETOOTH_DISCONNECT:    'BLUETOOTH_DISCONNECT',
+    HANDLE_DISCONNECT:       'HANDLE_DISCONNECT'
 };
