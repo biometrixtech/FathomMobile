@@ -35,7 +35,8 @@ class TeamCaptureSessionView extends Component {
         removeTrainingGroup: PropTypes.func.isRequired,
         teamSelect:          PropTypes.func.isRequired,
         selectTrainingGroup: PropTypes.func.isRequired,
-        getAccessories:      PropTypes.func.isRequired
+        getAccessories:      PropTypes.func.isRequired,
+        getTeams:            PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -56,7 +57,8 @@ class TeamCaptureSessionView extends Component {
 
     componentWillMount = () => {
         BackHandler.addEventListener('backPress', () => Actions.pop());
-        return this.props.getAccessories();
+        return this.props.getTeams()
+            .then(() => this.props.getAccessories());
     };
 
     componentWillUnmount = () => {

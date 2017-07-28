@@ -5,7 +5,11 @@ import React, { Component, PropTypes } from 'react';
 import {
     View,
     ScrollView,
-    BackHandler
+    BackHandler,
+    NativeEventEmitter,
+    NativeModules,
+    StyleSheet,
+    ActivityIndicator
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import Prompt from 'react-native-prompt';
@@ -22,20 +26,41 @@ import { Placeholder } from '@general/';
 const font18 = AppFonts.scaleFont(18);
 const font10 = AppFonts.scaleFont(10);
 
+const BleManagerModule = NativeModules.BleManager;
+const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+
+/* Styles ==================================================================== */
+const styles = StyleSheet.create({
+    indicator: {
+        position: 'absolute',
+        left:     0,
+        right:    0,
+        bottom:   0,
+        top:      0,
+    }
+});
+
 /* Component ==================================================================== */
 class KitManagementView extends Component {
     static componentName = 'KitManagementView';
 
     static propTypes = {
-        user:             PropTypes.object,
-        bluetooth:        PropTypes.object,
-        resetAccessory:   PropTypes.func.isRequired,
-        scanWiFi:         PropTypes.func.isRequired,
-        loginToAccessory: PropTypes.func.isRequired,
-        setWiFiSSID:      PropTypes.func.isRequired,
-        setWiFiPassword:  PropTypes.func.isRequired,
-        connectWiFi:      PropTypes.func.isRequired,
-        readSSID:         PropTypes.func.isRequired
+        user:               PropTypes.object,
+        bluetooth:          PropTypes.object,
+        resetAccessory:     PropTypes.func.isRequired,
+        systemReset:        PropTypes.func.isRequired,
+        scanWiFi:           PropTypes.func.isRequired,
+        startScan:          PropTypes.func.isRequired,
+        loginToAccessory:   PropTypes.func.isRequired,
+        setWiFiSSID:        PropTypes.func.isRequired,
+        setWiFiPassword:    PropTypes.func.isRequired,
+        connectWiFi:        PropTypes.func.isRequired,
+        readSSID:           PropTypes.func.isRequired,
+        handleDisconnect:   PropTypes.func.isRequired,
+        assignKitName:      PropTypes.func.isRequired,
+        connectToAccessory: PropTypes.func.isRequired,
+        startConnect:       PropTypes.func.isRequired,
+        stopConnect:        PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -49,6 +74,9 @@ class KitManagementView extends Component {
             modalStyle: {},
             SSID:       null
         };
+
+        this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
+        // this.handleDisconnectPeripheral = this.handleDisconnectPeripheral.bind(this);
     }
 
     readSSID = (id, loopsLeft) => {
@@ -56,9 +84,29 @@ class KitManagementView extends Component {
             .then(() => loopsLeft-1 >= 0 ? this.readSSID(id, loopsLeft-1) : null);
     };
 
-    componentWillMount = () => { BackHandler.addEventListener('backPress', () => Actions.pop()); };
+    componentDidMount = () => {
+        BackHandler.addEventListener('backPress', () => Actions.pop());
 
-    componentWillUnmount = () => { BackHandler.removeEventListener('backPress') };
+        this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral );
+        this._interval = setInterval(() => {
+            return this.props.bluetooth.accessoryData.id ? this.props.handleDisconnect(this.props.bluetooth.accessoryData.id) : null;
+        }, 10000);
+    }
+
+    componentWillUnmount = () => {
+        BackHandler.removeEventListener('backPress');
+
+        this.handlerDiscover.remove();
+        clearInterval(this._interval);
+    }
+
+    handleDiscoverPeripheral = (data) => {
+        return data.id === this.props.bluetooth.accessoryData.id ? this.props.connectToAccessory(data)
+            .then(() => this.props.assignKitName(data, data.name))
+            .then(() => this.props.loginToAccessory(data, this.props.user))
+            .catch(err => console.log(err))
+            .then(() => this.props.stopConnect()): null;
+    }
 
     resizeModal = (ev) => {
         this.setState({ modalStyle: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
@@ -74,6 +122,15 @@ class KitManagementView extends Component {
 
     biometrixAdminView = () => (
         <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]} >
+            { this.props.bluetooth.indicator ?
+                <View style={[styles.indicator, { justifyContent: 'center', alignItems: 'center'}]}>
+                    <ActivityIndicator
+                        animating={true}
+                        size={'large'}
+                        color={'#C1C5C8'}
+                    />
+                </View> : null
+            }
             <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>SETTINGS</Text>
             <ListItem
                 title={'Connect Kit'}
@@ -102,7 +159,14 @@ class KitManagementView extends Component {
                                 title={'Reset'}
                                 chevronColor={ AppColors.brand.blue }
                                 titleStyle={{ color: AppColors.brand.blue }}
-                                onPress={() => this.props.resetAccessory(this.props.bluetooth.accessoryData.id).then(() => this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user))}
+                                onPress={() => this.props.startConnect()
+                                    .then(() => this.props.resetAccessory(this.props.bluetooth.accessoryData.id))
+                                    .then(() => {
+                                        this.props.systemReset(this.props.bluetooth.accessoryData.id);
+                                        return this.props.startScan();
+                                    })
+
+                                }
                             />
                         </View>
                     ) : (
