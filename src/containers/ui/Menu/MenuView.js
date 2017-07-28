@@ -92,12 +92,15 @@ const styles = StyleSheet.create({
 class Menu extends Component {
     static propTypes = {
         logout:        PropTypes.func.isRequired,
+        disconnect:    PropTypes.func.isRequired,
         closeSideMenu: PropTypes.func.isRequired,
-        user:          PropTypes.object
+        user:          PropTypes.object,
+        id:            PropTypes.string,
     }
 
     static defaultProps = {
         user: null,
+        id:   null
     }
 
     constructor(props) {
@@ -159,7 +162,9 @@ class Menu extends Component {
 
     logout = () => {
         if (this.props.logout) {
-            this.props.logout()
+            this.props.disconnect(this.props.id)
+                .catch(err => console.log(err))
+                .then(() => this.props.logout())
                 .then(() => {
                     this.props.closeSideMenu();
                     return Actions.login();
