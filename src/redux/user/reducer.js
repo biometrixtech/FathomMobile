@@ -28,19 +28,22 @@ export default function userReducer(state = initialState, action) {
     case Actions.GET_TEAMS:
         let teams = action.data.teams.map(team => {
             let wholeTeamTrainingGroup = {
-                active: true,
-                id: 1,
-                name: 'Full Team',
+                active:  true,
+                id:      1,
+                name:    'Full Team',
                 team_id: team.id,
-                tier: 'primary',
+                tier:    'primary',
                 user_id: null,
-                users: team.users_with_training_groups
+                users:   team.users_with_training_groups
             };
             team.training_groups.push(wholeTeamTrainingGroup);
             return team;
         });
+        let group = Object.keys(state.selectedTrainingGroup).length === 0 ? {} 
+            : teams[state.teamIndex].training_groups.find(trainingGroup => trainingGroup.id === state.selectedTrainingGroup.id);
         return Object.assign({}, state, {
-            teams
+            teams,
+            selectedTrainingGroup: group
         });
     case Actions.CREATE_TRAINING_GROUP:
         let postCreateTeams = state.teams.map((team, index) => {

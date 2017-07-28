@@ -72,19 +72,23 @@ class KitAssignView extends Component {
         let accessory = this.props.bluetooth.accessoryData;
         let assignType = this.props.bluetooth.assignType;
         let users = this.props.user.teams[this.props.user.teamIndex].users_with_training_groups;
-        let category;
+        let category, name;
         switch(assignType) {
         case 'team':
-            category = this.props.bluetooth.accessoryData.team ? this.props.bluetooth.accessoryData.team.name : 'TEAM';
+            category =  'TEAM';
+            name = this.props.bluetooth.accessoryData.team ? this.props.bluetooth.accessoryData.team.name : '{None}';
             break;
         case 'individual':
-            category = this.props.bluetooth.accessoryData.individual ? `${this.props.bluetooth.accessoryData.individual.first_name} ${this.props.bluetooth.accessoryData.individual.last_name}` : 'INDIVIDUAL';
+            category = 'INDIVIDUAL';
+            name = this.props.bluetooth.accessoryData.individual ? `${this.props.bluetooth.accessoryData.individual.first_name} ${this.props.bluetooth.accessoryData.individual.last_name}` : '{None}';
             break;
         case 'organization':
-            category = this.props.bluetooth.accessoryData.organization ? this.props.bluetooth.accessoryData.organization.name : 'ORGANIZATION';
+            category = 'ORGANIZATION';
+            name = this.props.bluetooth.accessoryData.organization ? this.props.bluetooth.accessoryData.organization.name : '{None}';
             break;
         default:
             category = '';
+            name = '';
             break;
         }
 
@@ -118,7 +122,7 @@ class KitAssignView extends Component {
                         hideChevron
                     />
                     {
-                        assignType !== 'organization' ? 
+                        assignType !== 'organization' && this.state.editing ? 
                             <SearchBar
                                 containerStyle={{ backgroundColor: '#FFFFFF', borderWidth: 0 }}
                                 inputStyle={{ backgroundColor: '#FFFFFF' }}
@@ -131,31 +135,49 @@ class KitAssignView extends Component {
                         {
                             assignType === 'individual'
                                 ?
-                                users.filter(user => `${user.first_name} ${user.last_name}`.toUpperCase().indexOf(this.state.searchText.toUpperCase()) > -1).map(user => {
-                                    return <ListItem
-                                        key={user.id}
-                                        title={`${user.first_name} ${user.last_name}`}
-                                        onPress={() => this.state.editing ? this.props.assignKitIndividual(accessory, user) : null}
-                                        hideChevron
-                                    />
-                                })
-                                :
-                                assignType === 'team'
-                                    ?
-                                    this.props.user.teams.filter(team => team.name.toUpperCase().indexOf(this.state.searchText.toUpperCase()) > -1).map(team => {
+                                (this.state.editing ?
+                                    users.filter(user => `${user.first_name} ${user.last_name}`.toUpperCase().indexOf(this.state.searchText.toUpperCase()) > -1).map(user => {
                                         return <ListItem
-                                            key={team.id}
-                                            title={team.name}
-                                            onPress={() => this.state.editing ? this.props.assignKitTeam(accessory, team) : null}
+                                            key={user.id}
+                                            title={`${user.first_name} ${user.last_name}`}
+                                            onPress={() => this.props.assignKitIndividual(accessory, user)}
                                             hideChevron
                                         />
                                     })
-                                    :
-                                    <ListItem
-                                        title={this.props.user.organization.name}
-                                        onPress={() => this.state.editing ? this.props.assignKitOrganization(accessory, this.props.user.organization) : null}
+                                    : <ListItem
+                                        key={'individual'}
+                                        title={name}
                                         hideChevron
-                                    />
+                                    />)
+                                :
+                                assignType === 'team'
+                                    ?
+                                    (this.state.editing ?
+                                        this.props.user.teams.filter(team => team.name.toUpperCase().indexOf(this.state.searchText.toUpperCase()) > -1).map(team => {
+                                            return <ListItem
+                                                key={team.id}
+                                                title={team.name}
+                                                onPress={() => this.props.assignKitTeam(accessory, team)}
+                                                hideChevron
+                                            />
+                                        })
+                                        : <ListItem
+                                            key={'team'}
+                                            title={name}
+                                            hideChevron
+                                        />)
+                                    :
+                                    (this.state.editing ?
+                                        <ListItem
+                                            title={this.props.user.organization.name}
+                                            onPress={() => this.props.assignKitOrganization(accessory, this.props.user.organization)}
+                                            hideChevron
+                                        />
+                                        : <ListItem
+                                            key={'organization'}
+                                            title={name}
+                                            hideChevron
+                                        />)
                         }
                     </ScrollView>
                 </View>

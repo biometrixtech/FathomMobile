@@ -5,7 +5,8 @@ import React, { Component, PropTypes } from 'react';
 import {
     ScrollView,
     View,
-    BackHandler
+    BackHandler,
+    RefreshControl
 } from 'react-native';
 import { Icon, CheckBox } from 'react-native-elements';
 import Swipeable from 'react-native-swipeable';
@@ -52,6 +53,7 @@ class TeamCaptureSessionView extends Component {
         this.state = {
             modalStyle:    {},
             trainingGroup: { name: '', user_ids: {}, tier: 'secondary', team_id: this.props.user.teams[this.props.user.teamIndex].id },
+            refreshing:    false,
         };
     }
 
@@ -64,6 +66,17 @@ class TeamCaptureSessionView extends Component {
     componentWillUnmount = () => {
         BackHandler.removeEventListener('backPress');
     };
+
+    _onRefresh() {
+        this.setState({refreshing: true});
+        return this.props.getTeams()
+            .catch(e => console.log(e))
+            .then(() => this.props.getAccessories())
+            .catch(e => console.log(e))
+            .then(() => {
+                this.setState({refreshing: false});
+            });
+    }
 
     resizeModal = (ev) => {
         this.setState({ modalStyle: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
@@ -111,7 +124,15 @@ class TeamCaptureSessionView extends Component {
     );
 
     biometrixAdminView = () => (
-        <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]}>
+        <ScrollView
+            style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]}
+            refreshControl={
+                <RefreshControl
+                    refreshing={this.state.refreshing}
+                    onRefresh={this._onRefresh.bind(this)}
+                />
+            }
+        >
             <View style={{ justifyContent: 'center', flexDirection: 'row', backgroundColor: '#FFFFFF', paddingTop: 15, paddingBottom: 15 }} >
                 <ModalDropdown options={this.props.user.teams.map(team => team.name)} defaultIndex={this.props.user.teamIndex} defaultValue={this.props.user.teams[this.props.user.teamIndex].name} textStyle={AppStyles.h3} dropdownTextStyle={AppStyles.h3} onSelect={index => this.props.teamSelect(index)} />
                 <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }} color={AppColors.brand.blue}/>
@@ -198,7 +219,7 @@ class TeamCaptureSessionView extends Component {
                     </Card>
                 </View>
             </Modal>
-        </View>
+        </ScrollView>
     );
 
     managerView = () => (
