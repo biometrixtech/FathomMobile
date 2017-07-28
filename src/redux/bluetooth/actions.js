@@ -284,7 +284,7 @@ const readSSID = (id) => {
             console.log(response);
             return dispatch({
                 type: Actions.NETWORK_DISCOVERED,
-                data: convertByteArrayToString(response.slice(3))
+                data: response[3] === 1 ? '' : convertByteArrayToString(response.slice(3))
             });
         })
         .catch(err => console.log(err));
@@ -303,11 +303,7 @@ const scanWiFi = (id) => {
 
 const resetAccessory = (id) => {
     let dataArray = [commands.FACTORY_RESET, convertHex('0x00')];
-    let resetCmd = [commands.SYS_RESET, convertHex('0x00')];
     return dispatch => write(id, dataArray)
-        .then(response => {
-            return write(id, resetCmd);
-        })
         .then(response => {
             return dispatch({
                 type: Actions.ACCESSORY_RESET
@@ -316,8 +312,18 @@ const resetAccessory = (id) => {
         .catch(err => Promise.reject(err));
 };
 
+const systemReset = (id) => {
+    let resetCmd = [commands.SYS_RESET, convertHex('0x00')];
+    return dispatch => write(id, resetCmd)
+        .then(res => {
+            return dispatch({
+                type: Actions.ACCESSORY_RESET
+            })
+        });
+}
+
 const assignKitName = (accessory, name) => {
-    let newName = name.split('Fathom_kit_')[1];
+    let newName = accessory.name.split('Fathom_kit_')[1];
     let dataArray = [commands.SET_KIT_NAME, newName.length];
     dataArray = dataArray.concat(convertStringToByteArray(newName));
     return dispatch => write(accessory.id, dataArray)
@@ -429,6 +435,23 @@ const assignKitOrganization = (accessory, organization) => {
         .catch(err => Promise.reject(err))
 };
 
+const disconnect = (id) => {
+    return dispatch => BleManager.disconnect(id)
+        .then(() => BleManager.removePeripheral(id))
+        .then(() => dispatch({
+            type: Actions.BLUETOOTH_DISCONNECT
+        }));
+}
+
+const handleDisconnect = (id) => {
+    return dispatch => BleManager.isPeripheralConnected(id, [])
+        .then(isConnected => isConnected ? null : BleManager.connect(id))
+        .then(() => BleManager.retrieveServices(id))
+        .then(services => dispatch({
+            type: Actions.HANDLE_DISCONNECT
+        }));
+}
+
 export {
     assignType,
     checkState,
@@ -449,10 +472,13 @@ export {
     getOwnerTeam,
     getOwnerUser,
     resetAccessory,
+    systemReset,
     readSSID,
     scanWiFi,
     assignKitName,
     assignKitIndividual,
     assignKitTeam,
-    assignKitOrganization
+    assignKitOrganization,
+    disconnect,
+    handleDisconnect
 };

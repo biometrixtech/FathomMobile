@@ -6,6 +6,7 @@ import {
     Image,
     ScrollView,
     View,
+    RefreshControl
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -42,6 +43,7 @@ class KitOwnerView extends Component {
         super(props);
 
         this.state = {
+            refreshing: false,
         };
     }
 
@@ -54,6 +56,19 @@ class KitOwnerView extends Component {
             .catch(e => console.log(e));
     };
 
+    _onRefresh() {
+        this.setState({refreshing: true});
+        return this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id, this.props.user)
+            .catch(e => console.log(e))
+            .then(() => this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id, this.props.user))
+            .catch(e => console.log(e))
+            .then(() => this.props.getOwnerUser(this.props.bluetooth.accessoryData.id, this.props.user))
+            .catch(e => console.log(e))
+            .then(() => {
+                this.setState({refreshing: false});
+            });
+    }
+
     adminView = () => (
         <Placeholder />
     );
@@ -63,7 +78,15 @@ class KitOwnerView extends Component {
     );
 
     biometrixAdminView = () => (
-        <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]} >
+        <ScrollView
+            style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]}
+            refreshControl={
+                <RefreshControl
+                    refreshing={this.state.refreshing}
+                    onRefresh={this._onRefresh.bind(this)}
+                />
+            }
+        >
             <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', height: AppSizes.screen.heightOneThird }}>
                 <Image source={require('@images/kit-diagram.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthTwoThirds, height: AppSizes.screen.widthTwoThirds * 268/509 }}/>
                 <Spacer size={5}/>
@@ -98,7 +121,7 @@ class KitOwnerView extends Component {
                 />
                 <Text style={{ paddingLeft: 20, fontSize: font10 }}>Edit your school, team, and name above.</Text>
             </View>
-        </View>
+        </ScrollView>
     );
 
     managerView = () => (
