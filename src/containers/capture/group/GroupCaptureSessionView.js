@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import {
     ScrollView,
     View,
+    RefreshControl
 } from 'react-native';
 import { Platform } from 'react-native';
 import { Icon, Tab, Tabs, CheckBox } from 'react-native-elements';
@@ -40,7 +41,9 @@ class GroupCaptureSessionView extends Component {
         patchTrainingGroup: PropTypes.func.isRequired,
         removeUser:         PropTypes.func.isRequired,
         startSession:       PropTypes.func.isRequired,
-        stopSession:        PropTypes.func.isRequired
+        stopSession:        PropTypes.func.isRequired,
+        getAccessories:     PropTypes.func.isRequired,
+        getTeams:           PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -56,8 +59,20 @@ class GroupCaptureSessionView extends Component {
             height:        0,
             active:        false,
             trainingGroup: props.user.selectedTrainingGroup,
-            modalStyle:    {}
+            modalStyle:    {},
+            refreshing:    false
         };
+    }
+
+    _onRefresh() {
+        this.setState({refreshing: true});
+        return this.props.getTeams()
+            .catch(e => console.log(e))
+            .then(() => this.props.getAccessories())
+            .catch(e => console.log(e))
+            .then(() => {
+                this.setState({refreshing: false});
+            });
     }
 
     startSession = (userIds) => {
@@ -144,7 +159,14 @@ class GroupCaptureSessionView extends Component {
                         onPress={() => this.setState({ selectedIndex: 0 })}
                     >
                         <View style={{ flex: 1, paddingTop: 2 }}>
-                            <ScrollView>
+                            <ScrollView
+                                refreshControl={
+                                    <RefreshControl
+                                        refreshing={this.state.refreshing}
+                                        onRefresh={this._onRefresh.bind(this)}
+                                    />
+                                }
+                            >
                                 {
                                     this.props.user.selectedTrainingGroup.users.filter(user => this.props.user.accessories.some(accessory => accessory.last_user_id === user.id && bleStates.CAPTURING.some(state => state === accessory.state))).map(user => (
                                         <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} rightButtons={this.rightButtons(user.id)} rightButtonWidth={40} style={{padding: 2}}>
@@ -181,7 +203,14 @@ class GroupCaptureSessionView extends Component {
                         onPress={() => this.setState({ selectedIndex: 1 })}
                     >
                         <View style={{ flex: 1, paddingTop: 2 }}>
-                            <ScrollView>
+                            <ScrollView
+                                refreshControl={
+                                    <RefreshControl
+                                        refreshing={this.state.refreshing}
+                                        onRefresh={this._onRefresh.bind(this)}
+                                    />
+                                }
+                            >
                                 {
                                     this.props.user.selectedTrainingGroup.users.filter(user => this.props.user.accessories.some(accessory => accessory.last_user_id === user.id && bleStates.READY.some(state => state === accessory.state))).map(user => (
                                         <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} rightButtons={this.rightButtons(user.id)} rightButtonWidth={40} style={{padding: 2}}>
@@ -218,7 +247,14 @@ class GroupCaptureSessionView extends Component {
                         onPress={() => this.setState({ selectedIndex: 2 })}
                     >
                         <View style={{ flex: 1, paddingTop: 2 }}>
-                            <ScrollView>
+                            <ScrollView
+                                refreshControl={
+                                    <RefreshControl
+                                        refreshing={this.state.refreshing}
+                                        onRefresh={this._onRefresh.bind(this)}
+                                    />
+                                }
+                            >
                                 {
                                     this.props.user.selectedTrainingGroup.users.filter(user => this.props.user.accessories.some(accessory => accessory.last_user_id === user.id && bleStates.NOT_READY.every(state => state !== accessory.state))).map(user => (
                                         <Swipeable key={user.id} leftButtons={[this.leftButton(user.id)]} rightButtons={this.rightButtons(user.id)} rightButtonWidth={40} style={{padding: 2}}>
