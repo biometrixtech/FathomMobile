@@ -56,7 +56,8 @@ class KitAssignView extends Component {
 
         this.state = {
             editing:    false,
-            searchText: ''
+            searchText: '',
+            bold:       false
         };
     }
 
@@ -117,8 +118,8 @@ class KitAssignView extends Component {
                         title={category}
                         containerStyle={{ padding: 10, backgroundColor: AppColors.brand.light }}
                         rightTitle={`${this.state.editing ? 'DONE' : 'EDIT'}`}
-                        rightTitleStyle={[AppStyles.baseText, { color: AppColors.brand.yellow }]}
-                        onPress={() => this.setState({ editing: !this.state.editing })}
+                        rightTitleStyle={[AppStyles.baseText, { color: AppColors.brand.yellow, fontWeight: this.state.bold ? 'bold' : 'normal' }]}
+                        onPress={() => this.setState({ editing: !this.state.editing, bold: false })}
                         hideChevron
                     />
                     {
@@ -140,7 +141,8 @@ class KitAssignView extends Component {
                                         return <ListItem
                                             key={user.id}
                                             title={`${user.first_name} ${user.last_name}`}
-                                            onPress={() => this.props.assignKitIndividual(accessory, user)}
+                                            containerStyle={{ backgroundColor: `${user.first_name} ${user.last_name}` === name ? AppColors.brand.fogGrey : AppColors.background }}
+                                            onPress={() => { this.setState({ bold: true }); this.props.assignKitIndividual(accessory, user); }}
                                             hideChevron
                                         />
                                     })
@@ -157,7 +159,8 @@ class KitAssignView extends Component {
                                             return <ListItem
                                                 key={team.id}
                                                 title={team.name}
-                                                onPress={() => this.props.assignKitTeam(accessory, team)}
+                                                containerStyle={{ backgroundColor: team.name === name ? AppColors.brand.fogGrey : AppColors.background }}
+                                                onPress={() => { this.setState({ bold: true }); this.props.assignKitTeam(accessory, team); }}
                                                 hideChevron
                                             />
                                         })
@@ -170,7 +173,8 @@ class KitAssignView extends Component {
                                     (this.state.editing ?
                                         <ListItem
                                             title={this.props.user.organization.name}
-                                            onPress={() => this.props.assignKitOrganization(accessory, this.props.user.organization)}
+                                            containerStyle={{ backgroundColor: this.props.user.organization.name === name ? AppColors.brand.fogGrey : AppColors.background }}
+                                            onPress={() => { this.setState({ bold: true }); this.props.assignKitOrganization(accessory, this.props.user.organization); }}
                                             hideChevron
                                         />
                                         : <ListItem
