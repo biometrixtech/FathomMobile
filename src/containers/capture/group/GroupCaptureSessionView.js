@@ -129,18 +129,33 @@ class GroupCaptureSessionView extends Component {
     biometrixAdminView = () => (
         <View style={[AppStyles.container]}>
             <View>
-                <ListItem onLayout={(ev) => this.setState({ height: ev.nativeEvent.layout.height })} 
-                    containerStyle={{ borderBottomWidth: 0 }}
-                    titleContainerStyle={{ alignSelf: 'center', marginLeft: this.state.active ? 52 : 0 }}
-                    title={this.props.user.teams[this.props.user.teamIndex].name}
-                    subtitleContainerStyle={{ alignSelf: 'center', marginLeft: this.state.active ? 51 : 0 }}
-                    subtitle={this.props.user.selectedTrainingGroup.name}
-                    fontFamily={AppStyles.baseText.fontFamily}
-                    leftIcon={{ name: this.state.active ? null : 'chevron-left', color: AppColors.brand.blue, type: 'material-community' }}
-                    leftIconOnPress={() => Actions.pop()}
-                    rightIcon={{ name: 'pencil-circle', color: AppColors.brand.yellow, type: 'material-community'}}
-                    onPressRightIcon={() => Actions.refresh({ isModalVisible: true })}
-                />
+                {
+                    this.props.user.selectedTrainingGroup.name === 'Full Team' ?
+                        <ListItem onLayout={(ev) => this.setState({ height: ev.nativeEvent.layout.height })}
+                            containerStyle={{ borderBottomWidth: 0 }}
+                            titleContainerStyle={{ alignSelf: 'center', marginRight: 52 }}
+                            title={this.props.user.teams[this.props.user.teamIndex].name}
+                            subtitleContainerStyle={{ alignSelf: 'center', marginRight: 51 }}
+                            subtitle={this.props.user.selectedTrainingGroup.name}
+                            fontFamily={AppStyles.baseText.fontFamily}
+                            leftIcon={{ name: this.state.active ? null : 'chevron-left', color: AppColors.brand.blue, type: 'material-community' }}
+                            leftIconOnPress={() => Actions.pop()}
+                            hideChevron
+                        />
+                        :
+                        <ListItem onLayout={(ev) => this.setState({ height: ev.nativeEvent.layout.height })}
+                            containerStyle={{ borderBottomWidth: 0 }}
+                            titleContainerStyle={{ alignSelf: 'center' }}
+                            title={this.props.user.teams[this.props.user.teamIndex].name}
+                            subtitleContainerStyle={{ alignSelf: 'center' }}
+                            subtitle={this.props.user.selectedTrainingGroup.name}
+                            fontFamily={AppStyles.baseText.fontFamily}
+                            leftIcon={{ name: this.state.active ? null : 'chevron-left', color: AppColors.brand.blue, type: 'material-community' }}
+                            leftIconOnPress={() => Actions.pop()}
+                            rightIcon={{ name: 'pencil-circle', color: AppColors.brand.yellow, type: 'material-community'}}
+                            onPressRightIcon={() => Actions.refresh({ isModalVisible: true })}
+                        />
+                }
                 <Spacer size={this.state.height}/>
                 <Tabs sceneStyle={{ backgroundColor: AppColors.brand.light, height: AppSizes.screen.height - AppSizes.navbarHeight - (2*this.state.height) + (Platform.OS === 'ios' ? 35 : 15) }}
                     tabBarStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 2, borderColor: AppColors.shadowColor }}

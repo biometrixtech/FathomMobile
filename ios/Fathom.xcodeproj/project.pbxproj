@@ -309,13 +309,6 @@
 			remoteGlobalIDString = 139D7E881E25C6D100323FB7;
 			remoteInfo = "double-conversion";
 		};
-		F52084341F0C345800752BE0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 676898F0B4DF4578B7A9CF21 /* RNNetworkInfo.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 045BEB3C1B52EA6A0013C1B9;
-			remoteInfo = RNNetworkInfo;
-		};
 		F587AF961F10D30400183E9B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
@@ -387,11 +380,9 @@
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		621FED576505468EB9CFE175 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		62A8EA882B184930825FDE66 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
-		676898F0B4DF4578B7A9CF21 /* RNNetworkInfo.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNNetworkInfo.xcodeproj; path = "../node_modules/react-native-network-info/ios/RNNetworkInfo.xcodeproj"; sourceTree = "<group>"; };
 		76BC50C5ED02443CB1D32E96 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		7B91DDA8D97044CF9869F87C /* Proxima Nova_regular_italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Proxima Nova_regular_italic.ttf"; path = "../src/assets/fonts/Proxima Nova_regular_italic.ttf"; sourceTree = "<group>"; };
-		7C09FF161EA110CF00DFE46E /* libBleManager.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBleManager.a; path = "../node_modules/react-native-ble-manager/ios/build/Debug-iphoneos/libBleManager.a"; sourceTree = "<group>"; };
 		7C3C0AD01E9B3AE6008B335E /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
 		7C559C5A1E8E265E000C7EF7 /* ReactNativeCharts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ReactNativeCharts; path = "../node_modules/react-native-charts-wrapper/ios/ReactNativeCharts"; sourceTree = "<group>"; };
 		7C559C7A1E8E2841000C7EF7 /* Fathom-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Fathom-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -675,7 +666,6 @@
 				98DA833AC161470F8CDCADD5 /* CodePush.xcodeproj */,
 				0242B8CEC5604E53A24EBDED /* RCTGoogleAnalyticsBridge.xcodeproj */,
 				FFC94F28D95C4DCDB50C1B35 /* BleManager.xcodeproj */,
-				676898F0B4DF4578B7A9CF21 /* RNNetworkInfo.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -738,7 +728,6 @@
 			children = (
 				F543BB7C1F2987DC0096364F /* Charts.framework */,
 				F543BB7D1F2987DC0096364F /* SwiftyJSON.framework */,
-				7C09FF161EA110CF00DFE46E /* libBleManager.a */,
 				C97D70C41E2377B200C3C793 /* libsqlite3.0.tbd */,
 				C97D70C21E2377A300C3C793 /* libz.tbd */,
 				C97D70C01E23779800C3C793 /* SystemConfiguration.framework */,
@@ -752,14 +741,6 @@
 			isa = PBXGroup;
 			children = (
 				F520840C1F0C345800752BE0 /* libBleManager.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		F52084311F0C345800752BE0 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F52084351F0C345800752BE0 /* libRNNetworkInfo.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -902,10 +883,6 @@
 				{
 					ProductGroup = C97D70681E23756B00C3C793 /* Products */;
 					ProjectRef = 0179DBCBC56442DCBBF69B9D /* RNDeviceInfo.xcodeproj */;
-				},
-				{
-					ProductGroup = F52084311F0C345800752BE0 /* Products */;
-					ProjectRef = 676898F0B4DF4578B7A9CF21 /* RNNetworkInfo.xcodeproj */;
 				},
 				{
 					ProductGroup = C97D706C1E23756B00C3C793 /* Products */;
@@ -1170,13 +1147,6 @@
 			remoteRef = F520842C1F0C345800752BE0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F52084351F0C345800752BE0 /* libRNNetworkInfo.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNNetworkInfo.a;
-			remoteRef = F52084341F0C345800752BE0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		F587AF971F10D30400183E9B /* libthird-party.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1418,7 +1388,6 @@
 					"$(SRCROOT)/../node_modules/react-native-code-push/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/**",
 					"$(SRCROOT)/../node_modules/react-native-ble-manager/ios",
-					"$(SRCROOT)/../node_modules/react-native-network-info/ios",
 				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1453,7 +1422,6 @@
 					"$(SRCROOT)/../node_modules/react-native-code-push/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/**",
 					"$(SRCROOT)/../node_modules/react-native-ble-manager/ios",
-					"$(SRCROOT)/../node_modules/react-native-network-info/ios",
 				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1614,7 +1582,6 @@
 					"$(SRCROOT)/../node_modules/react-native-code-push/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/**",
 					"$(SRCROOT)/../node_modules/react-native-ble-manager/ios",
-					"$(SRCROOT)/../node_modules/react-native-network-info/ios",
 				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

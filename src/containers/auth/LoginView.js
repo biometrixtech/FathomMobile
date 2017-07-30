@@ -172,7 +172,7 @@ class Login extends Component {
                         // }
                     });
                 }).catch((err) => {
-                    console.error(err);
+                    console.log(err);
                     const error = AppAPI.handleError(err);
                     this.setState({ resultMsg: { error } });
                 });
