@@ -269,7 +269,6 @@ class BluetoothConnectView extends Component {
                         <Text style={{ color: AppColors.brand.yellow }} onPress={() => this.setState({ isCollapsed: !this.state.isCollapsed })}>{'Can\'t find your device?'}</Text>
                         <Spacer size={5}/>
                         <Text>{`Fathom pin: '${BLEConfig.pin}'`}</Text>
-                        <Spacer size={5}/>
                         <Collapsible collapsed={this.state.isCollapsed} >
                             <FormLabel labelStyle={[AppStyles.h4]} >
                                 { `${accessoryDiscoverabilityInstruction}. Then rescan.` }
