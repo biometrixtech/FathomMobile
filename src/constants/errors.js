@@ -4,7 +4,7 @@
 
 export default {
     // Defaults
-    default:     'Hmm, an unknown error occured',
+    default:     'Hmm, an unknown error occurred',
     timeout:     'Server Timed Out. Check your internet connection',
     invalidJson: 'Response returned is not valid JSON',
 };

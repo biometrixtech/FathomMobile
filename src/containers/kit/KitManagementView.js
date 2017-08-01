@@ -105,7 +105,7 @@ class KitManagementView extends Component {
             .then(() => this.props.assignKitName(data, data.name))
             .then(() => this.props.loginToAccessory(data, this.props.user))
             .catch(err => console.log(err))
-            .then(() => this.props.stopConnect()): null;
+            .then(() => this.props.stopConnect()) : null;
     }
 
     resizeModal = (ev) => {
@@ -153,7 +153,7 @@ class KitManagementView extends Component {
                                 title={'WiFi'}
                                 chevronColor={ AppColors.brand.blue }
                                 titleStyle={{ color: AppColors.brand.blue }}
-                                onPress={() => { this.setState({ isModalVisible: true }); return this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user).then(() => this.props.scanWiFi(this.props.bluetooth.accessoryData.id)).then(() => this.readSSID(this.props.bluetooth.accessoryData.id, 30)); }}
+                                onPress={() => { this.setState({ isModalVisible: true }); return this.props.assignKitName(this.props.bluetooth.accessoryData, this.props.bluetooth.accessoryData.name).then(() => this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user)).then(() => this.props.scanWiFi(this.props.bluetooth.accessoryData.id)).then(() => this.readSSID(this.props.bluetooth.accessoryData.id, 30)); }}
                             />
                             <ListItem
                                 title={'Reset'}
