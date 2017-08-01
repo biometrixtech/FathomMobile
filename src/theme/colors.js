@@ -17,7 +17,7 @@ const app = {
 const brand = {
     brand: {
         primary: '#0b587c', // Blue: #177896, Red: #8e223a, Old: #0E4EF8, Blue(Jasmine): #0b587c
-        red:     '#891e20',
+        red:     '#972c2f',
         yellow:  '#e0af12',
         blue:    '#0b587c',
         grey:    '#dee1e9',

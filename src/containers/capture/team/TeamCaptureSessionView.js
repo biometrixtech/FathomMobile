@@ -124,43 +124,67 @@ class TeamCaptureSessionView extends Component {
     );
 
     biometrixAdminView = () => (
-        <ScrollView
-            style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]}
-            refreshControl={
-                <RefreshControl
-                    refreshing={this.state.refreshing}
-                    onRefresh={this._onRefresh.bind(this)}
-                />
-            }
-        >
-            <View style={{ justifyContent: 'center', flexDirection: 'row', backgroundColor: '#FFFFFF', paddingTop: 15, paddingBottom: 15 }} >
-                <ModalDropdown options={this.props.user.teams.map(team => team.name)} defaultIndex={this.props.user.teamIndex} defaultValue={this.props.user.teams[this.props.user.teamIndex].name} textStyle={AppStyles.h3} dropdownTextStyle={AppStyles.h3} onSelect={index => this.props.teamSelect(index)} />
-                <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }} color={AppColors.brand.blue}/>
-            </View>
-            <ScrollView>
-                {/* Section for primary training groups */}
-                <ListItem title={'PRIMARY TRAINING GROUPS'} containerStyle={{ backgroundColor: AppColors.brand.light }} hideChevron/>
-                {
-                    this.props.user.teams[this.props.user.teamIndex].training_groups.filter(trainingGroup => trainingGroup.tier !== 'secondary' && trainingGroup.tier !== null).map(trainingGroup =>
-                        <ListItem key={trainingGroup.id} title={trainingGroup.name} onPress={() => Promise.resolve(this.props.selectTrainingGroup(trainingGroup)).then(() => Actions.groupCaptureSession())} hideChevron/>
-                    )
+        <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]}>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={this.state.refreshing}
+                        onRefresh={this._onRefresh.bind(this)}
+                    />
                 }
-                {/*Section for secondary training groups */}
-                <ListItem
-                    title={'SECONDARY TRAINING GROUPS'}
-                    containerStyle={{ backgroundColor: AppColors.brand.light }}
-                    rightIcon={{ name: 'plus-circle', type: 'material-community', color: AppColors.brand.yellow }}
-                    onPressRightIcon={() => Actions.refresh({ isModalVisible: true })}
-                />
-                {
-                    this.props.user.teams[this.props.user.teamIndex].training_groups.filter(trainingGroup => trainingGroup.tier === 'secondary' || trainingGroup.tier === null).map(trainingGroup => {
-                        return (
-                            <Swipeable key={trainingGroup.id} leftButtons={[this.leftButton(trainingGroup.id)]} rightButtons={[this.rightButton(trainingGroup)]} >
-                                <ListItem title={trainingGroup.name} onPress={() => Promise.resolve(this.props.selectTrainingGroup(trainingGroup)).then(() => Actions.groupCaptureSession())} hideChevron/>
-                            </Swipeable>
-                        );
-                    })
-                }
+            >
+                <View style={{ justifyContent: 'center', backgroundColor: '#FFFFFF', paddingTop: 15, paddingBottom: 15 }} >
+                    {
+                        this.props.user.teams.length > 1 ?
+                            <View style={{ justifyContent: 'center', flexDirection: 'row' }}>
+                                <ModalDropdown
+                                    options={this.props.user.teams.map(team => team.name)}
+                                    defaultIndex={this.props.user.teamIndex}
+                                    defaultValue={this.props.user.teams[this.props.user.teamIndex].name}
+                                    textStyle={AppStyles.h3}
+                                    dropdownTextStyle={AppStyles.h3}
+                                    onSelect={index => {
+                                        return Promise.resolve(this.props.teamSelect(index))
+                                            .then(() => this.setState({
+                                                trainingGroup: {
+                                                    ...this.state.trainingGroup,
+                                                    team_id: this.props.user.teams[this.props.user.teamIndex].id
+                                                }
+                                            }));
+                                    }}
+                                />
+                                <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }} color={AppColors.brand.blue}/>
+                            </View>
+                            :
+                            <Text style={AppStyles.h3}>{this.props.user.teams[this.props.user.teamIndex].name || 'No teams'}</Text>
+
+                    }
+                </View>
+                <ScrollView>
+                    {/* Section for primary training groups */}
+                    <ListItem title={'PRIMARY TRAINING GROUPS'} containerStyle={{ backgroundColor: AppColors.brand.light }} hideChevron/>
+                    {
+                        this.props.user.teams[this.props.user.teamIndex].training_groups.filter(trainingGroup => trainingGroup.tier !== 'secondary' && trainingGroup.tier !== null).map(trainingGroup =>
+                            <ListItem key={trainingGroup.id} title={trainingGroup.name} onPress={() => Promise.resolve(this.props.selectTrainingGroup(trainingGroup)).then(() => Actions.groupCaptureSession())} hideChevron/>
+                        )
+                    }
+                    {/*Section for secondary training groups */}
+                    <ListItem
+                        title={'SECONDARY TRAINING GROUPS'}
+                        containerStyle={{ backgroundColor: AppColors.brand.light }}
+                        rightIcon={{ name: 'plus-circle', type: 'material-community', color: AppColors.brand.yellow }}
+                        onPressRightIcon={() => Actions.refresh({ isModalVisible: true })}
+                    />
+                    {
+                        this.props.user.teams[this.props.user.teamIndex].training_groups.filter(trainingGroup => trainingGroup.tier === 'secondary' || trainingGroup.tier === null).map(trainingGroup => {
+                            return (
+                                <Swipeable key={trainingGroup.id} leftButtons={[this.leftButton(trainingGroup.id)]} rightButtons={[this.rightButton(trainingGroup)]} >
+                                    <ListItem title={trainingGroup.name} onPress={() => Promise.resolve(this.props.selectTrainingGroup(trainingGroup)).then(() => Actions.groupCaptureSession())} hideChevron/>
+                                </Swipeable>
+                            );
+                        })
+                    }
+                </ScrollView>
             </ScrollView>
             <Modal
                 position={'center'}
@@ -219,7 +243,7 @@ class TeamCaptureSessionView extends Component {
                     </Card>
                 </View>
             </Modal>
-        </ScrollView>
+        </View>
     );
 
     managerView = () => (

@@ -130,28 +130,24 @@ class GroupCaptureSessionView extends Component {
         <View style={[AppStyles.container]}>
             <View>
                 {
-                    this.props.user.selectedTrainingGroup.name === 'Full Team' ?
+                    this.props.user.selectedTrainingGroup.name === 'Full Team' || this.props.user.selectedTrainingGroup.tier === 'primary' ?
                         <ListItem onLayout={(ev) => this.setState({ height: ev.nativeEvent.layout.height })}
                             containerStyle={{ borderBottomWidth: 0 }}
-                            titleContainerStyle={{ alignSelf: 'center', marginRight: 52 }}
+                            titleContainerStyle={{ alignSelf: 'center' }}
                             title={this.props.user.teams[this.props.user.teamIndex].name}
-                            subtitleContainerStyle={{ alignSelf: 'center', marginRight: 51 }}
+                            subtitleContainerStyle={{ alignSelf: 'center', marginLeft: 1 }}
                             subtitle={this.props.user.selectedTrainingGroup.name}
                             fontFamily={AppStyles.baseText.fontFamily}
-                            leftIcon={{ name: this.state.active ? null : 'chevron-left', color: AppColors.brand.blue, type: 'material-community' }}
-                            leftIconOnPress={() => Actions.pop()}
                             hideChevron
                         />
                         :
                         <ListItem onLayout={(ev) => this.setState({ height: ev.nativeEvent.layout.height })}
                             containerStyle={{ borderBottomWidth: 0 }}
-                            titleContainerStyle={{ alignSelf: 'center' }}
+                            titleContainerStyle={{ alignSelf: 'center', marginLeft: 52 }}
                             title={this.props.user.teams[this.props.user.teamIndex].name}
-                            subtitleContainerStyle={{ alignSelf: 'center' }}
+                            subtitleContainerStyle={{ alignSelf: 'center', marginLeft: 51 }}
                             subtitle={this.props.user.selectedTrainingGroup.name}
                             fontFamily={AppStyles.baseText.fontFamily}
-                            leftIcon={{ name: this.state.active ? null : 'chevron-left', color: AppColors.brand.blue, type: 'material-community' }}
-                            leftIconOnPress={() => Actions.pop()}
                             rightIcon={{ name: 'pencil-circle', color: AppColors.brand.yellow, type: 'material-community'}}
                             onPressRightIcon={() => Actions.refresh({ isModalVisible: true })}
                         />
@@ -193,7 +189,7 @@ class GroupCaptureSessionView extends Component {
                             <Button
                                 containerViewStyle={{ bottom: 0 , height: 30, width: AppSizes.screen.width, alignSelf: 'center', paddingTop: 2 }}
                                 buttonStyle={{ borderRadius: 0 }}
-                                backgroundColor={AppColors.brand.yellow}
+                                backgroundColor={this.state.active ? AppColors.brand.red : AppColors.brand.yellow}
                                 onPress={() => {
                                     let ids = this.props.user.selectedTrainingGroup.users.map(user => user.id);
                                     return (this.state.action ? this.stopSession(ids) : this.startSession(ids)).then(() => this.setState({ active: !this.state.active }));
@@ -237,7 +233,7 @@ class GroupCaptureSessionView extends Component {
                             <Button
                                 containerViewStyle={{ bottom: 0 , height: 30, width: AppSizes.screen.width, alignSelf: 'center', paddingTop: 2 }}
                                 buttonStyle={{ borderRadius: 0 }}
-                                backgroundColor={AppColors.brand.yellow}
+                                backgroundColor={this.state.active ? AppColors.brand.red : AppColors.brand.yellow}
                                 onPress={() => {
                                     let ids = this.props.user.selectedTrainingGroup.users.map(user => user.id);
                                     return (this.state.action ? this.stopSession(ids) : this.startSession(ids)).then(() => this.setState({ active: !this.state.active }));
@@ -281,7 +277,7 @@ class GroupCaptureSessionView extends Component {
                             <Button
                                 containerViewStyle={{ bottom: 0 , height: 30, width: AppSizes.screen.width, alignSelf: 'center', paddingTop: 2 }}
                                 buttonStyle={{ borderRadius: 0 }}
-                                backgroundColor={AppColors.brand.yellow}
+                                backgroundColor={this.state.active ? AppColors.brand.red : AppColors.brand.yellow}
                                 onPress={() => {
                                     let ids = this.props.user.selectedTrainingGroup.users.map(user => user.id);
                                     return (this.state.action ? this.stopSession(ids) : this.startSession(ids)).then(() => this.setState({ active: !this.state.active }));
