@@ -169,7 +169,10 @@ const getTrainingGroups = () => {
  * Create Training Group
  */
 const createTrainingGroup = (trainingGroup) => {
-    return dispatch => AppAPI.training_groups.post(trainingGroup)
+    trainingGroup = Object.assign({}, trainingGroup, {
+        user_ids: Object.keys(trainingGroup.user_ids)
+    });
+    return dispatch => AppAPI.training_groups.post(null, trainingGroup)
         .then(newTrainingGroup => dispatch({
             type: Actions.CREATE_TRAINING_GROUP,
             data: newTrainingGroup,
@@ -182,6 +185,9 @@ const createTrainingGroup = (trainingGroup) => {
 const patchTrainingGroup = (trainingGroup) => {
     let id = trainingGroup.id;
     delete trainingGroup.id;
+    trainingGroup = Object.assign({}, trainingGroup, {
+        user_ids: Object.entries(trainingGroup.user_ids).filter(group => group[1]).map(group => group[0])
+    });
     return dispatch => AppAPI.training_groups.patch(id, trainingGroup)
         .then(patchedTrainingGroup => dispatch({
             type: Actions.PATCH_TRAINING_GROUP,
