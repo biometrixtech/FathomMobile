@@ -46,12 +46,6 @@ export default function userReducer(state = initialState, action) {
             selectedTrainingGroup: group
         });
     case Actions.CREATE_TRAINING_GROUP:
-        action.data = Object.assign({}, action.data, {
-            user_ids: Object.entries(action.data.user_ids).reduce((totalList, current) => {
-                totalList[current[0]] = action.data.user.some(user => user.id === current[0]);
-                return totalList;
-            },{})
-        });
         let postCreateTeams = state.teams.map((team, index) => {
             if (index !== state.teamIndex) {
                 return team;
@@ -63,12 +57,6 @@ export default function userReducer(state = initialState, action) {
             teams: postCreateTeams
         });
     case Actions.PATCH_TRAINING_GROUP:
-        action.data = Object.assign({}, action.data, {
-            user_ids: Object.entries(action.data.user_ids).reduce((totalList, current) => {
-                totalList[current[0]] = action.data.user.some(user => user.id === current[0]);
-                return totalList;
-            },{})
-        });
         let postPatchTeams = state.teams.map((team, index) => {
             if (index !== state.teamIndex) {
                 return team;

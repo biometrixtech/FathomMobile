@@ -84,12 +84,14 @@ class TeamCaptureSessionView extends Component {
 
     addGroup = () => {
         return this.props.createTrainingGroup(this.state.trainingGroup)
-            .then(() => Actions.refresh({ isModalVisible: false }));
+            .then(() => Actions.refresh({ isModalVisible: false }))
+            .then(() => this.props.getTeams());
     }
 
     editGroup = () => {
         return this.props.patchTrainingGroup(this.state.trainingGroup)
-            .then(() => Actions.refresh({ isModalVisible: false }));
+            .then(() => Actions.refresh({ isModalVisible: false }))
+            .then(() => this.props.getTeams());
     }
 
     removeGroup = (id) => {
