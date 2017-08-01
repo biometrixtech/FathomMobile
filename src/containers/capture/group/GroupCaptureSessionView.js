@@ -341,7 +341,13 @@ class GroupCaptureSessionView extends Component {
 
                         <Button
                             title={'Save'}
-                            onPress={() => this.props.patchTrainingGroup(this.state.trainingGroup).then(() => Actions.refresh({ isModalVisible: false }))}
+                            onPress={() => this.props.patchTrainingGroup(this.state.trainingGroup)
+                                .then(() => Actions.refresh({ isModalVisible: false }))
+                                .then(() => this.props.getTeams())
+                                .catch(e => console.log(e))
+                                .then(() => this.props.getAccessories())
+                                .catch(e => console.log(e))
+                            }
                         />
                     </Card>
                 </View>
