@@ -14,32 +14,32 @@ import AuthSignUp from '@containers/auth/SignUp/SignUpContainer';
 
 /* Routes ==================================================================== */
 const scenes = (
-  <Scene key={'login'} type={ActionConst.RESET}>
-    <Scene
-      hideNavBar
-      key={'authLanding'}
-      initial={true}
-      component={Login}
-      type={ActionConst.RESET}
-      analyticsDesc={'LoginView: Login'}
-    />
-    <Scene
-      {...AppConfig.navbarProps}
-      key={'signUp'}
-      title={'Sign Up'}
-      clone
-      component={AuthSignUp}
-      analyticsDesc={'SignUpView: Sign Up'}
-    />
-    <Scene
-      {...AppConfig.navbarProps}
-      key={'passwordReset'}
-      title={'Password Reset'}
-      clone
-      component={AuthForgotPassword}
-      analyticsDesc={'ForgotPasswordView: Forgot Password'}
-    />
-  </Scene>
+    <Scene key={'login'} type={ActionConst.RESET}>
+        <Scene
+            hideNavBar
+            key={'authLanding'}
+            initial={true}
+            component={Login}
+            type={ActionConst.RESET}
+            analyticsDesc={'LoginView: Login'}
+        />
+        <Scene
+            {...AppConfig.navbarProps}
+            key={'signUp'}
+            title={'Sign Up'}
+            clone
+            component={AuthSignUp}
+            analyticsDesc={'SignUpView: Sign Up'}
+        />
+        <Scene
+            {...AppConfig.navbarProps}
+            key={'passwordReset'}
+            title={'Password Reset'}
+            clone
+            component={AuthForgotPassword}
+            analyticsDesc={'ForgotPasswordView: Forgot Password'}
+        />
+    </Scene>
 );
 
 export default scenes;

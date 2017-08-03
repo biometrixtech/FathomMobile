@@ -41,5 +41,7 @@ module.exports = {
     STOP_SESSION:            'STOP_SESSION',
     WIFI:                    'WIFI',
     BLUETOOTH_DISCONNECT:    'BLUETOOTH_DISCONNECT',
-    HANDLE_DISCONNECT:       'HANDLE_DISCONNECT'
+    HANDLE_DISCONNECT:       'HANDLE_DISCONNECT',
+    SET_KIT_TIME:            'SET_KIT_TIME',
+    SET_KIT_STATE:           'SET_KIT_STATE'
 };
