@@ -60,7 +60,9 @@ class KitManagementView extends Component {
         assignKitName:      PropTypes.func.isRequired,
         connectToAccessory: PropTypes.func.isRequired,
         startConnect:       PropTypes.func.isRequired,
-        stopConnect:        PropTypes.func.isRequired
+        stopConnect:        PropTypes.func.isRequired,
+        setKitTime:         PropTypes.func.isRequired,
+        setKitState:        PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -95,6 +97,9 @@ class KitManagementView extends Component {
 
     componentWillUnmount = () => {
         BackHandler.removeEventListener('backPress');
+        if (this.props.bluetooth.accessoryData.id) {
+            this.props.setKitState(this.props.bluetooth.accessoryData.id, 'APP_IDLE');
+        }
 
         this.handlerDiscover.remove();
         clearInterval(this._interval);
@@ -102,8 +107,6 @@ class KitManagementView extends Component {
 
     handleDiscoverPeripheral = (data) => {
         return data.id === this.props.bluetooth.accessoryData.id ? this.props.connectToAccessory(data)
-            .then(() => this.props.assignKitName(data, data.name))
-            .then(() => this.props.loginToAccessory(data, this.props.user))
             .catch(err => console.log(err))
             .then(() => this.props.stopConnect()) : null;
     }
@@ -153,7 +156,13 @@ class KitManagementView extends Component {
                                 title={'WiFi'}
                                 chevronColor={ AppColors.brand.blue }
                                 titleStyle={{ color: AppColors.brand.blue }}
-                                onPress={() => { this.setState({ isModalVisible: true }); return this.props.assignKitName(this.props.bluetooth.accessoryData, this.props.bluetooth.accessoryData.name).then(() => this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user)).then(() => this.props.scanWiFi(this.props.bluetooth.accessoryData.id)).then(() => this.readSSID(this.props.bluetooth.accessoryData.id, 30)); }}
+                                onPress={() => {
+                                    this.setState({ isModalVisible: true });
+                                    return this.props.assignKitName(this.props.bluetooth.accessoryData)
+                                        .then(() =>  this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user))
+                                        .then(() => this.props.scanWiFi(this.props.bluetooth.accessoryData.id))
+                                        .then(() => this.readSSID(this.props.bluetooth.accessoryData.id, 30));
+                                }}
                             />
                             <ListItem
                                 title={'Reset'}

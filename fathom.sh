@@ -100,20 +100,54 @@ start() {
 }
 
 iosBuild() {
-    cd ios
-    xcodebuild clean -workspace Fathom.xcworkspace -scheme Fathom
-    xcodebuild archive -workspace Fathom.xcworkspace -scheme Fathom
-    cd ..
+    echo
+    read -p "${grey}Choose which build type:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Staging`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    echo
+    case "$REPLY" in
+        1)
+            cd ios
+            xcodebuild clean -workspace Fathom.xcworkspace -scheme Fathom -configuration Release
+            xcodebuild archive -workspace Fathom.xcworkspace -scheme Fathom -configuration Release
+            cd ..
+            ;;
+        2)
+            cd ios
+            xcodebuild clean -workspace Fathom.xcworkspace -scheme Fathom -configuration Staging
+            xcodebuild archive -workspace Fathom.xcworkspace -scheme Fathom -configuration Staging
+            cd ..
+            ;;
+        *)
+            echo "${red}Invalid selection${normal}"
+            iosBuild
+            ;;
+    esac
 }
 
 androidBuild() {
-    cd android
-    ./gradlew assembleRelease
-    cd ..
-    # cd app/build/outputs/apk
-    echo "Release apk located at 'android/app/build/outputs/apk/' as app-release_#.apk"
+    echo
+    read -p "${grey}Choose which build type:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Staging`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    echo
+    case "$REPLY" in
+        1)
+            cd android
+            ./gradlew assembleRelease
+            cd ..
+            echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}spencer-release#.apk${normal}"
+            open android/app/build/outputs/apk/
+            ;;
+        2)
+            cd android
+            ./gradlew assembleReleaseStaging
+            cd ..
+            echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}spencer-releaseStaging#.apk${normal}"
+            open android/app/build/outputs/apk/
+            ;;
+        *)
+            echo "${red}Invalid selection${normal}"
+            androidBuild
+            ;;
+    esac
     # adb install app-release*.apk
-    # cd ../../../../../
 }
 
 build() {

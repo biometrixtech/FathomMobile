@@ -2,7 +2,7 @@
  * App Navigation
  */
 import React from 'react';
-import { Actions, Scene, ActionConst } from 'react-native-router-flux';
+import { Scene, ActionConst } from 'react-native-router-flux';
 
 // Consts and Libs
 import { AppConfig } from '@constants/';
@@ -21,7 +21,7 @@ import AppNavigation from './appNavigation';
 import AuthScenes from './auth';
 
 /* Routes ==================================================================== */
-export default Actions.create(
+const scenes = (
     <Scene key={'root'} {...AppConfig.navbarProps}>
         <Scene
             hideNavBar
@@ -94,3 +94,5 @@ export default Actions.create(
 
     </Scene>
 );
+
+export default scenes;

@@ -32,7 +32,9 @@ const mapDispatchToProps = {
     assignKitName:      BluetoothActions.assignKitName,
     connectToAccessory: BluetoothActions.connectToAccessory,
     startConnect:       BluetoothActions.startConnect,
-    stopConnect:        BluetoothActions.stopConnect
+    stopConnect:        BluetoothActions.stopConnect,
+    setKitTime:         BluetoothActions.setKitTime,
+    setKitState:        BluetoothActions.setKitState,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitManagementRender);

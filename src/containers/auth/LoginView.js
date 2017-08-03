@@ -5,6 +5,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import {
+    View,
     KeyboardAvoidingView,
     AsyncStorage,
     StyleSheet,
@@ -213,9 +214,11 @@ class Login extends Component {
                     <Spacer size={10} />
 
                     <TouchableOpacity onPress={Actions.passwordReset}>
-                        <Text p style={[AppStyles.textCenterAligned, AppStyles.link]}>
-                        Forgot Password
-                        </Text>
+                        <View>
+                            <Text p style={[AppStyles.textCenterAligned, AppStyles.link]}>
+                            Forgot Password
+                            </Text>
+                        </View>
                     </TouchableOpacity>
 
                     {/*<Spacer size={10} />

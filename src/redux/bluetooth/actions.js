@@ -7,6 +7,7 @@ import AppAPI from '@lib/api';
 
 const Actions = require('../actionTypes');
 const commands = BLEConfig.commands;
+const state = BLEConfig.state
 
 const write = (id, data) => {
     return BleManager.write(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID, data)
@@ -162,13 +163,15 @@ const stopConnect = () => {
 const connectToAccessory = (data) => {
     return dispatch => BleManager.connect(data.id)
         .then(() => BleManager.retrieveServices(data.id))
-        .then(services => dispatch({
-            type: Actions.CONNECT_TO_ACCESSORY,
-            data: {
-                accessoryConnected: true,
-                ...data
-            }
-        }))
+        .then(services => {
+            return dispatch({
+                type: Actions.CONNECT_TO_ACCESSORY,
+                data: {
+                    accessoryConnected: true,
+                    ...data
+                }
+            });
+        })
         .catch(err => Promise.reject(err));
 };
 
@@ -181,9 +184,15 @@ const loginToAccessory = (data, {role, id}) => {
             dataArray.push(convertHex('0x11'));
             dataArray.push(hexRole);
             dataArray = dataArray.concat(convertedUUID);
+            console.log('------------------------------------');
+            console.log(dataArray);
+            console.log('------------------------------------');
             return write(data.id, dataArray);
         })
         .then(accessoryLoginResult => {
+            console.log('------------------------------------');
+            console.log(accessoryLoginResult);
+            console.log('------------------------------------');
             return AppAPI.accessories.patch(data.id, data);
         })
         .then(uploadedAccessory => dispatch({
@@ -322,18 +331,26 @@ const systemReset = (id) => {
         });
 }
 
-const assignKitName = (accessory, name) => {
+const assignKitName = (accessory) => {
     let newName = accessory.name.split('Fathom_kit_')[1];
     let dataArray = [commands.SET_KIT_NAME, newName.length];
     dataArray = dataArray.concat(convertStringToByteArray(newName));
     return dispatch => write(accessory.id, dataArray)
         .then(response => {
+            console.log('------------------------------------');
+            console.log(response);
+            console.log('------------------------------------');
             return write(accessory.id, [commands.STORE_PARAMS, convertHex('0X00')]);
         })
-        .then(response => dispatch({
-            type: Actions.ASSIGN_KIT_NAME,
-            data: name
-        }));
+        .then(response => {
+            console.log('------------------------------------');
+            console.log(response);
+            console.log('------------------------------------');
+            return dispatch({
+                type: Actions.ASSIGN_KIT_NAME,
+                data: accessory.name
+            });
+        });
 };
 
 const assignKitIndividual = (accessory, user) => {
@@ -345,9 +362,15 @@ const assignKitIndividual = (accessory, user) => {
         .then(() => BLEConfig.parse(user.id))
         .then(userUUID => write(accessory.id, dataArray.concat(userUUID)))
         .then(response => {
+            console.log('------------------------------------');
+            console.log(response);
+            console.log('------------------------------------');
             return write(accessory.id, [commands.STORE_PARAMS, convertHex('0X00')]);
         })
         .then(response => {
+            console.log('------------------------------------');
+            console.log(response);
+            console.log('------------------------------------');
             data = accessory;
             data.individual = user;
             data.last_user_id = user.id;
@@ -378,9 +401,15 @@ const assignKitTeam = (accessory, team) => {
         .then(() => BLEConfig.parse(team.id))
         .then(teamUUID => write(accessory.id, dataArray.concat(teamUUID)))
         .then(response => {
+            console.log('------------------------------------');
+            console.log(response);
+            console.log('------------------------------------');
             return write(accessory.id, [commands.STORE_PARAMS, convertHex('0X00')]);
         })
         .then(response => {
+            console.log('------------------------------------');
+            console.log(response);
+            console.log('------------------------------------');
             data = accessory;
             data.team = team;
             data.team_id = team.id;
@@ -411,9 +440,15 @@ const assignKitOrganization = (accessory, organization) => {
         .then(() => BLEConfig.parse(organization.id))
         .then(orgUUID => write(accessory.id, dataArray.concat(orgUUID)))
         .then(response => {
+            console.log('------------------------------------');
+            console.log(response);
+            console.log('------------------------------------');
             return write(accessory.id, [commands.STORE_PARAMS, convertHex('0X00')])
         })
         .then(response => {
+            console.log('------------------------------------');
+            console.log(response);
+            console.log('------------------------------------');
             data = accessory;
             data.organization = organization;
             data.organization_id = organization.id;
@@ -452,6 +487,25 @@ const handleDisconnect = (id) => {
         }));
 }
 
+const setKitTime = (id) => {
+    let dataArray = [commands.SET_TIME, convertHex('0x04')];
+    return dispatch => write(id, dataArray.concat(Math.round((new Date()).getTime() / 1000).toString(16).match(/.{1,2}/g).map(val => convertHex(val)))) // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
+        .then(result => {
+            console.log(result);
+            return dispatch({
+                type: Actions.SET_KIT_TIME
+            });
+        });
+};
+
+const setKitState = (id, stateUsed) => {
+    let dataArray = [commands.SET_STATE, convertHex('0x01'), state[stateUsed]];
+    return dispatch => write(id, dataArray)
+        .then(result => dispatch({
+            type: Actions.SET_KIT_STATE
+        }));
+}
+
 export {
     assignType,
     checkState,
@@ -480,5 +534,7 @@ export {
     assignKitTeam,
     assignKitOrganization,
     disconnect,
-    handleDisconnect
+    handleDisconnect,
+    setKitTime,
+    setKitState
 };

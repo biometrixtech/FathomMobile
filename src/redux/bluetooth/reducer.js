@@ -42,12 +42,7 @@ export default function bluetoothReducer(state = initialState, action) {
                 devicesFound: state.devicesFound.concat([action.data])
             });
         }
-        let devices = state.devicesFound;
-        let index = devices.findIndex(device => device.id === action.data.id);
-        devices[index] = action.data;
-        return Object.assign({}, state, {
-            devicesFound: devices
-        });
+        return state;
     case Actions.START_SCAN:
         return Object.assign({}, state, {
             scanning:     true,
@@ -66,6 +61,7 @@ export default function bluetoothReducer(state = initialState, action) {
         tempAccessory.organizationId = null;
         tempAccessory.last_user_id = null;
         tempAccessory.team_id = null;
+        tempAccessory.accessoryConnected = false;
         tempAccessory.name = `Fathom_kit_${tempAccessory.id.slice(-2)}`;
         return Object.assign({}, state, {
             accessoryData: tempAccessory,
@@ -123,6 +119,8 @@ export default function bluetoothReducer(state = initialState, action) {
     case Actions.CHECK_STATE:
     case Actions.ENABLE_BLUETOOTH:
     case Actions.START_BLUETOOTH:
+    case Actions.SET_KIT_TIME:
+    case Actions.SET_KIT_STATE:
     default:
         return state;
     }
