@@ -5,7 +5,8 @@ import React, { Component, PropTypes } from 'react';
 import {
     ScrollView,
     View,
-    RefreshControl
+    RefreshControl,
+    BackHandler
 } from 'react-native';
 import { Platform } from 'react-native';
 import { Icon, Tab, Tabs, CheckBox } from 'react-native-elements';
@@ -62,6 +63,14 @@ class GroupCaptureSessionView extends Component {
             modalStyle:    {},
             refreshing:    false
         };
+    }
+
+    componentDidMount = () => {
+        BackHandler.addEventListener('backPress', () => Actions.pop());
+    }
+
+    componentWillUnmount = () => {
+        BackHandler.removeEventListener('backPress');
     }
 
     _onRefresh() {

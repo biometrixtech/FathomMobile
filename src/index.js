@@ -46,7 +46,9 @@ const store = compose(
 export default function AppContainer() {
     return (
         <Provider store={store}>
-            <RouterWithRedux scenes={AppRoutes} style={AppStyles.appContainer} />
+            <RouterWithRedux style={AppStyles.appContainer}>
+                {AppRoutes}
+            </RouterWithRedux>
         </Provider>
     );
 }
