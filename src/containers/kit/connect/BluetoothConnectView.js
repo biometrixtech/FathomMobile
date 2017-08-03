@@ -157,7 +157,7 @@ class BluetoothConnectView extends Component {
     connect = (data) => {
         return this.props.stopScan()
             .then(() => this.props.connectToAccessory(data))
-            .then(() => this.props.assignKitName(data, data.name))
+            .then(() => this.props.assignKitName(data))
             .then(() => {
                 this.setState({ index: 3 });
                 this.refs.carousel.animateToPage(3);
