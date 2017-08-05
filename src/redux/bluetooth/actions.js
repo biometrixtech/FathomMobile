@@ -44,14 +44,18 @@ const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay));
 const getOwnerOrganization = (id, user) => {
     let dataArray = [commands.GET_OWNER_ORG, convertHex('0x00')];
     return dispatch => write(id, dataArray)
-        .then(response => BLEConfig.unparse(response.slice(4,20)))
-        .then(organizationUUID => dispatch({
-            type: Actions.GET_KIT_ORGANIZATION,
-            data: {
-                id: organizationUUID,
-                user
-            }
-        }))
+        .then(response => {
+            return BLEConfig.unparse(response.slice(4,20));
+        })
+        .then(organizationUUID => {
+            return dispatch({
+                type: Actions.GET_KIT_ORGANIZATION,
+                data: {
+                    id: organizationUUID,
+                    user
+                }
+            });
+        })
         .catch(err => Promise.reject(err));
 };
 
@@ -62,27 +66,59 @@ const getOwnerTeam = (id, user) => {
             console.log(response);
             return BLEConfig.unparse(response.slice(4,20));
         })
-        .then(teamUUID => dispatch({
-            type: Actions.GET_KIT_TEAM,
-            data: {
-                id: teamUUID,
-                user
-            }
-        }))
+        .then(teamUUID => {
+            return dispatch({
+                type: Actions.GET_KIT_TEAM,
+                data: {
+                    id: teamUUID,
+                    user
+                }
+            });
+        })
         .catch(err => Promise.reject(err));
 };
 
 const getOwnerUser = (id, user) => {
     let dataArray = [commands.GET_OWNER_USER, convertHex('0x00')];
     return dispatch => write(id, dataArray)
-        .then(response => BLEConfig.unparse(response.slice(4,20)))
-        .then(userUUID => dispatch({
-            type: Actions.GET_KIT_INDIVIDUAL,
-            data: {
-                id: userUUID,
-                user
-            }
-        }))
+        .then(response => {
+            return BLEConfig.unparse(response.slice(4,20));
+        })
+        .then(userUUID => {
+            return dispatch({
+                type: Actions.GET_KIT_INDIVIDUAL,
+                data: {
+                    id: userUUID,
+                    user
+                }
+            });
+        })
+        .catch(err => Promise.reject(err));
+};
+
+const getKitName = (id) => {
+    let dataArray = [commands.GET_KIT_NAME, convertHex('0x00')];
+    return dispatch => write(id, dataArray)
+        .then(response => {
+            return convertByteArrayToString(response.slice(4,20));
+        })
+        .then(name => {
+            return dispatch({
+                type: Actions.GET_KIT_NAME,
+                data: name
+            });
+        })
+}
+
+const getConfiguration = (id) => {
+    let dataArray = [commands.GET_CONFIGURATION, convertHex('0x00')];
+    return dispatch => write(id, dataArray)
+        .then(response => {
+            return dispatch({
+                type: Actions.GET_CONFIGURATION,    
+                data: response[4]
+            });
+        })
         .catch(err => Promise.reject(err));
 };
 
@@ -100,10 +136,10 @@ const checkState = () => {
         }));
 };
 
-const changeState = (state) => {
+const changeState = (kitState) => {
     return dispatch => dispatch({
         type: Actions.CHANGE_STATE,
-        data: state
+        data: kitState
     });
 };
 
@@ -184,22 +220,16 @@ const loginToAccessory = (data, {role, id}) => {
             dataArray.push(convertHex('0x11'));
             dataArray.push(hexRole);
             dataArray = dataArray.concat(convertedUUID);
-            console.log('------------------------------------');
-            console.log(dataArray);
-            console.log('------------------------------------');
             return write(data.id, dataArray);
         })
-        .then(accessoryLoginResult => {
-            console.log('------------------------------------');
-            console.log(accessoryLoginResult);
-            console.log('------------------------------------');
-            return AppAPI.accessories.patch(data.id, data);
-        })
+        // .then(accessoryLoginResult => {
+        //     return AppAPI.accessories.patch(data.id, data);
+        // })
         .then(uploadedAccessory => dispatch({
             type: Actions.CONNECT_TO_ACCESSORY,
             data: {
                 accessoryConnected: true,
-                ...uploadedAccessory
+                ...data
             }
         }))
         .catch(err => Promise.reject(err));
@@ -234,9 +264,11 @@ const setWiFiSSID = (id, ssid) => {
             console.log('SSID Data Array 2: ', dataArray);
             return write(id, dataArray);
         })
-        .then(() => dispatch({
-            type: Actions.WIFI
-        }));
+        .then(result => {
+            return dispatch({
+                type: Actions.WIFI
+            });
+        });
 };
 
 const setWiFiPassword = (id, pass) => {
@@ -268,9 +300,11 @@ const setWiFiPassword = (id, pass) => {
             console.log('Password Data Array 2: ', dataArray);
             return write(id, dataArray);
         })
-        .then(() => dispatch({
-            type: Actions.WIFI
-        }));
+        .then(result => {
+            return dispatch({
+                type: Actions.WIFI
+            });
+        });
 };
 
 const connectWiFi = (id) => {
@@ -281,9 +315,12 @@ const connectWiFi = (id) => {
         dataArray.push(convertHex('0x00'));
     }
     return dispatch => write(id, dataArray)
-        .then(() => dispatch({
-            type: Actions.WIFI
-        }));
+        .then(result => {
+            return dispatch({
+                type: Actions.WIFI,
+                data: result[3]
+            });
+        });
 };
 
 const readSSID = (id) => {
@@ -310,9 +347,16 @@ const scanWiFi = (id) => {
         .catch(err => Promise.reject(err));
 };
 
-const resetAccessory = (id) => {
+const resetAccessory = (accessory) => {
     let dataArray = [commands.FACTORY_RESET, convertHex('0x00')];
-    return dispatch => write(id, dataArray)
+    return dispatch => write(accessory.id, dataArray)
+        // .then(response => {
+        //     let data = accessory;
+        //     data.team_id = null;
+        //     data.organization_id = null;
+        //     data.name = `Fathom_kit_${data.id.slice(-2)}`;
+        //     return AppAPI.accessories.patch(data.id, data);
+        // })
         .then(response => {
             return dispatch({
                 type: Actions.ACCESSORY_RESET
@@ -324,34 +368,37 @@ const resetAccessory = (id) => {
 const systemReset = (id) => {
     let resetCmd = [commands.SYS_RESET, convertHex('0x00')];
     return dispatch => write(id, resetCmd)
-        .then(res => {
+        .then(response => {
             return dispatch({
                 type: Actions.ACCESSORY_RESET
             })
         });
 }
 
-const assignKitName = (accessory) => {
-    let newName = accessory.name.split('Fathom_kit_')[1];
-    let dataArray = [commands.SET_KIT_NAME, newName.length];
-    dataArray = dataArray.concat(convertStringToByteArray(newName));
-    return dispatch => write(accessory.id, dataArray)
+const assignKitName = (id, name) => {
+    let dataArray = [commands.SET_KIT_NAME, name.length];
+    dataArray = dataArray.concat(convertStringToByteArray(name));
+    return dispatch => write(id, dataArray)
         .then(response => {
-            console.log('------------------------------------');
-            console.log(response);
-            console.log('------------------------------------');
-            return write(accessory.id, [commands.STORE_PARAMS, convertHex('0X00')]);
-        })
-        .then(response => {
-            console.log('------------------------------------');
-            console.log(response);
-            console.log('------------------------------------');
             return dispatch({
                 type: Actions.ASSIGN_KIT_NAME,
-                data: accessory.name
+                data: name
             });
         });
 };
+
+const storeParams = (accessory) => {
+    let dataArray = [commands.STORE_PARAMS, convertHex('0X00')];
+    return dispatch => write(accessory.id, dataArray)
+        // .then(response => {
+        //     return AppAPI.accessories.patch(accessory.id, accessory);
+        // })
+        .then(response => {
+            return dispatch({
+                type: Actions.STORE_PARAMS
+            })
+        })
+}
 
 const assignKitIndividual = (accessory, user) => {
     let dataArray = [commands.SET_OWNER_USER, convertHex('0x10')];
@@ -360,23 +407,14 @@ const assignKitIndividual = (accessory, user) => {
         type: Actions.START_CONNECT
     }))
         .then(() => BLEConfig.parse(user.id))
-        .then(userUUID => write(accessory.id, dataArray.concat(userUUID)))
-        .then(response => {
-            console.log('------------------------------------');
-            console.log(response);
-            console.log('------------------------------------');
-            return write(accessory.id, [commands.STORE_PARAMS, convertHex('0X00')]);
+        .then(userUUID => {
+            dataArray = dataArray.concat(userUUID);
+            return write(accessory.id, dataArray);
         })
-        .then(response => {
-            console.log('------------------------------------');
-            console.log(response);
-            console.log('------------------------------------');
+        .then(uploadedAccessory => {
             data = accessory;
             data.individual = user;
             data.last_user_id = user.id;
-            return AppAPI.accessories.patch(data.id, data);
-        })
-        .then(uploadedAccessory => {
             dispatch({
                 type: Actions.CONNECT_TO_ACCESSORY,
                 data: {
@@ -399,23 +437,14 @@ const assignKitTeam = (accessory, team) => {
         type: Actions.START_CONNECT
     }))
         .then(() => BLEConfig.parse(team.id))
-        .then(teamUUID => write(accessory.id, dataArray.concat(teamUUID)))
-        .then(response => {
-            console.log('------------------------------------');
-            console.log(response);
-            console.log('------------------------------------');
-            return write(accessory.id, [commands.STORE_PARAMS, convertHex('0X00')]);
+        .then(teamUUID => {
+            dataArray = dataArray.concat(teamUUID);
+            return write(accessory.id, dataArray);
         })
-        .then(response => {
-            console.log('------------------------------------');
-            console.log(response);
-            console.log('------------------------------------');
+        .then(uploadedAccessory => {
             data = accessory;
             data.team = team;
             data.team_id = team.id;
-            return AppAPI.accessories.patch(data.id, data);
-        })
-        .then(uploadedAccessory => {
             dispatch({
                 type: Actions.CONNECT_TO_ACCESSORY,
                 data: {
@@ -438,23 +467,14 @@ const assignKitOrganization = (accessory, organization) => {
         type: Actions.START_CONNECT
     }))
         .then(() => BLEConfig.parse(organization.id))
-        .then(orgUUID => write(accessory.id, dataArray.concat(orgUUID)))
-        .then(response => {
-            console.log('------------------------------------');
-            console.log(response);
-            console.log('------------------------------------');
-            return write(accessory.id, [commands.STORE_PARAMS, convertHex('0X00')])
+        .then(orgUUID => {
+            dataArray = dataArray.concat(orgUUID)
+            return write(accessory.id, dataArray);
         })
-        .then(response => {
-            console.log('------------------------------------');
-            console.log(response);
-            console.log('------------------------------------');
+        .then(uploadedAccessory => {
             data = accessory;
             data.organization = organization;
             data.organization_id = organization.id;
-            return AppAPI.accessories.patch(data.id, data);
-        })
-        .then(uploadedAccessory => {
             dispatch({
                 type: Actions.CONNECT_TO_ACCESSORY,
                 data: {
@@ -470,13 +490,22 @@ const assignKitOrganization = (accessory, organization) => {
         .catch(err => Promise.reject(err))
 };
 
+const setKitState = (id, stateUsed) => {
+    let dataArray = [commands.SET_STATE, convertHex('0x01'), state[stateUsed]];
+    return dispatch => write(id, dataArray)
+        .then(result => dispatch({
+            type: Actions.SET_KIT_STATE
+        }));
+};
+
 const disconnect = (id) => {
-    return dispatch => BleManager.disconnect(id)
+    return dispatch => Promise.resolve(setKitState(id, 'APP_IDLE'))
+        .then(() => BleManager.disconnect(id))
         .then(() => BleManager.removePeripheral(id))
         .then(() => dispatch({
             type: Actions.BLUETOOTH_DISCONNECT
         }));
-}
+};
 
 const handleDisconnect = (id) => {
     return dispatch => BleManager.isPeripheralConnected(id, [])
@@ -485,26 +514,17 @@ const handleDisconnect = (id) => {
         .then(services => dispatch({
             type: Actions.HANDLE_DISCONNECT
         }));
-}
+};
 
 const setKitTime = (id) => {
     let dataArray = [commands.SET_TIME, convertHex('0x04')];
     return dispatch => write(id, dataArray.concat(Math.round((new Date()).getTime() / 1000).toString(16).match(/.{1,2}/g).map(val => convertHex(val)))) // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
         .then(result => {
-            console.log(result);
             return dispatch({
                 type: Actions.SET_KIT_TIME
             });
         });
 };
-
-const setKitState = (id, stateUsed) => {
-    let dataArray = [commands.SET_STATE, convertHex('0x01'), state[stateUsed]];
-    return dispatch => write(id, dataArray)
-        .then(result => dispatch({
-            type: Actions.SET_KIT_STATE
-        }));
-}
 
 export {
     assignType,
@@ -525,6 +545,7 @@ export {
     getOwnerOrganization,
     getOwnerTeam,
     getOwnerUser,
+    getKitName,
     resetAccessory,
     systemReset,
     readSSID,
@@ -536,5 +557,7 @@ export {
     disconnect,
     handleDisconnect,
     setKitTime,
-    setKitState
+    setKitState,
+    getConfiguration,
+    storeParams
 };

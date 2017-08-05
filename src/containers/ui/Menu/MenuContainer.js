@@ -18,8 +18,9 @@ const mapStateToProps = state => ({
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-    logout:     UserActions.logout,
-    disconnect: BluetoothActions.disconnect,
+    logout:      UserActions.logout,
+    disconnect:  BluetoothActions.disconnect,
+    setKitState: BluetoothActions.setKitState,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MenuRender);
