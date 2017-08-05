@@ -25,7 +25,6 @@ export default function bluetoothReducer(state = initialState, action) {
             indicator: false
         });
     case Actions.CONNECT_TO_ACCESSORY:
-        console.log(action.data);
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
@@ -35,7 +34,6 @@ export default function bluetoothReducer(state = initialState, action) {
             indicator:    false
         });
     case Actions.CHANGE_STATE:
-        console.log(action.data === 'on' ? state.accessoryData : {});
         return Object.assign({}, state, {
             bluetoothOn:   action.data === 'on',
             accessoryData: action.data === 'on' ? state.accessoryData : {}
@@ -67,7 +65,6 @@ export default function bluetoothReducer(state = initialState, action) {
         tempAccessory.team_id = null;
         tempAccessory.accessoryConnected = false;
         tempAccessory.name = `Fathom_kit_${tempAccessory.id.slice(-2)}`;
-        console.log(tempAccessory);
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
@@ -80,7 +77,6 @@ export default function bluetoothReducer(state = initialState, action) {
             wifiScan: true
         });
     case Actions.ASSIGN_KIT_NAME:
-        console.log(`Fathom_kit_${action.data}`);
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
@@ -88,10 +84,8 @@ export default function bluetoothReducer(state = initialState, action) {
             }
         });
     case Actions.GET_KIT_INDIVIDUAL:
-        console.log(action.data);
         let assignIndividualTeam = action.data.user.teams.find(checkTeam => checkTeam.users_with_training_groups.some(user => user.id === action.data.id));
         let individual = assignIndividualTeam ? assignIndividualTeam.users_with_training_groups.find(user => user.id === action.data.id) : null;
-        console.log(individual);
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
@@ -99,9 +93,7 @@ export default function bluetoothReducer(state = initialState, action) {
             }
         });
     case Actions.GET_KIT_TEAM:
-        console.log(action.data);
         let team = action.data.user.teams.find(checkTeam => checkTeam.id === action.data.id) || null;
-        console.log(team);
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
@@ -109,9 +101,7 @@ export default function bluetoothReducer(state = initialState, action) {
             }
         });
     case Actions.GET_KIT_ORGANIZATION:
-        console.log(action.data);
         let organization = action.data.user.organization.id === action.data.id ? action.data.user.organization : null;
-        console.log(organization);
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
@@ -120,7 +110,6 @@ export default function bluetoothReducer(state = initialState, action) {
         });
     case Actions.GET_KIT_NAME:
         let name = `Fathom_kit_${action.data}`;
-        console.log(name === 'Fathom_kit_' ? state.accessoryData.name : name);
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
@@ -133,7 +122,6 @@ export default function bluetoothReducer(state = initialState, action) {
             networks
         });
     case Actions.GET_CONFIGURATION:
-        console.log(action.data);
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
@@ -147,7 +135,6 @@ export default function bluetoothReducer(state = initialState, action) {
             devicesFound:  []
         });
     case Actions.WIFI:
-        console.log(action.data ? action.data === 0 : false);
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
