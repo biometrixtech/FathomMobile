@@ -95,6 +95,7 @@ class Menu extends Component {
         disconnect:    PropTypes.func.isRequired,
         closeSideMenu: PropTypes.func.isRequired,
         user:          PropTypes.object,
+        setKitState:   PropTypes.func.isRequired,
         id:            PropTypes.string,
     }
 
@@ -139,7 +140,7 @@ class Menu extends Component {
                 {
                     itemName: 'pulse',
                     title:    'Capture Session',
-                    onPress:  () => { this.props.closeSideMenu(); Actions.teamCaptureSession(); this.setState({ active: 0 }); }
+                    onPress:  () => { this.props.closeSideMenu(); Actions.teamCaptureSession(); this.setState({ active: 0 }); return this.props.id ? this.props.setKitState(this.props.id, 'APP_IDLE') : null; }
                 },
                 // {
                 //     itemName: 'tooltip-edit',

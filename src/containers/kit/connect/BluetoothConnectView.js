@@ -16,7 +16,6 @@ import {
 import { Icon } from 'react-native-elements'
 import Carousel from 'react-native-looped-carousel';
 import Collapsible from 'react-native-collapsible';
-import Prompt from 'react-native-prompt';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
@@ -59,9 +58,10 @@ class BluetoothConnectView extends Component {
         startScan:          PropTypes.func.isRequired,
         stopScan:           PropTypes.func.isRequired,
         deviceFound:        PropTypes.func.isRequired,
-        assignKitName:      PropTypes.func.isRequired,
         startConnect:       PropTypes.func.isRequired,
-        stopConnect:        PropTypes.func.isRequired
+        stopConnect:        PropTypes.func.isRequired,
+        setKitState:        PropTypes.func.isRequired,
+        disconnect:         PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -89,6 +89,15 @@ class BluetoothConnectView extends Component {
         this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral );
         this.handlerStop = bleManagerEmitter.addListener('BleManagerStopScan', this.handleStopScan );
         this.handlerState = bleManagerEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange );
+
+        if (this.props.bluetooth.accessoryData.id) {
+            return Promise.resolve(this.props.disconnect(this.props.bluetooth.accessoryData.id))
+                .then(result => {
+                    this.setState({ index: 0 });
+                    this.refs.carousel.animateToPage(0);
+                });
+        }
+        return null;
     }
 
     componentWillUnmount = () => {
@@ -121,7 +130,7 @@ class BluetoothConnectView extends Component {
             })
             .catch(error => {
                 this.setState({ index: 1 });
-                this.refs.animateToPage(1);
+                this.refs.carousel.animateToPage(1);
             });
     }
 
@@ -157,7 +166,6 @@ class BluetoothConnectView extends Component {
     connect = (data) => {
         return this.props.stopScan()
             .then(() => this.props.connectToAccessory(data))
-            .then(() => this.props.assignKitName(data))
             .then(() => {
                 this.setState({ index: 3 });
                 this.refs.carousel.animateToPage(3);

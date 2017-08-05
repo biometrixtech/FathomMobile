@@ -102,6 +102,7 @@ export default {
         SET_BF_QUATERNION:  parseInt('0x33', 16),
         SET_NEUTRAL_QUAT:   parseInt('0x34', 16),
         SET_TIME:           parseInt('0x35', 16),
+        GET_CONFIGURATION:  parseInt('0x36', 16),
         SET_OWNER_ORG:      parseInt('0x50', 16),
         SET_OWNER_TEAM:     parseInt('0x51', 16),
         SET_OWNER_USER:     parseInt('0x52', 16),
@@ -135,6 +136,18 @@ export default {
         APP_KIT_SETUP:   parseInt('0x21', 16),
         APP_READY:       parseInt('0x22', 16),
         APP_ERROR:       parseInt('0xFF', 16)
+    },
+
+    configuration: {
+        NOTHING:        parseInt('0x00', 16),
+        ORG_SET:        parseInt('0x01', 16),
+        USER_SET:       parseInt('0x02', 16),
+        TEAM_SET:       parseInt('0x04', 16),
+        NAME_SET:       parseInt('0x08', 16),
+        DONE:           parseInt('0x1F', 16),
+        UPSERT_PENDING: parseInt('0x2F', 16),
+        UPSERT_TO_SAVE: parseInt('0x3F', 16),
+        UPSERT_DONE:    parseInt('0x7F', 16),
     },
 
     parse,
