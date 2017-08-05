@@ -233,15 +233,24 @@ class TeamCaptureSessionView extends Component {
 
                         <Spacer />
 
-                        <Button
-                            title={'Save'}
-                            onPress={() => {
-                                if (!this.state.trainingGroup.id && this.state.trainingGroup.name === '') {
-                                    return Actions.refresh({ isModalVisible: false });
-                                }
-                                return this.state.trainingGroup.id ? this.editGroup() : this.addGroup();
-                            }}
-                        />
+                        <View style={{ flexDirection: 'row' }}>
+                            <Button
+                                title={'Cancel'}
+                                containerViewStyle={{ flex: 1 }}
+                                backgroundColor={AppColors.brand.fogGrey}
+                                onPress={() => Actions.refresh({ isModalVisible: false })}
+                            />
+                            <Button
+                                title={'Save'}
+                                containerViewStyle={{ flex: 1 }}
+                                onPress={() => {
+                                    if (!this.state.trainingGroup.id && this.state.trainingGroup.name === '') {
+                                        return Actions.refresh({ isModalVisible: false });
+                                    }
+                                    return this.state.trainingGroup.id ? this.editGroup() : this.addGroup();
+                                }}
+                            />
+                        </View>
                     </Card>
                 </View>
             </Modal>

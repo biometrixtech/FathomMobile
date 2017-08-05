@@ -348,16 +348,25 @@ class GroupCaptureSessionView extends Component {
 
                         <Spacer />
 
-                        <Button
-                            title={'Save'}
-                            onPress={() => this.props.patchTrainingGroup(this.state.trainingGroup)
-                                .then(() => Actions.refresh({ isModalVisible: false }))
-                                .then(() => this.props.getTeams())
-                                .catch(e => console.log(e))
-                                .then(() => this.props.getAccessories())
-                                .catch(e => console.log(e))
-                            }
-                        />
+                        <View style={{ flexDirection: 'row' }}>
+                            <Button
+                                title={'Cancel'}
+                                containerViewStyle={{ flex: 1 }}
+                                backgroundColor={AppColors.brand.fogGrey}
+                                onPress={() => Actions.refresh({ isModalVisible: false })}
+                            />
+                            <Button
+                                title={'Save'}
+                                containerViewStyle={{ flex: 1 }}
+                                onPress={() => this.props.patchTrainingGroup(this.state.trainingGroup)
+                                    .then(() => Actions.refresh({ isModalVisible: false }))
+                                    .then(() => this.props.getTeams())
+                                    .catch(e => console.log(e))
+                                    .then(() => this.props.getAccessories())
+                                    .catch(e => console.log(e))
+                                }
+                            />
+                        </View>
                     </Card>
                 </View>
             </Modal>

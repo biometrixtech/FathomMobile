@@ -132,14 +132,14 @@ androidBuild() {
             cd android
             ./gradlew assembleRelease
             cd ..
-            echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}spencer-release#.apk${normal}"
+            echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-release#.apk${normal}"
             open android/app/build/outputs/apk/
             ;;
         2)
             cd android
             ./gradlew assembleReleaseStaging
             cd ..
-            echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}spencer-releaseStaging#.apk${normal}"
+            echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-releaseStaging#.apk${normal}"
             open android/app/build/outputs/apk/
             ;;
         *)

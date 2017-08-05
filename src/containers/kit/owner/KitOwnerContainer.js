@@ -22,7 +22,13 @@ const mapDispatchToProps = {
     getOwnerOrganization: BluetoothActions.getOwnerOrganization,
     getOwnerTeam:         BluetoothActions.getOwnerTeam,
     getOwnerUser:         BluetoothActions.getOwnerUser,
-    assignType:           BluetoothActions.assignType
+    assignKitName:        BluetoothActions.assignKitName,
+    getKitName:           BluetoothActions.getKitName,
+    assignType:           BluetoothActions.assignType,
+    storeParams:          BluetoothActions.storeParams,
+    loginToAccessory:     BluetoothActions.loginToAccessory,
+    setKitTime:           BluetoothActions.setKitTime,
+
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitOwnerRender);

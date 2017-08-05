@@ -12,7 +12,7 @@ import TeamCaptureSessionView from './TeamCaptureSessionView';
 // What data from the store shall we send to the component?
 const mapStateToProps = state => {
     return ({
-        user: state.user,
+        user: state.user
     });
 };
 
