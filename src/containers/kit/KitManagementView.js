@@ -12,15 +12,15 @@ import {
     ActivityIndicator
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import Prompt from 'react-native-prompt';
 import Modal from 'react-native-modalbox';
+import Toast, {DURATION} from 'react-native-easy-toast';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors, AppFonts } from '@theme/';
-import { Roles } from '@constants/';
+import { Roles, BLEConfig } from '@constants/';
 
 // Components
-import { Spacer, Text, ListItem, Card, Button } from '@ui/';
+import { Spacer, Text, ListItem, Card, Button, FormInput, FormLabel } from '@ui/';
 import { Placeholder } from '@general/';
 
 const font18 = AppFonts.scaleFont(18);
@@ -28,6 +28,9 @@ const font10 = AppFonts.scaleFont(10);
 
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+
+const configuration = BLEConfig.configuration;
+const bleConfiguredState = [configuration.DONE, configuration.UPSERT_PENDING, configuration.UPSERT_TO_SAVE, configuration.UPSERT_DONE]
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -51,18 +54,16 @@ class KitManagementView extends Component {
         systemReset:        PropTypes.func.isRequired,
         scanWiFi:           PropTypes.func.isRequired,
         startScan:          PropTypes.func.isRequired,
-        loginToAccessory:   PropTypes.func.isRequired,
         setWiFiSSID:        PropTypes.func.isRequired,
         setWiFiPassword:    PropTypes.func.isRequired,
         connectWiFi:        PropTypes.func.isRequired,
         readSSID:           PropTypes.func.isRequired,
         handleDisconnect:   PropTypes.func.isRequired,
-        assignKitName:      PropTypes.func.isRequired,
         connectToAccessory: PropTypes.func.isRequired,
         startConnect:       PropTypes.func.isRequired,
         stopConnect:        PropTypes.func.isRequired,
-        setKitTime:         PropTypes.func.isRequired,
-        setKitState:        PropTypes.func.isRequired
+        setKitState:        PropTypes.func.isRequired,
+        getConfiguration:   PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -74,11 +75,13 @@ class KitManagementView extends Component {
 
         this.state = {
             modalStyle: {},
-            SSID:       null
+            SSID:       null,
+            configured: false,
+            newNetwork: true,
+            password:   ''
         };
 
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
-        // this.handleDisconnectPeripheral = this.handleDisconnectPeripheral.bind(this);
     }
 
     readSSID = (id, loopsLeft) => {
@@ -89,20 +92,23 @@ class KitManagementView extends Component {
     componentDidMount = () => {
         BackHandler.addEventListener('backPress', () => Actions.pop());
 
-        this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral );
-        this._interval = setInterval(() => {
+        this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
+        this._disconnectInterval = setInterval(() => {
             return this.props.bluetooth.accessoryData.id ? this.props.handleDisconnect(this.props.bluetooth.accessoryData.id) : null;
+        }, 10000);
+        
+        this._configurationInterval = setInterval(() => {
+            return this.props.bluetooth.accessoryData.id ? this.props.getConfiguration(this.props.bluetooth.accessoryData.id)
+                .then(() => this.setState({ configured: bleConfiguredState.some(state => state === this.props.bluetooth.accessoryData.configuration) })) : null;
         }, 10000);
     }
 
     componentWillUnmount = () => {
         BackHandler.removeEventListener('backPress');
-        if (this.props.bluetooth.accessoryData.id) {
-            this.props.setKitState(this.props.bluetooth.accessoryData.id, 'APP_IDLE');
-        }
 
         this.handlerDiscover.remove();
-        clearInterval(this._interval);
+        clearInterval(this._disconnectInterval);
+        clearInterval(this._configurationInterval);
     }
 
     handleDiscoverPeripheral = (data) => {
@@ -125,6 +131,10 @@ class KitManagementView extends Component {
 
     biometrixAdminView = () => (
         <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]} >
+            <Toast 
+                ref={'toast'}
+                position={'top'}
+            />
             { this.props.bluetooth.indicator ?
                 <View style={[styles.indicator, { justifyContent: 'center', alignItems: 'center'}]}>
                     <ActivityIndicator
@@ -137,84 +147,80 @@ class KitManagementView extends Component {
             <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>SETTINGS</Text>
             <ListItem
                 title={'Connect Kit'}
-                onPress={() => Actions.bluetoothConnect()}
+                onPress={() => {
+                    if (this.props.bluetooth.accessoryData.id) {
+                        return Promise.resolve(this.props.setKitState(this.props.bluetooth.accessoryData.id, 'APP_IDLE'))
+                            .then(() => Actions.bluetoothConnect());
+                    }
+                    return Actions.bluetoothConnect();
+                }}
             />
             <Text style={{ paddingLeft: 20, fontSize: font10 }}>Connect your Fathom Kit to WiFi</Text>
             <Spacer />
             <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>MANAGE KIT</Text>
             {
                 this.props.bluetooth.accessoryData.accessoryConnected ?
-                    (
-                        <View>
-                            <ListItem
-                                title={'Owner'}
-                                chevronColor={ AppColors.brand.blue }
-                                titleStyle={{ color: AppColors.brand.blue }}
-                                onPress={() => Actions.kitOwner()}
-                            />
-                            <ListItem
-                                title={'WiFi'}
-                                chevronColor={ AppColors.brand.blue }
-                                titleStyle={{ color: AppColors.brand.blue }}
-                                onPress={() => {
-                                    this.setState({ isModalVisible: true });
-                                    return this.props.assignKitName(this.props.bluetooth.accessoryData)
-                                        .then(() =>  this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user))
-                                        .then(() => this.props.scanWiFi(this.props.bluetooth.accessoryData.id))
-                                        .then(() => this.readSSID(this.props.bluetooth.accessoryData.id, 30));
-                                }}
-                            />
-                            <ListItem
-                                title={'Reset'}
-                                chevronColor={ AppColors.brand.blue }
-                                titleStyle={{ color: AppColors.brand.blue }}
-                                onPress={() => this.props.startConnect()
-                                    .then(() => this.props.resetAccessory(this.props.bluetooth.accessoryData.id))
-                                    .then(() => {
-                                        this.props.systemReset(this.props.bluetooth.accessoryData.id);
-                                        return this.props.startScan();
-                                    })
-
-                                }
-                            />
-                        </View>
-                    ) : (
-                        <View>
-                            <ListItem
-                                title={'Owner'}
-                                chevronColor={ AppColors.lightGrey }
-                                titleStyle={{ color: AppColors.lightGrey }}
-                            />
-                            <ListItem
-                                title={'WiFi'}
-                                chevronColor={ AppColors.lightGrey }
-                                titleStyle={{ color: AppColors.lightGrey }}
-                            />
-                            <ListItem
-                                title={'Reset'}
-                                chevronColor={ AppColors.lightGrey }
-                                titleStyle={{ color: AppColors.lightGrey }}
-                            />
-                        </View>
-                    )
+                    <ListItem
+                        title={'Owner'}
+                        chevronColor={ AppColors.brand.blue }
+                        titleStyle={{ color: AppColors.brand.blue }}
+                        onPress={() => Actions.kitOwner()}
+                    />
+                    :
+                    <ListItem
+                        title={'Owner'}
+                        chevronColor={ AppColors.lightGrey }
+                        titleStyle={{ color: AppColors.lightGrey }}
+                    />
+            }
+            {
+                this.state.configured ?
+                    <ListItem
+                        title={'WiFi'}
+                        chevronColor={ AppColors.brand.blue }
+                        titleStyle={{ color: AppColors.brand.blue }}
+                        onPress={() => {
+                            this.setState({ isModal1Visible: true });
+                            return this.props.scanWiFi(this.props.bluetooth.accessoryData.id)
+                                .then(() => this.readSSID(this.props.bluetooth.accessoryData.id, 30));
+                        }}
+                    />
+                    :
+                    <ListItem
+                        title={'WiFi'}
+                        chevronColor={ AppColors.lightGrey }
+                        titleStyle={{ color: AppColors.lightGrey }}
+                    />
+            }
+            {
+                this.props.bluetooth.accessoryData.accessoryConnected ?
+                    <ListItem
+                        title={'Reset'}
+                        chevronColor={ AppColors.brand.blue }
+                        titleStyle={{ color: AppColors.brand.blue }}
+                        onPress={() => this.props.startConnect()
+                            .then(() => this.props.resetAccessory(this.props.bluetooth.accessoryData))
+                            .then(() => {
+                                this.props.systemReset(this.props.bluetooth.accessoryData.id);
+                                return this.props.startScan();
+                            })
+                        }
+                    />
+                    :
+                    <ListItem
+                        title={'Reset'}
+                        chevronColor={ AppColors.lightGrey }
+                        titleStyle={{ color: AppColors.lightGrey }}
+                    />
             }
             <Text style={{ paddingLeft: 20, fontSize: font10 }}>Assign owner to the kit, change wifi network, or factory reset</Text>
-            <Prompt
-                title={this.state.SSID + ' Password (if needed):'}
-                placeholder={'Password'}
-                visible={this.state.promptVisible}
-                onCancel={() => this.setState({
-                    promptVisible: false
-                })}
-                onSubmit={value => this.props.setWiFiSSID(this.props.bluetooth.accessoryData.id, this.state.SSID).then(() => this.props.setWiFiPassword(this.props.bluetooth.accessoryData.id, value)).then(() => this.props.connectWiFi(this.props.bluetooth.accessoryData.id)).then(() => this.setState({ promptVisible: false }))}
-            />
             <Modal
                 position={'center'}
                 style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
-                isOpen={this.state.isModalVisible}
+                isOpen={this.state.isModal1Visible}
                 backButtonClose
                 swipeToClose={false}
-                onClosed={() => this.setState({ isModalVisible: false })}
+                onClosed={() => this.setState({ isModal1Visible: false })}
             >
                 <View onLayout={(ev) => { this.resizeModal(ev); }}>
                     <Card title={'Connect to WiFi'}>
@@ -225,13 +231,63 @@ class KitManagementView extends Component {
                                     <ListItem
                                         key={network.key}
                                         title={network.label}
-                                        onPress={() => this.setState({ promptVisible: true, SSID: network.label })}
+                                        containerStyle={{ backgroundColor: network.label === this.state.SSID ? AppColors.brand.fogGrey : AppColors.background }}
+                                        onPress={() => this.setState({ isModal1Visible: false, isModal2Visible: true, SSID: network.label, newNetwork: true })}
                                     />
                                 ))
                             }
                         </ScrollView>
                         <Spacer size={5} />
-                        <Button title={'Cancel'} onPress={() => this.setState({ isModalVisible: false })}/>
+                        <Button title={'Cancel'} onPress={() => this.setState({ isModal1Visible: false })}/>
+                    </Card>
+                </View>
+            </Modal>
+            <Modal
+                position={'center'}
+                style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
+                isOpen={this.state.isModal2Visible}
+                backButtonClose
+                swipeToClose={false}
+                onClosed={() => this.setState({ password: '', isModal2Visible: false }) }
+            >
+                <View onLayout={(ev) => { this.resizeModal(ev); }}>
+                    <Card title={`${this.state.SSID} Password (if needed)`}>
+
+                        <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >{`Password${!this.state.newNetwork ? '\nUnsuccessful, please try again' : '' }`}</FormLabel>
+                        <FormInput
+                            containerStyle={{ borderWidth: 1, borderColor: AppColors.border }}
+                            inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }}
+                            value={this.state.password}
+                            onChangeText={password => this.setState({ password })}
+                        />
+
+                        <Spacer />
+
+                        <View style={{ flexDirection: 'row' }}>
+                            <Button
+                                title={'Cancel'}
+                                containerViewStyle={{ flex: 1 }}
+                                backgroundColor={AppColors.brand.fogGrey}
+                                onPress={() => this.setState({ isModal2Visible: false, isModal1Visible: true })}
+                            />
+                            <Button
+                                title={'Save'}
+                                containerViewStyle={{ flex: 1 }}
+                                onPress={() => {
+                                    return this.props.setWiFiSSID(this.props.bluetooth.accessoryData.id, this.state.SSID)
+                                        .then(() => this.props.setWiFiPassword(this.props.bluetooth.accessoryData.id, this.state.password))
+                                        .then(() => this.props.connectWiFi(this.props.bluetooth.accessoryData.id))
+                                        .then(() => {
+                                            if (this.props.bluetooth.accessoryData.wifiConnected) {
+                                                this.refs.toast.show(`Successfully connected to ${this.state.SSID}`, DURATION.LENGTH_LONG);
+                                                return this.setState({ isModal2Visible: false, isModal1Visible: false, newNetwork: false });
+                                            }
+                                            this.refs.toast.show(`Failed to connect to ${this.state.SSID}`, DURATION.LENGTH_LONG);
+                                            return this.setState({ isModal2Visible: true, newNetwork: true });
+                                        });
+                                }}
+                            />
+                        </View>
                     </Card>
                 </View>
             </Modal>

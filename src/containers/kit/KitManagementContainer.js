@@ -22,19 +22,17 @@ const mapDispatchToProps = {
     resetAccessory:     BluetoothActions.resetAccessory,
     systemReset:        BluetoothActions.systemReset,
     scanWiFi:           BluetoothActions.scanWiFi,
-    loginToAccessory:   BluetoothActions.loginToAccessory,
     startScan:          BluetoothActions.startScan,
     setWiFiSSID:        BluetoothActions.setWiFiSSID,
     setWiFiPassword:    BluetoothActions.setWiFiPassword,
     connectWiFi:        BluetoothActions.connectWiFi,
     readSSID:           BluetoothActions.readSSID,
     handleDisconnect:   BluetoothActions.handleDisconnect,
-    assignKitName:      BluetoothActions.assignKitName,
     connectToAccessory: BluetoothActions.connectToAccessory,
     startConnect:       BluetoothActions.startConnect,
     stopConnect:        BluetoothActions.stopConnect,
-    setKitTime:         BluetoothActions.setKitTime,
     setKitState:        BluetoothActions.setKitState,
+    getConfiguration:   BluetoothActions.getConfiguration,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitManagementRender);

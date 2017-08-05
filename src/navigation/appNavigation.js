@@ -21,16 +21,12 @@ import { NavbarMenuButton } from '@containers/ui/NavbarMenuButton/NavbarMenuButt
 const navbarPropsTabs = {
     ...AppConfig.navbarProps,
     renderLeftButton: () => <NavbarMenuButton />,
-    sceneStyle:       {
-        ...AppConfig.navbarProps.sceneStyle,
-    },
 };
 
 /* Routes ==================================================================== */
 const scenes = (
     <Scene key={'navigation'} >
         <Scene
-            {...navbarPropsTabs}
             key={'navroot'}>
             <Scene
                 {...navbarPropsTabs}

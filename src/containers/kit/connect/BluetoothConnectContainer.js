@@ -26,9 +26,10 @@ const mapDispatchToProps = {
     startScan:           BluetoothActions.startScan,
     stopScan:            BluetoothActions.stopScan,
     deviceFound:         BluetoothActions.deviceFound,
-    assignKitName:       BluetoothActions.assignKitName,
     startConnect:        BluetoothActions.startConnect,
-    stopConnect:         BluetoothActions.stopConnect
+    stopConnect:         BluetoothActions.stopConnect,
+    setKitState:         BluetoothActions.setKitState,
+    disconnect:          BluetoothActions.disconnect,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BluetoothConnectRender);
