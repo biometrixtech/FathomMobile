@@ -20,7 +20,6 @@ const mapStateToProps = state => {
 // Any actions to map to the component?
 const mapDispatchToProps = {
     resetAccessory:     BluetoothActions.resetAccessory,
-    systemReset:        BluetoothActions.systemReset,
     scanWiFi:           BluetoothActions.scanWiFi,
     startScan:          BluetoothActions.startScan,
     setWiFiSSID:        BluetoothActions.setWiFiSSID,
