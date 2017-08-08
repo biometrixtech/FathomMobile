@@ -62,6 +62,7 @@ class BluetoothConnectView extends Component {
         stopConnect:        PropTypes.func.isRequired,
         setKitState:        PropTypes.func.isRequired,
         disconnect:         PropTypes.func.isRequired,
+        loginToAccessory:   PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -166,6 +167,7 @@ class BluetoothConnectView extends Component {
     connect = (data) => {
         return this.props.stopScan()
             .then(() => this.props.connectToAccessory(data))
+            .then(() => this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user))
             .then(() => {
                 this.setState({ index: 3 });
                 this.refs.carousel.animateToPage(3);
