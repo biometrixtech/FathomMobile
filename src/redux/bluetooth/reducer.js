@@ -63,12 +63,11 @@ export default function bluetoothReducer(state = initialState, action) {
         tempAccessory.organizationId = null;
         tempAccessory.last_user_id = null;
         tempAccessory.team_id = null;
-        tempAccessory.accessoryConnected = false;
-        tempAccessory.name = `Fathom_kit_${tempAccessory.id.slice(-2)}`;
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
-                ...tempAccessory
+                ...tempAccessory,
+                configuration: 0
             },
             networks: []
         });

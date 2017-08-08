@@ -14,7 +14,7 @@ import Modal from 'react-native-modalbox';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors, AppFonts } from '@theme/';
-import { Roles } from '@constants/';
+import { Roles, BLEConfig } from '@constants/';
 
 // Components
 import { Spacer, Button, FormLabel, Text, ListItem, Card, FormInput } from '@ui/';
@@ -22,6 +22,9 @@ import { Placeholder } from '@general/';
 
 const font10 = AppFonts.scaleFont(10);
 const font18 = AppFonts.scaleFont(18);
+
+const configuration = BLEConfig.configuration;
+const bleConfiguredState = [configuration.DONE, configuration.UPSERT_PENDING, configuration.UPSERT_TO_SAVE, configuration.UPSERT_DONE];
 
 /* Component ==================================================================== */
 class KitOwnerView extends Component {
@@ -53,6 +56,7 @@ class KitOwnerView extends Component {
             modalStyle: {},
             refreshing: false,
             name:       '',
+            configured: bleConfiguredState.some(state => state === this.props.bluetooth.accessoryData.configuration)
         };
     }
 
@@ -83,7 +87,8 @@ class KitOwnerView extends Component {
     }
 
     componentWillUnmount = () => {
-        return this.props.bluetooth.accessoryData.id ? this.props.storeParams(this.props.bluetooth.accessoryData)
+        return this.props.bluetooth.accessoryData.id ? this.props.assignKitName(this.props.bluetooth.accessoryData.id, this.props.bluetooth.accessoryData.name.slice(11))
+            .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
             .then(() => this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user))
             .then(() => this.props.setKitTime(this.props.bluetooth.accessoryData.id)) : null;
     };
@@ -118,32 +123,63 @@ class KitOwnerView extends Component {
                 </View>
                 <View>
                     <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>OWNER</Text>
-                    <ListItem
-                        title={'Kit Name'}
-                        rightTitle={this.props.bluetooth.accessoryData.name ? this.props.bluetooth.accessoryData.name : null}
-                        rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                        chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
-                        titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                        onPress={() => Actions.refresh({ isModalVisible: true })}
-                    />
-                    <ListItem
-                        title={'Organization'}
-                        rightTitle={this.props.bluetooth.accessoryData.organization ? this.props.bluetooth.accessoryData.organization.name : null}
-                        rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                        chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
-                        titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                        onPress={() => { this.props.assignType('organization'); return Actions.kitAssign(); }}
-                    />
                     {
-                        this.props.bluetooth.accessoryData.organization ?
+                        this.state.configured ?
                             <ListItem
-                                title={'Team'}
-                                rightTitle={this.props.bluetooth.accessoryData.team ? this.props.bluetooth.accessoryData.team.name : null}
+                                title={'Kit Name'}
+                                rightTitle={this.props.bluetooth.accessoryData.name ? this.props.bluetooth.accessoryData.name : null}
+                                rightTitleStyle={{ color: AppColors.lightGrey}}
+                                chevronColor={AppColors.lightGrey}
+                                titleStyle={{ color: AppColors.lightGrey}}
+                            />
+                            :
+                            <ListItem
+                                title={'Kit Name'}
+                                rightTitle={this.props.bluetooth.accessoryData.name ? this.props.bluetooth.accessoryData.name : null}
                                 rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
                                 chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
                                 titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                                onPress={() => { this.props.assignType('team'); return Actions.kitAssign(); }}
+                                onPress={() => Actions.refresh({ isModalVisible: true })}
                             />
+                    }
+                    {
+                        this.state.configured ?
+                            <ListItem
+                                title={'Organization'}
+                                rightTitle={this.props.bluetooth.accessoryData.organization ? this.props.bluetooth.accessoryData.organization.name : null}
+                                rightTitleStyle={{ color: AppColors.lightGrey}}
+                                chevronColor={AppColors.lightGrey}
+                                titleStyle={{ color: AppColors.lightGrey}}
+                            />
+                            :
+                            <ListItem
+                                title={'Organization'}
+                                rightTitle={this.props.bluetooth.accessoryData.organization ? this.props.bluetooth.accessoryData.organization.name : null}
+                                rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
+                                chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
+                                titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
+                                onPress={() => { this.props.assignType('organization'); return Actions.kitAssign(); }}
+                            />
+                    }
+                    {
+                        this.props.bluetooth.accessoryData.organization ?
+                            this.state.configured ?
+                                <ListItem
+                                    title={'Team'}
+                                    rightTitle={this.props.bluetooth.accessoryData.team ? this.props.bluetooth.accessoryData.team.name : null}
+                                    rightTitleStyle={{ color: AppColors.lightGrey}}
+                                    chevronColor={AppColors.lightGrey}
+                                    titleStyle={{ color: AppColors.lightGrey}}
+                                />
+                                :
+                                <ListItem
+                                    title={'Team'}
+                                    rightTitle={this.props.bluetooth.accessoryData.team ? this.props.bluetooth.accessoryData.team.name : null}
+                                    rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
+                                    chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
+                                    titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
+                                    onPress={() => { this.props.assignType('team'); return Actions.kitAssign(); }}
+                                />
                             :
                             <ListItem
                                 title={'Team'}
@@ -153,14 +189,23 @@ class KitOwnerView extends Component {
                     }
                     {
                         this.props.bluetooth.accessoryData.organization && this.props.bluetooth.accessoryData.team ?
-                            <ListItem
-                                title={'Individual'}
-                                rightTitle={this.props.bluetooth.accessoryData.individual ? `${this.props.bluetooth.accessoryData.individual.first_name} ${this.props.bluetooth.accessoryData.individual.last_name}` : null}
-                                rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                                chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
-                                titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
-                                onPress={() => { this.props.assignType('individual'); return Actions.kitAssign(); }}
-                            />
+                            this.state.configured ?
+                                <ListItem
+                                    title={'Individual'}
+                                    rightTitle={this.props.bluetooth.accessoryData.individual ? `${this.props.bluetooth.accessoryData.individual.first_name} ${this.props.bluetooth.accessoryData.individual.last_name}` : null}
+                                    rightTitleStyle={{ color: AppColors.lightGrey}}
+                                    chevronColor={AppColors.lightGrey}
+                                    titleStyle={{ color: AppColors.lightGrey}}
+                                />
+                                :
+                                <ListItem
+                                    title={'Individual'}
+                                    rightTitle={this.props.bluetooth.accessoryData.individual ? `${this.props.bluetooth.accessoryData.individual.first_name} ${this.props.bluetooth.accessoryData.individual.last_name}` : null}
+                                    rightTitleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
+                                    chevronColor={this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}
+                                    titleStyle={{ color: this.props.bluetooth.accessoryData.accessoryConnected ? AppColors.brand.blue : AppColors.lightGrey}}
+                                    onPress={() => { this.props.assignType('individual'); return Actions.kitAssign(); }}
+                                />
                             :
                             <ListItem
                                 title={'Individual'}
