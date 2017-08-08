@@ -30,6 +30,7 @@ const mapDispatchToProps = {
     stopConnect:         BluetoothActions.stopConnect,
     setKitState:         BluetoothActions.setKitState,
     disconnect:          BluetoothActions.disconnect,
+    loginToAccessory:    BluetoothActions.loginToAccessory,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BluetoothConnectRender);

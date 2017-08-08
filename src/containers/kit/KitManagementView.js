@@ -30,7 +30,7 @@ const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
 const configuration = BLEConfig.configuration;
-const bleConfiguredState = [configuration.DONE, configuration.UPSERT_PENDING, configuration.UPSERT_TO_SAVE, configuration.UPSERT_DONE]
+const bleConfiguredState = [configuration.DONE, configuration.UPSERT_PENDING, configuration.UPSERT_TO_SAVE, configuration.UPSERT_DONE];
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -51,7 +51,6 @@ class KitManagementView extends Component {
         user:               PropTypes.object,
         bluetooth:          PropTypes.object,
         resetAccessory:     PropTypes.func.isRequired,
-        systemReset:        PropTypes.func.isRequired,
         scanWiFi:           PropTypes.func.isRequired,
         startScan:          PropTypes.func.isRequired,
         setWiFiSSID:        PropTypes.func.isRequired,
@@ -99,7 +98,7 @@ class KitManagementView extends Component {
         
         this._configurationInterval = setInterval(() => {
             return this.props.bluetooth.accessoryData.id ? this.props.getConfiguration(this.props.bluetooth.accessoryData.id)
-                .then(() => this.setState({ configured: bleConfiguredState.some(state => state === this.props.bluetooth.accessoryData.configuration) })) : null;
+                .then(() => this.setState({ configured: bleConfiguredState.some(state => state === this.props.bluetooth.accessoryData.configuration) })) : this.setState({ configured: false });
         }, 10000);
     }
 
@@ -174,7 +173,7 @@ class KitManagementView extends Component {
                     />
             }
             {
-                this.state.configured ?
+                this.state.configured && this.props.bluetooth.accessoryData.accessoryConnected ?
                     <ListItem
                         title={'WiFi'}
                         chevronColor={ AppColors.brand.blue }
@@ -193,17 +192,18 @@ class KitManagementView extends Component {
                     />
             }
             {
-                this.props.bluetooth.accessoryData.accessoryConnected ?
+                this.state.configured && this.props.bluetooth.accessoryData.accessoryConnected ?
                     <ListItem
                         title={'Reset'}
                         chevronColor={ AppColors.brand.blue }
                         titleStyle={{ color: AppColors.brand.blue }}
-                        onPress={() => this.props.startConnect()
-                            .then(() => this.props.resetAccessory(this.props.bluetooth.accessoryData))
-                            .then(() => {
-                                this.props.systemReset(this.props.bluetooth.accessoryData.id);
-                                return this.props.startScan();
-                            })
+                        onPress={() => this.props.resetAccessory(this.props.bluetooth.accessoryData)
+                            .then(() => this.setState({
+                                SSID:       null,
+                                configured: false,
+                                newNetwork: true,
+                                password:   '' 
+                            }))
                         }
                     />
                     :

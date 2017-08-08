@@ -225,13 +225,15 @@ const loginToAccessory = (data, {role, id}) => {
         // .then(accessoryLoginResult => {
         //     return AppAPI.accessories.patch(data.id, data);
         // })
-        .then(uploadedAccessory => dispatch({
-            type: Actions.CONNECT_TO_ACCESSORY,
-            data: {
-                accessoryConnected: true,
-                ...data
-            }
-        }))
+        .then(uploadedAccessory => {
+            return dispatch({
+                type: Actions.CONNECT_TO_ACCESSORY,
+                data: {
+                    accessoryConnected: true,
+                    ...data
+                }
+            });
+        })
         .catch(err => Promise.reject(err));
 }
 
