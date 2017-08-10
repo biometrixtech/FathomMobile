@@ -203,7 +203,6 @@ const connectToAccessory = (data) => {
             return dispatch({
                 type: Actions.CONNECT_TO_ACCESSORY,
                 data: {
-                    accessoryConnected: true,
                     ...data
                 }
             });
@@ -226,10 +225,11 @@ const loginToAccessory = (data, {role, id}) => {
         //     return AppAPI.accessories.patch(data.id, data);
         // })
         .then(uploadedAccessory => {
+            console.log(uploadedAccessory);
             return dispatch({
+
                 type: Actions.CONNECT_TO_ACCESSORY,
                 data: {
-                    accessoryConnected: true,
                     ...data
                 }
             });
@@ -420,7 +420,6 @@ const assignKitIndividual = (accessory, user) => {
             dispatch({
                 type: Actions.CONNECT_TO_ACCESSORY,
                 data: {
-                    accessoryConnected: true,
                     ...data
                 }
             })
@@ -429,7 +428,12 @@ const assignKitIndividual = (accessory, user) => {
             });
             return null;
         })
-        .catch(err => Promise.reject(err))
+        .catch(err => {
+            dispatch({
+                type: Actions.STOP_CONNECT
+            });
+            return Promise.reject(err);
+        })
 };
 
 const assignKitTeam = (accessory, team) => {
@@ -450,7 +454,6 @@ const assignKitTeam = (accessory, team) => {
             dispatch({
                 type: Actions.CONNECT_TO_ACCESSORY,
                 data: {
-                    accessoryConnected: true,
                     ...data
                 }
             })
@@ -459,7 +462,12 @@ const assignKitTeam = (accessory, team) => {
             });
             return null;
         })
-        .catch(err => Promise.reject(err))
+        .catch(err => {
+            dispatch({
+                type: Actions.STOP_CONNECT
+            });
+            return Promise.reject(err);
+        })
 };
 
 const assignKitOrganization = (accessory, organization) => {
@@ -480,7 +488,6 @@ const assignKitOrganization = (accessory, organization) => {
             dispatch({
                 type: Actions.CONNECT_TO_ACCESSORY,
                 data: {
-                    accessoryConnected: true,
                     ...data
                 }
             })
@@ -489,24 +496,38 @@ const assignKitOrganization = (accessory, organization) => {
             });
             return null;
         })
-        .catch(err => Promise.reject(err))
+        .catch(err => {
+            dispatch({
+                type: Actions.STOP_CONNECT
+            });
+            return Promise.reject(err);
+        })
 };
 
 const setKitState = (id, stateUsed) => {
     let dataArray = [commands.SET_STATE, convertHex('0x01'), state[stateUsed]];
     return dispatch => write(id, dataArray)
-        .then(result => dispatch({
-            type: Actions.SET_KIT_STATE
-        }));
+        .then(result => {
+            return dispatch({
+                type: Actions.SET_KIT_STATE
+            });
+        })
+        .catch(err => Promise.reject(err));
 };
 
 const disconnect = (id) => {
-    return dispatch => Promise.resolve(setKitState(id, 'APP_IDLE'))
-        .then(() => BleManager.disconnect(id))
-        .then(() => BleManager.removePeripheral(id))
+    let dataArray = [commands.SET_STATE, convertHex('0x01'), state.APP_IDLE];
+    console.log(dataArray);
+    return dispatch => write(id, dataArray)
+        .catch(err => console.log(err))
+        .then(result => {
+            console.log(result);
+            return BleManager.disconnect(id);
+        })
         .then(() => dispatch({
             type: Actions.BLUETOOTH_DISCONNECT
-        }));
+        }))
+        .catch(err => Promise.reject(err));
 };
 
 const handleDisconnect = (id) => {

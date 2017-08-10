@@ -28,7 +28,7 @@ const scenes = (
     <Scene key={'navigation'} >
         <Scene
             key={'navroot'}>
-            <Scene
+            {/* <Scene
                 {...navbarPropsTabs}
                 key={'teamCaptureSession'}
                 clone
@@ -44,7 +44,7 @@ const scenes = (
                 type={ActionConst.PUSH}
                 component={GroupCaptureSessionView}
                 analyticsDesc={'GroupCaptureSessiontView: Group Capture Session'}
-            />
+            /> */}
             <Scene
                 {...navbarPropsTabs}
                 key={'kitManagement'}

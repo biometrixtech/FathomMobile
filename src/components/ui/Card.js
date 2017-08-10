@@ -43,7 +43,7 @@ class CustomCard extends Component {
             }],
             titleStyle: [
                 AppStyles.h2,
-              { marginBottom: 15 },
+                { marginBottom: 15 },
             ],
         };
 
