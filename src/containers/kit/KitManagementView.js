@@ -50,7 +50,6 @@ class KitManagementView extends Component {
     static propTypes = {
         user:               PropTypes.object,
         bluetooth:          PropTypes.object,
-        resetAccessory:     PropTypes.func.isRequired,
         scanWiFi:           PropTypes.func.isRequired,
         startScan:          PropTypes.func.isRequired,
         setWiFiSSID:        PropTypes.func.isRequired,
@@ -61,8 +60,8 @@ class KitManagementView extends Component {
         connectToAccessory: PropTypes.func.isRequired,
         startConnect:       PropTypes.func.isRequired,
         stopConnect:        PropTypes.func.isRequired,
-        setKitState:        PropTypes.func.isRequired,
         getConfiguration:   PropTypes.func.isRequired,
+        disconnect:         PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -145,11 +144,15 @@ class KitManagementView extends Component {
             }
             <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>SETTINGS</Text>
             <ListItem
-                title={'Connect Kit'}
+                title={`${this.props.bluetooth.accessoryData.id ? 'Disconnect' : 'Connect Kit'}`}
+                rightTitle={this.props.bluetooth.accessoryData.name ? this.props.bluetooth.accessoryData.name : null}
+                rightTitleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}}
                 onPress={() => {
                     if (this.props.bluetooth.accessoryData.id) {
-                        return Promise.resolve(this.props.setKitState(this.props.bluetooth.accessoryData.id, 'APP_IDLE'))
-                            .then(() => Actions.bluetoothConnect());
+                        return this.props.startConnect()
+                            .then(() => this.props.disconnect(this.props.bluetooth.accessoryData.id))
+                            .catch(err => console.log(err))
+                            .then(() => this.props.stopConnect());
                     }
                     return Actions.bluetoothConnect();
                 }}
@@ -158,7 +161,7 @@ class KitManagementView extends Component {
             <Spacer />
             <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>MANAGE KIT</Text>
             {
-                this.props.bluetooth.accessoryData.accessoryConnected ?
+                this.props.bluetooth.accessoryData.id ?
                     <ListItem
                         title={'Owner'}
                         chevronColor={ AppColors.brand.blue }
@@ -173,7 +176,7 @@ class KitManagementView extends Component {
                     />
             }
             {
-                this.state.configured && this.props.bluetooth.accessoryData.accessoryConnected ?
+                this.state.configured && this.props.bluetooth.accessoryData.id ?
                     <ListItem
                         title={'WiFi'}
                         chevronColor={ AppColors.brand.blue }
@@ -187,28 +190,6 @@ class KitManagementView extends Component {
                     :
                     <ListItem
                         title={'WiFi'}
-                        chevronColor={ AppColors.lightGrey }
-                        titleStyle={{ color: AppColors.lightGrey }}
-                    />
-            }
-            {
-                this.state.configured && this.props.bluetooth.accessoryData.accessoryConnected ?
-                    <ListItem
-                        title={'Reset'}
-                        chevronColor={ AppColors.brand.blue }
-                        titleStyle={{ color: AppColors.brand.blue }}
-                        onPress={() => this.props.resetAccessory(this.props.bluetooth.accessoryData)
-                            .then(() => this.setState({
-                                SSID:       null,
-                                configured: false,
-                                newNetwork: true,
-                                password:   '' 
-                            }))
-                        }
-                    />
-                    :
-                    <ListItem
-                        title={'Reset'}
                         chevronColor={ AppColors.lightGrey }
                         titleStyle={{ color: AppColors.lightGrey }}
                     />

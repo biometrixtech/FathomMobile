@@ -137,11 +137,11 @@ class Menu extends Component {
                 //     title:    'Dashboard',
                 //     onPress:  () => { this.props.closeSideMenu(); action(); this.setState({ active: 0 }); },
                 // },
-                {
-                    itemName: 'pulse',
-                    title:    'Capture Session',
-                    onPress:  () => { this.props.closeSideMenu(); Actions.teamCaptureSession(); this.setState({ active: 0 }); return this.props.id ? this.props.setKitState(this.props.id, 'APP_IDLE') : null; }
-                },
+                // {
+                //     itemName: 'pulse',
+                //     title:    'Capture Session',
+                //     onPress:  () => { this.props.closeSideMenu(); Actions.teamCaptureSession(); this.setState({ active: 0 }); return this.props.id ? this.props.setKitState(this.props.id, 'APP_IDLE') : null; }
+                // },
                 // {
                 //     itemName: 'tooltip-edit',
                 //     title:    'Feedback Settings',
@@ -155,7 +155,7 @@ class Menu extends Component {
                 {
                     itemName: 'mixcloud',
                     title:    'Manage Kit',
-                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 1 }); Actions.kitManagement(); },
+                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 0 }); Actions.kitManagement(); },
                 },
             ],
         };
@@ -163,16 +163,18 @@ class Menu extends Component {
 
     logout = () => {
         if (this.props.logout) {
-            this.props.disconnect(this.props.id)
-                .catch(err => console.log(err))
-                .then(() => this.props.logout())
+            return this.props.logout()
                 .then(() => {
                     this.props.closeSideMenu();
                     return Actions.login();
                 }).catch((err) => {
+                    console.log(err);
                     return Alert.alert('Uh oh!', 'Something went wrong, please try again.');
-                });
+                })
+                .then(() => this.props.id ? this.props.disconnect(this.props.id) : null)
+                .catch(err => Promise.reject(err));
         }
+        return null;
     }
 
     render = () => {

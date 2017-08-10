@@ -60,9 +60,9 @@ class BluetoothConnectView extends Component {
         deviceFound:        PropTypes.func.isRequired,
         startConnect:       PropTypes.func.isRequired,
         stopConnect:        PropTypes.func.isRequired,
-        setKitState:        PropTypes.func.isRequired,
         disconnect:         PropTypes.func.isRequired,
         loginToAccessory:   PropTypes.func.isRequired,
+        setKitTime:         PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -90,15 +90,6 @@ class BluetoothConnectView extends Component {
         this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral );
         this.handlerStop = bleManagerEmitter.addListener('BleManagerStopScan', this.handleStopScan );
         this.handlerState = bleManagerEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange );
-
-        if (this.props.bluetooth.accessoryData.id) {
-            return Promise.resolve(this.props.disconnect(this.props.bluetooth.accessoryData.id))
-                .then(result => {
-                    this.setState({ index: 0 });
-                    this.refs.carousel.animateToPage(0);
-                });
-        }
-        return null;
     }
 
     componentWillUnmount = () => {
@@ -168,6 +159,7 @@ class BluetoothConnectView extends Component {
         return this.props.stopScan()
             .then(() => this.props.connectToAccessory(data))
             .then(() => this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user))
+            .then(() => this.props.setKitTime(this.props.bluetooth.accessoryData.id))
             .then(() => {
                 this.setState({ index: 3 });
                 this.refs.carousel.animateToPage(3);
@@ -176,7 +168,7 @@ class BluetoothConnectView extends Component {
             .catch((err) => {
                 console.log(err);
                 return this.props.stopConnect();
-            });
+            }).catch((err) => this.props.stopConnect());
     }
 
     _onLayoutDidChange = (e) => {

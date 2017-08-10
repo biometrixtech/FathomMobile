@@ -28,7 +28,9 @@ const mapDispatchToProps = {
     storeParams:          BluetoothActions.storeParams,
     loginToAccessory:     BluetoothActions.loginToAccessory,
     setKitTime:           BluetoothActions.setKitTime,
-
+    resetAccessory:       BluetoothActions.resetAccessory,
+    startConnect:         BluetoothActions.startConnect,
+    stopConnect:          BluetoothActions.stopConnect,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitOwnerRender);
