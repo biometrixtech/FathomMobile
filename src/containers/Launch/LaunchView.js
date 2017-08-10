@@ -42,7 +42,7 @@ class AppLaunch extends Component {
         StatusBar.setHidden(false, true);
 
         // Try to login based on existing token
-        this.props.login()
+        return this.props.login()
         // Logged in, show index screen
             .then(() => Actions.app({ type: 'reset' }))
         // Not Logged in, show Login screen
