@@ -55,9 +55,7 @@ class KitAssignView extends Component {
         super(props);
 
         this.state = {
-            editing:    false,
-            searchText: '',
-            bold:       false
+            searchText: ''
         };
     }
 
@@ -117,13 +115,10 @@ class KitAssignView extends Component {
                     <ListItem
                         title={category}
                         containerStyle={{ padding: 10, backgroundColor: AppColors.brand.light }}
-                        rightTitle={`${this.state.editing ? 'DONE' : 'EDIT'}`}
-                        rightTitleStyle={[AppStyles.baseText, { color: AppColors.brand.yellow, fontWeight: this.state.bold ? 'bold' : 'normal' }]}
-                        onPress={() => this.setState({ editing: !this.state.editing, bold: false })}
                         hideChevron
                     />
                     {
-                        assignType !== 'organization' && this.state.editing ? 
+                        assignType !== 'organization' ?
                             <SearchBar
                                 containerStyle={{ backgroundColor: '#FFFFFF', borderWidth: 0 }}
                                 inputStyle={{ backgroundColor: '#FFFFFF' }}
@@ -136,52 +131,34 @@ class KitAssignView extends Component {
                         {
                             assignType === 'individual'
                                 ?
-                                (this.state.editing ?
-                                    users.filter(user => `${user.first_name} ${user.last_name}`.toUpperCase().indexOf(this.state.searchText.toUpperCase()) > -1).map(user => {
-                                        return <ListItem
-                                            key={user.id}
-                                            title={`${user.first_name} ${user.last_name}`}
-                                            containerStyle={{ backgroundColor: `${user.first_name} ${user.last_name}` === name ? AppColors.brand.fogGrey : AppColors.background }}
-                                            onPress={() => { this.setState({ bold: true }); this.props.assignKitIndividual(accessory, user); }}
-                                            hideChevron
-                                        />
-                                    })
-                                    : <ListItem
-                                        key={'individual'}
-                                        title={name}
+                                users.filter(user => `${user.first_name} ${user.last_name}`.toUpperCase().indexOf(this.state.searchText.toUpperCase()) > -1).map(user => {
+                                    return <ListItem
+                                        key={user.id}
+                                        title={`${user.first_name} ${user.last_name}`}
+                                        containerStyle={{ backgroundColor: `${user.first_name} ${user.last_name}` === name ? AppColors.brand.fogGrey : AppColors.background }}
+                                        onPress={() => this.props.assignKitIndividual(accessory, user)}
                                         hideChevron
-                                    />)
+                                    />
+                                })
                                 :
                                 assignType === 'team'
                                     ?
-                                    (this.state.editing ?
-                                        this.props.user.teams.filter(team => team.name.toUpperCase().indexOf(this.state.searchText.toUpperCase()) > -1).map(team => {
-                                            return <ListItem
-                                                key={team.id}
-                                                title={team.name}
-                                                containerStyle={{ backgroundColor: team.name === name ? AppColors.brand.fogGrey : AppColors.background }}
-                                                onPress={() => { this.setState({ bold: true }); this.props.assignKitTeam(accessory, team); }}
-                                                hideChevron
-                                            />
-                                        })
-                                        : <ListItem
-                                            key={'team'}
-                                            title={name}
-                                            hideChevron
-                                        />)
-                                    :
-                                    (this.state.editing ?
-                                        <ListItem
-                                            title={this.props.user.organization.name}
-                                            containerStyle={{ backgroundColor: this.props.user.organization.name === name ? AppColors.brand.fogGrey : AppColors.background }}
-                                            onPress={() => { this.setState({ bold: true }); this.props.assignKitOrganization(accessory, this.props.user.organization); }}
+                                    this.props.user.teams.filter(team => team.name.toUpperCase().indexOf(this.state.searchText.toUpperCase()) > -1).map(team => {
+                                        return <ListItem
+                                            key={team.id}
+                                            title={team.name}
+                                            containerStyle={{ backgroundColor: team.name === name ? AppColors.brand.fogGrey : AppColors.background }}
+                                            onPress={() => this.props.assignKitTeam(accessory, team)}
                                             hideChevron
                                         />
-                                        : <ListItem
-                                            key={'organization'}
-                                            title={name}
-                                            hideChevron
-                                        />)
+                                    })
+                                    :
+                                    <ListItem
+                                        title={this.props.user.organization.name}
+                                        containerStyle={{ backgroundColor: this.props.user.organization.name === name ? AppColors.brand.fogGrey : AppColors.background }}
+                                        onPress={() => this.props.assignKitOrganization(accessory, this.props.user.organization)}
+                                        hideChevron
+                                    />
                         }
                     </ScrollView>
                 </View>

@@ -10,8 +10,8 @@
  */
 import React, { PropTypes } from 'react';
 import {
-  View,
-  StyleSheet,
+    View,
+    StyleSheet,
 } from 'react-native';
 
 // Components
@@ -61,40 +61,40 @@ const styles = StyleSheet.create({
 
 /* Component ==================================================================== */
 const Alerts = ({ status, success, error }) => (
-  <View style={styles.alerts}>
-    {!!success &&
-      <View>
-        <View style={[styles.msg]}>
-          <Text style={[styles.msg_text]}>{success}</Text>
-        </View>
-      </View>
-    }
+    <View style={styles.alerts}>
+        {!!success &&
+          <View>
+              <View style={[styles.msg]}>
+                  <Text style={[styles.msg_text]}>{success}</Text>
+              </View>
+          </View>
+        }
 
-    {!!status &&
-      <View>
-        <View style={[styles.msg, styles.msgStatus]}>
-          <Text style={[styles.msg_text, styles.msgStatus_text]}>
-            {status}
-          </Text>
-        </View>
-      </View>
-    }
+        {!!status &&
+          <View>
+              <View style={[styles.msg, styles.msgStatus]}>
+                  <Text style={[styles.msg_text, styles.msgStatus_text]}>
+                      {status}
+                  </Text>
+              </View>
+          </View>
+        }
 
-    {!!error &&
-      <View>
-        <View style={[styles.msg, styles.msgError]}>
-          <Text
-            style={[
-                styles.msg_text,
-                styles.msgError_text,
-            ]}
-          >
-            {error}
-          </Text>
-        </View>
-      </View>
-    }
-  </View>
+        {!!error &&
+          <View>
+              <View style={[styles.msg, styles.msgError]}>
+                  <Text
+                      style={[
+                          styles.msg_text,
+                          styles.msgError_text,
+                      ]}
+                  >
+                      {error}
+                  </Text>
+              </View>
+          </View>
+        }
+    </View>
 );
 
 Alerts.propTypes = {

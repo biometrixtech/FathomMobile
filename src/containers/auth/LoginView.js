@@ -45,6 +45,10 @@ const styles = StyleSheet.create({
     whiteText: {
         color: '#FFFFFF',
     },
+    mainLogo: {
+        width:  AppSizes.screen.widthHalf,
+        height: AppSizes.screen.heightTenth 
+    }
 });
 
 /* Component ==================================================================== */
@@ -148,7 +152,7 @@ class Login extends Component {
                     email:    credentials.Email,
                     password: credentials.Password,
                 }, true).then((userData) => {
-                    this.setState({
+                    return this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
                         Actions.app({ type: 'reset' });
@@ -175,7 +179,7 @@ class Login extends Component {
                 }).catch((err) => {
                     console.log(err);
                     const error = AppAPI.handleError(err);
-                    this.setState({ resultMsg: { error } });
+                    return this.setState({ resultMsg: { error } });
                 });
             });
         }
@@ -190,7 +194,7 @@ class Login extends Component {
                 style={[AppStyles.containerCentered, AppStyles.container, styles.background]}
             >
 
-                <Image source={require('@images/fathom_white.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthHalf, height: AppSizes.screen.heightTenth }} />
+                <Image source={require('@images/fathom_white.png')} resizeMode={'contain'} style={styles.mainLogo} />
 
                 <Card>
                     <Alerts
