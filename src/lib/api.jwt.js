@@ -131,9 +131,9 @@ export default class JWT {
         // if (thisHostname !== tokenHostname) {
         // return false; // Issuing server is different
         // }
-        if (this.apiCredentials.email && this.apiCredentials.email.toLowerCase() !== decodedToken.email) {
-            return false;
-        }
+        // if (this.apiCredentials.email && this.apiCredentials.email.toLowerCase() !== decodedToken.email) {
+        //     return false;
+        // }
 
         if (userId && decodedToken.user_id !== userId) {
             return false; // Token is for another user

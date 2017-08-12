@@ -44,20 +44,23 @@ class KitOwnerView extends Component {
     static componentName = 'KitOwnerView';
 
     static propTypes = {
-        user:                 PropTypes.object,
-        bluetooth:            PropTypes.object,
-        assignType:           PropTypes.func.isRequired,
-        getOwnerOrganization: PropTypes.func.isRequired,
-        getOwnerTeam:         PropTypes.func.isRequired,
-        getOwnerUser:         PropTypes.func.isRequired,
-        getKitName:           PropTypes.func.isRequired,
-        assignKitName:        PropTypes.func.isRequired,
-        storeParams:          PropTypes.func.isRequired,
-        loginToAccessory:     PropTypes.func.isRequired,
-        setKitTime:           PropTypes.func.isRequired,
-        resetAccessory:       PropTypes.func.isRequired,
-        startConnect:         PropTypes.func.isRequired,
-        stopConnect:          PropTypes.func.isRequired,
+        user:                      PropTypes.object,
+        bluetooth:                 PropTypes.object,
+        assignType:                PropTypes.func.isRequired,
+        getOwnerOrganization:      PropTypes.func.isRequired,
+        getOwnerTeam:              PropTypes.func.isRequired,
+        getOwnerUser:              PropTypes.func.isRequired,
+        getKitName:                PropTypes.func.isRequired,
+        assignKitName:             PropTypes.func.isRequired,
+        storeParams:               PropTypes.func.isRequired,
+        loginToAccessory:          PropTypes.func.isRequired,
+        setKitTime:                PropTypes.func.isRequired,
+        resetAccessory:            PropTypes.func.isRequired,
+        startConnect:              PropTypes.func.isRequired,
+        stopConnect:               PropTypes.func.isRequired,
+        getConfiguration:          PropTypes.func.isRequired,
+        setAccessoryLoginEmail:    PropTypes.func.isRequired,
+        setAccessoryLoginPassword: PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -167,8 +170,13 @@ class KitOwnerView extends Component {
                                             .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
                                             .then(() => this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user))
                                             .then(() => this.props.setKitTime(this.props.bluetooth.accessoryData.id))
+                                            .then(() => this.props.setAccessoryLoginEmail(this.props.bluetooth.accessoryData.id, this.props.user.email))
+                                            .then(() => this.props.setAccessoryLoginPassword(this.props.bluetooth.accessoryData.id, this.props.user.password))
+                                            .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
                                             .catch(err => console.log(err))
+                                            .then(() => this.props.getConfiguration(this.props.bluetooth.accessoryData.id))
                                             .then(() => this.props.stopConnect())
+                                            .catch(err => { console.log(err); return this.props.stopConnect(); })
                                         }
                                         hideChevron
                                     />
