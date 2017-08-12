@@ -17,6 +17,7 @@ import { Icon } from 'react-native-elements'
 import Carousel from 'react-native-looped-carousel';
 import Collapsible from 'react-native-collapsible';
 import { Actions } from 'react-native-router-flux';
+import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors } from '@theme/';
@@ -48,21 +49,25 @@ class BluetoothConnectView extends Component {
     static componentName = 'BluetoothConnectView';
 
     static propTypes = {
-        user:               PropTypes.object,
-        bluetooth:          PropTypes.object,
-        connectToAccessory: PropTypes.func.isRequired,
-        checkState:         PropTypes.func.isRequired,
-        changeState:        PropTypes.func.isRequired,
-        startBluetooth:     PropTypes.func.isRequired,
-        enableBluetooth:    PropTypes.func.isRequired,
-        startScan:          PropTypes.func.isRequired,
-        stopScan:           PropTypes.func.isRequired,
-        deviceFound:        PropTypes.func.isRequired,
-        startConnect:       PropTypes.func.isRequired,
-        stopConnect:        PropTypes.func.isRequired,
-        disconnect:         PropTypes.func.isRequired,
-        loginToAccessory:   PropTypes.func.isRequired,
-        setKitTime:         PropTypes.func.isRequired,
+        user:                      PropTypes.object,
+        bluetooth:                 PropTypes.object,
+        connectToAccessory:        PropTypes.func.isRequired,
+        checkState:                PropTypes.func.isRequired,
+        changeState:               PropTypes.func.isRequired,
+        startBluetooth:            PropTypes.func.isRequired,
+        enableBluetooth:           PropTypes.func.isRequired,
+        startScan:                 PropTypes.func.isRequired,
+        stopScan:                  PropTypes.func.isRequired,
+        deviceFound:               PropTypes.func.isRequired,
+        startConnect:              PropTypes.func.isRequired,
+        stopConnect:               PropTypes.func.isRequired,
+        disconnect:                PropTypes.func.isRequired,
+        loginToAccessory:          PropTypes.func.isRequired,
+        setKitTime:                PropTypes.func.isRequired,
+        getConfiguration:          PropTypes.func.isRequired,
+        storeParams:               PropTypes.func.isRequired,
+        setAccessoryLoginEmail:    PropTypes.func.isRequired,
+        setAccessoryLoginPassword: PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -102,7 +107,7 @@ class BluetoothConnectView extends Component {
         return this.props.startBluetooth()
             .then(() => {
                 this.props.checkState();
-                if (Platform.OS === 'android' && Platform.Version >= 23) {
+                if (Platform.OS === 'android') {
                     return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
                         .then(result => {
                             if (!result) {
@@ -116,7 +121,19 @@ class BluetoothConnectView extends Component {
                             }
                             return null;
                         })
-                        .then(() => this.props.enableBluetooth())
+                        .then(() => LocationServicesDialogBox.checkLocationServicesIsEnabled({
+                            message: '<h2>Use Location?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, or cell network for location<br/>',
+                            ok:      'YES',
+                            cancel:  'NO'
+                        }))
+                        .then(success => {
+                            /* eslint-disable no-undef */
+                            return navigator.geolocation.getCurrentPosition((position) => this.props.enableBluetooth(), error => console.log(error), { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 });
+                        })
+                        .catch((error) => {
+                            console.log(error.message);
+                            return Promise.reject(error);
+                        });
                 }
                 return null;
             })
@@ -158,8 +175,14 @@ class BluetoothConnectView extends Component {
     connect = (data) => {
         return this.props.stopScan()
             .then(() => this.props.connectToAccessory(data))
+            .catch((err) => this.props.stopConnect())
             .then(() => this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user))
+            .catch((err) => this.props.stopConnect())
             .then(() => this.props.setKitTime(this.props.bluetooth.accessoryData.id))
+            .then(() => this.props.setAccessoryLoginEmail(this.props.bluetooth.accessoryData.id, this.props.user.email))
+            .then(() => this.props.setAccessoryLoginPassword(this.props.bluetooth.accessoryData.id, this.props.user.password))
+            .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
+            .then(() => this.props.getConfiguration(this.props.bluetooth.accessoryData.id))
             .then(() => {
                 this.setState({ index: 3 });
                 this.refs.carousel.animateToPage(3);
@@ -168,7 +191,8 @@ class BluetoothConnectView extends Component {
             .catch((err) => {
                 console.log(err);
                 return this.props.stopConnect();
-            }).catch((err) => this.props.stopConnect());
+            })
+            .catch((err) => this.props.stopConnect());
     }
 
     _onLayoutDidChange = (e) => {
