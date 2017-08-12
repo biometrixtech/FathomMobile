@@ -63,11 +63,14 @@ export default function bluetoothReducer(state = initialState, action) {
         tempAccessory.organizationId = null;
         tempAccessory.last_user_id = null;
         tempAccessory.team_id = null;
+        tempAccessory.emailWritten = false;
+        tempAccessory.passwordWritten = false;
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
                 ...tempAccessory,
-                configuration: 0
+                configuration: 0,
+                configured:    false
             },
             networks: []
         });
@@ -116,7 +119,7 @@ export default function bluetoothReducer(state = initialState, action) {
             }
         });
     case Actions.NETWORK_DISCOVERED:
-        let networks = state.networks.some(network => network.label === action.data) || action.data === '' ? state.networks : state.networks.concat([{ key: state.networks.length, label: action.data }]);
+        let networks = state.networks.some(network => network.label === action.data) || action.data.trim() === '' || action.data.trim() === 'Network Not Found' ? state.networks : state.networks.concat([{ key: state.networks.length, label: action.data }]);
         return Object.assign({}, state, {
             networks
         });
@@ -124,7 +127,7 @@ export default function bluetoothReducer(state = initialState, action) {
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
-                configuration: action.data
+                ...action.data
             }
         });
     case Actions.BLUETOOTH_DISCONNECT:
@@ -138,6 +141,20 @@ export default function bluetoothReducer(state = initialState, action) {
             accessoryData: {
                 ...state.accessoryData,
                 wifiConnected: action.data === 0 ? true : false
+            }
+        });
+    case Actions.ACCESSORY_LOGIN_EMAIL:
+        return Object.assign({}, state, {
+            accessoryData: {
+                ...state.accessoryData,
+                emailWritten: action.data === 0 ? true : false
+            }
+        });
+    case Actions.ACCESSORY_LOGIN_PASSWORD:
+        return Object.assign({}, state, {
+            accessoryData: {
+                ...state.accessoryData,
+                passwordWritten: action.data === 0 ? true : false
             }
         });
     case Actions.HANDLE_DISCONNECT:

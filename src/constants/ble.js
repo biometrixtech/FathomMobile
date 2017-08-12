@@ -12,18 +12,18 @@ for (let i = 0; i < 256; i++) {
 const parse = function parse(s, buf, offset) {
     return new Promise(resolve => {
         let i = (buf && offset) || 0;
-        let ii = 0;
+        let j = 0;
 
         buf = buf || [];
         s.toLowerCase().replace(/[0-9a-f]{2}/g, (oct) => {
-            if (ii < 16) { // Don't overflow!
-                buf[i + (ii++)] = _hexToByte[oct];
+            if (j < 16) { // Don't overflow!
+                buf[i + (j++)] = _hexToByte[oct];
             }
         });
 
         // Zero out remaining bytes if string was short
-        while (ii < 16) {
-            buf[i + (ii++)] = 0;
+        while (j < 16) {
+            buf[i + (j++)] = 0;
         }
 
         return resolve(buf);
@@ -103,6 +103,14 @@ export default {
         SET_NEUTRAL_QUAT:   parseInt('0x34', 16),
         SET_TIME:           parseInt('0x35', 16),
         GET_CONFIGURATION:  parseInt('0x36', 16),
+        GET_FILE_UUID:      parseInt('0x37', 16),
+        GET_FILE_RANGE:     parseInt('0x38', 16),
+        GET_CALIB_ERROR:    parseInt('0x39', 16),
+        WRONG_ACCESSORY:    parseInt('0x40', 16),
+        SET_EMAIL_HEAD:     parseInt('0x41', 16),
+        SET_EMAIL_CONT:     parseInt('0x42', 16),
+        SET_USER_PSW_HEAD:  parseInt('0x43', 16),
+        SET_USER_PSW_CONT:  parseInt('0x44', 16),
         SET_OWNER_ORG:      parseInt('0x50', 16),
         SET_OWNER_TEAM:     parseInt('0x51', 16),
         SET_OWNER_USER:     parseInt('0x52', 16),
