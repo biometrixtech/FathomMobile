@@ -29,9 +29,6 @@ const font10 = AppFonts.scaleFont(10);
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
-const configuration = BLEConfig.configuration;
-const bleConfiguredState = [configuration.DONE, configuration.UPSERT_PENDING, configuration.UPSERT_TO_SAVE, configuration.UPSERT_DONE];
-
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     indicator: {
@@ -60,7 +57,6 @@ class KitManagementView extends Component {
         connectToAccessory: PropTypes.func.isRequired,
         startConnect:       PropTypes.func.isRequired,
         stopConnect:        PropTypes.func.isRequired,
-        getConfiguration:   PropTypes.func.isRequired,
         disconnect:         PropTypes.func.isRequired,
     }
 
@@ -72,18 +68,18 @@ class KitManagementView extends Component {
         super(props);
 
         this.state = {
-            modalStyle: {},
-            SSID:       null,
-            configured: false,
-            newNetwork: true,
-            password:   ''
+            modal1Style: {},
+            modal2Style: {},
+            SSID:        null,
+            newNetwork:  true,
+            password:    ''
         };
 
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
     }
 
     readSSID = (id, loopsLeft) => {
-        return this.props.readSSID(id)
+        this.props.readSSID(id)
             .then(() => loopsLeft-1 >= 0 ? this.readSSID(id, loopsLeft-1) : null);
     };
 
@@ -93,11 +89,6 @@ class KitManagementView extends Component {
         this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
         this._disconnectInterval = setInterval(() => {
             return this.props.bluetooth.accessoryData.id ? this.props.handleDisconnect(this.props.bluetooth.accessoryData.id) : null;
-        }, 10000);
-        
-        this._configurationInterval = setInterval(() => {
-            return this.props.bluetooth.accessoryData.id ? this.props.getConfiguration(this.props.bluetooth.accessoryData.id)
-                .then(() => this.setState({ configured: bleConfiguredState.some(state => state === this.props.bluetooth.accessoryData.configuration) })) : this.setState({ configured: false });
         }, 10000);
     }
 
@@ -115,8 +106,12 @@ class KitManagementView extends Component {
             .then(() => this.props.stopConnect()) : null;
     }
 
-    resizeModal = (ev) => {
-        this.setState({ modalStyle: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
+    resizeModal1 = (ev) => {
+        this.setState({ modal1Style: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
+    }
+
+    resizeModal2 = (ev) => {
+        this.setState({ modal2Style: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
     }
 
     adminView = () => (
@@ -151,7 +146,7 @@ class KitManagementView extends Component {
                     if (this.props.bluetooth.accessoryData.id) {
                         return this.props.startConnect()
                             .then(() => this.props.disconnect(this.props.bluetooth.accessoryData.id))
-                            .catch(err => console.log(err))
+                            .catch(err => { console.log(err); return this.props.stopConnect();})
                             .then(() => this.props.stopConnect());
                     }
                     return Actions.bluetoothConnect();
@@ -176,7 +171,13 @@ class KitManagementView extends Component {
                     />
             }
             {
-                this.state.configured && this.props.bluetooth.accessoryData.id ?
+                !this.props.bluetooth.accessoryData.id || !this.props.bluetooth.accessoryData.configured ?
+                    <ListItem
+                        title={'WiFi'}
+                        chevronColor={ AppColors.lightGrey }
+                        titleStyle={{ color: AppColors.lightGrey }}
+                    />
+                    :
                     <ListItem
                         title={'WiFi'}
                         chevronColor={ AppColors.brand.blue }
@@ -186,12 +187,6 @@ class KitManagementView extends Component {
                             return this.props.scanWiFi(this.props.bluetooth.accessoryData.id)
                                 .then(() => this.readSSID(this.props.bluetooth.accessoryData.id, 30));
                         }}
-                    />
-                    :
-                    <ListItem
-                        title={'WiFi'}
-                        chevronColor={ AppColors.lightGrey }
-                        titleStyle={{ color: AppColors.lightGrey }}
                     />
             }
             <Text style={{ paddingLeft: 20, fontSize: font10 }}>Assign owner to the kit, change wifi network, or factory reset</Text>
@@ -203,7 +198,7 @@ class KitManagementView extends Component {
                 swipeToClose={false}
                 onClosed={() => this.setState({ isModal1Visible: false })}
             >
-                <View onLayout={(ev) => { this.resizeModal(ev); }}>
+                <View onLayout={(ev) => { this.resizeModal1(ev); }}>
                     <Card title={'Connect to WiFi'}>
                         <Spacer size={5} />
                         <ScrollView style={{ borderWidth: 1, borderColor: AppColors.border, height: AppSizes.screen.heightHalf }}>
@@ -231,7 +226,7 @@ class KitManagementView extends Component {
                 swipeToClose={false}
                 onClosed={() => this.setState({ password: '', isModal2Visible: false }) }
             >
-                <View onLayout={(ev) => { this.resizeModal(ev); }}>
+                <View onLayout={(ev) => { this.resizeModal2(ev); }}>
                     <Card title={`${this.state.SSID} Password (if needed)`}>
 
                         <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >{`Password${!this.state.newNetwork ? '\nUnsuccessful, please try again' : '' }`}</FormLabel>
@@ -249,7 +244,7 @@ class KitManagementView extends Component {
                                 title={'Cancel'}
                                 containerViewStyle={{ flex: 1 }}
                                 backgroundColor={AppColors.brand.fogGrey}
-                                onPress={() => this.setState({ isModal2Visible: false, isModal1Visible: true })}
+                                onPress={() => this.setState({ isModal2Visible: false, isModal1Visible: true, SSID: null, password: '' })}
                             />
                             <Button
                                 title={'Save'}

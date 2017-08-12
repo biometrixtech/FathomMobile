@@ -17,20 +17,24 @@ const mapStateToProps = state => ({
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-    connectToAccessory:  BluetoothActions.connectToAccessory,
-    updateAccessoryData: BluetoothActions.updateAccessoryData,
-    checkState:          BluetoothActions.checkState,
-    changeState:         BluetoothActions.changeState,
-    startBluetooth:      BluetoothActions.startBluetooth,
-    enableBluetooth:     BluetoothActions.enableBluetooth,
-    startScan:           BluetoothActions.startScan,
-    stopScan:            BluetoothActions.stopScan,
-    deviceFound:         BluetoothActions.deviceFound,
-    startConnect:        BluetoothActions.startConnect,
-    stopConnect:         BluetoothActions.stopConnect,
-    disconnect:          BluetoothActions.disconnect,
-    loginToAccessory:    BluetoothActions.loginToAccessory,
-    setKitTime:          BluetoothActions.setKitTime,
+    connectToAccessory:        BluetoothActions.connectToAccessory,
+    updateAccessoryData:       BluetoothActions.updateAccessoryData,
+    checkState:                BluetoothActions.checkState,
+    changeState:               BluetoothActions.changeState,
+    startBluetooth:            BluetoothActions.startBluetooth,
+    enableBluetooth:           BluetoothActions.enableBluetooth,
+    startScan:                 BluetoothActions.startScan,
+    stopScan:                  BluetoothActions.stopScan,
+    deviceFound:               BluetoothActions.deviceFound,
+    startConnect:              BluetoothActions.startConnect,
+    stopConnect:               BluetoothActions.stopConnect,
+    disconnect:                BluetoothActions.disconnect,
+    loginToAccessory:          BluetoothActions.loginToAccessory,
+    setKitTime:                BluetoothActions.setKitTime,
+    getConfiguration:          BluetoothActions.getConfiguration,
+    storeParams:               BluetoothActions.storeParams,
+    setAccessoryLoginEmail:    BluetoothActions.setAccessoryLoginEmail,
+    setAccessoryLoginPassword: BluetoothActions.setAccessoryLoginPassword
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BluetoothConnectRender);
