@@ -32,7 +32,7 @@ const login = (credentials, freshLogin) => {
                     return reject('Token decode failed.');
                 }
 
-                if (!decodedToken || !decodedToken.role || !decodedToken.user_id) {
+                if (!decodedToken || !decodedToken.user_id) {
                     return reject('Token decode failed.');
                 }
 
@@ -44,7 +44,8 @@ const login = (credentials, freshLogin) => {
                         delete response.user;
                         let storedObject = {
                             ...userData,
-                            ...response
+                            ...response,
+                            password: userCreds.password
                         };
                         return dispatch({
                             type: Actions.USER_REPLACE,

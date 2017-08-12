@@ -3,6 +3,7 @@ package com.fathom;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
 import com.smixx.fabric.FabricPackage;
 import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import com.github.wuxudong.rncharts.MPAndroidChartPackage;
@@ -36,6 +37,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.asList(
           new MainReactPackage(),
+            new LocationServicesDialogBoxPackage(),
           new FabricPackage(),
           new GoogleAnalyticsBridgePackage(),
           new MPAndroidChartPackage(),
