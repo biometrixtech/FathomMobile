@@ -8,6 +8,8 @@ import AppAPI from '@lib/api';
 const Actions = require('../actionTypes');
 const commands = BLEConfig.commands;
 const state = BLEConfig.state
+const configuration = BLEConfig.configuration;
+const bleConfiguredState = [configuration.DONE, configuration.UPSERT_PENDING, configuration.UPSERT_TO_SAVE, configuration.UPSERT_DONE];
 
 const write = (id, data) => {
     return BleManager.write(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID, data)
@@ -31,7 +33,7 @@ const convertStringToByteArray = (string) => {
   *   'test'
   */
 const convertByteArrayToString = (array) => {
-    return array.map(byte =>  byte ? String.fromCharCode(byte) : '').join('');
+    return array.map(byte =>  byte && byte > 31 && byte < 127 ? String.fromCharCode(byte) : '').join('');
 };
 
 const convertHex = (value) => {
@@ -116,7 +118,10 @@ const getConfiguration = (id) => {
         .then(response => {
             return dispatch({
                 type: Actions.GET_CONFIGURATION,    
-                data: response[4]
+                data: {
+                    configuration: response[4],
+                    configured:    bleConfiguredState.some(bleState => bleState === response[4])
+                }
             });
         })
         .catch(err => Promise.reject(err));
@@ -147,28 +152,32 @@ const enableBluetooth = () => {
     return dispatch => BleManager.enableBluetooth()
         .then(() => dispatch({
             type: Actions.ENABLE_BLUETOOTH
-        }));
+        }))
+        .catch(err => { console.log(err); return Promise.reject(err); });
 };
 
 const startBluetooth = () => {
-    return dispatch => BleManager.start({ showAlert: true })
+    return dispatch => BleManager.start({ showAlert: true, forceLegacy: true })
         .then(() => dispatch({
             type: Actions.START_BLUETOOTH
-        }));
+        }))
+        .catch(err => { console.log(err); return Promise.reject(err); });
 };
 
 const startScan = () => {
-    return dispatch => BleManager.scan([], 30, false)
+    return dispatch => BleManager.scan([], 30, false, { scanMode: 2 })
         .then(() => dispatch({
             type: Actions.START_SCAN
-        }));
+        }))
+        .catch(err => { console.log(err); return Promise.reject(err); });
 };
 
 const stopScan = () => {
     return dispatch => BleManager.stopScan()
         .then(() => dispatch({
             type: Actions.STOP_SCAN
-        }));
+        }))
+        .catch(err => { console.log(err); return Promise.reject(err); });
 };
 
 const deviceFound = (data) => {
@@ -326,8 +335,7 @@ const connectWiFi = (id) => {
 };
 
 const readSSID = (id) => {
-    return dispatch => wait(100)
-        .then(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID))
+    return id ? dispatch => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID)
         .then(response => {
             console.log(response);
             return dispatch({
@@ -335,7 +343,7 @@ const readSSID = (id) => {
                 data: response[3] === 1 ? '' : convertByteArrayToString(response.slice(3))
             });
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log(err)) : null;
 };
 
 const scanWiFi = (id) => {
@@ -549,6 +557,86 @@ const setKitTime = (id) => {
         });
 };
 
+const setAccessoryLoginEmail = (id, email) => {
+    let byteString = convertStringToByteArray(email);
+    let writeAttempts = 0;
+    let dataArray = [];
+    dataArray.push(commands.SET_EMAIL_HEAD);
+    dataArray.push(byteString.length);
+    for (let i = 2; i < 20 && i-2 < byteString.length; i+=1) {
+        dataArray.push(byteString[i-2]);
+    }
+    for (let i = byteString.length + 2; i < 20; i+=1) {
+        dataArray.push(convertHex('0x00'));
+    }
+    console.log('Email Data Array: ', dataArray);
+    return dispatch => write(id, dataArray)
+        .then(result => {
+            writeAttempts += result[3];
+            if (byteString.length <= 18) {
+                return null;
+            }
+            dataArray = [];
+            dataArray.push(commands.SET_EMAIL_CONT);
+            dataArray.push(byteString.length - 18);
+            for (let i = 2; i - 2 < byteString.length - 18; i+=1) {
+                dataArray.push(byteString[i+16]);
+            }
+            for (let i = byteString.length - 16; i < 20; i+=1) {
+                dataArray.push(convertHex('0x00'));
+            }
+            console.log('Email Data Array 2: ', dataArray);
+            return write(id, dataArray);
+        })
+        .then(result => {
+            writeAttempts += result ? result[3] : 0;
+            return dispatch({
+                type: Actions.ACCESSORY_LOGIN_EMAIL,
+                data: writeAttempts
+            });
+        });
+};
+
+const setAccessoryLoginPassword = (id, pass) => {
+    let byteString = convertStringToByteArray(pass);
+    let writeAttempts = 0;
+    let dataArray = [];
+    dataArray.push(commands.SET_USER_PSW_HEAD);
+    dataArray.push(byteString.length);
+    for (let i = 2; i < 20 && i-2 < byteString.length; i+=1) {
+        dataArray.push(byteString[i-2]);
+    }
+    for (let i = byteString.length + 2; i < 20; i+=1) {
+        dataArray.push(convertHex('0x00'));
+    }
+    console.log('Password Data Array: ', dataArray);
+    return dispatch => write(id, dataArray)
+        .then(result => {
+            writeAttempts += result[3];
+            if (byteString.length <= 18) {
+                return null;
+            }
+            dataArray = [];
+            dataArray.push(commands.SET_USER_PSW_CONT);
+            dataArray.push(byteString.length - 18);
+            for (let i = 2; i - 2 < byteString.length - 18; i+=1) {
+                dataArray.push(byteString[i+16]);
+            }
+            for (let i = byteString.length - 16; i < 20; i+=1) {
+                dataArray.push(convertHex('0x00'));
+            }
+            console.log('Password Data Array 2: ', dataArray);
+            return write(id, dataArray);
+        })
+        .then(result => {
+            writeAttempts += result ? result[3] : 0;
+            return dispatch({
+                type: Actions.ACCESSORY_LOGIN_PASSWORD,
+                data: writeAttempts
+            });
+        });
+};
+
 export {
     assignType,
     checkState,
@@ -582,5 +670,7 @@ export {
     setKitTime,
     setKitState,
     getConfiguration,
-    storeParams
+    storeParams,
+    setAccessoryLoginEmail,
+    setAccessoryLoginPassword
 };
