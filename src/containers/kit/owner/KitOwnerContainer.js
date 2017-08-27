@@ -33,7 +33,8 @@ const mapDispatchToProps = {
     stopConnect:               BluetoothActions.stopConnect,
     getConfiguration:          BluetoothActions.getConfiguration,
     setAccessoryLoginEmail:    BluetoothActions.setAccessoryLoginEmail,
-    setAccessoryLoginPassword: BluetoothActions.setAccessoryLoginPassword
+    setAccessoryLoginPassword: BluetoothActions.setAccessoryLoginPassword,
+    getWifiMacAddress:         BluetoothActions.getWifiMacAddress,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitOwnerRender);
