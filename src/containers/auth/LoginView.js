@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     },
     mainLogo: {
         width:  AppSizes.screen.widthHalf,
-        height: AppSizes.screen.heightTenth 
+        height: AppSizes.screen.heightTenth
     }
 });
 
@@ -190,13 +190,13 @@ class Login extends Component {
 
         return (
             <KeyboardAvoidingView
-                behavior={'height'}
+                behavior={'padding'}
                 style={[AppStyles.containerCentered, AppStyles.container, styles.background]}
             >
 
                 <Image source={require('@images/fathom_white.png')} resizeMode={'contain'} style={styles.mainLogo} />
 
-                <Card>
+                <Card dividerStyle={{ height: 0, width: 0 }} titleStyle={{ marginBottom: 0 }}>
                     <Alerts
                         status={this.state.resultMsg.status}
                         success={this.state.resultMsg.success}
