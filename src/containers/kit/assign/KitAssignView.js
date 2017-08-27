@@ -99,8 +99,8 @@ class KitAssignView extends Component {
                 <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', height: AppSizes.screen.heightOneThird }}>
                     <Image source={require('@images/kit-diagram.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthTwoThirds, height: AppSizes.screen.widthTwoThirds * 268/509 }}/>
                     <Spacer size={5}/>
-                    <Text>{this.props.bluetooth.accessoryData.name || ''}</Text>
-                    <Text style={{ fontSize: font10 }}>{accessory.id || ''}</Text>
+                    <Text>{accessory.name || ''}</Text>
+                    <Text style={{ fontSize: font10 }}>{accessory.wifiMacAddress || ''}</Text>
                 </View>
                 { this.props.bluetooth.indicator ? 
                     <View style={[styles.indicator, { justifyContent: 'center', alignItems: 'center'}]}>
