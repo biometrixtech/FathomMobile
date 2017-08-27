@@ -32,7 +32,7 @@ class CustomCard extends Component {
         // Defaults
         const props = {
             dividerStyle: [{
-                backgroundColor: AppColors.border,
+                backgroundColor: AppColors.border
             }],
             ...this.props,
             containerStyle: [{

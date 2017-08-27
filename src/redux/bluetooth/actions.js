@@ -36,6 +36,10 @@ const convertByteArrayToString = (array) => {
     return array.map(byte =>  byte && byte > 31 && byte < 127 ? String.fromCharCode(byte) : '').join('');
 };
 
+const convertDecimal = (array) => {
+    return array.map(byte => `0${byte.toString(16).toUpperCase()}`.slice(-2)).join(':');
+};
+
 const convertHex = (value) => {
     return parseInt(value, 16);
 };
@@ -65,7 +69,6 @@ const getOwnerTeam = (id, user) => {
     let dataArray = [commands.GET_OWNER_TEAM, convertHex('0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
-            console.log(response);
             return BLEConfig.unparse(response.slice(4,20));
         })
         .then(teamUUID => {
@@ -230,9 +233,6 @@ const loginToAccessory = (data, {role, id}) => {
             dataArray = dataArray.concat(convertedUUID);
             return write(data.id, dataArray);
         })
-        // .then(accessoryLoginResult => {
-        //     return AppAPI.accessories.patch(data.id, data);
-        // })
         .then(uploadedAccessory => {
             console.log(uploadedAccessory);
             return dispatch({
@@ -637,6 +637,21 @@ const setAccessoryLoginPassword = (id, pass) => {
         });
 };
 
+const getWifiMacAddress = (id) => {
+    let dataArray = [commands.GET_MAC_ADDRESS, convertHex('0x00')];
+    return dispatch => write(id, dataArray)
+        .then(response => {
+            return convertDecimal(response.slice(4,10), true);
+        })
+        .then(macAddress => {
+            return dispatch({
+                type: Actions.GET_WIFI_MAC_ADDRESS,
+                data: macAddress
+            });
+        })
+        .catch(err => { console.log(err); return Promise.reject(err); });
+};
+
 export {
     assignType,
     checkState,
@@ -672,5 +687,6 @@ export {
     getConfiguration,
     storeParams,
     setAccessoryLoginEmail,
-    setAccessoryLoginPassword
+    setAccessoryLoginPassword,
+    getWifiMacAddress,
 };
