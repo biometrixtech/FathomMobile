@@ -60,7 +60,8 @@ class KitOwnerView extends Component {
         stopConnect:               PropTypes.func.isRequired,
         getConfiguration:          PropTypes.func.isRequired,
         setAccessoryLoginEmail:    PropTypes.func.isRequired,
-        setAccessoryLoginPassword: PropTypes.func.isRequired
+        setAccessoryLoginPassword: PropTypes.func.isRequired,
+        getWifiMacAddress:         PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -82,11 +83,23 @@ class KitOwnerView extends Component {
     componentWillMount = () => {
         return this.props.getKitName(this.props.bluetooth.accessoryData.id)
             .catch(e => console.log(e))
+            .then(() => this.props.bluetooth.accessoryData.name ? Promise.resolve() : this.props.getKitName(this.props.bluetooth.accessoryData.id))
+            .catch(e => console.log(e))
+            .then(() => this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
+            .catch(e => console.log(e))
+            .then(() => this.props.bluetooth.accessoryData.wifiMacAddress ? Promise.resolve() : this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
+            .catch(e => console.log(e))
             .then(() => this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id, this.props.user))
+            .catch(e => console.log(e))
+            .then(() => this.props.bluetooth.accessoryData.organization ? Promise.resolve() : this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id, this.props.user))
             .catch(e => console.log(e))
             .then(() => this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id, this.props.user))
             .catch(e => console.log(e))
+            .then(() => this.props.bluetooth.accessoryData.team ? Promise.resolve() : this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id, this.props.user))
+            .catch(e => console.log(e))
             .then(() => this.props.getOwnerUser(this.props.bluetooth.accessoryData.id, this.props.user))
+            .catch(e => console.log(e))
+            .then(() => this.props.bluetooth.accessoryData.individual ? Promise.resolve() : this.props.getOwnerUser(this.props.bluetooth.accessoryData.id, this.props.user))
             .catch(e => console.log(e));
     };
 
@@ -94,11 +107,23 @@ class KitOwnerView extends Component {
         this.setState({refreshing: true});
         return this.props.getKitName(this.props.bluetooth.accessoryData.id)
             .catch(e => console.log(e))
+            .then(() => this.props.bluetooth.accessoryData.name ? Promise.resolve() : this.props.getKitName(this.props.bluetooth.accessoryData.id))
+            .catch(e => console.log(e))
+            .then(() => this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
+            .catch(e => console.log(e))
+            .then(() => this.props.bluetooth.accessoryData.wifiMacAddress ? Promise.resolve() : this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
+            .catch(e => console.log(e))
             .then(() => this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id, this.props.user))
+            .catch(e => console.log(e))
+            .then(() => this.props.bluetooth.accessoryData.organization ? Promise.resolve() : this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id, this.props.user))
             .catch(e => console.log(e))
             .then(() => this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id, this.props.user))
             .catch(e => console.log(e))
+            .then(() => this.props.bluetooth.accessoryData.team ? Promise.resolve() : this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id, this.props.user))
+            .catch(e => console.log(e))
             .then(() => this.props.getOwnerUser(this.props.bluetooth.accessoryData.id, this.props.user))
+            .catch(e => console.log(e))
+            .then(() => this.props.bluetooth.accessoryData.individual ? Promise.resolve() : this.props.getOwnerUser(this.props.bluetooth.accessoryData.id, this.props.user))
             .catch(e => console.log(e))
             .then(() => {
                 this.setState({refreshing: false});
@@ -136,7 +161,7 @@ class KitOwnerView extends Component {
                         <Image source={require('@images/kit-diagram.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthTwoThirds, height: AppSizes.screen.widthTwoThirds * 268/509 }}/>
                         <Spacer size={5}/>
                         <Text>{this.props.bluetooth.accessoryData.name || ''}</Text>
-                        <Text style={{ fontSize: font10 }}>{this.props.bluetooth.accessoryData.id || ''}</Text>
+                        <Text style={{ fontSize: font10 }}>{this.props.bluetooth.accessoryData.wifiMacAddress || ''}</Text>
                     </View>
                     { this.props.bluetooth.indicator ? 
                         <View style={[styles.indicator, { justifyContent: 'center', alignItems: 'center'}]}>

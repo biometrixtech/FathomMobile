@@ -119,7 +119,7 @@ export default function bluetoothReducer(state = initialState, action) {
             }
         });
     case Actions.NETWORK_DISCOVERED:
-        let networks = state.networks.some(network => network.label === action.data) || action.data.trim() === '' || action.data.trim() === 'Network Not Found' ? state.networks : state.networks.concat([{ key: state.networks.length, label: action.data }]);
+        let networks = state.networks.some(network => network.label === action.data) || action.data.trim() === '' || action.data.trim() === 'Network Not Found' || action.data.trim() === '\\x00\\x00\\x00\\x00\\' ? state.networks : state.networks.concat([{ key: state.networks.length, label: action.data }]);
         return Object.assign({}, state, {
             networks
         });
@@ -155,6 +155,13 @@ export default function bluetoothReducer(state = initialState, action) {
             accessoryData: {
                 ...state.accessoryData,
                 passwordWritten: action.data === 0 ? true : false
+            }
+        });
+    case Actions.GET_WIFI_MAC_ADDRESS:
+        return Object.assign({}, state, {
+            accessoryData: {
+                ...state.accessoryData,
+                wifiMacAddress: action.data !== '00:00:00:00:00:00' ? action.data : null
             }
         });
     case Actions.HANDLE_DISCONNECT:
