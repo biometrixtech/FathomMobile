@@ -146,7 +146,9 @@ class KitManagementView extends Component {
                     if (this.props.bluetooth.accessoryData.id) {
                         return this.props.startConnect()
                             .then(() => this.props.disconnect(this.props.bluetooth.accessoryData.id))
-                            .catch(err => { console.log(err); return this.props.stopConnect();})
+                            .catch(err => this.props.disconnect(this.props.bluetooth.accessoryData.id)
+                                .then(() => this.props.stopConnect())
+                            )
                             .then(() => this.props.stopConnect());
                     }
                     return Actions.bluetoothConnect();
@@ -214,7 +216,22 @@ class KitManagementView extends Component {
                             }
                         </ScrollView>
                         <Spacer size={5} />
-                        <Button title={'Cancel'} onPress={() => this.setState({ isModal1Visible: false })}/>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Button
+                                title={'Cancel'}
+                                containerViewStyle={{ flex: 1 }}
+                                backgroundColor={AppColors.brand.fogGrey}
+                                onPress={() => this.setState({ isModal1Visible: false })}
+                            />
+                            <Button
+                                title={'Rescan'}
+                                containerViewStyle={{ flex: 1 }}
+                                onPress={() => {
+                                    return this.props.scanWiFi(this.props.bluetooth.accessoryData.id)
+                                        .then(() => this.readSSID(this.props.bluetooth.accessoryData.id, 30));
+                                }}
+                            />
+                        </View>
                     </Card>
                 </View>
             </Modal>
