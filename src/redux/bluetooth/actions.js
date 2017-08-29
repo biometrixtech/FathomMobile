@@ -3,7 +3,6 @@
  */
 import BleManager from 'react-native-ble-manager';
 import { BLEConfig } from '@constants';
-import AppAPI from '@lib/api';
 
 const Actions = require('../actionTypes');
 const commands = BLEConfig.commands;
@@ -360,13 +359,6 @@ const scanWiFi = (id) => {
 const resetAccessory = (accessory) => {
     let dataArray = [commands.FACTORY_RESET, convertHex('0x00')];
     return dispatch => write(accessory.id, dataArray)
-        // .then(response => {
-        //     let data = accessory;
-        //     data.team_id = null;
-        //     data.organization_id = null;
-        //     data.name = `Fathom_kit_${data.id.slice(-2)}`;
-        //     return AppAPI.accessories.patch(data.id, data);
-        // })
         .then(response => {
             return dispatch({
                 type: Actions.ACCESSORY_RESET
@@ -400,9 +392,6 @@ const assignKitName = (id, name) => {
 const storeParams = (accessory) => {
     let dataArray = [commands.STORE_PARAMS, convertHex('0X00')];
     return dispatch => write(accessory.id, dataArray)
-        // .then(response => {
-        //     return AppAPI.accessories.patch(accessory.id, accessory);
-        // })
         .then(response => {
             return dispatch({
                 type: Actions.STORE_PARAMS
