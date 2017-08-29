@@ -13,9 +13,9 @@ it('Has endpoints available', () => {
         numberOfEndpoints += 1;
 
         expect(endpoint).not.toBe(null);
-  });
+    });
 
-  expect(numberOfEndpoints).not.toBe(0);
+    expect(numberOfEndpoints).not.toBe(0);
 });
 
 it('Has REST methods available', () => {
