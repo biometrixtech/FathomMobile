@@ -16,7 +16,6 @@ import Modal from 'react-native-modalbox';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
-import AppAPI from '@lib/api';
 import { AppSizes, AppStyles, AppColors, AppFonts } from '@theme/';
 
 // Components
