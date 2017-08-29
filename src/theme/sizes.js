@@ -25,7 +25,7 @@ export default {
         widthTwoThirds:     screenWidth * 0.666,
         widthQuarter:       screenWidth * 0.25,
         widthThreeQuarters: screenWidth * 0.75,
-        widthEightTenths:   screenWidth * 0.8,
+        widthFourFifths:    screenWidth * 0.8,
     },
     navbarHeight:    (Platform.OS === 'ios') ? 64 : 54,
     statusBarHeight: (Platform.OS === 'ios') ? 16 : 0,
