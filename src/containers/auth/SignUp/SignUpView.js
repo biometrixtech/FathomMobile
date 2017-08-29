@@ -3,8 +3,8 @@
  */
 import React, { Component, PropTypes } from 'react';
 import {
-  ScrollView,
-  AsyncStorage,
+    ScrollView,
+    AsyncStorage,
 } from 'react-native';
 import FormValidation from 'tcomb-form-native';
 import { Actions } from 'react-native-router-flux';
@@ -29,19 +29,19 @@ class SignUp extends Component {
 
         // Email Validation
         const validEmail = FormValidation.refinement(
-          FormValidation.String, (email) => {
-              const regularExpression = /^.+@.+\..+$/i;
+            FormValidation.String, (email) => {
+                const regularExpression = /^.+@.+\..+$/i;
 
-              return regularExpression.test(email);
-          },
+                return regularExpression.test(email);
+            },
         );
 
         // Password Validation - Must be 6 chars long
         const validPassword = FormValidation.refinement(
-          FormValidation.String, (password) => {
-              if (password.length < 8) { return false; }
-              return true;
-          },
+            FormValidation.String, (password) => {
+                if (password.length < 8) { return false; }
+                return true;
+            },
         );
 
         this.state = {
@@ -131,33 +131,33 @@ class SignUp extends Component {
         const Form = FormValidation.form.Form;
 
         return (
-          <ScrollView
-            automaticallyAdjustContentInsets={false}
-            ref={(a) => { this.scrollView = a; }}
-            style={[AppStyles.container]}
-            contentContainerStyle={[AppStyles.container, { alignItems: 'center' }]}
-          >
-            <Card>
-              <Alerts
-                status={this.state.resultMsg.status}
-                success={this.state.resultMsg.success}
-                error={this.state.resultMsg.error}
-              />
+            <ScrollView
+                automaticallyAdjustContentInsets={false}
+                ref={(a) => { this.scrollView = a; }}
+                style={[AppStyles.container]}
+                contentContainerStyle={[AppStyles.container, { alignItems: 'center' }]}
+            >
+                <Card>
+                    <Alerts
+                        status={this.state.resultMsg.status}
+                        success={this.state.resultMsg.success}
+                        error={this.state.resultMsg.error}
+                    />
 
-              <Form
-                ref={(b) => { this.form = b; }}
-                type={this.state.form_fields}
-                value={this.state.form_values}
-                options={this.state.options}
-              />
+                    <Form
+                        ref={(b) => { this.form = b; }}
+                        type={this.state.form_fields}
+                        value={this.state.form_values}
+                        options={this.state.options}
+                    />
 
-              <Button
-                title={'Sign Up'}
-                onPress={this.signUp}
-              />
+                    <Button
+                        title={'Sign Up'}
+                        onPress={this.signUp}
+                    />
 
-            </Card>
-          </ScrollView>
+                </Card>
+            </ScrollView>
         );
     }
 }
