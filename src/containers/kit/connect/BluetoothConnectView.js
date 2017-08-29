@@ -233,7 +233,7 @@ class BluetoothConnectView extends Component {
                     shadowOffset:    { width: 1, height: 3 },
                     shadowOpacity:   0.7,
                     shadowRadius:    2,
-                    width:           AppSizes.screen.widthEightTenths,
+                    width:           AppSizes.screen.widthFourFifths,
                     height:          AppSizes.screen.heightThreeQuarters
                 }}
                 bullets
