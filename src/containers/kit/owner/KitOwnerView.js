@@ -212,7 +212,6 @@ class KitOwnerView extends Component {
                                         hideChevron
                                     />
                         }
-                        {/* <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>OWNER</Text> */}
                         {
                             configured ?
                                 <ListItem
@@ -303,7 +302,7 @@ class KitOwnerView extends Component {
                                     titleStyle={{ color: AppColors.lightGrey}}
                                 />
                         }
-                        <Text style={{ paddingLeft: 20, fontSize: font10 }}>Edit your school, team, and name above.</Text>
+                        <Text style={{ paddingLeft: 20, fontSize: font10 }}>Edit kit assigned organization, team, user, and name above.</Text>
                     </View>
                 </ScrollView>
                 <Modal
