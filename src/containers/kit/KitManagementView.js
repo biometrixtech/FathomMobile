@@ -154,7 +154,7 @@ class KitManagementView extends Component {
                     return Actions.bluetoothConnect();
                 }}
             />
-            <Text style={{ paddingLeft: 20, fontSize: font10 }}>Connect your Fathom Kit to WiFi</Text>
+            <Text style={{ paddingLeft: 20, fontSize: font10 }}>{`${this.props.bluetooth.accessoryData.id ? 'Disconnect from' : 'Connect to'} your Fathom Kit`}</Text>
             <Spacer />
             <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>MANAGE KIT</Text>
             {
@@ -191,7 +191,7 @@ class KitManagementView extends Component {
                         }}
                     />
             }
-            <Text style={{ paddingLeft: 20, fontSize: font10 }}>Assign owner to the kit, change wifi network, or factory reset</Text>
+            <Text style={{ paddingLeft: 20, fontSize: font10 }}>Assign an owner to the kit then assign a wifi network</Text>
             <Modal
                 position={'center'}
                 style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
