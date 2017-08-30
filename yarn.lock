@@ -943,9 +943,9 @@ babel-preset-react-native@^2.0.0:
     babel-plugin-transform-regenerator "^6.5.0"
     react-transform-hmr "^1.0.4"
 
-babel-preset-react-native@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/babel-preset-react-native/-/babel-preset-react-native-3.0.1.tgz#ad9e96e39eac6673f3382e9bea9d17c8aa95da3c"
+babel-preset-react-native@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/babel-preset-react-native/-/babel-preset-react-native-3.0.2.tgz#f9a391540caebbd5014391ac1447ef6d8c0a5b57"
   dependencies:
     babel-plugin-check-es2015-constants "^6.5.0"
     babel-plugin-react-transform "2.0.2"
@@ -4152,9 +4152,9 @@ react-native-android-location-services-dialog-box@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/react-native-android-location-services-dialog-box/-/react-native-android-location-services-dialog-box-2.2.1.tgz#093b2e1252c27bd04f8caf36f65b0f563430007d"
 
-react-native-ble-manager@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-ble-manager/-/react-native-ble-manager-6.0.0.tgz#4415c5fbd0640d44d0fab04ca18e80eff091905b"
+react-native-ble-manager@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-ble-manager/-/react-native-ble-manager-6.1.0.tgz#2fd8ae828309086b962135d9902f4e287f224c73"
 
 react-native-charts-wrapper@^0.2.10:
   version "0.2.10"
