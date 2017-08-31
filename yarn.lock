@@ -4184,6 +4184,10 @@ react-native-easy-toast@^1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/react-native-easy-toast/-/react-native-easy-toast-1.0.6.tgz#e9e2a0c865fcfdb407dbc2341bc3571a7f5da3b5"
 
+react-native-egg@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-egg/-/react-native-egg-1.0.0.tgz#7a178de38b61044e012b80c15b7ac3cb69ba624c"
+
 react-native-elements@^0.16.0:
   version "0.16.0"
   resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-0.16.0.tgz#933a567d850d2f8ef605fcfb9ab95dfaf27393ce"

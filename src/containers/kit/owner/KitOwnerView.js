@@ -302,7 +302,18 @@ class KitOwnerView extends Component {
                                     titleStyle={{ color: AppColors.lightGrey}}
                                 />
                         }
-                        <Text style={{ paddingLeft: 20, fontSize: font10 }}>Edit kit assigned organization, team, user, and name above.</Text>
+                        {
+                            configured ?
+                                <Text style={{ paddingLeft: 20, fontSize: font10, fontWeight: configured ? 'bold' : 'normal' }}>Optional: Reset kit assignment to edit selections</Text>
+                                :
+                                <View>
+                                    <Text style={{ paddingLeft: 20, fontSize: font10, fontWeight: !this.props.bluetooth.accessoryData.organization && !this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal' }}>Step 1: Assign kit organization</Text>
+                                    <Text style={{ paddingLeft: 20, fontSize: font10, fontWeight: this.props.bluetooth.accessoryData.organization && !this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal' }}>Step 2: Assign kit team</Text>
+                                    <Text style={{ paddingLeft: 20, fontSize: font10, fontWeight: this.props.bluetooth.accessoryData.organization && this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal' }}>Step 3: Assign kit individual</Text>
+                                    <Text style={{ paddingLeft: 20, fontSize: font10 }}>Optional: Assign a different kit name</Text>
+                                    <Text style={{ paddingLeft: 20, fontSize: font10, fontWeight: this.props.bluetooth.accessoryData.organization && this.props.bluetooth.accessoryData.team && this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal' }}>Step 4: Save</Text>
+                                </View>
+                        }
                     </View>
                 </ScrollView>
                 <Modal
