@@ -14,13 +14,15 @@ import {
 } from 'react-native';
 import FormValidation from 'tcomb-form-native';
 import { Actions } from 'react-native-router-flux';
+import Modal from 'react-native-modalbox';
+import Egg from 'react-native-egg';
 
 // Consts and Libs
 import AppAPI from '@lib/api';
 import { AppStyles, AppSizes, AppColors } from '@theme/';
 
 // Components
-import { Spacer, Button, Card, Alerts, Text } from '@ui/';
+import { Spacer, Button, Card, Alerts, Text, ListItem } from '@ui/';
 
 /* Biometrix Roles =========================================================== */
 const roles = {
@@ -30,6 +32,11 @@ const roles = {
     manager:        'manager',
     researcher:     'researcher',
 };
+
+const APIs = {
+    DEV:  'https://rails-api-v2.biometrixtech.com',
+    PROD: 'https://rails-api.fathomai.com'
+}
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -82,7 +89,9 @@ class Login extends Component {
         );
 
         this.state = {
-            resultMsg: {
+            apiHost:    '',
+            modalStyle: {},
+            resultMsg:  {
                 status:  '',
                 success: '',
                 error:   '',
@@ -118,7 +127,14 @@ class Login extends Component {
     componentDidMount = async () => {
         // Get user data from AsyncStorage to populate fields
         const values = await AsyncStorage.getItem('api/credentials');
+        const apiHost = await AsyncStorage.getItem('api/host');
         const jsonValues = JSON.parse(values);
+
+        if (apiHost !== null) {
+            this.setState({
+                apiHost
+            });
+        }
 
         if (values !== null) {
             this.setState({
@@ -129,6 +145,10 @@ class Login extends Component {
             });
             this.login();
         }
+    }
+
+    resizeModal = (ev) => {
+        this.setState({ modalStyle: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
     }
 
     /**
@@ -193,8 +213,46 @@ class Login extends Component {
                 behavior={'padding'}
                 style={[AppStyles.containerCentered, AppStyles.container, styles.background]}
             >
-
-                <Image source={require('@images/fathom_white.png')} resizeMode={'contain'} style={styles.mainLogo} />
+                <Modal
+                    position={'center'}
+                    style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
+                    isOpen={this.state.isModalVisible}
+                    backButtonClose
+                    swipeToClose={false}
+                    coverScreen
+                    onClosed={() => this.setState({ isModalVisible: false })}
+                >
+                    <View onLayout={(ev) => { this.resizeModal(ev); }}>
+                        <Card title={'Select environment'}>
+                            <Spacer size={5} />
+                            <View style={{ borderWidth: 1, borderColor: AppColors.border }}>
+                                {
+                                    Object.entries(APIs).map(([key, value]) => (
+                                        <ListItem
+                                            key={key}
+                                            title={`${key}: ${value}`}
+                                            hideChevron
+                                            containerStyle={{ backgroundColor: value === this.state.apiHost ? AppColors.brand.fogGrey : AppColors.background }}
+                                            onPress={() => { this.setState({ isModalVisible: false, apiHost: value }); return AppAPI.storeAPIHost(value);  }}
+                                        />
+                                    ))
+                                }
+                            </View>
+                            <Spacer />
+                            <Button
+                                title={'Cancel'}
+                                backgroundColor={AppColors.brand.fogGrey}
+                                onPress={() => this.setState({ isModalVisible: false })}
+                            />
+                        </Card>
+                    </View>
+                </Modal>
+                <Egg
+                    setps={'TTT'}
+                    onCatch={() => this.setState({ isModalVisible: true })}
+                >
+                    <Image source={require('@images/fathom_white.png')} resizeMode={'contain'} style={styles.mainLogo} />
+                </Egg>
 
                 <Card dividerStyle={{ height: 0, width: 0 }} titleStyle={{ marginBottom: 0 }}>
                     <Alerts

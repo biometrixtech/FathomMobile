@@ -191,7 +191,9 @@ class KitManagementView extends Component {
                         }}
                     />
             }
-            <Text style={{ paddingLeft: 20, fontSize: font10 }}>Assign an owner to the kit then assign a wifi network</Text>
+            <Text style={{ paddingLeft: 20, fontSize: font10, fontWeight: !this.props.bluetooth.accessoryData.id ? 'bold' : 'normal' }}>Step 1: Connect to kit</Text>
+            <Text style={{ paddingLeft: 20, fontSize: font10, fontWeight: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.configured ? 'bold' : 'normal' }}>Step 2: Assign an owner to the kit</Text>
+            <Text style={{ paddingLeft: 20, fontSize: font10, fontWeight: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.configured ? 'bold' : 'normal' }}>Step 3: Assign a wifi network to the kit</Text>
             <Modal
                 position={'center'}
                 style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
