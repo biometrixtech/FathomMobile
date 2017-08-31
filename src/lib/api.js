@@ -15,10 +15,10 @@ import AppUtil from '@lib/util';
 const Token = new JWT();
 
 // Config
-const HOSTNAME = APIConfig.hostname;
+// const HOSTNAME = APIConfig.hostname;
 const ENDPOINTS = APIConfig.endpoints;
 
-let USER_AGENT;
+let USER_AGENT, HOSTNAME;
 try {
     // Build user agent string
     USER_AGENT = `${AppConfig.appName} ${DeviceInfo.getVersion()}; ${DeviceInfo.getSystemName()} ` +
@@ -122,6 +122,12 @@ function fetcher(method, inputEndpoint, inputParams, body) {
             }
         }
 
+        // Add Host name
+        // Don't add on anything but the login endpoint if host name already exists
+        if (!HOSTNAME || endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
+            HOSTNAME = await Token.getAPIHost();
+        }
+
         // Add Endpoint Params
         let urlParams = '';
         if (params) {
@@ -221,8 +227,9 @@ function fetcher(method, inputEndpoint, inputParams, body) {
   */
 const AppAPI = {
     handleError,
-    getToken:    Token.getToken,
-    deleteToken: Token.deleteToken,
+    getToken:     Token.getToken,
+    deleteToken:  Token.deleteToken,
+    storeAPIHost: Token.storeAPIHost
 };
 
 ENDPOINTS.forEach((endpoint, key) => {
