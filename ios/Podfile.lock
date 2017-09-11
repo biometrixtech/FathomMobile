@@ -10,46 +10,49 @@ PODS:
     - React
   - CodePush/SSZipArchive (5.0.0):
     - React
-  - React (0.47.2):
-    - React/Core (= 0.47.2)
-  - React/BatchedBridge (0.47.2):
+  - React (0.48.2):
+    - React/Core (= 0.48.2)
+  - React/BatchedBridge (0.48.2):
     - React/Core
     - React/cxxreact_legacy
-  - React/Core (0.47.2):
-    - Yoga (= 0.47.2.React)
-  - React/cxxreact_legacy (0.47.2):
+  - React/Core (0.48.2):
+    - Yoga (= 0.48.2.React)
+  - React/cxxreact_legacy (0.48.2):
     - React/jschelpers_legacy
-  - React/DevSupport (0.47.2):
+  - React/DevSupport (0.48.2):
     - React/Core
     - React/RCTWebSocket
-  - React/jschelpers_legacy (0.47.2)
-  - React/RCTActionSheet (0.47.2):
+  - React/jschelpers_legacy (0.48.2)
+  - React/RCTActionSheet (0.48.2):
     - React/Core
-  - React/RCTAnimation (0.47.2):
+  - React/RCTAnimation (0.48.2):
     - React/Core
-  - React/RCTGeolocation (0.47.2):
+  - React/RCTBlob (0.48.2):
     - React/Core
-  - React/RCTImage (0.47.2):
+  - React/RCTGeolocation (0.48.2):
+    - React/Core
+  - React/RCTImage (0.48.2):
     - React/Core
     - React/RCTNetwork
-  - React/RCTLinkingIOS (0.47.2):
+  - React/RCTLinkingIOS (0.48.2):
     - React/Core
-  - React/RCTNetwork (0.47.2):
+  - React/RCTNetwork (0.48.2):
     - React/Core
-  - React/RCTSettings (0.47.2):
+  - React/RCTSettings (0.48.2):
     - React/Core
-  - React/RCTText (0.47.2):
+  - React/RCTText (0.48.2):
     - React/Core
-  - React/RCTVibration (0.47.2):
+  - React/RCTVibration (0.48.2):
     - React/Core
-  - React/RCTWebSocket (0.47.2):
+  - React/RCTWebSocket (0.48.2):
     - React/Core
+    - React/RCTBlob
   - RNDeviceInfo (0.9.3):
     - React
   - RNVectorIcons (4.3.0):
     - React
   - SwiftyJSON (3.1.4)
-  - Yoga (0.47.2.React)
+  - Yoga (0.48.2.React)
 
 DEPENDENCIES:
   - Charts (= 3.0.2)
@@ -87,11 +90,11 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Charts: 236d6ccdd0ce6feae151d89e829a7397381a21fd
   CodePush: 089e3da41b5040ba0ef89aa5d485f720ee4d5862
-  React: fbe1a006550fb55871cb377ba7741f5d1cfff733
+  React: 9ed466c0074c63cb4912a6e0c509bc24870497b8
   RNDeviceInfo: dc3cbee96cd2392cf03d6ff6191dc15f1606a166
   RNVectorIcons: a58392f365a38ffd3a070bf7449c0145bd0814e1
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
-  Yoga: ff8531e8cf9f7ec92a75dd44286a68c4a084c507
+  Yoga: 15a7ea18cce3efdfd8d218bc8b94273bec0a4dda
 
 PODFILE CHECKSUM: 98acb67e33c51c03cd15821d30c0f2a8e354e5d6
 
