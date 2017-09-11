@@ -22,7 +22,7 @@ import { Spacer, Button, FormLabel, Text, ListItem } from '@ui/';
 import { Placeholder } from '@general/';
 
 const font10 = AppFonts.scaleFont(10);
-const font18 = AppFonts.scaleFont(18);
+const font14 = AppFonts.scaleFont(14);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -55,7 +55,9 @@ class KitAssignView extends Component {
         super(props);
 
         this.state = {
-            searchText: ''
+            searchText:      '',
+            categoryHeight:  0,
+            searchBarHeight: 0
         };
     }
 
@@ -116,6 +118,7 @@ class KitAssignView extends Component {
                         title={category}
                         containerStyle={{ padding: 10, backgroundColor: AppColors.brand.light }}
                         hideChevron
+                        onLayout={(ev) => { this.setState({ categoryHeight: ev.nativeEvent.layout.height }); }}
                     />
                     {
                         assignType !== 'organization' ?
@@ -125,9 +128,10 @@ class KitAssignView extends Component {
                                 placeholder={`Enter ${assignType}`}
                                 onChangeText={text => this.setState({ searchText: text })}
                                 lightTheme
+                                onLayout={(ev) => { this.setState({ searchBarHeight: ev.nativeEvent.layout.height }); }}
                             /> : null
                     }
-                    <ScrollView>
+                    <ScrollView style={{ height: AppSizes.screen.heightTwoThirds - AppSizes.navbarHeight - this.state.categoryHeight - this.state.searchBarHeight - 40 }}>
                         {
                             assignType === 'individual'
                                 ?
@@ -160,6 +164,17 @@ class KitAssignView extends Component {
                                         hideChevron
                                     />
                         }
+                        <Text style={{
+                            paddingLeft: 20,
+                            fontSize:    name === '{None}' ? font14 : font10,
+                            fontWeight:  name === '{None}' ? 'bold' : 'normal'
+                        }}>{`Step 1: Select the ${category} to assign to this kit`}</Text>
+                        <Text style={{
+                            paddingLeft: 20,
+                            fontSize:    name !== '{None}' ? font14 : font10,
+                            fontWeight:  name !== '{None}' ? 'bold' : 'normal'
+                        }}>{`Step 2: Select another ${category} or go to the previous menu`}</Text>
+                        <Spacer/>
                     </ScrollView>
                 </View>
             </KeyboardAvoidingView>
