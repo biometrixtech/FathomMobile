@@ -23,6 +23,7 @@ import { Spacer, Button, FormLabel, Text, ListItem, Card, FormInput } from '@ui/
 import { Placeholder } from '@general/';
 
 const font10 = AppFonts.scaleFont(10);
+const font14 = AppFonts.scaleFont(14);
 const font18 = AppFonts.scaleFont(18);
 
 const configuration = BLEConfig.configuration;
@@ -304,14 +305,30 @@ class KitOwnerView extends Component {
                         }
                         {
                             configured ?
-                                <Text style={{ paddingLeft: 20, fontSize: font10, fontWeight: configured ? 'bold' : 'normal' }}>Optional: Reset kit assignment to edit selections</Text>
+                                <Text style={{ paddingLeft: 20, fontSize: configured ? font14 : font10, fontWeight: configured ? 'bold' : 'normal' }}>Optional: Reset kit assignment to edit selections or press back to go to the main menu</Text>
                                 :
                                 <View>
-                                    <Text style={{ paddingLeft: 20, fontSize: font10, fontWeight: !this.props.bluetooth.accessoryData.organization && !this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal' }}>Step 1: Assign kit organization</Text>
-                                    <Text style={{ paddingLeft: 20, fontSize: font10, fontWeight: this.props.bluetooth.accessoryData.organization && !this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal' }}>Step 2: Assign kit team</Text>
-                                    <Text style={{ paddingLeft: 20, fontSize: font10, fontWeight: this.props.bluetooth.accessoryData.organization && this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal' }}>Step 3: Assign kit individual</Text>
+                                    <Text style={{
+                                        paddingLeft: 20,
+                                        fontSize:    !this.props.bluetooth.accessoryData.organization && !this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? font14 : font10,
+                                        fontWeight:  !this.props.bluetooth.accessoryData.organization && !this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal'
+                                    }}>Step 1: Assign kit organization</Text>
+                                    <Text style={{
+                                        paddingLeft: 20,
+                                        fontSize:    this.props.bluetooth.accessoryData.organization && !this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? font14 : font10,
+                                        fontWeight:  this.props.bluetooth.accessoryData.organization && !this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal'
+                                    }}>Step 2: Assign kit team</Text>
+                                    <Text style={{
+                                        paddingLeft: 20,
+                                        fontSize:    this.props.bluetooth.accessoryData.organization && this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? font14 : font10,
+                                        fontWeight:  this.props.bluetooth.accessoryData.organization && this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal'
+                                    }}>Step 3: Assign kit individual</Text>
                                     <Text style={{ paddingLeft: 20, fontSize: font10 }}>Optional: Assign a different kit name</Text>
-                                    <Text style={{ paddingLeft: 20, fontSize: font10, fontWeight: this.props.bluetooth.accessoryData.organization && this.props.bluetooth.accessoryData.team && this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal' }}>Step 4: Save</Text>
+                                    <Text style={{
+                                        paddingLeft: 20,
+                                        fontSize:    this.props.bluetooth.accessoryData.organization && this.props.bluetooth.accessoryData.team && this.props.bluetooth.accessoryData.individual ? font14 : font10,
+                                        fontWeight:  this.props.bluetooth.accessoryData.organization && this.props.bluetooth.accessoryData.team && this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal'
+                                    }}>Step 4: Press Save</Text>
                                 </View>
                         }
                     </View>

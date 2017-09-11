@@ -31,7 +31,7 @@ const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
 const accessoryDiscoverabilityInstruction = 'press & hold buttons simultaneously until the lights flash red and blue';
-const successfullyConnected = ['Your kit is connected!', 'Return to main menu to assign this kit to an athlete and their specific team.'];
+const successfullyConnected = ['Your kit is connected!', 'Ensure the bluetooth light on the accessory is green, then to assigning this kit to an athlete and connect it to a WiFi network by clicking the back button to return to the main menu.'];
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -326,6 +326,7 @@ class BluetoothConnectView extends Component {
                         <Text h2>{successfullyConnected[0]}</Text>
                     </View>
                     <Icon containerStyle={{ flex: 1 }} name={'checkbox-marked-circle'} type={'material-community'} color={AppColors.brand.yellow} size={100}/>
+                    <Spacer />
                     <View style={[AppStyles.containerCentered, { flex: 1, paddingLeft: 25, paddingRight: 25 }]}>
                         <Text>{successfullyConnected[1]}</Text>
                     </View>
