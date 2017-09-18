@@ -30,7 +30,7 @@ import { Placeholder } from '@general/';
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
-const accessoryDiscoverabilityInstruction = 'press & hold buttons simultaneously until the lights flash red and blue';
+const accessoryDiscoverabilityInstruction = 'press & hold buttons simultaneously until the Bluetooth light breathes blue';
 const successfullyConnected = ['Your kit is connected!', 'Ensure the bluetooth light on the accessory is green, then to assigning this kit to an athlete and connect it to a WiFi network by clicking the back button to return to the main menu.'];
 
 /* Styles ==================================================================== */
@@ -297,7 +297,6 @@ class BluetoothConnectView extends Component {
                         <Spacer size={5}/>
                         <Text style={{ color: AppColors.brand.yellow }} onPress={() => this.setState({ isCollapsed: !this.state.isCollapsed })}>{'Can\'t find your device?'}</Text>
                         <Spacer size={5}/>
-                        <Text>{`Fathom pin: '${BLEConfig.pin}'`}</Text>
                         <Collapsible collapsed={this.state.isCollapsed} >
                             <FormLabel labelStyle={[AppStyles.h4]} >
                                 { `${accessoryDiscoverabilityInstruction}. Then rescan.` }
