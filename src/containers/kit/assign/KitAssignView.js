@@ -8,6 +8,7 @@ import {
     View,
     KeyboardAvoidingView,
     StyleSheet,
+    Platform,
     ActivityIndicator
 } from 'react-native';
 import { Icon, SearchBar } from 'react-native-elements';
@@ -73,6 +74,7 @@ class KitAssignView extends Component {
         let accessory = this.props.bluetooth.accessoryData;
         let assignType = this.props.bluetooth.assignType;
         let users = this.props.user.teams[this.props.user.teamIndex].users_with_training_groups;
+        let extraMargin = AppFonts.scaleFont(Platform.OS === 'android' ? 40 : 20);
         let category, name;
         switch(assignType) {
         case 'team':
@@ -131,7 +133,7 @@ class KitAssignView extends Component {
                                 onLayout={(ev) => { this.setState({ searchBarHeight: ev.nativeEvent.layout.height }); }}
                             /> : null
                     }
-                    <ScrollView style={{ height: AppSizes.screen.heightTwoThirds - AppSizes.navbarHeight - this.state.categoryHeight - this.state.searchBarHeight - 40 }}>
+                    <ScrollView style={{ height: AppSizes.screen.heightTwoThirds - AppSizes.navbarHeight - this.state.categoryHeight - this.state.searchBarHeight - extraMargin }}>
                         {
                             assignType === 'individual'
                                 ?

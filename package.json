@@ -1,6 +1,6 @@
 {
   "name": "fathom",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "fathom": "./fathom.sh",
@@ -30,7 +30,7 @@
     "react": "16.0.0-alpha.12",
     "react-native": "0.48.2",
     "react-native-android-location-services-dialog-box": "^2.2.1",
-    "react-native-ble-manager": "^6.1.0",
+    "react-native-ble-manager": "^6.1.1",
     "react-native-charts-wrapper": "^0.2.10",
     "react-native-code-push": "^5.0.0-beta",
     "react-native-collapsible": "^0.9.0",
@@ -66,7 +66,7 @@
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-react": "^7.3.0",
-    "jest": "^21.0.1",
+    "jest": "^21.1.0",
     "jest-react-native": "^18.0.0",
     "react-test-renderer": "^15.6.1"
   }
