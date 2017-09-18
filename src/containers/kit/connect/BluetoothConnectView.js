@@ -152,6 +152,9 @@ class BluetoothConnectView extends Component {
     }
 
     handleDiscoverPeripheral = (data) => {
+        if (data.advertising && data.advertising.kCBAdvDataLocalName) {
+            data.name = data.advertising.kCBAdvDataLocalName;
+        }
         return data.name && /Fathom_kit_/i.test(data.name) ? this.props.deviceFound(data) : null;
     }
 
