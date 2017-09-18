@@ -98,11 +98,11 @@ android {
     }
 
     defaultConfig {
-        applicationId 'com.biometrixtech.fathom'
+        applicationId 'com.fathom.fathomai'
         minSdkVersion 18
         targetSdkVersion 25
-        versionCode 1
-        versionName "0.5"
+        versionCode 2
+        versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -177,7 +177,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.facebook.react:react-native:+'
     // From node_modules
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
     }
 }
