@@ -1,0 +1,27 @@
+/**
+ * Kit Assign Screen Container
+ */
+import { connect } from 'react-redux';
+
+// Actions
+import * as BluetoothActions from '@redux/bluetooth/actions';
+
+// The component we're mapping to
+import KitAssignRender from './KitAssignView';
+
+// What data from the store shall we send to the component?
+const mapStateToProps = state => {
+    return ({
+        user:      state.user,
+        bluetooth: state.bluetooth
+    });
+};
+
+// Any actions to map to the component?
+const mapDispatchToProps = {
+    assignKitOrganization: BluetoothActions.assignKitOrganization,
+    assignKitTeam:         BluetoothActions.assignKitTeam,
+    assignKitIndividual:   BluetoothActions.assignKitIndividual
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(KitAssignRender);

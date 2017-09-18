@@ -9,14 +9,14 @@ import { View } from 'react-native';
 
 /* Component ==================================================================== */
 const Spacer = ({ size }) => (
-  <View
-    style={{
-        left:      0,
-        right:     0,
-        height:    1,
-        marginTop: size - 1,
-    }}
-  />
+    <View
+        style={{
+            left:      0,
+            right:     0,
+            height:    1,
+            marginTop: size - 1,
+        }}
+    />
 );
 
 Spacer.propTypes = { size: PropTypes.number };

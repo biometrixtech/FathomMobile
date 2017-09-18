@@ -11,7 +11,7 @@ In a nutshell: Redux is essentially app-wide state, where you can call functions
 ## Naming conventions
 
 __Directories__
-All directories are lowercase where words separated by hyphens (`-`), named by type (eg. `recipes`). Each directory contains 2 files - `actions.js` and `reducer.js`.
+All directories are lowercase where words separated by hyphens (`-`), named by type (eg. `users`). Each directory contains 2 files - `actions.js` and `reducer.js`.
 
 __Files__
 Files should be `lowercase` and words separated by hyphens (`-`).

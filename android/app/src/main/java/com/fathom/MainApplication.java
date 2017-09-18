@@ -1,17 +1,20 @@
 package com.fathom;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.facebook.react.ReactApplication;
+import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
+import com.smixx.fabric.FabricPackage;
+import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
+import com.github.wuxudong.rncharts.MPAndroidChartPackage;
 import com.microsoft.codepush.react.CodePush;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import it.innove.BleManagerPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,11 +35,16 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
+      return Arrays.asList(
           new MainReactPackage(),
-            new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
-            new VectorIconsPackage(),
-            new RNDeviceInfo()
+            new LocationServicesDialogBoxPackage(),
+          new FabricPackage(),
+          new GoogleAnalyticsBridgePackage(),
+          new MPAndroidChartPackage(),
+          new CodePush(BuildConfig.CODEPUSH_KEY, getApplicationContext(), BuildConfig.DEBUG),
+          new VectorIconsPackage(),
+          new RNDeviceInfo(),
+          new BleManagerPackage()
       );
     }
   };

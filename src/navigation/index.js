@@ -2,7 +2,7 @@
  * App Navigation
  */
 import React from 'react';
-import { Actions, Scene, ActionConst } from 'react-native-router-flux';
+import { Scene, ActionConst } from 'react-native-router-flux';
 
 // Consts and Libs
 import { AppConfig } from '@constants/';
@@ -12,37 +12,87 @@ import Drawer from '@containers/ui/DrawerContainer';
 
 // Scenes
 import AppLaunch from '@containers/Launch/LaunchContainer';
-import Placeholder from '@components/general/Placeholder';
+import AppNavigation from './appNavigation';
+// import ManagerNavigation from './managerNavigation';
+// import AdminNavigation from './adminNavigation';
+// import AthleteNavigation from './athleteNavigation';
+// import BiometrixNavigation from './biometrixAdminNavigation';
+// import ResearcherNavigation from './researcherNavigation';
 import AuthScenes from './auth';
-import TabsScenes from './tabs';
 
 /* Routes ==================================================================== */
-export default Actions.create(
-  <Scene key={'root'} {...AppConfig.navbarProps}>
-    <Scene
-      hideNavBar
-      key={'splash'}
-      component={AppLaunch}
-    />
+const scenes = (
+    <Scene key={'root'} {...AppConfig.navbarProps}>
+        <Scene
+            hideNavBar
+            key={'splash'}
+            component={AppLaunch}
+            analyticsDesc={'AppLaunch: Launching App'}
+        />
 
-    {/* Auth */}
-    {AuthScenes}
+        {/* Auth */}
+        {AuthScenes}
 
-    {/* Main App */}
-    <Scene key={'app'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}>
-      {/* Drawer Side Menu */}
-      <Scene key={'home'} component={Drawer} initial={'tabBar'}>
-        {/* Tabbar */}
-        {TabsScenes}
-      </Scene>
+        <Scene key={'app'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}>
+            {/* Drawer Side Menu */}
+            <Scene key={'sideMenu'} component={Drawer}>
+                {/* Radial Menus */}
+                {AppNavigation}
+                {/*</Scene>*/}
+            </Scene>
+        </Scene>
 
-      {/* General */}
-      <Scene
-        clone
-        key={'comingSoon'}
-        title={'Coming Soon'}
-        component={Placeholder}
-      />
+        {/* Main Admin App */}
+        {/* <Scene key={'adminApp'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}> */}
+        {/* Drawer Side Menu */}
+        {/* <Scene key={'adminHome'} component={Drawer}> */}
+        {/* Radial Menus */}
+        {/* {AdminNavigation} */}
+        {/*</Scene>*/}
+        {/* </Scene> */}
+        {/* </Scene> */}
+
+        {/* Main Athlete App */}
+        {/* <Scene key={'athleteApp'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}> */}
+        {/* Drawer Side Menu */}
+        {/* <Scene key={'athleteHome'} component={Drawer}> */}
+        {/* Radial Menus */}
+        {/* {AthleteNavigation} */}
+        {/*</Scene>*/}
+        {/* </Scene> */}
+        {/* </Scene> */}
+
+        {/* Main BiometrixAdmin App */}
+        {/* <Scene key={'biometrixApp'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}> */}
+        {/* Drawer Side Menu */}
+        {/* <Scene key={'biometrixHome'} component={Drawer}> */}
+        {/* Radial Menus */}
+        {/* {BiometrixNavigation} */}
+        {/* </Scene> */}
+        {/* </Scene>*/}
+        {/* </Scene> */}
+
+        {/* Main Manager App */}
+        {/* <Scene key={'managerApp'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}> */}
+        {/* Drawer Side Menu */}
+        {/* <Scene key={'managerHome'} component={Drawer}> */}
+        {/* Radial Menus */}
+        {/* {ManagerNavigation} */}
+        {/*</Scene>*/}
+        {/* </Scene> */}
+        {/* </Scene> */}
+
+        {/* Main Researcher App */}
+        {/* <Scene key={'researcherApp'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}> */}
+        {/* Drawer Side Menu */}
+        {/* <Scene key={'researcherHome'} component={Drawer}> */}
+        {/* Radial Menus */}
+        {/* {ResearcherNavigation} */}
+        {/*</Scene>*/}
+        {/* </Scene> */}
+        {/* </Scene> */}
+
     </Scene>
-  </Scene>,
 );
+
+export default scenes;

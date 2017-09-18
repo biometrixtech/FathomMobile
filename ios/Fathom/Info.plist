@@ -15,13 +15,13 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>1.1</string>
 	<key>CodePushDeploymentKey</key>
-	<string>yUip94F_KaezxSrrlFCDJDrnIRkHNy8a-_BnM</string>
+	<string>$(CODEPUSH_KEY)</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -40,20 +40,34 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>localhost</key>
+			<key>codepush.azurewebsites.net</key>
 			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 			</dict>
-			<key>wp-api.mcnam.ee</key>
+			<key>codepush.blob.core.windows.net</key>
 			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+			<key>codepushupdates.azureedge.net</key>
+			<dict>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 			</dict>
 		</dict>
 	</dict>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>This app requires Bluetooth to connect to our hardware.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UIAppFonts</key>
@@ -68,6 +82,24 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 		<string>MaterialCommunityIcons.ttf</string>
+		<string>LibreFranklin-Black.ttf</string>
+		<string>LibreFranklin-BlackItalic.ttf</string>
+		<string>LibreFranklin-Bold.ttf</string>
+		<string>LibreFranklin-BoldItalic.ttf</string>
+		<string>LibreFranklin-ExtraBold.ttf</string>
+		<string>LibreFranklin-ExtraBoldItalic.ttf</string>
+		<string>LibreFranklin-ExtraLight.ttf</string>
+		<string>LibreFranklin-ExtraLightItalic.ttf</string>
+		<string>LibreFranklin-Italic.ttf</string>
+		<string>LibreFranklin-Light.ttf</string>
+		<string>LibreFranklin-LightItalic.ttf</string>
+		<string>LibreFranklin-Medium.ttf</string>
+		<string>LibreFranklin-MediumItalic.ttf</string>
+		<string>LibreFranklin-Regular.ttf</string>
+		<string>LibreFranklin-SemiBold.ttf</string>
+		<string>LibreFranklin-SemiBoldItalic.ttf</string>
+		<string>LibreFranklin-Thin.ttf</string>
+		<string>LibreFranklin-ThinItalic.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

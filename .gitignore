@@ -34,14 +34,12 @@ local.properties
 #
 node_modules/
 npm-debug.log
+yarn-error.log
 
 # BUCK
 buck-out/
 \.buckd/
-android/app/libs
 *.keystore
-android/keystores/debug.keystore
-android/app/build
 
 # fastlane
 #
@@ -54,14 +52,5 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
 
-# Test
-#
-coverage/*
-jest/*
-
-#vim
-.*.swp
-
-# Crashlytics
-crashlytics-build.properties
-com_crashlytics_export_strings.xml
+# Personal
+*.mobileprovision

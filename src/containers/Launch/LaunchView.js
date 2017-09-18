@@ -5,11 +5,11 @@
  */
 import React, { Component, PropTypes } from 'react';
 import {
-  View,
-  Image,
-  StatusBar,
-  StyleSheet,
-  ActivityIndicator,
+    View,
+    Image,
+    StatusBar,
+    StyleSheet,
+    ActivityIndicator,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
@@ -22,6 +22,11 @@ const styles = StyleSheet.create({
         width:  AppSizes.screen.width,
         height: AppSizes.screen.height,
     },
+    indicator: {
+        position: 'absolute',
+        left:     AppSizes.screen.widthHalf,
+        top:      AppSizes.screen.heightHalf
+    }
 });
 
 /* Component ==================================================================== */
@@ -36,27 +41,28 @@ class AppLaunch extends Component {
         // Show status bar on app launch
         StatusBar.setHidden(false, true);
 
-        // Try to authenticate based on existing token
-        this.props.login()
-          // Logged in, show index screen
-          .then(() => Actions.app({ type: 'reset' }))
-          // Not Logged in, show Login screen
-          .catch(() => Actions.authenticate({ type: 'reset' }));
+        // Try to login based on existing token
+        return this.props.login()
+        // Logged in, show index screen
+            .then(() => Actions.app({ type: 'reset' }))
+        // Not Logged in, show Login screen
+            .catch(() => Actions.login({ type: 'reset' }));
     }
 
     render = () => (
-      <View style={[AppStyles.container]}>
-        <Image
-          source={require('../../images/launch.jpg')}
-          style={[styles.launchImage, AppStyles.containerCentered]}
-        >
-          <ActivityIndicator
-            animating
-            size={'large'}
-            color={'#C1C5C8'}
-          />
-        </Image>
-      </View>
+        <View style={[AppStyles.container]}>
+            <Image
+                source={require('@images/fathom_colored.png')}
+                style={[styles.launchImage, AppStyles.containerCentered]}
+                resizeMode={'contain'}
+            />
+            <ActivityIndicator
+                style={[styles.indicator]}
+                animating
+                size={'large'}
+                color={'#C1C5C8'}
+            />
+        </View>
     );
 }
 

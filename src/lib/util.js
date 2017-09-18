@@ -2,10 +2,13 @@
  * Global Util Functions
  */
 
-const striptags = require('striptags');
 const Entities = require('html-entities').AllHtmlEntities;
 
 const entities = new Entities();
+
+function striptags(input) {
+    return input.replace(/(<([^>]+)>)/ig, '');
+}
 
 const UTIL = {
     /**

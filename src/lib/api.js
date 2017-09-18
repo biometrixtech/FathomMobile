@@ -15,10 +15,10 @@ import AppUtil from '@lib/util';
 const Token = new JWT();
 
 // Config
-const HOSTNAME = APIConfig.hostname;
+// const HOSTNAME = APIConfig.hostname;
 const ENDPOINTS = APIConfig.endpoints;
 
-let USER_AGENT;
+let USER_AGENT, HOSTNAME;
 try {
     // Build user agent string
     USER_AGENT = `${AppConfig.appName} ${DeviceInfo.getVersion()}; ${DeviceInfo.getSystemName()} ` +
@@ -57,8 +57,8 @@ function handleError(err) {
     let error = '';
     if (typeof err === 'string') {
         error = err;
-    } else if (err && err.message) {
-        error = err.message;
+    } else if (err && err.error) {
+        error = err.error;
     }
 
     if (!error) { error = ErrorMessages.default; }
@@ -96,12 +96,12 @@ function fetcher(method, inputEndpoint, inputParams, body) {
         const requestNum = requestCounter;
 
         // After x seconds, let's call it a day!
-        const timeoutAfter = 7;
+        const timeoutAfter = 25;
         const apiTimedOut = setTimeout(() => (
-          reject(ErrorMessages.timeout)
+            reject(ErrorMessages.timeout)
         ), timeoutAfter * 1000);
 
-        if (!method || !endpoint) return reject('Missing params (AppAPI.fetcher).');
+        if (!method || !endpoint) { return reject('Missing params (AppAPI.fetcher).'); }
 
         // Build request
         const req = {
@@ -118,16 +118,22 @@ function fetcher(method, inputEndpoint, inputParams, body) {
         if (Token.getStoredToken && endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
             const apiToken = await Token.getStoredToken();
             if (apiToken) {
-                req.headers.Authorization = `Bearer ${apiToken}`;
+                req.headers.jwt = apiToken;
             }
+        }
+
+        // Add Host name
+        // Don't add on anything but the login endpoint if host name already exists
+        if (!HOSTNAME || endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
+            HOSTNAME = await Token.getAPIHost();
         }
 
         // Add Endpoint Params
         let urlParams = '';
         if (params) {
-            // Object - eg. /recipes?title=this&cat=2
+            // Object - eg. /users?title=this&cat=2
             if (typeof params === 'object') {
-                // Replace matching params in API routes eg. /recipes/{param}/foo
+                // Replace matching params in API routes eg. /users/{param}/foo
                 Object.keys(params).forEach((param) => {
                     if (endpoint.includes(`{${param}}`)) {
                         endpoint = endpoint.split(`{${param}}`).join(params[param]);
@@ -146,7 +152,7 @@ function fetcher(method, inputEndpoint, inputParams, body) {
                 // Add the rest of the params as a query string
                 urlParams = `?${serialize(params)}`;
 
-            // String or Number - eg. /recipes/23
+            // String or Number - eg. /users/23
             } else if (typeof params === 'string' || typeof params === 'number') {
                 urlParams = `/${params}`;
 
@@ -157,70 +163,73 @@ function fetcher(method, inputEndpoint, inputParams, body) {
         }
 
         // Add Body
-        if (body) req.body = JSON.stringify(body);
+        if (body) { req.body = JSON.stringify(body); }
 
-        const thisUrl = HOSTNAME + endpoint + urlParams;
+        const thisUrl = `${HOSTNAME}${endpoint}${urlParams}`;
 
         debug('', `API Request #${requestNum} to ${thisUrl}`);
 
         // Make the request
         return fetch(thisUrl, req)
-          .then(async (rawRes) => {
-              // API got back to us, clear the timeout
-              clearTimeout(apiTimedOut);
+            .then(async (rawRes) => {
+                // API got back to us, clear the timeout
+                clearTimeout(apiTimedOut);
 
-              let jsonRes = {};
+                let jsonRes = {};
 
-              try {
-                  jsonRes = await rawRes.json();
-              } catch (error) {
-                  const err = { message: ErrorMessages.invalidJson };
-                  throw err;
-              }
+                try {
+                    jsonRes = await rawRes.json();
+                } catch (error) {
+                    if (rawRes.status !== 200) {
+                        const err = { message: ErrorMessages.invalidJson };
+                        throw err;
+                    }
+                }
 
-              // Only continue if the header is successful
-              if (rawRes && rawRes.status === 200) { return jsonRes; }
-              throw jsonRes;
-          })
-          .then((res) => {
-              debug(res, `API Response #${requestNum} from ${thisUrl}`);
-              return resolve(res);
-          })
-          .catch((err) => {
-              // API got back to us, clear the timeout
-              clearTimeout(apiTimedOut);
+                // Only continue if the header is successful
+                if (rawRes && rawRes.status === 200) { return jsonRes; }
+                throw jsonRes;
+            })
+            .then((res) => {
+                debug(res, `API Response #${requestNum} from ${thisUrl}`);
+                return resolve(res);
+            })
+            .catch((err) => {
+                // API got back to us, clear the timeout
+                clearTimeout(apiTimedOut);
 
-              const apiCredentials = Token.getStoredCredentials ? Token.getStoredCredentials() : {};
+                const apiCredentials = Token.getStoredCredentials ? Token.getStoredCredentials() : {};
 
-              // If unauthorized, try logging them back in
-              if (
-                !AppUtil.objIsEmpty(apiCredentials) &&
-                err &&
-                err.data &&
-                err.data.status.toString().charAt(0) === 4 &&
-                err.code !== 'jwt_auth_failed' &&
-                Token.getToken
-              ) {
-                  return Token.getToken()
-                  .then(() => { fetcher(method, endpoint, params, body); })
-                  .catch(error => reject(error));
-              }
+                // If unauthorized, try logging them back in
+                if (
+                    !AppUtil.objIsEmpty(apiCredentials) &&
+                    err &&
+                    err.data &&
+                    err.data.status.toString().charAt(0) === 4 &&
+                    err.code !== 'jwt_auth_failed' &&
+                    Token.getToken
+                ) {
+                    return Token.getToken()
+                        .then(() => { fetcher(method, endpoint, params, body); })
+                        .catch(error => reject(error));
+                }
 
-              debug(err, HOSTNAME + endpoint + urlParams);
-              return reject(err);
-          });
+                debug(err, thisUrl);
+                return reject(err);
+            });
     });
 }
 
 /* Create the API Export ==================================================================== */
 /**
   * Build services from Endpoints
-  * - So we can call AppAPI.recipes.get() for example
+  * - So we can call AppAPI.users.get() for example
   */
 const AppAPI = {
     handleError,
-    getToken:    Token.getToken,
-    deleteToken: Token.deleteToken,
+    getToken:     Token.getToken,
+    deleteToken:  Token.deleteToken,
+    storeAPIHost: Token.storeAPIHost
 };
 
 ENDPOINTS.forEach((endpoint, key) => {

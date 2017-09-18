@@ -6,10 +6,12 @@ import jwtDecode from 'jwt-decode';
 
 import AppAPI from '@lib/api';
 
+const Actions = require('../actionTypes');
+
 /**
   * Login to API and receive Token
   */
-export function login(credentials, freshLogin) {
+const login = (credentials, freshLogin) => {
     return dispatch => new Promise(async (resolve, reject) => {
         const userCreds = credentials || null;
 
@@ -20,120 +22,267 @@ export function login(credentials, freshLogin) {
 
         // Get a new token from API
         return AppAPI.getToken(userCreds)
-          .then((token) => {
-              let decodedToken = '';
+            .then((response) => {
+                let decodedToken = '';
+                let token = response.user.jwt;
 
-              try {
-                  decodedToken = jwtDecode(token);
-              } catch (err) {
-                  return reject('Token decode failed.');
-              }
+                try {
+                    decodedToken = jwtDecode(token);
+                } catch (err) {
+                    return reject('Token decode failed.');
+                }
 
-              if (!decodedToken || !decodedToken.role || !decodedToken.user_id) {
-                  return reject('Token decode failed.');
-              }
+                if (!decodedToken || !decodedToken.user_id) {
+                    return reject('Token decode failed.');
+                }
 
-              dispatch({
-                  type: 'LOGIN_SUCCESS',
-                  data: decodedToken,
-              });
+                // TODO: auth check on authorized account role
 
-              return resolve(decodedToken);
-
-              // Get user details from API, using my token
-              // return AppAPI.users.get(decodedToken.data.user.id)
-              //   .then((userData) => {
-              //       dispatch({
-              //           type: 'USER_REPLACE',
-              //           data: userData,
-              //       });
-              //
-              //       return resolve(userData);
-              //   }).catch(err => reject(err));
-          }).catch(err => reject(err));
+                // Get user details from API, using my token
+                return AppAPI.user.get()
+                    .then(userData => {
+                        delete response.user;
+                        let storedObject = {
+                            ...userData,
+                            ...response,
+                            password: userCreds.password
+                        };
+                        return dispatch({
+                            type: Actions.USER_REPLACE,
+                            data: storedObject,
+                        });
+                    })
+                    .then(() => AppAPI.teams.get())
+                    .then(teams => dispatch({
+                        type: Actions.GET_TEAMS,
+                        data: teams
+                    }))
+                    .then(() => AppAPI.accessories.get())
+                    .then(accessories => dispatch({
+                        type: Actions.GET_ACCESSORIES,
+                        data: accessories
+                    }))
+                    .then(() => resolve())
+                    .catch(err => reject(err));
+            }).catch(err => reject(err));
     });
-}
+};
 
 /**
   * Logout
   */
-export function logout() {
+const logout = () => {
     return dispatch => AppAPI.deleteToken()
-      .then(() => {
-          dispatch({
-              type: 'USER_REPLACE',
-              data: {},
-          });
-      });
-}
+        .then(() => {
+            dispatch({
+                type: Actions.USER_REPLACE,
+                data: {},
+            });
+        });
+};
 
 /**
   * Get My User Data
   */
-export function getMe() {
-    return dispatch => AppAPI.me.get()
-      .then((userData) => {
-          dispatch({
-              type: 'USER_REPLACE',
-              data: userData,
-          });
+const getUser = () => {
+    return dispatch => AppAPI.user.get()
+        .then((userData) => {
+            dispatch({
+                type: Actions.USER_REPLACE,
+                data: userData,
+            });
 
-          return userData;
-      });
-}
+            return userData;
+        });
+};
 
 /**
   * Update My User Data
   * - Receives complete user data in return
   */
-export function updateMe(payload) {
-    return dispatch => AppAPI.me.post(payload)
-      .then((userData) => {
-          dispatch({
-              type: 'USER_REPLACE',
-              data: userData,
-          });
+const updateUser = (payload) => {
+    return dispatch => AppAPI.user.patch(payload)
+        .then((userData) => {
+            dispatch({
+                type: Actions.USER_REPLACE,
+                data: userData,
+            });
 
-          return userData;
-      });
-}
+            return userData;
+        });
+};
 
 /**
   * POST Forgot Password Email
   */
-export function forgotPassword(email) {
+const forgotPassword = (email) => {
     return dispatch => AppAPI.forgotPassword.post(email)
         .then((result) => {
             dispatch({
-                type: 'FORGOT_PASSWORD_SUCCESS',
+                type: Actions.FORGOT_PASSWORD_SUCCESS,
                 data: result,
             });
             return result;
         })
         .catch((err) => {
             dispatch({
-                type: 'FORGOT_PASSWORD_FAILED',
+                type: Actions.FORGOT_PASSWORD_FAILED,
             });
             return err;
         });
-}
+};
 
 /**
   * POST SignUp form data
   */
-export function signUp(credentials) {
-    return dispatch => AppAPI.signUp.post(credentials)
+const signUp = (credentials) => {
+    return dispatch => AppAPI.user.post(credentials)
         .then((result) => {
             dispatch({
-                type: 'SIGN_UP_SUCCESS',
+                type: Actions.SIGN_UP_SUCCESS,
                 data: result,
             });
             return result;
         })
         .catch((err) => {
             dispatch({
-                type: 'SIGN_UP_FAILED',
+                type: Actions.SIGN_UP_FAILED,
             });
             return err;
         });
+};
+
+/**
+ * GET Training Groups
+ */
+const getTrainingGroups = () => {
+    return dispatch => AppAPI.training_groups.get()
+        .then((trainingGroups) => {
+            dispatch({
+                type: Actions.GET_TRAINING_GROUPS,
+                data: trainingGroups,
+            });
+            return trainingGroups;
+        });
+};
+
+/**
+ * Create Training Group
+ */
+const createTrainingGroup = (trainingGroup) => {
+    trainingGroup = Object.assign({}, trainingGroup, {
+        user_ids: Object.keys(trainingGroup.user_ids)
+    });
+    return dispatch => AppAPI.training_groups.post(null, trainingGroup)
+        .then(newTrainingGroup => dispatch({
+            type: Actions.CREATE_TRAINING_GROUP,
+            data: newTrainingGroup,
+        }));
+};
+
+/**
+ * Patch Training Group
+ */
+const patchTrainingGroup = (trainingGroup) => {
+    let id = trainingGroup.id;
+    delete trainingGroup.id;
+    trainingGroup.user_ids = Object.entries(trainingGroup.user_ids).filter(group => group[1]).map(group => group[0]);
+    return dispatch => AppAPI.training_groups.patch(id, trainingGroup)
+        .then(patchedTrainingGroup => dispatch({
+            type: Actions.PATCH_TRAINING_GROUP,
+            data: patchedTrainingGroup,
+        }));
+};
+
+/**
+ * Remove Training Group
+ */
+const removeTrainingGroup = (trainingGroupId) => {
+    return dispatch => AppAPI.training_groups.delete(trainingGroupId)
+        .then(() => dispatch({
+            type: Actions.REMOVE_TRAINING_GROUP,
+            data: trainingGroupId,
+        }));
+};
+
+const teamSelect = (index) => {
+    return dispatch => dispatch({
+        type: Actions.TEAM_SELECT,
+        data: index
+    });
+};
+
+const selectTrainingGroup = (trainingGroup) => {
+    return dispatch => dispatch({
+        type: Actions.TRAINING_GROUP_SELECT,
+        data: trainingGroup
+    });
+};
+
+const removeUser = (trainingGroupId, userId) => {
+    return dispatch => AppAPI.remove_user.post({ trainingGroupId }, { user_id: userId })
+        .then(() => AppAPI.teams.get())
+        .then(newTeams => dispatch({
+            type: Actions.REMOVE_USER,
+            data: {
+                newTeams,
+                userId
+            }
+        }));
+};
+
+const startSession = (accessoryId) => {
+    return dispatch => AppAPI.start_session.post({ accessoryId }, { capture_mode: 'log' })
+        .then(() => AppAPI.accessories.get())
+        .then(accessories => dispatch({
+            type: Actions.GET_ACCESSORIES,
+            data: accessories
+        }))
+        .catch(err => Promise.reject(err));
+};
+
+const stopSession = (accessoryId) => {
+    return dispatch => AppAPI.stop_session.post({ accessoryId })
+        .then(() => AppAPI.accessories.get())
+        .then(accessories => dispatch({
+            type: Actions.GET_ACCESSORIES,
+            data: accessories
+        }))
+        .catch(err => Promise.reject(err));
+};
+
+const getTeams = () => {
+    return dispatch => AppAPI.teams.get()
+        .then(teams => dispatch({
+            type: Actions.GET_TEAMS,
+            data: teams
+        }));
+};
+
+const getAccessories = () => {
+    return dispatch => AppAPI.accessories.get()
+        .then(accessories => dispatch({
+            type: Actions.GET_ACCESSORIES,
+            data: accessories
+        }));
 }
+
+export {
+    login,
+    logout,
+    getUser,
+    updateUser,
+    forgotPassword,
+    signUp,
+    getTrainingGroups,
+    createTrainingGroup,
+    patchTrainingGroup,
+    removeTrainingGroup,
+    teamSelect,
+    selectTrainingGroup,
+    removeUser,
+    startSession,
+    stopSession,
+    getTeams,
+    getAccessories
+};

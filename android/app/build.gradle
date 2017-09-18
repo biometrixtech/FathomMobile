@@ -59,7 +59,7 @@ import com.android.build.OutputFile
  *   inputExcludes: ["android/**", "ios/**"],
  *
  *   // override which node gets called and with what additional arguments
- *   nodeExecutableAndArgs: ["node"]
+ *   nodeExecutableAndArgs: ["node"],
  *
  *   // supply additional arguments to the packager
  *   extraPackagerArgs: []
@@ -87,11 +87,21 @@ def enableProguardInReleaseBuilds = false
 android {
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
+
+    signingConfigs {
+        release {
+            storeFile file("./fathom.jks")
+            storePassword "fathom"
+            keyAlias "FathomKey"
+            keyPassword "fathom"
+        }
+    }
+
     defaultConfig {
-        applicationId 'com.biometrixtech.fathom'
-        minSdkVersion 16
+        applicationId 'com.fathom.fathomai'
+        minSdkVersion 18
         targetSdkVersion 25
-        versionCode 1
+        versionCode 2
         versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
@@ -106,9 +116,31 @@ android {
         }
     }
     buildTypes {
+        debug {
+            // Note: CodePush updates should not be tested in Debug mode as they are overriden by the RN packager. However, because CodePush checks for updates in all modes, we must supply a key.
+            buildConfigField "String", "CODEPUSH_KEY", '""'
+        }
+        releaseStaging {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            buildConfigField "String", "CODEPUSH_KEY", '"yUip94F_KaezxSrrlFCDJDrnIRkHNy8a-_BnM"'
+            signingConfig signingConfigs.release
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    output.outputFile = new File(output.outputFile.parent, output.outputFile.name.replace(".apk", "_" + defaultConfig.versionName + ".apk"))
+                }
+            }
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            buildConfigField "String", "CODEPUSH_KEY", '"7LJiescWwsZkIPqAU3IRpm0l_5pVNy8a-_BnM"'
+            signingConfig signingConfigs.release
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    output.outputFile = new File(output.outputFile.parent, output.outputFile.name.replace(".apk", "_" + defaultConfig.versionCode + ".apk"))
+                }
+            }
         }
     }
     // applicationVariants are e.g. debug, release
@@ -133,15 +165,19 @@ repositories {
 }
 
 dependencies {
+    compile project(':react-native-google-analytics-bridge')
+    compile project(':react-native-charts-wrapper')
     compile project(':react-native-code-push')
     compile project(':react-native-fabric')
     compile project(':react-native-vector-icons')
     compile project(':react-native-device-info')
+    compile project(':react-native-ble-manager')
+    compile project(':react-native-android-location-services-dialog-box')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.facebook.react:react-native:+'
     // From node_modules
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
     }
 }

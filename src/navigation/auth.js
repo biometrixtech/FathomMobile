@@ -8,42 +8,38 @@ import { Scene, ActionConst } from 'react-native-router-flux';
 import { AppConfig } from '@constants/';
 
 // Scenes
-import Authenticate from '@containers/auth/AuthenticateView';
-import AuthLogin from '@containers/auth/Login/LoginContainer';
+import Login from '@containers/auth/LoginContainer';
 import AuthForgotPassword from '@containers/auth/ForgotPassword/ForgotPasswordContainer';
 import AuthSignUp from '@containers/auth/SignUp/SignUpContainer';
 
 /* Routes ==================================================================== */
 const scenes = (
-  <Scene key={'authenticate'}>
-    <Scene
-      hideNavBar
-      key={'authLanding'}
-      component={Authenticate}
-      type={ActionConst.RESET}
-    />
-    <Scene
-      {...AppConfig.navbarProps}
-      key={'login'}
-      title={'Login'}
-      clone
-      component={AuthLogin}
-    />
-    <Scene
-      {...AppConfig.navbarProps}
-      key={'signUp'}
-      title={'Sign Up'}
-      clone
-      component={AuthSignUp}
-    />
-    <Scene
-      {...AppConfig.navbarProps}
-      key={'passwordReset'}
-      title={'Password Reset'}
-      clone
-      component={AuthForgotPassword}
-    />
-  </Scene>
+    <Scene key={'login'} type={ActionConst.RESET}>
+        <Scene
+            hideNavBar
+            key={'authLanding'}
+            initial={true}
+            component={Login}
+            type={ActionConst.RESET}
+            analyticsDesc={'LoginView: Login'}
+        />
+        <Scene
+            {...AppConfig.navbarProps}
+            key={'signUp'}
+            title={'Sign Up'}
+            clone
+            component={AuthSignUp}
+            analyticsDesc={'SignUpView: Sign Up'}
+        />
+        <Scene
+            {...AppConfig.navbarProps}
+            key={'passwordReset'}
+            title={'Password Reset'}
+            clone
+            component={AuthForgotPassword}
+            analyticsDesc={'ForgotPasswordView: Forgot Password'}
+        />
+    </Scene>
 );
 
 export default scenes;

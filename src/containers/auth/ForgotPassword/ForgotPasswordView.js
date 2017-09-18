@@ -3,8 +3,8 @@
  */
 import React, { Component, PropTypes } from 'react';
 import {
-  ScrollView,
-  AsyncStorage,
+    ScrollView,
+    AsyncStorage,
 } from 'react-native';
 import FormValidation from 'tcomb-form-native';
 import { Actions } from 'react-native-router-flux';
@@ -29,11 +29,11 @@ class ForgotPassword extends Component {
 
         // Email Validation
         const validEmail = FormValidation.refinement(
-          FormValidation.String, (email) => {
-              const regularExpression = /^.+@.+\..+$/i;
+            FormValidation.String, (email) => {
+                const regularExpression = /^.+@.+\..+$/i;
 
-              return regularExpression.test(email);
-          },
+                return regularExpression.test(email);
+            },
         );
 
         this.state = {
@@ -115,37 +115,37 @@ class ForgotPassword extends Component {
         const Form = FormValidation.form.Form;
 
         return (
-          <ScrollView
-            automaticallyAdjustContentInsets={false}
-            ref={(a) => { this.scrollView = a; }}
-            style={[AppStyles.container]}
-            contentContainerStyle={[AppStyles.container]}
-          >
-            <Card>
-              <Alerts
-                status={this.state.resultMsg.status}
-                success={this.state.resultMsg.success}
-                error={this.state.resultMsg.error}
-              />
+            <ScrollView
+                automaticallyAdjustContentInsets={false}
+                ref={(a) => { this.scrollView = a; }}
+                style={[AppStyles.container]}
+                contentContainerStyle={[AppStyles.container, { alignItems: 'center' }]}
+            >
+                <Card>
+                    <Alerts
+                        status={this.state.resultMsg.status}
+                        success={this.state.resultMsg.success}
+                        error={this.state.resultMsg.error}
+                    />
 
-              <Text p style={[AppStyles.textCenterAligned]}>
-                Enter your email address and we will send you an email with a link to reset your password.
-              </Text>
+                    <Text p style={[AppStyles.textCenterAligned]}>
+                        Enter your email address and we will send you an email with a link to reset your password.
+                    </Text>
 
-              <Form
-                ref={(b) => { this.form = b; }}
-                type={this.state.form_fields}
-                value={this.state.form_values}
-                options={this.state.options}
-              />
+                    <Form
+                        ref={(b) => { this.form = b; }}
+                        type={this.state.form_fields}
+                        value={this.state.form_values}
+                        options={this.state.options}
+                    />
 
-              <Button
-                title={'Submit'}
-                onPress={this.forgotPassword}
-              />
+                    <Button
+                        title={'Submit'}
+                        onPress={this.forgotPassword}
+                    />
 
-            </Card>
-          </ScrollView>
+                </Card>
+            </ScrollView>
         );
     }
 }
