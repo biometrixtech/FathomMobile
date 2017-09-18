@@ -7,7 +7,7 @@ import codePush from 'react-native-code-push';
 import AppContainer from './src';
 
 let codePushOptions = {
-    updateDialog: true,
+    updateDialog: false,
     installMode:  codePush.InstallMode.IMMEDIATE
 };
 

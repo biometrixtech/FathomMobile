@@ -4,8 +4,8 @@
 
 export default {
     // The URL we're connecting to
-    // hostname: 'https://rails-api.fathomai.com', // deployment
-    hostname: 'https://rails-api-v2.biometrixtech.com', // testing
+    hostname: 'https://rails-api.fathomai.com', // deployment
+    // hostname: 'https://rails-api-v2.biometrixtech.com', // testing
 
     // Map shortnames to the actual endpoints, so that we can
     // use them like so: AppAPI.ENDPOINT_NAME.METHOD()
