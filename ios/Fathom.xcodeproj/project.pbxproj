@@ -899,7 +899,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = FFKN7TF2BB;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -1527,6 +1527,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = FFKN7TF2BB;
@@ -1551,7 +1552,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fathom.fathomai;
 				PRODUCT_NAME = Fathom;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "fa097177-534f-495f-8967-6033db2bb16f";
+				PROVISIONING_PROFILE_SPECIFIER = "Fathom Dev Provisioning Profile";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1562,7 +1564,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FFKN7TF2BB;
 				ENABLE_BITCODE = YES;
@@ -1586,7 +1589,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fathom.fathomai;
 				PRODUCT_NAME = Fathom;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "e29709c2-399b-4659-8c9b-18b19add6268";
+				PROVISIONING_PROFILE_SPECIFIER = "Fathom App Store Provisioning Profile";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -1722,7 +1726,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/Staging$(EFFECTIVE_PLATFORM_NAME)";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FFKN7TF2BB;
@@ -1747,7 +1752,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fathom.fathomai;
 				PRODUCT_NAME = Fathom;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "5cc14c36-5ee3-464d-97d4-deec19824c3a";
+				PROVISIONING_PROFILE_SPECIFIER = "Fathom Ad Hoc Provisioning Profile";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Staging;
