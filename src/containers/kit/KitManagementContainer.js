@@ -19,18 +19,21 @@ const mapStateToProps = state => {
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-    scanWiFi:           BluetoothActions.scanWiFi,
-    startScan:          BluetoothActions.startScan,
-    setWiFiSSID:        BluetoothActions.setWiFiSSID,
-    setWiFiPassword:    BluetoothActions.setWiFiPassword,
-    connectWiFi:        BluetoothActions.connectWiFi,
-    readSSID:           BluetoothActions.readSSID,
-    handleDisconnect:   BluetoothActions.handleDisconnect,
-    connectToAccessory: BluetoothActions.connectToAccessory,
-    startConnect:       BluetoothActions.startConnect,
-    stopConnect:        BluetoothActions.stopConnect,
-    getConfiguration:   BluetoothActions.getConfiguration,
-    disconnect:         BluetoothActions.disconnect,
+    scanWiFi:             BluetoothActions.scanWiFi,
+    startScan:            BluetoothActions.startScan,
+    setWiFiSSID:          BluetoothActions.setWiFiSSID,
+    setWiFiPassword:      BluetoothActions.setWiFiPassword,
+    connectWiFi:          BluetoothActions.connectWiFi,
+    readSSID:             BluetoothActions.readSSID,
+    handleDisconnect:     BluetoothActions.handleDisconnect,
+    connectToAccessory:   BluetoothActions.connectToAccessory,
+    startConnect:         BluetoothActions.startConnect,
+    stopConnect:          BluetoothActions.stopConnect,
+    getConfiguration:     BluetoothActions.getConfiguration,
+    disconnect:           BluetoothActions.disconnect,
+    setIdentity:          BluetoothActions.setIdentity,
+    setAnonymousIdentity: BluetoothActions.setAnonymousIdentity,
+    setEAPType:           BluetoothActions.setEAPType
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitManagementRender);

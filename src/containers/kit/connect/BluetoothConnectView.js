@@ -82,6 +82,7 @@ class BluetoothConnectView extends Component {
             isCollapsed: true,
             size:        {},
             data:        null,
+            carousel:    null
         };
 
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
@@ -90,11 +91,11 @@ class BluetoothConnectView extends Component {
     }
 
     componentDidMount = () => {
-        this.props.checkState();
-
         this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral );
         this.handlerStop = bleManagerEmitter.addListener('BleManagerStopScan', this.handleStopScan );
         this.handlerState = bleManagerEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange );
+
+        this.props.checkState();
     }
 
     componentWillUnmount = () => {
@@ -122,24 +123,25 @@ class BluetoothConnectView extends Component {
                             return null;
                         })
                         .then(() => LocationServicesDialogBox.checkLocationServicesIsEnabled({
-                            message: '<h2>Use Location?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, or cell network for location<br/>',
-                            ok:      'YES',
-                            cancel:  'NO'
+                            message:            '<h2>Use Location?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, or cell network for location<br/>',
+                            ok:                 'YES',
+                            cancel:             'NO',
+                            enableHighAccuracy: false,
                         }))
                         .then(success => {
                             /* eslint-disable no-undef */
-                            return navigator.geolocation.getCurrentPosition((position) => this.props.enableBluetooth(), error => console.log(error), { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 });
+                            return navigator.geolocation.getCurrentPosition((position) => this.props.enableBluetooth(), error => console.log(error), { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 });
                         })
                         .catch((error) => {
                             console.log(error.message);
                             return Promise.reject(error);
                         });
                 }
-                return null;
+                return Promise.resolve();
             })
             .catch(error => {
                 this.setState({ index: 1 });
-                this.refs.carousel.animateToPage(1);
+                this.state.carousel.animateToPage(1);
             });
     }
 
@@ -160,17 +162,17 @@ class BluetoothConnectView extends Component {
 
     handleBleStateChange = (data) => {
         if (data.state === 'off') {
-            if (this.refs.carousel && this.refs.carousel.getCurrentPage() > 1) {
+            if (this.state.carousel && this.state.carousel.getCurrentPage() > 1) {
                 this.setState({ index: 1 });
-                this.refs.carousel.animateToPage(1);
-            } else if (!this.refs.carousel) {
+                this.state.carousel.animateToPage(1);
+            } else if (!this.state.carousel) {
                 return Promise.resolve(this.props.changeState(data.state))
                     .then(() => Actions.kitManagement());
             }
-        } else if (this.refs.carousel && this.refs.carousel.getCurrentPage() === 1) {
+        } else if (data.state === 'on' && this.state.carousel && this.state.carousel.getCurrentPage() === 1) {
             this.startBluetooth();
             this.setState({ index: 2 });
-            this.refs.carousel.animateToPage(2);
+            this.state.carousel.animateToPage(2);
         }
         return this.props.changeState(data.state);
     }
@@ -188,7 +190,7 @@ class BluetoothConnectView extends Component {
             .then(() => this.props.getConfiguration(this.props.bluetooth.accessoryData.id))
             .then(() => {
                 this.setState({ index: 3 });
-                this.refs.carousel.animateToPage(3);
+                this.state.carousel.animateToPage(3);
                 return this.props.stopConnect();
             })
             .catch((err) => {
@@ -223,7 +225,7 @@ class BluetoothConnectView extends Component {
                 <Spacer size={50}/>
             </View>
             <Carousel
-                ref={'carousel'}
+                ref={(carousel) => { this.state.carousel = carousel; }}
                 autoplay={false}
                 currentPage={this.state.index}
                 swipe={false}
@@ -257,7 +259,7 @@ class BluetoothConnectView extends Component {
                             title={'Next'}
                             onPress={() => {
                                 this.setState({ index: 1 });
-                                this.refs.carousel.animateToPage(1);
+                                this.state.carousel.animateToPage(1);
                                 return this.props.checkState();
                             }}
                             raised
@@ -347,22 +349,23 @@ class BluetoothConnectView extends Component {
     );
 
     render = () => {
-        switch(this.props.user.role) {
-        case Roles.admin:
-            return this.adminView();
-        case Roles.athlete:
-            return this.athleteView();
-        case Roles.biometrixAdmin:
-            return this.biometrixAdminView();
-        case Roles.superAdmin:
-            return this.biometrixAdminView();
-        case Roles.manager:
-            return this.biometrixAdminView();
-        case Roles.researcher:
-            return this.researcherView();
-        default:
-            return <Placeholder />;
-        }
+        return this.props.user.role ? this.biometrixAdminView() : <Placeholder />;
+        // switch(this.props.user.role) {
+        // case Roles.admin:
+        //     return this.adminView();
+        // case Roles.athlete:
+        //     return this.athleteView();
+        // case Roles.biometrixAdmin:
+        //     return this.biometrixAdminView();
+        // case Roles.superAdmin:
+        //     return this.biometrixAdminView();
+        // case Roles.manager:
+        //     return this.biometrixAdminView();
+        // case Roles.researcher:
+        //     return this.researcherView();
+        // default:
+        //     return <Placeholder />;
+        // }
     }
 }
 

@@ -7,11 +7,14 @@ import {
     ScrollView,
     BackHandler,
     NativeEventEmitter,
+    KeyboardAvoidingView,
     NativeModules,
     StyleSheet,
     ActivityIndicator
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import Collapsible from 'react-native-collapsible';
+import ModalDropdown from 'react-native-modal-dropdown';
 import Modal from 'react-native-modalbox';
 import Toast, {DURATION} from 'react-native-easy-toast';
 
@@ -46,19 +49,22 @@ class KitManagementView extends Component {
     static componentName = 'KitManagementView';
 
     static propTypes = {
-        user:               PropTypes.object,
-        bluetooth:          PropTypes.object,
-        scanWiFi:           PropTypes.func.isRequired,
-        startScan:          PropTypes.func.isRequired,
-        setWiFiSSID:        PropTypes.func.isRequired,
-        setWiFiPassword:    PropTypes.func.isRequired,
-        connectWiFi:        PropTypes.func.isRequired,
-        readSSID:           PropTypes.func.isRequired,
-        handleDisconnect:   PropTypes.func.isRequired,
-        connectToAccessory: PropTypes.func.isRequired,
-        startConnect:       PropTypes.func.isRequired,
-        stopConnect:        PropTypes.func.isRequired,
-        disconnect:         PropTypes.func.isRequired,
+        user:                 PropTypes.object,
+        bluetooth:            PropTypes.object,
+        scanWiFi:             PropTypes.func.isRequired,
+        startScan:            PropTypes.func.isRequired,
+        setWiFiSSID:          PropTypes.func.isRequired,
+        setWiFiPassword:      PropTypes.func.isRequired,
+        connectWiFi:          PropTypes.func.isRequired,
+        readSSID:             PropTypes.func.isRequired,
+        handleDisconnect:     PropTypes.func.isRequired,
+        connectToAccessory:   PropTypes.func.isRequired,
+        startConnect:         PropTypes.func.isRequired,
+        stopConnect:          PropTypes.func.isRequired,
+        disconnect:           PropTypes.func.isRequired,
+        setIdentity:          PropTypes.func.isRequired,
+        setAnonymousIdentity: PropTypes.func.isRequired,
+        setEAPType:           PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -69,11 +75,14 @@ class KitManagementView extends Component {
         super(props);
 
         this.state = {
-            modal1Style: {},
-            modal2Style: {},
-            SSID:        null,
-            newNetwork:  true,
-            password:    ''
+            modalStyle:        {},
+            SSID:              null,
+            newNetwork:        true,
+            isCollapsed:       true,
+            password:          '',
+            identity:          '',
+            anonymousIdentity: '',
+            eapType:           ''
         };
 
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
@@ -108,11 +117,7 @@ class KitManagementView extends Component {
     }
 
     resizeModal1 = (ev) => {
-        this.setState({ modal1Style: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
-    }
-
-    resizeModal2 = (ev) => {
-        this.setState({ modal2Style: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
+        this.setState({ modalStyle: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
     }
 
     adminView = () => (
@@ -241,42 +246,78 @@ class KitManagementView extends Component {
             </Modal>
             <Modal
                 position={'center'}
-                style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
+                style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, flex: 1 }]}
                 isOpen={this.state.isModal2Visible}
                 backButtonClose
                 swipeToClose={false}
-                onClosed={() => this.setState({ password: '', isModal2Visible: false }) }
+                onClosed={() => this.setState({ password: '', identity: '', anonymousIdentity: '', isModal2Visible: false, isCollapsed: true }) }
             >
-                <View onLayout={(ev) => { this.resizeModal2(ev); }}>
-                    <Card title={`${this.state.SSID} Password (if needed)`}>
+                <KeyboardAvoidingView behavior={'padding'}>
+                    <Card title={`${this.state.SSID} security settings (if needed)`}>
+                        <ScrollView style={{ height: this.state.isCollapsed ? AppSizes.screen.heightOneThird : AppSizes.screen.heightHalf }}>
 
-                        <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >{`Password${!this.state.newNetwork ? '\nUnsuccessful, please try again' : '' }`}</FormLabel>
-                        <FormInput
-                            containerStyle={{ borderWidth: 1, borderColor: AppColors.border }}
-                            inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }}
-                            value={this.state.password}
-                            onChangeText={password => this.setState({ password })}
-                        />
+                            <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >{`Password${!this.state.newNetwork ? '\nUnsuccessful, please try again' : '' }`}</FormLabel>
+                            <FormInput
+                                containerStyle={{ borderWidth: 1, borderColor: AppColors.border }}
+                                inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }}
+                                value={this.state.password}
+                                maxLength={32}
+                                onChangeText={password => this.setState({ password })}
+                            />
 
-                        <Spacer />
+                            <Spacer />
+                            <Text style={{ paddingLeft: 15, paddingRight: 15 }} onPress={() => this.setState({ isCollapsed: !this.state.isCollapsed })}>Advanced options</Text>
+                            <Collapsible collapsed={this.state.isCollapsed} >
+                                <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Identity</FormLabel>
+                                <FormInput
+                                    containerStyle={{ borderWidth: 1, borderColor: AppColors.border }}
+                                    inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }}
+                                    value={this.state.identity}
+                                    maxLength={31}
+                                    onChangeText={identity => this.setState({ identity })}
+                                />
+                                <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Anonymous Identity</FormLabel>
+                                <FormInput
+                                    containerStyle={{ borderWidth: 1, borderColor: AppColors.border }}
+                                    inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }}
+                                    value={this.state.anonymousIdentity}
+                                    maxLength={31}
+                                    onChangeText={anonymousIdentity => this.setState({ anonymousIdentity })}
+                                />
+                                <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Phase 2 Authentication</FormLabel>
+                                <ModalDropdown
+                                    options={Object.keys(BLEConfig.eapTypes)}
+                                    style={{ paddingLeft: 15, paddingRight: 15 }}
+                                    textStyle={AppStyles.h3}
+                                    dropdownTextStyle={AppStyles.h3}
+                                    onSelect={(index, value) => this.setState({ eapType: value })}
+                                />
+                            </Collapsible>
+
+                            <Spacer />
+                        </ScrollView>
 
                         <View style={{ flexDirection: 'row' }}>
                             <Button
                                 title={'Cancel'}
                                 containerViewStyle={{ flex: 1 }}
                                 backgroundColor={AppColors.brand.fogGrey}
-                                onPress={() => this.setState({ isModal2Visible: false, isModal1Visible: true, SSID: null, password: '' })}
+                                onPress={() => this.setState({ isModal2Visible: false, isModal1Visible: true, SSID: null, password: '', identity: '', anonymousIdentity: '', isCollapsed: true })}
                             />
                             <Button
                                 title={'Save'}
                                 containerViewStyle={{ flex: 1 }}
                                 onPress={() => {
+                                    let config = !this.state.password.length ? BLEConfig.networkTypes.Open : this.state.identity.length || this.state.anonymousIdentity.length ? BLEConfig.networkTypes.WPA_Enterprise : BLEConfig.networkTypes.WPA_PSK;
                                     return this.props.setWiFiSSID(this.props.bluetooth.accessoryData.id, this.state.SSID)
                                         .then(() => this.props.setWiFiPassword(this.props.bluetooth.accessoryData.id, this.state.password))
-                                        .then(() => this.props.connectWiFi(this.props.bluetooth.accessoryData.id))
+                                        .then(() => this.props.setIdentity(this.props.bluetooth.accessoryData.id, this.state.identity))
+                                        .then(() => this.props.setAnonymousIdentity(this.props.bluetooth.accessoryData.id, this.state.anonymousIdentity))
+                                        .then(() => this.props.setEAPType(this.props.bluetooth.accessoryData.id, this.state.eapType))
+                                        .then(() => this.props.connectWiFi(this.props.bluetooth.accessoryData.id, config))
                                         .then(() => {
                                             if (this.props.bluetooth.accessoryData.wifiConnected) {
-                                                this.refs.toast.show(`Successfully connected to ${this.state.SSID}`, DURATION.LENGTH_LONG);
+                                                this.refs.toast.show(`Attempting connection to ${this.state.SSID}`, DURATION.LENGTH_LONG);
                                                 return this.setState({ isModal2Visible: false, isModal1Visible: false, newNetwork: false });
                                             }
                                             this.refs.toast.show(`Failed to connect to ${this.state.SSID}`, DURATION.LENGTH_LONG);
@@ -286,7 +327,7 @@ class KitManagementView extends Component {
                             />
                         </View>
                     </Card>
-                </View>
+                </KeyboardAvoidingView>
             </Modal>
         </View>
     );
@@ -300,22 +341,23 @@ class KitManagementView extends Component {
     );
 
     render = () => {
-        switch(this.props.user.role) {
-        case Roles.admin:
-            return this.adminView();
-        case Roles.athlete:
-            return this.athleteView();
-        case Roles.biometrixAdmin:
-            return this.biometrixAdminView();
-        case Roles.superAdmin:
-            return this.biometrixAdminView();
-        case Roles.manager:
-            return this.biometrixAdminView();
-        case Roles.researcher:
-            return this.researcherView();
-        default:
-            return <Placeholder />;
-        }
+        return this.props.user.role ? this.biometrixAdminView() : <Placeholder />;
+        // switch(this.props.user.role) {
+        // case Roles.admin:
+        //     return this.adminView();
+        // case Roles.athlete:
+        //     return this.athleteView();
+        // case Roles.biometrixAdmin:
+        //     return this.biometrixAdminView();
+        // case Roles.superAdmin:
+        //     return this.biometrixAdminView();
+        // case Roles.manager:
+        //     return this.biometrixAdminView();
+        // case Roles.researcher:
+        //     return this.researcherView();
+        // default:
+        //     return <Placeholder />;
+        // }
     }
 }
 
