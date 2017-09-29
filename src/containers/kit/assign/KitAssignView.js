@@ -192,22 +192,23 @@ class KitAssignView extends Component {
     );
 
     render = () => {
-        switch(this.props.user.role) {
-        case Roles.admin:
-            return this.adminView();
-        case Roles.athlete:
-            return this.athleteView();
-        case Roles.biometrixAdmin:
-            return this.biometrixAdminView();
-        case Roles.superAdmin:
-            return this.biometrixAdminView();
-        case Roles.manager:
-            return this.biometrixAdminView();
-        case Roles.researcher:
-            return this.researcherView();
-        default:
-            return <Placeholder />;
-        }
+        return this.props.user.role ? this.biometrixAdminView() : <Placeholder />;
+        // switch(this.props.user.role) {
+        // case Roles.admin:
+        //     return this.adminView();
+        // case Roles.athlete:
+        //     return this.athleteView();
+        // case Roles.biometrixAdmin:
+        //     return this.biometrixAdminView();
+        // case Roles.superAdmin:
+        //     return this.biometrixAdminView();
+        // case Roles.manager:
+        //     return this.biometrixAdminView();
+        // case Roles.researcher:
+        //     return this.researcherView();
+        // default:
+        //     return <Placeholder />;
+        // }
     }
 }
 

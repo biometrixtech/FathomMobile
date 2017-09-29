@@ -159,7 +159,7 @@ const enableBluetooth = () => {
 };
 
 const startBluetooth = () => {
-    return dispatch => BleManager.start({ showAlert: true, forceLegacy: true })
+    return dispatch => BleManager.start({ showAlert: true })
         .then(() => dispatch({
             type: Actions.START_BLUETOOTH
         }))
@@ -317,13 +317,11 @@ const setWiFiPassword = (id, pass) => {
         });
 };
 
-const connectWiFi = (id) => {
+const connectWiFi = (id, networkType) => {
     let dataArray = [];
-    dataArray.push(convertHex('0x08'));
-    dataArray.push(convertHex('0x00'));
-    for (let i = 2; i < 20; i+=1) {
-        dataArray.push(convertHex('0x00'));
-    }
+    dataArray.push(commands.CONNECT_WIFI);
+    dataArray.push(convertHex('0x01'));
+    dataArray.push(networkType)
     return dispatch => write(id, dataArray)
         .then(result => {
             return dispatch({
@@ -641,6 +639,89 @@ const getWifiMacAddress = (id) => {
         .catch(err => { console.log(err); return Promise.reject(err); });
 };
 
+const setIdentity = (id, identity) => {
+    let byteString = convertStringToByteArray(identity);
+    let dataArray = [];
+    dataArray.push(commands.SET_IDENTITY_HEAD);
+    dataArray.push(byteString.length);
+    for (let i = 2; i < 20 && i-2 < byteString.length; i+=1) {
+        dataArray.push(byteString[i-2]);
+    }
+    for (let i = byteString.length + 2; i < 20; i+=1) {
+        dataArray.push(convertHex('0x00'));
+    }
+    console.log('Identity Data Array: ', dataArray);
+    return dispatch => write(id, dataArray)
+        .then(() => {
+            if (byteString.length <= 18) {
+                return null;
+            }
+            dataArray = [];
+            dataArray.push(commands.SET_IDENTITY_CONT);
+            dataArray.push(byteString.length - 18);
+            for (let i = 2; i - 2 < byteString.length - 18; i+=1) {
+                dataArray.push(byteString[i+16]);
+            }
+            for (let i = byteString.length - 16; i < 20; i+=1) {
+                dataArray.push(convertHex('0x00'));
+            }
+            console.log('Identity Data Array 2: ', dataArray);
+            return write(id, dataArray);
+        })
+        .then(result => {
+            return dispatch({
+                type: Actions.WIFI
+            });
+        });
+};
+
+const setAnonymousIdentity = (id, anonymousIdentity) => {
+    let byteString = convertStringToByteArray(anonymousIdentity);
+    let dataArray = [];
+    dataArray.push(commands.SET_ANONYMOUS_IDENTITY_HEAD);
+    dataArray.push(byteString.length);
+    for (let i = 2; i < 20 && i-2 < byteString.length; i+=1) {
+        dataArray.push(byteString[i-2]);
+    }
+    for (let i = byteString.length + 2; i < 20; i+=1) {
+        dataArray.push(convertHex('0x00'));
+    }
+    console.log('Anonymous Identity Data Array: ', dataArray);
+    return dispatch => write(id, dataArray)
+        .then(() => {
+            if (byteString.length <= 18) {
+                return null;
+            }
+            dataArray = [];
+            dataArray.push(commands.SET_ANONYMOUS_IDENTITY_CONT);
+            dataArray.push(byteString.length - 18);
+            for (let i = 2; i - 2 < byteString.length - 18; i+=1) {
+                dataArray.push(byteString[i+16]);
+            }
+            for (let i = byteString.length - 16; i < 20; i+=1) {
+                dataArray.push(convertHex('0x00'));
+            }
+            console.log('Anonymous Identity Data Array 2: ', dataArray);
+            return write(id, dataArray);
+        })
+        .then(result => {
+            return dispatch({
+                type: Actions.WIFI
+            });
+        });
+};
+
+const setEAPType = (id, type) => {
+    let dataArray = [commands.SET_EAP_TYPE, convertHex('0x01'), BLEConfig.eapTypes[type] || 0];
+    console.log('EAP Type Data Array: ', dataArray);
+    return dispatch => write(id, dataArray)
+        .then(result => {
+            return dispatch({
+                type: Actions.WIFI
+            });
+        })
+};
+
 export {
     assignType,
     checkState,
@@ -678,4 +759,7 @@ export {
     setAccessoryLoginEmail,
     setAccessoryLoginPassword,
     getWifiMacAddress,
+    setIdentity,
+    setAnonymousIdentity,
+    setEAPType
 };
