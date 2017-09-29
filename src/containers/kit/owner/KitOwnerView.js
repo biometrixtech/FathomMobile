@@ -349,7 +349,9 @@ class KitOwnerView extends Component {
                                 containerStyle={{ borderWidth: 1, borderColor: AppColors.border }}
                                 inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }}
                                 value={this.state.name}
-                                onChangeText={name => this.setState({ name })}
+                                maxLength={6}
+                                keyboardType={'name-phone-pad'}
+                                onChangeText={name => this.setState({ name: name.replace(/\W/g, '') })}
                             />
 
                             <Spacer />
@@ -422,22 +424,23 @@ class KitOwnerView extends Component {
     );
 
     render = () => {
-        switch(this.props.user.role) {
-        case Roles.admin:
-            return this.adminView();
-        case Roles.athlete:
-            return this.athleteView();
-        case Roles.biometrixAdmin:
-            return this.biometrixAdminView();
-        case Roles.superAdmin:
-            return this.biometrixAdminView();
-        case Roles.manager:
-            return this.biometrixAdminView();
-        case Roles.researcher:
-            return this.researcherView();
-        default:
-            return <Placeholder />;
-        }
+        return this.props.user.role ? this.biometrixAdminView() : <Placeholder />;
+        // switch(this.props.user.role) {
+        // case Roles.admin:
+        //     return this.adminView();
+        // case Roles.athlete:
+        //     return this.athleteView();
+        // case Roles.biometrixAdmin:
+        //     return this.biometrixAdminView();
+        // case Roles.superAdmin:
+        //     return this.biometrixAdminView();
+        // case Roles.manager:
+        //     return this.biometrixAdminView();
+        // case Roles.researcher:
+        //     return this.researcherView();
+        // default:
+        //     return <Placeholder />;
+        // }
     }
 }
 
