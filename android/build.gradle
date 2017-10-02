@@ -22,6 +22,5 @@ allprojects {
             url "$rootDir/../node_modules/react-native/android"
         }
         maven { url 'https://maven.fabric.io/public' }
-        maven { url "https://jitpack.io" }    // used for MPAndroidChart
     }
 }
