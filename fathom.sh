@@ -36,26 +36,26 @@ initialize() {
         watchman=$(which watchman)
         [ ${#watchman} == 0 ] && { echo "watchman does not exist, installing"; brew install watchman; } || continue
 
-        nvmrc=`cat .nvmrc`
-        [ -e ~/.nvm/nvm.sh ] && . ~/.nvm/nvm.sh || {
-            echo "nvm does not exist, installing";
-            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-            . ~/.nvm/nvm.sh
-        }
-        nvm install $nvmrc
-        cd ..
-        cd FathomMobile
+        # nvmrc=`cat .nvmrc`
+        # [ -e ~/.nvm/nvm.sh ] && . ~/.nvm/nvm.sh || {
+        #     echo "nvm does not exist, installing";
+        #     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+        #     export NVM_DIR="$HOME/.nvm"
+        #     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+        #     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+        #     . ~/.nvm/nvm.sh
+        # }
+        # nvm install $nvmrc
+        # cd ..
+        # cd FathomMobile
 
-        pod=$(which pod)
-        [ ${#pod} == 0 ] && {
-            echo "cocoapods does not exist, installing";
-            export GEM_HOME=$HOME/.gem
-            export PATH=$GEM_HOME/bin:$PATH
-            gem install cocoapods
-        } || continue
+        # pod=$(which pod)
+        # [ ${#pod} == 0 ] && {
+        #     echo "cocoapods does not exist, installing";
+        #     export GEM_HOME=$HOME/.gem
+        #     export PATH=$GEM_HOME/bin:$PATH
+        #     gem install cocoapods
+        # } || continue
 
 
         echo "☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️️☁️☁️☁️☁️☁️☁️☁️☁️☁️️️️️️️"
@@ -64,13 +64,12 @@ initialize() {
         echo "🚀\t${green}✔︎${normal} ${magenta}Homebrew installed${normal}\t🚀"
         echo "🚀\t${green}✔︎${normal} ${cyan}watchman installed${normal}\t🚀"
         echo "🚀\t${green}✔︎${normal} ${white}nvm installed${normal}\t\t🚀"
-        echo "🚀\t${green}✔︎${normal} ${grey}cocoapods installed${normal}\t🚀"
+        # echo "🚀\t${green}✔︎${normal} ${grey}cocoapods installed${normal}\t🚀"
         echo "🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊"
 
         watchman watch-del-all
         lsof -P | grep ':8081' | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
-        rm -rf node_modules
-        rm yarn.lock
+        rm -rf yarn.lock node_modules
         yarn
         sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
         sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-code-push/android/app/build.gradle
@@ -83,9 +82,9 @@ initialize() {
         #     ../../scripts/ios-configure-glog.sh                 
         #     cd ../../../../
         # } || continue
-        cd ios/
-        pod install
-        cd ..
+        # cd ios/
+        # pod install
+        # cd ..
         
         echo "Everything checked, installed, and prepared.\nPackager ready to be started"
     else
