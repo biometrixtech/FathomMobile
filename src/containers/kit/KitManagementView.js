@@ -76,6 +76,7 @@ class KitManagementView extends Component {
 
         this.state = {
             modalStyle:        {},
+            other:             false,
             SSID:              null,
             newNetwork:        true,
             isCollapsed:       true,
@@ -218,8 +219,8 @@ class KitManagementView extends Component {
                                     <ListItem
                                         key={network.key}
                                         title={network.label}
-                                        containerStyle={{ backgroundColor: network.label === this.state.SSID ? AppColors.brand.fogGrey : AppColors.background }}
-                                        onPress={() => this.setState({ isModal1Visible: false, isModal2Visible: true, SSID: network.label, newNetwork: true })}
+                                        containerStyle={{ backgroundColor: network.label === this.state.SSID || (network.label === 'Other' && this.state.other) ? AppColors.brand.fogGrey : AppColors.background }}
+                                        onPress={() => this.setState({ isModal1Visible: false, isModal2Visible: true, SSID: network.label === 'Other' ? '' : network.label, other: network.label === 'Other', newNetwork: true })}
                                     />
                                 ))
                             }
@@ -253,8 +254,22 @@ class KitManagementView extends Component {
                 onClosed={() => this.setState({ password: '', identity: '', anonymousIdentity: '', isModal2Visible: false, isCollapsed: true }) }
             >
                 <KeyboardAvoidingView behavior={'padding'}>
-                    <Card title={`${this.state.SSID} security settings (if needed)`}>
+                    <Card title={`${this.state.other ? 'Hidden network' : this.state.SSID} security settings${this.state.other ? '' : ' (if needed'}`}>
                         <ScrollView style={{ height: this.state.isCollapsed ? AppSizes.screen.heightOneThird : AppSizes.screen.heightHalf }}>
+
+                            {
+                                this.state.other ?
+                                    <View>
+                                        <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >{'SSID'}</FormLabel>
+                                        <FormInput
+                                            containerStyle={{ borderWidth: 1, borderColor: AppColors.border }}
+                                            inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }}
+                                            value={this.state.SSID}
+                                            maxLength={32}
+                                            onChangeText={SSID => this.setState({ SSID })}
+                                        />
+                                    </View> : null
+                            }
 
                             <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >{`Password${!this.state.newNetwork ? '\nUnsuccessful, please try again' : '' }`}</FormLabel>
                             <FormInput
