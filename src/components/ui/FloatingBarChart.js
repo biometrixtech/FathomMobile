@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-17 18:45:57
+ * @Last Modified time: 2017-10-17 23:56:45
  */
 
 /**
@@ -172,7 +172,7 @@ class FloatingBarChart extends Component {
                     <Text onPress={() => this.props.getTeamStats(user.teams[user.teamIndex].id, user.weekOffset+1)}>Next</Text>
                 </View>
                 {
-                    !user.teams[user.teamIndex].stats ? <View style={{ alignSelf: 'center' }}><Placeholder text={'No data to show...'} /></View> :
+                    !user.teams[user.teamIndex].stats ? <View style={{ alignSelf: 'center' }}><Placeholder text={'No data to show for this range...'} /></View> :
                         <View>
                             { xAxis ? <Text style={[AppStyles.subtext, { position: 'absolute', left: -4 * margin.horizontal - tabOffset * AppSizes.tickSize, top: height*9/20, transform: [{ rotate: '270deg' }] }]}>{xAxis}</Text> : null }
                             { yAxis ? <Text style={[AppStyles.subtext, { position: 'absolute', left: width/2, top: height + margin.vertical }]}>{yAxis}</Text> : null }
