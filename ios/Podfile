@@ -1,0 +1,31 @@
+use_frameworks!
+
+target 'Fathom' do
+  pod 'CodePush', :path => '../node_modules/react-native-code-push'
+  pod 'React', :path => '../node_modules/react-native', :subspecs => [
+    'Core',
+    'DevSupport', # Include this to enable In-App Devmenu if RN >= 0.43
+    'RCTText',
+    'RCTNetwork',
+    'RCTWebSocket', # needed for debugging
+    'RCTActionSheet',
+    'RCTAnimation',
+    'RCTGeolocation',
+    'RCTImage',
+    'RCTLinkingIOS',
+    'RCTSettings',
+    'RCTVibration',
+    'BatchedBridge'
+    # Add any other subspecs you want to use in your project
+  ]
+  # Explicitly include Yoga if you are using RN >= 0.42.0
+  pod "Yoga", :path => "../node_modules/react-native/ReactCommon/yoga"
+end
+  
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['SWIFT_VERSION'] = '3.0'
+    end
+  end
+end

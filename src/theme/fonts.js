@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:19:55 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-16 10:11:56
+ */
+
 /**
  * App Theme - Fonts
  */
@@ -20,14 +27,6 @@ const base = {
     size:       scaleFont(16),
     lineHeight: lineHeight(scaleFont(Platform.OS === 'ios' ? 13 : 14)),
     family:     'Libre Franklin'
-    // ...Platform.select({
-    //     ios: {
-    //         family: 'Proxima Nova',
-    //     },
-    //     android: {
-    //         family: 'Proxima Nova',
-    //     },
-    // }),
 };
 
 export default {
@@ -38,6 +37,7 @@ export default {
     h3:   { ...base, size: base.size * 1.25, lineHeight: lineHeight(base.size * 1.5) },
     h4:   { ...base, size: base.size * 1.1, lineHeight: lineHeight(base.size * 1.25) },
     h5:   { ...base },
+    h6:   { ...base, size: base.size * 0.8, lineHeight: lineHeight(base.size * 0.8) },
     scaleFont,
     lineHeight
 };

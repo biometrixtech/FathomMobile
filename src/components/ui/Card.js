@@ -1,10 +1,18 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:28:47 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-17 20:13:16
+ */
+
 /**
  * Cards
  *
      <Card></Card>
  *
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Card } from 'react-native-elements';
 
 // Consts and Libs

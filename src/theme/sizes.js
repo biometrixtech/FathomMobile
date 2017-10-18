@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:19:46 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-13 18:30:34
+ */
+
 /**
  * App Theme - Sizes
  */
@@ -10,8 +17,9 @@ const screenWidth = width < height ? width : height;
 export default {
     // Window Dimensions
     screen: {
-        height: screenHeight,
-        width:  screenWidth,
+        height:       screenHeight,
+        usableHeight: screenHeight - ((Platform.OS === 'ios') ? 64 : 54) - ((Platform.OS === 'ios') ? 16 : 0), // screen height under navbar and statusbar
+        width:        screenWidth,
 
         heightOneThird:      screenHeight * 0.333,
         heightTwoThirds:     screenHeight * 0.666,
@@ -27,12 +35,13 @@ export default {
         widthThreeQuarters: screenWidth * 0.75,
         widthFourFifths:    screenWidth * 0.8,
     },
-    navbarHeight:    (Platform.OS === 'ios') ? 64 : 54,
-    statusBarHeight: (Platform.OS === 'ios') ? 16 : 0,
+    navbarHeight:    (Platform.OS === 'ios') ? 64 : 54, // header with title and nav bar buttons
+    statusBarHeight: (Platform.OS === 'ios') ? 16 : 0,  // time and icon indicators
     tabbarHeight:    51,
 
     padding:    20,
     paddingSml: 10,
+    tickSize:   5,
 
     borderRadius: 5,
 };
