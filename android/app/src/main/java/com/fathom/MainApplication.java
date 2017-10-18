@@ -14,6 +14,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import it.innove.BleManagerPackage;
+import com.horcrux.svg.SvgPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,9 +43,15 @@ public class MainApplication extends Application implements ReactApplication {
           new CodePush(BuildConfig.CODEPUSH_KEY, getApplicationContext(), BuildConfig.DEBUG),
           new VectorIconsPackage(),
           new RNDeviceInfo(),
-          new BleManagerPackage()
+          new BleManagerPackage(),
+          new SvgPackage()
       );
     }
+
+    // @Override
+    // protected String getJSMainModuleName() {
+    //   return "index";
+    // }
   };
 
   @Override
