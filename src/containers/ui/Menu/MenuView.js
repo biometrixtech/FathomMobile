@@ -1,8 +1,15 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:35:22 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-17 20:16:00
+ */
+
 /**
  * Menu Contents
  */
-/* eslint-disable max-len */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
     View,
     Image,
@@ -132,11 +139,11 @@ class Menu extends Component {
         this.state = {
             active: 0,
             menu:   [
-                // {
-                //     itemName: 'view-dashboard',
-                //     title:    'Dashboard',
-                //     onPress:  () => { this.props.closeSideMenu(); action(); this.setState({ active: 0 }); },
-                // },
+                {
+                    itemName: 'view-dashboard',
+                    title:    'Dashboard',
+                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 0 }); Actions.dashboard(); },
+                },
                 // {
                 //     itemName: 'pulse',
                 //     title:    'Capture Session',
@@ -155,7 +162,7 @@ class Menu extends Component {
                 {
                     itemName: 'mixcloud',
                     title:    'Manage Kit',
-                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 0 }); Actions.kitManagement(); },
+                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 1 }); Actions.kitManagement(); },
                 },
             ],
         };

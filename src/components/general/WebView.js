@@ -1,14 +1,22 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:27:57 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2017-10-12 11:27:57 
+ */
+
 /**
  * Web View
  *
  * <WebView url={"http://google.com"} />
  *
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
-  WebView,
-  StyleSheet,
-  InteractionManager,
+    WebView,
+    StyleSheet,
+    InteractionManager,
 } from 'react-native';
 
 // Consts and Libs
@@ -70,14 +78,14 @@ class AppWebView extends Component {
         if (!webViewURL) { return <Error type={'URL not defined.'} />; }
 
         return (
-          <WebView
-            scalesPageToFit
-            startInLoadingState
-            source={{ uri: webViewURL }}
-            automaticallyAdjustContentInsets={false}
-            style={[AppStyles.container, styles.container]}
-            onNavigationStateChange={this.onNavigationStateChange}
-          />
+            <WebView
+                scalesPageToFit
+                startInLoadingState
+                source={{ uri: webViewURL }}
+                automaticallyAdjustContentInsets={false}
+                style={[AppStyles.container, styles.container]}
+                onNavigationStateChange={this.onNavigationStateChange}
+            />
         );
     }
 }

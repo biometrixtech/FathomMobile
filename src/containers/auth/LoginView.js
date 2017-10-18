@@ -1,9 +1,17 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:32:47 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-13 18:42:46
+ */
+
 /**
  * Login Screen
  *  - Entry screen for all authentication
  *  - User can tap to login, forget password, or signUp...
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
     View,
     KeyboardAvoidingView,
@@ -18,8 +26,9 @@ import Modal from 'react-native-modalbox';
 import Egg from 'react-native-egg';
 
 // Consts and Libs
-import AppAPI from '@lib/api';
+import { AppAPI } from '@lib/';
 import { AppStyles, AppSizes, AppColors } from '@theme/';
+import { APIConfig } from '@constants';
 
 // Components
 import { Spacer, Button, Card, Alerts, Text, ListItem } from '@ui/';
@@ -32,11 +41,6 @@ const roles = {
     manager:        'manager',
     researcher:     'researcher',
 };
-
-const APIs = {
-    DEV:  'https://rails-api-v2.biometrixtech.com',
-    PROD: 'https://rails-api.fathomai.com'
-}
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -227,13 +231,13 @@ class Login extends Component {
                             <Spacer size={5} />
                             <View style={{ borderWidth: 1, borderColor: AppColors.border }}>
                                 {
-                                    Object.entries(APIs).map(([key, value]) => (
+                                    Object.entries(APIConfig.APIs).map(([key, value]) => (
                                         <ListItem
                                             key={key}
                                             title={`${key}: ${value}`}
                                             hideChevron
                                             containerStyle={{ backgroundColor: value === this.state.apiHost ? AppColors.brand.fogGrey : AppColors.background }}
-                                            onPress={() => { this.setState({ isModalVisible: false, apiHost: value }); return AppAPI.storeAPIHost(value);  }}
+                                            onPress={() => { this.setState({ isModalVisible: false, apiHost: value }); return AppAPI.storeAPIHost(key, value);  }}
                                         />
                                     ))
                                 }
