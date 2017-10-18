@@ -1,12 +1,21 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:20:59 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-17 03:21:51
+ */
+
 /**
  * User Actions
  */
 
 import jwtDecode from 'jwt-decode';
 
-import AppAPI from '@lib/api';
+import { AppAPI } from '@lib/';
 
 const Actions = require('../actionTypes');
+
+const DAY_IN_MS = 86400000;
 
 /**
   * Login to API and receive Token
@@ -53,10 +62,12 @@ const login = (credentials, freshLogin) => {
                         });
                     })
                     .then(() => AppAPI.teams.get())
-                    .then(teams => dispatch({
-                        type: Actions.GET_TEAMS,
-                        data: teams
-                    }))
+                    .then(teams => {
+                        return dispatch({
+                            type: Actions.GET_TEAMS,
+                            data: teams
+                        });
+                    })
                     .then(() => AppAPI.accessories.get())
                     .then(accessories => dispatch({
                         type: Actions.GET_ACCESSORIES,
@@ -252,11 +263,33 @@ const stopSession = (accessoryId) => {
 };
 
 const getTeams = () => {
+    let tempTeams = [];
+    let todaysDate = new Date();
+    let dayOfWeek = todaysDate.getDay();
+    let startOfWeekOffset = dayOfWeek === 1 ? 0 : (dayOfWeek+6)%7;
+    let endOfWeekOffset = !dayOfWeek ? 0 : 7-dayOfWeek;
+    let startDateObject = new Date(todaysDate.getTime() - startOfWeekOffset * DAY_IN_MS);
+    let endDateObject = new Date(todaysDate.getTime() + endOfWeekOffset * DAY_IN_MS);
+    let startDate = `${startDateObject.getFullYear()}-${startDateObject.getMonth()+1}-${startDateObject.getDate()}`;
+    let endDate = `${endDateObject.getFullYear()}-${endDateObject.getMonth()+1}-${endDateObject.getDate()}`;
     return dispatch => AppAPI.teams.get()
-        .then(teams => dispatch({
-            type: Actions.GET_TEAMS,
-            data: teams
-        }));
+        .then(teams => {
+            tempTeams = teams.teams.map(team => team.id);
+            return dispatch({
+                type: Actions.GET_TEAMS,
+                data: teams
+            });
+        })
+        .then(() => Promise.all(tempTeams.map((teamId) => AppAPI.stats.team_movement_quality_details.post(null, { teamId, startDate, endDate })
+            .then(stats => dispatch({
+                type: Actions.GET_TEAM_STATS,
+                data: { teamId, stats, weekOffset: 0, startDate, endDate }
+            }))
+            .catch(err => dispatch({
+                type: Actions.GET_TEAM_STATS,
+                data: { teamId, stats: null, weekOffset: 0, startDate, endDate }
+            }))
+        )));
 };
 
 const getAccessories = () => {
@@ -265,7 +298,39 @@ const getAccessories = () => {
             type: Actions.GET_ACCESSORIES,
             data: accessories
         }));
-}
+};
+
+const setStatsCategory = (athlete, athleteId) => {
+    return dispatch => dispatch({
+        type: Actions.SELECT_STATS_CATEGORY,
+        data: { athlete, athleteId }
+    });
+};
+
+const formatDate = (date) => `${date < 10 ? '0' : ''}${date}`;
+
+const getTeamStats = (teamId, weekOffset) => {
+    let date = new Date();
+    date.setTime(date.getTime() + weekOffset * 7 * DAY_IN_MS);
+    let dayOfWeek = date.getDay();
+    let startOfWeekOffset = dayOfWeek === 1 ? 0 : (dayOfWeek+6)%7;
+    let endOfWeekOffset = !dayOfWeek ? 0 : 7-dayOfWeek;
+    let startDateObject = new Date(date.getTime() - startOfWeekOffset * DAY_IN_MS);
+    let endDateObject = new Date(date.getTime() + endOfWeekOffset * DAY_IN_MS);
+    let startDate = `${startDateObject.getFullYear()}-${formatDate(startDateObject.getMonth()+1)}-${formatDate(startDateObject.getDate())}`;
+    let endDate = `${endDateObject.getFullYear()}-${formatDate(endDateObject.getMonth()+1)}-${formatDate(endDateObject.getDate())}`;
+    return dispatch => AppAPI.stats.team_movement_quality_details.post(null, { teamId, startDate, endDate })
+        .then(stats => {
+            return dispatch({
+                type: Actions.GET_TEAM_STATS,
+                data: { teamId, stats, weekOffset, startDate, endDate }
+            });
+        })
+        .catch(err => dispatch({
+            type: Actions.GET_TEAM_STATS,
+            data: { teamId, stats: null, weekOffset, startDate, endDate }
+        }));
+};
 
 export {
     login,
@@ -284,5 +349,7 @@ export {
     startSession,
     stopSession,
     getTeams,
-    getAccessories
+    getAccessories,
+    getTeamStats,
+    setStatsCategory
 };
