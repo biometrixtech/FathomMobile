@@ -1,7 +1,15 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:32:58 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-13 18:42:28
+ */
+
 /**
  * Login Screen
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
     ScrollView,
     AsyncStorage,
@@ -10,7 +18,7 @@ import FormValidation from 'tcomb-form-native';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
-import AppAPI from '@lib/api';
+import { AppAPI } from '@lib/';
 import { AppStyles } from '@theme/';
 
 // Components

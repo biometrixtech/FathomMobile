@@ -1,7 +1,15 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:35:00 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-17 03:34:38
+ */
+
 /**
  * Kit Management Screen
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
     View,
     ScrollView,
@@ -76,6 +84,7 @@ class KitManagementView extends Component {
 
         this.state = {
             modalStyle:        {},
+            other:             false,
             SSID:              null,
             newNetwork:        true,
             isCollapsed:       true,
@@ -197,10 +206,10 @@ class KitManagementView extends Component {
                         }}
                     />
             }
-            <Text style={{ paddingLeft: 20, fontSize: !this.props.bluetooth.accessoryData.id ? font14 : font10, fontWeight: !this.props.bluetooth.accessoryData.id ? 'bold' : 'normal' }}>Step 1: Connect to kit</Text>
-            <Text style={{ paddingLeft: 20, fontSize: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.configured ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.configured ? 'bold' : 'normal' }}>Step 2: Assign an owner to the kit</Text>
-            <Text style={{ paddingLeft: 20, fontSize: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.configured ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.configured ? 'bold' : 'normal' }}>Step 3: Assign a wifi network to the kit</Text>
-            <Text style={{ paddingLeft: 20, fontSize: font10 }}>Step 4: Make sure WiFi light is solid green, then disconnect from kit</Text>
+            <Text style={{ paddingLeft: AppSizes.padding, fontSize: !this.props.bluetooth.accessoryData.id ? font14 : font10, fontWeight: !this.props.bluetooth.accessoryData.id ? 'bold' : 'normal' }}>Step 1: Connect to kit</Text>
+            <Text style={{ paddingLeft: AppSizes.padding, fontSize: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.configured ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.configured ? 'bold' : 'normal' }}>Step 2: Assign an owner to the kit</Text>
+            <Text style={{ paddingLeft: AppSizes.padding, fontSize: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.configured ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.configured ? 'bold' : 'normal' }}>Step 3: Assign a wifi network to the kit</Text>
+            <Text style={{ paddingLeft: AppSizes.padding, fontSize: font10 }}>Step 4: Make sure WiFi light is solid green, then disconnect from kit</Text>
             <Modal
                 position={'center'}
                 style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
@@ -218,8 +227,8 @@ class KitManagementView extends Component {
                                     <ListItem
                                         key={network.key}
                                         title={network.label}
-                                        containerStyle={{ backgroundColor: network.label === this.state.SSID ? AppColors.brand.fogGrey : AppColors.background }}
-                                        onPress={() => this.setState({ isModal1Visible: false, isModal2Visible: true, SSID: network.label, newNetwork: true })}
+                                        containerStyle={{ backgroundColor: network.label === this.state.SSID || (network.label === 'Other' && this.state.other) ? AppColors.brand.fogGrey : AppColors.background }}
+                                        onPress={() => this.setState({ isModal1Visible: false, isModal2Visible: true, SSID: network.label === 'Other' ? '' : network.label, other: network.label === 'Other', newNetwork: true })}
                                     />
                                 ))
                             }
@@ -253,8 +262,22 @@ class KitManagementView extends Component {
                 onClosed={() => this.setState({ password: '', identity: '', anonymousIdentity: '', isModal2Visible: false, isCollapsed: true }) }
             >
                 <KeyboardAvoidingView behavior={'padding'}>
-                    <Card title={`${this.state.SSID} security settings (if needed)`}>
+                    <Card title={`${this.state.other ? 'Hidden network' : this.state.SSID} security settings${this.state.other ? '' : ' (if needed'}`}>
                         <ScrollView style={{ height: this.state.isCollapsed ? AppSizes.screen.heightOneThird : AppSizes.screen.heightHalf }}>
+
+                            {
+                                this.state.other ?
+                                    <View>
+                                        <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >{'SSID'}</FormLabel>
+                                        <FormInput
+                                            containerStyle={{ borderWidth: 1, borderColor: AppColors.border }}
+                                            inputContainer={{ backgroundColor: '#ffffff', paddingLeft: 15, paddingRight: 15, borderBottomColor: 'transparent' }}
+                                            value={this.state.SSID}
+                                            maxLength={32}
+                                            onChangeText={SSID => this.setState({ SSID })}
+                                        />
+                                    </View> : null
+                            }
 
                             <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >{`Password${!this.state.newNetwork ? '\nUnsuccessful, please try again' : '' }`}</FormLabel>
                             <FormInput
