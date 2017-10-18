@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:24:01 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2017-10-12 11:24:01 
+ */
+
 /**
  * App Navigation Scenes
  */
@@ -14,6 +21,7 @@ import KitManagementView from '@containers/kit/KitManagementContainer';
 import BluetoothConnectView from '@containers/kit/connect/BluetoothConnectContainer';
 import KitOwnerView from '@containers/kit/owner/KitOwnerContainer';
 import KitAssignView from '@containers/kit/assign/KitAssignContainer';
+import DashboardView from '@containers/dashboard/DashboardContainer';
 
 // Components
 import { NavbarMenuButton } from '@containers/ui/NavbarMenuButton/NavbarMenuButtonContainer';
@@ -45,6 +53,14 @@ const scenes = (
                 component={GroupCaptureSessionView}
                 analyticsDesc={'GroupCaptureSessiontView: Group Capture Session'}
             /> */}
+            <Scene
+                {...navbarPropsTabs}
+                key={'dashboard'}
+                clone
+                type={ActionConst.REPLACE}
+                component={DashboardView}
+                analyticsDesc={'DashboardView: Dashboard'}
+            />
             <Scene
                 {...navbarPropsTabs}
                 key={'kitManagement'}

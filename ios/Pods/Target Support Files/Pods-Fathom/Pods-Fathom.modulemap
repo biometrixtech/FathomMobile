@@ -1,0 +1,6 @@
+framework module Pods_Fathom {
+  umbrella header "Pods-Fathom-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,7 +1,15 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:33:37 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2017-10-12 11:33:37 
+ */
+
 /**
  * Capture Session Screen
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
     ScrollView,
     View,
