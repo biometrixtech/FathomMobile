@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:55 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-16 23:53:11
+ * @Last Modified time: 2017-10-20 03:25:59
  */
 
 /**
@@ -134,10 +134,10 @@ const UTIL = {
       * @param {number} height Height for our scale's range.
       * @return {Function} D3 scale instance.
       */
-    createScaleY: (minY, maxY, height) => d3.scale.scaleLinear()
-        .domain([minY, maxY]).nice(10)
+    createScaleY: (minY, maxY, height, startY) => d3.scale.scaleLinear()
+        .domain([minY, maxY]).nice()
         // We invert our range so it outputs using the axis that React uses.
-        .range([height, 0])
+        .range([height, startY])
         .clamp(true),
   
     /**
