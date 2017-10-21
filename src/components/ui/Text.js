@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:30:36 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-17 20:14:27
+ * @Last Modified time: 2017-10-18 22:51:24
  */
 
 /**
@@ -27,6 +27,7 @@ class CustomText extends Component {
         h4:      PropTypes.bool,
         h5:      PropTypes.bool,
         h6:      PropTypes.bool,
+        h7:      PropTypes.bool,
         p:       PropTypes.bool,
         onPress: PropTypes.func,
         style:   PropTypes.oneOfType([
@@ -43,6 +44,7 @@ class CustomText extends Component {
         h4:       false,
         h5:       false,
         h6:       false,
+        h7:       false,
         p:        false,
         onPress:  null,
         style:    null,
@@ -56,13 +58,14 @@ class CustomText extends Component {
             style: [AppStyles.baseText],
         };
 
-        if (this.props.p) { props.style = [AppStyles.p]; }
+        if (this.props.p)  { props.style = [AppStyles.p];  }
         if (this.props.h1) { props.style = [AppStyles.h1]; }
         if (this.props.h2) { props.style = [AppStyles.h2]; }
         if (this.props.h3) { props.style = [AppStyles.h3]; }
         if (this.props.h4) { props.style = [AppStyles.h4]; }
         if (this.props.h5) { props.style = [AppStyles.h5]; }
         if (this.props.h6) { props.style = [AppStyles.h6]; }
+        if (this.props.h7) { props.style = [AppStyles.h7]; }
         if (this.props.onPress) { props.style.push(AppStyles.link); }
 
         if (this.props.style) {
