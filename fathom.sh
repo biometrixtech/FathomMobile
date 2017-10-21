@@ -129,14 +129,14 @@ androidBuild() {
     case "$REPLY" in
         1)
             cd android
-            ./gradlew assembleRelease
+            ./gradlew clean :assembleRelease
             cd ..
             echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-release#.apk${normal}"
             open android/app/build/outputs/apk/
             ;;
         2)
             cd android
-            ./gradlew assembleReleaseStaging
+            ./gradlew clean :assembleReleaseStaging
             cd ..
             echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-releaseStaging#.apk${normal}"
             open android/app/build/outputs/apk/
@@ -167,9 +167,31 @@ build() {
     esac
 }
 
+push() {
+    echo
+    read -p "${grey}Choose which OS to push:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n '`[3]: Both`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    echo
+    case "$REPLY" in
+        1)
+            code-push release-react FathomAI-Android android
+            ;;
+        2)
+            code-push release-react FathomAI-iOS ios
+            ;;
+        3)
+            code-push release-react FathomAI-Android android
+            code-push release-react FathomAI-iOS ios
+            ;;
+        *)
+            echo "${red}Invalid selection${normal}"
+            push
+            ;;
+    esac
+}
+
 main() {
     echo
-    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n '`[4]: Code Push`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
     echo
     case "$REPLY" in
         1)
@@ -180,6 +202,9 @@ main() {
             ;;
         3)
             build
+            ;;
+        4)
+            push
             ;;
         *)
             echo "${red}Invalid selection${normal}"
