@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:19:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-13 15:08:59
+ * @Last Modified time: 2017-10-19 13:38:03
  */
 
 /**
@@ -147,6 +147,13 @@ export default {
         fontWeight: '400',
         fontStyle:  'normal'
     },
+    h7: {
+        fontFamily: Fonts.h7.family,
+        fontSize:   Fonts.h7.size,
+        lineHeight: Fonts.h7.lineHeight,
+        fontWeight: '400',
+        fontStyle:  'normal'
+    },
     strong: {
         fontWeight: '900',
     },
@@ -277,15 +284,32 @@ export default {
 
     // TabBar
     tabbar: {
-        // backgroundColor: Colors.tabbar.background,
-        // borderTopColor:  Colors.border,
-        // borderTopWidth:  1,
         height:         Sizes.tabbarHeight,
-        alignItems:     'center',
+        width:          Sizes.screen.widthThreeQuarters,
+        alignItems:     'flex-end',
+        justifyContent: 'center',
+    },
+    leftTabBar: {
+        height:         Sizes.tabbarHeight,
+        width:          Sizes.screen.widthThreeQuarters,
+        alignItems:     'flex-end',
         justifyContent: 'center',
         paddingLeft:    Sizes.padding,
         paddingRight:   Sizes.padding,
     },
+    centerTabBar: {
+        height:         Sizes.tabbarHeight,
+        width:          Sizes.screen.widthHalf,
+        alignItems:     'center',
+        justifyContent: 'center',
+    },
+    rightTabBar: {
+        height:         Sizes.tabbarHeight,
+        width:          Sizes.screen.widthThreeQuarters,
+        alignItems:     'flex-start',
+        justifyContent: 'center',
+    },
+
 
     // Radial Menu
     radialMenu: {

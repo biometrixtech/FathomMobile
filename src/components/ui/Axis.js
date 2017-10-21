@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:46 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-17 12:57:13
+ * @Last Modified time: 2017-10-20 03:58:45
  */
 
 import React, { Component } from 'react';
@@ -30,7 +30,7 @@ export default class Axis extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            daysOfWeek: ['Mo', 'Tu', 'We', 'Th', 'Fi', 'Sa', 'Su'],
+            daysOfWeek: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
         };
     }
 
@@ -40,13 +40,13 @@ export default class Axis extends Component {
         x = x || 0;
         y = y || 0;
         let endX = vertical ? x : x + length + AppSizes.padding;
-        let endY = vertical ? y - length - AppSizes.padding : y;
+        let endY = vertical ? y - length : y;
         let tickPoints = vertical ? this.getTickPoints(vertical, y, endY, ticks) : this.getTickPoints(vertical, x, endX, ticks);
         return (
             <G fill='none'>
                 <Line
                     stroke='#000'
-                    strokeWidth='3'
+                    strokeWidth={1}
                     x1={x}
                     x2={endX}
                     y1={y}
@@ -56,7 +56,7 @@ export default class Axis extends Component {
                         <Line
                             key={pos}
                             stroke='#000'
-                            strokeWidth='3'
+                            strokeWidth={1}
                             x1={vertical ? x : pos + AppSizes.paddingSml}
                             y1={vertical ? pos : y}
                             x2={vertical ? x - TICKSIZE : pos + AppSizes.paddingSml}
@@ -68,8 +68,8 @@ export default class Axis extends Component {
                         key={pos}
                         fill='#000'
                         stroke='#000'
-                        strokeWidth={0.5}
-                        fontSize={AppFonts.scaleFont(10)}
+                        strokeWidth={0.2}
+                        fontSize={AppFonts.scaleFont(8)}
                         textAnchor='middle'
                         x={vertical ? x - 3 * TICKSIZE : pos + AppSizes.paddingSml}
                         y={vertical ? pos + 3 : y + 3 * TICKSIZE}>
@@ -83,10 +83,11 @@ export default class Axis extends Component {
 
     getTickPoints (vertical, start, end, numTicks) {
         let res = [];
-        let ticksEvery = Math.floor(this.props.length / (numTicks - 1));
         if (vertical) {
-            for (let cur = start; cur >= end; cur -= ticksEvery) { res.push(cur); }
+            let ticksEvery = this.props.length / (numTicks - 1);
+            for (let cur = start; cur >= (end - AppSizes.paddingSml); cur -= ticksEvery) { res.push(cur); }
         } else {
+            let ticksEvery = Math.floor(this.props.length / (numTicks - 1));
             for (let cur = start; cur <= end; cur += ticksEvery) { res.push(cur); }
         }
         return res;
