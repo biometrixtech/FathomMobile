@@ -49,13 +49,13 @@ initialize() {
         # cd ..
         # cd FathomMobile
 
-        pod=$(which pod)
-        [ ${#pod} == 0 ] && {
-            echo "cocoapods does not exist, installing";
-            export GEM_HOME=$HOME/.gem
-            export PATH=$GEM_HOME/bin:$PATH
-            gem install cocoapods
-        } || continue
+        # pod=$(which pod)
+        # [ ${#pod} == 0 ] && {
+        #     echo "cocoapods does not exist, installing";
+        #     export GEM_HOME=$HOME/.gem
+        #     export PATH=$GEM_HOME/bin:$PATH
+        #     gem install cocoapods
+        # } || continue
 
 
         echo "☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️️☁️☁️☁️☁️☁️☁️☁️☁️☁️️️️️️️"
@@ -64,7 +64,7 @@ initialize() {
         echo "🚀\t${green}✔︎${normal} ${magenta}Homebrew installed${normal}\t🚀"
         echo "🚀\t${green}✔︎${normal} ${cyan}watchman installed${normal}\t🚀"
         echo "🚀\t${green}✔︎${normal} ${white}nvm installed${normal}\t\t🚀"
-        echo "🚀\t${green}✔︎${normal} ${grey}cocoapods installed${normal}\t🚀"
+        # echo "🚀\t${green}✔︎${normal} ${grey}cocoapods installed${normal}\t🚀"
         echo "🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊"
 
         watchman watch-del-all
@@ -77,14 +77,15 @@ initialize() {
         sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-vector-icons/android/build.gradle
         sed -i '' 's/24.0.2/25.0.0/' ./node_modules/react-native-ble-manager/android/build.gradle
         sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
+        sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
         # [ -d "./node_modules/react-native/third-party" ] && {
         #     cd node_modules/react-native/third-party/glog-0.3.4
         #     ../../scripts/ios-configure-glog.sh                 
         #     cd ../../../../
         # } || continue
-        cd ios/
-        pod install
-        cd ..
+        # cd ios/
+        # pod install
+        # cd ..
         
         echo "Everything checked, installed, and prepared.\nPackager ready to be started"
     else
