@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:19:55 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-16 10:11:56
+ * @Last Modified time: 2017-10-18 22:54:02
  */
 
 /**
@@ -38,6 +38,7 @@ export default {
     h4:   { ...base, size: base.size * 1.1, lineHeight: lineHeight(base.size * 1.25) },
     h5:   { ...base },
     h6:   { ...base, size: base.size * 0.8, lineHeight: lineHeight(base.size * 0.8) },
+    h7:   { ...base, size: base.size * 0.5, lineHeight: lineHeight(base.size * 0.5) },
     scaleFont,
     lineHeight
 };
