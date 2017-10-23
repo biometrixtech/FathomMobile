@@ -1,7 +1,15 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:35:34 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2017-10-12 11:35:34 
+ */
+
 /**
  * Navbar Menu Button
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 

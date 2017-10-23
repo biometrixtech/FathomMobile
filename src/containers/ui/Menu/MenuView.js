@@ -1,8 +1,15 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:35:22 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-19 01:06:34
+ */
+
 /**
  * Menu Contents
  */
-/* eslint-disable max-len */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
     View,
     Image,
@@ -12,6 +19,7 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { Icon } from 'react-native-elements';
+import Collapsible from 'react-native-collapsible';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors, AppFonts } from '@theme/';
@@ -97,6 +105,7 @@ class Menu extends Component {
         user:          PropTypes.object,
         setKitState:   PropTypes.func.isRequired,
         id:            PropTypes.string,
+        teamSelect:    PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -130,13 +139,15 @@ class Menu extends Component {
         // }
 
         this.state = {
-            active: 0,
-            menu:   [
-                // {
-                //     itemName: 'view-dashboard',
-                //     title:    'Dashboard',
-                //     onPress:  () => { this.props.closeSideMenu(); action(); this.setState({ active: 0 }); },
-                // },
+            active:      0,
+            isCollapsed: true,
+            menu:        [
+                {
+                    itemName:   'view-dashboard',
+                    title:      'Dashboard',
+                    onPress:    () => { this.setState({ isCollapsed: !this.state.isCollapsed }); },
+                    teamSelect: (index) => { Promise.resolve(this.props.teamSelect(index)).then(() => this.props.closeSideMenu()); this.setState({ active: 0 }); Actions.dashboard(); }
+                },
                 // {
                 //     itemName: 'pulse',
                 //     title:    'Capture Session',
@@ -155,7 +166,7 @@ class Menu extends Component {
                 {
                     itemName: 'mixcloud',
                     title:    'Manage Kit',
-                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 0 }); Actions.kitManagement(); },
+                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 1 }); Actions.kitManagement(); },
                 },
             ],
         };
@@ -177,25 +188,61 @@ class Menu extends Component {
         return null;
     }
 
+    // modalDropdown = () => {
+    //     return <View style={{ flex: 1, alignSelf: 'center' }} >
+    //         <View style={{ justifyContent: 'center', flexDirection: 'row' }}>
+    //             <ModalDropdown
+    //                 options={this.props.user.teams.map(team => team.name)}
+    //                 defaultIndex={this.props.user.teamIndex}
+    //                 style={{ backgroundColor: AppColors.brand.primary }}
+    //                 defaultValue={this.props.user.teams[this.props.user.teamIndex].name}
+    //                 textStyle={[AppStyles.h3, { color: 'white' }]}
+    //                 dropdownTextStyle={[AppStyles.h3, { borderWidth: 1, borderColor: 'white' }]}
+    //                 onSelect={index =>  Promise.resolve(this.props.teamSelect(index))}
+    //             />
+    //             <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }} color={'white'}/>
+    //         </View>
+    //     </View>
+    // }
+
     render = () => {
         const { menu } = this.state;
 
         // Build the actual Menu Items
         const menuItems = menu.map((item, index) => {
-            const { title, onPress, itemName } = item;
+            const { title, onPress, itemName, teamSelect } = item;
 
             return (
-                <TouchableOpacity
-                    key={`menu-item-${title}`}
-                    onPress={onPress}
-                >
-                    <View style={[styles.menuItem, { backgroundColor: this.state.active === index ? '#FFFFFF' : AppColors.brand.primary }]}>
-                        <Icon type={'material-community'} color={this.state.active === index ? AppColors.brand.primary : '#FFFFFF'} name={itemName}/>
-                        <Text style={[styles.menuItem_text, { color: this.state.active === index ? AppColors.brand.primary : '#FFFFFF' }]}>
-                            {title}
-                        </Text>
-                    </View>
-                </TouchableOpacity>
+                <View key={`menu-item-${title}`}>
+                    <TouchableOpacity onPress={() => !index && this.props.user.teams.length === 1 ? teamSelect(index) : onPress()}>
+                        <View style={[styles.menuItem, { backgroundColor: this.state.active === index ? '#FFFFFF' : AppColors.brand.primary }]}>
+                            <Icon type={'material-community'} color={this.state.active === index ? AppColors.brand.primary : '#FFFFFF'} name={itemName}/>
+                            <Text style={[styles.menuItem_text, { color: this.state.active === index ? AppColors.brand.primary : '#FFFFFF' }]}>
+                                {title}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    {
+                        !index ?
+                            <Collapsible collapsed={this.state.isCollapsed} >
+                                {
+                                    this.props.user.teams.map((team, teamIndex) => 
+                                        <TouchableOpacity
+                                            key={`team-item-${team.name}`}
+                                            onPress={() => teamSelect(teamIndex)}
+                                        >
+                                            <View style={[styles.menuItem, { backgroundColor: this.props.user.teamIndex === teamIndex ? AppColors.brand.fogGrey : AppColors.brand.primary }]}>
+                                                <Text style={[styles.menuItem_text, { color: this.props.user.teamIndex === teamIndex ? AppColors.brand.primary : '#FFFFFF' }]}>
+                                                    {team.name}
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    )
+                                }
+                            </Collapsible>
+                            : null
+                    }
+                </View>
             );
         });
 

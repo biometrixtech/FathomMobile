@@ -1,10 +1,18 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:29:10 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-17 20:13:33
+ */
+
 /**
  * Text Input
  *
      <FormLabel></FormLabel>
  *
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FormLabel } from 'react-native-elements';
 
 // Consts and Libs
