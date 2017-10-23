@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-13 15:17:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-20 15:07:59
+ * @Last Modified time: 2017-10-23 11:23:32
  */
 
 /**
@@ -121,23 +121,21 @@ class StackedBarChart extends Component {
         let xScale = data ? data.x[0] instanceof Date ? AppUtil.createTimeScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : AppUtil.createScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : null;
         let yScale = AppUtil.createScaleY(0, max, height - 2 * margin.vertical, margin.vertical);
 
-        console.log(data);
-
         return (
             <View>
                 <View style={{ flexDirection: 'row' }} onLayout={ev => this.setState({ chartHeaderHeight: ev.nativeEvent.layout.height })}>
-                    <TouchableWithoutFeedback onPress={() => this.props.getTeamStats(user.teams[user.teamIndex].id, user.weekOffset-1)}>
+                    <TouchableWithoutFeedback onPress={() => user.teams[user.teamIndex] ? this.props.getTeamStats(user.teams[user.teamIndex].id, user.weekOffset-1) : null}>
                         <View style={[AppStyles.containerCentered, { flex: 1 }]}><Spacer /><Text h3>{'<'}</Text><Spacer /></View>
                     </TouchableWithoutFeedback>
                     <View style={[AppStyles.containerCentered, { flex: 2 }]}>
                         <Text>{`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}</Text>
                     </View>
-                    <TouchableWithoutFeedback onPress={() => this.props.getTeamStats(user.teams[user.teamIndex].id, user.weekOffset+1)}>
+                    <TouchableWithoutFeedback onPress={() => user.teams[user.teamIndex] ? this.props.getTeamStats(user.teams[user.teamIndex].id, user.weekOffset+1) : null}>
                         <View style={[AppStyles.containerCentered, { flex: 1 }]}><Spacer /><Text h3>{'>'}</Text><Spacer /></View>
                     </TouchableWithoutFeedback>
                 </View>
                 {
-                    !user.teams[user.teamIndex].stats ? <View style={{ alignSelf: 'center' }}><Placeholder text={'No data to show for this range...'} /></View> :
+                    !user.teams[user.teamIndex] || !user.teams[user.teamIndex].stats ? <View style={{ alignSelf: 'center' }}><Placeholder text={'No data to show for this range...'} /></View> :
                         <View>
                             { xAxis ? <Text style={[AppStyles.h7, { position: 'absolute', left: -4 * margin.horizontal - tabOffset * AppSizes.tickSize, top: height*9/20, transform: [{ rotate: '270deg' }] }]}>{xAxis}</Text> : null }
                             { yAxis ? <Text style={[AppStyles.subtext, { position: 'absolute', left: width/2, top: height + margin.vertical }]}>{yAxis}</Text> : null }
