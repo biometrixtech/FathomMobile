@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:31:10 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2017-10-12 11:31:10 
+ */
+
 /**
  * Global App Config
  */
@@ -23,7 +30,7 @@ export default {
         leftButtonIconStyle:          AppStyles.navbarButton,
         rightButtonIconStyle:         AppStyles.navbarButton,
         onBack:                       () => Actions.pop({ type: ActionConst.REFRESH }),
-        navigationBarTitleImage:      require('@images/fathom_colored.png'),
+        navigationBarTitleImage:      require('@images/fathom_gold_and_grey.png'),
         navigationBarTitleImageStyle: AppStyles.navbarImageTitle,
         sceneStyle:                   {
             backgroundColor: AppColors.background,

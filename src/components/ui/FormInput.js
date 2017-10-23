@@ -1,10 +1,18 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:28:53 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2017-10-12 11:28:53 
+ */
+
 /**
  * Text Input
  *
      <FormInput></FormInput>
  *
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FormInput } from 'react-native-elements';
 
 // Consts and Libs

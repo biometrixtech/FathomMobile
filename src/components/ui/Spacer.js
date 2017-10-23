@@ -1,10 +1,18 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:30:13 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2017-10-12 11:30:13 
+ */
+
 /**
  * Spacer
  *
     <Spacer size={10} />
  *
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 /* Component ==================================================================== */

@@ -66,6 +66,10 @@ import com.android.build.OutputFile
  * ]
  */
 
+//  project.ext.react = [
+//     entryFile: "index.js"
+// ]
+
 apply from: "../../node_modules/react-native/react.gradle"
 apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 
@@ -85,8 +89,8 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
 
     signingConfigs {
         release {
@@ -100,9 +104,9 @@ android {
     defaultConfig {
         applicationId 'com.fathom.fathomai'
         minSdkVersion 18
-        targetSdkVersion 25
-        versionCode 2
-        versionName "1.0"
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.2"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -156,8 +160,6 @@ android {
             }
         }
     }
-    productFlavors {
-    }
 }
 
 repositories {
@@ -166,15 +168,15 @@ repositories {
 
 dependencies {
     compile project(':react-native-google-analytics-bridge')
-    compile project(':react-native-charts-wrapper')
     compile project(':react-native-code-push')
     compile project(':react-native-fabric')
     compile project(':react-native-vector-icons')
     compile project(':react-native-device-info')
     compile project(':react-native-ble-manager')
     compile project(':react-native-android-location-services-dialog-box')
+    compile project(':react-native-svg')
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
     compile 'com.facebook.react:react-native:+'
     // From node_modules
     compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {

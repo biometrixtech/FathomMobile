@@ -1,10 +1,18 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:29:29 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-17 20:13:51
+ */
+
 /**
  * List Items
  *
      <ListItem title={'Hello World'} />
  *
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { ListItem } from 'react-native-elements';
 
 // Consts and Libs
