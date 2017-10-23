@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:21:27 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2017-10-12 11:21:27 
+ */
+
 /**
  * Bluetooth Reducer
  */
@@ -10,7 +17,7 @@ const initialState = {
     scanning:      false,
     devicesFound:  [],
     accessoryData: {},
-    networks:      [],
+    networks:      [{ key: 0, label: 'Other' }],
     indicator:     false
 };
 
@@ -72,7 +79,7 @@ export default function bluetoothReducer(state = initialState, action) {
                 configuration: 0,
                 configured:    false
             },
-            networks: []
+            networks: [{ key: 0, label: 'Other' }]
         });
     case Actions.WIFI_SCAN:
         return Object.assign({}, state, {
@@ -133,7 +140,7 @@ export default function bluetoothReducer(state = initialState, action) {
     case Actions.BLUETOOTH_DISCONNECT:
         return Object.assign({}, state, {
             accessoryData: {},
-            networks:      [],
+            networks:      [{ key: 0, label: 'Other' }],
             devicesFound:  []
         });
     case Actions.WIFI:

@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:16:35 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-13 18:40:59
+ */
+
 /**
  * API JWT Auth Functions
  */
@@ -6,12 +13,13 @@ import { AsyncStorage } from 'react-native';
 import jwtDecode from 'jwt-decode';
 
 // Consts and Libs
-import AppAPI from '@lib/api';
+import { AppAPI } from '@lib/';
 import { APIConfig } from '@constants/';
 
 export default class JWT {
     static apiToken = '';
     static apiHost = '';
+    static statsHost = '';
     apiCredentials =  {};
 
     /**
@@ -99,11 +107,23 @@ export default class JWT {
     }
 
     /**
-      * Adds API Host Endpoint to AsyncStorage
+      * Adds API and Stats Host Endpoint to AsyncStorage
       */
-    storeAPIHost = async (endpoint) => {
+    storeAPIHost = async (key, endpoint) => {
+        let statsHost = APIConfig.STATS_APIs[key];
         await AsyncStorage.setItem('api/host', endpoint);
+        await AsyncStorage.setItem('stats/host', statsHost)
         this.apiHost = endpoint;
+        this.statsHost = statsHost;
+    }
+
+    /**
+      * Retrieves Stats Host Endpoint from Storage
+      */
+    getStatsHost = async () => {
+        if (!this.statsHost) { this.statsHost = await AsyncStorage.getItem('stats/host'); }
+
+        return this.statsHost || APIConfig.statsHostname;
     }
 
     /**
