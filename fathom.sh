@@ -74,7 +74,6 @@ initialize() {
         sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
         sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-code-push/android/app/build.gradle
         sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-fabric/android/build.gradle
-        sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-vector-icons/android/build.gradle
         sed -i '' 's/24.0.2/25.0.0/' ./node_modules/react-native-ble-manager/android/build.gradle
         sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
         sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
@@ -106,14 +105,14 @@ iosBuild() {
     case "$REPLY" in
         1)
             cd ios
-            xcodebuild clean -workspace Fathom.xcworkspace -scheme Fathom -configuration Release
-            xcodebuild archive -workspace Fathom.xcworkspace -scheme Fathom -configuration Release
+            xcodebuild clean -project Fathom.xcodeproj -scheme Fathom -configuration Release
+            xcodebuild archive -project Fathom.xcodeproj -scheme Fathom -configuration Release
             cd ..
             ;;
         2)
             cd ios
-            xcodebuild clean -workspace Fathom.xcworkspace -scheme Fathom -configuration Staging
-            xcodebuild archive -workspace Fathom.xcworkspace -scheme Fathom -configuration Staging
+            xcodebuild clean -project Fathom.xcodeproj -scheme Fathom -configuration Staging
+            xcodebuild archive -project Fathom.xcodeproj -scheme Fathom -configuration Staging
             cd ..
             ;;
         *)
@@ -130,14 +129,14 @@ androidBuild() {
     case "$REPLY" in
         1)
             cd android
-            ./gradlew clean :assembleRelease
+            ./gradlew clean assembleRelease
             cd ..
             echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-release#.apk${normal}"
             open android/app/build/outputs/apk/
             ;;
         2)
             cd android
-            ./gradlew clean :assembleReleaseStaging
+            ./gradlew clean assembleReleaseStaging
             cd ..
             echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-releaseStaging#.apk${normal}"
             open android/app/build/outputs/apk/
@@ -168,7 +167,7 @@ build() {
     esac
 }
 
-push() {
+codepushRelease() {
     echo
     read -p "${grey}Choose which OS to push:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n '`[3]: Both`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
     echo
@@ -185,7 +184,47 @@ push() {
             ;;
         *)
             echo "${red}Invalid selection${normal}"
-            push
+            codepushRelease
+            ;;
+    esac
+}
+
+codepushPromote() {
+    echo
+    read -p "${grey}Choose which OS to promote:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n '`[3]: Both`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    echo
+    case "$REPLY" in
+        1)
+            code-push promote FathomAI-Android Staging Production -t '*'
+            ;;
+        2)
+            code-push promote FathomAI-iOS Staging Production -t '*'
+            ;;
+        3)
+            code-push promote FathomAI-Android Staging Production -t '*'
+            code-push promote FathomAI-iOS Staging Production -t '*'
+            ;;
+        *)
+            echo "${red}Invalid selection${normal}"
+            codepushPromote
+            ;;
+    esac
+}
+
+codepush() {
+    echo
+    read -p "${grey}Choose which OS to push:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Promote`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    echo
+    case "$REPLY" in
+        1)
+            codepushRelease
+            ;;
+        2)
+            codepushPromote
+            ;;
+        *)
+            echo "${red}Invalid selection${normal}"
+            codepush
             ;;
     esac
 }
@@ -205,7 +244,7 @@ main() {
             build
             ;;
         4)
-            push
+            codepush
             ;;
         *)
             echo "${red}Invalid selection${normal}"
