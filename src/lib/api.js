@@ -1,14 +1,20 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:16:44 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-17 03:16:11
+ */
+
 /**
  * API Functions
  */
- /* global fetch console */
+/* global fetch console */
 import DeviceInfo from 'react-native-device-info';
 
-import JWT from '@lib/api.jwt';
-
 // Consts and Libs
+import JWT from '@lib/api.jwt';
+import { AppUtil } from '@lib/';
 import { AppConfig, ErrorMessages, APIConfig } from '@constants/';
-import AppUtil from '@lib/util';
 
 // We'll use JWT for API Authentication
 // const Token = {};
@@ -17,8 +23,9 @@ const Token = new JWT();
 // Config
 // const HOSTNAME = APIConfig.hostname;
 const ENDPOINTS = APIConfig.endpoints;
+const STATS =     APIConfig.statsEndpoints;
 
-let USER_AGENT, HOSTNAME;
+let USER_AGENT, HOSTNAME, STATS_HOSTNAME;
 try {
     // Build user agent string
     USER_AGENT = `${AppConfig.appName} ${DeviceInfo.getVersion()}; ${DeviceInfo.getSystemName()} ` +
@@ -87,7 +94,7 @@ function serialize(obj, prefix) {
 /**
   * Sends requests to the API
   */
-function fetcher(method, inputEndpoint, inputParams, body) {
+function fetcher(method, inputEndpoint, inputParams, body, stats) {
     let endpoint = inputEndpoint;
     const params = inputParams;
 
@@ -128,6 +135,10 @@ function fetcher(method, inputEndpoint, inputParams, body) {
             HOSTNAME = await Token.getAPIHost();
         }
 
+        if (!STATS_HOSTNAME) {
+            STATS_HOSTNAME = await Token.getStatsHost();
+        }
+
         // Add Endpoint Params
         let urlParams = '';
         if (params) {
@@ -158,14 +169,14 @@ function fetcher(method, inputEndpoint, inputParams, body) {
 
             // Something else? Just log an error
             } else {
-                debug('You provided params, but it wasn\'t an object!', HOSTNAME + endpoint + urlParams);
+                debug('You provided params, but it wasn\'t an object!', (stats ? STATS_HOSTNAME : HOSTNAME) + endpoint + urlParams);
             }
         }
 
         // Add Body
         if (body) { req.body = JSON.stringify(body); }
 
-        const thisUrl = `${HOSTNAME}${endpoint}${urlParams}`;
+        const thisUrl = `${stats ? STATS_HOSTNAME : HOSTNAME}${endpoint}${urlParams}`;
 
         debug('', `API Request #${requestNum} to ${thisUrl}`);
 
@@ -229,16 +240,27 @@ const AppAPI = {
     handleError,
     getToken:     Token.getToken,
     deleteToken:  Token.deleteToken,
-    storeAPIHost: Token.storeAPIHost
+    storeAPIHost: Token.storeAPIHost,
+    stats:        {}
 };
 
 ENDPOINTS.forEach((endpoint, key) => {
     AppAPI[key] = {
-        get:    (params, payload) => fetcher('GET',    endpoint, params, payload),
-        post:   (params, payload) => fetcher('POST',   endpoint, params, payload),
-        patch:  (params, payload) => fetcher('PATCH',  endpoint, params, payload),
-        put:    (params, payload) => fetcher('PUT',    endpoint, params, payload),
-        delete: (params, payload) => fetcher('DELETE', endpoint, params, payload),
+        get:    (params, payload) => fetcher('GET',    endpoint, params, payload, false),
+        post:   (params, payload) => fetcher('POST',   endpoint, params, payload, false),
+        patch:  (params, payload) => fetcher('PATCH',  endpoint, params, payload, false),
+        put:    (params, payload) => fetcher('PUT',    endpoint, params, payload, false),
+        delete: (params, payload) => fetcher('DELETE', endpoint, params, payload, false),
+    };
+});
+
+STATS.forEach((endpoint, key) => {
+    AppAPI.stats[key] = {
+        get:    (params, payload) => fetcher('GET',    endpoint, params, payload, true),
+        post:   (params, payload) => fetcher('POST',   endpoint, params, payload, true),
+        patch:  (params, payload) => fetcher('PATCH',  endpoint, params, payload, true),
+        put:    (params, payload) => fetcher('PUT',    endpoint, params, payload, true),
+        delete: (params, payload) => fetcher('DELETE', endpoint, params, payload, true),
     };
 });
 
