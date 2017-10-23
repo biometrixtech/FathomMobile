@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:21:07 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2017-10-12 11:21:07 
+ */
+
 /**
  * Sidemenu Reducer
  */

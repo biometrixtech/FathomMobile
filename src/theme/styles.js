@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:19:33 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-19 13:38:03
+ */
+
 /**
  * App Styles
  */
@@ -36,6 +43,13 @@ export default {
     },
 
     // Text Styles
+    tabHeaders: {
+        fontFamily: Fonts.base.family,
+        fontSize:   Fonts.base.size,
+        lineHeight: Fonts.base.lineHeight,
+        fontWeight: '400',
+        fontStyle:  'normal'
+    },
     baseText: {
         fontFamily: Fonts.base.family,
         fontSize:   Fonts.base.size,
@@ -125,6 +139,20 @@ export default {
         marginBottom: 4,
         left:         0,
         right:        0,
+    },
+    h6: {
+        fontFamily: Fonts.h6.family,
+        fontSize:   Fonts.h6.size,
+        lineHeight: Fonts.h6.lineHeight,
+        fontWeight: '400',
+        fontStyle:  'normal'
+    },
+    h7: {
+        fontFamily: Fonts.h7.family,
+        fontSize:   Fonts.h7.size,
+        lineHeight: Fonts.h7.lineHeight,
+        fontWeight: '400',
+        fontStyle:  'normal'
     },
     strong: {
         fontWeight: '900',
@@ -256,10 +284,32 @@ export default {
 
     // TabBar
     tabbar: {
-        backgroundColor: Colors.tabbar.background,
-        borderTopColor:  Colors.border,
-        borderTopWidth:  1,
+        height:         Sizes.tabbarHeight,
+        width:          Sizes.screen.widthThreeQuarters,
+        alignItems:     'flex-end',
+        justifyContent: 'center',
     },
+    leftTabBar: {
+        height:         Sizes.tabbarHeight,
+        width:          Sizes.screen.widthThreeQuarters,
+        alignItems:     'flex-end',
+        justifyContent: 'center',
+        paddingLeft:    Sizes.padding,
+        paddingRight:   Sizes.padding,
+    },
+    centerTabBar: {
+        height:         Sizes.tabbarHeight,
+        width:          Sizes.screen.widthHalf,
+        alignItems:     'center',
+        justifyContent: 'center',
+    },
+    rightTabBar: {
+        height:         Sizes.tabbarHeight,
+        width:          Sizes.screen.widthThreeQuarters,
+        alignItems:     'flex-start',
+        justifyContent: 'center',
+    },
+
 
     // Radial Menu
     radialMenu: {

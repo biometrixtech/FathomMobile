@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:35:29 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-19 00:11:46
+ */
+
 /**
  * Menu Container
  */
@@ -21,6 +28,7 @@ const mapDispatchToProps = {
     logout:      UserActions.logout,
     disconnect:  BluetoothActions.disconnect,
     setKitState: BluetoothActions.setKitState,
+    teamSelect:  UserActions.teamSelect,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MenuRender);

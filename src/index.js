@@ -1,4 +1,11 @@
-/**
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:18:24 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-13 18:42:09
+ */
+
+ /**
  * Index - this is where everything starts - but offloads to app.js
  */
 /* global __DEV__ */
@@ -12,7 +19,7 @@ import { Router } from 'react-native-router-flux';
 // Consts and Libs
 import { AppStyles } from '@theme/';
 import AppRoutes from '@navigation/';
-import Analytics from '@lib/analytics';
+import { Analytics } from '@lib/';
 
 // All redux reducers (rolled into one mega-reducer)
 import rootReducer from '@redux/index';
