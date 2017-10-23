@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:32:18 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2017-10-12 11:32:18 
+ */
+
 /**
  * Test to check if the component renders correctly
  */
@@ -10,13 +17,13 @@ import LaunchView from '@containers/Launch/LaunchView';
 
 // Login prop expects a promise
 const mockPromise = new Promise((resolve) => {
-  resolve();
+    resolve();
 });
 
 it('LaunchView renders correctly', () => {
-  const tree = renderer.create(
-    <LaunchView login={() => mockPromise} />,
-  ).toJSON();
+    const tree = renderer.create(
+        <LaunchView login={() => mockPromise} />,
+    ).toJSON();
 
-  expect(tree).toMatchSnapshot();
+    expect(tree).toMatchSnapshot();
 });

@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:16:07 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-17 20:12:40
+ */
+
 /**
  * Alerts - Status/Success/Error Messages
  *
@@ -8,7 +15,8 @@
     />
  *
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import {
     View,
     StyleSheet,

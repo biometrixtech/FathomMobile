@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:20:51 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-17 14:30:02
+ */
+
 /**
  * User Reducer
  */
@@ -8,7 +15,14 @@ const Actions = require('../actionTypes');
 const initialState = {
     teamIndex:             0,
     teams:                 [],
-    selectedTrainingGroup: {}
+    selectedTrainingGroup: {},
+    weekOffset:            0,
+    statsStartDate:        '',
+    statsEndDate:          '',
+    selectedStats:         {
+        athlete:   false,
+        athleteId: null,
+    }
 };
 
 /* eslint-disable max-len */
@@ -93,7 +107,11 @@ export default function userReducer(state = initialState, action) {
         });
     case Actions.TEAM_SELECT:
         return Object.assign({}, state, {
-            teamIndex: parseInt(action.data, 10)
+            teamIndex:     parseInt(action.data, 10),
+            selectedStats: {
+                athlete:   false,
+                athleteId: null,
+            }
         });
     case Actions.TRAINING_GROUP_SELECT:
         let trainingGroup = action.data;
@@ -105,6 +123,26 @@ export default function userReducer(state = initialState, action) {
         let accessories = action.data.users.filter(user => user.accessories.length).reduce((totalAccessories, accessory) => totalAccessories.concat(accessory.accessories), []);
         return Object.assign({}, state, {
             accessories
+        });
+    case Actions.GET_TEAM_STATS:
+        let teamsForStats = state.teams.map((team, index) => {
+            if (team.id !== action.data.teamId) {
+                return team;
+            }
+            team.stats = action.data.stats;
+            return team;
+        });
+        return Object.assign({}, state, {
+            teams:          teamsForStats,
+            weekOffset:     action.data.weekOffset,
+            statsStartDate: action.data.startDate,
+            statsEndDate:   action.data.endDate,
+        });
+    case Actions.SELECT_STATS_CATEGORY:
+        return Object.assign({}, state, {
+            selectedStats: {
+                ...action.data
+            }
         });
     case Actions.SIGN_UP_SUCCESS:
     case Actions.FORGOT_PASSWORD_SUCCESS:
