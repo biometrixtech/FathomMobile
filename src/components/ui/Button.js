@@ -1,10 +1,18 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:28:39 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-17 20:13:09
+ */
+
 /**
  * Buttons
  *
      <Button text={'Server is down'} />
  *
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Button } from 'react-native-elements';
 
 // Consts and Libs
@@ -44,7 +52,7 @@ class CustomButton extends Component {
             containerViewStyle: { borderRadius: AppSizes.borderRadius },
             raised:             true,
             buttonStyle:        {
-                padding:     12,
+                padding:     AppFonts.scaleFont(12),
                 marginLeft:  0,
                 marginRight: 0,
             },
@@ -54,7 +62,7 @@ class CustomButton extends Component {
             large:           false,
             icon:            (this.props.icon && this.props.icon.name)
                 ? {
-                    size: 14,
+                    size: AppFonts.scaleFont(14),
                     ...this.props.icon,
                 } : null,
         };
@@ -62,23 +70,23 @@ class CustomButton extends Component {
         // Overrides
         // Size
         if (this.props.small) {
-            props.fontSize = 12;
-            props.buttonStyle.padding = 8;
+            props.fontSize = AppFonts.scaleFont(12);
+            props.buttonStyle.padding = AppFonts.scaleFont(8);
 
             if (props.icon && props.icon.name) {
                 props.icon = {
-                    size: 14,
+                    size: AppFonts.scaleFonts(14),
                     ...props.icon,
                 };
             }
         }
         if (this.props.large) {
-            props.fontSize = 20;
-            props.buttonStyle.padding = 15;
+            props.fontSize = AppFonts.scaleFont(20);
+            props.buttonStyle.padding = AppFonts.scaleFont(15);
 
             if (props.icon && props.icon.name) {
                 props.icon = {
-                    size: 20,
+                    size: AppFonts.scaleFont(20),
                     ...props.icon,
                 };
             }
