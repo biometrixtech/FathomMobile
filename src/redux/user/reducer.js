@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:51 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-17 14:30:02
+ * @Last Modified time: 2017-10-23 11:15:54
  */
 
 /**
@@ -11,14 +11,16 @@
 
 const Actions = require('../actionTypes');
 
+let date = (new Date()).toLocaleDateString().split('/');
+
 // Set initial state
 const initialState = {
     teamIndex:             0,
     teams:                 [],
     selectedTrainingGroup: {},
     weekOffset:            0,
-    statsStartDate:        '',
-    statsEndDate:          '',
+    statsStartDate:        `20${date[2]}-${date[0]}-${date[1]}`,
+    statsEndDate:          `20${date[2]}-${date[0]}-${date[1]}`,
     selectedStats:         {
         athlete:   false,
         athleteId: null,

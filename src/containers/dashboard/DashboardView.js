@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:20 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-20 14:45:32
+ * @Last Modified time: 2017-10-23 11:08:54
  */
 
 import React, { Component } from 'react';
@@ -24,12 +24,6 @@ const tabs = {
     0: ['RESPONSE TO LOAD', 'Biomechanical Fatigue'],
     1: ['TRAINING VOLUME', 'Accumulated GRF'],
     2: ['TRAINING VOLUME', 'Accumulated CoM Acceleration']
-}
-
-const d = {
-    x:  [new Date('2017-03-01'), new Date('2017-03-02'), new Date('2017-03-03'), new Date('2017-03-04'), new Date('2017-03-05'), new Date('2017-03-06'), new Date('2017-03-07')],
-    y1: [150, 62, 0, 99, 53, 148, 63],
-    y2: [31, 24, 0, 16, 9, 8, 8]
 }
 
 /* Component ==================================================================== */
@@ -99,7 +93,7 @@ class Dashboard extends Component {
 
     getBiomechanicalFatigueData = () => {
         let data = { x: [], y1: [], y2: [] };
-        let allData = this.props.user.teams[this.props.user.teamIndex].stats;
+        let allData = this.props.user.teams[this.props.user.teamIndex] ? this.props.user.teams[this.props.user.teamIndex].stats : null;
         if (!allData) {
             return null;
         }
@@ -129,7 +123,7 @@ class Dashboard extends Component {
 
     getAccumulatedGRFData = () => {
         let grfData = { x: [], y1: [], y2: [] };
-        let allData = this.props.user.teams[this.props.user.teamIndex].stats;
+        let allData = this.props.user.teams[this.props.user.teamIndex] ? this.props.user.teams[this.props.user.teamIndex].stats : null;
         if (!allData) {
             return {};
         }
@@ -170,7 +164,7 @@ class Dashboard extends Component {
 
     getAccumulatedCoMAcceleration = () => {
         let accelData = { x: [], y1: [], y2: [] };
-        let allData = this.props.user.teams[this.props.user.teamIndex].stats;
+        let allData = this.props.user.teams[this.props.user.teamIndex] ? this.props.user.teams[this.props.user.teamIndex].stats : null;
         if (!allData) {
             return {};
         }
