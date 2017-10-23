@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:32:31 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2017-10-12 11:32:31 
+ */
+
 /**
  * Test to check if the component renders correctly
  */
@@ -12,9 +19,9 @@ import LoginView from '@containers/auth/Login/LoginView';
 const mockPromise = new Promise(resolve => resolve());
 
 it('LoginView renders correctly', () => {
-  const tree = renderer.create(
-    <LoginView login={() => mockPromise} />,
-  ).toJSON();
+    const tree = renderer.create(
+        <LoginView login={() => mockPromise} />,
+    ).toJSON();
 
-  expect(tree).toMatchSnapshot();
+    expect(tree).toMatchSnapshot();
 });

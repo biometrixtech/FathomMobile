@@ -64,28 +64,27 @@ initialize() {
         echo "🚀\t${green}✔︎${normal} ${magenta}Homebrew installed${normal}\t🚀"
         echo "🚀\t${green}✔︎${normal} ${cyan}watchman installed${normal}\t🚀"
         echo "🚀\t${green}✔︎${normal} ${white}nvm installed${normal}\t\t🚀"
-        echo "🚀\t${green}✔︎${normal} ${grey}cocoapods installed${normal}\t🚀"
+        # echo "🚀\t${green}✔︎${normal} ${grey}cocoapods installed${normal}\t🚀"
         echo "🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊"
 
         watchman watch-del-all
         lsof -P | grep ':8081' | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
-        rm -rf node_modules
-        rm yarn.lock
+        rm -rf yarn.lock node_modules
         yarn
         sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
         sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-code-push/android/app/build.gradle
         sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-fabric/android/build.gradle
-        sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-vector-icons/android/build.gradle
         sed -i '' 's/24.0.2/25.0.0/' ./node_modules/react-native-ble-manager/android/build.gradle
         sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
+        sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
         # [ -d "./node_modules/react-native/third-party" ] && {
         #     cd node_modules/react-native/third-party/glog-0.3.4
         #     ../../scripts/ios-configure-glog.sh                 
         #     cd ../../../../
         # } || continue
-        cd ios/
-        pod install
-        cd ..
+        # cd ios/
+        # pod install
+        # cd ..
         
         echo "Everything checked, installed, and prepared.\nPackager ready to be started"
     else
@@ -106,14 +105,14 @@ iosBuild() {
     case "$REPLY" in
         1)
             cd ios
-            xcodebuild clean -workspace Fathom.xcworkspace -scheme Fathom -configuration Release
-            xcodebuild archive -workspace Fathom.xcworkspace -scheme Fathom -configuration Release
+            xcodebuild clean -project Fathom.xcodeproj -scheme Fathom -configuration Release
+            xcodebuild archive -project Fathom.xcodeproj -scheme Fathom -configuration Release
             cd ..
             ;;
         2)
             cd ios
-            xcodebuild clean -workspace Fathom.xcworkspace -scheme Fathom -configuration Staging
-            xcodebuild archive -workspace Fathom.xcworkspace -scheme Fathom -configuration Staging
+            xcodebuild clean -project Fathom.xcodeproj -scheme Fathom -configuration Staging
+            xcodebuild archive -project Fathom.xcodeproj -scheme Fathom -configuration Staging
             cd ..
             ;;
         *)
@@ -130,14 +129,14 @@ androidBuild() {
     case "$REPLY" in
         1)
             cd android
-            ./gradlew assembleRelease
+            ./gradlew clean assembleRelease
             cd ..
             echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-release#.apk${normal}"
             open android/app/build/outputs/apk/
             ;;
         2)
             cd android
-            ./gradlew assembleReleaseStaging
+            ./gradlew clean assembleReleaseStaging
             cd ..
             echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-releaseStaging#.apk${normal}"
             open android/app/build/outputs/apk/
@@ -168,9 +167,71 @@ build() {
     esac
 }
 
+codepushRelease() {
+    echo
+    read -p "${grey}Choose which OS to push:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n '`[3]: Both`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    echo
+    case "$REPLY" in
+        1)
+            code-push release-react FathomAI-Android android
+            ;;
+        2)
+            code-push release-react FathomAI-iOS ios
+            ;;
+        3)
+            code-push release-react FathomAI-Android android
+            code-push release-react FathomAI-iOS ios
+            ;;
+        *)
+            echo "${red}Invalid selection${normal}"
+            codepushRelease
+            ;;
+    esac
+}
+
+codepushPromote() {
+    echo
+    read -p "${grey}Choose which OS to promote:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n '`[3]: Both`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    echo
+    case "$REPLY" in
+        1)
+            code-push promote FathomAI-Android Staging Production -t '*'
+            ;;
+        2)
+            code-push promote FathomAI-iOS Staging Production -t '*'
+            ;;
+        3)
+            code-push promote FathomAI-Android Staging Production -t '*'
+            code-push promote FathomAI-iOS Staging Production -t '*'
+            ;;
+        *)
+            echo "${red}Invalid selection${normal}"
+            codepushPromote
+            ;;
+    esac
+}
+
+codepush() {
+    echo
+    read -p "${grey}Choose which OS to push:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Promote`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    echo
+    case "$REPLY" in
+        1)
+            codepushRelease
+            ;;
+        2)
+            codepushPromote
+            ;;
+        *)
+            echo "${red}Invalid selection${normal}"
+            codepush
+            ;;
+    esac
+}
+
 main() {
     echo
-    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n '`[4]: Code Push`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
     echo
     case "$REPLY" in
         1)
@@ -181,6 +242,9 @@ main() {
             ;;
         3)
             build
+            ;;
+        4)
+            codepush
             ;;
         *)
             echo "${red}Invalid selection${normal}"

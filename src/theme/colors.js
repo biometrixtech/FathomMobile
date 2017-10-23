@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:20:06 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-17 01:39:56
+ */
+
 /**
  * App Theme - Colors
  */
@@ -30,6 +37,7 @@ const brand = {
 const text = {
     textPrimary:      '#222222',
     textSecondary:    '#777777',
+    greyText:         '#8a8a8a',
     headingPrimary:   brand.brand.primary,
     headingSecondary: brand.brand.primary,
 };
