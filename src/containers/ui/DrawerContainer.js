@@ -1,7 +1,15 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:35:43 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2017-10-12 11:35:43 
+ */
+
 /**
  * Whole App Container
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 import SideMenu from 'react-native-side-menu';

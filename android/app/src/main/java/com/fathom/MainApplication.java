@@ -6,7 +6,6 @@ import com.facebook.react.ReactApplication;
 import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
 import com.smixx.fabric.FabricPackage;
 import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
-import com.github.wuxudong.rncharts.MPAndroidChartPackage;
 import com.microsoft.codepush.react.CodePush;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
@@ -15,6 +14,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import it.innove.BleManagerPackage;
+import com.horcrux.svg.SvgPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,16 +37,21 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.asList(
           new MainReactPackage(),
-            new LocationServicesDialogBoxPackage(),
+          new LocationServicesDialogBoxPackage(),
           new FabricPackage(),
           new GoogleAnalyticsBridgePackage(),
-          new MPAndroidChartPackage(),
           new CodePush(BuildConfig.CODEPUSH_KEY, getApplicationContext(), BuildConfig.DEBUG),
           new VectorIconsPackage(),
           new RNDeviceInfo(),
-          new BleManagerPackage()
+          new BleManagerPackage(),
+          new SvgPackage()
       );
     }
+
+    // @Override
+    // protected String getJSMainModuleName() {
+    //   return "index";
+    // }
   };
 
   @Override
