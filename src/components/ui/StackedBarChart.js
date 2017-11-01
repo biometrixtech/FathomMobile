@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-13 15:17:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-23 11:23:32
+ * @Last Modified time: 2017-10-26 15:13:35
  */
 
 /**
@@ -19,6 +19,7 @@ import Svg, { Rect, G } from 'react-native-svg';
 // Consts and Libs
 import { AppColors, AppStyles, AppSizes } from '@theme/';
 import { AppUtil } from '@lib/';
+import { Roles } from '@constants/';
 
 // Components
 import { Axis, Spacer, Text } from '@ui/';
@@ -41,6 +42,7 @@ class StackedBarChart extends Component {
         height:    PropTypes.number,
         tabOffset: PropTypes.number,
         max:       PropTypes.number,
+        graphNum:  PropTypes.number,
         margin:    PropTypes.shape({
             horizontal: PropTypes.number,
             vertical:   PropTypes.number
@@ -175,43 +177,111 @@ class StackedBarChart extends Component {
                                 </View>
                                 <View style={{ flex: 1 }}/>
                             </View>
-                            <ScrollView style={{ backgroundColor: AppColors.brand.light, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10) }} scrollEnabled={true} contentContainerStyle={{ height: (user.teams[user.teamIndex].stats && user.teams[user.teamIndex].stats.AthleteMovementQualityData ? user.teams[user.teamIndex].stats.AthleteMovementQualityData.length + 1 : 0) * 55 }}>
-                                <TouchableHighlight key={-1} onPress={() => this.props.setStatsCategory(false, null)}>
-                                    <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete ? 'white' : AppColors.lightGrey }}>
-                                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
-                                            <Text style={[AppStyles.subtext, { color: this.getColor(user.teams[user.teamIndex].stats && user.teams[user.teamIndex].stats.acwrGRF7) }]}>{user.teams[user.teamIndex].stats ? user.teams[user.teamIndex].stats.acwrGRF7 : ''}</Text>
-                                            <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{user.teams[user.teamIndex].stats ? user.teams[user.teamIndex].stats.chronicGRF : ''}</Text>
-                                        </View>
-                                        <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                                            <Text style={{ color: this.getColor(user.teams[user.teamIndex].stats && user.teams[user.teamIndex].stats.acwrGRF7) }}>Team Avg</Text>
-                                        </View>
-                                    </View>
-                                </TouchableHighlight>
-                                {
-                                    user.teams[user.teamIndex].stats && user.teams[user.teamIndex].stats.AthleteMovementQualityData && user.teams[user.teamIndex].stats.AthleteMovementQualityData.length
-                                        ? user.teams[user.teamIndex].stats.AthleteMovementQualityData.map((athleteMovementQualityData, index) => {
-                                            let athlete = user.teams[user.teamIndex].users_with_training_groups.find(userInGroup => userInGroup.id === athleteMovementQualityData.userId);
-                                            return athlete
-                                                ? <TouchableHighlight key={index} onPress={() => this.props.setStatsCategory(true, athlete.id)}>
-                                                    <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete && user.selectedStats.athleteId === athlete.id ? AppColors.lightGrey : 'white' }}>
-                                                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
-                                                            <Text style={[AppStyles.subtext, { color: this.getColor(athleteMovementQualityData.acwrGRF7) }]}>{athleteMovementQualityData.acwrGRF7}</Text>
-                                                            <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{athleteMovementQualityData.chronicGRF}</Text>
-                                                        </View>
-                                                        <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                                                            <Text style={{ color: this.getColor(athleteMovementQualityData.acwrGRF7) }}>{athlete.first_name} {athlete.last_name}</Text>
-                                                        </View>
-                                                    </View>
-                                                </TouchableHighlight>
-                                                : null;
-                                        })
-                                        : null
-                                }
-                            </ScrollView>
+                            { this.chartList() }
                         </View>
                 }
             </View>
         );
+    };
+
+    compareChronicDailyAverage = (a, b) => {
+        return this.props.graphNum === 1 ? b.chronicGRF - a.chronicGRF : b.chronicTotalAccel - a.chronicTotalAccel;
+    }
+
+    chartList = () => {
+        let { user, graphNum } = this.props;
+
+        let team = user.teams[user.teamIndex];
+        let stats = team.stats;
+        let athleteData = stats.AthleteMovementQualityData;
+
+        if (!athleteData || !athleteData.length) {
+            return null;
+        }
+
+        if (user.role === Roles.athlete) {
+            athleteData = athleteData.sort(this.compareChronicDailyAverage);
+            let athleteStatsIndex = athleteData.findIndex(athlete => athlete.userId === user.id);
+            let athleteStats = athleteStatsIndex > -1 ? athleteData[athleteStatsIndex] : null;
+            let trainingGroups = team.training_groups.filter(teamTrainingGroup => teamTrainingGroup.active && teamTrainingGroup.id !== 1 && teamTrainingGroup.users.some(teamTrainingGroupUser => teamTrainingGroupUser.id === user.id));
+            trainingGroups = trainingGroups.map(trainingGroup => {
+                let trainingGroupUsers = trainingGroup.users.map(trainingGroupUser => {
+                    let trainingGroupAthleteStats = athleteData.find(athlete => athlete.userId === trainingGroupUser.id);
+                    trainingGroupUser = Object.assign({}, trainingGroupUser, {
+                        ...trainingGroupAthleteStats
+                    });
+                    return trainingGroupUser;
+                });
+                trainingGroupUsers = trainingGroupUsers.sort(this.compareChronicDailyAverage);
+                trainingGroup.users = trainingGroupUsers;
+                return trainingGroup;
+            });
+            return athleteStats ? <ScrollView style={{ backgroundColor: AppColors.brand.light, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10) }} scrollEnabled={true} contentContainerStyle={{ height: 220 }}>
+                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: AppColors.lightGrey }}>
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
+                        <Text style={[AppStyles.subtext, { color: this.getColor(graphNum === 1 ? athleteStats.acwrGRF7 : athleteStats.acwrTotalAccel7) }]}>{graphNum === 1 ? athleteStats.acwrGRF7 || '-' : athleteStats.acwrTotalAccel7 || '-'}</Text>
+                        <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{graphNum === 1 ? athleteStats.chronicGRF : athleteStats.chronicTotalAccel}</Text>
+                    </View>
+                    <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                        <Text style={{ color: this.getColor(athleteStats.acwrGRF7) }}>{user.first_name} {user.last_name}</Text>
+                    </View>
+                </View>
+                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: 'white' }}>
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
+                        <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{`${athleteStatsIndex + 1} of ${athleteData.length}`}</Text>
+                    </View>
+                    <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                        <Text style={{ color: AppColors.greyText }}>Team Avg</Text>
+                    </View>
+                </View>
+                {
+                    trainingGroups ? trainingGroups.map((trainingGroup, index) => <View key={index} style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: 'white' }}>
+                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
+                            <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{`${trainingGroup.users.findIndex(trainingGroupUser => trainingGroupUser.id === user.id) + 1} of ${trainingGroup.users.length}`}</Text>
+                        </View>
+                        <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                            <Text style={{ color: AppColors.greyText }}>{trainingGroup.name}</Text>
+                        </View>
+                    </View>
+                    ) : null
+                }
+            </ScrollView>
+                : null;
+        }
+
+        return <ScrollView style={{ backgroundColor: AppColors.brand.light, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10) }} scrollEnabled={true} contentContainerStyle={{ height: (stats.AthleteMovementQualityData ? stats.AthleteMovementQualityData.length + 1 : 0) * 55 }}>
+            <TouchableHighlight key={-1} onPress={() => this.props.setStatsCategory(false, null)}>
+                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete ? 'white' : AppColors.lightGrey }}>
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
+                        <Text style={[AppStyles.subtext, { color: this.getColor(graphNum === 1 ? stats.acwrGRF7 : stats.acwrTotalAccel7) }]}>{graphNum === 1 ? stats.acwrGRF7 || '-' : stats.acwrTotalAccel7 || '-'}</Text>
+                        <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{graphNum === 1 ? stats.chronicGRF : stats.chronicTotalAccel}</Text>
+                    </View>
+                    <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                        <Text style={{ color: this.getColor(graphNum === 1 ? stats.acwrGRF7 : stats.acwrTotalAccel7) }}>Team Avg</Text>
+                    </View>
+                </View>
+            </TouchableHighlight>
+            {
+                stats.AthleteMovementQualityData && stats.AthleteMovementQualityData.length
+                    ? stats.AthleteMovementQualityData.map((athleteMovementQualityData, index) => {
+                        let athlete = team.users_with_training_groups.find(userInGroup => userInGroup.id === athleteMovementQualityData.userId);
+                        return athlete
+                            ? <TouchableHighlight key={index} onPress={() => this.props.setStatsCategory(true, athlete.id)}>
+                                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete && user.selectedStats.athleteId === athlete.id ? AppColors.lightGrey : 'white' }}>
+                                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
+                                        <Text style={[AppStyles.subtext, { color: this.getColor(graphNum === 1 ? athleteMovementQualityData.acwrGRF7 : athleteMovementQualityData.acwrTotalAccel7) }]}>{graphNum === 1 ? athleteMovementQualityData.acwrGRF7 || '-' : athleteMovementQualityData.acwrTotalAccel7 || '-'}</Text>
+                                        <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{graphNum === 1 ? athleteMovementQualityData.chronicGRF : athleteMovementQualityData.chronicTotalAccel}</Text>
+                                    </View>
+                                    <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                                        <Text style={{ color: this.getColor(graphNum === 1 ? athleteMovementQualityData.acwrGRF7 : athleteMovementQualityData.acwrTotalAccel7) }}>{athlete.first_name} {athlete.last_name}</Text>
+                                    </View>
+                                </View>
+                            </TouchableHighlight>
+                            : null;
+                    })
+                    : null
+            }
+        </ScrollView>
     };
 }
 

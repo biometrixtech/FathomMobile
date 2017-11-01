@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:24:01 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:24:01 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-25 15:55:06
  */
 
 /**
@@ -73,7 +73,7 @@ const scenes = (
                 {...navbarPropsTabs}
                 key={'bluetoothConnect'}
                 clone
-                type={ActionConst.PUSH}
+                type={ActionConst.PUSH_OR_POP}
                 component={BluetoothConnectView}
                 analyticsDesc={'BluetoothConnectView: Kit Management Bluetooth Connect'}
             />
@@ -81,7 +81,7 @@ const scenes = (
                 {...navbarPropsTabs}
                 key={'kitOwner'}
                 clone
-                type={ActionConst.PUSH}
+                type={ActionConst.PUSH_OR_POP}
                 component={KitOwnerView}
                 analyticsDesc={'OwnerView: Kit Owner View'}
             />
@@ -89,7 +89,7 @@ const scenes = (
                 {...navbarPropsTabs}
                 key={'kitAssign'}
                 clone
-                type={ActionConst.PUSH}
+                type={ActionConst.PUSH_OR_POP}
                 component={KitAssignView}
                 analyticsDesc={'KitAssignView: Kit Assign View'}
             />
