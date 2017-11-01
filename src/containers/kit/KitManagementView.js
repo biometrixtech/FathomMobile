@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:00 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-17 03:34:38
+ * @Last Modified time: 2017-10-25 18:38:18
  */
 
 /**
@@ -161,9 +161,7 @@ class KitManagementView extends Component {
                     if (this.props.bluetooth.accessoryData.id) {
                         return this.props.startConnect()
                             .then(() => this.props.disconnect(this.props.bluetooth.accessoryData.id))
-                            .catch(err => this.props.disconnect(this.props.bluetooth.accessoryData.id)
-                                .then(() => this.props.stopConnect())
-                            )
+                            .catch(err => this.props.disconnect(this.props.bluetooth.accessoryData.id))
                             .then(() => this.props.stopConnect());
                     }
                     return Actions.bluetoothConnect();
