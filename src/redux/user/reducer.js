@@ -2,13 +2,14 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:51 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-23 11:15:54
+ * @Last Modified time: 2017-10-23 16:23:38
  */
 
 /**
  * User Reducer
  */
 
+import { Roles } from '@constants/';
 const Actions = require('../actionTypes');
 
 let date = (new Date()).toLocaleDateString().split('/');
@@ -111,8 +112,8 @@ export default function userReducer(state = initialState, action) {
         return Object.assign({}, state, {
             teamIndex:     parseInt(action.data, 10),
             selectedStats: {
-                athlete:   false,
-                athleteId: null,
+                athlete:   state.role === Roles.athlete ? true : false,
+                athleteId: state.role === Roles.athlete ? state.id : null,
             }
         });
     case Actions.TRAINING_GROUP_SELECT:

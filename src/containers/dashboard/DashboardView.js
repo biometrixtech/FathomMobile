@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:20 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-23 11:08:54
+ * @Last Modified time: 2017-10-23 21:32:43
  */
 
 import React, { Component } from 'react';
@@ -32,7 +32,6 @@ class Dashboard extends Component {
     
     static propTypes = {
         user:             PropTypes.object,
-        teamSelect:       PropTypes.func.isRequired,
         getTeams:         PropTypes.func.isRequired,
         setStatsCategory: PropTypes.func.isRequired,
         getTeamStats:     PropTypes.func.isRequired,
@@ -237,6 +236,7 @@ class Dashboard extends Component {
                         data={grfData}
                         tabOffset={-8}
                         max={grfMax}
+                        graphNum={1}
                         user={this.props.user}
                         setStatsCategory={this.props.setStatsCategory}
                         getTeamStats={this.props.getTeamStats}
@@ -251,6 +251,7 @@ class Dashboard extends Component {
                         data={accelData}
                         tabOffset={-6.5}
                         max={accelMax}
+                        graphNum={2}
                         user={this.props.user}
                         setStatsCategory={this.props.setStatsCategory}
                         getTeamStats={this.props.getTeamStats}
