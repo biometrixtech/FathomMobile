@@ -4648,10 +4648,6 @@ react-native-google-analytics-bridge@^5.3.3:
   version "5.3.3"
   resolved "https://registry.yarnpkg.com/react-native-google-analytics-bridge/-/react-native-google-analytics-bridge-5.3.3.tgz#4a91e1fca5cf5d87b3211a301f851cfbadb16785"
 
-react-native-looped-carousel@^0.1.7:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/react-native-looped-carousel/-/react-native-looped-carousel-0.1.7.tgz#9e81aec732039250568e367383d0bd70ba4173e9"
-
 react-native-modal-dropdown@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/react-native-modal-dropdown/-/react-native-modal-dropdown-0.5.0.tgz#f6c4cd4d077792e56902b43b14d83959f5f40f46"
