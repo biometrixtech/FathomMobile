@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:33 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:21:33 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-25 18:26:43
  */
 
 /**
@@ -215,8 +215,21 @@ const stopConnect = () => {
 };
 
 const connectToAccessory = (data) => {
-    return dispatch => BleManager.connect(data.id)
+    return dispatch => BleManager.disconnect(data.id)
+        .catch(err => {
+            console.log(err);
+            return BleManager.disconnect(data.id);
+        })
+        .then(() => BleManager.connect(data.id))
+        .catch(err => {
+            console.log(err);
+            return BleManager.connect(data.id);
+        })
         .then(() => BleManager.retrieveServices(data.id))
+        .catch(err => {
+            console.log(err);
+            return BleManager.retrieveServices(data.id);
+        })
         .then(services => {
             return dispatch({
                 type: Actions.CONNECT_TO_ACCESSORY,
@@ -522,10 +535,8 @@ const disconnect = (id) => {
     console.log(dataArray);
     return dispatch => write(id, dataArray)
         .catch(err => console.log(err))
-        .then(result => {
-            console.log(result);
-            return BleManager.disconnect(id);
-        })
+        .then(() => BleManager.disconnect(id))
+        .catch(err => console.log(err))
         .then(() => dispatch({
             type: Actions.BLUETOOTH_DISCONNECT
         }))
