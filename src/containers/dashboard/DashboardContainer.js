@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-16 22:11:42
+ * @Last Modified time: 2017-10-23 16:25:15
  */
 
 /**
@@ -25,7 +25,6 @@ const mapStateToProps = state => {
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-    teamSelect:          UserActions.teamSelect,
     selectTrainingGroup: UserActions.selectTrainingGroup,
     getTeams:            UserActions.getTeams,
     setStatsCategory:    UserActions.setStatsCategory,

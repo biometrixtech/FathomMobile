@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:33 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:34:33 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2017-10-25 22:49:28
  */
 
 /**
@@ -21,8 +21,7 @@ import {
     StyleSheet,
     ActivityIndicator
 } from 'react-native';
-import { Icon } from 'react-native-elements'
-import Carousel from 'react-native-looped-carousel';
+import { Icon } from 'react-native-elements';
 import Collapsible from 'react-native-collapsible';
 import { Actions } from 'react-native-router-flux';
 import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
@@ -32,7 +31,7 @@ import { AppStyles, AppSizes, AppColors } from '@theme/';
 import { Roles, BLEConfig } from '@constants/';
 
 // Components
-import { Spacer, Button, FormLabel, Text, ListItem } from '@ui/';
+import { Spacer, Button, FormLabel, Text, ListItem, Pages } from '@ui/';
 import { Placeholder } from '@general/';
 
 const BleManagerModule = NativeModules.BleManager;
@@ -89,8 +88,7 @@ class BluetoothConnectView extends Component {
             index:       0,
             isCollapsed: true,
             size:        {},
-            data:        null,
-            carousel:    null
+            data:        null
         };
 
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
@@ -110,6 +108,7 @@ class BluetoothConnectView extends Component {
         this.handlerDiscover.remove();
         this.handlerStop.remove();
         this.handlerState.remove();
+        this.pages = null;
     }
 
     startBluetooth = () => {
@@ -149,7 +148,8 @@ class BluetoothConnectView extends Component {
             })
             .catch(error => {
                 this.setState({ index: 1 });
-                this.state.carousel.animateToPage(1);
+                // this.pages.scrollToPage(1);
+                this.pages.progress = 1;
             });
     }
 
@@ -170,17 +170,19 @@ class BluetoothConnectView extends Component {
 
     handleBleStateChange = (data) => {
         if (data.state === 'off') {
-            if (this.state.carousel && this.state.carousel.getCurrentPage() > 1) {
+            if (this.pages && this.pages.progress > 1) {
                 this.setState({ index: 1 });
-                this.state.carousel.animateToPage(1);
-            } else if (!this.state.carousel) {
+                // this.pages.scrollToPage(1);
+                this.pages.progress = 1;
+            } else if (!this.pages) {
                 return Promise.resolve(this.props.changeState(data.state))
                     .then(() => Actions.kitManagement());
             }
-        } else if (data.state === 'on' && this.state.carousel && this.state.carousel.getCurrentPage() === 1) {
+        } else if (data.state === 'on' && this.pages && this.pages.progress === 1) {
             this.startBluetooth();
             this.setState({ index: 2 });
-            this.state.carousel.animateToPage(2);
+            // this.pages.scrollToPage(2);
+            this.pages.progress = 2;
         }
         return this.props.changeState(data.state);
     }
@@ -188,17 +190,47 @@ class BluetoothConnectView extends Component {
     connect = (data) => {
         return this.props.stopScan()
             .then(() => this.props.connectToAccessory(data))
+            .catch((err) => {
+                console.log(err);
+                return this.props.connectToAccessory(data);
+            })
             .catch((err) => this.props.stopConnect())
             .then(() => this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user))
+            .catch((err) => {
+                console.log(err);
+                return this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user);
+            })
             .catch((err) => this.props.stopConnect())
             .then(() => this.props.setKitTime(this.props.bluetooth.accessoryData.id))
+            .catch((err) => {
+                console.log(err);
+                return this.props.setKitTime(this.props.bluetooth.accessoryData.id);
+            })
             .then(() => this.props.setAccessoryLoginEmail(this.props.bluetooth.accessoryData.id, this.props.user.email))
+            .catch((err) => {
+                console.log(err);
+                return this.props.setAccessoryLoginEmail(this.props.bluetooth.accessoryData.id, this.props.user.email);
+            })
             .then(() => this.props.setAccessoryLoginPassword(this.props.bluetooth.accessoryData.id, this.props.user.password))
+            .catch((err) => {
+                console.log(err);
+                return this.props.setAccessoryLoginPassword(this.props.bluetooth.accessoryData.id, this.props.user.password);
+            })
             .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
+            .catch((err) => {
+                console.log(err);
+                return this.props.storeParams(this.props.bluetooth.accessoryData);
+            })
             .then(() => this.props.getConfiguration(this.props.bluetooth.accessoryData.id))
+            .catch((err) => {
+                console.log(err);
+                return this.props.getConfiguration(this.props.bluetooth.accessoryData.id);
+            })
             .then(() => {
+                console.log('success');
+                // this.pages.scrollToPage(3);
                 this.setState({ index: 3 });
-                this.state.carousel.animateToPage(3);
+                this.pages.progress = 3;
                 return this.props.stopConnect();
             })
             .catch((err) => {
@@ -232,12 +264,10 @@ class BluetoothConnectView extends Component {
                 </Text>
                 <Spacer size={50}/>
             </View>
-            <Carousel
-                ref={(carousel) => { this.state.carousel = carousel; }}
-                autoplay={false}
-                currentPage={this.state.index}
-                swipe={false}
-                style={{
+            <Pages
+                ref={(pages) => { this.pages = pages; }}
+                startPlay={this.state.index}
+                containerStyle={{
                     position:        'absolute',
                     elevation:       10,
                     bottom:          15,
@@ -249,9 +279,7 @@ class BluetoothConnectView extends Component {
                     width:           AppSizes.screen.widthFourFifths,
                     height:          AppSizes.screen.heightThreeQuarters
                 }}
-                bullets
-                bulletStyle={{ borderColor: AppColors.brand.blue }}
-                chosenBulletStyle={{ backgroundColor: AppColors.brand.blue }}
+                indicatorColor={AppColors.brand.blue}
             >
                 <View style={[AppStyles.containerCentered, { flex: 1 }]}>
                     <View style={{ flex: 1 }} />
@@ -267,7 +295,8 @@ class BluetoothConnectView extends Component {
                             title={'Next'}
                             onPress={() => {
                                 this.setState({ index: 1 });
-                                this.state.carousel.animateToPage(1);
+                                // this.pages.scrollToPage(1);
+                                this.pages.progress = 1;
                                 return this.props.checkState();
                             }}
                             raised
@@ -344,7 +373,7 @@ class BluetoothConnectView extends Component {
                     </View>
                     <View style={{ flex: 1 }}/>
                 </View>
-            </Carousel>
+            </Pages>
         </View>
     );
 
