@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:22 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-19 01:06:34
+ * @Last Modified time: 2017-10-23 16:30:10
  */
 
 /**
@@ -118,25 +118,27 @@ class Menu extends Component {
 
         // let action;
 
-        // switch (this.props.user.role) {
-        // case Roles.admin:
-        //     action = Actions.adminTeamManagement;
-        //     break;
-        // case Roles.athlete:
-        //     action = Actions.athleteAthleteManagement;
-        //     break;
-        // case Roles.biometrixAdmin:
-        //     action = Actions.biometrixAdminTeamCaptureSession;
-        //     break;
-        // case Roles.manager:
-        //     action = Actions.managerTeamManagement;
-        //     break;
-        // case Roles.researcher:
-        //     action = Actions.researcherSubjectManagement;
-        //     break;
-        // default:
-        //     break;
-        // }
+        switch (this.props.user.role) {
+        case Roles.athlete:
+            // action = Actions.athleteAthleteManagement;
+            this.props.teamSelect(0);
+            break;
+        case Roles.admin:
+            // action = Actions.adminTeamManagement;
+            break;
+        case Roles.biometrixAdmin:
+            // action = Actions.biometrixAdminTeamCaptureSession;
+            break;
+        case Roles.manager:
+            // action = Actions.managerTeamManagement;
+            break;
+        case Roles.researcher:
+            // action = Actions.researcherSubjectManagement;
+            break;
+        default:
+            break;
+        }
+        
 
         this.state = {
             active:      0,
@@ -187,23 +189,6 @@ class Menu extends Component {
         }
         return null;
     }
-
-    // modalDropdown = () => {
-    //     return <View style={{ flex: 1, alignSelf: 'center' }} >
-    //         <View style={{ justifyContent: 'center', flexDirection: 'row' }}>
-    //             <ModalDropdown
-    //                 options={this.props.user.teams.map(team => team.name)}
-    //                 defaultIndex={this.props.user.teamIndex}
-    //                 style={{ backgroundColor: AppColors.brand.primary }}
-    //                 defaultValue={this.props.user.teams[this.props.user.teamIndex].name}
-    //                 textStyle={[AppStyles.h3, { color: 'white' }]}
-    //                 dropdownTextStyle={[AppStyles.h3, { borderWidth: 1, borderColor: 'white' }]}
-    //                 onSelect={index =>  Promise.resolve(this.props.teamSelect(index))}
-    //             />
-    //             <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }} color={'white'}/>
-    //         </View>
-    //     </View>
-    // }
 
     render = () => {
         const { menu } = this.state;
