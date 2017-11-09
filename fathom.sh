@@ -71,10 +71,10 @@ initialize() {
         lsof -P | grep ':8081' | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
         rm -rf yarn.lock node_modules
         yarn
-        sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
-        sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-code-push/android/app/build.gradle
-        sed -i '' 's/23.0.1/25.0.0/' ./node_modules/react-native-fabric/android/build.gradle
-        sed -i '' 's/24.0.2/25.0.0/' ./node_modules/react-native-ble-manager/android/build.gradle
+        sed -i '' 's/23.0.1/26.0.2/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
+        sed -i '' 's/23.0.1/26.0.2/' ./node_modules/react-native-code-push/android/app/build.gradle
+        sed -i '' 's/23.0.1/26.0.2/' ./node_modules/react-native-fabric/android/build.gradle
+        sed -i '' 's/24.0.2/26.0.2/' ./node_modules/react-native-ble-manager/android/build.gradle
         sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
         sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
         # [ -d "./node_modules/react-native/third-party" ] && {
@@ -213,7 +213,7 @@ codepushPromote() {
 
 codepush() {
     echo
-    read -p "${grey}Choose which OS to push:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Promote`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose a codepush option:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Promote`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
     echo
     case "$REPLY" in
         1)
