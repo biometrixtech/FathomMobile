@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:30:58 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-13 01:18:11
+ * @Last Modified time: 2017-11-03 17:13:28
  */
 
 /**
@@ -12,6 +12,7 @@
 export default {
     APIs: {
         DEV:  'https://rails-api-v2.biometrixtech.com',
+        QA:   'http://api.qa.fathomai.com',
         PROD: 'https://rails-api.fathomai.com'
     },
     // The URL we're connecting to
@@ -44,6 +45,7 @@ export default {
 
     STATS_APIs: {
         DEV:  'http://biometrixstatsapi-dev.us-west-2.elasticbeanstalk.com/MQ',
+        QA:   'http://biometrixstatsapi-test.us-west-2.elasticbeanstalk.com/MQ',
         PROD: 'http://biometrixstatsapi-dev.us-west-2.elasticbeanstalk.com/MQ'
     },
 
