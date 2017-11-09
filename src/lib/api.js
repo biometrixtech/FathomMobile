@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:16:44 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-17 03:16:11
+ * @Last Modified time: 2017-11-07 11:31:04
  */
 
 /**
@@ -51,7 +51,7 @@ function debug(str, title) {
             console.log(`=== DEBUG: ${title} ===========================`);
         }
         if (str) {
-            console.log(str);
+            console.log(Object.assign({}, str));
             console.log('%c ...', 'color: #CCC');
         }
     }
