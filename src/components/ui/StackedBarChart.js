@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-13 15:17:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-26 15:13:35
+ * @Last Modified time: 2017-12-05 16:36:23
  */
 
 /**
@@ -27,7 +27,7 @@ import { Placeholder } from '@general/';
 
 const threshold = [
     { max: Number.POSITIVE_INFINITY, min: 1.5, color: AppColors.brand.red },
-    { max: 1.2, min: 1.49, color: AppColors.brand.yellow },
+    { max: 1.49, min: 1.2, color: AppColors.brand.yellow },
     { max: 0.79, min: Number.NEGATIVE_INFINITY, color: AppColors.brand.yellow },
     { max: 1.19, min: 0.8, color: AppColors.greyText },
 ]
@@ -76,16 +76,13 @@ class StackedBarChart extends Component {
         };
     }
 
-    getColor = (value1, value2) => {
-        if (!value1 && typeof value1 !== 'number') {
-            return AppColors.greyText;
+    getColor = (value) => {
+        let color = AppColors.greyText;
+        let colorIndex = typeof value === 'number' ? threshold.findIndex(colorThreshold => colorThreshold.max >= value && colorThreshold.min <= value) : -1;
+        if (colorIndex !== -1) {
+            color = threshold[colorIndex].color;
         }
-        let colorIndex = threshold.findIndex(colorThreshold => colorThreshold.max >= value1 && colorThreshold.min <= value1);
-        if (typeof value2 === 'number') {
-            let colorIndex2 = threshold.findIndex(colorThreshold => colorThreshold.max >= value2 && colorThreshold.min <= value2);
-            colorIndex = colorIndex > colorIndex2 ? colorIndex2 : colorIndex;
-        }
-        return threshold[colorIndex].color;
+        return color;
     } 
 
     getTickPoints (start, end, numTicks, length) {

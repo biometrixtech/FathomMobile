@@ -63,7 +63,7 @@ initialize() {
         echo "🚀\t${green}✔︎${normal} ${blue}yarn installed${normal}\t🚀"
         echo "🚀\t${green}✔︎${normal} ${magenta}Homebrew installed${normal}\t🚀"
         echo "🚀\t${green}✔︎${normal} ${cyan}watchman installed${normal}\t🚀"
-        echo "🚀\t${green}✔︎${normal} ${white}nvm installed${normal}\t\t🚀"
+        # echo "🚀\t${green}✔︎${normal} ${white}nvm installed${normal}\t\t🚀"
         # echo "🚀\t${green}✔︎${normal} ${grey}cocoapods installed${normal}\t🚀"
         echo "🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊"
 
@@ -75,6 +75,10 @@ initialize() {
         sed -i '' 's/23.0.1/26.0.2/' ./node_modules/react-native-code-push/android/app/build.gradle
         sed -i '' 's/23.0.1/26.0.2/' ./node_modules/react-native-fabric/android/build.gradle
         sed -i '' 's/24.0.2/26.0.2/' ./node_modules/react-native-ble-manager/android/build.gradle
+        sed -i '' 's/25.0.2/26.0.2/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+        sed -i '' 's/25.0.2/26.0.2/' ./node_modules/react-native-device-info/android/build.gradle
+        sed -i '' 's/25.0.3/26.0.2/' ./node_modules/react-native-svg/android/build.gradle
+        sed -i '' 's/26.0.1/26.0.2/' ./node_modules/react-native-vector-icons/android/build.gradle
         sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
         sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
         # [ -d "./node_modules/react-native/third-party" ] && {
