@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:27:49 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-17 00:06:02
+ * @Last Modified time: 2017-11-09 14:26:42
  */
 
 /**
@@ -16,14 +16,14 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 // Consts and Libs
-import { AppStyles } from '@theme/';
+import { AppStyles, AppSizes } from '@theme/';
 
 // Components
 import { Text } from '@ui/';
 
 /* Component ==================================================================== */
 const Placeholder = ({ text }) => (
-    <View style={[AppStyles.container, AppStyles.containerCentered, { alignSelf: 'center' }]}>
+    <View style={[AppStyles.container, AppStyles.containerCentered, { alignSelf: 'center', width: AppSizes.screen.width }]}>
         <Text>{text}</Text>
     </View>
 );
