@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:41 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-16 21:56:18
+ * @Last Modified time: 2018-01-24 02:32:19
  */
 
 module.exports = {
@@ -59,4 +59,5 @@ module.exports = {
     GET_WIFI_MAC_ADDRESS:     'GET_WIFI_MAC_ADDRESS',
     GET_TEAM_STATS:           'GET_TEAM_STATS',
     SELECT_STATS_CATEGORY:    'SELECT_STATS_CATEGORY',
+    SET_GYRO_CALIBRATION:     'SET_GYRO_CALIBRATION',
 };

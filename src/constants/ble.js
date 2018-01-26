@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:31:04 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:31:04 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-01-24 02:27:52
  */
 
 /**
@@ -129,7 +129,8 @@ export default {
         SET_IDENTITY_CONT:           parseInt('0x5B', 16),
         SET_ANONYMOUS_IDENTITY_HEAD: parseInt('0x5C', 16),
         SET_ANONYMOUS_IDENTITY_CONT: parseInt('0x5D', 16),
-        SET_EAP_TYPE:                parseInt('0x5E', 16)
+        SET_EAP_TYPE:                parseInt('0x5E', 16),
+        SET_GYRO_CALIBRATION:        parseInt('0x60', 16),
     },
 
     roles: {
@@ -177,6 +178,11 @@ export default {
     eapTypes: {
         EAP_TLS:        parseInt('0x00', 16),
         PEAP_MSCHAP_V2: parseInt('0x04', 16)
+    },
+
+    gyroCalibrationOffsets: {
+        SOFT: parseInt('0x01', 16),
+        HARD: parseInt('0x02', 16),
     },
 
     parse,

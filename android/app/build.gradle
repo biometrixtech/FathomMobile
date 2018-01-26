@@ -66,9 +66,11 @@ import com.android.build.OutputFile
  * ]
  */
 
-//  project.ext.react = [
-//     entryFile: "index.js"
-// ]
+// CHANGE THIS TO YOUR OWN DIRECTORY FOR NODE WHEN YOU DEVELOP/TRY TO BUILD FROM ANDROID STUDIO
+ project.ext.react = [
+    nodeExecutableAndArgs: ["/Users/virdesai/.nvm/versions/node/v9.2.0/bin/node"],
+    // entryFile: "index.js"
+]
 
 apply from: "../../node_modules/react-native/react.gradle"
 apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
@@ -129,9 +131,10 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             buildConfigField "String", "CODEPUSH_KEY", '"yUip94F_KaezxSrrlFCDJDrnIRkHNy8a-_BnM"'
             signingConfig signingConfigs.release
+            matchingFallbacks = ['release', 'debug']
             applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    output.outputFile = new File(output.outputFile.parent, output.outputFile.name.replace(".apk", "_" + defaultConfig.versionName + ".apk"))
+                variant.outputs.all { output ->
+                    outputFileName = new File(output.outputFile.parent, outputFileName.replace(".apk", "_" + defaultConfig.versionCode + ".apk"))
                 }
             }
         }
@@ -141,8 +144,8 @@ android {
             buildConfigField "String", "CODEPUSH_KEY", '"7LJiescWwsZkIPqAU3IRpm0l_5pVNy8a-_BnM"'
             signingConfig signingConfigs.release
             applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    output.outputFile = new File(output.outputFile.parent, output.outputFile.name.replace(".apk", "_" + defaultConfig.versionCode + ".apk"))
+                variant.outputs.all { output ->
+                    outputFileName = new File(output.outputFile.parent, outputFileName.replace(".apk", "_" + defaultConfig.versionCode + ".apk"))
                 }
             }
         }
@@ -179,7 +182,7 @@ dependencies {
     compile project(':react-native-ble-manager')
     compile project(':react-native-android-location-services-dialog-box')
     compile project(':react-native-svg')
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: "libs", include: ["*.jar"])
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.facebook.react:react-native:+'
     // From node_modules
