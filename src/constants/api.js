@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:30:58 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-11-03 17:13:28
+ * @Last Modified time: 2017-12-05 15:01:39
  */
 
 /**
@@ -44,12 +44,12 @@ export default {
     tokenKey: 'login',
 
     STATS_APIs: {
-        DEV:  'http://biometrixstatsapi-dev.us-west-2.elasticbeanstalk.com/MQ',
-        QA:   'http://biometrixstatsapi-test.us-west-2.elasticbeanstalk.com/MQ',
-        PROD: 'http://biometrixstatsapi-dev.us-west-2.elasticbeanstalk.com/MQ'
+        DEV:  'https://statsapi.dev.fathomai.com/v1/MQ',
+        QA:   'https://statsapi.dev.fathomai.com/v1/MQ',
+        PROD: 'https://statsapi.dev.fathomai.com/v1/MQ'
     },
 
-    statsHostname: 'http://biometrixstatsapi-dev.us-west-2.elasticbeanstalk.com/MQ',
+    statsHostname: 'https://statsapi.dev.fathomai.com/v1/MQ',
 
     statsEndpoints: new Map([
         ['team_movement_quality',                   '/Team'],

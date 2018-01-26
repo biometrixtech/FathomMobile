@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:56 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:34:56 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-01-25 10:29:54
  */
 
 /**
@@ -40,7 +40,8 @@ const mapDispatchToProps = {
     disconnect:           BluetoothActions.disconnect,
     setIdentity:          BluetoothActions.setIdentity,
     setAnonymousIdentity: BluetoothActions.setAnonymousIdentity,
-    setEAPType:           BluetoothActions.setEAPType
+    setEAPType:           BluetoothActions.setEAPType,
+    setGyroCalibration:   BluetoothActions.setGyroCalibration,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitManagementRender);
