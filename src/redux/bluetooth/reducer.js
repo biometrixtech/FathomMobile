@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:27 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:21:27 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-01-24 02:32:55
  */
 
 /**
@@ -171,6 +171,7 @@ export default function bluetoothReducer(state = initialState, action) {
                 wifiMacAddress: action.data !== '00:00:00:00:00:00' ? action.data : null
             }
         });
+    case Actions.SET_GYRO_CALIBRATION:
     case Actions.HANDLE_DISCONNECT:
     case Actions.CHECK_STATE:
     case Actions.ENABLE_BLUETOOTH:
