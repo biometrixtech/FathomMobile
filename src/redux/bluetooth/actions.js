@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-25 18:26:43
+ * @Last Modified time: 2018-01-24 02:32:32
  */
 
 /**
@@ -740,6 +740,17 @@ const setEAPType = (id, type) => {
         })
 };
 
+const setGyroCalibration = (id, type) => {
+    let dataArray = [commands.SET_GYRO_CALIBRATION, convertHex('0x01'), type];
+    console.log('Gyro Calibration Offset Data Array: ', dataArray);
+    return dispatch => write(id, dataArray)
+        .then(result => {
+            return dispatch({
+                type: Actions.SET_GYRO_CALIBRATION
+            });
+        });
+}
+
 export {
     assignType,
     checkState,
@@ -779,5 +790,6 @@ export {
     getWifiMacAddress,
     setIdentity,
     setAnonymousIdentity,
-    setEAPType
+    setEAPType,
+    setGyroCalibration,
 };
