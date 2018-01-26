@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:00 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-25 18:38:18
+ * @Last Modified time: 2018-01-24 12:45:19
  */
 
 /**
@@ -25,6 +25,7 @@ import Collapsible from 'react-native-collapsible';
 import ModalDropdown from 'react-native-modal-dropdown';
 import Modal from 'react-native-modalbox';
 import Toast, {DURATION} from 'react-native-easy-toast';
+import Egg from 'react-native-egg';
 
 // Consts and Libs
 import { AppStyles, AppSizes, AppColors, AppFonts } from '@theme/';
@@ -73,6 +74,7 @@ class KitManagementView extends Component {
         setIdentity:          PropTypes.func.isRequired,
         setAnonymousIdentity: PropTypes.func.isRequired,
         setEAPType:           PropTypes.func.isRequired,
+        setGyroCalibration:   PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -207,7 +209,12 @@ class KitManagementView extends Component {
             <Text style={{ paddingLeft: AppSizes.padding, fontSize: !this.props.bluetooth.accessoryData.id ? font14 : font10, fontWeight: !this.props.bluetooth.accessoryData.id ? 'bold' : 'normal' }}>Step 1: Connect to kit</Text>
             <Text style={{ paddingLeft: AppSizes.padding, fontSize: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.configured ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.configured ? 'bold' : 'normal' }}>Step 2: Assign an owner to the kit</Text>
             <Text style={{ paddingLeft: AppSizes.padding, fontSize: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.configured ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.configured ? 'bold' : 'normal' }}>Step 3: Assign a wifi network to the kit</Text>
-            <Text style={{ paddingLeft: AppSizes.padding, fontSize: font10 }}>Step 4: Make sure WiFi light is solid green, then disconnect from kit</Text>
+            <Egg
+                setps={'TTT'}
+                onCatch={() => this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.configured ? this.setState({ isModal3Visible: true }) : null }
+            >
+                <Text style={{ paddingLeft: AppSizes.padding, fontSize: font10 }}>Step 4: Make sure WiFi light is solid green, then disconnect from kit</Text>
+            </Egg>
             <Modal
                 position={'center'}
                 style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
@@ -347,6 +354,43 @@ class KitManagementView extends Component {
                                 }}
                             />
                         </View>
+                    </Card>
+                </KeyboardAvoidingView>
+            </Modal>
+            <Modal
+                position={'center'}
+                style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, flex: 1 }]}
+                isOpen={this.state.isModal3Visible}
+                backButtonClose
+                swipeToClose={false}
+                onClosed={() => this.setState({ isModal3Visible: false }) }
+            >
+                <KeyboardAvoidingView behavior={'padding'}>
+                    <Card title={'Gyro Calibration'}>
+                        <ScrollView style={{ height: AppSizes.screen.heightOneThird }}>
+
+                            <Button
+                                containerViewStyle={{ borderWidth: 1, borderColor: AppColors.border, paddingLeft: 15, paddingRight: 15 }}
+                                title={'Hard Calibration Offset'}
+                                onPress={() => this.props.setGyroCalibration(this.props.bluetooth.accessoryData.id, BLEConfig.gyroCalibrationOffsets.HARD)}
+                            />
+                            <Spacer />
+
+                            <Button
+                                containerViewStyle={{ borderWidth: 1, borderColor: AppColors.border, paddingLeft: 15, paddingRight: 15 }}
+                                title={'Soft Calibration Offset'}
+                                onPress={() => this.props.setGyroCalibration(this.props.bluetooth.accessoryData.id, BLEConfig.gyroCalibrationOffsets.SOFT)}
+                            />
+                            <Spacer />
+
+                        </ScrollView>
+
+                        <Button
+                            title={'Cancel'}
+                            containerViewStyle={{ flex: 1 }}
+                            backgroundColor={AppColors.brand.fogGrey}
+                            onPress={() => this.setState({ isModal3Visible: false })}
+                        />
                     </Card>
                 </KeyboardAvoidingView>
             </Modal>
