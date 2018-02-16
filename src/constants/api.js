@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:30:58 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-12-05 15:01:39
+ * @Last Modified time: 2018-02-01 10:27:54
  */
 
 /**
@@ -45,11 +45,11 @@ export default {
 
     STATS_APIs: {
         DEV:  'https://statsapi.dev.fathomai.com/v1/MQ',
-        QA:   'https://statsapi.dev.fathomai.com/v1/MQ',
-        PROD: 'https://statsapi.dev.fathomai.com/v1/MQ'
+        QA:   'https://statsapi.qa.fathomai.com/v1/MQ',
+        PROD: 'https://statsapi.production.fathomai.com/v1/MQ'
     },
 
-    statsHostname: 'https://statsapi.dev.fathomai.com/v1/MQ',
+    statsHostname: 'https://statsapi.production.fathomai.com/v1/MQ',
 
     statsEndpoints: new Map([
         ['team_movement_quality',                   '/Team'],
