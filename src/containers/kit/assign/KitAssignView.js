@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:13 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:34:13 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-01-31 01:28:35
  */
 
 /**
@@ -53,7 +53,8 @@ class KitAssignView extends Component {
         bluetooth:             PropTypes.object,
         assignKitOrganization: PropTypes.func.isRequired,
         assignKitTeam:         PropTypes.func.isRequired,
-        assignKitIndividual:   PropTypes.func.isRequired
+        assignKitIndividual:   PropTypes.func.isRequired,
+        teamSelect:            PropTypes.func.isRequired
     }
 
     static defaultProps = {
@@ -157,12 +158,12 @@ class KitAssignView extends Component {
                                 :
                                 assignType === 'team'
                                     ?
-                                    this.props.user.teams.filter(team => team.name.toUpperCase().indexOf(this.state.searchText.toUpperCase()) > -1).map(team => {
+                                    this.props.user.teams.filter(team => team.name.toUpperCase().indexOf(this.state.searchText.toUpperCase()) > -1).map((team, teamIndex) => {
                                         return <ListItem
                                             key={team.id}
                                             title={team.name}
                                             containerStyle={{ backgroundColor: team.name === name ? AppColors.brand.fogGrey : AppColors.background }}
-                                            onPress={() => this.props.assignKitTeam(accessory, team)}
+                                            onPress={() => this.props.assignKitTeam(accessory, team).then(() => this.props.teamSelect(teamIndex))}
                                             hideChevron
                                         />
                                     })
