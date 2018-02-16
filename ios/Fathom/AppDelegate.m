@@ -29,7 +29,7 @@
 
 #ifdef DEBUG
     // jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.9:8081/index.ios.bundle?platform=ios&dev=true"];
-    jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.7:8081/index.bundle?platform=ios&dev=true"];
+    jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.18:8081/index.bundle?platform=ios&dev=true"];
 #else
     jsCodeLocation = [CodePush bundleURL];
 #endif

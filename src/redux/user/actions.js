@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:59 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-17 03:21:51
+ * @Last Modified time: 2018-02-13 13:06:09
  */
 
 /**
@@ -262,6 +262,8 @@ const stopSession = (accessoryId) => {
         .catch(err => Promise.reject(err));
 };
 
+const formatDate = (date) => `${date < 10 ? '0' : ''}${date}`;
+
 const getTeams = () => {
     let tempTeams = [];
     let todaysDate = new Date();
@@ -270,8 +272,8 @@ const getTeams = () => {
     let endOfWeekOffset = !dayOfWeek ? 0 : 7-dayOfWeek;
     let startDateObject = new Date(todaysDate.getTime() - startOfWeekOffset * DAY_IN_MS);
     let endDateObject = new Date(todaysDate.getTime() + endOfWeekOffset * DAY_IN_MS);
-    let startDate = `${startDateObject.getFullYear()}-${startDateObject.getMonth()+1}-${startDateObject.getDate()}`;
-    let endDate = `${endDateObject.getFullYear()}-${endDateObject.getMonth()+1}-${endDateObject.getDate()}`;
+    let startDate = `${startDateObject.getFullYear()}-${formatDate(startDateObject.getMonth()+1)}-${formatDate(startDateObject.getDate())}`;
+    let endDate = `${endDateObject.getFullYear()}-${formatDate(endDateObject.getMonth()+1)}-${formatDate(endDateObject.getDate())}`;
     return dispatch => AppAPI.teams.get()
         .then(teams => {
             tempTeams = teams.teams.map(team => team.id);
@@ -306,8 +308,6 @@ const setStatsCategory = (athlete, athleteId) => {
         data: { athlete, athleteId }
     });
 };
-
-const formatDate = (date) => `${date < 10 ? '0' : ''}${date}`;
 
 const getTeamStats = (teamId, weekOffset) => {
     let date = new Date();
