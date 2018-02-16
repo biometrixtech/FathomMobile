@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:16:44 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-11-07 11:31:04
+ * @Last Modified time: 2018-02-01 12:14:21
  */
 
 /**
@@ -125,7 +125,11 @@ function fetcher(method, inputEndpoint, inputParams, body, stats) {
         if (Token.getStoredToken && endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
             const apiToken = await Token.getStoredToken();
             if (apiToken) {
-                req.headers.jwt = apiToken;
+                if (stats) {
+                    req.headers.Authorization = apiToken;
+                } else {
+                    req.headers.jwt = apiToken;
+                }
             }
         }
 
