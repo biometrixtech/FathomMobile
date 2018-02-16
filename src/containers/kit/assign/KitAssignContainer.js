@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:23 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:34:23 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-02-01 10:29:54
  */
 
 /**
@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 
 // Actions
 import * as BluetoothActions from '@redux/bluetooth/actions';
+import * as UserActions from '@redux/user/actions';
 
 // The component we're mapping to
 import KitAssignRender from './KitAssignView';
@@ -28,7 +29,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
     assignKitOrganization: BluetoothActions.assignKitOrganization,
     assignKitTeam:         BluetoothActions.assignKitTeam,
-    assignKitIndividual:   BluetoothActions.assignKitIndividual
+    assignKitIndividual:   BluetoothActions.assignKitIndividual,
+    teamSelect:            UserActions.teamSelect
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitAssignRender);

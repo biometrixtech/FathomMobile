@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:20 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-23 21:32:43
+ * @Last Modified time: 2018-02-13 13:15:28
  */
 
 import React, { Component } from 'react';
@@ -96,6 +96,9 @@ class Dashboard extends Component {
         if (!allData) {
             return null;
         }
+        if (allData.TeamMovementQualityData.every(teamMovementQualityData => Object.keys(teamMovementQualityData).every(key => key === 'eventDate'))) {
+            return data;
+        }
         data.x = allData.TeamMovementQualityData.map(teamMovementQualityData => new Date(teamMovementQualityData.eventDate));
         if (this.props.user.selectedStats.athlete) {
             let athleteId = this.props.user.selectedStats.athleteId;
@@ -125,6 +128,9 @@ class Dashboard extends Component {
         let allData = this.props.user.teams[this.props.user.teamIndex] ? this.props.user.teams[this.props.user.teamIndex].stats : null;
         if (!allData) {
             return {};
+        }
+        if (allData.TeamMovementQualityData.every(teamMovementQualityData => Object.keys(teamMovementQualityData).every(key => key === 'eventDate'))) {
+            return ({grfData, grfMax: 0});
         }
         grfData.x = allData.TeamMovementQualityData.map(teamMovementQualityData => new Date(teamMovementQualityData.eventDate));
         let maxDataPerDay = allData.TeamMovementQualityData.map(teamMovementQualityData => {
@@ -166,6 +172,9 @@ class Dashboard extends Component {
         let allData = this.props.user.teams[this.props.user.teamIndex] ? this.props.user.teams[this.props.user.teamIndex].stats : null;
         if (!allData) {
             return {};
+        }
+        if (allData.TeamMovementQualityData.every(teamMovementQualityData => Object.keys(teamMovementQualityData).every(key => key === 'eventDate'))) {
+            return ({accelData, accelMax: 0});
         }
         accelData.x = allData.TeamMovementQualityData.map(teamMovementQualityData => new Date(teamMovementQualityData.eventDate));
         let maxDataPerDay = allData.TeamMovementQualityData.map(teamMovementQualityData => {
