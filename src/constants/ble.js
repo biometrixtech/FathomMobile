@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:31:04 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-01-24 02:27:52
+ * @Last Modified time: 2018-03-08 04:06:38
  */
 
 /**
@@ -116,13 +116,9 @@ export default {
         SET_EMAIL_CONT:              parseInt('0x42', 16),
         SET_USER_PSW_HEAD:           parseInt('0x43', 16),
         SET_USER_PSW_CONT:           parseInt('0x44', 16),
-        SET_OWNER_ORG:               parseInt('0x50', 16),
-        SET_OWNER_TEAM:              parseInt('0x51', 16),
-        SET_OWNER_USER:              parseInt('0x52', 16),
+        SET_OWNER_FLAG:              parseInt('0x50', 16),
         SET_KIT_NAME:                parseInt('0x53', 16),
-        GET_OWNER_ORG:               parseInt('0x54', 16),
-        GET_OWNER_TEAM:              parseInt('0x55', 16),
-        GET_OWNER_USER:              parseInt('0x56', 16),
+        GET_OWNER_FLAG:              parseInt('0x54', 16),
         GET_KIT_NAME:                parseInt('0x57', 16),
         LOGIN:                       parseInt('0x58', 16),
         SET_IDENTITY_HEAD:           parseInt('0x5A', 16),

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:16:44 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-02-01 12:14:21
+ * @Last Modified time: 2018-03-08 11:09:46
  */
 
 /**
@@ -22,10 +22,12 @@ const Token = new JWT();
 
 // Config
 // const HOSTNAME = APIConfig.hostname;
-const ENDPOINTS = APIConfig.endpoints;
-const STATS =     APIConfig.statsEndpoints;
+const ENDPOINTS     = APIConfig.endpoints;
+const STATS         = APIConfig.statsEndpoints;
+const PREPROCESSING = APIConfig.preprocessingEndpoints;
+const HARDWARE      = APIConfig.hardwareEndpoints;
 
-let USER_AGENT, HOSTNAME, STATS_HOSTNAME;
+let USER_AGENT, HOSTNAME, STATS_HOSTNAME, PREPROCESSING_HOSTNAME, HARDWARE_HOSTNAME;
 try {
     // Build user agent string
     USER_AGENT = `${AppConfig.appName} ${DeviceInfo.getVersion()}; ${DeviceInfo.getSystemName()} ` +
@@ -94,9 +96,10 @@ function serialize(obj, prefix) {
 /**
   * Sends requests to the API
   */
-function fetcher(method, inputEndpoint, inputParams, body, stats) {
+function fetcher(method, inputEndpoint, inputParams, body, oldAPI, stats, preprocessing, hardware) {
     let endpoint = inputEndpoint;
     const params = inputParams;
+    let hostname = '';
 
     return new Promise(async (resolve, reject) => {
         requestCounter += 1;
@@ -125,22 +128,36 @@ function fetcher(method, inputEndpoint, inputParams, body, stats) {
         if (Token.getStoredToken && endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
             const apiToken = await Token.getStoredToken();
             if (apiToken) {
-                if (stats) {
-                    req.headers.Authorization = apiToken;
-                } else {
+                if (oldAPI) {
                     req.headers.jwt = apiToken;
+                } else {
+                    req.headers.Authorization = apiToken;
                 }
             }
         }
 
         // Add Host name
         // Don't add on anything but the login endpoint if host name already exists
-        if (!HOSTNAME || endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
-            HOSTNAME = await Token.getAPIHost();
-        }
-
-        if (!STATS_HOSTNAME) {
-            STATS_HOSTNAME = await Token.getStatsHost();
+        if (oldAPI) {
+            if (!HOSTNAME || endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
+                HOSTNAME = await Token.getAPIHost();
+            }
+            hostname = HOSTNAME;
+        } else if (stats) {
+            if (!STATS_HOSTNAME) {
+                STATS_HOSTNAME = await Token.getStatsHost();
+            }
+            hostname = STATS_HOSTNAME;
+        } else if (preprocessing) {
+            if (!PREPROCESSING_HOSTNAME) {
+                PREPROCESSING_HOSTNAME = await Token.getPreprocessingHost();
+            }
+            hostname = PREPROCESSING_HOSTNAME;
+        } else if (hardware) {
+            if (!HARDWARE_HOSTNAME) {
+                HARDWARE_HOSTNAME = await Token.getHardwareHost();
+            }
+            hostname = HARDWARE_HOSTNAME;
         }
 
         // Add Endpoint Params
@@ -173,14 +190,14 @@ function fetcher(method, inputEndpoint, inputParams, body, stats) {
 
             // Something else? Just log an error
             } else {
-                debug('You provided params, but it wasn\'t an object!', (stats ? STATS_HOSTNAME : HOSTNAME) + endpoint + urlParams);
+                debug('You provided params, but it wasn\'t an object!', hostname + endpoint + urlParams);
             }
         }
 
         // Add Body
         if (body) { req.body = JSON.stringify(body); }
 
-        const thisUrl = `${stats ? STATS_HOSTNAME : HOSTNAME}${endpoint}${urlParams}`;
+        const thisUrl = `${hostname}${endpoint}${urlParams}`;
 
         debug('', `API Request #${requestNum} to ${thisUrl}`);
 
@@ -242,31 +259,53 @@ function fetcher(method, inputEndpoint, inputParams, body, stats) {
   */
 const AppAPI = {
     handleError,
-    getToken:     Token.getToken,
-    deleteToken:  Token.deleteToken,
-    storeAPIHost: Token.storeAPIHost,
-    stats:        {}
+    getToken:      Token.getToken,
+    deleteToken:   Token.deleteToken,
+    storeAPIHost:  Token.storeAPIHost,
+    stats:         {},
+    preprocessing: {},
+    hardware:      {},
 };
 
 ENDPOINTS.forEach((endpoint, key) => {
     AppAPI[key] = {
-        get:    (params, payload) => fetcher('GET',    endpoint, params, payload, false),
-        post:   (params, payload) => fetcher('POST',   endpoint, params, payload, false),
-        patch:  (params, payload) => fetcher('PATCH',  endpoint, params, payload, false),
-        put:    (params, payload) => fetcher('PUT',    endpoint, params, payload, false),
-        delete: (params, payload) => fetcher('DELETE', endpoint, params, payload, false),
+        get:    (params, payload) => fetcher('GET',    endpoint, params, payload, true, false, false, false),
+        post:   (params, payload) => fetcher('POST',   endpoint, params, payload, true, false, false, false),
+        patch:  (params, payload) => fetcher('PATCH',  endpoint, params, payload, true, false, false, false),
+        put:    (params, payload) => fetcher('PUT',    endpoint, params, payload, true, false, false, false),
+        delete: (params, payload) => fetcher('DELETE', endpoint, params, payload, true, false, false, false),
     };
 });
 
 STATS.forEach((endpoint, key) => {
     AppAPI.stats[key] = {
-        get:    (params, payload) => fetcher('GET',    endpoint, params, payload, true),
-        post:   (params, payload) => fetcher('POST',   endpoint, params, payload, true),
-        patch:  (params, payload) => fetcher('PATCH',  endpoint, params, payload, true),
-        put:    (params, payload) => fetcher('PUT',    endpoint, params, payload, true),
-        delete: (params, payload) => fetcher('DELETE', endpoint, params, payload, true),
+        get:    (params, payload) => fetcher('GET',    endpoint, params, payload, false, true, false, false),
+        post:   (params, payload) => fetcher('POST',   endpoint, params, payload, false, true, false, false),
+        patch:  (params, payload) => fetcher('PATCH',  endpoint, params, payload, false, true, false, false),
+        put:    (params, payload) => fetcher('PUT',    endpoint, params, payload, false, true, false, false),
+        delete: (params, payload) => fetcher('DELETE', endpoint, params, payload, false, true, false, false),
     };
 });
+
+PREPROCESSING.forEach((endpoint, key) => {
+    AppAPI.preprocessing[key] = {
+        get:    (params, payload) => fetcher('GET',    endpoint, params, payload, false, false, true, false),
+        post:   (params, payload) => fetcher('POST',   endpoint, params, payload, false, false, true, false),
+        patch:  (params, payload) => fetcher('PATCH',  endpoint, params, payload, false, false, true, false),
+        put:    (params, payload) => fetcher('PUT',    endpoint, params, payload, false, false, true, false),
+        delete: (params, payload) => fetcher('DELETE', endpoint, params, payload, false, false, true, false),
+    }
+});
+
+HARDWARE.forEach((endpoint, key) => {
+    AppAPI.hardware[key] = {
+        get:    (params, payload) => fetcher('GET',    endpoint, params, payload, false, false, false, true),
+        post:   (params, payload) => fetcher('POST',   endpoint, params, payload, false, false, false, true),
+        patch:  (params, payload) => fetcher('PATCH',  endpoint, params, payload, false, false, false, true),
+        put:    (params, payload) => fetcher('PUT',    endpoint, params, payload, false, false, false, true),
+        delete: (params, payload) => fetcher('DELETE', endpoint, params, payload, false, false, false, true),
+    }
+})
 
 /* Export ==================================================================== */
 export default AppAPI;
