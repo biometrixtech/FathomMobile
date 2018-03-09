@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-25 22:49:28
+ * @Last Modified time: 2018-03-08 14:44:35
  */
 
 /**
@@ -18,7 +18,6 @@ import {
     NativeModules,
     Platform,
     PermissionsAndroid,
-    StyleSheet,
     ActivityIndicator
 } from 'react-native';
 import { Icon } from 'react-native-elements';
@@ -40,41 +39,30 @@ const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 const accessoryDiscoverabilityInstruction = 'press & hold buttons simultaneously until the Bluetooth light breathes blue';
 const successfullyConnected = ['Your kit is connected!', 'Ensure the bluetooth light on the accessory is green, then to assigning this kit to an athlete and connect it to a WiFi network by clicking the back button to return to the main menu.'];
 
-/* Styles ==================================================================== */
-const styles = StyleSheet.create({
-    indicator: {
-        position: 'absolute',
-        left:     0,
-        right:    0,
-        bottom:   0,
-        top:      0,
-    }
-});
-
 /* Component ==================================================================== */
 class BluetoothConnectView extends Component {
     static componentName = 'BluetoothConnectView';
 
     static propTypes = {
-        user:                      PropTypes.object,
-        bluetooth:                 PropTypes.object,
-        connectToAccessory:        PropTypes.func.isRequired,
-        checkState:                PropTypes.func.isRequired,
-        changeState:               PropTypes.func.isRequired,
-        startBluetooth:            PropTypes.func.isRequired,
-        enableBluetooth:           PropTypes.func.isRequired,
-        startScan:                 PropTypes.func.isRequired,
-        stopScan:                  PropTypes.func.isRequired,
-        deviceFound:               PropTypes.func.isRequired,
-        startConnect:              PropTypes.func.isRequired,
-        stopConnect:               PropTypes.func.isRequired,
-        disconnect:                PropTypes.func.isRequired,
-        loginToAccessory:          PropTypes.func.isRequired,
-        setKitTime:                PropTypes.func.isRequired,
-        getConfiguration:          PropTypes.func.isRequired,
-        storeParams:               PropTypes.func.isRequired,
-        setAccessoryLoginEmail:    PropTypes.func.isRequired,
-        setAccessoryLoginPassword: PropTypes.func.isRequired
+        user:               PropTypes.object,
+        bluetooth:          PropTypes.object,
+        connectToAccessory: PropTypes.func.isRequired,
+        checkState:         PropTypes.func.isRequired,
+        changeState:        PropTypes.func.isRequired,
+        startBluetooth:     PropTypes.func.isRequired,
+        enableBluetooth:    PropTypes.func.isRequired,
+        startScan:          PropTypes.func.isRequired,
+        stopScan:           PropTypes.func.isRequired,
+        deviceFound:        PropTypes.func.isRequired,
+        startConnect:       PropTypes.func.isRequired,
+        stopConnect:        PropTypes.func.isRequired,
+        disconnect:         PropTypes.func.isRequired,
+        loginToAccessory:   PropTypes.func.isRequired,
+        setKitTime:         PropTypes.func.isRequired,
+        getConfiguration:   PropTypes.func.isRequired,
+        storeParams:        PropTypes.func.isRequired,
+        getAccessoryKey:    PropTypes.func.isRequired,
+        getWifiMacAddress:  PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -190,45 +178,37 @@ class BluetoothConnectView extends Component {
     connect = (data) => {
         return this.props.stopScan()
             .then(() => this.props.connectToAccessory(data))
-            .catch((err) => {
+            .catch(err => {
                 console.log(err);
                 return this.props.connectToAccessory(data);
             })
-            .catch((err) => this.props.stopConnect())
-            .then(() => this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user))
-            .catch((err) => {
+            .catch(err => this.props.stopConnect())
+            .then(() => this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
+            .catch(err => {
                 console.log(err);
-                return this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user);
+                return this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id);
             })
-            .catch((err) => this.props.stopConnect())
-            .then(() => this.props.setKitTime(this.props.bluetooth.accessoryData.id))
-            .catch((err) => {
+            .then(() => this.props.getAccessoryKey(this.props.bluetooth.accessoryData.wifiMacAddress, this.props.user))
+            .catch(err => {
                 console.log(err);
-                return this.props.setKitTime(this.props.bluetooth.accessoryData.id);
+                return this.props.getAccessoryKey(this.props.bluetooth.accessoryData.wifiMacAddress, this.props.user);
             })
-            .then(() => this.props.setAccessoryLoginEmail(this.props.bluetooth.accessoryData.id, this.props.user.email))
+            .then(() => this.props.loginToAccessory(this.props.bluetooth.accessoryData))
             .catch((err) => {
                 console.log(err);
-                return this.props.setAccessoryLoginEmail(this.props.bluetooth.accessoryData.id, this.props.user.email);
-            })
-            .then(() => this.props.setAccessoryLoginPassword(this.props.bluetooth.accessoryData.id, this.props.user.password))
-            .catch((err) => {
-                console.log(err);
-                return this.props.setAccessoryLoginPassword(this.props.bluetooth.accessoryData.id, this.props.user.password);
+                return this.props.loginToAccessory(this.props.bluetooth.accessoryData);
             })
             .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
-            .catch((err) => {
+            .catch(err => {
                 console.log(err);
                 return this.props.storeParams(this.props.bluetooth.accessoryData);
             })
             .then(() => this.props.getConfiguration(this.props.bluetooth.accessoryData.id))
-            .catch((err) => {
+            .catch(err => {
                 console.log(err);
                 return this.props.getConfiguration(this.props.bluetooth.accessoryData.id);
             })
             .then(() => {
-                console.log('success');
-                // this.pages.scrollToPage(3);
                 this.setState({ index: 3 });
                 this.pages.progress = 3;
                 return this.props.stopConnect();
@@ -295,7 +275,6 @@ class BluetoothConnectView extends Component {
                             title={'Next'}
                             onPress={() => {
                                 this.setState({ index: 1 });
-                                // this.pages.scrollToPage(1);
                                 this.pages.progress = 1;
                                 return this.props.checkState();
                             }}
@@ -316,15 +295,6 @@ class BluetoothConnectView extends Component {
 
 
                 <View style={{ flex: 1 }}>
-                    { this.props.bluetooth.indicator ? 
-                        <View style={[styles.indicator, { justifyContent: 'center', alignItems: 'center'}]}>
-                            <ActivityIndicator
-                                animating={true}
-                                size={'large'}
-                                color={'#C1C5C8'}
-                            />
-                        </View> : null
-                    }
                     <View style={[AppStyles.containerCentered, { flex: 3 }]}>
                         <Button
                             title={this.props.bluetooth.scanning ? 'Stop Scan' : 'Start Scan'}
@@ -359,6 +329,13 @@ class BluetoothConnectView extends Component {
                         </ScrollView>
                     </View>
                     <View style={{ flex: 1 }}/>
+                    { this.props.bluetooth.indicator ? 
+                        <ActivityIndicator
+                            style={[AppStyles.activityIndicator]}
+                            size={'large'}
+                            color={'#C1C5C8'}
+                        /> : null
+                    }
                 </View>
 
                 <View style={[AppStyles.containerCentered, { flex: 1 }]}>
