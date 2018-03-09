@@ -5,6 +5,8 @@
   "author": "Vir Desai",
   "scripts": {
     "fathom": "./fathom.sh",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios --simulator='iPhone X'",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "pretest": "./node_modules/.bin/eslint -c .eslintrc --ext .js src",
     "test": "jest"

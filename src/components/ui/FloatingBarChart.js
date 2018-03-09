@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-02-13 13:11:37
+ * @Last Modified time: 2018-03-08 14:47:42
  */
 
 /**
@@ -13,8 +13,8 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, TouchableHighlight, TouchableWithoutFeedback, View } from 'react-native';
-import Svg, { Rect, G } from 'react-native-svg';
+import { ScrollView, TouchableHighlight, TouchableWithoutFeedback, View, ActivityIndicator } from 'react-native';
+import Svg, { Rect, G, Polygon } from 'react-native-svg';
 
 // Consts and Libs
 import { AppColors, AppStyles, AppSizes } from '@theme/';
@@ -58,19 +58,23 @@ class FloatingBarChart extends Component {
             y1: PropTypes.array, // total
             y2: PropTypes.array, // irregular
         }),
-        user:             PropTypes.object,
-        setStatsCategory: PropTypes.func.isRequired,
-        getTeamStats:     PropTypes.func.isRequired
+        user:               PropTypes.object,
+        setStatsCategory:   PropTypes.func.isRequired,
+        getTeamStats:       PropTypes.func.isRequired,
+        startRequest:       PropTypes.func,
+        stopRequest:        PropTypes.func,
+        resetVisibleStates: PropTypes.func
     }
 
     static defaultProps = {
-        xAxis:     null,
-        yAxis:     null,
-        width:     0,
-        height:    0,
-        tabOffset: 0,
-        margin:    {},
-        data:      null,
+        xAxis:              null,
+        yAxis:              null,
+        width:              0,
+        height:             0,
+        tabOffset:          0,
+        margin:             {},
+        data:               null,
+        resetVisibleStates: () => {}
     }
 
     constructor(props) {
@@ -116,23 +120,34 @@ class FloatingBarChart extends Component {
         let ticksEvery = Math.floor(length / (numTicks - 1));
         for (let cur = start; cur <= end; cur += ticksEvery) { res.push(cur); }
         return res;
-    };
+    }
 
-    renderBar = (width, y1, y2, index, color) => {
-        let array = this.getTickPoints(3 * this.props.margin.horizontal, width + 6 * this.props.margin.horizontal, 7, width);
-        return <G key={index}>
-            <Rect
-                x={array[index] + AppSizes.tickSize+1.5}
-                y={y1}
-                width={8}
-                height={Math.abs(y2)}
-                fill={color}
-            />
-        </G>
+    renderBar = (width, y1, y2, index, color, positive) => {
+        if(typeof(positive) === typeof(true)) {
+            let array = this.getTickPoints(3 * this.props.margin.horizontal, width + 6 * this.props.margin.horizontal, 7, width);
+            let x = array[index] + AppSizes.tickSize + 1.5;
+            let pointsString = `${x + 0.75},${y1 + Math.abs(y2) * 0.5} ${x + 3.85},${positive ? y1 : y1 + Math.abs(y2)}, ${x + 6.95},${y1 + Math.abs(y2) * 0.5}`;
+            return <G key={index}>
+                <Rect
+                    x={x}
+                    y={positive ? y1 + Math.abs(y2) * 0.5 : y1}
+                    width={8}
+                    height={Math.abs(y2) * 0.5}
+                    fill={color}
+                />
+                <Polygon
+                    strokeWidth={1}
+                    stroke={color}
+                    fill={color}
+                    points={pointsString}
+                />
+            </G>
+        }
+        return null;
     };
 
     render = () => {
-        let {xAxis, yAxis, width, height, margin, data, tabOffset, user} = this.props;
+        let {xAxis, yAxis, width, height, margin, data, tabOffset, user, resetVisibleStates} = this.props;
 
         let team = user.teams[user.teamIndex];
         let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : (new Date()).toLocaleDateString().split('/');
@@ -143,13 +158,13 @@ class FloatingBarChart extends Component {
         return (
             <View>
                 <View style={{ flexDirection: 'row' }} onLayout={ev => this.setState({ chartHeaderHeight: ev.nativeEvent.layout.height })}>
-                    <TouchableWithoutFeedback onPress={() => user.teams[user.teamIndex] ? this.props.getTeamStats(user.teams[user.teamIndex].id, user.weekOffset-1) : null}>
+                    <TouchableWithoutFeedback onPress={() => team ? this.props.startRequest().then(() => this.props.getTeamStats(team.id, user.weekOffset-1)).then(() => resetVisibleStates()).then(() => this.props.stopRequest()) : null}>
                         <View style={[AppStyles.containerCentered, { flex: 1 }]}><Spacer /><Text h3>{'<'}</Text><Spacer /></View>
                     </TouchableWithoutFeedback>
                     <View style={[AppStyles.containerCentered, { flex: 2 }]}>
                         <Text>{`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}</Text>
                     </View>
-                    <TouchableWithoutFeedback onPress={() => user.teams[user.teamIndex] ? this.props.getTeamStats(user.teams[user.teamIndex].id, user.weekOffset+1) : null}>
+                    <TouchableWithoutFeedback onPress={() => team ? this.props.startRequest().then(() => this.props.getTeamStats(team.id, user.weekOffset+1)).then(() => resetVisibleStates()).then(() => this.props.stopRequest()) : null}>
                         <View style={[AppStyles.containerCentered, { flex: 1 }]}><Spacer /><Text h3>{'>'}</Text><Spacer /></View>
                     </TouchableWithoutFeedback>
                 </View>
@@ -177,7 +192,7 @@ class FloatingBarChart extends Component {
                                     scale={yScale}
                                     vertical />
                                 {
-                                    data.x.map((xValues, index) => this.renderBar(width - margin.horizontal, data.y2[index] > 0 ? yScale(data.y1[index]+data.y2[index]) : yScale(data.y1[index]), yScale(data.y1[index])-yScale(data.y1[index]+data.y2[index]), index, this.getBarColor(data.y1[index], Math.abs(data.y2[index]))))
+                                    data.x.map((xValues, index) => this.renderBar(width - margin.horizontal, data.y2[index] > 0 ? yScale(data.y1[index]+data.y2[index]) : yScale(data.y1[index]), yScale(data.y1[index])-yScale(data.y1[index]+data.y2[index]), index, this.getBarColor(data.y1[index], Math.abs(data.y2[index])), data.y2[index] ? data.y2[index] > 0 : null))
                                 }
                             </Svg>
                             <Spacer size={20}/>
@@ -195,6 +210,9 @@ class FloatingBarChart extends Component {
                             </View>
                             { this.chartList() }
                         </View>
+                }
+                {
+                    user.loading ? <ActivityIndicator style={[AppStyles.activityIndicator]} size={'large'} color={'#C1C5C8'}/> : null
                 }
             </View>
         );

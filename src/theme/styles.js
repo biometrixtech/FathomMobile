@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:19:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-19 13:38:03
+ * @Last Modified time: 2018-03-08 14:29:21
  */
 
 /**
@@ -329,4 +329,15 @@ export default {
         flex:            1,
         backgroundColor: Colors.brand.yellow,
     },
+
+    // Activity Indicator
+    activityIndicator: {
+        position:       'absolute',
+        left:           0,
+        right:          0,
+        top:            0,
+        bottom:         0,
+        alignItems:     'center',
+        justifyContent: 'center'
+    }
 };

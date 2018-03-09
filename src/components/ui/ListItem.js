@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:29:29 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-17 20:13:51
+ * @Last Modified time: 2018-03-05 17:16:32
  */
 
 /**
@@ -53,8 +53,8 @@ class CustomListItem extends Component {
                 borderTopColor:    AppColors.border,
                 borderBottomColor: AppColors.border,
             }],
-            titleStyle:      [AppStyles.baseText],
-            subtitleStyle:   [AppStyles.subtext],
+            titleStyle:    [AppStyles.baseText],
+            subtitleStyle: [AppStyles.subtext],
         };
 
         if (this.props.containerStyle) {

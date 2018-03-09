@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-13 15:17:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-02-02 10:41:10
+ * @Last Modified time: 2018-03-08 14:47:49
  */
 
 /**
@@ -13,7 +13,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, TouchableHighlight, TouchableWithoutFeedback, View } from 'react-native';
+import { ScrollView, TouchableHighlight, TouchableWithoutFeedback, View, ActivityIndicator } from 'react-native';
 import Svg, { Rect, G } from 'react-native-svg';
 
 // Consts and Libs
@@ -52,20 +52,24 @@ class StackedBarChart extends Component {
             y1: PropTypes.array, // total
             y2: PropTypes.array, // irregular
         }),
-        user:             PropTypes.object,
-        setStatsCategory: PropTypes.func.isRequired,
-        getTeamStats:     PropTypes.func.isRequired
+        user:               PropTypes.object,
+        setStatsCategory:   PropTypes.func.isRequired,
+        getTeamStats:       PropTypes.func.isRequired,
+        startRequest:       PropTypes.func,
+        stopRequest:        PropTypes.func,
+        resetVisibleStates: PropTypes.func,
     }
 
     static defaultProps = {
-        xAxis:     null,
-        yAxis:     null,
-        width:     0,
-        height:    0,
-        max:       0,
-        tabOffset: 0,
-        margin:    {},
-        data:      null,
+        xAxis:              null,
+        yAxis:              null,
+        width:              0,
+        height:             0,
+        max:                0,
+        tabOffset:          0,
+        margin:             {},
+        data:               null,
+        resetVisibleStates: () => {}
     }
 
     constructor(props) {
@@ -113,7 +117,7 @@ class StackedBarChart extends Component {
     }
 
     render = () => {
-        let {xAxis, yAxis, width, height, margin, data, tabOffset, user, max} = this.props;
+        let {xAxis, yAxis, width, height, margin, data, tabOffset, user, max, resetVisibleStates} = this.props;
 
         let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : (new Date()).toLocaleDateString().split('/');
         let endDateComponents = user.statsEndDate ? user.statsEndDate.split('-') : (new Date()).toLocaleDateString().split('/');
@@ -123,13 +127,13 @@ class StackedBarChart extends Component {
         return (
             <View>
                 <View style={{ flexDirection: 'row' }} onLayout={ev => this.setState({ chartHeaderHeight: ev.nativeEvent.layout.height })}>
-                    <TouchableWithoutFeedback onPress={() => user.teams[user.teamIndex] ? this.props.getTeamStats(user.teams[user.teamIndex].id, user.weekOffset-1) : null}>
+                    <TouchableWithoutFeedback onPress={() => user.teams[user.teamIndex] ? this.props.startRequest().then(() => this.props.getTeamStats(user.teams[user.teamIndex].id, user.weekOffset-1)).then(() => resetVisibleStates()).then(() => this.props.stopRequest()) : null}>
                         <View style={[AppStyles.containerCentered, { flex: 1 }]}><Spacer /><Text h3>{'<'}</Text><Spacer /></View>
                     </TouchableWithoutFeedback>
                     <View style={[AppStyles.containerCentered, { flex: 2 }]}>
                         <Text>{`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}</Text>
                     </View>
-                    <TouchableWithoutFeedback onPress={() => user.teams[user.teamIndex] ? this.props.getTeamStats(user.teams[user.teamIndex].id, user.weekOffset+1) : null}>
+                    <TouchableWithoutFeedback onPress={() => user.teams[user.teamIndex] ? this.props.startRequest().then(() => this.props.getTeamStats(user.teams[user.teamIndex].id, user.weekOffset+1)).then(() => resetVisibleStates()).then(() => this.props.stopRequest()) : null}>
                         <View style={[AppStyles.containerCentered, { flex: 1 }]}><Spacer /><Text h3>{'>'}</Text><Spacer /></View>
                     </TouchableWithoutFeedback>
                 </View>
@@ -176,6 +180,9 @@ class StackedBarChart extends Component {
                             </View>
                             { this.chartList() }
                         </View>
+                }
+                {
+                    user.loading ? <ActivityIndicator style={[AppStyles.activityIndicator]} size={'large'} color={'#C1C5C8'}/> : null
                 }
             </View>
         );
