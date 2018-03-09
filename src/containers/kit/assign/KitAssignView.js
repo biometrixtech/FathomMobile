@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:13 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-01-31 01:28:35
+ * @Last Modified time: 2018-03-08 14:40:17
  */
 
 /**
@@ -15,7 +15,6 @@ import {
     ScrollView,
     View,
     KeyboardAvoidingView,
-    StyleSheet,
     Platform,
     ActivityIndicator
 } from 'react-native';
@@ -32,17 +31,6 @@ import { Placeholder } from '@general/';
 
 const font10 = AppFonts.scaleFont(10);
 const font14 = AppFonts.scaleFont(14);
-
-/* Styles ==================================================================== */
-const styles = StyleSheet.create({
-    indicator: {
-        position: 'absolute',
-        left:     0,
-        right:    0,
-        bottom:   0,
-        top:      0,
-    }
-});
 
 /* Component ==================================================================== */
 class KitAssignView extends Component {
@@ -82,7 +70,7 @@ class KitAssignView extends Component {
     biometrixAdminView = () => {
         let accessory = this.props.bluetooth.accessoryData;
         let assignType = this.props.bluetooth.assignType;
-        let users = this.props.user.teams[this.props.user.teamIndex].users_with_training_groups;
+        let users = this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.filter(user => user.role === Roles.athlete);
         let extraMargin = AppFonts.scaleFont(Platform.OS === 'android' ? 40 : 20);
         let category, name;
         switch(assignType) {
@@ -115,15 +103,6 @@ class KitAssignView extends Component {
                     <Text>{accessory.name || ''}</Text>
                     <Text style={{ fontSize: font10 }}>{accessory.wifiMacAddress || ''}</Text>
                 </View>
-                { this.props.bluetooth.indicator ? 
-                    <View style={[styles.indicator, { justifyContent: 'center', alignItems: 'center'}]}>
-                        <ActivityIndicator
-                            animating={true}
-                            size={'large'}
-                            color={'#C1C5C8'}
-                        />
-                    </View> : null
-                }
                 <View>
                     <ListItem
                         title={category}
@@ -188,6 +167,13 @@ class KitAssignView extends Component {
                         <Spacer/>
                     </ScrollView>
                 </View>
+                { this.props.bluetooth.indicator ? 
+                    <ActivityIndicator
+                        style={[AppStyles.activityIndicator]}
+                        size={'large'}
+                        color={'#C1C5C8'}
+                    /> : null
+                }
             </KeyboardAvoidingView>
         );
     }

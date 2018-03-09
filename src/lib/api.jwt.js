@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:16:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-13 18:40:59
+ * @Last Modified time: 2018-03-06 10:47:06
  */
 
 /**
@@ -17,10 +17,12 @@ import { AppAPI } from '@lib/';
 import { APIConfig } from '@constants/';
 
 export default class JWT {
-    static apiToken = '';
-    static apiHost = '';
-    static statsHost = '';
-    apiCredentials =  {};
+    static apiToken          = '';
+    static apiHost           = '';
+    static statsHost         = '';
+    static preprocessingHost = '';
+    static hardwareHost      = '';
+    apiCredentials           =  {};
 
     /**
       * Login
@@ -101,7 +103,9 @@ export default class JWT {
       * Retrieves API Host Endpoint from Storage
       */
     getAPIHost = async () => {
-        if (!this.apiHost) { this.apiHost = await AsyncStorage.getItem('api/host'); }
+        if (!this.apiHost) {
+            this.apiHost = await AsyncStorage.getItem('api/host');
+        }
 
         return this.apiHost || APIConfig.hostname;
     }
@@ -111,19 +115,51 @@ export default class JWT {
       */
     storeAPIHost = async (key, endpoint) => {
         let statsHost = APIConfig.STATS_APIs[key];
-        await AsyncStorage.setItem('api/host', endpoint);
-        await AsyncStorage.setItem('stats/host', statsHost)
+        let preprocessingHost = APIConfig.PREPROCESSING_APIs[key];
+        let hardwareHost = APIConfig.HARDWARE_APIs[key];
+        await AsyncStorage.multiSet([
+            ['api/host',           endpoint],
+            ['stats/host',         statsHost],
+            ['preprocessing/host', preprocessingHost],
+            ['hardware/host',      hardwareHost]
+        ]);
         this.apiHost = endpoint;
         this.statsHost = statsHost;
+        this.preprocessingHost = preprocessingHost;
+        this.hardwareHost = hardwareHost;
     }
 
     /**
       * Retrieves Stats Host Endpoint from Storage
       */
     getStatsHost = async () => {
-        if (!this.statsHost) { this.statsHost = await AsyncStorage.getItem('stats/host'); }
+        if (!this.statsHost) {
+            this.statsHost = await AsyncStorage.getItem('stats/host');
+        }
 
         return this.statsHost || APIConfig.statsHostname;
+    }
+
+    /**
+      * Retrieves Preprocessing Host Endpoint from Storage
+      */
+    getPreprocessingHost = async () => {
+        if (!this.preprocessingHost) {
+            this.preprocessingHost = await AsyncStorage.getItem('preprocessing/host');
+        }
+
+        return this.preprocessingHost || APIConfig.preprocessingHostname;
+    }
+
+    /**
+      * Retrieves Hardware Host Endpoint from Storage
+      */
+    getHardwareHost = async () => {
+        if (!this.hardwareHost) {
+            this.hardwareHost = await AsyncStorage.getItem('hardware/host');
+        }
+
+        return this.hardwareHost || APIConfig.hardwareHostname;
     }
 
     /**

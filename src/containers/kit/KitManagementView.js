@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:00 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-01-24 12:45:19
+ * @Last Modified time: 2018-03-08 14:37:51
  */
 
 /**
@@ -17,7 +17,6 @@ import {
     NativeEventEmitter,
     KeyboardAvoidingView,
     NativeModules,
-    StyleSheet,
     ActivityIndicator
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
@@ -42,17 +41,6 @@ const font10 = AppFonts.scaleFont(10);
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
-/* Styles ==================================================================== */
-const styles = StyleSheet.create({
-    indicator: {
-        position: 'absolute',
-        left:     0,
-        right:    0,
-        bottom:   0,
-        top:      0,
-    }
-});
-
 /* Component ==================================================================== */
 class KitManagementView extends Component {
     static componentName = 'KitManagementView';
@@ -61,7 +49,6 @@ class KitManagementView extends Component {
         user:                 PropTypes.object,
         bluetooth:            PropTypes.object,
         scanWiFi:             PropTypes.func.isRequired,
-        startScan:            PropTypes.func.isRequired,
         setWiFiSSID:          PropTypes.func.isRequired,
         setWiFiPassword:      PropTypes.func.isRequired,
         connectWiFi:          PropTypes.func.isRequired,
@@ -145,15 +132,6 @@ class KitManagementView extends Component {
                 ref={'toast'}
                 position={'top'}
             />
-            { this.props.bluetooth.indicator ?
-                <View style={[styles.indicator, { justifyContent: 'center', alignItems: 'center'}]}>
-                    <ActivityIndicator
-                        animating={true}
-                        size={'large'}
-                        color={'#C1C5C8'}
-                    />
-                </View> : null
-            }
             <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>SETTINGS</Text>
             <ListItem
                 title={`${this.props.bluetooth.accessoryData.id ? 'Disconnect' : 'Connect Kit'}`}
@@ -394,6 +372,13 @@ class KitManagementView extends Component {
                     </Card>
                 </KeyboardAvoidingView>
             </Modal>
+            { this.props.bluetooth.indicator ?
+                <ActivityIndicator
+                    style={[AppStyles.activityIndicator]}
+                    size={'large'}
+                    color={'#C1C5C8'}
+                /> : null
+            }
         </View>
     );
 
