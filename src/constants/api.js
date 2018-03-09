@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:30:58 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-02-01 10:27:54
+ * @Last Modified time: 2018-03-08 11:56:16
  */
 
 /**
@@ -64,5 +64,29 @@ export default {
         ['athlete_summaries_tg',                    '/TGAthleteSummaries'],
         ['team_movement_quality_summary',           '/TeamMQSummary'],
         ['team_movement_quality_details',           '/TeamMQDetail']
-    ])
+    ]),
+
+    PREPROCESSING_APIs: {
+        DEV:  'https://preprocessing.dev.fathomai.com/v1',
+        QA:   'https://preprocessing.qa.fathomai.com/v1',
+        PROD: 'https://preprocessing.production.fathomai.com/v1',
+    },
+
+    preprocessingHostname: 'https://preprocessing.production.fathomai.com/v1',
+
+    preprocessingEndpoints: new Map([
+        ['status', '/status'] // body: { start_date: '<start of week>', end_date: '<end of week>' }
+    ]),
+
+    HARDWARE_APIs: {
+        DEV:  'https://hardware.dev.fathomai.com/v1',
+        QA:   'https://hardware.qa.fathomai.com/v1',
+        PROD: 'https://hardware.production.fathomai.com/v1',
+    },
+
+    hardwareHostname: 'https://hardware.production.fathomai.com/v1',
+
+    hardwareEndpoints: new Map([
+        ['accessory', '/accessory/{wifiMacAddress}'], // GET: settings key, PATCH: owner-uuid with body: { owner_id: '<uuid>' }
+    ]),
 };

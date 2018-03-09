@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:59 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-02-13 13:06:09
+ * @Last Modified time: 2018-03-08 14:24:14
  */
 
 /**
@@ -283,13 +283,21 @@ const getTeams = () => {
             });
         })
         .then(() => Promise.all(tempTeams.map((teamId) => AppAPI.stats.team_movement_quality_details.post(null, { teamId, startDate, endDate })
-            .then(stats => dispatch({
-                type: Actions.GET_TEAM_STATS,
-                data: { teamId, stats, weekOffset: 0, startDate, endDate }
-            }))
+            .then(stats => AppAPI.preprocessing.status.post(null, { start_date: startDate, end_date: endDate })
+                .then(preprocessing => {
+                    return dispatch({
+                        type: Actions.GET_TEAM_STATS,
+                        data: { teamId, stats, weekOffset: 0, startDate, endDate, preprocessing: preprocessing.sessions }
+                    })
+                })
+                .catch(err => dispatch({
+                    type: Actions.GET_TEAM_STATS,
+                    data: { teamId, stats, weekOffset: 0, startDate, endDate, preprocessing: null }
+                }))
+            )
             .catch(err => dispatch({
                 type: Actions.GET_TEAM_STATS,
-                data: { teamId, stats: null, weekOffset: 0, startDate, endDate }
+                data: { teamId, stats: null, weekOffset: 0, startDate, endDate, preprocessing: null }
             }))
         )));
 };
@@ -320,16 +328,34 @@ const getTeamStats = (teamId, weekOffset) => {
     let startDate = `${startDateObject.getFullYear()}-${formatDate(startDateObject.getMonth()+1)}-${formatDate(startDateObject.getDate())}`;
     let endDate = `${endDateObject.getFullYear()}-${formatDate(endDateObject.getMonth()+1)}-${formatDate(endDateObject.getDate())}`;
     return dispatch => AppAPI.stats.team_movement_quality_details.post(null, { teamId, startDate, endDate })
-        .then(stats => {
-            return dispatch({
+        .then(stats => AppAPI.preprocessing.status.post(null, { start_date: startDate, end_date: endDate })
+            .then(preprocessing => {
+                return dispatch({
+                    type: Actions.GET_TEAM_STATS,
+                    data: { teamId, stats, weekOffset, startDate, endDate, preprocessing: preprocessing.sessions }
+                })
+            })
+            .catch(err => dispatch({
                 type: Actions.GET_TEAM_STATS,
-                data: { teamId, stats, weekOffset, startDate, endDate }
-            });
-        })
+                data: { teamId, stats, weekOffset, startDate, endDate, preprocessing: null }
+            }))
+        )
         .catch(err => dispatch({
             type: Actions.GET_TEAM_STATS,
-            data: { teamId, stats: null, weekOffset, startDate, endDate }
+            data: { teamId, stats: null, weekOffset, startDate, endDate, preprocessing: null }
         }));
+};
+
+const startRequest = () => {
+    return dispatch => Promise.resolve(dispatch({
+        type: Actions.START_REQUEST,
+    }));
+};
+
+const stopRequest = () => {
+    return dispatch => Promise.resolve(dispatch({
+        type: Actions.STOP_REQUEST,
+    }));
 };
 
 export {
@@ -351,5 +377,7 @@ export {
     getTeams,
     getAccessories,
     getTeamStats,
-    setStatsCategory
+    setStatsCategory,
+    startRequest,
+    stopRequest,
 };
