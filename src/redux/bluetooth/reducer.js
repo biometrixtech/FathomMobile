@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:27 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-01-24 02:32:55
+ * @Last Modified time: 2018-03-08 13:33:15
  */
 
 /**
@@ -67,17 +67,19 @@ export default function bluetoothReducer(state = initialState, action) {
         });
     case Actions.ACCESSORY_RESET:
         let tempAccessory = state.accessoryData;
+        tempAccessory.organization = null;
         tempAccessory.organizationId = null;
-        tempAccessory.last_user_id = null;
+        tempAccessory.team = null;
         tempAccessory.team_id = null;
-        tempAccessory.emailWritten = false;
-        tempAccessory.passwordWritten = false;
+        tempAccessory.last_user_id = null;
+        tempAccessory.individual = null;
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
                 ...tempAccessory,
                 configuration: 0,
-                configured:    false
+                configured:    false,
+                ownerFlag:     false,
             },
             networks: [{ key: 0, label: 'Other' }]
         });
@@ -90,31 +92,6 @@ export default function bluetoothReducer(state = initialState, action) {
             accessoryData: {
                 ...state.accessoryData,
                 name: `Fathom_kit_${action.data}`
-            }
-        });
-    case Actions.GET_KIT_INDIVIDUAL:
-        let assignIndividualTeam = action.data.user.teams.find(checkTeam => checkTeam.users_with_training_groups.some(user => user.id === action.data.id));
-        let individual = assignIndividualTeam ? assignIndividualTeam.users_with_training_groups.find(user => user.id === action.data.id) : null;
-        return Object.assign({}, state, {
-            accessoryData: {
-                ...state.accessoryData,
-                individual
-            }
-        });
-    case Actions.GET_KIT_TEAM:
-        let team = action.data.user.teams.find(checkTeam => checkTeam.id === action.data.id) || null;
-        return Object.assign({}, state, {
-            accessoryData: {
-                ...state.accessoryData,
-                team
-            }
-        });
-    case Actions.GET_KIT_ORGANIZATION:
-        let organization = action.data.user.organization.id === action.data.id ? action.data.user.organization : null;
-        return Object.assign({}, state, {
-            accessoryData: {
-                ...state.accessoryData,
-                organization
             }
         });
     case Actions.GET_KIT_NAME:
@@ -150,18 +127,12 @@ export default function bluetoothReducer(state = initialState, action) {
                 wifiConnected: action.data === 0 ? true : false
             }
         });
-    case Actions.ACCESSORY_LOGIN_EMAIL:
+    case Actions.GET_OWNER_FLAG:
+    case Actions.SET_OWNER_FLAG:
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
-                emailWritten: action.data === 0 ? true : false
-            }
-        });
-    case Actions.ACCESSORY_LOGIN_PASSWORD:
-        return Object.assign({}, state, {
-            accessoryData: {
-                ...state.accessoryData,
-                passwordWritten: action.data === 0 ? true : false
+                ownerFlag: action.data
             }
         });
     case Actions.GET_WIFI_MAC_ADDRESS:
@@ -169,6 +140,23 @@ export default function bluetoothReducer(state = initialState, action) {
             accessoryData: {
                 ...state.accessoryData,
                 wifiMacAddress: action.data !== '00:00:00:00:00:00' ? action.data : null
+            }
+        });
+    case Actions.GET_ACCESSORY_KEY:
+        let user = action.user;
+        let organization = action.user.organization || null;
+        let team = user.teams.find(checkTeam => checkTeam.users_with_training_groups.some(individual => individual.id === action.user_id));
+        let individual = team ? team.users_with_training_groups.find(checkUser => checkUser.id === action.user_id) : null;
+        return Object.assign({}, state, {
+            accessoryData: {
+                ...state.accessoryData,
+                settingsKey:     action.settingsKey,
+                last_user_id:    action.user_id,
+                organization,
+                organization_id: organization.id,
+                team,
+                team_id:         team.id,
+                individual
             }
         });
     case Actions.SET_GYRO_CALIBRATION:

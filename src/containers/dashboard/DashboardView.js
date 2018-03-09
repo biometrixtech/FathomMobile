@@ -2,22 +2,21 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:20 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-02-13 13:15:28
+ * @Last Modified time: 2018-03-08 14:21:31
  */
 
 import React, { Component } from 'react';
 import { TouchableHighlight, View } from 'react-native';
 
 import PropTypes from 'prop-types';
-import { Icon } from 'react-native-elements';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 
 // Consts and Libs
 import { AppColors, AppStyles, AppSizes } from '@theme/';
+import { Roles } from '@constants/';
 
 // Components
 import { ListItem, Text, StackedBarChart, FloatingBarChart } from '@ui/';
-import { Placeholder } from '@general/';
 
 // Tabs title (index: 0) and subtitle (index: 1)
 const tabs = {
@@ -25,6 +24,18 @@ const tabs = {
     1: ['TRAINING VOLUME', 'Accumulated GRF'],
     2: ['TRAINING VOLUME', 'Accumulated CoM Acceleration']
 }
+
+const ATHLETE_PREPROCESSING_UPLOADING  = 'Your session is still uploading - make sure your kit has wifi access and check back soon.';
+const ATHLETE_PREPROCESSING_PROCESSING = 'We\'re processing your session now - check back soon.';
+const ATHLETE_PREPROCESSING_ERROR      = 'Uh Oh! One of your sessions was an odd ball. We\'re on it and will get you your results soon.';
+
+const SINGLE_PREPROCESSING_UPLOADING  = '1 athlete is still uploading sessions - make sure their kit has wifi access and check back soon.';
+const SINGLE_PREPROCESSING_PROCESSING = '1 athlete\'s session is still processing - check back soon.';
+const SINGLE_PREPROCESSING_ERROR      = 'Uh Oh! 1 of your sessions was an odd ball. We\'re on it and will get you your results soon.';
+
+const MULTIPLE_PREPROCESSING_UPLOADING  = 'X athletes are still uploading sessions - make sure their kits have wifi access and check back soon.';
+const MULTIPLE_PREPROCESSING_PROCESSING = 'X athletes\' session are still processing - check back soon.';
+const MULTIPLE_PREPROCESSING_ERROR      = 'Uh Oh! X of your sessions were odd balls. We\'re on it and will get you your results soon.';
 
 /* Component ==================================================================== */
 class Dashboard extends Component {
@@ -46,11 +57,16 @@ class Dashboard extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            preprocessing_upload_visible:     true,
+            preprocessing_processing_visible: true,
+            preprocessing_error_visible:      true
         };
     }
 
     componentWillMount = () => {
-        return this.props.getTeams();
+        return this.props.startRequest()
+            .then(() => this.props.getTeams())
+            .then(() => this.props.stopRequest());
     }
 
     renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) {
@@ -96,20 +112,21 @@ class Dashboard extends Component {
         if (!allData) {
             return null;
         }
-        if (allData.TeamMovementQualityData.every(teamMovementQualityData => Object.keys(teamMovementQualityData).every(key => key === 'eventDate'))) {
+        let allTeamMovementQualityData = allData.TeamMovementQualityData;
+        if (allTeamMovementQualityData.every(teamMovementQualityData => Object.keys(teamMovementQualityData).every(key => key === 'eventDate'))) {
             return data;
         }
-        data.x = allData.TeamMovementQualityData.map(teamMovementQualityData => new Date(teamMovementQualityData.eventDate));
+        data.x = allTeamMovementQualityData.map(teamMovementQualityData => new Date(teamMovementQualityData.eventDate));
         if (this.props.user.selectedStats.athlete) {
             let athleteId = this.props.user.selectedStats.athleteId;
-            data.y1 = allData.TeamMovementQualityData.map(teamMovementQualityData => {
+            data.y1 = allTeamMovementQualityData.map(teamMovementQualityData => {
                 if (teamMovementQualityData.athletes && teamMovementQualityData.athletes.length) {
                     let foundAthlete = teamMovementQualityData.athletes.find(athlete => athlete.userId === athleteId);
                     return foundAthlete ? foundAthlete.percOptimal || 0 : 0;
                 }
                 return 0;
             });
-            data.y2 = allData.TeamMovementQualityData.map(teamMovementQualityData => {
+            data.y2 = allTeamMovementQualityData.map(teamMovementQualityData => {
                 if (teamMovementQualityData.athletes && teamMovementQualityData.athletes.length) {
                     let foundAthlete = teamMovementQualityData.athletes.find(athlete => athlete.userId === athleteId);
                     return foundAthlete ? foundAthlete.fatigue || 0 : 0;
@@ -117,8 +134,8 @@ class Dashboard extends Component {
                 return 0;
             });
         } else {
-            data.y1 = allData.TeamMovementQualityData.map(teamMovementQualityData => teamMovementQualityData.percOptimal || 0);
-            data.y2 = allData.TeamMovementQualityData.map(teamMovementQualityData => teamMovementQualityData.fatigue || 0);
+            data.y1 = allTeamMovementQualityData.map(teamMovementQualityData => teamMovementQualityData.percOptimal || 0);
+            data.y2 = allTeamMovementQualityData.map(teamMovementQualityData => teamMovementQualityData.fatigue || 0);
         }
         return data;
     }
@@ -211,10 +228,104 @@ class Dashboard extends Component {
         return ({accelData, accelMax});
     }
 
+    preprocessingUpload = (uploadArray, role) => {
+        if (!uploadArray || !uploadArray.length) {
+            return null;
+        }
+        let red = AppColors.brand.red;
+        let grey = AppColors.brand.grey;
+        let text = '';
+        if (role === Roles.athlete) {
+            text = ATHLETE_PREPROCESSING_UPLOADING;
+        } else {
+            text = uploadArray.length === 1 ? SINGLE_PREPROCESSING_UPLOADING : MULTIPLE_PREPROCESSING_UPLOADING;
+            text.replace('X', String(uploadArray.length));
+        }
+        return <ListItem
+            title={null}
+            subtitle={text}
+            subtitleStyle={{ color: grey }}
+            subtitleNumberOfLines={null}
+            containerStyle={{ backgroundColor: red }}
+            rightIcon={{ name: 'clear', color: grey }}
+            onPressRightIcon={() => this.setState({ preprocessing_upload_visible: false })}
+        />
+    }
+
+    preprocessingProcessing = (processingArray, role) => {
+        if (!processingArray || !processingArray.length) {
+            return null;
+        }
+        let red = AppColors.brand.red;
+        let grey = AppColors.brand.grey;
+        let text = '';
+        if (role === Roles.athlete) {
+            text = ATHLETE_PREPROCESSING_PROCESSING;
+        } else {
+            text = processingArray.length === 1 ? SINGLE_PREPROCESSING_PROCESSING : MULTIPLE_PREPROCESSING_PROCESSING;
+            text.replace('X', String(processingArray.length));
+        }
+        return <ListItem
+            title={null}
+            subtitle={text}
+            subtitleStyle={{ color: grey }}
+            subtitleNumberOfLines={null}
+            containerStyle={{ backgroundColor: red }}
+            rightIcon={{ name: 'clear', color: grey }}
+            onPressRightIcon={() => this.setState({ preprocessing_processing_visible: false })}
+        />
+    }
+
+    preprocessingError = (errorArray, role) => {
+        if (!errorArray || !errorArray.length) {
+            return null;
+        }
+        let red = AppColors.brand.red;
+        let grey = AppColors.brand.grey;
+        let text = '';
+        if (role === Roles.athlete) {
+            text = ATHLETE_PREPROCESSING_ERROR;
+        } else {
+            text = errorArray.length === 1 ? SINGLE_PREPROCESSING_ERROR : MULTIPLE_PREPROCESSING_ERROR;
+            text.replace('X', String(errorArray.length));
+        }
+        return <ListItem
+            title={null}
+            subtitle={text}
+            subtitleStyle={{ color: grey }}
+            subtitleNumberOfLines={null}
+            containerStyle={{ backgroundColor: red }}
+            rightIcon={{ name: 'clear', color: grey }}
+            onPressRightIcon={() => this.setState({ preprocessing_error_visible: false })}
+        />
+    }
+
+    preprocessingMessages = (preprocessing, role) => {
+        if (!preprocessing) {
+            return null;
+        }
+        return <View>
+            { this.state.preprocessing_upload_visible ? this.preprocessingUpload(preprocessing.UPLOAD_IN_PROGRESS, role) : null }
+            { this.state.preprocessing_processing_visible ? this.preprocessingProcessing(preprocessing.PROCESSING_IN_PROGRESS, role) : null }
+            { this.state.preprocessing_error_visible ? this.preprocessingError(preprocessing.PROCESSING_FAILED, role) : null }
+        </View>
+    }
+
+    resetVisibleStates = () => {
+        this.setState({
+            preprocessing_upload_visible:     true,
+            preprocessing_processing_visible: true,
+            preprocessing_error_visible:      true
+        })
+    }
+
     render() {
         let movementQualityScoreData = this.getBiomechanicalFatigueData();
         let {grfData, grfMax} = this.getAccumulatedGRFData();
         let {accelData, accelMax} = this.getAccumulatedCoMAcceleration();
+        let user = this.props.user;
+        let preprocessing = user.teams[user.teamIndex] ? user.teams[user.teamIndex].preprocessing : null;
+        let role = user.role;
         return (
             <ScrollableTabView
                 initialPage={0}
@@ -224,6 +335,7 @@ class Dashboard extends Component {
                 renderTabBar={() => <ScrollableTabBar renderTab={this.renderTab} />}
             >
                 <View tabLabel={tabs[0][0]}>
+                    { this.preprocessingMessages(preprocessing, role) }
                     <FloatingBarChart
                         xAxis={'Movement Quality Score (0 to 100)'}
                         width={AppSizes.screen.widthFourFifths}
@@ -231,12 +343,16 @@ class Dashboard extends Component {
                         margin={{ horizontal: AppSizes.padding, vertical: AppSizes.paddingSml }}
                         data={movementQualityScoreData}
                         tabOffset={-7}
-                        user={this.props.user}
+                        user={user}
+                        startRequest={this.props.startRequest}
+                        stopRequest={this.props.stopRequest}
+                        resetVisibleStates={this.resetVisibleStates}
                         setStatsCategory={this.props.setStatsCategory}
                         getTeamStats={this.props.getTeamStats}
                     />
                 </View>
                 <View tabLabel={tabs[1][0]}>
+                    { this.preprocessingMessages(preprocessing, role) }
                     <StackedBarChart
                         xAxis={'Accum. GRF (Millions of Newtons)'}
                         width={AppSizes.screen.widthFourFifths}
@@ -246,12 +362,16 @@ class Dashboard extends Component {
                         tabOffset={-8}
                         max={grfMax}
                         graphNum={1}
-                        user={this.props.user}
+                        user={user}
+                        startRequest={this.props.startRequest}
+                        stopRequest={this.props.stopRequest}
+                        resetVisibleStates={this.resetVisibleStates}
                         setStatsCategory={this.props.setStatsCategory}
                         getTeamStats={this.props.getTeamStats}
                     />
                 </View>
                 <View tabLabel={tabs[2][0]}>
+                    { this.preprocessingMessages(preprocessing, role) }
                     <StackedBarChart
                         xAxis={'Accum. CoM Accel. (Meters per sec. sqr.)'}
                         width={AppSizes.screen.widthFourFifths}
@@ -261,7 +381,10 @@ class Dashboard extends Component {
                         tabOffset={-6.5}
                         max={accelMax}
                         graphNum={2}
-                        user={this.props.user}
+                        user={user}
+                        startRequest={this.props.startRequest}
+                        stopRequest={this.props.stopRequest}
+                        resetVisibleStates={this.resetVisibleStates}
                         setStatsCategory={this.props.setStatsCategory}
                         getTeamStats={this.props.getTeamStats}
                     />
