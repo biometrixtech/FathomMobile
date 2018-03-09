@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:45 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:34:45 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-03-08 14:38:56
  */
 
 /**
@@ -15,7 +15,6 @@ import {
     ScrollView,
     View,
     RefreshControl,
-    StyleSheet,
     ActivityIndicator
 } from 'react-native';
 import { Icon } from 'react-native-elements';
@@ -32,45 +31,28 @@ import { Placeholder } from '@general/';
 
 const font10 = AppFonts.scaleFont(10);
 const font14 = AppFonts.scaleFont(14);
-const font18 = AppFonts.scaleFont(18);
 
 const configuration = BLEConfig.configuration;
 const bleConfiguredState = [configuration.DONE, configuration.UPSERT_PENDING, configuration.UPSERT_TO_SAVE, configuration.UPSERT_DONE];
-
-/* Styles ==================================================================== */
-const styles = StyleSheet.create({
-    indicator: {
-        position: 'absolute',
-        left:     0,
-        right:    0,
-        bottom:   0,
-        top:      0,
-    }
-});
 
 /* Component ==================================================================== */
 class KitOwnerView extends Component {
     static componentName = 'KitOwnerView';
 
     static propTypes = {
-        user:                      PropTypes.object,
-        bluetooth:                 PropTypes.object,
-        assignType:                PropTypes.func.isRequired,
-        getOwnerOrganization:      PropTypes.func.isRequired,
-        getOwnerTeam:              PropTypes.func.isRequired,
-        getOwnerUser:              PropTypes.func.isRequired,
-        getKitName:                PropTypes.func.isRequired,
-        assignKitName:             PropTypes.func.isRequired,
-        storeParams:               PropTypes.func.isRequired,
-        loginToAccessory:          PropTypes.func.isRequired,
-        setKitTime:                PropTypes.func.isRequired,
-        resetAccessory:            PropTypes.func.isRequired,
-        startConnect:              PropTypes.func.isRequired,
-        stopConnect:               PropTypes.func.isRequired,
-        getConfiguration:          PropTypes.func.isRequired,
-        setAccessoryLoginEmail:    PropTypes.func.isRequired,
-        setAccessoryLoginPassword: PropTypes.func.isRequired,
-        getWifiMacAddress:         PropTypes.func.isRequired,
+        user:              PropTypes.object,
+        bluetooth:         PropTypes.object,
+        assignType:        PropTypes.func.isRequired,
+        getKitName:        PropTypes.func.isRequired,
+        assignKitName:     PropTypes.func.isRequired,
+        storeParams:       PropTypes.func.isRequired,
+        setKitTime:        PropTypes.func.isRequired,
+        resetAccessory:    PropTypes.func.isRequired,
+        startConnect:      PropTypes.func.isRequired,
+        stopConnect:       PropTypes.func.isRequired,
+        getConfiguration:  PropTypes.func.isRequired,
+        getWifiMacAddress: PropTypes.func.isRequired,
+        setOwnerFlag:      PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -98,18 +80,6 @@ class KitOwnerView extends Component {
             .catch(e => console.log(e))
             .then(() => this.props.bluetooth.accessoryData.wifiMacAddress ? Promise.resolve() : this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
             .catch(e => console.log(e))
-            .then(() => this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id, this.props.user))
-            .catch(e => console.log(e))
-            .then(() => this.props.bluetooth.accessoryData.organization ? Promise.resolve() : this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id, this.props.user))
-            .catch(e => console.log(e))
-            .then(() => this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id, this.props.user))
-            .catch(e => console.log(e))
-            .then(() => this.props.bluetooth.accessoryData.team ? Promise.resolve() : this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id, this.props.user))
-            .catch(e => console.log(e))
-            .then(() => this.props.getOwnerUser(this.props.bluetooth.accessoryData.id, this.props.user))
-            .catch(e => console.log(e))
-            .then(() => this.props.bluetooth.accessoryData.individual ? Promise.resolve() : this.props.getOwnerUser(this.props.bluetooth.accessoryData.id, this.props.user))
-            .catch(e => console.log(e));
     };
 
     _onRefresh() {
@@ -121,18 +91,6 @@ class KitOwnerView extends Component {
             .then(() => this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
             .catch(e => console.log(e))
             .then(() => this.props.bluetooth.accessoryData.wifiMacAddress ? Promise.resolve() : this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
-            .catch(e => console.log(e))
-            .then(() => this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id, this.props.user))
-            .catch(e => console.log(e))
-            .then(() => this.props.bluetooth.accessoryData.organization ? Promise.resolve() : this.props.getOwnerOrganization(this.props.bluetooth.accessoryData.id, this.props.user))
-            .catch(e => console.log(e))
-            .then(() => this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id, this.props.user))
-            .catch(e => console.log(e))
-            .then(() => this.props.bluetooth.accessoryData.team ? Promise.resolve() : this.props.getOwnerTeam(this.props.bluetooth.accessoryData.id, this.props.user))
-            .catch(e => console.log(e))
-            .then(() => this.props.getOwnerUser(this.props.bluetooth.accessoryData.id, this.props.user))
-            .catch(e => console.log(e))
-            .then(() => this.props.bluetooth.accessoryData.individual ? Promise.resolve() : this.props.getOwnerUser(this.props.bluetooth.accessoryData.id, this.props.user))
             .catch(e => console.log(e))
             .then(() => {
                 this.setState({refreshing: false});
@@ -153,9 +111,8 @@ class KitOwnerView extends Component {
 
     biometrixAdminView = () => {
         let configured = bleConfiguredState.some(state => state === this.props.bluetooth.accessoryData.configuration);
-        let saveable = this.props.bluetooth.accessoryData.name && this.props.bluetooth.accessoryData.organization && this.props.bluetooth.accessoryData.organization.name
-            && this.props.bluetooth.accessoryData.team && this.props.bluetooth.accessoryData.team.name && this.props.bluetooth.accessoryData.individual &&
-            this.props.bluetooth.accessoryData.individual.first_name && this.props.bluetooth.accessoryData.individual.last_name;
+        let saveable = this.props.bluetooth.accessoryData.name && this.props.bluetooth.accessoryData.individual && this.props.bluetooth.accessoryData.individual.first_name
+            && this.props.bluetooth.accessoryData.individual.last_name && this.props.bluetooth.accessoryData.ownerFlag;
         return (
             <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]}>
                 <ScrollView
@@ -172,15 +129,6 @@ class KitOwnerView extends Component {
                         <Text>{this.props.bluetooth.accessoryData.name || ''}</Text>
                         <Text style={{ fontSize: font10 }}>{this.props.bluetooth.accessoryData.wifiMacAddress || ''}</Text>
                     </View>
-                    { this.props.bluetooth.indicator ? 
-                        <View style={[styles.indicator, { justifyContent: 'center', alignItems: 'center'}]}>
-                            <ActivityIndicator
-                                animating={true}
-                                size={'large'}
-                                color={'#C1C5C8'}
-                            />
-                        </View> : null
-                    }
                     <View>
                         {
                             configured ?
@@ -201,11 +149,9 @@ class KitOwnerView extends Component {
                                         rightTitleStyle={[AppStyles.baseText, { color: AppColors.brand.yellow, fontWeight: 'bold' }]}
                                         onPress={() => this.props.startConnect()
                                             .then(() => this.props.assignKitName(this.props.bluetooth.accessoryData.id, this.props.bluetooth.accessoryData.name.slice(11)))
+                                            .then(() => this.props.setOwnerFlag(this.props.bluetooth.accessoryData.id, true))
                                             .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
-                                            .then(() => this.props.loginToAccessory(this.props.bluetooth.accessoryData, this.props.user))
                                             .then(() => this.props.setKitTime(this.props.bluetooth.accessoryData.id))
-                                            .then(() => this.props.setAccessoryLoginEmail(this.props.bluetooth.accessoryData.id, this.props.user.email))
-                                            .then(() => this.props.setAccessoryLoginPassword(this.props.bluetooth.accessoryData.id, this.props.user.password))
                                             .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
                                             .catch(err => console.log(err))
                                             .then(() => this.props.getConfiguration(this.props.bluetooth.accessoryData.id))
@@ -320,12 +266,12 @@ class KitOwnerView extends Component {
                                         paddingLeft: 20,
                                         fontSize:    !this.props.bluetooth.accessoryData.organization && !this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? font14 : font10,
                                         fontWeight:  !this.props.bluetooth.accessoryData.organization && !this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal'
-                                    }}>Step 1: Assign kit organization</Text>
+                                    }}>Step 1: Select organization</Text>
                                     <Text style={{
                                         paddingLeft: 20,
                                         fontSize:    this.props.bluetooth.accessoryData.organization && !this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? font14 : font10,
                                         fontWeight:  this.props.bluetooth.accessoryData.organization && !this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? 'bold' : 'normal'
-                                    }}>Step 2: Assign kit team</Text>
+                                    }}>Step 2: Select team</Text>
                                     <Text style={{
                                         paddingLeft: 20,
                                         fontSize:    this.props.bluetooth.accessoryData.organization && this.props.bluetooth.accessoryData.team && !this.props.bluetooth.accessoryData.individual ? font14 : font10,
@@ -419,6 +365,13 @@ class KitOwnerView extends Component {
                         </Card>
                     </View>
                 </Modal>
+                { this.props.bluetooth.indicator ? 
+                    <ActivityIndicator
+                        style={[AppStyles.activityIndicator]}
+                        size={'large'}
+                        color={'#C1C5C8'}
+                    /> : null
+                }
             </View>
         );
     };

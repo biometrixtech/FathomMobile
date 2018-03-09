@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:56 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-01-25 10:29:54
+ * @Last Modified time: 2018-03-08 02:23:09
  */
 
 /**
@@ -27,7 +27,6 @@ const mapStateToProps = state => {
 // Any actions to map to the component?
 const mapDispatchToProps = {
     scanWiFi:             BluetoothActions.scanWiFi,
-    startScan:            BluetoothActions.startScan,
     setWiFiSSID:          BluetoothActions.setWiFiSSID,
     setWiFiPassword:      BluetoothActions.setWiFiPassword,
     connectWiFi:          BluetoothActions.connectWiFi,

@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:08 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:35:08 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-03-08 14:39:41
  */
 
 /**
@@ -30,11 +30,6 @@ const styles = StyleSheet.create({
         width:  AppSizes.screen.width,
         height: AppSizes.screen.height,
     },
-    indicator: {
-        position: 'absolute',
-        left:     AppSizes.screen.widthHalf,
-        top:      AppSizes.screen.heightHalf
-    }
 });
 
 /* Component ==================================================================== */
@@ -65,8 +60,7 @@ class AppLaunch extends Component {
                 resizeMode={'contain'}
             />
             <ActivityIndicator
-                style={[styles.indicator]}
-                animating
+                style={[AppStyles.ActivityIndicator]}
                 size={'large'}
                 color={'#C1C5C8'}
             />

@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:49 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:34:49 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-03-08 12:44:29
  */
 
 /**
@@ -26,22 +26,18 @@ const mapStateToProps = state => {
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-    getOwnerOrganization:      BluetoothActions.getOwnerOrganization,
-    getOwnerTeam:              BluetoothActions.getOwnerTeam,
-    getOwnerUser:              BluetoothActions.getOwnerUser,
-    assignKitName:             BluetoothActions.assignKitName,
-    getKitName:                BluetoothActions.getKitName,
-    assignType:                BluetoothActions.assignType,
-    storeParams:               BluetoothActions.storeParams,
-    loginToAccessory:          BluetoothActions.loginToAccessory,
-    setKitTime:                BluetoothActions.setKitTime,
-    resetAccessory:            BluetoothActions.resetAccessory,
-    startConnect:              BluetoothActions.startConnect,
-    stopConnect:               BluetoothActions.stopConnect,
-    getConfiguration:          BluetoothActions.getConfiguration,
-    setAccessoryLoginEmail:    BluetoothActions.setAccessoryLoginEmail,
-    setAccessoryLoginPassword: BluetoothActions.setAccessoryLoginPassword,
-    getWifiMacAddress:         BluetoothActions.getWifiMacAddress,
+    assignKitName:     BluetoothActions.assignKitName,
+    getKitName:        BluetoothActions.getKitName,
+    assignType:        BluetoothActions.assignType,
+    storeParams:       BluetoothActions.storeParams,
+    loginToAccessory:  BluetoothActions.loginToAccessory,
+    setKitTime:        BluetoothActions.setKitTime,
+    resetAccessory:    BluetoothActions.resetAccessory,
+    startConnect:      BluetoothActions.startConnect,
+    stopConnect:       BluetoothActions.stopConnect,
+    getConfiguration:  BluetoothActions.getConfiguration,
+    getWifiMacAddress: BluetoothActions.getWifiMacAddress,
+    setOwnerFlag:      BluetoothActions.setOwnerFlag,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitOwnerRender);
