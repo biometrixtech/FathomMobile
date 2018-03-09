@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 13:16:54
+ * @Last Modified time: 2018-03-09 11:45:34
  */
 
 /**
@@ -64,7 +64,7 @@ const getOwnerFlag = (id) => {
         .then(response => {
             return dispatch({
                 type: Actions.GET_OWNER_FLAG,
-                data: parseInt(response[3], 16) === 1 && parseInt(response[4], 16) === 1
+                data: convertHex(response[3]) === 1 && convertHex(response[4]) === 1
             });
         });
 };

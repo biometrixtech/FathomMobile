@@ -69,7 +69,7 @@ initialize() {
 
         watchman watch-del-all
         lsof -P | grep ':8081' | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
-        rm -rf yarn.lock node_modules
+        rm -rf node_modules/ yarn.lock
         yarn
         sed -i '' 's/23.0.1/26.0.2/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
         sed -i '' 's/23.0.1/26.0.2/' ./node_modules/react-native-code-push/android/app/build.gradle

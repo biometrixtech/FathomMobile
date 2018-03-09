@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:40 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 01:56:27
+ * @Last Modified time: 2018-03-09 10:32:24
  */
 
 /**
@@ -37,9 +37,7 @@ const mapDispatchToProps = {
     stopConnect:         BluetoothActions.stopConnect,
     disconnect:          BluetoothActions.disconnect,
     loginToAccessory:    BluetoothActions.loginToAccessory,
-    setKitTime:          BluetoothActions.setKitTime,
     getConfiguration:    BluetoothActions.getConfiguration,
-    storeParams:         BluetoothActions.storeParams,
     getAccessoryKey:     BluetoothActions.getAccessoryKey,
     getWifiMacAddress:   BluetoothActions.getWifiMacAddress,
 };

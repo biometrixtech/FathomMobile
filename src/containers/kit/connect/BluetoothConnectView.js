@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 14:44:35
+ * @Last Modified time: 2018-03-09 10:32:16
  */
 
 /**
@@ -58,9 +58,7 @@ class BluetoothConnectView extends Component {
         stopConnect:        PropTypes.func.isRequired,
         disconnect:         PropTypes.func.isRequired,
         loginToAccessory:   PropTypes.func.isRequired,
-        setKitTime:         PropTypes.func.isRequired,
         getConfiguration:   PropTypes.func.isRequired,
-        storeParams:        PropTypes.func.isRequired,
         getAccessoryKey:    PropTypes.func.isRequired,
         getWifiMacAddress:  PropTypes.func.isRequired,
     }
@@ -197,11 +195,6 @@ class BluetoothConnectView extends Component {
             .catch((err) => {
                 console.log(err);
                 return this.props.loginToAccessory(this.props.bluetooth.accessoryData);
-            })
-            .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
-            .catch(err => {
-                console.log(err);
-                return this.props.storeParams(this.props.bluetooth.accessoryData);
             })
             .then(() => this.props.getConfiguration(this.props.bluetooth.accessoryData.id))
             .catch(err => {

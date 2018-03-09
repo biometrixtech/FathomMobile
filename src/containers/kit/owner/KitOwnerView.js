@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:45 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 14:38:56
+ * @Last Modified time: 2018-03-09 10:32:57
  */
 
 /**
@@ -150,7 +150,6 @@ class KitOwnerView extends Component {
                                         onPress={() => this.props.startConnect()
                                             .then(() => this.props.assignKitName(this.props.bluetooth.accessoryData.id, this.props.bluetooth.accessoryData.name.slice(11)))
                                             .then(() => this.props.setOwnerFlag(this.props.bluetooth.accessoryData.id, true))
-                                            .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
                                             .then(() => this.props.setKitTime(this.props.bluetooth.accessoryData.id))
                                             .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
                                             .catch(err => console.log(err))
