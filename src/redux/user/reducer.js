@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:51 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-23 16:23:38
+ * @Last Modified time: 2018-03-08 13:58:56
  */
 
 /**
@@ -20,6 +20,7 @@ const initialState = {
     teams:                 [],
     selectedTrainingGroup: {},
     weekOffset:            0,
+    loading:               false,
     statsStartDate:        `20${date[2]}-${date[0]}-${date[1]}`,
     statsEndDate:          `20${date[2]}-${date[0]}-${date[1]}`,
     selectedStats:         {
@@ -133,6 +134,7 @@ export default function userReducer(state = initialState, action) {
                 return team;
             }
             team.stats = action.data.stats;
+            team.preprocessing = action.data.preprocessing;
             return team;
         });
         return Object.assign({}, state, {
@@ -146,6 +148,14 @@ export default function userReducer(state = initialState, action) {
             selectedStats: {
                 ...action.data
             }
+        });
+    case Actions.START_REQUEST:
+        return Object.assign({}, state, {
+            loading: true
+        });
+    case Actions.STOP_REQUEST:
+        return Object.assign({}, state, {
+            loading: false
         });
     case Actions.SIGN_UP_SUCCESS:
     case Actions.FORGOT_PASSWORD_SUCCESS:
