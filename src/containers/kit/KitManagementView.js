@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:00 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 14:37:51
+ * @Last Modified time: 2018-03-11 12:33:37
  */
 
 /**
@@ -62,6 +62,7 @@ class KitManagementView extends Component {
         setAnonymousIdentity: PropTypes.func.isRequired,
         setEAPType:           PropTypes.func.isRequired,
         setGyroCalibration:   PropTypes.func.isRequired,
+        resetAccessory:       PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -72,15 +73,16 @@ class KitManagementView extends Component {
         super(props);
 
         this.state = {
-            modalStyle:        {},
-            other:             false,
-            SSID:              null,
-            newNetwork:        true,
-            isCollapsed:       true,
-            password:          '',
-            identity:          '',
-            anonymousIdentity: '',
-            eapType:           ''
+            modalStyle:          {},
+            other:               false,
+            SSID:                null,
+            newNetwork:          true,
+            isCollapsed:         true,
+            password:            '',
+            identity:            '',
+            anonymousIdentity:   '',
+            eapType:             '',
+            isResetModalVisible: false,
         };
 
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
@@ -166,7 +168,7 @@ class KitManagementView extends Component {
                     />
             }
             {
-                !this.props.bluetooth.accessoryData.id || !this.props.bluetooth.accessoryData.configured ?
+                !this.props.bluetooth.accessoryData.id ?
                     <ListItem
                         title={'WiFi'}
                         chevronColor={ AppColors.lightGrey }
@@ -182,6 +184,21 @@ class KitManagementView extends Component {
                             return this.props.scanWiFi(this.props.bluetooth.accessoryData.id)
                                 .then(() => this.readSSID(this.props.bluetooth.accessoryData.id, 30));
                         }}
+                    />
+            }
+            {
+                !this.props.bluetooth.accessoryData.id ?
+                    <ListItem
+                        title={'Factory Reset'}
+                        chevronColor={ AppColors.lightGrey }
+                        titleStyle={{ color: AppColors.lightGrey }}
+                    />
+                    :
+                    <ListItem
+                        title={'Factory Reset'}
+                        chevronColor={ AppColors.brand.blue }
+                        titleStyle={{ color: AppColors.brand.blue }}
+                        onPress={() => this.setState({ isResetModalVisible: true })}
                     />
             }
             <Text style={{ paddingLeft: AppSizes.padding, fontSize: !this.props.bluetooth.accessoryData.id ? font14 : font10, fontWeight: !this.props.bluetooth.accessoryData.id ? 'bold' : 'normal' }}>Step 1: Connect to kit</Text>
@@ -371,6 +388,42 @@ class KitManagementView extends Component {
                         />
                     </Card>
                 </KeyboardAvoidingView>
+            </Modal>
+            <Modal
+                position={'center'}
+                style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
+                isOpen={this.props.isResetModalVisible}
+                backButtonClose
+                swipeToClose={false}
+                onClosed={() => Actions.refresh({ isResetModalVisible: false })}
+            >
+                <View onLayout={(ev) => { this.resizeModal(ev); }}>
+                    <Card title={'Erase Owner'}>
+
+                        <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >This will reset all kit data. Are you sure you want to continue?</FormLabel>
+
+                        <Spacer />
+
+                        <View style={{ flexDirection: 'row' }}>
+                            <Button
+                                title={'No'}
+                                containerViewStyle={{ flex: 1 }}
+                                backgroundColor={AppColors.brand.fogGrey}
+                                onPress={() => this.setState({ isResetModalVisible: false })}
+                            />
+                            <Button
+                                title={'Yes'}
+                                containerViewStyle={{ flex: 1 }}
+                                onPress={() => this.props.startConnect()
+                                    .then(() => this.props.resetAccessory(this.props.bluetooth.accessoryData))
+                                    .catch(err => console.log(err))
+                                    .then(() => this.props.stopConnect())
+                                    .then(() => this.setState({ isResetModalVisible: false }))
+                                }
+                            />
+                        </View>
+                    </Card>
+                </View>
             </Modal>
             { this.props.bluetooth.indicator ?
                 <ActivityIndicator

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:27 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 13:33:15
+ * @Last Modified time: 2018-03-11 13:38:48
  */
 
 /**
@@ -77,9 +77,7 @@ export default function bluetoothReducer(state = initialState, action) {
             accessoryData: {
                 ...state.accessoryData,
                 ...tempAccessory,
-                configuration: 0,
-                configured:    false,
-                ownerFlag:     false,
+                ownerFlag: false,
             },
             networks: [{ key: 0, label: 'Other' }]
         });
@@ -107,13 +105,6 @@ export default function bluetoothReducer(state = initialState, action) {
         return Object.assign({}, state, {
             networks
         });
-    case Actions.GET_CONFIGURATION:
-        return Object.assign({}, state, {
-            accessoryData: {
-                ...state.accessoryData,
-                ...action.data
-            }
-        });
     case Actions.BLUETOOTH_DISCONNECT:
         return Object.assign({}, state, {
             accessoryData: {},
@@ -128,7 +119,6 @@ export default function bluetoothReducer(state = initialState, action) {
             }
         });
     case Actions.GET_OWNER_FLAG:
-    case Actions.SET_OWNER_FLAG:
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
@@ -153,12 +143,13 @@ export default function bluetoothReducer(state = initialState, action) {
                 settingsKey:     action.settingsKey,
                 last_user_id:    action.user_id,
                 organization,
-                organization_id: organization.id,
+                organization_id: organization ? organization.id : null,
                 team,
-                team_id:         team.id,
+                team_id:         team ? team.id : null,
                 individual
             }
         });
+    case Actions.SET_OWNER_FLAG:
     case Actions.SET_GYRO_CALIBRATION:
     case Actions.HANDLE_DISCONNECT:
     case Actions.CHECK_STATE:

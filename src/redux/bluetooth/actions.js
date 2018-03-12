@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-09 11:45:34
+ * @Last Modified time: 2018-03-12 01:27:06
  */
 
 /**
@@ -15,8 +15,8 @@ import { AppAPI } from '@lib/';
 const Actions = require('../actionTypes');
 const commands = BLEConfig.commands;
 const state = BLEConfig.state
-const configuration = BLEConfig.configuration;
-const bleConfiguredState = [configuration.DONE, configuration.UPSERT_PENDING, configuration.UPSERT_TO_SAVE, configuration.UPSERT_DONE];
+// const configuration = BLEConfig.configuration;
+// const bleConfiguredState = [configuration.DONE, configuration.UPSERT_PENDING, configuration.UPSERT_TO_SAVE, configuration.UPSERT_DONE];
 
 const write = (id, data) => {
     return BleManager.write(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID, data)
@@ -64,7 +64,7 @@ const getOwnerFlag = (id) => {
         .then(response => {
             return dispatch({
                 type: Actions.GET_OWNER_FLAG,
-                data: convertHex(response[3]) === 1 && convertHex(response[4]) === 1
+                data: convertHex(response[3]) === 0 && convertHex(response[4]) === 1
             });
         });
 };
@@ -82,21 +82,6 @@ const getKitName = (id) => {
             });
         })
 }
-
-const getConfiguration = (id) => {
-    let dataArray = [commands.GET_CONFIGURATION, convertHex('0x00')];
-    return dispatch => write(id, dataArray)
-        .then(response => {
-            return dispatch({
-                type: Actions.GET_CONFIGURATION,    
-                data: {
-                    configuration: response[4],
-                    configured:    bleConfiguredState.some(bleState => bleState === response[4])
-                }
-            });
-        })
-        .catch(err => Promise.reject(err));
-};
 
 const assignType = (type) => {
     return dispatch => dispatch({
@@ -201,15 +186,25 @@ const connectToAccessory = (data) => {
         .catch(err => Promise.reject(err));
 };
 
-const loginToAccessory = (data) => {
+const loginToAccessory = (accessoryData) => {
     let dataArray = [commands.LOGIN, convertHex('0x04')];
-    dataArray.concat(convertToUnsigned32BitIntByteArray(data.accessoryData.settingsKey));
-    return dispatch => write(data.id, dataArray)
-        .then(uploadedAccessory => {
-            return dispatch({
+    dataArray = dataArray.concat(convertToUnsigned32BitIntByteArray(accessoryData.settingsKey));
+    return dispatch => write(accessoryData.id, dataArray)
+        .then(response => {
+            return convertHex(response[3]) === 1 ? write(accessoryData.id, dataArray) : Promise.resolve(response);
+        })
+        .then(response => {
+            dispatch({
                 type: Actions.CONNECT_TO_ACCESSORY,
-                data
+                data: convertHex(response[3]) === 1 ? {} : accessoryData
             });
+            if (convertHex(response[3]) === 1) {
+                return BleManager.disconnect(accessoryData.id)
+                    .then(() => dispatch({
+                        type: Actions.BLUETOOTH_DISCONNECT
+                    }));
+            }
+            return Promise.resolve();
         })
         .catch(err => Promise.reject(err));
 }
@@ -306,7 +301,7 @@ const readSSID = (id) => {
             console.log(response);
             return dispatch({
                 type: Actions.NETWORK_DISCOVERED,
-                data: response[3] === 1 ? '' : convertByteArrayToString(response.slice(3))
+                data: convertHex(response[3]) === 1 ? '' : convertByteArrayToString(response.slice(3))
             });
         })
         .catch(err => console.log(err)) : null;
@@ -370,9 +365,11 @@ const setOwnerFlag = (id, value) => {
     let dataArray = [commands.SET_OWNER_FLAG, convertHex('0x01'), convertHex(value ? '0x01' : '0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
+            return convertHex(response[3]) === 1 ? write(id, dataArray) : Promise.resolve();
+        })
+        .then(response => {
             return dispatch({
                 type: Actions.SET_OWNER_FLAG,
-                data: value
             });
         });
 };
@@ -427,7 +424,6 @@ const setKitState = (id, stateUsed) => {
 
 const disconnect = (id) => {
     let dataArray = [commands.SET_STATE, convertHex('0x01'), state.APP_IDLE];
-    console.log(dataArray);
     return dispatch => write(id, dataArray)
         .catch(err => console.log(err))
         .then(() => BleManager.disconnect(id))
@@ -461,7 +457,13 @@ const getWifiMacAddress = (id) => {
     let dataArray = [commands.GET_MAC_ADDRESS, convertHex('0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
-            return convertDecimal(response.slice(4,10), true);
+            return convertHex(response[3]) === 1 ? write(id, dataArray) : Promise.resolve(response);
+        })
+        .then(response => {
+            return convertDecimal(response.slice(4,10));
+        })
+        .then(macAddress => {
+            return macAddress === '00:00:00:00:00:00' ? write(id, dataArray) : Promise.resolve(macAddress);
         })
         .then(macAddress => {
             return dispatch({
@@ -571,8 +573,8 @@ const getAccessoryKey = (id, user) => {
         .then(response => {
             return dispatch({
                 type:        Actions.GET_ACCESSORY_KEY,
-                settingsKey: response.settingsKey,
-                user_id:     response.owner_id,
+                settingsKey: response.accessory.settings_key,
+                user_id:     response.accessory.owner_id,
                 user
             });
         })
@@ -613,7 +615,7 @@ export {
     handleDisconnect,
     setKitTime,
     setKitState,
-    getConfiguration,
+    // getConfiguration,
     storeParams,
     getWifiMacAddress,
     setIdentity,

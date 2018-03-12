@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:45 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-09 10:32:57
+ * @Last Modified time: 2018-03-11 14:29:29
  */
 
 /**
@@ -32,27 +32,25 @@ import { Placeholder } from '@general/';
 const font10 = AppFonts.scaleFont(10);
 const font14 = AppFonts.scaleFont(14);
 
-const configuration = BLEConfig.configuration;
-const bleConfiguredState = [configuration.DONE, configuration.UPSERT_PENDING, configuration.UPSERT_TO_SAVE, configuration.UPSERT_DONE];
+// const configuration = BLEConfig.configuration;
+// const bleConfiguredState = [configuration.DONE, configuration.UPSERT_PENDING, configuration.UPSERT_TO_SAVE, configuration.UPSERT_DONE];
 
 /* Component ==================================================================== */
 class KitOwnerView extends Component {
     static componentName = 'KitOwnerView';
 
     static propTypes = {
-        user:              PropTypes.object,
-        bluetooth:         PropTypes.object,
-        assignType:        PropTypes.func.isRequired,
-        getKitName:        PropTypes.func.isRequired,
-        assignKitName:     PropTypes.func.isRequired,
-        storeParams:       PropTypes.func.isRequired,
-        setKitTime:        PropTypes.func.isRequired,
-        resetAccessory:    PropTypes.func.isRequired,
-        startConnect:      PropTypes.func.isRequired,
-        stopConnect:       PropTypes.func.isRequired,
-        getConfiguration:  PropTypes.func.isRequired,
-        getWifiMacAddress: PropTypes.func.isRequired,
-        setOwnerFlag:      PropTypes.func.isRequired,
+        user:          PropTypes.object,
+        bluetooth:     PropTypes.object,
+        assignType:    PropTypes.func.isRequired,
+        getKitName:    PropTypes.func.isRequired,
+        assignKitName: PropTypes.func.isRequired,
+        storeParams:   PropTypes.func.isRequired,
+        setKitTime:    PropTypes.func.isRequired,
+        startConnect:  PropTypes.func.isRequired,
+        stopConnect:   PropTypes.func.isRequired,
+        setOwnerFlag:  PropTypes.func.isRequired,
+        getOwnerFlag:  PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -76,9 +74,9 @@ class KitOwnerView extends Component {
             .catch(e => console.log(e))
             .then(() => this.props.bluetooth.accessoryData.name ? Promise.resolve() : this.props.getKitName(this.props.bluetooth.accessoryData.id))
             .catch(e => console.log(e))
-            .then(() => this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
+            .then(() => this.props.getOwnerFlag(this.props.bluetooth.accessoryData.id))
             .catch(e => console.log(e))
-            .then(() => this.props.bluetooth.accessoryData.wifiMacAddress ? Promise.resolve() : this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
+            .then(() => typeof(this.props.bluetooth.accessoryData.ownerFlag) === typeof(true) ? Promise.resolve() : this.props.getOwnerFlag(this.props.bluetooth.accessoryData.id))
             .catch(e => console.log(e))
     };
 
@@ -88,9 +86,9 @@ class KitOwnerView extends Component {
             .catch(e => console.log(e))
             .then(() => this.props.bluetooth.accessoryData.name ? Promise.resolve() : this.props.getKitName(this.props.bluetooth.accessoryData.id))
             .catch(e => console.log(e))
-            .then(() => this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
+            .then(() => this.props.getOwnerFlag(this.props.bluetooth.accessoryData.id))
             .catch(e => console.log(e))
-            .then(() => this.props.bluetooth.accessoryData.wifiMacAddress ? Promise.resolve() : this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
+            .then(() => typeof(this.props.bluetooth.accessoryData.ownerFlag) === typeof(true) ? Promise.resolve() : this.props.getOwnerFlag(this.props.bluetooth.accessoryData.id))
             .catch(e => console.log(e))
             .then(() => {
                 this.setState({refreshing: false});
@@ -110,9 +108,10 @@ class KitOwnerView extends Component {
     );
 
     biometrixAdminView = () => {
-        let configured = bleConfiguredState.some(state => state === this.props.bluetooth.accessoryData.configuration);
+        // let configured = bleConfiguredState.some(state => state === this.props.bluetooth.accessoryData.configuration);
+        let configured = this.props.bluetooth.accessoryData.ownerFlag;
         let saveable = this.props.bluetooth.accessoryData.name && this.props.bluetooth.accessoryData.individual && this.props.bluetooth.accessoryData.individual.first_name
-            && this.props.bluetooth.accessoryData.individual.last_name && this.props.bluetooth.accessoryData.ownerFlag;
+            && this.props.bluetooth.accessoryData.individual.last_name && !this.props.bluetooth.accessoryData.ownerFlag;
         return (
             <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]}>
                 <ScrollView
@@ -135,7 +134,7 @@ class KitOwnerView extends Component {
                                 <ListItem
                                     title={'OWNER'}
                                     containerStyle={{ padding: 10, backgroundColor: AppColors.brand.light }}
-                                    rightTitle={'Reset to Edit'}
+                                    rightTitle={'Erase Owner'}
                                     rightTitleStyle={[AppStyles.baseText, { color: AppColors.brand.yellow, fontWeight: 'bold' }]}
                                     onPress={() => Actions.refresh({ isResetModalVisible: true })}
                                     hideChevron
@@ -150,10 +149,10 @@ class KitOwnerView extends Component {
                                         onPress={() => this.props.startConnect()
                                             .then(() => this.props.assignKitName(this.props.bluetooth.accessoryData.id, this.props.bluetooth.accessoryData.name.slice(11)))
                                             .then(() => this.props.setOwnerFlag(this.props.bluetooth.accessoryData.id, true))
+                                            .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
                                             .then(() => this.props.setKitTime(this.props.bluetooth.accessoryData.id))
                                             .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
-                                            .catch(err => console.log(err))
-                                            .then(() => this.props.getConfiguration(this.props.bluetooth.accessoryData.id))
+                                            .then(() => this.props.getOwnerFlag(this.props.bluetooth.accessoryData.id))
                                             .then(() => this.props.stopConnect())
                                             .catch(err => { console.log(err); return this.props.stopConnect(); })
                                         }
@@ -336,9 +335,9 @@ class KitOwnerView extends Component {
                     onClosed={() => Actions.refresh({ isResetModalVisible: false })}
                 >
                     <View onLayout={(ev) => { this.resizeModal(ev); }}>
-                        <Card title={'Factory Reset'}>
+                        <Card title={'Erase Owner'}>
 
-                            <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >This will erase all kit owner data. Are you sure you want to erase?</FormLabel>
+                            <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >This will remove the kit owner data. Are you sure you want to erase?</FormLabel>
 
                             <Spacer />
 
@@ -353,7 +352,9 @@ class KitOwnerView extends Component {
                                     title={'Yes'}
                                     containerViewStyle={{ flex: 1 }}
                                     onPress={() => this.props.startConnect()
-                                        .then(() => this.props.resetAccessory(this.props.bluetooth.accessoryData))
+                                        .then(() => this.props.setOwnerFlag(this.props.bluetooth.accessoryData.id, false))
+                                        .then(() => this.props.storeParams(this.props.bluetooth.accessoryData))
+                                        .then(() => this.props.getOwnerFlag(this.props.bluetooth.accessoryData.id))
                                         .then(() => this._onRefresh())
                                         .catch(err => console.log(err))
                                         .then(() => this.props.stopConnect())

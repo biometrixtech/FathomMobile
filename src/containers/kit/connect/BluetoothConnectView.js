@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-09 10:32:16
+ * @Last Modified time: 2018-03-12 00:44:15
  */
 
 /**
@@ -23,6 +23,7 @@ import {
 import { Icon } from 'react-native-elements';
 import Collapsible from 'react-native-collapsible';
 import { Actions } from 'react-native-router-flux';
+import Toast, {DURATION} from 'react-native-easy-toast';
 import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
 
 // Consts and Libs
@@ -58,7 +59,7 @@ class BluetoothConnectView extends Component {
         stopConnect:        PropTypes.func.isRequired,
         disconnect:         PropTypes.func.isRequired,
         loginToAccessory:   PropTypes.func.isRequired,
-        getConfiguration:   PropTypes.func.isRequired,
+        getOwnerFlag:       PropTypes.func.isRequired,
         getAccessoryKey:    PropTypes.func.isRequired,
         getWifiMacAddress:  PropTypes.func.isRequired,
     }
@@ -134,7 +135,6 @@ class BluetoothConnectView extends Component {
             })
             .catch(error => {
                 this.setState({ index: 1 });
-                // this.pages.scrollToPage(1);
                 this.pages.progress = 1;
             });
     }
@@ -158,7 +158,6 @@ class BluetoothConnectView extends Component {
         if (data.state === 'off') {
             if (this.pages && this.pages.progress > 1) {
                 this.setState({ index: 1 });
-                // this.pages.scrollToPage(1);
                 this.pages.progress = 1;
             } else if (!this.pages) {
                 return Promise.resolve(this.props.changeState(data.state))
@@ -167,7 +166,6 @@ class BluetoothConnectView extends Component {
         } else if (data.state === 'on' && this.pages && this.pages.progress === 1) {
             this.startBluetooth();
             this.setState({ index: 2 });
-            // this.pages.scrollToPage(2);
             this.pages.progress = 2;
         }
         return this.props.changeState(data.state);
@@ -196,14 +194,16 @@ class BluetoothConnectView extends Component {
                 console.log(err);
                 return this.props.loginToAccessory(this.props.bluetooth.accessoryData);
             })
-            .then(() => this.props.getConfiguration(this.props.bluetooth.accessoryData.id))
-            .catch(err => {
-                console.log(err);
-                return this.props.getConfiguration(this.props.bluetooth.accessoryData.id);
+            .then(() => {
+                return !this.props.bluetooth.accessoryData.id ? Promise.resolve() : this.props.getOwnerFlag(this.props.bluetooth.accessoryData.id);
             })
             .then(() => {
-                this.setState({ index: 3 });
-                this.pages.progress = 3;
+                if (Object.keys(this.props.bluetooth.accessoryData).length === 0 && this.props.bluetooth.accessoryData.constructor === Object) {
+                    this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
+                } else {
+                    this.setState({ index: 3 });
+                    this.pages.progress = 3;
+                }
                 return this.props.stopConnect();
             })
             .catch((err) => {
@@ -307,6 +307,10 @@ class BluetoothConnectView extends Component {
                     </View>
                     <Spacer />
                     <View style={{ flex: 4 }}>
+                        <Toast 
+                            ref={'toast'}
+                            position={'top'}
+                        />
                         <ScrollView>
                             {
                                 this.props.bluetooth.devicesFound.map(device => {

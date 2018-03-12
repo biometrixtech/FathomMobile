@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:49 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 12:44:29
+ * @Last Modified time: 2018-03-11 14:19:26
  */
 
 /**
@@ -26,18 +26,16 @@ const mapStateToProps = state => {
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-    assignKitName:     BluetoothActions.assignKitName,
-    getKitName:        BluetoothActions.getKitName,
-    assignType:        BluetoothActions.assignType,
-    storeParams:       BluetoothActions.storeParams,
-    loginToAccessory:  BluetoothActions.loginToAccessory,
-    setKitTime:        BluetoothActions.setKitTime,
-    resetAccessory:    BluetoothActions.resetAccessory,
-    startConnect:      BluetoothActions.startConnect,
-    stopConnect:       BluetoothActions.stopConnect,
-    getConfiguration:  BluetoothActions.getConfiguration,
-    getWifiMacAddress: BluetoothActions.getWifiMacAddress,
-    setOwnerFlag:      BluetoothActions.setOwnerFlag,
+    assignKitName:    BluetoothActions.assignKitName,
+    getKitName:       BluetoothActions.getKitName,
+    assignType:       BluetoothActions.assignType,
+    storeParams:      BluetoothActions.storeParams,
+    loginToAccessory: BluetoothActions.loginToAccessory,
+    setKitTime:       BluetoothActions.setKitTime,
+    startConnect:     BluetoothActions.startConnect,
+    stopConnect:      BluetoothActions.stopConnect,
+    setOwnerFlag:     BluetoothActions.setOwnerFlag,
+    getOwnerFlag:     BluetoothActions.getOwnerFlag,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KitOwnerRender);

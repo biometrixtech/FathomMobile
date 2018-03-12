@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:41 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 13:59:20
+ * @Last Modified time: 2018-03-11 14:29:47
  */
 
 module.exports = {
@@ -51,7 +51,6 @@ module.exports = {
     HANDLE_DISCONNECT:       'HANDLE_DISCONNECT',
     SET_KIT_TIME:            'SET_KIT_TIME',
     SET_KIT_STATE:           'SET_KIT_STATE',
-    GET_CONFIGURATION:       'GET_CONFIGURATION',
     STORE_PARAMS:            'STORE_PARAMS',
     GET_WIFI_MAC_ADDRESS:    'GET_WIFI_MAC_ADDRESS',
     GET_TEAM_STATS:          'GET_TEAM_STATS',
