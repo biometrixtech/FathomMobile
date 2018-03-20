@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:00 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-11 12:33:37
+ * @Last Modified time: 2018-03-19 23:57:41
  */
 
 /**
@@ -89,7 +89,7 @@ class KitManagementView extends Component {
     }
 
     readSSID = (id, loopsLeft) => {
-        this.props.readSSID(id)
+        return this.props.readSSID(id)
             .then(() => loopsLeft-1 >= 0 ? this.readSSID(id, loopsLeft-1) : null);
     };
 
@@ -218,7 +218,7 @@ class KitManagementView extends Component {
                 swipeToClose={false}
                 onClosed={() => this.setState({ isModal1Visible: false })}
             >
-                <View onLayout={(ev) => { this.resizeModal1(ev); }}>
+                <View onLayout={(ev) => this.resizeModal1(ev)}>
                     <Card title={'Connect to WiFi'}>
                         <Spacer size={5} />
                         <ScrollView style={{ borderWidth: 1, borderColor: AppColors.border, height: AppSizes.screen.heightHalf }}>
@@ -398,7 +398,7 @@ class KitManagementView extends Component {
                 onClosed={() => Actions.refresh({ isResetModalVisible: false })}
             >
                 <View onLayout={(ev) => { this.resizeModal(ev); }}>
-                    <Card title={'Erase Owner'}>
+                    <Card title={'Factory Reset'}>
 
                         <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >This will reset all kit data. Are you sure you want to continue?</FormLabel>
 

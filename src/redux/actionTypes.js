@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:41 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-11 14:29:47
+ * @Last Modified time: 2018-03-19 02:15:07
  */
 
 module.exports = {
@@ -35,6 +35,7 @@ module.exports = {
     START_BLUETOOTH:         'START_BLUETOOTH',
     ASSIGN_TYPE:             'ASSIGN_TYPE',
     TEAM_SELECT:             'TEAM_SELECT',
+    USER_SELECT:             'USER_SELECT',
     TRAINING_GROUP_SELECT:   'TRAINING_GROUP_SELECT',
     ACCESSORY_RESET:         'ACCESSORY_RESET',
     WIFI_SCAN:               'WIFI_SCAN',
@@ -59,4 +60,5 @@ module.exports = {
     GET_ACCESSORY_KEY:       'GET_ACCESSORY_KEY',
     START_REQUEST:           'START_REQUEST',
     STOP_REQUEST:            'STOP_REQUEST',
+    SELECT_GRAPH:            'SELECT_GRAPH',
 };

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:20 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 14:21:31
+ * @Last Modified time: 2018-03-16 17:28:28
  */
 
 import React, { Component } from 'react';
@@ -13,7 +13,7 @@ import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab
 
 // Consts and Libs
 import { AppColors, AppStyles, AppSizes } from '@theme/';
-import { Roles } from '@constants/';
+import { Roles, ErrorMessages } from '@constants/';
 
 // Components
 import { ListItem, Text, StackedBarChart, FloatingBarChart } from '@ui/';
@@ -25,27 +25,17 @@ const tabs = {
     2: ['TRAINING VOLUME', 'Accumulated CoM Acceleration']
 }
 
-const ATHLETE_PREPROCESSING_UPLOADING  = 'Your session is still uploading - make sure your kit has wifi access and check back soon.';
-const ATHLETE_PREPROCESSING_PROCESSING = 'We\'re processing your session now - check back soon.';
-const ATHLETE_PREPROCESSING_ERROR      = 'Uh Oh! One of your sessions was an odd ball. We\'re on it and will get you your results soon.';
-
-const SINGLE_PREPROCESSING_UPLOADING  = '1 athlete is still uploading sessions - make sure their kit has wifi access and check back soon.';
-const SINGLE_PREPROCESSING_PROCESSING = '1 athlete\'s session is still processing - check back soon.';
-const SINGLE_PREPROCESSING_ERROR      = 'Uh Oh! 1 of your sessions was an odd ball. We\'re on it and will get you your results soon.';
-
-const MULTIPLE_PREPROCESSING_UPLOADING  = 'X athletes are still uploading sessions - make sure their kits have wifi access and check back soon.';
-const MULTIPLE_PREPROCESSING_PROCESSING = 'X athletes\' session are still processing - check back soon.';
-const MULTIPLE_PREPROCESSING_ERROR      = 'Uh Oh! X of your sessions were odd balls. We\'re on it and will get you your results soon.';
-
 /* Component ==================================================================== */
 class Dashboard extends Component {
     static componentName = 'DashboardView';
     
     static propTypes = {
         user:             PropTypes.object,
-        getTeams:         PropTypes.func.isRequired,
         setStatsCategory: PropTypes.func.isRequired,
+        getTeams:         PropTypes.func.isRequired,
         getTeamStats:     PropTypes.func.isRequired,
+        startRequest:     PropTypes.func.isRequired,
+        stopRequest:      PropTypes.func.isRequired,
     }
     
     static defaultProps = {
@@ -65,7 +55,7 @@ class Dashboard extends Component {
 
     componentWillMount = () => {
         return this.props.startRequest()
-            .then(() => this.props.getTeams())
+            .then(() => this.props.getTeams(this.props.user.statsStartDate, this.props.user.statsEndDate, this.props.user.weekOffset))
             .then(() => this.props.stopRequest());
     }
 
@@ -236,9 +226,9 @@ class Dashboard extends Component {
         let grey = AppColors.brand.grey;
         let text = '';
         if (role === Roles.athlete) {
-            text = ATHLETE_PREPROCESSING_UPLOADING;
+            text = ErrorMessages.ATHLETE_PREPROCESSING_UPLOADING;
         } else {
-            text = uploadArray.length === 1 ? SINGLE_PREPROCESSING_UPLOADING : MULTIPLE_PREPROCESSING_UPLOADING;
+            text = uploadArray.length === 1 ? ErrorMessages.SINGLE_PREPROCESSING_UPLOADING : ErrorMessages.MULTIPLE_PREPROCESSING_UPLOADING;
             text.replace('X', String(uploadArray.length));
         }
         return <ListItem
@@ -260,9 +250,9 @@ class Dashboard extends Component {
         let grey = AppColors.brand.grey;
         let text = '';
         if (role === Roles.athlete) {
-            text = ATHLETE_PREPROCESSING_PROCESSING;
+            text = ErrorMessages.ATHLETE_PREPROCESSING_PROCESSING;
         } else {
-            text = processingArray.length === 1 ? SINGLE_PREPROCESSING_PROCESSING : MULTIPLE_PREPROCESSING_PROCESSING;
+            text = processingArray.length === 1 ? ErrorMessages.SINGLE_PREPROCESSING_PROCESSING : ErrorMessages.MULTIPLE_PREPROCESSING_PROCESSING;
             text.replace('X', String(processingArray.length));
         }
         return <ListItem
@@ -284,9 +274,9 @@ class Dashboard extends Component {
         let grey = AppColors.brand.grey;
         let text = '';
         if (role === Roles.athlete) {
-            text = ATHLETE_PREPROCESSING_ERROR;
+            text = ErrorMessages.ATHLETE_PREPROCESSING_ERROR;
         } else {
-            text = errorArray.length === 1 ? SINGLE_PREPROCESSING_ERROR : MULTIPLE_PREPROCESSING_ERROR;
+            text = errorArray.length === 1 ? ErrorMessages.SINGLE_PREPROCESSING_ERROR : ErrorMessages.MULTIPLE_PREPROCESSING_ERROR;
             text.replace('X', String(errorArray.length));
         }
         return <ListItem

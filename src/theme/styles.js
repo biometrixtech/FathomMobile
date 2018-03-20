@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:19:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 14:29:21
+ * @Last Modified time: 2018-03-14 19:16:17
  */
 
 /**
@@ -258,6 +258,9 @@ export default {
     },
     flex6: {
         flex: 6,
+    },
+    flex7: {
+        flex: 7,
     },
 
     // Navbar

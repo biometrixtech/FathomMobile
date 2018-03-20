@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:32:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-13 18:42:46
+ * @Last Modified time: 2018-03-14 14:40:02
  */
 
 /**
@@ -181,22 +181,15 @@ class Login extends Component {
                     }, () => {
                         Actions.app({ type: 'reset' });
                         // switch (userData.role) {
-                        // case roles.admin:
-                        //     Actions.adminApp({ type: 'reset' });
-                        //     break;
                         // case roles.athlete:
-                        //     Actions.athleteApp({ type: 'reset' });
+                        //     Actions.athleteApp({ type: 'reset'});
                         //     break;
+                        // case roles.admin:
                         // case roles.biometrixAdmin:
-                        //     Actions.biometrixApp({ type: 'reset' }); // eventually changed to biometrixAdminApp?
-                        //     break;
                         // case roles.manager:
-                        //     Actions.managerApp({ type: 'reset' });
-                        //     break;
                         // case roles.researcher:
-                        //     Actions.researcherApp({ type: 'reset' });
-                        //     break;
                         // default:
+                        //     Actions.app({ type: 'reset' });
                         //     break;
                         // }
                     });

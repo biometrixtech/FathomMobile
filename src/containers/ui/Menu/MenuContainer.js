@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:29 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-19 00:11:46
+ * @Last Modified time: 2018-03-14 01:50:21
  */
 
 /**
@@ -29,6 +29,7 @@ const mapDispatchToProps = {
     disconnect:  BluetoothActions.disconnect,
     setKitState: BluetoothActions.setKitState,
     teamSelect:  UserActions.teamSelect,
+    userSelect:  UserActions.userSelect,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MenuRender);

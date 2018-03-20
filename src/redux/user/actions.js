@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:59 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 14:24:14
+ * @Last Modified time: 2018-03-19 02:26:41
  */
 
 /**
@@ -48,6 +48,7 @@ const login = (credentials, freshLogin) => {
                 // TODO: auth check on authorized account role
 
                 // Get user details from API, using my token
+                let user = response.user;
                 return AppAPI.user.get()
                     .then(userData => {
                         delete response.user;
@@ -68,12 +69,12 @@ const login = (credentials, freshLogin) => {
                             data: teams
                         });
                     })
-                    .then(() => AppAPI.accessories.get())
-                    .then(accessories => dispatch({
-                        type: Actions.GET_ACCESSORIES,
-                        data: accessories
-                    }))
-                    .then(() => resolve())
+                    // .then(() => AppAPI.accessories.get())
+                    // .then(accessories => dispatch({
+                    //     type: Actions.GET_ACCESSORIES,
+                    //     data: accessories
+                    // }))
+                    .then(() => resolve(user))
                     .catch(err => reject(err));
             }).catch(err => reject(err));
     });
@@ -219,9 +220,16 @@ const removeTrainingGroup = (trainingGroupId) => {
 const teamSelect = (index) => {
     return dispatch => dispatch({
         type: Actions.TEAM_SELECT,
-        data: index
+        index
     });
 };
+
+const userSelect = (index) => {
+    return dispatch => dispatch({
+        type: Actions.USER_SELECT,
+        index
+    });
+}
 
 const selectTrainingGroup = (trainingGroup) => {
     return dispatch => dispatch({
@@ -264,16 +272,33 @@ const stopSession = (accessoryId) => {
 
 const formatDate = (date) => `${date < 10 ? '0' : ''}${date}`;
 
-const getTeams = () => {
-    let tempTeams = [];
-    let todaysDate = new Date();
-    let dayOfWeek = todaysDate.getDay();
+const getStartAndEndDate = (weekOffset) => {
+    let date = new Date();
+    date.setTime(date.getTime() + weekOffset * 7 * DAY_IN_MS);
+    let dayOfWeek = date.getDay();
     let startOfWeekOffset = dayOfWeek === 1 ? 0 : (dayOfWeek+6)%7;
     let endOfWeekOffset = !dayOfWeek ? 0 : 7-dayOfWeek;
-    let startDateObject = new Date(todaysDate.getTime() - startOfWeekOffset * DAY_IN_MS);
-    let endDateObject = new Date(todaysDate.getTime() + endOfWeekOffset * DAY_IN_MS);
+    let startDateObject = new Date(date.getTime() - startOfWeekOffset * DAY_IN_MS);
+    let endDateObject = new Date(date.getTime() + endOfWeekOffset * DAY_IN_MS);
     let startDate = `${startDateObject.getFullYear()}-${formatDate(startDateObject.getMonth()+1)}-${formatDate(startDateObject.getDate())}`;
     let endDate = `${endDateObject.getFullYear()}-${formatDate(endDateObject.getMonth()+1)}-${formatDate(endDateObject.getDate())}`;
+    return ({ startDate, endDate });
+}
+
+const getTeams = (prerequestStartDate, prerequestEndDate, weekOffset = 0) => {
+    let tempTeams = [];
+    let { startDate, endDate } = getStartAndEndDate(weekOffset);
+    if (startDate === prerequestStartDate && endDate === prerequestEndDate) {
+        return dispatch => dispatch({
+            type: Actions.STOP_REQUEST
+        });
+    }
+    let previousWeek = getStartAndEndDate(-1);
+    let nextWeek = getStartAndEndDate(+1);
+    let previousWeekStartDate = previousWeek.startDate;
+    let previousWeekEndDate = previousWeek.endDate;
+    let nextWeekStartDate = nextWeek.startDate;
+    let nextWeekEndDate = nextWeek.endDate;
     return dispatch => AppAPI.teams.get()
         .then(teams => {
             tempTeams = teams.teams.map(team => team.id);
@@ -282,22 +307,28 @@ const getTeams = () => {
                 data: teams
             });
         })
-        .then(() => Promise.all(tempTeams.map((teamId) => AppAPI.stats.team_movement_quality_details.post(null, { teamId, startDate, endDate })
-            .then(stats => AppAPI.preprocessing.status.post(null, { start_date: startDate, end_date: endDate })
-                .then(preprocessing => {
-                    return dispatch({
-                        type: Actions.GET_TEAM_STATS,
-                        data: { teamId, stats, weekOffset: 0, startDate, endDate, preprocessing: preprocessing.sessions }
+        .then(() => Promise.all(tempTeams.map(teamId => AppAPI.stats.team_movement_quality_details.post(null, { teamId, startDate, endDate })
+            .then(stats => AppAPI.stats.team_movement_quality_details.post(null, { teamId, startDate: previousWeekStartDate, endDate: previousWeekEndDate })
+                .then(previousWeekStats => AppAPI.preprocessing.status.post(null, { start_date: startDate, end_date: endDate })
+                    .then(preprocessing => {
+                        return dispatch({
+                            type: Actions.GET_TEAM_STATS,
+                            data: { teamId, stats, previousWeekStats, weekOffset: 0, startDate, endDate, previousWeekStartDate, previousWeekEndDate, nextWeekStartDate, nextWeekEndDate, preprocessing: preprocessing.sessions }
+                        });
                     })
-                })
+                    .catch(err => dispatch({
+                        type: Actions.GET_TEAM_STATS,
+                        data: { teamId, stats, previousWeekStats, weekOffset: 0, startDate, endDate, previousWeekStartDate, previousWeekEndDate, nextWeekStartDate, nextWeekEndDate, preprocessing: null }
+                    }))
+                )
                 .catch(err => dispatch({
                     type: Actions.GET_TEAM_STATS,
-                    data: { teamId, stats, weekOffset: 0, startDate, endDate, preprocessing: null }
+                    data: { teamId, stats, previousWeekStats: null, weekOffset: 0, startDate, endDate, previousWeekStartDate, previousWeekEndDate, nextWeekStartDate, nextWeekEndDate, preprocessing: null }
                 }))
             )
             .catch(err => dispatch({
                 type: Actions.GET_TEAM_STATS,
-                data: { teamId, stats: null, weekOffset: 0, startDate, endDate, preprocessing: null }
+                data: { teamId, stats: null, previousWeekStats: null, weekOffset: 0, startDate, endDate, previousWeekStartDate, previousWeekEndDate, nextWeekStartDate, nextWeekEndDate, preprocessing: null }
             }))
         )));
 };
@@ -317,33 +348,37 @@ const setStatsCategory = (athlete, athleteId) => {
     });
 };
 
-const getTeamStats = (teamId, weekOffset) => {
-    let date = new Date();
-    date.setTime(date.getTime() + weekOffset * 7 * DAY_IN_MS);
-    let dayOfWeek = date.getDay();
-    let startOfWeekOffset = dayOfWeek === 1 ? 0 : (dayOfWeek+6)%7;
-    let endOfWeekOffset = !dayOfWeek ? 0 : 7-dayOfWeek;
-    let startDateObject = new Date(date.getTime() - startOfWeekOffset * DAY_IN_MS);
-    let endDateObject = new Date(date.getTime() + endOfWeekOffset * DAY_IN_MS);
-    let startDate = `${startDateObject.getFullYear()}-${formatDate(startDateObject.getMonth()+1)}-${formatDate(startDateObject.getDate())}`;
-    let endDate = `${endDateObject.getFullYear()}-${formatDate(endDateObject.getMonth()+1)}-${formatDate(endDateObject.getDate())}`;
-    return dispatch => AppAPI.stats.team_movement_quality_details.post(null, { teamId, startDate, endDate })
-        .then(stats => AppAPI.preprocessing.status.post(null, { start_date: startDate, end_date: endDate })
-            .then(preprocessing => {
-                return dispatch({
-                    type: Actions.GET_TEAM_STATS,
-                    data: { teamId, stats, weekOffset, startDate, endDate, preprocessing: preprocessing.sessions }
+const getTeamStats = (teams, weekOffset) => {
+    let { startDate, endDate } = getStartAndEndDate(weekOffset);
+    let previousWeek = getStartAndEndDate(weekOffset-1);
+    let nextWeek = getStartAndEndDate(weekOffset+1);
+    let previousWeekStartDate = previousWeek.startDate;
+    let previousWeekEndDate = previousWeek.endDate;
+    let nextWeekStartDate = nextWeek.startDate;
+    let nextWeekEndDate = nextWeek.endDate;
+    return dispatch => Promise.all(teams.map(team => AppAPI.stats.team_movement_quality_details.post(null, { teamId: team.id, startDate, endDate })
+        .then(stats => AppAPI.stats.team_movement_quality_details.post(null, { teamId: team.id, startDate: previousWeekStartDate, endDate: previousWeekEndDate })
+            .then(previousWeekStats => AppAPI.preprocessing.status.post(null, { start_date: startDate, end_date: endDate })
+                .then(preprocessing => {
+                    return dispatch({
+                        type: Actions.GET_TEAM_STATS,
+                        data: { teamId: team.id, stats, previousWeekStats, weekOffset, startDate, endDate, previousWeekStartDate, previousWeekEndDate, nextWeekStartDate, nextWeekEndDate, preprocessing: preprocessing.sessions }
+                    });
                 })
-            })
+                .catch(err => dispatch({
+                    type: Actions.GET_TEAM_STATS,
+                    data: { teamId: team.id, stats, previousWeekStats, weekOffset, startDate, endDate, previousWeekStartDate, previousWeekEndDate, nextWeekStartDate, nextWeekEndDate, preprocessing: null }
+                }))
+            )
             .catch(err => dispatch({
                 type: Actions.GET_TEAM_STATS,
-                data: { teamId, stats, weekOffset, startDate, endDate, preprocessing: null }
+                data: { teamId: team.id, stats, previousWeekStats: null, weekOffset, startDate, endDate, previousWeekStartDate, previousWeekEndDate, nextWeekStartDate, nextWeekEndDate, preprocessing: null }
             }))
         )
         .catch(err => dispatch({
             type: Actions.GET_TEAM_STATS,
-            data: { teamId, stats: null, weekOffset, startDate, endDate, preprocessing: null }
-        }));
+            data: { teamId: team.id, stats: null, previousWeekStats: null, weekOffset, startDate, endDate, previousWeekStartDate, previousWeekEndDate, nextWeekStartDate, nextWeekEndDate, preprocessing: null }
+        }))));
 };
 
 const startRequest = () => {
@@ -358,6 +393,14 @@ const stopRequest = () => {
     }));
 };
 
+const selectGraph = (selectedGraph, selectedGraphIndex) => {
+    return dispatch => Promise.resolve(dispatch({
+        type: Actions.SELECT_GRAPH,
+        selectedGraph,
+        selectedGraphIndex,
+    }));
+}
+
 export {
     login,
     logout,
@@ -370,6 +413,7 @@ export {
     patchTrainingGroup,
     removeTrainingGroup,
     teamSelect,
+    userSelect,
     selectTrainingGroup,
     removeUser,
     startSession,
@@ -380,4 +424,5 @@ export {
     setStatsCategory,
     startRequest,
     stopRequest,
+    selectGraph,
 };

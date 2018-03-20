@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-12 01:27:06
+ * @Last Modified time: 2018-03-19 23:51:54
  */
 
 /**
@@ -365,7 +365,7 @@ const setOwnerFlag = (id, value) => {
     let dataArray = [commands.SET_OWNER_FLAG, convertHex('0x01'), convertHex(value ? '0x01' : '0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
-            return convertHex(response[3]) === 1 ? write(id, dataArray) : Promise.resolve();
+            return convertHex(response[3]) === 1 ? write(id, dataArray) : Promise.resolve(response);
         })
         .then(response => {
             return dispatch({
@@ -375,8 +375,7 @@ const setOwnerFlag = (id, value) => {
 };
 
 const assignKitIndividual = (accessory, user) => {
-    return dispatch => BLEConfig.parse(user.id)
-        .then(userUUID => AppAPI.hardware.accessory.patch({ wifiMacAddress: accessory.wifiMacAddress }, { owner_id: userUUID }))
+    return dispatch => AppAPI.hardware.accessory.patch({ wifiMacAddress: accessory.wifiMacAddress }, { owner_id: user.id })
         .then(response => {
             let data = accessory;
             data.individual = user;
@@ -615,7 +614,6 @@ export {
     handleDisconnect,
     setKitTime,
     setKitState,
-    // getConfiguration,
     storeParams,
     getWifiMacAddress,
     setIdentity,

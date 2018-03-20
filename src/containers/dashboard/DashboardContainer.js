@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 14:10:10
+ * @Last Modified time: 2018-03-14 02:39:37
  */
 
 /**
@@ -25,12 +25,11 @@ const mapStateToProps = state => {
 
 // Any actions to map to the component?
 const mapDispatchToProps = {
-    selectTrainingGroup: UserActions.selectTrainingGroup,
-    getTeams:            UserActions.getTeams,
-    setStatsCategory:    UserActions.setStatsCategory,
-    getTeamStats:        UserActions.getTeamStats,
-    startRequest:        UserActions.startRequest,
-    stopRequest:         UserActions.stopRequest,
+    getTeams:         UserActions.getTeams,
+    setStatsCategory: UserActions.setStatsCategory,
+    getTeamStats:     UserActions.getTeamStats,
+    startRequest:     UserActions.startRequest,
+    stopRequest:      UserActions.stopRequest,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardRender);

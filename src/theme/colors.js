@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:06 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-17 01:39:56
+ * @Last Modified time: 2018-03-15 21:05:38
  */
 
 /**
@@ -19,6 +19,14 @@ const app = {
     blue:               '#0000FF',
     lightGrey:          '#E0E0E0',
     shadowColor:        '#C8C8C8'
+};
+
+const chart = {
+    blue:   '#016DC980', // 50% opacity
+    red:    '#C9014E80', // 50% opacity
+    yellow: '#E0AF1280', // 50% opacity
+    grey:   '#E3E3E3FF',
+    light:  '#EFEFEFFF',
 };
 
 const brand = {
@@ -60,4 +68,5 @@ export default {
     ...text,
     ...borders,
     ...tabbar,
+    chart
 };

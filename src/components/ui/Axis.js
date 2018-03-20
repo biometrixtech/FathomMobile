@@ -2,15 +2,12 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:46 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-20 03:58:45
+ * @Last Modified time: 2018-03-14 13:39:35
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { G, Line, Path, Text } from 'react-native-svg';
-import * as d3scale from 'd3-scale';
-import * as d3shape from 'd3-shape';
-import * as d3axis from 'd3-axis';
 
 // Consts and Libs
 import { AppFonts, AppSizes } from '@theme/';

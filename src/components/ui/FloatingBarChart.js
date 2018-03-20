@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 14:47:42
+ * @Last Modified time: 2018-03-19 01:54:20
  */
 
 /**
@@ -13,32 +13,18 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, TouchableHighlight, TouchableWithoutFeedback, View, ActivityIndicator } from 'react-native';
+import { ScrollView, TouchableHighlight, View, ActivityIndicator } from 'react-native';
+import { Icon } from 'react-native-elements';
 import Svg, { Rect, G, Polygon } from 'react-native-svg';
 
 // Consts and Libs
 import { AppColors, AppStyles, AppSizes } from '@theme/';
 import { AppUtil } from '@lib/';
-import { Roles } from '@constants/';
+import { Roles, Thresholds } from '@constants/';
 
 // Components
 import { Axis, Spacer, Text } from '@ui/';
 import { Placeholder } from '@general/';
-
-const thresholdBar = [
-    { max: 50, min: Number.NEGATIVE_INFINITY, differenceMax: Number.POSITIVE_INFINITY, differenceMin: 30, color: AppColors.brand.red },
-    { max: 65, min: 51, differenceMax: 29.99, differenceMin: 20, color: AppColors.brand.yellow },
-];
-
-const thresholdAcrossDays = [
-    { max: -5, min: Number.NEGATIVE_INFINITY, color: AppColors.brand.red },
-    { max: -0.01, min: -4.99, color: AppColors.brand.yellow },
-];
-
-const thresholdSingleDay = [
-    { max: -20, min: Number.NEGATIVE_INFINITY, color: AppColors.brand.red },
-    { max: -10, min: -19.99, color: AppColors.brand.yellow },
-];
 
 
 /* Component ==================================================================== */
@@ -89,8 +75,8 @@ class FloatingBarChart extends Component {
         if (!percOptimal || typeof percOptimal !== 'number' || !fatigue || typeof fatigue !== 'number') {
             return AppColors.brand.fogGrey;
         }
-        let colorIndex = thresholdBar.findIndex(colorThreshold => colorThreshold.max >= percOptimal && colorThreshold.min <= percOptimal);
-        let colorIndex2 = thresholdBar.findIndex(colorThreshold => colorThreshold.differenceMax >= fatigue && colorThreshold.differenceMin <= fatigue);
+        let colorIndex = Thresholds.movementQualityScore.findIndex(colorThreshold => colorThreshold.max >= percOptimal && colorThreshold.min < percOptimal);
+        let colorIndex2 = Thresholds.fatigueRateSingleDay.findIndex(colorThreshold => colorThreshold.max >= fatigue && colorThreshold.min <= fatigue);
         if (colorIndex !== -1 && colorIndex2 !== -1) {
             colorIndex = colorIndex > colorIndex2 ? colorIndex2 : colorIndex;
         } else if (colorIndex2 !== -1) {
@@ -98,19 +84,19 @@ class FloatingBarChart extends Component {
         } else if ( colorIndex === -1 && colorIndex === -1) {
             colorIndex = null;
         }
-        return typeof colorIndex === 'number' ? thresholdBar[colorIndex].color : AppColors.brand.fogGrey;
+        return typeof colorIndex === 'number' ? Thresholds.movementQualityScore[colorIndex].color : AppColors.brand.fogGrey;
     };
 
     getTextColor = (weekValue, dayValue) => {
         let color = AppColors.greyText;
-        let colorIndex = typeof weekValue === 'number' ? thresholdAcrossDays.findIndex(colorThreshold => colorThreshold.max >= weekValue && colorThreshold.min <= weekValue) : -1;
-        let colorIndex2 =  typeof dayValue === 'number' ? thresholdSingleDay.findIndex(colorThreshold => colorThreshold.max >= dayValue && colorThreshold.min <= dayValue): -1;
+        let colorIndex = typeof weekValue === 'number' ? Thresholds.fatigueRateAcrossDays.findIndex(colorThreshold => colorThreshold.max >= weekValue && colorThreshold.min < weekValue) : -1;
+        let colorIndex2 =  typeof dayValue === 'number' ? Thresholds.fatigueRateSingleDay.findIndex(colorThreshold => colorThreshold.max >= dayValue && colorThreshold.min <= dayValue): -1;
         if (colorIndex !== -1 && colorIndex2 !== -1) {
-            color = thresholdAcrossDays[colorIndex > colorIndex2 ? colorIndex2 : colorIndex].color;
+            color = Thresholds.fatigueRateAcrossDays[colorIndex > colorIndex2 ? colorIndex2 : colorIndex].color;
         } else if (colorIndex2 !== -1) {
-            color = thresholdAcrossDays[colorIndex2].color;
+            color = Thresholds.fatigueRateAcrossDays[colorIndex2].color;
         } else if ( colorIndex !== -1) {
-            color = thresholdAcrossDays[colorIndex].color;
+            color = Thresholds.fatigueRateAcrossDays[colorIndex].color;
         }
         return color;
     };
@@ -147,9 +133,9 @@ class FloatingBarChart extends Component {
     };
 
     render = () => {
-        let {xAxis, yAxis, width, height, margin, data, tabOffset, user, resetVisibleStates} = this.props;
+        let {xAxis, yAxis, width, height, margin, data, tabOffset, user, resetVisibleStates, getTeamStats, startRequest, stopRequest} = this.props;
 
-        let team = user.teams[user.teamIndex];
+        let userData = user.teams[user.teamIndex];
         let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : (new Date()).toLocaleDateString().split('/');
         let endDateComponents = user.statsEndDate ? user.statsEndDate.split('-') : (new Date()).toLocaleDateString().split('/');
         let xScale = data ? data.x[0] instanceof Date ? AppUtil.createTimeScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : AppUtil.createScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : null;
@@ -157,19 +143,26 @@ class FloatingBarChart extends Component {
 
         return (
             <View>
+                <Spacer />
                 <View style={{ flexDirection: 'row' }} onLayout={ev => this.setState({ chartHeaderHeight: ev.nativeEvent.layout.height })}>
-                    <TouchableWithoutFeedback onPress={() => team ? this.props.startRequest().then(() => this.props.getTeamStats(team.id, user.weekOffset-1)).then(() => resetVisibleStates()).then(() => this.props.stopRequest()) : null}>
-                        <View style={[AppStyles.containerCentered, { flex: 1 }]}><Spacer /><Text h3>{'<'}</Text><Spacer /></View>
-                    </TouchableWithoutFeedback>
+                    <Icon
+                        style={[AppStyles.containerCentered, AppStyles.flex1]}
+                        name={'arrow-back'}
+                        color={AppColors.brand.primary}
+                        onPress={() => userData ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset-1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                    />
                     <View style={[AppStyles.containerCentered, { flex: 2 }]}>
                         <Text>{`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}</Text>
                     </View>
-                    <TouchableWithoutFeedback onPress={() => team ? this.props.startRequest().then(() => this.props.getTeamStats(team.id, user.weekOffset+1)).then(() => resetVisibleStates()).then(() => this.props.stopRequest()) : null}>
-                        <View style={[AppStyles.containerCentered, { flex: 1 }]}><Spacer /><Text h3>{'>'}</Text><Spacer /></View>
-                    </TouchableWithoutFeedback>
+                    <Icon
+                        style={[AppStyles.containerCentered, AppStyles.flex1]}
+                        name={'arrow-forward'}
+                        color={AppColors.brand.primary}
+                        onPress={() => userData ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset+1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                    />
                 </View>
                 {
-                    !team || !team.stats || !data.x.length ? <View style={{ alignSelf: 'center' }}><Placeholder text={'No data to show for this range...'} /></View> :
+                    !userData || !userData.stats || !data.x.length ? <View style={{ alignSelf: 'center' }}><Placeholder text={'No data to show for this range...'} /></View> :
                         <View>
                             { xAxis ? <Text style={[AppStyles.h7, { position: 'absolute', left: -4 * margin.horizontal - tabOffset * AppSizes.tickSize, top: height*9/20, transform: [{ rotate: '270deg' }] }]}>{xAxis}</Text> : null }
                             { yAxis ? <Text style={[AppStyles.subtext, { position: 'absolute', left: width/2, top: height + margin.vertical }]}>{yAxis}</Text> : null }
@@ -223,7 +216,7 @@ class FloatingBarChart extends Component {
     }
 
     chartList = () => {
-        let { user } = this.props;
+        let { user, setStatsCategory } = this.props;
 
         let team = user.teams[user.teamIndex];
         let stats = team.stats;
@@ -287,7 +280,7 @@ class FloatingBarChart extends Component {
         }
 
         return <ScrollView style={{ backgroundColor: AppColors.brand.light, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10) }} scrollEnabled={true} contentContainerStyle={{ height: (athleteData.length + 1) * 55 }}>
-            <TouchableHighlight key={-1} onPress={() => this.props.setStatsCategory(false, null)}>
+            <TouchableHighlight key={-1} onPress={() => setStatsCategory(false, null)}>
                 <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete ? 'white' : AppColors.lightGrey }}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
                         <Text style={[AppStyles.subtext, { paddingLeft, color: this.getTextColor(stats.fatigueRateOfChange, null) }]}>{stats.fatigueRateOfChange}</Text>
@@ -302,7 +295,7 @@ class FloatingBarChart extends Component {
                 athleteData.map((athleteMovementQualityData, index) => {
                     let athlete = team.users_with_training_groups.find(userInGroup => userInGroup.id === athleteMovementQualityData.userId);
                     return athlete
-                        ? <TouchableHighlight key={index} onPress={() => this.props.setStatsCategory(true, athlete.id)}>
+                        ? <TouchableHighlight key={index} onPress={() => setStatsCategory(true, athlete.id)}>
                             <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete && user.selectedStats.athleteId === athlete.id ? AppColors.lightGrey : 'white' }}>
                                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
                                     <Text style={[AppStyles.subtext, { paddingLeft, color: this.getTextColor(athleteMovementQualityData.fatigueRateOfChange, null) }]}>{athleteMovementQualityData.fatigueRateOfChange}</Text>

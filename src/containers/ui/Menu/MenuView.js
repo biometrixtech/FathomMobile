@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:22 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-23 16:30:10
+ * @Last Modified time: 2018-03-19 16:55:00
  */
 
 /**
@@ -12,6 +12,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
     View,
+    ScrollView,
     Image,
     Alert,
     StyleSheet,
@@ -28,30 +29,18 @@ import { AppStyles, AppSizes, AppColors, AppFonts } from '@theme/';
 import { Spacer, Text, Button } from '@ui/';
 import { Roles } from '@constants/';
 
-/* Biometrix Roles =========================================================== */
-
-/* Styles ==================================================================== */
-const MENU_BG_COLOR = '#2E3234';
-
 const styles = StyleSheet.create({
-    backgroundFill: {
-        backgroundColor: AppColors.brand.primary,
-        height:          AppSizes.screen.height,
-        width:           AppSizes.screen.width,
-        position:        'absolute',
-        top:             0,
-        left:            0,
-    },
+    // Container
     container: {
-        position: 'relative',
-        flex:     1,
+        backgroundColor: AppColors.brand.primary,
+        flex:            1,
     },
     menuContainer: {
         flex:            3,
         left:            0,
         right:           0,
         backgroundColor: AppColors.brand.primary,
-        paddingTop:      AppSizes.padding,
+        paddingTop:      AppSizes.padding/2,
         paddingBottom:   AppSizes.padding,
     },
     imageContainer: {
@@ -68,7 +57,7 @@ const styles = StyleSheet.create({
         paddingTop:      AppSizes.statusBarHeight,
     },
     menuItem: {
-        borderBottomWidth: 1,
+        borderBottomWidth: 0,
         borderBottomColor: AppColors.border,
         padding:           10,
         flexDirection:     'row',
@@ -78,21 +67,21 @@ const styles = StyleSheet.create({
         lineHeight:  AppFonts.lineHeight(AppFonts.scaleFont(18)),
         fontWeight:  'normal',
         color:       '#EEEFF0',
-        paddingLeft: AppSizes.padding*2.5,
+        paddingLeft: AppSizes.padding*2,
     },
-
-    // Menu Bottom
-    menuBottom: {
-        flex:           1,
-        left:           0,
-        right:          0,
-        justifyContent: 'flex-end',
-        paddingBottom:  10,
-    },
-    menuBottom_text: {
+    menu_name: {
         color:      '#EEEFF0',
         lineHeight: AppFonts.lineHeight(AppFonts.scaleFont(23)),
         fontSize:   AppFonts.scaleFont(23),
+    },
+
+    // Collapse
+    collapseItem_text: {
+        fontSize:    AppFonts.scaleFont(18),
+        lineHeight:  AppFonts.lineHeight(AppFonts.scaleFont(18)),
+        fontWeight:  'normal',
+        color:       '#EEEFF0',
+        paddingLeft: AppSizes.padding*4,
     },
 });
 
@@ -106,6 +95,7 @@ class Menu extends Component {
         setKitState:   PropTypes.func.isRequired,
         id:            PropTypes.string,
         teamSelect:    PropTypes.func.isRequired,
+        userSelect:    PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -117,11 +107,14 @@ class Menu extends Component {
         super(props);
 
         // let action;
+        let active = 1;
 
         switch (this.props.user.role) {
         case Roles.athlete:
             // action = Actions.athleteAthleteManagement;
+            active = 0;
             this.props.teamSelect(0);
+            this.props.userSelect(0);
             break;
         case Roles.admin:
             // action = Actions.adminTeamManagement;
@@ -141,37 +134,59 @@ class Menu extends Component {
         
 
         this.state = {
-            active:      0,
-            isCollapsed: true,
-            menu:        [
+            active,
+            areTeamsCollapsed: true,
+            areUsersCollapsed: true,
+            menu:              [
                 {
-                    itemName:   'view-dashboard',
-                    title:      'Dashboard',
-                    onPress:    () => { this.setState({ isCollapsed: !this.state.isCollapsed }); },
-                    teamSelect: (index) => { Promise.resolve(this.props.teamSelect(index)).then(() => this.props.closeSideMenu()); this.setState({ active: 0 }); Actions.dashboard(); }
+                    itemName: 'clipboard-outline',
+                    title:    'Training Report',
+                    onPress:  () => { this.setState({ areUsersCollapsed: !this.state.areUsersCollapsed }); },
+                    select:   (index) => { Promise.resolve(this.props.userSelect(index)).then(() => Promise.resolve(this.props.closeSideMenu())).then(() => this.props.teamSelect(null)); this.setState({ active: 0, areUsersCollapsed: true }); Actions.report(); }
+                },
+                {
+                    itemName: 'chart-bar',
+                    title:    'Dashboard',
+                    onPress:  () => { this.setState({ areTeamsCollapsed: !this.state.areTeamsCollapsed }); },
+                    select:   (index) => { Promise.resolve(this.props.teamSelect(index)).then(() => Promise.resolve(this.props.closeSideMenu())).then(() => this.props.userSelect(null)); this.setState({ active: 1, areTeamsCollapsed: true }); Actions.dashboard(); }
                 },
                 // {
                 //     itemName: 'pulse',
                 //     title:    'Capture Session',
                 //     onPress:  () => { this.props.closeSideMenu(); Actions.teamCaptureSession(); this.setState({ active: 0 }); return this.props.id ? this.props.setKitState(this.props.id, 'APP_IDLE') : null; }
                 // },
-                // {
-                //     itemName: 'tooltip-edit',
-                //     title:    'Feedback Settings',
-                //     onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 2 }); Actions.settings(); },
-                // },
-                // {
-                //     itemName: 'account-settings-variant',
-                //     title:    'Manage Account',
-                //     onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 3 }); }
-                // },
                 {
-                    itemName: 'mixcloud',
+                    itemName: 'settings',
                     title:    'Manage Kit',
-                    onPress:  () => { this.props.closeSideMenu(); this.setState({ active: 1 }); Actions.kitManagement(); },
+                    onPress:  () => { Promise.resolve(this.props.closeSideMenu()).then(() => this.props.userSelect(null)); this.setState({ active: 2 }); Actions.kitManagement(); },
                 },
+                {
+                    itemName: 'forum',
+                    title:    'Support',
+                    onPress:  () => { Promise.resolve(this.props.closeSideMenu()).then(() => this.props.userSelect(null)); this.setState({ active: 3 }); },
+                },
+                {
+                    itemName: 'power',
+                    title:    'Logout',
+                    onPress:  () => { Promise.resolve(this.props.closeSideMenu()).then(() => this.props.userSelect(null)); this.logout() },
+                }
             ],
         };
+    }
+
+    componentWillMount = () => {
+        switch (this.props.user.role) {
+        case Roles.athlete:
+            Actions.report();
+            break;
+        case Roles.admin:
+        case Roles.biometrixAdmin:
+        case Roles.manager:
+        case Roles.researcher:
+        default:
+            Actions.dashboard();
+            break;
+        }
     }
 
     logout = () => {
@@ -190,16 +205,26 @@ class Menu extends Component {
         return null;
     }
 
+
+    collapseFunction = (index, onPress, select) => {
+        if (!index) {
+            return this.props.user.users.length === 1 ? select(0) : onPress();
+        } else if (index === 1) {
+            return this.props.user.teams.length === 1 ? select(0) : onPress();
+        }
+        return onPress();
+    }
+
     render = () => {
         const { menu } = this.state;
 
         // Build the actual Menu Items
         const menuItems = menu.map((item, index) => {
-            const { title, onPress, itemName, teamSelect } = item;
+            const { title, onPress, itemName, select } = item;
 
             return (
                 <View key={`menu-item-${title}`}>
-                    <TouchableOpacity onPress={() => !index && this.props.user.teams.length === 1 ? teamSelect(index) : onPress()}>
+                    <TouchableOpacity onPress={() => this.collapseFunction(index, onPress, select)}>
                         <View style={[styles.menuItem, { backgroundColor: this.state.active === index ? '#FFFFFF' : AppColors.brand.primary }]}>
                             <Icon type={'material-community'} color={this.state.active === index ? AppColors.brand.primary : '#FFFFFF'} name={itemName}/>
                             <Text style={[styles.menuItem_text, { color: this.state.active === index ? AppColors.brand.primary : '#FFFFFF' }]}>
@@ -208,16 +233,16 @@ class Menu extends Component {
                         </View>
                     </TouchableOpacity>
                     {
-                        !index ?
-                            <Collapsible collapsed={this.state.isCollapsed} >
+                        index === 1 ?
+                            <Collapsible collapsed={this.state.areTeamsCollapsed} >
                                 {
                                     this.props.user.teams.map((team, teamIndex) => 
                                         <TouchableOpacity
                                             key={`team-item-${team.name}`}
-                                            onPress={() => teamSelect(teamIndex)}
+                                            onPress={() => select(teamIndex)}
                                         >
                                             <View style={[styles.menuItem, { backgroundColor: this.props.user.teamIndex === teamIndex ? AppColors.brand.fogGrey : AppColors.brand.primary }]}>
-                                                <Text style={[styles.menuItem_text, { color: this.props.user.teamIndex === teamIndex ? AppColors.brand.primary : '#FFFFFF' }]}>
+                                                <Text style={[styles.collapseItem_text, { color: this.props.user.teamIndex === teamIndex ? AppColors.brand.primary : '#FFFFFF' }]}>
                                                     {team.name}
                                                 </Text>
                                             </View>
@@ -225,7 +250,25 @@ class Menu extends Component {
                                     )
                                 }
                             </Collapsible>
-                            : null
+                            :
+                            !index ?
+                                <Collapsible collapsed={this.state.areUsersCollapsed} >
+                                    {
+                                        this.props.user.users.map((user, userIndex) =>
+                                            <TouchableOpacity
+                                                key={`user-item-${user.first_name}_${user.last_name}`}
+                                                onPress={() => select(userIndex)}
+                                            >
+                                                <View style={[styles.menuItem, { backgroundColor: this.props.user.userIndex === userIndex ? AppColors.brand.fogGrey : AppColors.brand.primary }]}>
+                                                    <Text style={[styles.collapseItem_text, { color: this.props.user.userIndex === userIndex ? AppColors.brand.primary : '#FFFFFF' }]}>
+                                                        {`${user.first_name} ${user.last_name}`}
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        )
+                                    }
+                                </Collapsible>
+                                : null
                     }
                 </View>
             );
@@ -233,7 +276,7 @@ class Menu extends Component {
 
         return (
             <View style={[styles.container]}>
-                <View style={[styles.backgroundFill]} />
+                {/* <View style={[styles.backgroundFill]} /> */}
 
                 <Image resizeMode={'contain'} style={[styles.imageContainer]} source={{ uri: this.props.user.avatar_url }} />
 
@@ -241,7 +284,7 @@ class Menu extends Component {
 
                 <Text
                     style={[
-                        styles.menuBottom_text,
+                        styles.menu_name,
                         AppStyles.textCenterAligned,
                         { backgroundColor: AppColors.transparent }
                     ]}
@@ -249,12 +292,10 @@ class Menu extends Component {
                     {this.props.user.first_name && this.props.user.last_name ? `${this.props.user.first_name} ${this.props.user.last_name}` : this.props.user.role}
                 </Text>
 
-                <Spacer />
-
                 <View style={[styles.menuContainer]}>
-                    <View style={[styles.menu]}>{menuItems}</View>
+                    <ScrollView style={[styles.menu]}>{menuItems}</ScrollView>
 
-                    <View style={[styles.menuBottom]}>
+                    {/* <View style={[styles.menuBottom]}>
                         <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
                             <Button
                                 backgroundColor={MENU_BG_COLOR}
@@ -262,7 +303,7 @@ class Menu extends Component {
                                 onPress={this.logout}
                             />
                         </View>
-                    </View>
+                    </View> */}
                 </View>
             </View>
         );

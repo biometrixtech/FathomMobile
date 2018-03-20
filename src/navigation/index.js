@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:23:33 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:23:33 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-03-20 00:51:11
  */
 
 /**
@@ -43,9 +43,7 @@ const scenes = (
         <Scene key={'app'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}>
             {/* Drawer Side Menu */}
             <Scene key={'sideMenu'} component={Drawer}>
-                {/* Radial Menus */}
                 {AppNavigation}
-                {/*</Scene>*/}
             </Scene>
         </Scene>
 
@@ -53,19 +51,15 @@ const scenes = (
         {/* <Scene key={'adminApp'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}> */}
         {/* Drawer Side Menu */}
         {/* <Scene key={'adminHome'} component={Drawer}> */}
-        {/* Radial Menus */}
         {/* {AdminNavigation} */}
-        {/*</Scene>*/}
         {/* </Scene> */}
         {/* </Scene> */}
 
-        {/* Main Athlete App */}
+        {/* Athlete App */}
         {/* <Scene key={'athleteApp'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}> */}
         {/* Drawer Side Menu */}
-        {/* <Scene key={'athleteHome'} component={Drawer}> */}
-        {/* Radial Menus */}
+        {/* <Scene key={'sideMenu'} component={Drawer}> */}
         {/* {AthleteNavigation} */}
-        {/*</Scene>*/}
         {/* </Scene> */}
         {/* </Scene> */}
 
@@ -73,9 +67,7 @@ const scenes = (
         {/* <Scene key={'biometrixApp'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}> */}
         {/* Drawer Side Menu */}
         {/* <Scene key={'biometrixHome'} component={Drawer}> */}
-        {/* Radial Menus */}
         {/* {BiometrixNavigation} */}
-        {/* </Scene> */}
         {/* </Scene>*/}
         {/* </Scene> */}
 
@@ -83,9 +75,7 @@ const scenes = (
         {/* <Scene key={'managerApp'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}> */}
         {/* Drawer Side Menu */}
         {/* <Scene key={'managerHome'} component={Drawer}> */}
-        {/* Radial Menus */}
         {/* {ManagerNavigation} */}
-        {/*</Scene>*/}
         {/* </Scene> */}
         {/* </Scene> */}
 
@@ -93,9 +83,7 @@ const scenes = (
         {/* <Scene key={'researcherApp'} {...AppConfig.navbarProps} title={AppConfig.appName} hideNavBar={false} type={ActionConst.RESET}> */}
         {/* Drawer Side Menu */}
         {/* <Scene key={'researcherHome'} component={Drawer}> */}
-        {/* Radial Menus */}
         {/* {ResearcherNavigation} */}
-        {/*</Scene>*/}
         {/* </Scene> */}
         {/* </Scene> */}
 

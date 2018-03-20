@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:24:01 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-25 15:55:06
+ * @Last Modified time: 2018-03-14 13:48:50
  */
 
 /**
@@ -15,13 +15,14 @@ import { Scene, ActionConst } from 'react-native-router-flux';
 import { AppConfig } from '@constants/';
 
 // Scenes
-import TeamCaptureSessionView from '@containers/capture/team/TeamCaptureSessionContainer';
-import GroupCaptureSessionView from '@containers/capture/group/GroupCaptureSessionContainer';
+// import TeamCaptureSessionView from '@containers/capture/team/TeamCaptureSessionContainer';
+// import GroupCaptureSessionView from '@containers/capture/group/GroupCaptureSessionContainer';
 import KitManagementView from '@containers/kit/KitManagementContainer';
 import BluetoothConnectView from '@containers/kit/connect/BluetoothConnectContainer';
 import KitOwnerView from '@containers/kit/owner/KitOwnerContainer';
 import KitAssignView from '@containers/kit/assign/KitAssignContainer';
 import DashboardView from '@containers/dashboard/DashboardContainer';
+import ReportView from '@containers/report/ReportContainer';
 
 // Components
 import { NavbarMenuButton } from '@containers/ui/NavbarMenuButton/NavbarMenuButtonContainer';
@@ -60,6 +61,13 @@ const scenes = (
                 type={ActionConst.REPLACE}
                 component={DashboardView}
                 analyticsDesc={'DashboardView: Dashboard'}
+            />
+            <Scene
+                {...navbarPropsTabs}
+                key={'report'}
+                type={ActionConst.REPLACE}
+                component={ReportView}
+                analyticsDesc={'ReportView: Training Report'}
             />
             <Scene
                 {...navbarPropsTabs}

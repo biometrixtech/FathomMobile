@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:08 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 14:39:41
+ * @Last Modified time: 2018-03-14 14:25:33
  */
 
 /**
@@ -47,7 +47,7 @@ class AppLaunch extends Component {
         // Try to login based on existing token
         return this.props.login()
         // Logged in, show index screen
-            .then(() => Actions.app({ type: 'reset' }))
+            // .then(() => Actions.app({ type: 'reset' }))
         // Not Logged in, show Login screen
             .catch(() => Actions.login({ type: 'reset' }));
     }

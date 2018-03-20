@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:27 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-11 13:38:48
+ * @Last Modified time: 2018-03-19 23:38:17
  */
 
 /**
@@ -134,9 +134,9 @@ export default function bluetoothReducer(state = initialState, action) {
         });
     case Actions.GET_ACCESSORY_KEY:
         let user = action.user;
-        let organization = action.user.organization || null;
         let team = user.teams.find(checkTeam => checkTeam.users_with_training_groups.some(individual => individual.id === action.user_id));
         let individual = team ? team.users_with_training_groups.find(checkUser => checkUser.id === action.user_id) : null;
+        let organization = !!team && !!individual ? action.user.organization : null;
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,

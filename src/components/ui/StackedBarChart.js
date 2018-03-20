@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-13 15:17:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 14:47:49
+ * @Last Modified time: 2018-03-19 00:53:56
  */
 
 /**
@@ -13,24 +13,18 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, TouchableHighlight, TouchableWithoutFeedback, View, ActivityIndicator } from 'react-native';
+import { ScrollView, TouchableHighlight, View, ActivityIndicator } from 'react-native';
+import { Icon } from 'react-native-elements';
 import Svg, { Rect, G } from 'react-native-svg';
 
 // Consts and Libs
 import { AppColors, AppStyles, AppSizes } from '@theme/';
 import { AppUtil } from '@lib/';
-import { Roles } from '@constants/';
+import { Roles, Thresholds } from '@constants/';
 
 // Components
 import { Axis, Spacer, Text } from '@ui/';
 import { Placeholder } from '@general/';
-
-const threshold = [
-    { max: Number.POSITIVE_INFINITY, min: 1.5, color: AppColors.brand.red },
-    { max: 1.49, min: 1.2, color: AppColors.brand.yellow },
-    { max: 0.79, min: Number.NEGATIVE_INFINITY, color: AppColors.brand.yellow },
-    { max: 1.19, min: 0.8, color: AppColors.greyText },
-]
 
 
 /* Component ==================================================================== */
@@ -82,12 +76,13 @@ class StackedBarChart extends Component {
 
     getColor = (value) => {
         let color = AppColors.greyText;
-        let colorIndex = typeof value === 'number' ? threshold.findIndex(colorThreshold => colorThreshold.max >= value && colorThreshold.min <= value) : -1;
+        let thresholds = Thresholds.acwr;
+        let colorIndex = typeof value === 'number' ? thresholds.findIndex(colorThreshold => colorThreshold.max > value && colorThreshold.min <= value) : -1;
         if (colorIndex !== -1) {
-            color = threshold[colorIndex].color;
+            color = thresholds[colorIndex].color;
         }
         return color;
-    } 
+    }
 
     getTickPoints (start, end, numTicks, length) {
         let res = [];
@@ -117,8 +112,9 @@ class StackedBarChart extends Component {
     }
 
     render = () => {
-        let {xAxis, yAxis, width, height, margin, data, tabOffset, user, max, resetVisibleStates} = this.props;
+        let {xAxis, yAxis, width, height, margin, data, tabOffset, user, max, resetVisibleStates, startRequest, stopRequest, getTeamStats} = this.props;
 
+        let userData = user.teams[user.teamIndex];
         let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : (new Date()).toLocaleDateString().split('/');
         let endDateComponents = user.statsEndDate ? user.statsEndDate.split('-') : (new Date()).toLocaleDateString().split('/');
         let xScale = data ? data.x[0] instanceof Date ? AppUtil.createTimeScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : AppUtil.createScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : null;
@@ -126,19 +122,26 @@ class StackedBarChart extends Component {
 
         return (
             <View>
+                <Spacer />
                 <View style={{ flexDirection: 'row' }} onLayout={ev => this.setState({ chartHeaderHeight: ev.nativeEvent.layout.height })}>
-                    <TouchableWithoutFeedback onPress={() => user.teams[user.teamIndex] ? this.props.startRequest().then(() => this.props.getTeamStats(user.teams[user.teamIndex].id, user.weekOffset-1)).then(() => resetVisibleStates()).then(() => this.props.stopRequest()) : null}>
-                        <View style={[AppStyles.containerCentered, { flex: 1 }]}><Spacer /><Text h3>{'<'}</Text><Spacer /></View>
-                    </TouchableWithoutFeedback>
+                    <Icon
+                        style={[AppStyles.containerCentered, AppStyles.flex1]}
+                        name={'arrow-back'}
+                        color={AppColors.brand.primary}
+                        onPress={() => userData ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset-1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                    />
                     <View style={[AppStyles.containerCentered, { flex: 2 }]}>
                         <Text>{`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}</Text>
                     </View>
-                    <TouchableWithoutFeedback onPress={() => user.teams[user.teamIndex] ? this.props.startRequest().then(() => this.props.getTeamStats(user.teams[user.teamIndex].id, user.weekOffset+1)).then(() => resetVisibleStates()).then(() => this.props.stopRequest()) : null}>
-                        <View style={[AppStyles.containerCentered, { flex: 1 }]}><Spacer /><Text h3>{'>'}</Text><Spacer /></View>
-                    </TouchableWithoutFeedback>
+                    <Icon
+                        style={[AppStyles.containerCentered, AppStyles.flex1]}
+                        name={'arrow-forward'}
+                        color={AppColors.brand.primary}
+                        onPress={() => userData ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset+1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                    />
                 </View>
                 {
-                    !user.teams[user.teamIndex] || !user.teams[user.teamIndex].stats || !data.x.length ? <View style={{ alignSelf: 'center' }}><Placeholder text={'No data to show for this range...'} /></View> :
+                    !userData || !userData.stats || !data.x.length ? <View style={{ alignSelf: 'center' }}><Placeholder text={'No data to show for this range...'} /></View> :
                         <View>
                             { xAxis ? <Text style={[AppStyles.h7, { position: 'absolute', left: -4 * margin.horizontal - tabOffset * AppSizes.tickSize, top: height*9/20, transform: [{ rotate: '270deg' }] }]}>{xAxis}</Text> : null }
                             { yAxis ? <Text style={[AppStyles.subtext, { position: 'absolute', left: width/2, top: height + margin.vertical }]}>{yAxis}</Text> : null }
