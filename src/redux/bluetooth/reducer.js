@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:27 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-19 23:38:17
+ * @Last Modified time: 2018-03-20 13:27:08
  */
 
 /**
@@ -18,7 +18,8 @@ const initialState = {
     devicesFound:  [],
     accessoryData: {},
     networks:      [{ key: 0, label: 'Other' }],
-    indicator:     false
+    indicator:     false,
+    resetFailed:   null,
 };
 
 export default function bluetoothReducer(state = initialState, action) {
@@ -66,20 +67,26 @@ export default function bluetoothReducer(state = initialState, action) {
             assignType: action.data
         });
     case Actions.ACCESSORY_RESET:
-        let tempAccessory = state.accessoryData;
-        tempAccessory.organization = null;
-        tempAccessory.organizationId = null;
-        tempAccessory.team = null;
-        tempAccessory.team_id = null;
-        tempAccessory.last_user_id = null;
-        tempAccessory.individual = null;
+        if (action.success) {
+            let tempAccessory = state.accessoryData;
+            tempAccessory.organization = null;
+            tempAccessory.organizationId = null;
+            tempAccessory.team = null;
+            tempAccessory.team_id = null;
+            tempAccessory.last_user_id = null;
+            tempAccessory.individual = null;
+            return Object.assign({}, state, {
+                accessoryData: {
+                    ...state.accessoryData,
+                    ...tempAccessory,
+                    ownerFlag: false,
+                },
+                resetFailed: null,
+                networks:    [{ key: 0, label: 'Other' }]
+            });
+        }
         return Object.assign({}, state, {
-            accessoryData: {
-                ...state.accessoryData,
-                ...tempAccessory,
-                ownerFlag: false,
-            },
-            networks: [{ key: 0, label: 'Other' }]
+            resetFailed: true
         });
     case Actions.WIFI_SCAN:
         return Object.assign({}, state, {

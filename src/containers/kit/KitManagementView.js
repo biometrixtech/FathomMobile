@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:00 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-19 23:57:41
+ * @Last Modified time: 2018-03-20 14:33:46
  */
 
 /**
@@ -74,6 +74,7 @@ class KitManagementView extends Component {
 
         this.state = {
             modalStyle:          {},
+            resetModalStyle:     {},
             other:               false,
             SSID:                null,
             newNetwork:          true,
@@ -114,6 +115,10 @@ class KitManagementView extends Component {
         return data.id === this.props.bluetooth.accessoryData.id ? this.props.connectToAccessory(data)
             .catch(err => console.log(err))
             .then(() => this.props.stopConnect()) : null;
+    }
+
+    resizeResetModal = (ev) => {
+        this.setState({ resetModalStyle: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
     }
 
     resizeModal1 = (ev) => {
@@ -202,11 +207,11 @@ class KitManagementView extends Component {
                     />
             }
             <Text style={{ paddingLeft: AppSizes.padding, fontSize: !this.props.bluetooth.accessoryData.id ? font14 : font10, fontWeight: !this.props.bluetooth.accessoryData.id ? 'bold' : 'normal' }}>Step 1: Connect to kit</Text>
-            <Text style={{ paddingLeft: AppSizes.padding, fontSize: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.configured ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.configured ? 'bold' : 'normal' }}>Step 2: Assign an owner to the kit</Text>
-            <Text style={{ paddingLeft: AppSizes.padding, fontSize: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.configured ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.configured ? 'bold' : 'normal' }}>Step 3: Assign a wifi network to the kit</Text>
+            <Text style={{ paddingLeft: AppSizes.padding, fontSize: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.ownerFlag ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.ownerFlag ? 'bold' : 'normal' }}>Step 2: Assign an owner to the kit</Text>
+            <Text style={{ paddingLeft: AppSizes.padding, fontSize: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.ownerFlag ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.ownerFlag ? 'bold' : 'normal' }}>Step 3: Assign a wifi network to the kit</Text>
             <Egg
                 setps={'TTT'}
-                onCatch={() => this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.configured ? this.setState({ isModal3Visible: true }) : null }
+                onCatch={() => this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.ownerFlag ? this.setState({ isModal3Visible: true }) : null }
             >
                 <Text style={{ paddingLeft: AppSizes.padding, fontSize: font10 }}>Step 4: Make sure WiFi light is solid green, then disconnect from kit</Text>
             </Egg>
@@ -391,13 +396,13 @@ class KitManagementView extends Component {
             </Modal>
             <Modal
                 position={'center'}
-                style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
-                isOpen={this.props.isResetModalVisible}
+                style={[AppStyles.containerCentered, this.state.resetModalStyle, { backgroundColor: AppColors.transparent }]}
+                isOpen={this.state.isResetModalVisible}
                 backButtonClose
                 swipeToClose={false}
-                onClosed={() => Actions.refresh({ isResetModalVisible: false })}
+                onClosed={() => this.setState({ isResetModalVisible: false })}
             >
-                <View onLayout={(ev) => { this.resizeModal(ev); }}>
+                <View onLayout={(ev) => { this.resizeResetModal(ev); }}>
                     <Card title={'Factory Reset'}>
 
                         <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >This will reset all kit data. Are you sure you want to continue?</FormLabel>
@@ -418,7 +423,10 @@ class KitManagementView extends Component {
                                     .then(() => this.props.resetAccessory(this.props.bluetooth.accessoryData))
                                     .catch(err => console.log(err))
                                     .then(() => this.props.stopConnect())
-                                    .then(() => this.setState({ isResetModalVisible: false }))
+                                    .then(() => {
+                                        this.refs.toast.show(`Accessory reset ${this.props.bluetooth.resetFailed ? 'failed' : 'succeeded'}`, DURATION.LENGTH_LONG);
+                                        return this.setState({ isResetModalVisible: false });
+                                    })
                                 }
                             />
                         </View>

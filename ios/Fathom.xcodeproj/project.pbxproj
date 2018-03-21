@@ -1513,7 +1513,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fathom.fathomai;
 				PRODUCT_NAME = Fathom;
-				PROVISIONING_PROFILE = "fa097177-534f-495f-8967-6033db2bb16f";
+				PROVISIONING_PROFILE = "b1a13e9e-70d3-402e-a0f5-4b387474bf57";
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom Dev Provisioning Profile";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1715,7 +1715,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fathom.fathomai;
 				PRODUCT_NAME = Fathom;
-				PROVISIONING_PROFILE = "5cc14c36-5ee3-464d-97d4-deec19824c3a";
+				PROVISIONING_PROFILE = "1653c152-9c6d-4e27-aacc-860f9341ddea";
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom Ad Hoc Provisioning Profile";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-19 23:51:54
+ * @Last Modified time: 2018-03-20 13:30:18
  */
 
 /**
@@ -64,7 +64,7 @@ const getOwnerFlag = (id) => {
         .then(response => {
             return dispatch({
                 type: Actions.GET_OWNER_FLAG,
-                data: convertHex(response[3]) === 0 && convertHex(response[4]) === 1
+                data: response[3] === 0 && response[4] === 1
             });
         });
 };
@@ -188,17 +188,23 @@ const connectToAccessory = (data) => {
 
 const loginToAccessory = (accessoryData) => {
     let dataArray = [commands.LOGIN, convertHex('0x04')];
+    if (!accessoryData.settingsKey) {
+        return dispatch => BleManager.disconnect(accessoryData.id)
+            .then(() => dispatch({
+                type: Actions.BLUETOOTH_DISCONNECT
+            }));
+    }
     dataArray = dataArray.concat(convertToUnsigned32BitIntByteArray(accessoryData.settingsKey));
     return dispatch => write(accessoryData.id, dataArray)
         .then(response => {
-            return convertHex(response[3]) === 1 ? write(accessoryData.id, dataArray) : Promise.resolve(response);
+            return (response[3] === 1 && response[2] === 88) || response[2] !== 88 ? write(accessoryData.id, dataArray) : Promise.resolve(response);
         })
         .then(response => {
             dispatch({
                 type: Actions.CONNECT_TO_ACCESSORY,
-                data: convertHex(response[3]) === 1 ? {} : accessoryData
+                data: (response[3] === 1 && response[2] === 88) || response[2] !== 88 ? {} : accessoryData
             });
-            if (convertHex(response[3]) === 1) {
+            if (response[3] === 1) {
                 return BleManager.disconnect(accessoryData.id)
                     .then(() => dispatch({
                         type: Actions.BLUETOOTH_DISCONNECT
@@ -301,7 +307,7 @@ const readSSID = (id) => {
             console.log(response);
             return dispatch({
                 type: Actions.NETWORK_DISCOVERED,
-                data: convertHex(response[3]) === 1 ? '' : convertByteArrayToString(response.slice(3))
+                data: response[3] === 1 ? '' : convertByteArrayToString(response.slice(3))
             });
         })
         .catch(err => console.log(err)) : null;
@@ -322,20 +328,41 @@ const resetAccessory = (accessory) => {
     let dataArray = [commands.FACTORY_RESET, convertHex('0x00')];
     return dispatch => write(accessory.id, dataArray)
         .then(response => {
+            return (response[2] === 31 && response[2] === 1) || response[2] !== 31 ? write(accessory.id, dataArray) : Promise.resolve(response);
+        })
+        .then(response => {
             return dispatch({
-                type: Actions.ACCESSORY_RESET
+                type:    Actions.ACCESSORY_RESET,
+                success: response[2] === 31 && response[3] === 0
             });
         })
-        .catch(err => Promise.reject(err));
+        .catch(err => {
+            dispatch({
+                type:    Actions.ACCESSORY_RESET,
+                success: false
+            })
+            return Promise.reject(err);
+        });
 };
 
 const systemReset = (id) => {
     let resetCmd = [commands.SYS_RESET, convertHex('0x00')];
     return dispatch => write(id, resetCmd)
         .then(response => {
+            return (response[2] === 2 && response[3] === 1) || response[2] !== 2 ? write(id, resetCmd) : Promise.resolve(response);
+        })
+        .then(response => {
             return dispatch({
-                type: Actions.ACCESSORY_RESET
+                type:    Actions.ACCESSORY_RESET,
+                success: response[2] === 2 && response[3] === 0
             })
+        })
+        .catch(err => {
+            dispatch({
+                type:    Actions.ACCESSORY_RESET,
+                success: false
+            })
+            return Promise.reject(err);
         });
 }
 
@@ -365,7 +392,7 @@ const setOwnerFlag = (id, value) => {
     let dataArray = [commands.SET_OWNER_FLAG, convertHex('0x01'), convertHex(value ? '0x01' : '0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
-            return convertHex(response[3]) === 1 ? write(id, dataArray) : Promise.resolve(response);
+            return response[3] === 1 ? write(id, dataArray) : Promise.resolve(response);
         })
         .then(response => {
             return dispatch({
@@ -456,7 +483,7 @@ const getWifiMacAddress = (id) => {
     let dataArray = [commands.GET_MAC_ADDRESS, convertHex('0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
-            return convertHex(response[3]) === 1 ? write(id, dataArray) : Promise.resolve(response);
+            return response[3] === 1 ? write(id, dataArray) : Promise.resolve(response);
         })
         .then(response => {
             return convertDecimal(response.slice(4,10));

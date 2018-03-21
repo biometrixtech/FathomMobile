@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-12 00:44:15
+ * @Last Modified time: 2018-03-20 11:48:38
  */
 
 /**
@@ -208,6 +208,12 @@ class BluetoothConnectView extends Component {
             })
             .catch((err) => {
                 console.log(err);
+                if (Object.keys(this.props.bluetooth.accessoryData).length === 0 && this.props.bluetooth.accessoryData.constructor === Object) {
+                    this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
+                } else {
+                    this.setState({ index: 3 });
+                    this.pages.progress = 3;
+                }
                 return this.props.stopConnect();
             })
             .catch((err) => this.props.stopConnect());
