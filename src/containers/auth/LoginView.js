@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:32:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-14 14:40:02
+ * @Last Modified time: 2018-03-21 15:23:09
  */
 
 /**
@@ -45,7 +45,7 @@ const roles = {
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: AppColors.brand.primary,
+        backgroundColor: AppColors.secondary.blue.hundredPercent,
         height:          AppSizes.screen.height,
         width:           AppSizes.screen.width,
     },
@@ -229,7 +229,7 @@ class Login extends Component {
                                             key={key}
                                             title={`${key}: ${value}`}
                                             hideChevron
-                                            containerStyle={{ backgroundColor: value === this.state.apiHost ? AppColors.brand.fogGrey : AppColors.background }}
+                                            containerStyle={{ backgroundColor: value === this.state.apiHost ? AppColors.primary.grey.fiftyPercent : AppColors.white }}
                                             onPress={() => { this.setState({ isModalVisible: false, apiHost: value }); return AppAPI.storeAPIHost(key, value);  }}
                                         />
                                     ))
@@ -238,7 +238,7 @@ class Login extends Component {
                             <Spacer />
                             <Button
                                 title={'Cancel'}
-                                backgroundColor={AppColors.brand.fogGrey}
+                                backgroundColor={AppColors.primary.grey.fiftyPercent}
                                 onPress={() => this.setState({ isModalVisible: false })}
                             />
                         </Card>

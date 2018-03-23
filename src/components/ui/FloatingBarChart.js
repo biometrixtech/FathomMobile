@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-19 01:54:20
+ * @Last Modified time: 2018-03-23 11:48:53
  */
 
 /**
@@ -13,18 +13,25 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, TouchableHighlight, View, ActivityIndicator } from 'react-native';
+import { ScrollView, TouchableHighlight, View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Svg, { Rect, G, Polygon } from 'react-native-svg';
 
 // Consts and Libs
-import { AppColors, AppStyles, AppSizes } from '@theme/';
+import { AppColors, AppStyles, AppSizes, AppFonts } from '@theme/';
 import { AppUtil } from '@lib/';
 import { Roles, Thresholds } from '@constants/';
 
 // Components
 import { Axis, Spacer, Text } from '@ui/';
 import { Placeholder } from '@general/';
+
+const styles = StyleSheet.create({
+    subtext: {
+        ...AppStyles.subtext,
+        lineHeight: parseInt(AppFonts.base.lineHeight, 10),
+    }
+});
 
 
 /* Component ==================================================================== */
@@ -73,7 +80,7 @@ class FloatingBarChart extends Component {
 
     getBarColor = (percOptimal, fatigue) => {
         if (!percOptimal || typeof percOptimal !== 'number' || !fatigue || typeof fatigue !== 'number') {
-            return AppColors.brand.fogGrey;
+            return AppColors.secondary.blue.hundredPercent;
         }
         let colorIndex = Thresholds.movementQualityScore.findIndex(colorThreshold => colorThreshold.max >= percOptimal && colorThreshold.min < percOptimal);
         let colorIndex2 = Thresholds.fatigueRateSingleDay.findIndex(colorThreshold => colorThreshold.max >= fatigue && colorThreshold.min <= fatigue);
@@ -84,11 +91,11 @@ class FloatingBarChart extends Component {
         } else if ( colorIndex === -1 && colorIndex === -1) {
             colorIndex = null;
         }
-        return typeof colorIndex === 'number' ? Thresholds.movementQualityScore[colorIndex].color : AppColors.brand.fogGrey;
+        return typeof colorIndex === 'number' ? Thresholds.movementQualityScore[colorIndex].color : AppColors.secondary.blue.hundredPercent;
     };
 
     getTextColor = (weekValue, dayValue) => {
-        let color = AppColors.greyText;
+        let color = AppColors.primary.grey.hundredPercent;
         let colorIndex = typeof weekValue === 'number' ? Thresholds.fatigueRateAcrossDays.findIndex(colorThreshold => colorThreshold.max >= weekValue && colorThreshold.min < weekValue) : -1;
         let colorIndex2 =  typeof dayValue === 'number' ? Thresholds.fatigueRateSingleDay.findIndex(colorThreshold => colorThreshold.max >= dayValue && colorThreshold.min <= dayValue): -1;
         if (colorIndex !== -1 && colorIndex2 !== -1) {
@@ -139,7 +146,8 @@ class FloatingBarChart extends Component {
         let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : (new Date()).toLocaleDateString().split('/');
         let endDateComponents = user.statsEndDate ? user.statsEndDate.split('-') : (new Date()).toLocaleDateString().split('/');
         let xScale = data ? data.x[0] instanceof Date ? AppUtil.createTimeScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : AppUtil.createScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : null;
-        let yScale = AppUtil.createScaleY(0, 100, height - 2 * margin.vertical, margin.vertical);
+        let minY = data ? Math.round((data.yMin - 5) / 5) * 5 : 0;
+        let yScale = AppUtil.createScaleY(minY < 0 ? 0 : minY, 100, height - 2 * margin.vertical, margin.vertical);
 
         return (
             <View>
@@ -148,17 +156,19 @@ class FloatingBarChart extends Component {
                     <Icon
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-back'}
-                        color={AppColors.brand.primary}
-                        onPress={() => userData ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset-1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                        color={AppColors.primary.grey.fiftyPercent}
+                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset-1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
                     />
                     <View style={[AppStyles.containerCentered, { flex: 2 }]}>
-                        <Text>{`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}</Text>
+                        <Text style={{ color: AppColors.primary.grey.fiftyPercent }}>
+                            {`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}
+                        </Text>
                     </View>
                     <Icon
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-forward'}
-                        color={AppColors.brand.primary}
-                        onPress={() => userData ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset+1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                        color={AppColors.primary.grey.fiftyPercent}
+                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset+1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
                     />
                 </View>
                 {
@@ -180,7 +190,7 @@ class FloatingBarChart extends Component {
                                     x={3 * margin.horizontal}
                                     y={height - 2 * margin.vertical}
                                     ticks={11}
-                                    startVal={0}
+                                    startVal={minY < 0 ? 0 : minY}
                                     endVal={100}
                                     scale={yScale}
                                     vertical />
@@ -192,10 +202,10 @@ class FloatingBarChart extends Component {
                             <View style={{ flexDirection: 'row' }} onLayout={ev => this.setState({ listHeaderHeight: ev.nativeEvent.layout.height })}>
                                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around' }}>
                                     <View>
-                                        <Text style={AppStyles.subtext}>RATE OF CHANGE</Text>
+                                        <Text style={[styles.subtext]}>RATE OF CHANGE</Text>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                            <Text style={AppStyles.subtext}>WEEKLY</Text>
-                                            <Text style={AppStyles.subtext}>DAILY</Text>
+                                            <Text style={[styles.subtext]}>WEEKLY</Text>
+                                            <Text style={[styles.subtext]}>DAILY</Text>
                                         </View>
                                     </View>
                                 </View>
@@ -216,7 +226,7 @@ class FloatingBarChart extends Component {
     }
 
     chartList = () => {
-        let { user, setStatsCategory } = this.props;
+        let { user, setStatsCategory, height } = this.props;
 
         let team = user.teams[user.teamIndex];
         let stats = team.stats;
@@ -246,8 +256,8 @@ class FloatingBarChart extends Component {
                 trainingGroup.users = trainingGroupUsers;
                 return trainingGroup;
             });
-            return athleteStats ? <ScrollView style={{ backgroundColor: AppColors.brand.light, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10) }} scrollEnabled={true} contentContainerStyle={{ height: 220 }}>
-                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: AppColors.lightGrey }}>
+            return athleteStats ? <ScrollView style={{ backgroundColor: AppColors.secondary.light_blue.hundredPercent, height: AppSizes.screen.usableHeight - (height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10) }} scrollEnabled={true} contentContainerStyle={{ height: 220 }}>
+                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: AppColors.primary.grey.thirtyPercent }}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
                         <Text style={[AppStyles.subtext, { paddingLeft, color: this.getTextColor(athleteStats.fatigueRateOfChange, null) }]}>{athleteStats.fatigueRateOfChange}</Text>
                         <Text style={[AppStyles.subtext, { paddingRight, color: this.getTextColor(null, athleteStats.avgFatigue) }]}>{athleteStats.avgFatigue}</Text>
@@ -258,19 +268,19 @@ class FloatingBarChart extends Component {
                 </View>
                 <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: 'white' }}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
-                        <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{`${athleteStatsIndex + 1} of ${athleteData.length}`}</Text>
+                        <Text style={[AppStyles.subtext, { color: AppColors.primary.grey.hundredPercent }]}>{`${athleteStatsIndex + 1} of ${athleteData.length}`}</Text>
                     </View>
                     <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                        <Text style={{ color: AppColors.greyText }}>Team Avg</Text>
+                        <Text style={{ color: AppColors.primary.grey.hundredPercent }}>Team Avg</Text>
                     </View>
                 </View>
                 {
-                    trainingGroups ? trainingGroups.map((trainingGroup, index) => <View key={index} style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: 'white' }}>
+                    trainingGroups ? trainingGroups.map((trainingGroup, index) => <View key={index} style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: AppColors.white }}>
                         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
-                            <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{`${trainingGroup.users.findIndex(trainingGroupUser => trainingGroupUser.id === user.id) + 1} of ${trainingGroup.users.length}`}</Text>
+                            <Text style={[AppStyles.subtext, { color: AppColors.primary.grey.hundredPercent }]}>{`${trainingGroup.users.findIndex(trainingGroupUser => trainingGroupUser.id === user.id) + 1} of ${trainingGroup.users.length}`}</Text>
                         </View>
                         <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                            <Text style={{ color: AppColors.greyText }}>{trainingGroup.name}</Text>
+                            <Text style={{ color: AppColors.primary.grey.hundredPercent }}>{trainingGroup.name}</Text>
                         </View>
                     </View>
                     ) : null
@@ -279,9 +289,9 @@ class FloatingBarChart extends Component {
                 : null;
         }
 
-        return <ScrollView style={{ backgroundColor: AppColors.brand.light, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10) }} scrollEnabled={true} contentContainerStyle={{ height: (athleteData.length + 1) * 55 }}>
+        return <ScrollView style={{ backgroundColor: AppColors.secondary.light_blue.hundredPercent, height: AppSizes.screen.usableHeight - (height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10) }} scrollEnabled={true} contentContainerStyle={{ height: (athleteData.length + 1) * 55 }}>
             <TouchableHighlight key={-1} onPress={() => setStatsCategory(false, null)}>
-                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete ? 'white' : AppColors.lightGrey }}>
+                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete ? AppColors.white : AppColors.primary.grey.thirtyPercent }}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
                         <Text style={[AppStyles.subtext, { paddingLeft, color: this.getTextColor(stats.fatigueRateOfChange, null) }]}>{stats.fatigueRateOfChange}</Text>
                         <Text style={[AppStyles.subtext, { paddingRight, color: this.getTextColor(null, stats.avgFatigue) }]}>{stats.avgFatigue}</Text>
@@ -296,7 +306,7 @@ class FloatingBarChart extends Component {
                     let athlete = team.users_with_training_groups.find(userInGroup => userInGroup.id === athleteMovementQualityData.userId);
                     return athlete
                         ? <TouchableHighlight key={index} onPress={() => setStatsCategory(true, athlete.id)}>
-                            <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete && user.selectedStats.athleteId === athlete.id ? AppColors.lightGrey : 'white' }}>
+                            <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete && user.selectedStats.athleteId === athlete.id ? AppColors.primary.grey.thirtyPercent : AppColors.white }}>
                                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
                                     <Text style={[AppStyles.subtext, { paddingLeft, color: this.getTextColor(athleteMovementQualityData.fatigueRateOfChange, null) }]}>{athleteMovementQualityData.fatigueRateOfChange}</Text>
                                     <Text style={[AppStyles.subtext, { paddingRight, color: this.getTextColor(null, athleteMovementQualityData.avgFatigue) }]}>{athleteMovementQualityData.avgFatigue}</Text>

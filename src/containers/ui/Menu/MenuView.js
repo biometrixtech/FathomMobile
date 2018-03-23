@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:22 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-19 16:55:00
+ * @Last Modified time: 2018-03-23 11:32:20
  */
 
 /**
@@ -32,20 +32,25 @@ import { Roles } from '@constants/';
 const styles = StyleSheet.create({
     // Container
     container: {
-        backgroundColor: AppColors.brand.primary,
+        backgroundColor: AppColors.secondary.blue.hundredPercent,
         flex:            1,
     },
     menuContainer: {
         flex:            3,
         left:            0,
         right:           0,
-        backgroundColor: AppColors.brand.primary,
+        backgroundColor: AppColors.secondary.blue.hundredPercent,
         paddingTop:      AppSizes.padding/2,
         paddingBottom:   AppSizes.padding,
     },
     imageContainer: {
-        flex:   1,
-        margin: 20
+        flex:        1,
+        height:      null,
+        width:       null,
+        marginTop:   20,
+        marginLeft:  50,
+        marginRight: 50,
+        resizeMode:  'contain'
     },
 
     // Main Menu
@@ -53,7 +58,7 @@ const styles = StyleSheet.create({
         flex:            3,
         left:            0,
         right:           0,
-        backgroundColor: AppColors.brand.primary,
+        backgroundColor: AppColors.secondary.blue.hundredPercent,
         paddingTop:      AppSizes.statusBarHeight,
     },
     menuItem: {
@@ -70,9 +75,10 @@ const styles = StyleSheet.create({
         paddingLeft: AppSizes.padding*2,
     },
     menu_name: {
-        color:      '#EEEFF0',
-        lineHeight: AppFonts.lineHeight(AppFonts.scaleFont(23)),
-        fontSize:   AppFonts.scaleFont(23),
+        color:       '#EEEFF0',
+        paddingLeft: 10,
+        lineHeight:  AppFonts.lineHeight(AppFonts.scaleFont(18)),
+        fontSize:    AppFonts.scaleFont(18),
     },
 
     // Collapse
@@ -163,7 +169,7 @@ class Menu extends Component {
                 {
                     itemName: 'forum',
                     title:    'Support',
-                    onPress:  () => { Promise.resolve(this.props.closeSideMenu()).then(() => this.props.userSelect(null)); this.setState({ active: 3 }); },
+                    onPress:  () => { Promise.resolve(this.props.closeSideMenu()).then(() => this.props.userSelect(null)); this.setState({ active: 3 }); Actions.placeholder(); },
                 },
                 {
                     itemName: 'power',
@@ -225,9 +231,9 @@ class Menu extends Component {
             return (
                 <View key={`menu-item-${title}`}>
                     <TouchableOpacity onPress={() => this.collapseFunction(index, onPress, select)}>
-                        <View style={[styles.menuItem, { backgroundColor: this.state.active === index ? '#FFFFFF' : AppColors.brand.primary }]}>
-                            <Icon type={'material-community'} color={this.state.active === index ? AppColors.brand.primary : '#FFFFFF'} name={itemName}/>
-                            <Text style={[styles.menuItem_text, { color: this.state.active === index ? AppColors.brand.primary : '#FFFFFF' }]}>
+                        <View style={[styles.menuItem]}>
+                            <Icon type={'material-community'} color={this.state.active === index ? AppColors.primary.yellow.hundredPercent : AppColors.white} name={itemName}/>
+                            <Text style={[styles.menuItem_text, { color: this.state.active === index ? AppColors.primary.yellow.hundredPercent : AppColors.white }]}>
                                 {title}
                             </Text>
                         </View>
@@ -241,8 +247,8 @@ class Menu extends Component {
                                             key={`team-item-${team.name}`}
                                             onPress={() => select(teamIndex)}
                                         >
-                                            <View style={[styles.menuItem, { backgroundColor: this.props.user.teamIndex === teamIndex ? AppColors.brand.fogGrey : AppColors.brand.primary }]}>
-                                                <Text style={[styles.collapseItem_text, { color: this.props.user.teamIndex === teamIndex ? AppColors.brand.primary : '#FFFFFF' }]}>
+                                            <View style={[styles.menuItem]}>
+                                                <Text style={[styles.collapseItem_text, { color: this.props.user.teamIndex === teamIndex ? AppColors.primary.yellow.hundredPercent : AppColors.white }]}>
                                                     {team.name}
                                                 </Text>
                                             </View>
@@ -259,8 +265,8 @@ class Menu extends Component {
                                                 key={`user-item-${user.first_name}_${user.last_name}`}
                                                 onPress={() => select(userIndex)}
                                             >
-                                                <View style={[styles.menuItem, { backgroundColor: this.props.user.userIndex === userIndex ? AppColors.brand.fogGrey : AppColors.brand.primary }]}>
-                                                    <Text style={[styles.collapseItem_text, { color: this.props.user.userIndex === userIndex ? AppColors.brand.primary : '#FFFFFF' }]}>
+                                                <View style={[styles.menuItem]}>
+                                                    <Text style={[styles.collapseItem_text, { color: this.props.user.userIndex === userIndex ? AppColors.primary.yellow.hundredPercent : AppColors.white }]}>
                                                         {`${user.first_name} ${user.last_name}`}
                                                     </Text>
                                                 </View>
@@ -276,16 +282,12 @@ class Menu extends Component {
 
         return (
             <View style={[styles.container]}>
-                {/* <View style={[styles.backgroundFill]} /> */}
-
-                <Image resizeMode={'contain'} style={[styles.imageContainer]} source={{ uri: this.props.user.avatar_url }} />
-
-                <Spacer />
+                <Image resizeMode={'contain'} style={[styles.imageContainer]} source={require('@images/fathom_gold_and_white.png')} />
 
                 <Text
                     style={[
                         styles.menu_name,
-                        AppStyles.textCenterAligned,
+                        AppStyles.textLeftAligned,
                         { backgroundColor: AppColors.transparent }
                     ]}
                 >
@@ -294,16 +296,6 @@ class Menu extends Component {
 
                 <View style={[styles.menuContainer]}>
                     <ScrollView style={[styles.menu]}>{menuItems}</ScrollView>
-
-                    {/* <View style={[styles.menuBottom]}>
-                        <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
-                            <Button
-                                backgroundColor={MENU_BG_COLOR}
-                                title={'Log Out'}
-                                onPress={this.logout}
-                            />
-                        </View>
-                    </View> */}
                 </View>
             </View>
         );

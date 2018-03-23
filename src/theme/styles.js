@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:19:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-14 19:16:17
+ * @Last Modified time: 2018-03-21 16:50:42
  */
 
 /**
@@ -54,7 +54,7 @@ export default {
         fontFamily: Fonts.base.family,
         fontSize:   Fonts.base.size,
         lineHeight: Fonts.base.lineHeight,
-        color:      Colors.brand.primary,
+        color:      Colors.primary.grey.fiftyPercent,
         fontWeight: '400',
         fontStyle:  'normal'
     },
@@ -62,7 +62,7 @@ export default {
         fontFamily:   Fonts.base.family,
         fontSize:     Fonts.base.size,
         lineHeight:   Fonts.base.lineHeight,
-        color:        Colors.brand.primary,
+        color:        Colors.primary.grey.fiftyPercent,
         fontWeight:   '400',
         fontStyle:    'normal',
         marginBottom: 8,
@@ -71,7 +71,7 @@ export default {
         fontFamily:   Fonts.h0.family,
         fontSize:     Fonts.h0.size,
         lineHeight:   Fonts.h0.lineHeight,
-        color:        Colors.brand.primary,
+        color:        Colors.primary.grey.hundredPercent,
         fontWeight:   '800',
         fontStyle:    'normal',
         margin:       0,
@@ -83,7 +83,7 @@ export default {
         fontFamily:   Fonts.h1.family,
         fontSize:     Fonts.h1.size,
         lineHeight:   Fonts.h1.lineHeight,
-        color:        Colors.headingPrimary,
+        color:        Colors.primary.grey.hundredPercent,
         fontWeight:   '800',
         fontStyle:    'normal',
         margin:       0,
@@ -95,7 +95,7 @@ export default {
         fontFamily:   Fonts.h2.family,
         fontSize:     Fonts.h2.size,
         lineHeight:   Fonts.h2.lineHeight,
-        color:        Colors.headingPrimary,
+        color:        Colors.primary.grey.hundredPercent,
         fontWeight:   '800',
         fontStyle:    'normal',
         margin:       0,
@@ -107,7 +107,7 @@ export default {
         fontFamily:   Fonts.h3.family,
         fontSize:     Fonts.h3.size,
         lineHeight:   Fonts.h3.lineHeight,
-        color:        Colors.headingPrimary,
+        color:        Colors.primary.grey.hundredPercent,
         fontWeight:   '400',
         fontStyle:    'normal',
         margin:       0,
@@ -119,7 +119,7 @@ export default {
         fontFamily:   Fonts.h4.family,
         fontSize:     Fonts.h4.size,
         lineHeight:   Fonts.h4.lineHeight,
-        color:        Colors.headingPrimary,
+        color:        Colors.primary.grey.hundredPercent,
         fontWeight:   '800',
         fontStyle:    'normal',
         margin:       0,
@@ -131,7 +131,7 @@ export default {
         fontFamily:   Fonts.h5.family,
         fontSize:     Fonts.h5.size,
         lineHeight:   Fonts.h5.lineHeight,
-        color:        Colors.headingPrimary,
+        color:        Colors.primary.grey.hundredPercent,
         fontWeight:   '800',
         fontStyle:    'normal',
         margin:       0,
@@ -154,18 +154,42 @@ export default {
         fontWeight: '400',
         fontStyle:  'normal'
     },
+    thin: {
+        fontWeight: '100',
+    },
+    ultra_light: {
+        fontWeight: '200',
+    },
+    light: {
+        fontWeight: '300',
+    },
+    regular: {
+        fontWeight: '400',
+    },
+    medium: {
+        fontWeight: '500',
+    },
+    semibold: {
+        fontWeight: '600',
+    },
+    bold: {
+        fontWeight: '700',
+    },
+    heavy: {
+        fontWeight: '800',
+    },
     strong: {
         fontWeight: '900',
     },
     link: {
         textDecorationLine: 'underline',
-        color:              Colors.brand.primary,
+        color:              Colors.secondary.blue.hundredPercent,
     },
     subtext: {
         fontFamily: Fonts.base.family,
         fontSize:   Fonts.base.size * 0.8,
         lineHeight: parseInt(Fonts.base.lineHeight * 0.8, 10),
-        color:      Colors.brand.primary,
+        color:      Colors.secondary.blue.hundredPercent,
         fontWeight: '400',
     },
 
@@ -177,7 +201,7 @@ export default {
         textAlign: 'right',
     },
 
-    // Give me padding
+    // Padding
     padding: {
         paddingVertical:   Sizes.padding,
         paddingHorizontal: Sizes.padding,
@@ -235,7 +259,7 @@ export default {
         marginBottom:      Sizes.padding,
     },
 
-    // Grid
+    // Grid/Flexbox
     row: {
         left:          0,
         right:         0,
@@ -265,18 +289,18 @@ export default {
 
     // Navbar
     navbar: {
-        backgroundColor:   '#FFFFFF',
-        borderBottomColor: Colors.shadowColor,
+        backgroundColor:   Colors.primary.white.hundredPercent,
+        borderBottomColor: Colors.primary.grey.thirtyPercent,
         borderBottomWidth: 1,
     },
     navbarTitle: {
-        color:      '#FFFFFF',
+        color:      Colors.white,
         fontWeight: 'bold',
         fontFamily: Fonts.base.family,
         fontSize:   Fonts.base.size+5,
     },
     navbarButton: {
-        tintColor: Colors.brand.primary,
+        tintColor: Colors.secondary.blue.hundredPercent,
     },
     navbarImageTitle: {
         height:      Sizes.navbarHeight/(Platform.OS === 'ios' ? 1.8 : 1.5),
@@ -297,8 +321,6 @@ export default {
         width:          Sizes.screen.widthThreeQuarters,
         alignItems:     'flex-end',
         justifyContent: 'center',
-        paddingLeft:    Sizes.padding,
-        paddingRight:   Sizes.padding,
     },
     centerTabBar: {
         height:         Sizes.tabbarHeight,
@@ -311,8 +333,8 @@ export default {
         width:          Sizes.screen.widthThreeQuarters,
         alignItems:     'flex-start',
         justifyContent: 'center',
+        paddingLeft:    Sizes.padding * 1.75,
     },
-
 
     // Radial Menu
     radialMenu: {
@@ -325,12 +347,12 @@ export default {
     deleteButton: {
         justifyContent:  'center',
         flex:            1,
-        backgroundColor: Colors.brand.red,
+        backgroundColor: Colors.secondary.red.hundredPercent,
     },
     editButton: {
         justifyContent:  'center',
         flex:            1,
-        backgroundColor: Colors.brand.yellow,
+        backgroundColor: Colors.primary.yellow.hundredPercent,
     },
 
     // Activity Indicator

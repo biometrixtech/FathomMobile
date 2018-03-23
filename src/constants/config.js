@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:31:10 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:31:10 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-03-21 15:40:24
  */
 
 /**
@@ -33,7 +33,7 @@ export default {
         navigationBarTitleImage:      require('@images/fathom_gold_and_grey.png'),
         navigationBarTitleImageStyle: AppStyles.navbarImageTitle,
         sceneStyle:                   {
-            backgroundColor: AppColors.background,
+            backgroundColor: AppColors.white,
             paddingTop:      AppSizes.navbarHeight,
         },
     },

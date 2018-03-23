@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-20 00:04:00
+ * @Last Modified time: 2018-03-23 14:24:15
  */
 
 import React, { Component } from 'react';
@@ -67,8 +67,8 @@ class TrainingReport extends Component {
         if (!uploadArray || !uploadArray.length) {
             return null;
         }
-        let red = AppColors.brand.red;
-        let grey = AppColors.brand.grey;
+        let red = AppColors.secondary.red.hundredPercent;
+        let grey = AppColors.primary.white.hundredPercent;
         let text = '';
         if (role === Roles.athlete) {
             text = ErrorMessages.ATHLETE_PREPROCESSING_UPLOADING;
@@ -91,8 +91,8 @@ class TrainingReport extends Component {
         if (!processingArray || !processingArray.length) {
             return null;
         }
-        let red = AppColors.brand.red;
-        let grey = AppColors.brand.grey;
+        let red = AppColors.secondary.red.hundredPercent;
+        let grey = AppColors.primary.white.hundredPercent;
         let text = '';
         if (role === Roles.athlete) {
             text = ErrorMessages.ATHLETE_PREPROCESSING_PROCESSING;
@@ -115,8 +115,8 @@ class TrainingReport extends Component {
         if (!errorArray || !errorArray.length) {
             return null;
         }
-        let red = AppColors.brand.red;
-        let grey = AppColors.brand.grey;
+        let red = AppColors.secondary.red.hundredPercent;
+        let grey = AppColors.primary.white.hundredPercent;
         let text = '';
         if (role === Roles.athlete) {
             text = ErrorMessages.ATHLETE_PREPROCESSING_ERROR;
@@ -161,7 +161,7 @@ class TrainingReport extends Component {
         let acwrTotalAccel7ColorIndex = typeof(acwrTotalAccel7) === 'number' ? Thresholds.chart.acwr.findIndex(colorThreshold => colorThreshold.max > acwrTotalAccel7 && colorThreshold.min <= acwrTotalAccel7) : -1;
         let acwrGRF7ColorIndex = typeof(acwrTotalAccel7) === 'number' ? Thresholds.chart.acwr.findIndex(colorThreshold => colorThreshold.max > acwrGRF7 && colorThreshold.min <= acwrGRF7) : -1;
         let minColorIndex = Math.min(...[fatigueRateOfChangeColorIndex, avgFatigueColorIndex, acwrTotalAccel7ColorIndex, acwrGRF7ColorIndex].filter(value => value !== -1), Number.POSITIVE_INFINITY);
-        let color = minColorIndex === Number.POSITIVE_INFINITY ? AppColors.chart.blue : Thresholds.chart.acwr[minColorIndex].color;
+        let color = minColorIndex === Number.POSITIVE_INFINITY ? AppColors.secondary.blue : Thresholds.chart.acwr[minColorIndex].color;
         if (fatigueRateOfChangeColorIndex !== -1 && avgFatigueColorIndex !== -1) {
             cards.push(Thresholds.chart.fatigueRateAcrossDays[fatigueRateOfChangeColorIndex < avgFatigueColorIndex ? fatigueRateOfChangeColorIndex : avgFatigueColorIndex]);
         } else if (fatigueRateOfChangeColorIndex !== -1) {
@@ -200,7 +200,7 @@ class TrainingReport extends Component {
         let ankleControlColorIndex = typeof(ankleControl) === 'number' ? Thresholds.chart.control.findIndex(colorThreshold => colorThreshold.max >= ankleControl && colorThreshold.min <= ankleControl) : -1;
         
         let minColorIndex = Math.min(...[fatigueColorIndex, percOptimalColorIndex, percLRGRFDiffColorIndex, percLeftGRFColorIndex, symmetryColorIndex, hipSymmetryColorIndex, ankleSymmetryColorIndex, controlColorIndex, controlLFColorIndex, controlRFColorIndex, hipControlColorIndex, ankleControlColorIndex].filter(value => value !== -1), Number.POSITIVE_INFINITY);
-        let color = minColorIndex === Number.POSITIVE_INFINITY ? AppColors.chart.blue : Thresholds.chart.fatigueRateSingleDay[minColorIndex].color;
+        let color = minColorIndex === Number.POSITIVE_INFINITY ? AppColors.secondary.blue : Thresholds.chart.fatigueRateSingleDay[minColorIndex].color;
 
         if (fatigueColorIndex !== -1) {
             cards.push(Thresholds.chart.fatigueRateSingleDay[fatigueColorIndex]);
@@ -252,7 +252,7 @@ class TrainingReport extends Component {
     getGraphData = (userData, isCurrentWeekFocused) => {
         let focusedWeekComparisionPercentageOverall = 0;
         let focusedWeekComparisionPercentageToDate = 0;
-        let color = AppColors.chart.blue;
+        let color = AppColors.secondary.blue;
         let cards = [];
         let weekData = { M: {}, Tu: {}, W: {}, Th: {}, F: {}, Sa: {}, Su: {} };
 
@@ -340,7 +340,7 @@ class TrainingReport extends Component {
         let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : (new Date()).toLocaleDateString().split('/');
         let endDateComponents = user.statsEndDate ? user.statsEndDate.split('-') : (new Date()).toLocaleDateString().split('/');
         let isCurrentWeekFocused = this.isCurrentWeekFocused(startDateComponents, endDateComponents);
-        let { focusedWeekComparisionPercentageOverall, focusedWeekComparisionPercentageToDate, weekData, progressData } = userData ? this.getGraphData(userData, isCurrentWeekFocused) : null;
+        let { focusedWeekComparisionPercentageOverall = null, focusedWeekComparisionPercentageToDate = null, weekData = null, progressData = null } = userData ? this.getGraphData(userData, isCurrentWeekFocused) : {};
         let selectedCards = typeof(user.selectedGraph) === 'number' && typeof(user.selectedGraphIndex) === 'number' ? user.selectedGraph === GRAPH_INDEX_MAP.CIRCULAR_PROGRESS ? progressData.cards : weekData[DAY_OF_WEEK_MAP[user.selectedGraphIndex]].cards : null;
         return (
             <View>
@@ -348,8 +348,8 @@ class TrainingReport extends Component {
                 <Spacer size={20}/>
                 <View style={[AppStyles.row]}>
                     <View style={{ flex: 1 }}/>
-                    <Text style={[AppStyles.textCenterAligned, { flex: 1 }]}>
-                        {`${user.users[user.userIndex].first_name} ${user.users[user.userIndex].last_name}`}
+                    <Text style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold' }]}>
+                        {`${userData ? userData.first_name : ''} ${userData ? userData.last_name : ''}`}
                     </Text>
                     <View style={{ flex: 1 }}/>
                 </View>
@@ -358,100 +358,100 @@ class TrainingReport extends Component {
                     <Icon
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-back'}
-                        color={AppColors.brand.primary}
-                        onPress={() => user ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset-1)).then(() => this.resetVisibleStates()).then(() => stopRequest()) : null}
+                        color={AppColors.primary.grey.fiftyPercent}
+                        onPress={() => user && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset-1)).then(() => this.resetVisibleStates()).then(() => stopRequest()) : null}
                     />
                     <View style={[AppStyles.containerCentered, { flex: 2 }]}>
-                        <Text>{`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}</Text>
+                        <Text style={{ color: AppColors.primary.grey.fiftyPercent }}>
+                            {`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}
+                        </Text>
                     </View>
                     <Icon
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-forward'}
-                        color={AppColors.brand.primary}
-                        onPress={() => user ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset+1)).then(() => this.resetVisibleStates()).then(() => stopRequest()) : null}
+                        color={AppColors.primary.grey.fiftyPercent}
+                        onPress={() => user && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset+1)).then(() => this.resetVisibleStates()).then(() => stopRequest()) : null}
                     />
                 </View>
                 {
-                    !userData || (!userData.stats && !userData.previousWeekStats) ? <View style={{ alignSelf: 'center' }}><Placeholder text={noData} /></View> :
-                        userData.stats && !userData.previousWeekStats ? <View style={{ alignSelf: 'center' }}><Placeholder text={noPastData}/></View> :
-                            <View>
-                                <View onLayout={ev => this.setState({ circularProgressHeight: ev.nativeEvent.layout.height })}>
-                                    <CircularProgress
-                                        graphIndex={GRAPH_INDEX_MAP.CIRCULAR_PROGRESS}
-                                        selectGraph={selectGraph}
-                                        isGraphSelected={user.selectedGraph === GRAPH_INDEX_MAP.CIRCULAR_PROGRESS}
-                                        percentageOverall={focusedWeekComparisionPercentageOverall}
-                                        percentageToDate={focusedWeekComparisionPercentageToDate}
-                                        progressColor={progressData.color}
-                                        getTeamStats={this.props.getTeamStats}
-                                        startRequest={this.props.startRequest}
-                                        stopRequest={this.props.stopRequest}
-                                        resetVisibleStates={this.resetVisibleStates}
-                                    />
-                                </View>
-                                <Spacer size={30}/>
-                                <View onLayout={ev => this.setState({ textHeight: ev.nativeEvent.layout.height })} style={[AppStyles.row, AppStyles.containerCentered]}>
-                                    <Text h6 style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold', color: AppColors.greyText }]}>
-                                        {'DAILY LOAD COMPARED TO PREVIOUS WEEK'}
-                                    </Text>
-                                    {/* <View style={{ flex: 1 }}>
-                                        <ButtonGroup
-                                            textStyle={[AppStyles.h6]}
-                                            selectedTextStyle={[AppStyles.h6, { fontWeight: 'bold' }]}
-                                            selectedBackgroundColor={AppColors.greyText}
-                                            // onPress={selectedIndex => this.setState({ selectedIndex })}
-                                            selectedIndex={this.state.selectedIndex}
-                                            buttons={['TEAM', 'TARGET']}
-                                        />
-                                    </View> */}
-                                </View>
-                                <Spacer size={20}/>
-                                <View onLayout={ev => this.setState({ dailyLoadChartHeight: ev.nativeEvent.layout.height })}>
-                                    <DailyLoadChart
-                                        graphIndex={GRAPH_INDEX_MAP.DAILY_LOAD_CHART}
-                                        selectGraph={selectGraph}
-                                        isGraphSelected={user.selectedGraph === GRAPH_INDEX_MAP.DAILY_LOAD_CHART}
-                                        selectedGraphIndex={user.selectedGraphIndex}
-                                        user={user}
-                                        data={weekData}
-                                        getTeamStats={this.props.getTeamStats}
-                                        startRequest={this.props.startRequest}
-                                        stopRequest={this.props.stopRequest}
-                                        resetVisibleStates={this.resetVisibleStates}
-                                    />
-                                </View>
-                                <Spacer size={2}/>
-                                { selectedCards ?
-                                    <ScrollView style={{ backgroundColor: AppColors.chart.light, height: AppSizes.screen.usableHeight - (62 + circularProgressHeight + dailyLoadChartHeight + textHeight + (selectedCards ? selectedCards.length * 14 : 0)) }}>
-                                        {
-                                            selectedCards.map((card, index) =>
-                                                <Card
-                                                    key={index}
-                                                    title={card.title}
-                                                    titleStyle={[AppStyles.h3, { color: AppColors.greyText, fontWeight: 'bold' }]}
-                                                    dividerStyle={{}}
-                                                    containerStyle={{ backgroundColor: AppColors.chart.grey, alignSelf: 'center' }}
-                                                >
-                                                    <Text style={{ color: 'white' }}>
-                                                        {card.detectionResponse}
-                                                    </Text>
-                                                    <View
-                                                        style={{
-                                                            borderBottomColor: AppColors.greyText,
-                                                            borderBottomWidth: 1,
-                                                            margin:            5,
-                                                        }}
-                                                    />
-                                                    <Text style={{ color: 'white' }}>
-                                                        {card.recommedationResponse}
-                                                    </Text>
-                                                </Card>
-                                            )
-                                        }
-                                        <Spacer />
-                                    </ScrollView> : null
-                                }
+                    !userData || !userData.stats ? <View style={{ alignSelf: 'center' }}><Placeholder text={noData} /></View> :
+                        <View>
+                            <View onLayout={ev => this.setState({ circularProgressHeight: ev.nativeEvent.layout.height })}>
+                                <CircularProgress
+                                    graphIndex={GRAPH_INDEX_MAP.CIRCULAR_PROGRESS}
+                                    selectGraph={selectGraph}
+                                    isGraphSelected={user.selectedGraph === GRAPH_INDEX_MAP.CIRCULAR_PROGRESS}
+                                    percentageOverall={focusedWeekComparisionPercentageOverall}
+                                    percentageToDate={focusedWeekComparisionPercentageToDate}
+                                    progressColor={progressData.color}
+                                    getTeamStats={this.props.getTeamStats}
+                                    startRequest={this.props.startRequest}
+                                    stopRequest={this.props.stopRequest}
+                                    resetVisibleStates={this.resetVisibleStates}
+                                />
                             </View>
+                            <Spacer size={30}/>
+                            <View onLayout={ev => this.setState({ textHeight: ev.nativeEvent.layout.height })} style={[AppStyles.row, AppStyles.containerCentered]}>
+                                <Text h6 style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold', color: AppColors.primary.grey.hundredPercent }]}>
+                                    {'DAILY LOAD COMPARED TO PREVIOUS WEEK'}
+                                </Text>
+                                {/* <View style={{ flex: 1 }}>
+                                    <ButtonGroup
+                                        textStyle={[AppStyles.h6]}
+                                        selectedTextStyle={[AppStyles.h6, { fontWeight: 'bold' }]}
+                                        selectedBackgroundColor={AppColors.primary.grey.hundredPercent}
+                                        // onPress={selectedIndex => this.setState({ selectedIndex })}
+                                        selectedIndex={this.state.selectedIndex}
+                                        buttons={['TEAM', 'TARGET']}
+                                    />
+                                </View> */}
+                            </View>
+                            <Spacer size={20}/>
+                            <View onLayout={ev => this.setState({ dailyLoadChartHeight: ev.nativeEvent.layout.height })}>
+                                <DailyLoadChart
+                                    graphIndex={GRAPH_INDEX_MAP.DAILY_LOAD_CHART}
+                                    selectGraph={selectGraph}
+                                    isGraphSelected={user.selectedGraph === GRAPH_INDEX_MAP.DAILY_LOAD_CHART}
+                                    selectedGraphIndex={user.selectedGraphIndex}
+                                    user={user}
+                                    data={weekData}
+                                    getTeamStats={this.props.getTeamStats}
+                                    startRequest={this.props.startRequest}
+                                    stopRequest={this.props.stopRequest}
+                                    resetVisibleStates={this.resetVisibleStates}
+                                />
+                            </View>
+                            { selectedCards ?
+                                <ScrollView style={{ backgroundColor: AppColors.secondary.light_blue.hundredPercent, height: AppSizes.screen.usableHeight - (60 + circularProgressHeight + dailyLoadChartHeight + textHeight + (selectedCards ? selectedCards.length * 14 : 0)) }}>
+                                    {
+                                        selectedCards.map((card, index) =>
+                                            <Card
+                                                key={index}
+                                                containerStyle={{ backgroundColor: card.cardColor, alignSelf: 'center', borderRadius: 0, borderColor: AppColors.transparent }}
+                                            >
+                                                <Text style={[AppStyles.h3, { color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold', marginBottom: 15 }]}>
+                                                    {card.title}
+                                                </Text>
+                                                <Text style={{ color: AppColors.white }}>
+                                                    {card.detectionResponse}
+                                                </Text>
+                                                <View
+                                                    style={{
+                                                        borderBottomColor: AppColors.primary.grey.hundredPercent,
+                                                        borderBottomWidth: 1,
+                                                        margin:            5,
+                                                    }}
+                                                />
+                                                <Text style={{ color: AppColors.white }}>
+                                                    {card.recommedationResponse}
+                                                </Text>
+                                            </Card>
+                                        )
+                                    }
+                                    <Spacer />
+                                </ScrollView> : null
+                            }
+                        </View>
                 }
                 {
                     user.loading ? <ActivityIndicator style={[AppStyles.activityIndicator]} size={'large'} color={'#C1C5C8'}/> : null

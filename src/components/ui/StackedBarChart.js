@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-13 15:17:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-19 00:53:56
+ * @Last Modified time: 2018-03-23 02:03:06
  */
 
 /**
@@ -13,18 +13,25 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, TouchableHighlight, View, ActivityIndicator } from 'react-native';
+import { ScrollView, TouchableHighlight, View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Svg, { Rect, G } from 'react-native-svg';
 
 // Consts and Libs
-import { AppColors, AppStyles, AppSizes } from '@theme/';
+import { AppColors, AppStyles, AppSizes, AppFonts } from '@theme/';
 import { AppUtil } from '@lib/';
 import { Roles, Thresholds } from '@constants/';
 
 // Components
 import { Axis, Spacer, Text } from '@ui/';
 import { Placeholder } from '@general/';
+
+const styles = StyleSheet.create({
+    subtext: {
+        ...AppStyles.subtext,
+        lineHeight: parseInt(AppFonts.base.lineHeight, 10),
+    }
+});
 
 
 /* Component ==================================================================== */
@@ -75,7 +82,7 @@ class StackedBarChart extends Component {
     }
 
     getColor = (value) => {
-        let color = AppColors.greyText;
+        let color = AppColors.primary.grey.hundredPercent;
         let thresholds = Thresholds.acwr;
         let colorIndex = typeof value === 'number' ? thresholds.findIndex(colorThreshold => colorThreshold.max > value && colorThreshold.min <= value) : -1;
         if (colorIndex !== -1) {
@@ -99,14 +106,14 @@ class StackedBarChart extends Component {
                 y={height - (y1 + 0.5)}
                 width={8}
                 height={y1}
-                fill={AppColors.brand.fogGrey}
+                fill={AppColors.secondary.blue.hundredPercent}
             />
             <Rect
                 x={array[index] + AppSizes.tickSize+1.5}
                 y={height - (y2 + 0.5)}
                 width={8}
                 height={y2}
-                fill={AppColors.brand.yellow}
+                fill={AppColors.primary.yellow.hundredPercent}
             />
         </G>
     }
@@ -127,17 +134,19 @@ class StackedBarChart extends Component {
                     <Icon
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-back'}
-                        color={AppColors.brand.primary}
-                        onPress={() => userData ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset-1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                        color={AppColors.primary.grey.fiftyPercent}
+                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset-1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
                     />
                     <View style={[AppStyles.containerCentered, { flex: 2 }]}>
-                        <Text>{`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}</Text>
+                        <Text style={{ color: AppColors.primary.grey.fiftyPercent }}>
+                            {`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}
+                        </Text>
                     </View>
                     <Icon
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-forward'}
-                        color={AppColors.brand.primary}
-                        onPress={() => userData ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset+1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                        color={AppColors.primary.grey.fiftyPercent}
+                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset+1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
                     />
                 </View>
                 {
@@ -169,14 +178,14 @@ class StackedBarChart extends Component {
                             </Svg>
                             <Spacer size={20}/>
                             <View style={{ flexDirection: 'row' }} onLayout={ev => this.setState({ listHeaderHeight: ev.nativeEvent.layout.height })}>
-                                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around' }}>
+                                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', paddingTop: 2 }}>
                                     <View style={{ alignItems: 'center' }}>
-                                        <Text style={AppStyles.subtext}>7day</Text>
-                                        <Text style={AppStyles.subtext}>ACWR</Text>
+                                        <Text style={[styles.subtext]}>7day</Text>
+                                        <Text style={[styles.subtext]}>ACWR</Text>
                                     </View>
                                     <View style={{ alignItems: 'center' }}>
-                                        <Text style={AppStyles.subtext}>CHRONIC</Text>
-                                        <Text style={AppStyles.subtext}>DAILY AVG</Text>
+                                        <Text style={[styles.subtext]}>CHRONIC</Text>
+                                        <Text style={[styles.subtext]}>DAILY AVG</Text>
                                     </View>
                                 </View>
                                 <View style={{ flex: 1 }}/>
@@ -223,31 +232,31 @@ class StackedBarChart extends Component {
                 trainingGroup.users = trainingGroupUsers;
                 return trainingGroup;
             });
-            return athleteStats ? <ScrollView style={{ backgroundColor: AppColors.brand.light, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10) }} scrollEnabled={true} contentContainerStyle={{ height: 220 }}>
-                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: AppColors.lightGrey }}>
+            return athleteStats ? <ScrollView style={{ backgroundColor: AppColors.secondary.light_blue.hundredPercent, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10) }} scrollEnabled={true} contentContainerStyle={{ height: 220 }}>
+                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: AppColors.primary.grey.thirtyPercent }}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
                         <Text style={[AppStyles.subtext, { color: this.getColor(graphNum === 1 ? athleteStats.acwrGRF7 : athleteStats.acwrTotalAccel7) }]}>{graphNum === 1 ? athleteStats.acwrGRF7 || '-' : athleteStats.acwrTotalAccel7 || '-'}</Text>
-                        <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{graphNum === 1 ? athleteStats.chronicGRF : athleteStats.chronicTotalAccel}</Text>
+                        <Text style={[AppStyles.subtext, { color: AppColors.primary.grey.hundredPercent }]}>{graphNum === 1 ? athleteStats.chronicGRF : athleteStats.chronicTotalAccel}</Text>
                     </View>
                     <View style={[AppStyles.containerCentered, { flex: 1 }]}>
                         <Text style={{ color: this.getColor(athleteStats.acwrGRF7) }}>{user.first_name} {user.last_name}</Text>
                     </View>
                 </View>
-                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: 'white' }}>
+                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: AppColors.white }}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
-                        <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{`${athleteStatsIndex + 1} of ${athleteData.length}`}</Text>
+                        <Text style={[AppStyles.subtext, { color: AppColors.primary.grey.hundredPercent }]}>{`${athleteStatsIndex + 1} of ${athleteData.length}`}</Text>
                     </View>
                     <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                        <Text style={{ color: AppColors.greyText }}>Team Avg</Text>
+                        <Text style={{ color: AppColors.primary.grey.hundredPercent }}>Team Avg</Text>
                     </View>
                 </View>
                 {
-                    trainingGroups ? trainingGroups.map((trainingGroup, index) => <View key={index} style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: 'white' }}>
+                    trainingGroups ? trainingGroups.map((trainingGroup, index) => <View key={index} style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: AppColors.white }}>
                         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
-                            <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{`${trainingGroup.users.findIndex(trainingGroupUser => trainingGroupUser.id === user.id) + 1} of ${trainingGroup.users.length}`}</Text>
+                            <Text style={[AppStyles.subtext, { color: AppColors.primary.grey.hundredPercent }]}>{`${trainingGroup.users.findIndex(trainingGroupUser => trainingGroupUser.id === user.id) + 1} of ${trainingGroup.users.length}`}</Text>
                         </View>
                         <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                            <Text style={{ color: AppColors.greyText }}>{trainingGroup.name}</Text>
+                            <Text style={{ color: AppColors.primary.grey.hundredPercent }}>{trainingGroup.name}</Text>
                         </View>
                     </View>
                     ) : null
@@ -256,12 +265,12 @@ class StackedBarChart extends Component {
                 : null;
         }
 
-        return <ScrollView style={{ backgroundColor: AppColors.brand.light, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10) }} scrollEnabled={true} contentContainerStyle={{ height: (stats.AthleteMovementQualityData ? stats.AthleteMovementQualityData.length + 1 : 0) * 55 }}>
+        return <ScrollView style={{ backgroundColor: AppColors.secondary.light_blue.hundredPercent, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10) }} scrollEnabled={true} contentContainerStyle={{ height: (stats.AthleteMovementQualityData ? stats.AthleteMovementQualityData.length + 1 : 0) * 55 }}>
             <TouchableHighlight key={-1} onPress={() => this.props.setStatsCategory(false, null)}>
-                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete ? 'white' : AppColors.lightGrey }}>
+                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete ? AppColors.white : AppColors.primary.grey.thirtyPercent }}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
                         <Text style={[AppStyles.subtext, { color: this.getColor(graphNum === 1 ? stats.acwrGRF7 : stats.acwrTotalAccel7) }]}>{graphNum === 1 ? stats.acwrGRF7 || '-' : stats.acwrTotalAccel7 || '-'}</Text>
-                        <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{graphNum === 1 ? stats.chronicGRF : stats.chronicTotalAccel}</Text>
+                        <Text style={[AppStyles.subtext, { color: AppColors.primary.grey.hundredPercent }]}>{graphNum === 1 ? stats.chronicGRF : stats.chronicTotalAccel}</Text>
                     </View>
                     <View style={[AppStyles.containerCentered, { flex: 1 }]}>
                         <Text style={{ color: this.getColor(graphNum === 1 ? stats.acwrGRF7 : stats.acwrTotalAccel7) }}>Team Avg</Text>
@@ -274,10 +283,10 @@ class StackedBarChart extends Component {
                         let athlete = team.users_with_training_groups.find(userInGroup => userInGroup.id === athleteMovementQualityData.userId);
                         return athlete
                             ? <TouchableHighlight key={index} onPress={() => this.props.setStatsCategory(true, athlete.id)}>
-                                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete && user.selectedStats.athleteId === athlete.id ? AppColors.lightGrey : 'white' }}>
+                                <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete && user.selectedStats.athleteId === athlete.id ? AppColors.primary.grey.thirtyPercent : AppColors.white }}>
                                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
                                         <Text style={[AppStyles.subtext, { color: this.getColor(graphNum === 1 ? athleteMovementQualityData.acwrGRF7 : athleteMovementQualityData.acwrTotalAccel7) }]}>{graphNum === 1 ? athleteMovementQualityData.acwrGRF7 || '-' : athleteMovementQualityData.acwrTotalAccel7 || '-'}</Text>
-                                        <Text style={[AppStyles.subtext, { color: AppColors.greyText }]}>{graphNum === 1 ? athleteMovementQualityData.chronicGRF : athleteMovementQualityData.chronicTotalAccel}</Text>
+                                        <Text style={[AppStyles.subtext, { color: AppColors.primary.grey.hundredPercent }]}>{graphNum === 1 ? athleteMovementQualityData.chronicGRF : athleteMovementQualityData.chronicTotalAccel}</Text>
                                     </View>
                                     <View style={[AppStyles.containerCentered, { flex: 1 }]}>
                                         <Text style={{ color: this.getColor(graphNum === 1 ? athleteMovementQualityData.acwrGRF7 : athleteMovementQualityData.acwrTotalAccel7) }}>{athlete.first_name} {athlete.last_name}</Text>

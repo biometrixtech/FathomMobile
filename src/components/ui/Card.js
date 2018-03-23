@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:28:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-17 20:13:16
+ * @Last Modified time: 2018-03-21 13:35:52
  */
 
 /**
@@ -44,7 +44,7 @@ class CustomCard extends Component {
             }],
             ...this.props,
             containerStyle: [{
-                backgroundColor: AppColors.cardBackground,
+                backgroundColor: AppColors.white,
                 borderRadius:    AppSizes.borderRadius,
                 borderColor:     AppColors.border,
                 width:           AppSizes.screen.width * 0.85,

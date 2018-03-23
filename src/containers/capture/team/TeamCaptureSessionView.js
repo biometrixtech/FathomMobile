@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:33:37 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:33:37 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-03-21 15:47:12
  */
 
 /**
@@ -134,7 +134,7 @@ class TeamCaptureSessionView extends Component {
     );
 
     biometrixAdminView = () => (
-        <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]}>
+        <View style={[AppStyles.container, { backgroundColor: AppColors.secondary.light_blue.seventyPercent }]}>
             <ScrollView
                 refreshControl={
                     <RefreshControl
@@ -163,7 +163,7 @@ class TeamCaptureSessionView extends Component {
                                             }));
                                     }}
                                 />
-                                <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }} color={AppColors.brand.blue}/>
+                                <Icon name={'caret-down'} type={'font-awesome'} size={16} containerStyle={{ marginLeft: 5 }} color={AppColors.secondary.blue.hundredPercent}/>
                             </View>
                             :
                             <Text style={AppStyles.h3}>{this.props.user.teams[this.props.user.teamIndex].name || 'No teams'}</Text>
@@ -172,7 +172,7 @@ class TeamCaptureSessionView extends Component {
                 </View>
                 <ScrollView>
                     {/* Section for primary training groups */}
-                    <ListItem title={'PRIMARY TRAINING GROUPS'} containerStyle={{ backgroundColor: AppColors.brand.light }} hideChevron/>
+                    <ListItem title={'PRIMARY TRAINING GROUPS'} containerStyle={{ backgroundColor: AppColors.secondary.light_blue.seventyPercent }} hideChevron/>
                     {
                         this.props.user.teams[this.props.user.teamIndex].training_groups.filter(trainingGroup => trainingGroup.tier !== 'secondary' && trainingGroup.tier !== null).map(trainingGroup =>
                             <ListItem key={trainingGroup.id} title={trainingGroup.name} onPress={() => Promise.resolve(this.props.selectTrainingGroup(trainingGroup)).then(() => Actions.groupCaptureSession())} hideChevron/>
@@ -181,8 +181,8 @@ class TeamCaptureSessionView extends Component {
                     {/*Section for secondary training groups */}
                     <ListItem
                         title={'SECONDARY TRAINING GROUPS'}
-                        containerStyle={{ backgroundColor: AppColors.brand.light }}
-                        rightIcon={{ name: 'plus-circle', type: 'material-community', color: AppColors.brand.yellow }}
+                        containerStyle={{ backgroundColor: AppColors.secondary.light_blue.seventyPercent }}
+                        rightIcon={{ name: 'plus-circle', type: 'material-community', color: AppColors.primary.yellow.hundredPercent }}
                         onPressRightIcon={() => Actions.refresh({ isModalVisible: true })}
                     />
                     {
@@ -245,7 +245,7 @@ class TeamCaptureSessionView extends Component {
                             <Button
                                 title={'Cancel'}
                                 containerViewStyle={{ flex: 1 }}
-                                backgroundColor={AppColors.brand.fogGrey}
+                                backgroundColor={AppColors.primary.grey.fiftyPercent}
                                 onPress={() => Actions.refresh({ isModalVisible: false })}
                             />
                             <Button

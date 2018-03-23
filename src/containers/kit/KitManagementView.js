@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:00 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-20 14:33:46
+ * @Last Modified time: 2018-03-23 00:01:24
  */
 
 /**
@@ -134,7 +134,7 @@ class KitManagementView extends Component {
     );
 
     biometrixAdminView = () => (
-        <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]} >
+        <View style={[AppStyles.container, { backgroundColor: AppColors.secondary.light_blue.seventyPercent }]} >
             <Toast 
                 ref={'toast'}
                 position={'top'}
@@ -143,7 +143,7 @@ class KitManagementView extends Component {
             <ListItem
                 title={`${this.props.bluetooth.accessoryData.id ? 'Disconnect' : 'Connect Kit'}`}
                 rightTitle={this.props.bluetooth.accessoryData.name ? this.props.bluetooth.accessoryData.name : null}
-                rightTitleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}}
+                rightTitleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.secondary.blue.hundredPercent : AppColors.primary.grey.thirtyPercent}}
                 onPress={() => {
                     if (this.props.bluetooth.accessoryData.id) {
                         return this.props.startConnect()
@@ -161,29 +161,29 @@ class KitManagementView extends Component {
                 this.props.bluetooth.accessoryData.id ?
                     <ListItem
                         title={'Owner'}
-                        chevronColor={ AppColors.brand.blue }
-                        titleStyle={{ color: AppColors.brand.blue }}
+                        chevronColor={ AppColors.secondary.blue.hundredPercent }
+                        titleStyle={{ color: AppColors.secondary.blue.hundredPercent }}
                         onPress={() => Actions.kitOwner()}
                     />
                     :
                     <ListItem
                         title={'Owner'}
-                        chevronColor={ AppColors.lightGrey }
-                        titleStyle={{ color: AppColors.lightGrey }}
+                        chevronColor={ AppColors.primary.grey.thirtyPercent }
+                        titleStyle={{ color: AppColors.primary.grey.thirtyPercent }}
                     />
             }
             {
                 !this.props.bluetooth.accessoryData.id ?
                     <ListItem
                         title={'WiFi'}
-                        chevronColor={ AppColors.lightGrey }
-                        titleStyle={{ color: AppColors.lightGrey }}
+                        chevronColor={ AppColors.primary.grey.thirtyPercent }
+                        titleStyle={{ color: AppColors.primary.grey.thirtyPercent }}
                     />
                     :
                     <ListItem
                         title={'WiFi'}
-                        chevronColor={ AppColors.brand.blue }
-                        titleStyle={{ color: AppColors.brand.blue }}
+                        chevronColor={ AppColors.secondary.blue.hundredPercent }
+                        titleStyle={{ color: AppColors.secondary.blue.hundredPercent }}
                         onPress={() => {
                             this.setState({ isModal1Visible: true });
                             return this.props.scanWiFi(this.props.bluetooth.accessoryData.id)
@@ -195,14 +195,14 @@ class KitManagementView extends Component {
                 !this.props.bluetooth.accessoryData.id ?
                     <ListItem
                         title={'Factory Reset'}
-                        chevronColor={ AppColors.lightGrey }
-                        titleStyle={{ color: AppColors.lightGrey }}
+                        chevronColor={ AppColors.primary.grey.thirtyPercent }
+                        titleStyle={{ color: AppColors.primary.grey.thirtyPercent }}
                     />
                     :
                     <ListItem
                         title={'Factory Reset'}
-                        chevronColor={ AppColors.brand.blue }
-                        titleStyle={{ color: AppColors.brand.blue }}
+                        chevronColor={ AppColors.secondary.blue.hundredPercent }
+                        titleStyle={{ color: AppColors.secondary.blue.hundredPercent }}
                         onPress={() => this.setState({ isResetModalVisible: true })}
                     />
             }
@@ -232,7 +232,7 @@ class KitManagementView extends Component {
                                     <ListItem
                                         key={network.key}
                                         title={network.label}
-                                        containerStyle={{ backgroundColor: network.label === this.state.SSID || (network.label === 'Other' && this.state.other) ? AppColors.brand.fogGrey : AppColors.background }}
+                                        containerStyle={{ backgroundColor: network.label === this.state.SSID || (network.label === 'Other' && this.state.other) ? AppColors.primary.grey.thirtyPercent : AppColors.white }}
                                         onPress={() => this.setState({ isModal1Visible: false, isModal2Visible: true, SSID: network.label === 'Other' ? '' : network.label, other: network.label === 'Other', newNetwork: true })}
                                     />
                                 ))
@@ -243,7 +243,7 @@ class KitManagementView extends Component {
                             <Button
                                 title={'Cancel'}
                                 containerViewStyle={{ flex: 1 }}
-                                backgroundColor={AppColors.brand.fogGrey}
+                                backgroundColor={AppColors.primary.grey.fiftyPercent}
                                 onPress={() => this.setState({ isModal1Visible: false })}
                             />
                             <Button
@@ -329,7 +329,7 @@ class KitManagementView extends Component {
                             <Button
                                 title={'Cancel'}
                                 containerViewStyle={{ flex: 1 }}
-                                backgroundColor={AppColors.brand.fogGrey}
+                                backgroundColor={AppColors.primary.grey.fiftyPercent}
                                 onPress={() => this.setState({ isModal2Visible: false, isModal1Visible: true, SSID: null, password: '', identity: '', anonymousIdentity: '', isCollapsed: true })}
                             />
                             <Button
@@ -388,7 +388,7 @@ class KitManagementView extends Component {
                         <Button
                             title={'Cancel'}
                             containerViewStyle={{ flex: 1 }}
-                            backgroundColor={AppColors.brand.fogGrey}
+                            backgroundColor={AppColors.primary.grey.fiftyPercent}
                             onPress={() => this.setState({ isModal3Visible: false })}
                         />
                     </Card>
@@ -413,7 +413,7 @@ class KitManagementView extends Component {
                             <Button
                                 title={'No'}
                                 containerViewStyle={{ flex: 1 }}
-                                backgroundColor={AppColors.brand.fogGrey}
+                                backgroundColor={AppColors.primary.grey.fiftyPercent}
                                 onPress={() => this.setState({ isResetModalVisible: false })}
                             />
                             <Button

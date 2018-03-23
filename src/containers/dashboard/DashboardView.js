@@ -2,11 +2,11 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:20 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-16 17:28:28
+ * @Last Modified time: 2018-03-23 11:45:03
  */
 
 import React, { Component } from 'react';
-import { TouchableHighlight, View } from 'react-native';
+import { TouchableWithoutFeedback, View } from 'react-native';
 
 import PropTypes from 'prop-types';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
@@ -18,12 +18,8 @@ import { Roles, ErrorMessages } from '@constants/';
 // Components
 import { ListItem, Text, StackedBarChart, FloatingBarChart } from '@ui/';
 
-// Tabs title (index: 0) and subtitle (index: 1)
-const tabs = {
-    0: ['RESPONSE TO LOAD', 'Biomechanical Fatigue'],
-    1: ['TRAINING VOLUME', 'Accumulated GRF'],
-    2: ['TRAINING VOLUME', 'Accumulated CoM Acceleration']
-}
+// Tabs titles
+const tabs = ['Biomechanical Response', 'Workload', 'Force Exposure'];
 
 /* Component ==================================================================== */
 class Dashboard extends Component {
@@ -61,13 +57,9 @@ class Dashboard extends Component {
 
     renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) {
         const textStyle = AppStyles.tabHeaders;
-        const inactiveTextColor = AppColors.brand.grey;
-        const activeTextColor = AppColors.brand.primary;
-        const textColor = isTabActive ? activeTextColor : inactiveTextColor;
         const fontWeight = isTabActive ? 'bold' : 'normal';
-        let padding1 = 0;
         
-        return <TouchableHighlight
+        return <TouchableWithoutFeedback
             key={`${name}_${page}`}
             accessible={true}
             accessibilityLabel={name}
@@ -75,25 +67,17 @@ class Dashboard extends Component {
             onPress={() => onPressHandler(page)}
             onLayout={onLayoutHandler}
         >
-            <View>
+            <View style={{ backgroundColor: AppColors.primary.white.hundredPercent }}>
                 <View style={[page === 0 ? AppStyles.leftTabBar : page === 1 ? AppStyles.centerTabBar : AppStyles.rightTabBar]}>
-                    <View onLayout={ev => {
-                        if (page === 0) { 
-                            let padding = (ev.nativeEvent.layout.width/2 + ev.nativeEvent.layout.x)-AppSizes.screen.width/2;
-                            padding1 = padding;
-                        }
-                    }} style={{ alignItems: 'center', justifyContent: 'center', marginRight: page === 0 ? padding1 : 0 }}>
-                        <Text style={[{color: textColor, fontWeight }, textStyle, ]}>
-                            {name}
-                        </Text>
-                        <Text h6 style={{ color: textColor, fontWeight }}>{tabs[page][1]}</Text>
-                    </View>
+                    <Text style={[textStyle, {color: AppColors.primary.grey.hundredPercent, fontWeight }]}>
+                        {name}
+                    </Text>
                 </View>
                 {
-                    isTabActive ? <View style={{ backgroundColor: AppColors.brand.yellow, width: AppSizes.screen.widthQuarter, height: 4, bottom: 0, left: AppSizes.screen.width * (page === 0 ? 0.375 : page === 1 ? 0.1275 : 0.1125), position: 'absolute' }} /> : null
+                    isTabActive ? <View style={{ backgroundColor: AppColors.primary.yellow.hundredPercent, width: AppSizes.screen.widthQuarter, height: 4, bottom: 0, left: AppSizes.screen.width * (page === 0 ? 0.375 : page === 1 ? 0.1275 : 0.1125), position: 'absolute' }} /> : null
                 }
             </View>
-        </TouchableHighlight>;
+        </TouchableWithoutFeedback>;
     }
 
     getBiomechanicalFatigueData = () => {
@@ -109,10 +93,14 @@ class Dashboard extends Component {
         data.x = allTeamMovementQualityData.map(teamMovementQualityData => new Date(teamMovementQualityData.eventDate));
         if (this.props.user.selectedStats.athlete) {
             let athleteId = this.props.user.selectedStats.athleteId;
+            data.yMin = 100;
             data.y1 = allTeamMovementQualityData.map(teamMovementQualityData => {
                 if (teamMovementQualityData.athletes && teamMovementQualityData.athletes.length) {
                     let foundAthlete = teamMovementQualityData.athletes.find(athlete => athlete.userId === athleteId);
-                    return foundAthlete ? foundAthlete.percOptimal || 0 : 0;
+                    let y1 = foundAthlete ? foundAthlete.percOptimal || 0 : 0;
+                    let y2 = foundAthlete ? foundAthlete.fatigue || 0 : 0;
+                    data.yMin = y1+y2 > 0 && y1+y2 < data.yMin ? y1+y2 : data.yMin;
+                    return y1;
                 }
                 return 0;
             });
@@ -124,7 +112,13 @@ class Dashboard extends Component {
                 return 0;
             });
         } else {
-            data.y1 = allTeamMovementQualityData.map(teamMovementQualityData => teamMovementQualityData.percOptimal || 0);
+            data.yMin = 100;
+            data.y1 = allTeamMovementQualityData.map(teamMovementQualityData => {
+                let y1 = teamMovementQualityData.percOptimal || 0;
+                let y2 = teamMovementQualityData.fatigue || 0;
+                data.yMin = y1+y2 > 0 && y1+y2 < data.yMin ? y1+y2 : data.yMin;
+                return y1;
+            });
             data.y2 = allTeamMovementQualityData.map(teamMovementQualityData => teamMovementQualityData.fatigue || 0);
         }
         return data;
@@ -222,8 +216,8 @@ class Dashboard extends Component {
         if (!uploadArray || !uploadArray.length) {
             return null;
         }
-        let red = AppColors.brand.red;
-        let grey = AppColors.brand.grey;
+        let red = AppColors.secondary.red.hundredPercent;
+        let grey = AppColors.primary.white.hundredPercent;
         let text = '';
         if (role === Roles.athlete) {
             text = ErrorMessages.ATHLETE_PREPROCESSING_UPLOADING;
@@ -246,8 +240,8 @@ class Dashboard extends Component {
         if (!processingArray || !processingArray.length) {
             return null;
         }
-        let red = AppColors.brand.red;
-        let grey = AppColors.brand.grey;
+        let red = AppColors.secondary.red.hundredPercent;
+        let grey = AppColors.primary.white.hundredPercent;
         let text = '';
         if (role === Roles.athlete) {
             text = ErrorMessages.ATHLETE_PREPROCESSING_PROCESSING;
@@ -270,8 +264,8 @@ class Dashboard extends Component {
         if (!errorArray || !errorArray.length) {
             return null;
         }
-        let red = AppColors.brand.red;
-        let grey = AppColors.brand.grey;
+        let red = AppColors.secondary.red.hundredPercent;
+        let grey = AppColors.primary.white.hundredPercent;
         let text = '';
         if (role === Roles.athlete) {
             text = ErrorMessages.ATHLETE_PREPROCESSING_ERROR;
@@ -320,11 +314,11 @@ class Dashboard extends Component {
             <ScrollableTabView
                 initialPage={0}
                 tabBarUnderlineStyle={{ height: 0 }}
-                tabBarActiveTextColor={AppColors.brand.primary}
-                tabBarInactiveTextColor={AppColors.brand.grey}
+                tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
+                tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
                 renderTabBar={() => <ScrollableTabBar renderTab={this.renderTab} />}
             >
-                <View tabLabel={tabs[0][0]}>
+                <View tabLabel={tabs[0]}>
                     { this.preprocessingMessages(preprocessing, role) }
                     <FloatingBarChart
                         xAxis={'Movement Quality Score (0 to 100)'}
@@ -341,7 +335,7 @@ class Dashboard extends Component {
                         getTeamStats={this.props.getTeamStats}
                     />
                 </View>
-                <View tabLabel={tabs[1][0]}>
+                <View tabLabel={tabs[1]}>
                     { this.preprocessingMessages(preprocessing, role) }
                     <StackedBarChart
                         xAxis={'Accum. GRF (Millions of Newtons)'}
@@ -360,7 +354,7 @@ class Dashboard extends Component {
                         getTeamStats={this.props.getTeamStats}
                     />
                 </View>
-                <View tabLabel={tabs[2][0]}>
+                <View tabLabel={tabs[2]}>
                     { this.preprocessingMessages(preprocessing, role) }
                     <StackedBarChart
                         xAxis={'Accum. CoM Accel. (Meters per sec. sqr.)'}

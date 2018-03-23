@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-20 11:48:38
+ * @Last Modified time: 2018-03-21 15:38:04
  */
 
 /**
@@ -234,7 +234,7 @@ class BluetoothConnectView extends Component {
 
     biometrixAdminView = () => (
         <View style={{ flex: 1 }} onLayout={this._onLayoutDidChange}>
-            <View style={{ alignItems: 'center', backgroundColor: AppColors.brand.light }}>
+            <View style={{ alignItems: 'center', backgroundColor: AppColors.secondary.light_blue.seventyPercent }}>
                 <Spacer size={25}/>
                 <Text h1>
                     {
@@ -258,7 +258,7 @@ class BluetoothConnectView extends Component {
                     width:           AppSizes.screen.widthFourFifths,
                     height:          AppSizes.screen.heightThreeQuarters
                 }}
-                indicatorColor={AppColors.brand.blue}
+                indicatorColor={AppColors.secondary.blue.hundredPercent}
             >
                 <View style={[AppStyles.containerCentered, { flex: 1 }]}>
                     <View style={{ flex: 1 }} />
@@ -287,7 +287,7 @@ class BluetoothConnectView extends Component {
                 <View style={[AppStyles.containerCentered, { flex: 1 }]}>
                     <View style={{ flex: 1 }} />
                     <View style={{ flex: 1 }} >
-                        <Icon name="bluetooth" containerStyle={{ alignSelf: 'center' }} size={30} color={AppColors.brand.primary} reverse onPress={() => this.startBluetooth()} raised />
+                        <Icon name="bluetooth" containerStyle={{ alignSelf: 'center' }} size={30} color={AppColors.secondary.blue.hundredPercent} reverse onPress={() => this.startBluetooth()} raised />
                     </View>
                     <View style={{ flex: 1 }} />
                 </View>
@@ -298,12 +298,12 @@ class BluetoothConnectView extends Component {
                         <Button
                             title={this.props.bluetooth.scanning ? 'Stop Scan' : 'Start Scan'}
                             icon={{ name: `${this.props.bluetooth.scanning ? 'stop' : 'play-arrow'}` }}
-                            buttonStyle={{ backgroundColor: `${this.props.bluetooth.scanning ? AppColors.brand.red : AppColors.brand.primary}` }}
+                            buttonStyle={{ backgroundColor: `${this.props.bluetooth.scanning ? AppColors.secondary.red.hundredPercent : AppColors.secondary.blue.hundredPercent}` }}
                             onPress={() => this.toggleScanning(!this.props.bluetooth.scanning)}
                             raised
                         />
                         <Spacer size={5}/>
-                        <Text style={{ color: AppColors.brand.yellow }} onPress={() => this.setState({ isCollapsed: !this.state.isCollapsed })}>{'Can\'t find your device?'}</Text>
+                        <Text style={{ color: AppColors.primary.yellow.hundredPercent }} onPress={() => this.setState({ isCollapsed: !this.state.isCollapsed })}>{'Can\'t find your device?'}</Text>
                         <Spacer size={5}/>
                         <Collapsible collapsed={this.state.isCollapsed} >
                             <FormLabel labelStyle={[AppStyles.h4]} >
@@ -346,7 +346,7 @@ class BluetoothConnectView extends Component {
                     <View style={{ flex: 1 }}>
                         <Text h2>{successfullyConnected[0]}</Text>
                     </View>
-                    <Icon containerStyle={{ flex: 1 }} name={'checkbox-marked-circle'} type={'material-community'} color={AppColors.brand.yellow} size={100}/>
+                    <Icon containerStyle={{ flex: 1 }} name={'checkbox-marked-circle'} type={'material-community'} color={AppColors.primary.yellow.hundredPercent} size={100}/>
                     <Spacer />
                     <View style={[AppStyles.containerCentered, { flex: 1, paddingLeft: 25, paddingRight: 25 }]}>
                         <Text>{successfullyConnected[1]}</Text>

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:29:10 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-17 20:13:33
+ * @Last Modified time: 2018-03-23 14:23:38
  */
 
 /**
@@ -39,7 +39,7 @@ class CustomFormLabel extends Component {
         const props = {
             ...this.props,
             labelStyle: [{
-                color:      AppColors.textPrimary,
+                color:      AppColors.primary.grey.hundredPercent,
                 fontFamily: AppFonts.base.family,
                 fontWeight: AppFonts.h0.fontWeight
             }],

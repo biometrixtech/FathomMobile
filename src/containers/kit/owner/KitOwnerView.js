@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:45 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-19 23:42:50
+ * @Last Modified time: 2018-03-21 15:02:35
  */
 
 /**
@@ -113,7 +113,7 @@ class KitOwnerView extends Component {
         let saveable = this.props.bluetooth.accessoryData.name && this.props.bluetooth.accessoryData.individual && this.props.bluetooth.accessoryData.individual.first_name
             && this.props.bluetooth.accessoryData.individual.last_name && !this.props.bluetooth.accessoryData.ownerFlag;
         return (
-            <View style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]}>
+            <View style={[AppStyles.container, { backgroundColor: AppColors.secondary.light_blue.fiftyPercent }]}>
                 <ScrollView
                     refreshControl={
                         <RefreshControl
@@ -133,9 +133,9 @@ class KitOwnerView extends Component {
                             configured ?
                                 <ListItem
                                     title={'OWNER'}
-                                    containerStyle={{ padding: 10, backgroundColor: AppColors.brand.light }}
+                                    containerStyle={{ padding: 10, backgroundColor: AppColors.secondary.light_blue.fiftyPercent }}
                                     rightTitle={'Erase Owner'}
-                                    rightTitleStyle={[AppStyles.baseText, { color: AppColors.brand.yellow, fontWeight: 'bold' }]}
+                                    rightTitleStyle={[AppStyles.baseText, { color: AppColors.primary.yellow.hundredPercent, fontWeight: 'bold' }]}
                                     onPress={() => Actions.refresh({ isResetModalVisible: true })}
                                     hideChevron
                                 />
@@ -143,9 +143,9 @@ class KitOwnerView extends Component {
                                 saveable ?
                                     <ListItem
                                         title={'OWNER'}
-                                        containerStyle={{ padding: 10, backgroundColor: AppColors.brand.light }}
+                                        containerStyle={{ padding: 10, backgroundColor: AppColors.secondary.light_blue.fiftyPercent }}
                                         rightTitle={'Save'}
-                                        rightTitleStyle={[AppStyles.baseText, { color: AppColors.brand.yellow, fontWeight: 'bold' }]}
+                                        rightTitleStyle={[AppStyles.baseText, { color: AppColors.primary.yellow.hundredPercent, fontWeight: 'bold' }]}
                                         onPress={() => this.props.startConnect()
                                             .then(() => this.props.assignKitName(this.props.bluetooth.accessoryData.id, this.props.bluetooth.accessoryData.name.slice(11)))
                                             .then(() => this.props.setOwnerFlag(this.props.bluetooth.accessoryData.id, true))
@@ -161,7 +161,7 @@ class KitOwnerView extends Component {
                                     :
                                     <ListItem
                                         title={'OWNER'}
-                                        containerStyle={{ padding: 10, backgroundColor: AppColors.brand.light }}
+                                        containerStyle={{ padding: 10, backgroundColor: AppColors.secondary.light_blue.fiftyPercent }}
                                         hideChevron
                                     />
                         }
@@ -170,17 +170,17 @@ class KitOwnerView extends Component {
                                 <ListItem
                                     title={'Kit Name'}
                                     rightTitle={this.props.bluetooth.accessoryData.name ? this.props.bluetooth.accessoryData.name : null}
-                                    rightTitleStyle={{ color: AppColors.lightGrey}}
-                                    chevronColor={AppColors.lightGrey}
-                                    titleStyle={{ color: AppColors.lightGrey}}
+                                    rightTitleStyle={{ color: AppColors.primary.grey.thirtyPercent}}
+                                    chevronColor={AppColors.primary.grey.thirtyPercent}
+                                    titleStyle={{ color: AppColors.primary.grey.thirtyPercent}}
                                 />
                                 :
                                 <ListItem
                                     title={'Kit Name'}
                                     rightTitle={this.props.bluetooth.accessoryData.name ? this.props.bluetooth.accessoryData.name : null}
-                                    rightTitleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}}
-                                    chevronColor={this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}
-                                    titleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}}
+                                    rightTitleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.secondary.blue.hundredPercent : AppColors.primary.grey.thirtyPercent}}
+                                    chevronColor={this.props.bluetooth.accessoryData.id ? AppColors.secondary.blue.hundredPercent : AppColors.primary.grey.thirtyPercent}
+                                    titleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.secondary.blue.hundredPercent : AppColors.primary.grey.thirtyPercent}}
                                     onPress={() => Actions.refresh({ isModalVisible: true })}
                                 />
                         }
@@ -189,17 +189,17 @@ class KitOwnerView extends Component {
                                 <ListItem
                                     title={'Organization'}
                                     rightTitle={this.props.bluetooth.accessoryData.organization ? this.props.bluetooth.accessoryData.organization.name : null}
-                                    rightTitleStyle={{ color: AppColors.lightGrey}}
-                                    chevronColor={AppColors.lightGrey}
-                                    titleStyle={{ color: AppColors.lightGrey}}
+                                    rightTitleStyle={{ color: AppColors.primary.grey.thirtyPercent}}
+                                    chevronColor={AppColors.primary.grey.thirtyPercent}
+                                    titleStyle={{ color: AppColors.primary.grey.thirtyPercent}}
                                 />
                                 :
                                 <ListItem
                                     title={'Organization'}
                                     rightTitle={this.props.bluetooth.accessoryData.organization ? this.props.bluetooth.accessoryData.organization.name : null}
-                                    rightTitleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}}
-                                    chevronColor={this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}
-                                    titleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}}
+                                    rightTitleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.secondary.blue.hundredPercent : AppColors.primary.grey.thirtyPercent}}
+                                    chevronColor={this.props.bluetooth.accessoryData.id ? AppColors.secondary.blue.hundredPercent : AppColors.primary.grey.thirtyPercent}
+                                    titleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.secondary.blue.hundredPercent : AppColors.primary.grey.thirtyPercent}}
                                     onPress={() => { this.props.assignType('organization'); return Actions.kitAssign(); }}
                                 />
                         }
@@ -209,24 +209,24 @@ class KitOwnerView extends Component {
                                     <ListItem
                                         title={'Team'}
                                         rightTitle={this.props.bluetooth.accessoryData.team ? this.props.bluetooth.accessoryData.team.name : null}
-                                        rightTitleStyle={{ color: AppColors.lightGrey}}
-                                        chevronColor={AppColors.lightGrey}
-                                        titleStyle={{ color: AppColors.lightGrey}}
+                                        rightTitleStyle={{ color: AppColors.primary.grey.thirtyPercent}}
+                                        chevronColor={AppColors.primary.grey.thirtyPercent}
+                                        titleStyle={{ color: AppColors.primary.grey.thirtyPercent}}
                                     />
                                     :
                                     <ListItem
                                         title={'Team'}
                                         rightTitle={this.props.bluetooth.accessoryData.team ? this.props.bluetooth.accessoryData.team.name : null}
-                                        rightTitleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}}
-                                        chevronColor={this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}
-                                        titleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}}
+                                        rightTitleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.secondary.blue.hundredPercent : AppColors.primary.grey.thirtyPercent}}
+                                        chevronColor={this.props.bluetooth.accessoryData.id ? AppColors.secondary.blue.hundredPercent : AppColors.primary.grey.thirtyPercent}
+                                        titleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.secondary.blue.hundredPercent : AppColors.primary.grey.thirtyPercent}}
                                         onPress={() => { this.props.assignType('team'); return Actions.kitAssign(); }}
                                     />
                                 :
                                 <ListItem
                                     title={'Team'}
-                                    chevronColor={AppColors.lightGrey}
-                                    titleStyle={{ color: AppColors.lightGrey}}
+                                    chevronColor={AppColors.primary.grey.thirtyPercent}
+                                    titleStyle={{ color: AppColors.primary.grey.thirtyPercent}}
                                 />
                         }
                         {
@@ -235,24 +235,24 @@ class KitOwnerView extends Component {
                                     <ListItem
                                         title={'Individual'}
                                         rightTitle={this.props.bluetooth.accessoryData.individual ? `${this.props.bluetooth.accessoryData.individual.first_name} ${this.props.bluetooth.accessoryData.individual.last_name}` : null}
-                                        rightTitleStyle={{ color: AppColors.lightGrey}}
-                                        chevronColor={AppColors.lightGrey}
-                                        titleStyle={{ color: AppColors.lightGrey}}
+                                        rightTitleStyle={{ color: AppColors.primary.grey.thirtyPercent}}
+                                        chevronColor={AppColors.primary.grey.thirtyPercent}
+                                        titleStyle={{ color: AppColors.primary.grey.thirtyPercent}}
                                     />
                                     :
                                     <ListItem
                                         title={'Individual'}
                                         rightTitle={this.props.bluetooth.accessoryData.individual ? `${this.props.bluetooth.accessoryData.individual.first_name} ${this.props.bluetooth.accessoryData.individual.last_name}` : null}
-                                        rightTitleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}}
-                                        chevronColor={this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}
-                                        titleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.brand.blue : AppColors.lightGrey}}
+                                        rightTitleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.secondary.blue.hundredPercent : AppColors.primary.grey.thirtyPercent}}
+                                        chevronColor={this.props.bluetooth.accessoryData.id ? AppColors.secondary.blue.hundredPercent : AppColors.primary.grey.thirtyPercent}
+                                        titleStyle={{ color: this.props.bluetooth.accessoryData.id ? AppColors.secondary.blue.hundredPercent : AppColors.primary.grey.thirtyPercent}}
                                         onPress={() => { this.props.assignType('individual'); return Actions.kitAssign(); }}
                                     />
                                 :
                                 <ListItem
                                     title={'Individual'}
-                                    chevronColor={AppColors.lightGrey}
-                                    titleStyle={{ color: AppColors.lightGrey}}
+                                    chevronColor={AppColors.primary.grey.thirtyPercent}
+                                    titleStyle={{ color: AppColors.primary.grey.thirtyPercent}}
                                 />
                         }
                         {
@@ -312,7 +312,7 @@ class KitOwnerView extends Component {
                                 <Button
                                     title={'Cancel'}
                                     containerViewStyle={{ flex: 1 }}
-                                    backgroundColor={AppColors.brand.fogGrey}
+                                    backgroundColor={AppColors.primary.grey.fiftyPercent}
                                     onPress={() => Actions.refresh({ isModalVisible: false })}
                                 />
                                 <Button
@@ -345,7 +345,7 @@ class KitOwnerView extends Component {
                                 <Button
                                     title={'No'}
                                     containerViewStyle={{ flex: 1 }}
-                                    backgroundColor={AppColors.brand.fogGrey}
+                                    backgroundColor={AppColors.primary.grey.fiftyPercent}
                                     onPress={() => Actions.refresh({ isResetModalVisible: false })}
                                 />
                                 <Button

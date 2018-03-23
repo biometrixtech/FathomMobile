@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:13 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 14:40:17
+ * @Last Modified time: 2018-03-22 23:59:48
  */
 
 /**
@@ -95,7 +95,7 @@ class KitAssignView extends Component {
         return (
             <KeyboardAvoidingView
                 behavior={'position'}
-                style={[AppStyles.container, { backgroundColor: AppColors.brand.light }]}
+                style={[AppStyles.container, { backgroundColor: AppColors.secondary.light_blue.hundredPercent }]}
             >
                 <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', height: AppSizes.screen.heightOneThird }}>
                     <Image source={require('@images/kit-diagram.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthTwoThirds, height: AppSizes.screen.widthTwoThirds * 268/509 }}/>
@@ -106,7 +106,7 @@ class KitAssignView extends Component {
                 <View>
                     <ListItem
                         title={category}
-                        containerStyle={{ padding: 10, backgroundColor: AppColors.brand.light }}
+                        containerStyle={{ padding: 10, backgroundColor: AppColors.secondary.light_blue.hundredPercent }}
                         hideChevron
                         onLayout={(ev) => { this.setState({ categoryHeight: ev.nativeEvent.layout.height }); }}
                     />
@@ -129,7 +129,7 @@ class KitAssignView extends Component {
                                     return <ListItem
                                         key={user.id}
                                         title={`${user.first_name} ${user.last_name}`}
-                                        containerStyle={{ backgroundColor: `${user.first_name} ${user.last_name}` === name ? AppColors.brand.fogGrey : AppColors.background }}
+                                        containerStyle={{ backgroundColor: `${user.first_name} ${user.last_name}` === name ? AppColors.primary.grey.thirtyPercent : AppColors.white }}
                                         onPress={() => this.props.assignKitIndividual(accessory, user)}
                                         hideChevron
                                     />
@@ -141,7 +141,7 @@ class KitAssignView extends Component {
                                         return <ListItem
                                             key={team.id}
                                             title={team.name}
-                                            containerStyle={{ backgroundColor: team.name === name ? AppColors.brand.fogGrey : AppColors.background }}
+                                            containerStyle={{ backgroundColor: team.name === name ? AppColors.primary.grey.thirtyPercent : AppColors.white }}
                                             onPress={() => this.props.assignKitTeam(accessory, team).then(() => this.props.teamSelect(teamIndex))}
                                             hideChevron
                                         />
@@ -149,7 +149,7 @@ class KitAssignView extends Component {
                                     :
                                     <ListItem
                                         title={this.props.user.organization.name}
-                                        containerStyle={{ backgroundColor: this.props.user.organization.name === name ? AppColors.brand.fogGrey : AppColors.background }}
+                                        containerStyle={{ backgroundColor: this.props.user.organization.name === name ? AppColors.primary.grey.thirtyPercent : AppColors.white }}
                                         onPress={() => this.props.assignKitOrganization(accessory, this.props.user.organization)}
                                         hideChevron
                                     />

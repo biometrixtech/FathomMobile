@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:29:29 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-05 17:16:32
+ * @Last Modified time: 2018-03-21 15:30:08
  */
 
 /**
@@ -45,11 +45,11 @@ class CustomListItem extends Component {
         // Defaults
         const props = {
             title:          'Coming Soon...',
-            chevronColor:   AppColors.brand.primary,
+            chevronColor:   AppColors.secondary.blue.hundredPercent,
             underlayColor:  AppColors.border,
             ...this.props,
             containerStyle: [{
-                backgroundColor:   AppColors.listItemBackground,
+                backgroundColor:   AppColors.white,
                 borderTopColor:    AppColors.border,
                 borderBottomColor: AppColors.border,
             }],

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:06 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-15 21:05:38
+ * @Last Modified time: 2018-03-23 14:26:40
  */
 
 /**
@@ -10,63 +10,71 @@
  */
 
 const app = {
-    background:         '#FFFFFF',
-    cardBackground:     '#FFFFFF',
-    listItemBackground: '#FFFFFF',
-    transparent:        'rgba(0,0,0,0)',
-    red:                '#FF0000',
-    green:              '#00FF00',
-    blue:               '#0000FF',
-    lightGrey:          '#E0E0E0',
-    shadowColor:        '#C8C8C8'
-};
-
-const chart = {
-    blue:   '#016DC980', // 50% opacity
-    red:    '#C9014E80', // 50% opacity
-    yellow: '#E0AF1280', // 50% opacity
-    grey:   '#E3E3E3FF',
-    light:  '#EFEFEFFF',
+    transparent: 'rgba(0,0,0,0)',
+    white:       '#FFFFFF',
+    black:       '#000000',
+    red:         '#FF0000',
+    green:       '#00FF00',
+    blue:        '#0000FF',
 };
 
 const brand = {
-    brand: {
-        primary: '#0b587c', // Blue: #177896, Red: #8e223a, Old: #0E4EF8, Blue(Jasmine): #0b587c
-        red:     '#972c2f',
-        yellow:  '#e0af12',
-        blue:    '#0b587c',
-        grey:    '#dee1e9',
-        light:   '#ebf5f7',
-        fogGrey: '#c8c8c8',
-        skyGrey: '#f0f0f0'
+    primary: {
+        // Smokey Grey
+        grey: {
+            hundredPercent: '#505050',
+            fiftyPercent:   '#757575',
+            thirtyPercent:  '#D5D5D5'
+        },
+        // Medal Gold
+        yellow: {
+            hundredPercent: '#E0AF12',
+            seventyPercent: '#E9C766',
+            fiftyPercent:   '#EFD792',
+        },
+        // Finish Line White
+        white: {
+            hundredPercent: '#F7F7F7',
+        }
     },
-};
-
-const text = {
-    textPrimary:      '#222222',
-    textSecondary:    '#777777',
-    greyText:         '#8a8a8a',
-    headingPrimary:   brand.brand.primary,
-    headingSecondary: brand.brand.primary,
+    secondary: {
+        // Blood Sweet & Tears
+        red: {
+            hundredPercent: '#972C2F',
+            seventyPercent: '#B66B6D',
+            fiftyPercent:   '#CB9597',
+        },
+        // Imagine Blue
+        light_blue: {
+            hundredPercent: '#E6F5F7',
+            seventyPercent: '#EDF8F9',
+            fiftyPercent:   '#F3FAFB',
+        },
+        // Fathom Blue
+        blue: {
+            hundredPercent: '#0B587C',
+            seventyPercent: '#548AA3',
+            fiftyPercent:   '#85ACBE',
+            thirtyPercent:  '#B6CDD8',
+        }
+    }
 };
 
 const borders = {
-    border: '#D0D1D5',
+    border: brand.primary.grey.hundredPercent,
 };
 
 const tabbar = {
     tabbar: {
-        background:   '#ffffff',
+        background:   app.white,
         iconDefault:  '#BABDC2',
-        iconSelected: brand.brand.primary,
+        iconSelected: brand.secondary.blue.hundredPercent,
     },
 };
 
 export default {
     ...app,
     ...brand,
-    ...text,
     ...borders,
     ...tabbar,
-    chart
 };

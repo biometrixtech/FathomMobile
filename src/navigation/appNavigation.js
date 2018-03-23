@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:24:01 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-14 13:48:50
+ * @Last Modified time: 2018-03-22 23:16:40
  */
 
 /**
@@ -23,6 +23,7 @@ import KitOwnerView from '@containers/kit/owner/KitOwnerContainer';
 import KitAssignView from '@containers/kit/assign/KitAssignContainer';
 import DashboardView from '@containers/dashboard/DashboardContainer';
 import ReportView from '@containers/report/ReportContainer';
+import SupportView from '@containers/support/SupportContainer';
 
 // Components
 import { NavbarMenuButton } from '@containers/ui/NavbarMenuButton/NavbarMenuButtonContainer';
@@ -76,6 +77,14 @@ const scenes = (
                 type={ActionConst.REPLACE}
                 component={KitManagementView}
                 analyticsDesc={'KitManagementView: Kit Management'}
+            />
+            <Scene
+                {...navbarPropsTabs}
+                key={'placeholder'}
+                clone
+                type={ActionConst.REPLACE}
+                component={SupportView}
+                analyticsDesc={'Placeholder'}
             />
             <Scene
                 {...navbarPropsTabs}

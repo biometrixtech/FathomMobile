@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:19:55 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-18 22:54:02
+ * @Last Modified time: 2018-03-20 21:25:15
  */
 
 /**
@@ -26,16 +26,17 @@ function lineHeight(fontSize) {
 const base = {
     size:       scaleFont(16),
     lineHeight: lineHeight(scaleFont(Platform.OS === 'ios' ? 13 : 14)),
-    family:     'Libre Franklin'
+    family:     'Libre Franklin',
+    fontWeight: '400',
 };
 
 export default {
     base: { ...base },
-    h0:   { ...base, size: base.size * 2.5, lineHeight: lineHeight(base.size * 2) },
+    h0:   { ...base, size: base.size * 2.5,  lineHeight: lineHeight(base.size * 2) },
     h1:   { ...base, size: base.size * 1.75, lineHeight: lineHeight(base.size * 2) },
-    h2:   { ...base, size: base.size * 1.5, lineHeight: lineHeight(base.size * 1.75) },
+    h2:   { ...base, size: base.size * 1.5,  lineHeight: lineHeight(base.size * 1.75) },
     h3:   { ...base, size: base.size * 1.25, lineHeight: lineHeight(base.size * 1.5) },
-    h4:   { ...base, size: base.size * 1.1, lineHeight: lineHeight(base.size * 1.25) },
+    h4:   { ...base, size: base.size * 1.1,  lineHeight: lineHeight(base.size * 1.25) },
     h5:   { ...base },
     h6:   { ...base, size: base.size * 0.8, lineHeight: lineHeight(base.size * 0.8) },
     h7:   { ...base, size: base.size * 0.5, lineHeight: lineHeight(base.size * 0.5) },

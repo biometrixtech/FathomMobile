@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:33:23 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:33:23 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-03-21 15:46:23
  */
 
 /**
@@ -164,20 +164,20 @@ class GroupCaptureSessionView extends Component {
                             subtitleContainerStyle={{ alignSelf: 'center', marginLeft: 51 }}
                             subtitle={this.props.user.selectedTrainingGroup.name}
                             fontFamily={AppStyles.baseText.fontFamily}
-                            rightIcon={{ name: 'pencil-circle', color: AppColors.brand.yellow, type: 'material-community'}}
+                            rightIcon={{ name: 'pencil-circle', color: AppColors.primary.yellow.hundredPercent, type: 'material-community'}}
                             onPressRightIcon={() => Actions.refresh({ isModalVisible: true })}
                         />
                 }
                 <Spacer size={this.state.height}/>
-                <Tabs sceneStyle={{ backgroundColor: AppColors.brand.light, height: AppSizes.screen.height - AppSizes.navbarHeight - (2*this.state.height) + (Platform.OS === 'ios' ? 35 : 15) }}
-                    tabBarStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 2, borderColor: AppColors.shadowColor }}
+                <Tabs sceneStyle={{ backgroundColor: AppColors.secondary.light_blue.seventyPercent, height: AppSizes.screen.height - AppSizes.navbarHeight - (2*this.state.height) + (Platform.OS === 'ios' ? 35 : 15) }}
+                    tabBarStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 2, borderColor: AppColors.border }}
                     tabBarShadowStyle={{ height: 0 }}
                 >
                     <Tab titleStyle={{ paddingBottom: 10, marginTop: 10, ...AppStyles.baseText, color: AppColors.lightGrey  }}
-                        selectedTitleStyle={{ borderBottomWidth: 2, borderColor: AppColors.brand.yellow, color: AppColors.brand.blue }}
+                        selectedTitleStyle={{ borderBottomWidth: 2, borderColor: AppColors.primary.yellow.hundredPercent, color: AppColors.secondary.blue.hundredPercent }}
                         title={'CAPTURING'}
                         renderBadge={() => (
-                            <Text style={{ color: this.state.selectedIndex === 0 ? AppColors.brand.blue : AppColors.lightGrey}}>
+                            <Text style={{ color: this.state.selectedIndex === 0 ? AppColors.secondary.blue.hundredPercent : AppColors.lightGrey}}>
                                 {this.props.user.selectedTrainingGroup.users.filter(user => this.props.user.accessories.some(accessory => accessory.last_user_id === user.id && bleStates.CAPTURING.some(state => state === accessory.state))).length}
                             </Text>
                         )}
@@ -205,7 +205,7 @@ class GroupCaptureSessionView extends Component {
                             <Button
                                 containerViewStyle={{ bottom: 0 , height: 30, width: AppSizes.screen.width, alignSelf: 'center', paddingTop: 2 }}
                                 buttonStyle={{ borderRadius: 0 }}
-                                backgroundColor={this.state.active ? AppColors.brand.red : AppColors.brand.yellow}
+                                backgroundColor={this.state.active ? AppColors.secondary.red.hundredPercent : AppColors.primary.yellow.hundredPercent}
                                 onPress={() => {
                                     let ids = this.props.user.selectedTrainingGroup.users.map(user => user.id);
                                     return (this.state.action ? this.stopSession(ids) : this.startSession(ids)).then(() => this.setState({ active: !this.state.active }));
@@ -218,10 +218,10 @@ class GroupCaptureSessionView extends Component {
                         </View>
                     </Tab>
                     <Tab titleStyle={{ paddingBottom: 10, marginTop: 10, ...AppStyles.baseText, color: AppColors.lightGrey  }}
-                        selectedTitleStyle={{ borderBottomWidth: 2, borderColor: AppColors.brand.yellow, color: AppColors.brand.blue }}
+                        selectedTitleStyle={{ borderBottomWidth: 2, borderColor: AppColors.primary.yellow.hundredPercent, color: AppColors.secondary.blue.hundredPercent }}
                         title={'READY'}
                         renderBadge={() => (
-                            <Text style={{ color: this.state.selectedIndex === 1 ? AppColors.brand.blue : AppColors.lightGrey}}>
+                            <Text style={{ color: this.state.selectedIndex === 1 ? AppColors.secondary.blue.hundredPercent : AppColors.lightGrey}}>
                                 {this.props.user.selectedTrainingGroup.users.filter(user => this.props.user.accessories.some(accessory => accessory.last_user_id === user.id && bleStates.READY.some(state => state === accessory.state))).length}
                             </Text>
                         )}
@@ -249,7 +249,7 @@ class GroupCaptureSessionView extends Component {
                             <Button
                                 containerViewStyle={{ bottom: 0 , height: 30, width: AppSizes.screen.width, alignSelf: 'center', paddingTop: 2 }}
                                 buttonStyle={{ borderRadius: 0 }}
-                                backgroundColor={this.state.active ? AppColors.brand.red : AppColors.brand.yellow}
+                                backgroundColor={this.state.active ? AppColors.secondary.red.hundredPercent : AppColors.primary.yellow.hundredPercent}
                                 onPress={() => {
                                     let ids = this.props.user.selectedTrainingGroup.users.map(user => user.id);
                                     return (this.state.action ? this.stopSession(ids) : this.startSession(ids)).then(() => this.setState({ active: !this.state.active }));
@@ -262,10 +262,10 @@ class GroupCaptureSessionView extends Component {
                         </View>
                     </Tab>
                     <Tab titleStyle={{ paddingBottom: 10, marginTop: 10, ...AppStyles.baseText, color: AppColors.lightGrey  }}
-                        selectedTitleStyle={{ borderBottomWidth: 2, borderColor: AppColors.brand.yellow, color: AppColors.brand.blue }}
+                        selectedTitleStyle={{ borderBottomWidth: 2, borderColor: AppColors.primary.yellow.hundredPercent, color: AppColors.secondary.blue.hundredPercent }}
                         title={'NOT READY'}
                         renderBadge={() => (
-                            <Text style={{ color: this.state.selectedIndex === 2 ? AppColors.brand.blue : AppColors.lightGrey}}>
+                            <Text style={{ color: this.state.selectedIndex === 2 ? AppColors.secondary.blue.hundredPercent : AppColors.lightGrey}}>
                                 {this.props.user.selectedTrainingGroup.users.filter(user => this.props.user.accessories.some(accessory => accessory.last_user_id === user.id && bleStates.NOT_READY.every(state => state !== accessory.state))).length}
                             </Text>
                         )}
@@ -293,7 +293,7 @@ class GroupCaptureSessionView extends Component {
                             <Button
                                 containerViewStyle={{ bottom: 0 , height: 30, width: AppSizes.screen.width, alignSelf: 'center', paddingTop: 2 }}
                                 buttonStyle={{ borderRadius: 0 }}
-                                backgroundColor={this.state.active ? AppColors.brand.red : AppColors.brand.yellow}
+                                backgroundColor={this.state.active ? AppColors.secondary.red.hundredPercent : AppColors.primary.yellow.hundredPercent}
                                 onPress={() => {
                                     let ids = this.props.user.selectedTrainingGroup.users.map(user => user.id);
                                     return (this.state.action ? this.stopSession(ids) : this.startSession(ids)).then(() => this.setState({ active: !this.state.active }));
@@ -359,7 +359,7 @@ class GroupCaptureSessionView extends Component {
                             <Button
                                 title={'Cancel'}
                                 containerViewStyle={{ flex: 1 }}
-                                backgroundColor={AppColors.brand.fogGrey}
+                                backgroundColor={AppColors.primary.grey.fiftyPercent}
                                 onPress={() => Actions.refresh({ isModalVisible: false })}
                             />
                             <Button

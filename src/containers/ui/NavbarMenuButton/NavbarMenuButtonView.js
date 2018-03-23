@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:34 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:35:34 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-03-21 13:27:06
  */
 
 /**
@@ -25,7 +25,7 @@ const NavbarMenuButton = ({ toggleSideMenu }) => (
         hitSlop={{ top: 7, right: 7, bottom: 7, left: 7 }}
     >
         <View>
-            <Icon name={'menu'} size={32} color={AppColors.brand.primary} />
+            <Icon name={'menu'} size={32} color={AppColors.primary.grey.fiftyPercent} />
         </View>
     </TouchableOpacity>
 );
