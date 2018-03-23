@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-23 18:27:56
+ * @Last Modified time: 2018-03-23 19:14:46
  */
 
 /**
@@ -189,7 +189,7 @@ class FloatingBarChart extends Component {
                                     length={height - 3 * margin.vertical}
                                     x={3 * margin.horizontal}
                                     y={height - 2 * margin.vertical}
-                                    ticks={11}
+                                    ticks={6}
                                     startVal={minY < 0 ? 0 : minY}
                                     endVal={100}
                                     scale={yScale}
