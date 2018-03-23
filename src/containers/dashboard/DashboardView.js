@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:20 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-23 11:45:03
+ * @Last Modified time: 2018-03-23 18:25:36
  */
 
 import React, { Component } from 'react';
@@ -99,7 +99,8 @@ class Dashboard extends Component {
                     let foundAthlete = teamMovementQualityData.athletes.find(athlete => athlete.userId === athleteId);
                     let y1 = foundAthlete ? foundAthlete.percOptimal || 0 : 0;
                     let y2 = foundAthlete ? foundAthlete.fatigue || 0 : 0;
-                    data.yMin = y1+y2 > 0 && y1+y2 < data.yMin ? y1+y2 : data.yMin;
+                    let value = y1+y2;
+                    data.yMin = value > 0 && (y2 > 0 ? y1 : value) < data.yMin ? (y2 > 0 ? y1 : value) : data.yMin;
                     return y1;
                 }
                 return 0;
@@ -116,7 +117,8 @@ class Dashboard extends Component {
             data.y1 = allTeamMovementQualityData.map(teamMovementQualityData => {
                 let y1 = teamMovementQualityData.percOptimal || 0;
                 let y2 = teamMovementQualityData.fatigue || 0;
-                data.yMin = y1+y2 > 0 && y1+y2 < data.yMin ? y1+y2 : data.yMin;
+                let value = y1+y2;
+                data.yMin = value > 0 && (y2 > 0 ? y1 : value) < data.yMin ? (y2 > 0 ? y1 : value) : data.yMin;
                 return y1;
             });
             data.y2 = allTeamMovementQualityData.map(teamMovementQualityData => teamMovementQualityData.fatigue || 0);

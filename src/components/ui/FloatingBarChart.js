@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-23 11:48:53
+ * @Last Modified time: 2018-03-23 18:27:56
  */
 
 /**
@@ -119,15 +119,15 @@ class FloatingBarChart extends Component {
         if(typeof(positive) === typeof(true)) {
             let array = this.getTickPoints(3 * this.props.margin.horizontal, width + 6 * this.props.margin.horizontal, 7, width);
             let x = array[index] + AppSizes.tickSize + 1.5;
-            let pointsString = `${x + 0.75},${y1 + Math.abs(y2) * 0.5} ${x + 3.85},${positive ? y1 : y1 + Math.abs(y2)}, ${x + 6.95},${y1 + Math.abs(y2) * 0.5}`;
+            let pointsString = `${x + 0.75},${positive ? y1 + Math.abs(y2): y1} ${x + 3.85},${positive ? y1 : y1 + Math.abs(y2)}, ${x + 6.95},${positive ? y1 + Math.abs(y2): y1}`;
             return <G key={index}>
-                <Rect
+                {/* <Rect
                     x={x}
                     y={positive ? y1 + Math.abs(y2) * 0.5 : y1}
                     width={8}
                     height={Math.abs(y2) * 0.5}
                     fill={color}
-                />
+                /> */}
                 <Polygon
                     strokeWidth={1}
                     stroke={color}
@@ -146,7 +146,7 @@ class FloatingBarChart extends Component {
         let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : (new Date()).toLocaleDateString().split('/');
         let endDateComponents = user.statsEndDate ? user.statsEndDate.split('-') : (new Date()).toLocaleDateString().split('/');
         let xScale = data ? data.x[0] instanceof Date ? AppUtil.createTimeScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : AppUtil.createScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : null;
-        let minY = data ? Math.round((data.yMin - 5) / 5) * 5 : 0;
+        let minY = data ? Math.floor(data.yMin / 5) * 5 : 0;
         let yScale = AppUtil.createScaleY(minY < 0 ? 0 : minY, 100, height - 2 * margin.vertical, margin.vertical);
 
         return (
