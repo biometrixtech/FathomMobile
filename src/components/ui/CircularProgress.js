@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-23 14:22:21
+ * @Last Modified time: 2018-03-23 23:39:20
  */
 
 /**
@@ -34,7 +34,6 @@ class CircularProgress extends Component {
         height:             PropTypes.number,
         percentageOverall:  PropTypes.number,
         percentageToDate:   PropTypes.number,
-        getTeamStats:       PropTypes.func.isRequired,
         startRequest:       PropTypes.func.isRequired,
         stopRequest:        PropTypes.func.isRequired,
         resetVisibleStates: PropTypes.func.isRequired,

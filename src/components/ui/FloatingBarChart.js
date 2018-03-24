@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-23 19:14:46
+ * @Last Modified time: 2018-03-23 23:38:53
  */
 
 /**
@@ -157,7 +157,7 @@ class FloatingBarChart extends Component {
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-back'}
                         color={AppColors.primary.grey.fiftyPercent}
-                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset-1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset, -1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
                     />
                     <View style={[AppStyles.containerCentered, { flex: 2 }]}>
                         <Text style={{ color: AppColors.primary.grey.fiftyPercent }}>
@@ -168,7 +168,7 @@ class FloatingBarChart extends Component {
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-forward'}
                         color={AppColors.primary.grey.fiftyPercent}
-                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset+1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset, 1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
                     />
                 </View>
                 {

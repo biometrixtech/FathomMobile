@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-23 02:08:59
+ * @Last Modified time: 2018-03-23 23:39:10
  */
 
 /**
@@ -146,7 +146,7 @@ class DailyLoadChart extends Component {
                     <Icon
                         style={[AppStyles.containerCentered, { padding: 10, paddingRight: 5 }]}
                         name={'arrow-back'}
-                        onPress={() => user ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset-1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                        onPress={() => user ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset, -1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
                     />
                     <View style={[AppStyles.containerCentered, { padding: 10, paddingLeft: 5 }]}>
                         <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>PREVIOUS</Text>
@@ -171,7 +171,7 @@ class DailyLoadChart extends Component {
                     <Icon
                         style={[AppStyles.containerCentered, { padding: 10, paddingLeft: 5 }]}
                         name={'arrow-forward'}
-                        onPress={() => user ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset+1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                        onPress={() => user ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset, 1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
                     />
                 </ScrollView>
             </View>

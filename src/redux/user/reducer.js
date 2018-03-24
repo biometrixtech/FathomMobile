@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:51 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-19 02:14:38
+ * @Last Modified time: 2018-03-24 00:37:37
  */
 
 /**
@@ -171,25 +171,61 @@ export default function userReducer(state = initialState, action) {
             if (team.id !== action.data.teamId) {
                 return team;
             }
-            team.stats = state.role !== Roles.athlete || action.data.stats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? action.data.stats : null;
-            team.previousWeekStats = state.role !== Roles.athlete || action.data.previousWeekStats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? action.data.previousWeekStats : null;
+            if (action.data.stats && action.data.previousWeekStats) {
+                team.stats = state.role !== Roles.athlete || action.data.stats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? action.data.stats : null;
+                team.previousWeekStats = state.role !== Roles.athlete || action.data.previousWeekStats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? action.data.previousWeekStats : null;
+            } else if (action.data.stats) {
+                team.previousWeekStats = Object.assign({}, team.stats);
+                team.stats = state.role !== Roles.athlete || action.data.stats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? action.data.stats : null;
+            } else if (action.data.previousWeekStats) {
+                team.stats = Object.assign({}, team.previousWeekStats);
+                team.previousWeekStats = state.role !== Roles.athlete || action.data.previousWeekStats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? action.data.previousWeekStats : null;
+            } else {
+                team.stats = null;
+                team.previousWeekStats = null;
+            }
             usersForStats = usersForStats.slice(0).map(user => {
-                user.stats = null;
-                user.previousWeekStats = null;
                 user.preprocessing = null;
-                if (action.data.stats && action.data.stats.AthleteMovementQualityData.length) {
-                    action.data.stats.AthleteMovementQualityData.forEach(athleteData => {
-                        if (athleteData.userId === user.id) {
-                            user.stats = athleteData;
-                        }
-                    });
-                }
-                if (action.data.previousWeekStats && action.data.previousWeekStats.AthleteMovementQualityData.length) {
-                    action.data.previousWeekStats.AthleteMovementQualityData.forEach(athleteData => {
-                        if (athleteData.userId === user.id) {
-                            user.previousWeekStats = athleteData;
-                        }
-                    });
+                if (action.data.stats && action.data.previousWeekStats) {
+                    user.stats = null;
+                    user.previousWeekStats = null;
+                    if (action.data.stats.AthleteMovementQualityData.length) {
+                        action.data.stats.AthleteMovementQualityData.forEach(athleteData => {
+                            if (athleteData.userId === user.id) {
+                                user.stats = athleteData;
+                            }
+                        });
+                    }
+                    if (action.data.previousWeekStats.AthleteMovementQualityData.length) {
+                        action.data.previousWeekStats.AthleteMovementQualityData.forEach(athleteData => {
+                            if (athleteData.userId === user.id) {
+                                user.previousWeekStats = athleteData;
+                            }
+                        });
+                    }
+                } else if (action.data.stats) {
+                    user.previousWeekStats = Object.assign({}, user.stats);
+                    user.stats = null;
+                    if (action.data.stats.AthleteMovementQualityData.length) {
+                        action.data.stats.AthleteMovementQualityData.forEach(athleteData => {
+                            if (athleteData.userId === user.id) {
+                                user.stats = athleteData;
+                            }
+                        });
+                    }
+                } else if (action.data.previousWeekStats) {
+                    user.stats = Object.assign({}, user.previousWeekStats);
+                    user.previousWeekStats = null;
+                    if (action.data.previousWeekStats.AthleteMovementQualityData.length) {
+                        action.data.previousWeekStats.AthleteMovementQualityData.forEach(athleteData => {
+                            if (athleteData.userId === user.id) {
+                                user.previousWeekStats = athleteData;
+                            }
+                        });
+                    }
+                } else {
+                    user.stats = null;
+                    user.previousWeekStats = null;
                 }
                 if (action.data.preprocessing) {
                     Object.keys(action.data.preprocessing).forEach(preprocessingType => {

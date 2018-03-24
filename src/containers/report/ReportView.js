@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-23 14:24:15
+ * @Last Modified time: 2018-03-23 23:39:36
  */
 
 import React, { Component } from 'react';
@@ -359,7 +359,7 @@ class TrainingReport extends Component {
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-back'}
                         color={AppColors.primary.grey.fiftyPercent}
-                        onPress={() => user && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset-1)).then(() => this.resetVisibleStates()).then(() => stopRequest()) : null}
+                        onPress={() => user && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset, -1)).then(() => this.resetVisibleStates()).then(() => stopRequest()) : null}
                     />
                     <View style={[AppStyles.containerCentered, { flex: 2 }]}>
                         <Text style={{ color: AppColors.primary.grey.fiftyPercent }}>
@@ -370,7 +370,7 @@ class TrainingReport extends Component {
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-forward'}
                         color={AppColors.primary.grey.fiftyPercent}
-                        onPress={() => user && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset+1)).then(() => this.resetVisibleStates()).then(() => stopRequest()) : null}
+                        onPress={() => user && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset, 1)).then(() => this.resetVisibleStates()).then(() => stopRequest()) : null}
                     />
                 </View>
                 {
@@ -384,7 +384,6 @@ class TrainingReport extends Component {
                                     percentageOverall={focusedWeekComparisionPercentageOverall}
                                     percentageToDate={focusedWeekComparisionPercentageToDate}
                                     progressColor={progressData.color}
-                                    getTeamStats={this.props.getTeamStats}
                                     startRequest={this.props.startRequest}
                                     stopRequest={this.props.stopRequest}
                                     resetVisibleStates={this.resetVisibleStates}
