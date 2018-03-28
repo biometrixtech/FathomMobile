@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:23:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-20 00:51:11
+ * @Last Modified time: 2018-03-26 18:15:14
  */
 
 /**
@@ -30,12 +30,12 @@ import AuthScenes from './auth';
 /* Routes ==================================================================== */
 const scenes = (
     <Scene key={'root'} {...AppConfig.navbarProps}>
-        <Scene
+        {/* <Scene
             hideNavBar
             key={'splash'}
             component={AppLaunch}
             analyticsDesc={'AppLaunch: Launching App'}
-        />
+        /> */}
 
         {/* Auth */}
         {AuthScenes}

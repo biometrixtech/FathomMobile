@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:19:46 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-13 18:30:34
+ * @Last Modified time: 2018-03-28 03:16:32
  */
 
 /**
@@ -18,7 +18,7 @@ export default {
     // Window Dimensions
     screen: {
         height:       screenHeight,
-        usableHeight: screenHeight - ((Platform.OS === 'ios') ? 64 : 54) - ((Platform.OS === 'ios') ? 16 : 0), // screen height under navbar and statusbar
+        usableHeight: screenHeight - 64/(Platform.OS === 'ios' ? 1.8 : 1) - ((Platform.OS === 'ios') ? 16 : 0), // screen height under navbar and statusbar
         width:        screenWidth,
 
         heightOneThird:      screenHeight * 0.333,

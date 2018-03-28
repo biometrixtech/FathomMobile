@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-23 23:38:53
+ * @Last Modified time: 2018-03-28 10:55:34
  */
 
 /**
@@ -13,7 +13,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, TouchableHighlight, View, ActivityIndicator, StyleSheet } from 'react-native';
+import { ScrollView, TouchableHighlight, View, ActivityIndicator, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Svg, { Rect, G, Polygon } from 'react-native-svg';
 
@@ -23,8 +23,10 @@ import { AppUtil } from '@lib/';
 import { Roles, Thresholds } from '@constants/';
 
 // Components
-import { Axis, Spacer, Text } from '@ui/';
+import { Axis, Spacer, Text, Calendar } from '@ui/';
 import { Placeholder } from '@general/';
+
+const MS_IN_WEEK = 1000 * 60 * 60 * 24 * 7;
 
 const styles = StyleSheet.create({
     subtext: {
@@ -56,7 +58,7 @@ class FloatingBarChart extends Component {
         getTeamStats:       PropTypes.func.isRequired,
         startRequest:       PropTypes.func,
         stopRequest:        PropTypes.func,
-        resetVisibleStates: PropTypes.func
+        resetVisibleStates: PropTypes.func,
     }
 
     static defaultProps = {
@@ -75,6 +77,7 @@ class FloatingBarChart extends Component {
         this.state = {
             chartHeaderHeight: 0,
             listHeaderHeight:  0,
+            calendarVisible:   false,
         };
     }
 
@@ -145,6 +148,17 @@ class FloatingBarChart extends Component {
         let userData = user.teams[user.teamIndex];
         let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : (new Date()).toLocaleDateString().split('/');
         let endDateComponents = user.statsEndDate ? user.statsEndDate.split('-') : (new Date()).toLocaleDateString().split('/');
+        let markedDates = {};
+        if (user.statsStartDate && user.statsEndDate) {
+            let startDate = new Date(user.statsStartDate);
+            let endDate = new Date(user.statsEndDate);
+            markedDates[user.statsStartDate] = { startingDay: true, color: AppColors.secondary.blue.thirtyPercent };
+            markedDates[user.statsEndDate] = { endingDay: true, color: AppColors.secondary.blue.thirtyPercent };
+            for (let d = startDate.setDate(startDate.getDate() + 1); d < endDate;) {
+                markedDates[(new Date(d)).toISOString().split('T')[0]] = { color: AppColors.secondary.blue.thirtyPercent };
+                d = (new Date(d)).setDate((new Date(d)).getDate() + 1);
+            }
+        }
         let xScale = data ? data.x[0] instanceof Date ? AppUtil.createTimeScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : AppUtil.createScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : null;
         let minY = data ? Math.floor(data.yMin / 5) * 5 : 0;
         let yScale = AppUtil.createScaleY(minY < 0 ? 0 : minY, 100, height - 2 * margin.vertical, margin.vertical);
@@ -157,18 +171,20 @@ class FloatingBarChart extends Component {
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-back'}
                         color={AppColors.primary.grey.fiftyPercent}
-                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset, -1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user, -1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
                     />
-                    <View style={[AppStyles.containerCentered, { flex: 2 }]}>
-                        <Text style={{ color: AppColors.primary.grey.fiftyPercent }}>
-                            {`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}
-                        </Text>
-                    </View>
+                    <TouchableWithoutFeedback onPress={() => userData && !user.loading ? this.setState({ calendarVisible: !this.state.calendarVisible }) : null}>
+                        <View style={[AppStyles.containerCentered, { flex: 2 }]}>
+                            <Text style={{ color: AppColors.primary.grey.fiftyPercent }}>
+                                {`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}
+                            </Text>
+                        </View>
+                    </TouchableWithoutFeedback>
                     <Icon
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-forward'}
                         color={AppColors.primary.grey.fiftyPercent}
-                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset, 1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user, 1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
                     />
                 </View>
                 {
@@ -213,6 +229,31 @@ class FloatingBarChart extends Component {
                             </View>
                             { this.chartList() }
                         </View>
+                }
+                {
+                    this.state.calendarVisible ?
+                        <Calendar
+                            style={{ position: 'absolute', width: AppSizes.screen.width }}
+                            firstDay={1}
+                            current={user.statsStartDate}
+                            onPressTitle={() => this.setState({ calendarVisible: false })}
+                            onDayPress={day => {
+                                if (user.loading) {
+                                    return null;
+                                }
+                                let currentDateMs = (user.statsStartDate ? new Date(user.statsStartDate) : new Date()).getTime();
+                                let checkDateMs = (new Date(day.dateString)).getTime();
+                                let msDifference = checkDateMs - currentDateMs;
+                                let weekChange =  Math.floor(msDifference / MS_IN_WEEK);
+                                return  startRequest()
+                                    .then(() => getTeamStats(user, weekChange))
+                                    .then(() => resetVisibleStates())
+                                    .then(() => stopRequest())
+                                    .then(() => this.setState({ calendarVisible: false }));
+                            }}
+                            markedDates={markedDates}
+                            markingType={'period'}
+                        /> : null
                 }
                 {
                     user.loading ? <ActivityIndicator style={[AppStyles.activityIndicator]} size={'large'} color={'#C1C5C8'}/> : null

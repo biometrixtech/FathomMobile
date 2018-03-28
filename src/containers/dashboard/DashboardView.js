@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:20 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-23 18:25:36
+ * @Last Modified time: 2018-03-27 15:32:13
  */
 
 import React, { Component } from 'react';
@@ -51,7 +51,7 @@ class Dashboard extends Component {
 
     componentWillMount = () => {
         return this.props.startRequest()
-            .then(() => this.props.getTeams(this.props.user.statsStartDate, this.props.user.statsEndDate, this.props.user.weekOffset))
+            .then(() => this.props.getTeams(this.props.user))
             .then(() => this.props.stopRequest());
     }
 
@@ -225,7 +225,7 @@ class Dashboard extends Component {
             text = ErrorMessages.ATHLETE_PREPROCESSING_UPLOADING;
         } else {
             text = uploadArray.length === 1 ? ErrorMessages.SINGLE_PREPROCESSING_UPLOADING : ErrorMessages.MULTIPLE_PREPROCESSING_UPLOADING;
-            text.replace('X', String(uploadArray.length));
+            text = text.replace('X', String(uploadArray.length));
         }
         return <ListItem
             title={null}
@@ -249,7 +249,7 @@ class Dashboard extends Component {
             text = ErrorMessages.ATHLETE_PREPROCESSING_PROCESSING;
         } else {
             text = processingArray.length === 1 ? ErrorMessages.SINGLE_PREPROCESSING_PROCESSING : ErrorMessages.MULTIPLE_PREPROCESSING_PROCESSING;
-            text.replace('X', String(processingArray.length));
+            text = text.replace('X', String(processingArray.length));
         }
         return <ListItem
             title={null}
@@ -273,7 +273,7 @@ class Dashboard extends Component {
             text = ErrorMessages.ATHLETE_PREPROCESSING_ERROR;
         } else {
             text = errorArray.length === 1 ? ErrorMessages.SINGLE_PREPROCESSING_ERROR : ErrorMessages.MULTIPLE_PREPROCESSING_ERROR;
-            text.replace('X', String(errorArray.length));
+            text = text.replace('X', String(errorArray.length));
         }
         return <ListItem
             title={null}

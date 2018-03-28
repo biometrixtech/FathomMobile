@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-23 23:39:10
+ * @Last Modified time: 2018-03-28 10:55:11
  */
 
 /**
@@ -74,14 +74,20 @@ class DailyLoadChart extends Component {
     }
 
     componentDidMount = () => {
-        let sevenTenthsWidth = AppSizes.screen.width * 7 / 10;
-        let dailyGraphWidth = this.props.width + this.props.height * 2 / 15;
-        let dayOfWeekOffset = ((new Date()).getDay() + 6) % 7;
-        let offset = sevenTenthsWidth - (7.5 + dailyGraphWidth * (dayOfWeekOffset + 1));
-        let absoluteOffset = Math.abs(offset > 0 ? 0 : offset);
-        if (!!this && !!this.scrollView) {
-            setTimeout(() => this.scrollView.scrollTo({ x: absoluteOffset, animated: true }), 100);
-        }
+        setTimeout(() => {
+            if (!!this.refs && !!this.refs.scrollView && !!this.refs.scrollView.scrollTo) {
+                let sevenTenthsWidth = AppSizes.screen.width * 7 / 10;
+                let dailyGraphWidth = this.props.width + this.props.height * 2 / 15;
+                let dayOfWeekOffset = ((new Date()).getDay() + 6) % 7;
+                let offset = sevenTenthsWidth - (7.5 + dailyGraphWidth * (dayOfWeekOffset + 1));
+                let absoluteOffset = Math.abs(offset > 0 ? 0 : offset);
+                this.refs.scrollView.scrollTo({ x: absoluteOffset, animated: true });
+            }
+        }, 100);
+    };
+
+    componentWillUnmount = () => {
+        this.refs.scrollView = null;
     };
 
     getMaxValue = (data) => {
@@ -140,19 +146,24 @@ class DailyLoadChart extends Component {
         return (
             <View style={[AppStyles.row, { height: height * 1.5 }]}>
                 <ScrollView
-                    ref={scrollView => { this.scrollView = scrollView; }}
+                    ref={'scrollView'}
                     horizontal={true}
                 >
-                    <Icon
-                        style={[AppStyles.containerCentered, { padding: 10, paddingRight: 5 }]}
-                        name={'arrow-back'}
-                        onPress={() => user ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset, -1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
-                    />
-                    <View style={[AppStyles.containerCentered, { padding: 10, paddingLeft: 5 }]}>
-                        <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>PREVIOUS</Text>
-                        <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>WEEK</Text>
-                        <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>{previousWeekRange}</Text>
-                    </View>
+                    <TouchableWithoutFeedback
+                        onPress={() => user ? startRequest().then(() => getTeamStats(user, -1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                    >
+                        <View style={{ flexDirection: 'row' }}>
+                            <Icon
+                                style={[AppStyles.containerCentered, { padding: 10, paddingRight: 5 }]}
+                                name={'arrow-back'}
+                            />
+                            <View style={[AppStyles.containerCentered, { padding: 10, paddingLeft: 5 }]}>
+                                <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>PREVIOUS</Text>
+                                <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>WEEK</Text>
+                                <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>{previousWeekRange}</Text>
+                            </View>
+                        </View>
+                    </TouchableWithoutFeedback>
                     {
                         DAYS_OF_WEEK.map((day, index) =>
                             <TouchableWithoutFeedback onPress={() => selectGraph(graphIndex, index)} key={day}>
@@ -163,16 +174,21 @@ class DailyLoadChart extends Component {
                             </TouchableWithoutFeedback>
                         )
                     }
-                    <View style={[AppStyles.containerCentered, { padding: 10, paddingRight: 5 }]}>
-                        <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>NEXT</Text>
-                        <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>WEEK</Text>
-                        <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>{nextWeekRange}</Text>
-                    </View>
-                    <Icon
-                        style={[AppStyles.containerCentered, { padding: 10, paddingLeft: 5 }]}
-                        name={'arrow-forward'}
-                        onPress={() => user ? startRequest().then(() => getTeamStats(user.teams, user.weekOffset, 1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
-                    />
+                    <TouchableWithoutFeedback
+                        onPress={() => user ? startRequest().then(() => getTeamStats(user, 1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                    >
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={[AppStyles.containerCentered, { padding: 10, paddingRight: 5 }]}>
+                                <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>NEXT</Text>
+                                <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>WEEK</Text>
+                                <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>{nextWeekRange}</Text>
+                            </View>
+                            <Icon
+                                style={[AppStyles.containerCentered, { padding: 10, paddingLeft: 5 }]}
+                                name={'arrow-forward'}
+                            />
+                        </View>
+                    </TouchableWithoutFeedback>
                 </ScrollView>
             </View>
         );

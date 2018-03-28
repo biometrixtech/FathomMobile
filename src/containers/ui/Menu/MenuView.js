@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:22 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-23 11:32:20
+ * @Last Modified time: 2018-03-27 14:49:18
  */
 
 /**
@@ -244,7 +244,7 @@ class Menu extends Component {
                                 {
                                     this.props.user.teams.map((team, teamIndex) => 
                                         <TouchableOpacity
-                                            key={`team-item-${team.name}`}
+                                            key={`team-item-${team.name}-${teamIndex}`}
                                             onPress={() => select(teamIndex)}
                                         >
                                             <View style={[styles.menuItem]}>
@@ -262,7 +262,7 @@ class Menu extends Component {
                                     {
                                         this.props.user.users.map((user, userIndex) =>
                                             <TouchableOpacity
-                                                key={`user-item-${user.first_name}_${user.last_name}`}
+                                                key={`user-item-${user.first_name}_${user.last_name}-${userIndex}`}
                                                 onPress={() => select(userIndex)}
                                             >
                                                 <View style={[styles.menuItem]}>

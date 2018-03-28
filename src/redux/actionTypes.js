@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:41 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-19 02:15:07
+ * @Last Modified time: 2018-03-28 10:33:33
  */
 
 module.exports = {
@@ -61,4 +61,5 @@ module.exports = {
     START_REQUEST:           'START_REQUEST',
     STOP_REQUEST:            'STOP_REQUEST',
     SELECT_GRAPH:            'SELECT_GRAPH',
+    LOGOUT:                  'LOGOUT',
 };

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-14 19:09:23
+ * @Last Modified time: 2018-03-26 17:02:51
  */
 
 /**
@@ -10,6 +10,7 @@
  */
 
 import Alerts from './Alerts';
+import { Calendar, CalendarList, Agenda, LocaleConfig } from './Calendar';
 import Axis from './Axis';
 import Button from './Button';
 import Card from './Card';
@@ -27,4 +28,26 @@ import Pages from './Pages';
 import CircularProgress from './CircularProgress';
 import DailyLoadChart from './DailyLoadChart';
 
-export { Alerts, Axis, Button, Card, Spacer, TabIcon, Text, List, ListItem, FormInput, FormLabel, StackedBarChart, FloatingBarChart, Indicator, Pages, CircularProgress, DailyLoadChart };
+export {
+    Alerts,
+    Axis,
+    Button,
+    Card,
+    Spacer,
+    TabIcon,
+    Text,
+    List,
+    ListItem,
+    FormInput,
+    FormLabel,
+    StackedBarChart,
+    FloatingBarChart,
+    Indicator,
+    Pages,
+    CircularProgress,
+    DailyLoadChart,
+    Calendar,
+    CalendarList,
+    Agenda,
+    LocaleConfig,
+};

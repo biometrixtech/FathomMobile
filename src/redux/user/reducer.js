@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:51 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-24 00:37:37
+ * @Last Modified time: 2018-03-28 10:47:39
  */
 
 /**
@@ -165,89 +165,33 @@ export default function userReducer(state = initialState, action) {
         return Object.assign({}, state, {
             accessories
         });
+    case Actions.LOGOUT:
+        return initialState;
     case Actions.GET_TEAM_STATS:
-        let usersForStats = state.users.slice(0);
-        let teamsForStats = state.teams.map((team, index) => {
-            if (team.id !== action.data.teamId) {
-                return team;
+        let teamsForStats = state.teams.reduce((previousTeamArray, currentTeam) => {
+            let actionTeamData = action.data.teamsStats.find(teamData => teamData.teamId === currentTeam.id);
+            if (!actionTeamData) {
+                previousTeamArray.push(currentTeam);
+                return previousTeamArray;
             }
-            if (action.data.stats && action.data.previousWeekStats) {
-                team.stats = state.role !== Roles.athlete || action.data.stats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? action.data.stats : null;
-                team.previousWeekStats = state.role !== Roles.athlete || action.data.previousWeekStats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? action.data.previousWeekStats : null;
-            } else if (action.data.stats) {
-                team.previousWeekStats = Object.assign({}, team.stats);
-                team.stats = state.role !== Roles.athlete || action.data.stats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? action.data.stats : null;
-            } else if (action.data.previousWeekStats) {
-                team.stats = Object.assign({}, team.previousWeekStats);
-                team.previousWeekStats = state.role !== Roles.athlete || action.data.previousWeekStats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? action.data.previousWeekStats : null;
+            if (actionTeamData.stats && actionTeamData.previousWeekStats) {
+                currentTeam.stats = state.role !== Roles.athlete || actionTeamData.stats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? actionTeamData.stats : null;
+                currentTeam.previousWeekStats = state.role !== Roles.athlete || actionTeamData.previousWeekStats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? actionTeamData.previousWeekStats : null;
+            } else if (actionTeamData.stats) {
+                currentTeam.previousWeekStats = Object.assign({}, currentTeam.stats);
+                currentTeam.stats = state.role !== Roles.athlete || actionTeamData.stats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? actionTeamData.stats : null;
+            } else if (actionTeamData.previousWeekStats) {
+                currentTeam.stats = Object.assign({}, currentTeam.previousWeekStats);
+                currentTeam.previousWeekStats = state.role !== Roles.athlete || actionTeamData.previousWeekStats.AthleteMovementQualityData.some(athlete => athlete.userId === state.id) ? actionTeamData.previousWeekStats : null;
             } else {
-                team.stats = null;
-                team.previousWeekStats = null;
+                currentTeam.stats = null;
+                currentTeam.previousWeekStats = null;
             }
-            usersForStats = usersForStats.slice(0).map(user => {
-                user.preprocessing = null;
-                if (action.data.stats && action.data.previousWeekStats) {
-                    user.stats = null;
-                    user.previousWeekStats = null;
-                    if (action.data.stats.AthleteMovementQualityData.length) {
-                        action.data.stats.AthleteMovementQualityData.forEach(athleteData => {
-                            if (athleteData.userId === user.id) {
-                                user.stats = athleteData;
-                            }
-                        });
-                    }
-                    if (action.data.previousWeekStats.AthleteMovementQualityData.length) {
-                        action.data.previousWeekStats.AthleteMovementQualityData.forEach(athleteData => {
-                            if (athleteData.userId === user.id) {
-                                user.previousWeekStats = athleteData;
-                            }
-                        });
-                    }
-                } else if (action.data.stats) {
-                    user.previousWeekStats = Object.assign({}, user.stats);
-                    user.stats = null;
-                    if (action.data.stats.AthleteMovementQualityData.length) {
-                        action.data.stats.AthleteMovementQualityData.forEach(athleteData => {
-                            if (athleteData.userId === user.id) {
-                                user.stats = athleteData;
-                            }
-                        });
-                    }
-                } else if (action.data.previousWeekStats) {
-                    user.stats = Object.assign({}, user.previousWeekStats);
-                    user.previousWeekStats = null;
-                    if (action.data.previousWeekStats.AthleteMovementQualityData.length) {
-                        action.data.previousWeekStats.AthleteMovementQualityData.forEach(athleteData => {
-                            if (athleteData.userId === user.id) {
-                                user.previousWeekStats = athleteData;
-                            }
-                        });
-                    }
-                } else {
-                    user.stats = null;
-                    user.previousWeekStats = null;
-                }
-                if (action.data.preprocessing) {
-                    Object.keys(action.data.preprocessing).forEach(preprocessingType => {
-                        if (preprocessingType.length) {
-                            action.data.preprocessing[preprocessingType].forEach(typeData => {
-                                if (typeData.user_id === user.id) {
-                                    if (!user.preprocessing) {
-                                        user.preprocessing = {};
-                                    }
-                                    user.preprocessing[preprocessingType] = [typeData];
-                                }
-                            })
-                        }
-                    });
-                }
-                return user;
-            });
-            team.preprocessing = action.data.preprocessing;
-            return team;
-        });
+            currentTeam.preprocessing = actionTeamData.preprocessing;
+            previousTeamArray.push(currentTeam);
+            return previousTeamArray;
+        }, []);
         return Object.assign({}, state, {
-            users:                      usersForStats,
             teams:                      teamsForStats,
             weekOffset:                 action.data.weekOffset,
             statsStartDate:             action.data.startDate,
