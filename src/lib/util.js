@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:55 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-20 03:25:59
+ * @Last Modified time: 2018-03-30 02:24:45
  */
 
 /**
@@ -14,6 +14,8 @@ import * as shape from 'd3-shape';
 import * as d3Array from 'd3-array';
 
 const Entities = require('html-entities').AllHtmlEntities;
+
+const MS_IN_DAY = 1000 * 60 * 60 * 24;
 
 const entities = new Entities();
 
@@ -197,7 +199,22 @@ const UTIL = {
                 };
             }),
         };
-    }
+    },
+    MS_IN_DAY,
+    MS_IN_WEEK:      MS_IN_DAY * 7,
+    formatDate:      (date) => `${date < 10 ? '0' : ''}${date}`,
+    getStartEndDate: (weekOffset) => {
+        let date = new Date();
+        date.setTime(date.getTime() + weekOffset * UTIL.MS_IN_WEEK);
+        let dayOfWeek = date.getDay();
+        let startOfWeekOffset = dayOfWeek === 1 ? 0 : (dayOfWeek+6)%7;
+        let endOfWeekOffset = !dayOfWeek ? 0 : 7-dayOfWeek;
+        let startDateObject = new Date(date.getTime() - startOfWeekOffset * UTIL.MS_IN_DAY);
+        let endDateObject = new Date(date.getTime() + endOfWeekOffset * UTIL.MS_IN_DAY);
+        let newStartDate = `${startDateObject.getFullYear()}-${UTIL.formatDate(startDateObject.getMonth()+1)}-${UTIL.formatDate(startDateObject.getDate())}`;
+        let newEndDate = `${endDateObject.getFullYear()}-${UTIL.formatDate(endDateObject.getMonth()+1)}-${UTIL.formatDate(endDateObject.getDate())}`;
+        return ({ newStartDate, newEndDate });
+    },
 };
 
 /* Export ==================================================================== */

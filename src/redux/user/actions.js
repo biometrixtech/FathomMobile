@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:59 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-28 11:13:59
+ * @Last Modified time: 2018-03-30 02:25:56
  */
 
 /**
@@ -11,12 +11,9 @@
 
 import jwtDecode from 'jwt-decode';
 
-import { Roles } from '@constants/';
-import { AppAPI } from '@lib/';
+import { AppAPI, AppUtil } from '@lib/';
 
 const Actions = require('../actionTypes');
-
-const DAY_IN_MS = 86400000;
 
 /**
   * Login to API and receive Token
@@ -271,18 +268,16 @@ const stopSession = (accessoryId) => {
         .catch(err => Promise.reject(err));
 };
 
-const formatDate = (date) => `${date < 10 ? '0' : ''}${date}`;
-
 const getStartAndEndDate = (weekOffset) => {
     let date = new Date();
-    date.setTime(date.getTime() + weekOffset * 7 * DAY_IN_MS);
+    date.setTime(date.getTime() + weekOffset * AppUtil.MS_IN_WEEK);
     let dayOfWeek = date.getDay();
     let startOfWeekOffset = dayOfWeek === 1 ? 0 : (dayOfWeek+6)%7;
     let endOfWeekOffset = !dayOfWeek ? 0 : 7-dayOfWeek;
-    let startDateObject = new Date(date.getTime() - startOfWeekOffset * DAY_IN_MS);
-    let endDateObject = new Date(date.getTime() + endOfWeekOffset * DAY_IN_MS);
-    let startDate = `${startDateObject.getFullYear()}-${formatDate(startDateObject.getMonth()+1)}-${formatDate(startDateObject.getDate())}`;
-    let endDate = `${endDateObject.getFullYear()}-${formatDate(endDateObject.getMonth()+1)}-${formatDate(endDateObject.getDate())}`;
+    let startDateObject = new Date(date.getTime() - startOfWeekOffset * AppUtil.MS_IN_DAY);
+    let endDateObject = new Date(date.getTime() + endOfWeekOffset * AppUtil.MS_IN_DAY);
+    let startDate = `${startDateObject.getFullYear()}-${AppUtil.formatDate(startDateObject.getMonth()+1)}-${AppUtil.formatDate(startDateObject.getDate())}`;
+    let endDate = `${endDateObject.getFullYear()}-${AppUtil.formatDate(endDateObject.getMonth()+1)}-${AppUtil.formatDate(endDateObject.getDate())}`;
     return ({ startDate, endDate });
 };
 

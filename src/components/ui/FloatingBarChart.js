@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-30 01:40:59
+ * @Last Modified time: 2018-03-30 02:10:20
  */
 
 /**
@@ -25,9 +25,6 @@ import { Roles, Thresholds } from '@constants/';
 // Components
 import { Axis, Spacer, Text, Calendar } from '@ui/';
 import { Placeholder } from '@general/';
-
-const MS_IN_DAY = 1000 * 60 * 60 * 24;
-const MS_IN_WEEK = MS_IN_DAY * 7;
 
 const styles = StyleSheet.create({
     subtext: {
@@ -80,8 +77,8 @@ class FloatingBarChart extends Component {
             chartHeaderHeight: 0,
             listHeaderHeight:  0,
             calendarVisible:   false,
-            startDate:                        `${date.getFullYear()}-${this.formatDate(date.getMonth()+1)}-${this.formatDate(date.getDate())}`,
-            endDate:                          `${date.getFullYear()}-${this.formatDate(date.getMonth()+1)}-${this.formatDate(date.getDate())}`,
+            startDate:         `${date.getFullYear()}-${AppUtil.formatDate(date.getMonth()+1)}-${AppUtil.formatDate(date.getDate())}`,
+            endDate:           `${date.getFullYear()}-${AppUtil.formatDate(date.getMonth()+1)}-${AppUtil.formatDate(date.getDate())}`,
         };
     }
 
@@ -146,21 +143,6 @@ class FloatingBarChart extends Component {
         return null;
     };
 
-    formatDate = (date) => `${date < 10 ? '0' : ''}${date}`;
-
-    getStartDate = (weekOffset) => {
-        let date = new Date();
-        date.setTime(date.getTime() + weekOffset * MS_IN_WEEK);
-        let dayOfWeek = date.getDay();
-        let startOfWeekOffset = dayOfWeek === 1 ? 0 : (dayOfWeek+6)%7;
-        let endOfWeekOffset = !dayOfWeek ? 0 : 7-dayOfWeek;
-        let startDateObject = new Date(date.getTime() - startOfWeekOffset * MS_IN_DAY);
-        let endDateObject = new Date(date.getTime() + endOfWeekOffset * MS_IN_DAY);
-        let newStartDate = `${startDateObject.getFullYear()}-${this.formatDate(startDateObject.getMonth()+1)}-${this.formatDate(startDateObject.getDate())}`;
-        let newEndDate = `${endDateObject.getFullYear()}-${this.formatDate(endDateObject.getMonth()+1)}-${this.formatDate(endDateObject.getDate())}`;
-        return ({ newStartDate, newEndDate });
-    };
-
     render = () => {
         let {xAxis, yAxis, width, height, margin, data, tabOffset, user, resetVisibleStates, getTeamStats, startRequest, stopRequest} = this.props;
         let { startDate, endDate } = this.state;
@@ -204,7 +186,7 @@ class FloatingBarChart extends Component {
                         color={AppColors.primary.grey.fiftyPercent}
                         onPress={() => {
                             if (userData && !user.loading) {
-                                let { newStartDate, newEndDate } = this.getStartDate(user.weekOffset - 1);
+                                let { newStartDate, newEndDate } = AppUtil.getStartEndDate(user.weekOffset - 1);
                                 this.setState({ startDate: newStartDate, endDate: newEndDate });
                                 return startRequest().then(() => getTeamStats(user, -1)).then(() => resetVisibleStates()).then(() => stopRequest());
                             }
@@ -224,7 +206,7 @@ class FloatingBarChart extends Component {
                         color={AppColors.primary.grey.fiftyPercent}
                         onPress={() => {
                             if (userData && !user.loading) {
-                                let { newStartDate, newEndDate } = this.getStartDate(user.weekOffset + 1);
+                                let { newStartDate, newEndDate } = AppUtil.getStartEndDate(user.weekOffset + 1);
                                 this.setState({ startDate: newStartDate, endDate: newEndDate });
                                 return startRequest().then(() => getTeamStats(user, 1)).then(() => resetVisibleStates()).then(() => stopRequest());
                             }
@@ -286,8 +268,8 @@ class FloatingBarChart extends Component {
                                 let currentDateMs = (user.statsStartDate ? new Date(user.statsStartDate) : new Date()).getTime();
                                 let checkDateMs = (new Date(day.dateString)).getTime();
                                 let msDifference = checkDateMs - currentDateMs;
-                                let weekChange =  Math.floor(msDifference / MS_IN_WEEK);
-                                let { newStartDate, newEndDate } = this.getStartDate(user.weekOffset + weekChange);
+                                let weekChange =  Math.floor(msDifference / AppUtil.MS_IN_WEEK);
+                                let { newStartDate, newEndDate } = AppUtil.getStartEndDate(user.weekOffset + weekChange);
                                 this.setState({ startDate: newStartDate, endDate: newEndDate });
                                 return  user.loading ? null : startRequest()
                                     .then(() => getTeamStats(user, weekChange))
