@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-28 10:55:34
+ * @Last Modified time: 2018-03-30 01:40:59
  */
 
 /**
@@ -26,7 +26,8 @@ import { Roles, Thresholds } from '@constants/';
 import { Axis, Spacer, Text, Calendar } from '@ui/';
 import { Placeholder } from '@general/';
 
-const MS_IN_WEEK = 1000 * 60 * 60 * 24 * 7;
+const MS_IN_DAY = 1000 * 60 * 60 * 24;
+const MS_IN_WEEK = MS_IN_DAY * 7;
 
 const styles = StyleSheet.create({
     subtext: {
@@ -74,10 +75,13 @@ class FloatingBarChart extends Component {
 
     constructor(props) {
         super(props);
+        let date = new Date();
         this.state = {
             chartHeaderHeight: 0,
             listHeaderHeight:  0,
             calendarVisible:   false,
+            startDate:                        `${date.getFullYear()}-${this.formatDate(date.getMonth()+1)}-${this.formatDate(date.getDate())}`,
+            endDate:                          `${date.getFullYear()}-${this.formatDate(date.getMonth()+1)}-${this.formatDate(date.getDate())}`,
         };
     }
 
@@ -142,21 +146,48 @@ class FloatingBarChart extends Component {
         return null;
     };
 
+    formatDate = (date) => `${date < 10 ? '0' : ''}${date}`;
+
+    getStartDate = (weekOffset) => {
+        let date = new Date();
+        date.setTime(date.getTime() + weekOffset * MS_IN_WEEK);
+        let dayOfWeek = date.getDay();
+        let startOfWeekOffset = dayOfWeek === 1 ? 0 : (dayOfWeek+6)%7;
+        let endOfWeekOffset = !dayOfWeek ? 0 : 7-dayOfWeek;
+        let startDateObject = new Date(date.getTime() - startOfWeekOffset * MS_IN_DAY);
+        let endDateObject = new Date(date.getTime() + endOfWeekOffset * MS_IN_DAY);
+        let newStartDate = `${startDateObject.getFullYear()}-${this.formatDate(startDateObject.getMonth()+1)}-${this.formatDate(startDateObject.getDate())}`;
+        let newEndDate = `${endDateObject.getFullYear()}-${this.formatDate(endDateObject.getMonth()+1)}-${this.formatDate(endDateObject.getDate())}`;
+        return ({ newStartDate, newEndDate });
+    };
+
     render = () => {
         let {xAxis, yAxis, width, height, margin, data, tabOffset, user, resetVisibleStates, getTeamStats, startRequest, stopRequest} = this.props;
+        let { startDate, endDate } = this.state;
 
         let userData = user.teams[user.teamIndex];
-        let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : (new Date()).toLocaleDateString().split('/');
-        let endDateComponents = user.statsEndDate ? user.statsEndDate.split('-') : (new Date()).toLocaleDateString().split('/');
+        let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : startDate.split('-');
+        let endDateComponents = user.statsEndDate ? user.statsEndDate.split('-') : endDate.split('-');
         let markedDates = {};
-        if (user.statsStartDate && user.statsEndDate) {
-            let startDate = new Date(user.statsStartDate);
-            let endDate = new Date(user.statsEndDate);
-            markedDates[user.statsStartDate] = { startingDay: true, color: AppColors.secondary.blue.thirtyPercent };
-            markedDates[user.statsEndDate] = { endingDay: true, color: AppColors.secondary.blue.thirtyPercent };
-            for (let d = startDate.setDate(startDate.getDate() + 1); d < endDate;) {
+        if (user.loading) {
+            let markedStartDate = new Date(startDate);
+            let markedEndDate = new Date(endDate);
+            markedDates[startDate] = { startingDay: true, color: AppColors.secondary.blue.thirtyPercent };
+            markedDates[endDate] = { endingDay: true, color: AppColors.secondary.blue.thirtyPercent };
+            for (let d = markedStartDate.setDate(markedStartDate.getDate() + 1); d < markedEndDate;) {
                 markedDates[(new Date(d)).toISOString().split('T')[0]] = { color: AppColors.secondary.blue.thirtyPercent };
                 d = (new Date(d)).setDate((new Date(d)).getDate() + 1);
+            }
+        } else {
+            if (user.statsStartDate && user.statsEndDate) {
+                let markedStartDate = new Date(user.statsStartDate);
+                let markedEndDate = new Date(user.statsEndDate);
+                markedDates[user.statsStartDate] = { startingDay: true, color: AppColors.secondary.blue.thirtyPercent };
+                markedDates[user.statsEndDate] = { endingDay: true, color: AppColors.secondary.blue.thirtyPercent };
+                for (let d = markedStartDate.setDate(markedStartDate.getDate() + 1); d < markedEndDate;) {
+                    markedDates[(new Date(d)).toISOString().split('T')[0]] = { color: AppColors.secondary.blue.thirtyPercent };
+                    d = (new Date(d)).setDate((new Date(d)).getDate() + 1);
+                }
             }
         }
         let xScale = data ? data.x[0] instanceof Date ? AppUtil.createTimeScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : AppUtil.createScaleX(data.x[0], data.x[data.x.length - 1], width - 2 * margin.horizontal) : null;
@@ -171,7 +202,14 @@ class FloatingBarChart extends Component {
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-back'}
                         color={AppColors.primary.grey.fiftyPercent}
-                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user, -1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                        onPress={() => {
+                            if (userData && !user.loading) {
+                                let { newStartDate, newEndDate } = this.getStartDate(user.weekOffset - 1);
+                                this.setState({ startDate: newStartDate, endDate: newEndDate });
+                                return startRequest().then(() => getTeamStats(user, -1)).then(() => resetVisibleStates()).then(() => stopRequest());
+                            }
+                            return null;
+                        }}
                     />
                     <TouchableWithoutFeedback onPress={() => userData && !user.loading ? this.setState({ calendarVisible: !this.state.calendarVisible }) : null}>
                         <View style={[AppStyles.containerCentered, { flex: 2 }]}>
@@ -184,7 +222,14 @@ class FloatingBarChart extends Component {
                         style={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-forward'}
                         color={AppColors.primary.grey.fiftyPercent}
-                        onPress={() => userData && !user.loading ? startRequest().then(() => getTeamStats(user, 1)).then(() => resetVisibleStates()).then(() => stopRequest()) : null}
+                        onPress={() => {
+                            if (userData && !user.loading) {
+                                let { newStartDate, newEndDate } = this.getStartDate(user.weekOffset + 1);
+                                this.setState({ startDate: newStartDate, endDate: newEndDate });
+                                return startRequest().then(() => getTeamStats(user, 1)).then(() => resetVisibleStates()).then(() => stopRequest());
+                            }
+                            return null;
+                        }}
                     />
                 </View>
                 {
@@ -235,17 +280,16 @@ class FloatingBarChart extends Component {
                         <Calendar
                             style={{ position: 'absolute', width: AppSizes.screen.width }}
                             firstDay={1}
-                            current={user.statsStartDate}
+                            current={!user.loading ? user.statsStartDate : startDate}
                             onPressTitle={() => this.setState({ calendarVisible: false })}
                             onDayPress={day => {
-                                if (user.loading) {
-                                    return null;
-                                }
                                 let currentDateMs = (user.statsStartDate ? new Date(user.statsStartDate) : new Date()).getTime();
                                 let checkDateMs = (new Date(day.dateString)).getTime();
                                 let msDifference = checkDateMs - currentDateMs;
                                 let weekChange =  Math.floor(msDifference / MS_IN_WEEK);
-                                return  startRequest()
+                                let { newStartDate, newEndDate } = this.getStartDate(user.weekOffset + weekChange);
+                                this.setState({ startDate: newStartDate, endDate: newEndDate });
+                                return  user.loading ? null : startRequest()
                                     .then(() => getTeamStats(user, weekChange))
                                     .then(() => resetVisibleStates())
                                     .then(() => stopRequest())

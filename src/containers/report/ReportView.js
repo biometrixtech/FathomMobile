@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-28 10:56:59
+ * @Last Modified time: 2018-03-30 01:38:04
  */
 
 import React, { Component } from 'react';
@@ -46,12 +46,15 @@ class TrainingReport extends Component {
 
     constructor(props) {
         super(props);
+        let date = new Date();
         this.state = {
             // selectedIndex:                    1,
             preprocessing_upload_visible:     true,
             preprocessing_processing_visible: true,
             preprocessing_error_visible:      true,
             calendarVisible:                  false,
+            startDate:                        `${date.getFullYear()}-${this.formatDate(date.getMonth()+1)}-${this.formatDate(date.getDate())}`,
+            endDate:                          `${date.getFullYear()}-${this.formatDate(date.getMonth()+1)}-${this.formatDate(date.getDate())}`,
         };
     }
 
@@ -332,8 +335,24 @@ class TrainingReport extends Component {
         return daysDifferent === 7;
     };
 
+    formatDate = (date) => `${date < 10 ? '0' : ''}${date}`;
+
+    getStartDate = (weekOffset) => {
+        let date = new Date();
+        date.setTime(date.getTime() + weekOffset * MS_IN_WEEK);
+        let dayOfWeek = date.getDay();
+        let startOfWeekOffset = dayOfWeek === 1 ? 0 : (dayOfWeek+6)%7;
+        let endOfWeekOffset = !dayOfWeek ? 0 : 7-dayOfWeek;
+        let startDateObject = new Date(date.getTime() - startOfWeekOffset * MS_IN_DAY);
+        let endDateObject = new Date(date.getTime() + endOfWeekOffset * MS_IN_DAY);
+        let newStartDate = `${startDateObject.getFullYear()}-${this.formatDate(startDateObject.getMonth()+1)}-${this.formatDate(startDateObject.getDate())}`;
+        let newEndDate = `${endDateObject.getFullYear()}-${this.formatDate(endDateObject.getMonth()+1)}-${this.formatDate(endDateObject.getDate())}`;
+        return ({ newStartDate, newEndDate });
+    };
+
     render() {
         let { user, startRequest, stopRequest, getTeamStats, selectGraph } = this.props;
+        let { startDate, endDate } = this.state;
         let userData = user.users[user.userIndex];
         let currentUserTeam = user.teams.find(team => team.users_with_training_groups.some(currentTeamUser => currentTeamUser.id === userData.id));
         if (!currentUserTeam) {
@@ -344,17 +363,28 @@ class TrainingReport extends Component {
             userData.previousWeekStats = currentUserTeam.previousWeekStats ? currentUserTeam.previousWeekStats.AthleteMovementQualityData.find(athleteData => athleteData.userId === userData.id) : null;
         }
         let role = user.role;
-        let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : (new Date()).toLocaleDateString().split('/');
-        let endDateComponents = user.statsEndDate ? user.statsEndDate.split('-') : (new Date()).toLocaleDateString().split('/');
+        let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : startDate.split('-');
+        let endDateComponents = user.statsEndDate ? user.statsEndDate.split('-') : endDate.split('-');
         let markedDates = {};
-        if (user.statsStartDate && user.statsEndDate) {
-            let startDate = new Date(user.statsStartDate);
-            let endDate = new Date(user.statsEndDate);
-            markedDates[user.statsStartDate] = { startingDay: true, color: AppColors.secondary.blue.thirtyPercent };
-            markedDates[user.statsEndDate] = { endingDay: true, color: AppColors.secondary.blue.thirtyPercent };
-            for (let d = startDate.setDate(startDate.getDate() + 1); d < endDate;) {
+        if (user.loading) {
+            let markedStartDate = new Date(startDate);
+            let markedEndDate = new Date(endDate);
+            markedDates[startDate] = { startingDay: true, color: AppColors.secondary.blue.thirtyPercent };
+            markedDates[endDate] = { endingDay: true, color: AppColors.secondary.blue.thirtyPercent };
+            for (let d = markedStartDate.setDate(markedStartDate.getDate() + 1); d < markedEndDate;) {
                 markedDates[(new Date(d)).toISOString().split('T')[0]] = { color: AppColors.secondary.blue.thirtyPercent };
                 d = (new Date(d)).setDate((new Date(d)).getDate() + 1);
+            }
+        } else {
+            if (user.statsStartDate && user.statsEndDate) {
+                let markedStartDate = new Date(user.statsStartDate);
+                let markedEndDate = new Date(user.statsEndDate);
+                markedDates[user.statsStartDate] = { startingDay: true, color: AppColors.secondary.blue.thirtyPercent };
+                markedDates[user.statsEndDate] = { endingDay: true, color: AppColors.secondary.blue.thirtyPercent };
+                for (let d = markedStartDate.setDate(markedStartDate.getDate() + 1); d < markedEndDate;) {
+                    markedDates[(new Date(d)).toISOString().split('T')[0]] = { color: AppColors.secondary.blue.thirtyPercent };
+                    d = (new Date(d)).setDate((new Date(d)).getDate() + 1);
+                }
             }
         }
         let isCurrentWeekFocused = this.isCurrentWeekFocused(startDateComponents, endDateComponents);
@@ -381,7 +411,14 @@ class TrainingReport extends Component {
                                     style={[AppStyles.containerCentered, AppStyles.flex1]}
                                     name={'arrow-back'}
                                     color={AppColors.primary.grey.fiftyPercent}
-                                    onPress={() => user && !user.loading ? startRequest().then(() => getTeamStats(user, -1)).then(() => this.resetVisibleStates()).then(() => stopRequest()) : null}
+                                    onPress={() => {
+                                        if (userData && !user.loading) {
+                                            let { newStartDate, newEndDate } = this.getStartDate(user.weekOffset - 1);
+                                            this.setState({ startDate: newStartDate, endDate: newEndDate });
+                                            return startRequest().then(() => getTeamStats(user, -1)).then(() => this.resetVisibleStates()).then(() => stopRequest());
+                                        }
+                                        return null;
+                                    }}
                                 />
                                 <TouchableWithoutFeedback onPress={() => this.setState({ calendarVisible: !this.state.calendarVisible })}>
                                     <View style={[AppStyles.containerCentered, AppStyles.flex2]}>
@@ -394,7 +431,14 @@ class TrainingReport extends Component {
                                     style={[AppStyles.containerCentered, AppStyles.flex1]}
                                     name={'arrow-forward'}
                                     color={AppColors.primary.grey.fiftyPercent}
-                                    onPress={() => user && !user.loading ? startRequest().then(() => getTeamStats(user, 1)).then(() => this.resetVisibleStates()).then(() => stopRequest()) : null}
+                                    onPress={() => {
+                                        if (userData && !user.loading) {
+                                            let { newStartDate, newEndDate } = this.getStartDate(user.weekOffset + 1);
+                                            this.setState({ startDate: newStartDate, endDate: newEndDate });
+                                            return startRequest().then(() => getTeamStats(user, 1)).then(() => this.resetVisibleStates()).then(() => stopRequest());
+                                        }
+                                        return null;
+                                    }}
                                 />
                             </View>
                             <View style={{ alignSelf: 'center' }}><Placeholder text={noData} /></View> 
@@ -511,14 +555,16 @@ class TrainingReport extends Component {
                         <Calendar
                             style={{ position: 'absolute', width: AppSizes.screen.width }}
                             firstDay={1}
-                            current={user.statsStartDate}
+                            current={!user.loading ? user.statsStartDate : startDate}
                             onPressTitle={() => this.setState({ calendarVisible: false })}
                             onDayPress={day => {
                                 let currentDateMs = (user.statsStartDate ? new Date(user.statsStartDate) : new Date()).getTime();
                                 let checkDateMs = (new Date(day.dateString)).getTime();
                                 let msDifference = checkDateMs - currentDateMs;
                                 let weekChange =  Math.floor(msDifference / MS_IN_WEEK);
-                                return  startRequest()
+                                let { newStartDate, newEndDate } = this.getStartDate(user.weekOffset + weekChange);
+                                this.setState({ startDate: newStartDate, endDate: newEndDate });
+                                return user.loading ? null : startRequest()
                                     .then(() => getTeamStats(user, weekChange))
                                     .then(() => this.resetVisibleStates())
                                     .then(() => stopRequest())

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:51 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-28 10:47:39
+ * @Last Modified time: 2018-03-30 01:44:40
  */
 
 /**
@@ -12,7 +12,9 @@
 import { Roles } from '@constants/';
 const Actions = require('../actionTypes');
 
-let date = (new Date()).toLocaleDateString().split('/');
+let date = new Date();
+
+const formatDate = (newDate) => `${newDate < 10 ? '0' : ''}${newDate}`;
 
 // Set initial state
 const initialState = {
@@ -23,8 +25,8 @@ const initialState = {
     selectedTrainingGroup: {},
     weekOffset:            0,
     loading:               false,
-    statsStartDate:        `20${date[2]}-${date[0]}-${date[1]}`,
-    statsEndDate:          `20${date[2]}-${date[0]}-${date[1]}`,
+    statsStartDate:        `${date.getFullYear()}-${formatDate(date.getMonth()+1)}-${formatDate(date.getDate())}`,
+    statsEndDate:          `${date.getFullYear()}-${formatDate(date.getMonth()+1)}-${formatDate(date.getDate())}`,
     selectedStats:         {
         athlete:   false,
         athleteId: null,
