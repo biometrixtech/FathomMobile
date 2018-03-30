@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-30 02:10:54
+ * @Last Modified time: 2018-03-30 11:54:37
  */
 
 import React, { Component } from 'react';
@@ -48,6 +48,7 @@ class TrainingReport extends Component {
         let date = new Date();
         this.state = {
             // selectedIndex:                    1,
+            chartHeaderHeight:                0,
             preprocessing_upload_visible:     true,
             preprocessing_processing_visible: true,
             preprocessing_error_visible:      true,
@@ -144,9 +145,9 @@ class TrainingReport extends Component {
             return null;
         }
         return <View>
-            { this.state.preprocessing_upload_visible ? this.preprocessingUpload(currentUserTeam.preprocessing.UPLOAD_IN_PROGRESS.filter(preprocessingEvent => preprocessingEvent.user_id === userData.id), role) : null }
-            { this.state.preprocessing_processing_visible ? this.preprocessingProcessing(currentUserTeam.preprocessing.PROCESSING_IN_PROGRESS.filter(preprocessingEvent => preprocessingEvent.user_id === userData.id), role) : null }
-            { this.state.preprocessing_error_visible ? this.preprocessingError(currentUserTeam.preprocessing.PROCESSING_FAILED.filter(preprocessingEvent => preprocessingEvent.user_id === userData.id), role) : null }
+            { this.state.preprocessing_upload_visible && currentUserTeam.preprocessing && currentUserTeam.preprocessing.UPLOAD_IN_PROGRESS  ? this.preprocessingUpload(currentUserTeam.preprocessing.UPLOAD_IN_PROGRESS.filter(preprocessingEvent => preprocessingEvent.user_id === userData.id), role) : null }
+            { this.state.preprocessing_processing_visible && currentUserTeam.preprocessing && currentUserTeam.preprocessing.PROCESSING_IN_PROGRESS  ? this.preprocessingProcessing(currentUserTeam.preprocessing.PROCESSING_IN_PROGRESS.filter(preprocessingEvent => preprocessingEvent.user_id === userData.id), role) : null }
+            { this.state.preprocessing_error_visible && currentUserTeam.preprocessing && currentUserTeam.preprocessing.PROCESSING_FAILED ? this.preprocessingError(currentUserTeam.preprocessing.PROCESSING_FAILED.filter(preprocessingEvent => preprocessingEvent.user_id === userData.id), role) : null }
         </View>
     }
 
@@ -336,7 +337,7 @@ class TrainingReport extends Component {
 
     render() {
         let { user, startRequest, stopRequest, getTeamStats, selectGraph } = this.props;
-        let { startDate, endDate } = this.state;
+        let { startDate, endDate, chartHeaderHeight } = this.state;
         let userData = user.users[user.userIndex];
         let currentUserTeam = user.teams.find(team => team.users_with_training_groups.some(currentTeamUser => currentTeamUser.id === userData.id));
         if (!currentUserTeam) {
@@ -390,7 +391,7 @@ class TrainingReport extends Component {
                                 <View style={{ flex: 1 }}/>
                             </View>
                             <Spacer />
-                            <View style={{ flexDirection: 'row' }}>
+                            <View style={{ flexDirection: 'row' }} onLayout={ev => this.setState({ chartHeaderHeight: ev.nativeEvent.layout.height })}>
                                 <Icon
                                     style={[AppStyles.containerCentered, AppStyles.flex1]}
                                     name={'arrow-back'}
@@ -425,7 +426,7 @@ class TrainingReport extends Component {
                                     }}
                                 />
                             </View>
-                            <View style={{ alignSelf: 'center' }}><Placeholder text={noData} /></View> 
+                            <View style={{ height: AppSizes.screen.usableHeight - 20 - this.state.chartHeaderHeight }}><Placeholder text={noData} /></View> 
                         </View>
                         :
                         <ScrollView stickyHeaderIndices={[preprocessingMessages ? 7 : 6]} style={{ height: AppSizes.screen.usableHeight - 10 }}>
@@ -559,7 +560,7 @@ class TrainingReport extends Component {
                         /> : null
                 }
                 {
-                    user.loading ? <ActivityIndicator style={[AppStyles.activityIndicator]} size={'large'} color={'#C1C5C8'}/> : null
+                    user.loading ? <ActivityIndicator style={[AppStyles.activityIndicator, { height: AppSizes.screen.usableHeight - 20 - chartHeaderHeight }]} size={'large'} color={'#C1C5C8'}/> : null
                 }
             </View>
         );

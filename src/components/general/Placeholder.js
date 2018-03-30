@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:27:49 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-11-09 14:26:42
+ * @Last Modified time: 2018-03-30 11:36:30
  */
 
 /**
@@ -23,7 +23,7 @@ import { Text } from '@ui/';
 
 /* Component ==================================================================== */
 const Placeholder = ({ text }) => (
-    <View style={[AppStyles.container, AppStyles.containerCentered, { alignSelf: 'center', width: AppSizes.screen.width }]}>
+    <View style={[AppStyles.activityIndicator]}>
         <Text>{text}</Text>
     </View>
 );

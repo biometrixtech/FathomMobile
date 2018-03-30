@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-30 02:10:20
+ * @Last Modified time: 2018-03-30 11:37:28
  */
 
 /**
@@ -145,7 +145,7 @@ class FloatingBarChart extends Component {
 
     render = () => {
         let {xAxis, yAxis, width, height, margin, data, tabOffset, user, resetVisibleStates, getTeamStats, startRequest, stopRequest} = this.props;
-        let { startDate, endDate } = this.state;
+        let { startDate, endDate, chartHeaderHeight } = this.state;
 
         let userData = user.teams[user.teamIndex];
         let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : startDate.split('-');
@@ -215,7 +215,7 @@ class FloatingBarChart extends Component {
                     />
                 </View>
                 {
-                    !userData || !userData.stats || !data.x.length ? <View style={{ alignSelf: 'center' }}><Placeholder text={'No data to show for this range...'} /></View> :
+                    !userData || !userData.stats || !data.x.length ? <View style={{ height: AppSizes.screen.usableHeight - 20 - this.state.chartHeaderHeight }}><Placeholder text={'No data to show for this range...'} /></View> :
                         <View>
                             { xAxis ? <Text style={[AppStyles.h7, { position: 'absolute', left: -4 * margin.horizontal - tabOffset * AppSizes.tickSize, top: height*9/20, transform: [{ rotate: '270deg' }] }]}>{xAxis}</Text> : null }
                             { yAxis ? <Text style={[AppStyles.subtext, { position: 'absolute', left: width/2, top: height + margin.vertical }]}>{yAxis}</Text> : null }
@@ -282,7 +282,7 @@ class FloatingBarChart extends Component {
                         /> : null
                 }
                 {
-                    user.loading ? <ActivityIndicator style={[AppStyles.activityIndicator]} size={'large'} color={'#C1C5C8'}/> : null
+                    user.loading ? <ActivityIndicator style={[AppStyles.activityIndicator, { height: AppSizes.screen.usableHeight - 20 - chartHeaderHeight }]} size={'large'} color={'#C1C5C8'}/> : null
                 }
             </View>
         );
