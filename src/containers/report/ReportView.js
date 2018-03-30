@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-30 11:54:37
+ * @Last Modified time: 2018-03-30 14:02:58
  */
 
 import React, { Component } from 'react';
@@ -48,7 +48,9 @@ class TrainingReport extends Component {
         let date = new Date();
         this.state = {
             // selectedIndex:                    1,
+            nameHeight:                       0,
             chartHeaderHeight:                0,
+            preprocessingHeight:              0,
             preprocessing_upload_visible:     true,
             preprocessing_processing_visible: true,
             preprocessing_error_visible:      true,
@@ -144,7 +146,7 @@ class TrainingReport extends Component {
         if (!currentUserTeam) {
             return null;
         }
-        return <View>
+        return <View onLayout={ev => this.setState({ preprocessingHeight: ev.nativeEvent.layout.height })}>
             { this.state.preprocessing_upload_visible && currentUserTeam.preprocessing && currentUserTeam.preprocessing.UPLOAD_IN_PROGRESS  ? this.preprocessingUpload(currentUserTeam.preprocessing.UPLOAD_IN_PROGRESS.filter(preprocessingEvent => preprocessingEvent.user_id === userData.id), role) : null }
             { this.state.preprocessing_processing_visible && currentUserTeam.preprocessing && currentUserTeam.preprocessing.PROCESSING_IN_PROGRESS  ? this.preprocessingProcessing(currentUserTeam.preprocessing.PROCESSING_IN_PROGRESS.filter(preprocessingEvent => preprocessingEvent.user_id === userData.id), role) : null }
             { this.state.preprocessing_error_visible && currentUserTeam.preprocessing && currentUserTeam.preprocessing.PROCESSING_FAILED ? this.preprocessingError(currentUserTeam.preprocessing.PROCESSING_FAILED.filter(preprocessingEvent => preprocessingEvent.user_id === userData.id), role) : null }
@@ -216,10 +218,6 @@ class TrainingReport extends Component {
             cards.push(card);
         }
 
-        // if (symmetryColorIndex !== -1 || hipSymmetryColorIndex !== -1 || ankleSymmetryColorIndex !== -1) {
-        //     let indexOfMinValue = [symmetryColorIndex, hipSymmetryColorIndex, ankleSymmetryColorIndex].reduce((iMin, x, i, arr) => x !== -1 && x < arr[iMin] ? i : iMin, 0);
-        //     cards.push(Thresholds.chart.symmetry[indexOfMinValue]);
-        // }
         if (symmetryColorIndex !== -1) {
             cards.push(Thresholds.chart.symmetry[symmetryColorIndex]);
         }
@@ -230,10 +228,6 @@ class TrainingReport extends Component {
             cards.push(Thresholds.chart.ankleSymmetry[ankleSymmetryColorIndex]);
         }
 
-        // if (controlColorIndex !== -1 || controlLFColorIndex !== -1 || controlRFColorIndex !== -1 || hipControlColorIndex !== -1 || ankleControlColorIndex !== -1) {
-        //     let indexOfMinValue = [controlColorIndex, controlLFColorIndex, controlRFColorIndex, hipControlColorIndex, ankleControlColorIndex].reduce((iMin, x, i, arr) => x !== -1 && x < arr[iMin] ? i : iMin, 0);
-        //     cards.push(Thresholds.chart.control[indexOfMinValue]);
-        // }
         if (controlColorIndex !== -1) {
             cards.push(Thresholds.chart.control[controlColorIndex]);
         }
@@ -337,15 +331,17 @@ class TrainingReport extends Component {
 
     render() {
         let { user, startRequest, stopRequest, getTeamStats, selectGraph } = this.props;
-        let { startDate, endDate, chartHeaderHeight } = this.state;
+        let { startDate, endDate, chartHeaderHeight, nameHeight, preprocessingHeight } = this.state;
         let userData = user.users[user.userIndex];
         let currentUserTeam = user.teams.find(team => team.users_with_training_groups.some(currentTeamUser => currentTeamUser.id === userData.id));
-        if (!currentUserTeam) {
-            userData.stats = null;
-            userData.previousWeekStats = null;
-        } else {
-            userData.stats = currentUserTeam.stats ? currentUserTeam.stats.AthleteMovementQualityData.find(athleteData => athleteData.userId === userData.id) : null;
-            userData.previousWeekStats = currentUserTeam.previousWeekStats ? currentUserTeam.previousWeekStats.AthleteMovementQualityData.find(athleteData => athleteData.userId === userData.id) : null;
+        if (userData) {
+            if (!currentUserTeam) {
+                userData.stats = null;
+                userData.previousWeekStats = null;
+            } else {
+                userData.stats = currentUserTeam.stats ? currentUserTeam.stats.AthleteMovementQualityData.find(athleteData => athleteData.userId === userData.id) : null;
+                userData.previousWeekStats = currentUserTeam.previousWeekStats ? currentUserTeam.previousWeekStats.AthleteMovementQualityData.find(athleteData => athleteData.userId === userData.id) : null;
+            }
         }
         let role = user.role;
         let startDateComponents = user.statsStartDate ? user.statsStartDate.split('-') : startDate.split('-');
@@ -383,7 +379,7 @@ class TrainingReport extends Component {
                         <View>
                             { preprocessingMessages }
                             <Spacer size={20}/>
-                            <View style={[AppStyles.row]}>
+                            <View style={[AppStyles.row]} onLayout={ev => this.setState({ nameHeight: ev.nativeEvent.layout.height })}>
                                 <View style={{ flex: 1 }}/>
                                 <Text style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold' }]}>
                                     {`${userData ? userData.first_name : ''} ${userData ? userData.last_name : ''}`}
@@ -426,7 +422,7 @@ class TrainingReport extends Component {
                                     }}
                                 />
                             </View>
-                            <View style={{ height: AppSizes.screen.usableHeight - 20 - this.state.chartHeaderHeight }}><Placeholder text={noData} /></View> 
+                            <View style={{ height: AppSizes.screen.usableHeight - 30 - chartHeaderHeight - nameHeight - preprocessingHeight }}><Placeholder text={noData} /></View> 
                         </View>
                         :
                         <ScrollView stickyHeaderIndices={[preprocessingMessages ? 7 : 6]} style={{ height: AppSizes.screen.usableHeight - 10 }}>
@@ -560,7 +556,7 @@ class TrainingReport extends Component {
                         /> : null
                 }
                 {
-                    user.loading ? <ActivityIndicator style={[AppStyles.activityIndicator, { height: AppSizes.screen.usableHeight - 20 - chartHeaderHeight }]} size={'large'} color={'#C1C5C8'}/> : null
+                    user.loading ? <ActivityIndicator style={[AppStyles.activityIndicator, { height: AppSizes.screen.usableHeight - 30 - chartHeaderHeight - nameHeight - preprocessingHeight }]} size={'large'} color={'#C1C5C8'}/> : null
                 }
             </View>
         );

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:22 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-27 14:49:18
+ * @Last Modified time: 2018-03-30 13:55:32
  */
 
 /**
@@ -174,7 +174,7 @@ class Menu extends Component {
                 {
                     itemName: 'power',
                     title:    'Logout',
-                    onPress:  () => { Promise.resolve(this.props.closeSideMenu()).then(() => this.props.userSelect(null)); this.logout() },
+                    onPress:  () => { Promise.resolve(this.props.closeSideMenu()).then(() => this.logout()); },
                 }
             ],
         };

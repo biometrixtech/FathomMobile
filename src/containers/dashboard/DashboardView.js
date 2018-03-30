@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:20 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-27 15:32:13
+ * @Last Modified time: 2018-03-30 13:44:57
  */
 
 import React, { Component } from 'react';
@@ -43,6 +43,8 @@ class Dashboard extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            tabbarHeight:                     AppSizes.tabbarHeight,
+            preprocessingHeight:              0,
             preprocessing_upload_visible:     true,
             preprocessing_processing_visible: true,
             preprocessing_error_visible:      true
@@ -290,7 +292,7 @@ class Dashboard extends Component {
         if (!preprocessing) {
             return null;
         }
-        return <View>
+        return <View onLayout={ev => this.setState({ preprocessingHeight: ev.nativeEvent.layout.height })}>
             { this.state.preprocessing_upload_visible ? this.preprocessingUpload(preprocessing.UPLOAD_IN_PROGRESS, role) : null }
             { this.state.preprocessing_processing_visible ? this.preprocessingProcessing(preprocessing.PROCESSING_IN_PROGRESS, role) : null }
             { this.state.preprocessing_error_visible ? this.preprocessingError(preprocessing.PROCESSING_FAILED, role) : null }
@@ -306,6 +308,7 @@ class Dashboard extends Component {
     }
 
     render() {
+        let { tabbarHeight, preprocessingHeight } = this.state;
         let movementQualityScoreData = this.getBiomechanicalFatigueData();
         let {grfData, grfMax} = this.getAccumulatedGRFData();
         let {accelData, accelMax} = this.getAccumulatedCoMAcceleration();
@@ -329,6 +332,8 @@ class Dashboard extends Component {
                         margin={{ horizontal: AppSizes.padding, vertical: AppSizes.paddingSml }}
                         data={movementQualityScoreData}
                         tabOffset={-7}
+                        tabbarHeight={tabbarHeight}
+                        preprocessingHeight={preprocessingHeight}
                         user={user}
                         startRequest={this.props.startRequest}
                         stopRequest={this.props.stopRequest}
@@ -346,6 +351,8 @@ class Dashboard extends Component {
                         margin={{ horizontal: AppSizes.padding, vertical: AppSizes.paddingSml }}
                         data={grfData}
                         tabOffset={-8}
+                        tabbarHeight={tabbarHeight}
+                        preprocessingHeight={preprocessingHeight}
                         max={grfMax}
                         graphNum={1}
                         user={user}
@@ -365,6 +372,8 @@ class Dashboard extends Component {
                         margin={{ horizontal: AppSizes.padding, vertical: AppSizes.paddingSml }}
                         data={accelData}
                         tabOffset={-6.5}
+                        tabbarHeight={tabbarHeight}
+                        preprocessingHeight={preprocessingHeight}
                         max={accelMax}
                         graphNum={2}
                         user={user}

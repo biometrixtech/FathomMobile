@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-30 11:37:28
+ * @Last Modified time: 2018-03-30 14:00:19
  */
 
 /**
@@ -37,12 +37,14 @@ const styles = StyleSheet.create({
 /* Component ==================================================================== */
 class FloatingBarChart extends Component {
     static propTypes = {
-        xAxis:     PropTypes.string,
-        yAxis:     PropTypes.string,
-        width:     PropTypes.number,
-        height:    PropTypes.number,
-        tabOffset: PropTypes.number,
-        margin:    PropTypes.shape({
+        xAxis:               PropTypes.string,
+        yAxis:               PropTypes.string,
+        width:               PropTypes.number,
+        height:              PropTypes.number,
+        tabOffset:           PropTypes.number,
+        tabbarHeight:        PropTypes.number,
+        preprocessingHeight: PropTypes.number,
+        margin:              PropTypes.shape({
             horizontal: PropTypes.number,
             vertical:   PropTypes.number
         }),
@@ -144,7 +146,7 @@ class FloatingBarChart extends Component {
     };
 
     render = () => {
-        let {xAxis, yAxis, width, height, margin, data, tabOffset, user, resetVisibleStates, getTeamStats, startRequest, stopRequest} = this.props;
+        let {xAxis, yAxis, width, height, margin, data, tabOffset, user, resetVisibleStates, getTeamStats, startRequest, stopRequest, tabbarHeight, preprocessingHeight} = this.props;
         let { startDate, endDate, chartHeaderHeight } = this.state;
 
         let userData = user.teams[user.teamIndex];
@@ -215,7 +217,7 @@ class FloatingBarChart extends Component {
                     />
                 </View>
                 {
-                    !userData || !userData.stats || !data.x.length ? <View style={{ height: AppSizes.screen.usableHeight - 20 - this.state.chartHeaderHeight }}><Placeholder text={'No data to show for this range...'} /></View> :
+                    !userData || !userData.stats || !data.x.length ? <View style={{ height: AppSizes.screen.usableHeight - 10 - chartHeaderHeight - tabbarHeight - preprocessingHeight }}><Placeholder text={'No data to show for this range...'} /></View> :
                         <View>
                             { xAxis ? <Text style={[AppStyles.h7, { position: 'absolute', left: -4 * margin.horizontal - tabOffset * AppSizes.tickSize, top: height*9/20, transform: [{ rotate: '270deg' }] }]}>{xAxis}</Text> : null }
                             { yAxis ? <Text style={[AppStyles.subtext, { position: 'absolute', left: width/2, top: height + margin.vertical }]}>{yAxis}</Text> : null }
@@ -282,7 +284,7 @@ class FloatingBarChart extends Component {
                         /> : null
                 }
                 {
-                    user.loading ? <ActivityIndicator style={[AppStyles.activityIndicator, { height: AppSizes.screen.usableHeight - 20 - chartHeaderHeight }]} size={'large'} color={'#C1C5C8'}/> : null
+                    user.loading ? <ActivityIndicator style={[AppStyles.activityIndicator, { height: AppSizes.screen.usableHeight - 10 - chartHeaderHeight - tabbarHeight - preprocessingHeight }]} size={'large'} color={'#C1C5C8'}/> : null
                 }
             </View>
         );
