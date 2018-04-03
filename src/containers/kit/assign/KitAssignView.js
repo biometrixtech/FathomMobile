@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:13 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-22 23:59:48
+ * @Last Modified time: 2018-04-02 22:36:36
  */
 
 /**
@@ -18,7 +18,7 @@ import {
     Platform,
     ActivityIndicator
 } from 'react-native';
-import { Icon, SearchBar } from 'react-native-elements';
+import { SearchBar } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
@@ -31,6 +31,18 @@ import { Placeholder } from '@general/';
 
 const font10 = AppFonts.scaleFont(10);
 const font14 = AppFonts.scaleFont(14);
+
+const Wrapper = props => Platform.OS === 'ios' ?
+    (
+        <KeyboardAvoidingView behavior={'padding'} style={[AppStyles.container, { backgroundColor: AppColors.secondary.light_blue.hundredPercent }]}>
+            {props.children}
+        </KeyboardAvoidingView>
+    ) :
+    (
+        <View style={[AppStyles.container, { backgroundColor: AppColors.secondary.light_blue.hundredPercent }]}>
+            {props.children}
+        </View>
+    );
 
 /* Component ==================================================================== */
 class KitAssignView extends Component {
@@ -93,10 +105,7 @@ class KitAssignView extends Component {
         }
 
         return (
-            <KeyboardAvoidingView
-                behavior={'position'}
-                style={[AppStyles.container, { backgroundColor: AppColors.secondary.light_blue.hundredPercent }]}
-            >
+            <Wrapper>
                 <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', height: AppSizes.screen.heightOneThird }}>
                     <Image source={require('@images/kit-diagram.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthTwoThirds, height: AppSizes.screen.widthTwoThirds * 268/509 }}/>
                     <Spacer size={5}/>
@@ -174,7 +183,7 @@ class KitAssignView extends Component {
                         color={'#C1C5C8'}
                     /> : null
                 }
-            </KeyboardAvoidingView>
+            </Wrapper>
         );
     }
 

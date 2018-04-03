@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:35:00 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-23 00:01:24
+ * @Last Modified time: 2018-04-02 21:51:25
  */
 
 /**
@@ -17,7 +17,8 @@ import {
     NativeEventEmitter,
     KeyboardAvoidingView,
     NativeModules,
-    ActivityIndicator
+    ActivityIndicator,
+    Platform
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import Collapsible from 'react-native-collapsible';
@@ -40,6 +41,18 @@ const font10 = AppFonts.scaleFont(10);
 
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+
+const Wrapper = props => Platform.OS === 'ios' ?
+    (
+        <KeyboardAvoidingView behavior={'padding'}>
+            {props.children}
+        </KeyboardAvoidingView>
+    ) :
+    (
+        <View>
+            {props.children}
+        </View>
+    );
 
 /* Component ==================================================================== */
 class KitManagementView extends Component {
@@ -266,7 +279,7 @@ class KitManagementView extends Component {
                 swipeToClose={false}
                 onClosed={() => this.setState({ password: '', identity: '', anonymousIdentity: '', isModal2Visible: false, isCollapsed: true }) }
             >
-                <KeyboardAvoidingView behavior={'padding'}>
+                <Wrapper>
                     <Card title={`${this.state.other ? 'Hidden network' : this.state.SSID} security settings${this.state.other ? '' : ' (if needed'}`}>
                         <ScrollView style={{ height: this.state.isCollapsed ? AppSizes.screen.heightOneThird : AppSizes.screen.heightHalf }}>
 
@@ -355,7 +368,7 @@ class KitManagementView extends Component {
                             />
                         </View>
                     </Card>
-                </KeyboardAvoidingView>
+                </Wrapper>
             </Modal>
             <Modal
                 position={'center'}
@@ -365,7 +378,7 @@ class KitManagementView extends Component {
                 swipeToClose={false}
                 onClosed={() => this.setState({ isModal3Visible: false }) }
             >
-                <KeyboardAvoidingView behavior={'padding'}>
+                <Wrapper behavior={'padding'}>
                     <Card title={'Gyro Calibration'}>
                         <ScrollView style={{ height: AppSizes.screen.heightOneThird }}>
 
@@ -392,7 +405,7 @@ class KitManagementView extends Component {
                             onPress={() => this.setState({ isModal3Visible: false })}
                         />
                     </Card>
-                </KeyboardAvoidingView>
+                </Wrapper>
             </Modal>
             <Modal
                 position={'center'}

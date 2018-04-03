@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-30 14:02:58
+ * @Last Modified time: 2018-04-02 22:49:58
  */
 
 import React, { Component } from 'react';
@@ -380,16 +380,16 @@ class TrainingReport extends Component {
                             { preprocessingMessages }
                             <Spacer size={20}/>
                             <View style={[AppStyles.row]} onLayout={ev => this.setState({ nameHeight: ev.nativeEvent.layout.height })}>
-                                <View style={{ flex: 1 }}/>
-                                <Text style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold' }]}>
+                                <View style={[AppStyles.flex1]}/>
+                                <Text style={[AppStyles.textCenterAligned, AppStyles.flex1, { fontWeight: 'bold' }]}>
                                     {`${userData ? userData.first_name : ''} ${userData ? userData.last_name : ''}`}
                                 </Text>
-                                <View style={{ flex: 1 }}/>
+                                <View style={[AppStyles.flex1]}/>
                             </View>
                             <Spacer />
-                            <View style={{ flexDirection: 'row' }} onLayout={ev => this.setState({ chartHeaderHeight: ev.nativeEvent.layout.height })}>
+                            <View style={[AppStyles.row]} onLayout={ev => this.setState({ chartHeaderHeight: ev.nativeEvent.layout.height })}>
                                 <Icon
-                                    style={[AppStyles.containerCentered, AppStyles.flex1]}
+                                    containerStyle={[AppStyles.containerCentered, AppStyles.flex1]}
                                     name={'arrow-back'}
                                     color={AppColors.primary.grey.fiftyPercent}
                                     onPress={() => {
@@ -409,7 +409,7 @@ class TrainingReport extends Component {
                                     </View>
                                 </TouchableWithoutFeedback>
                                 <Icon
-                                    style={[AppStyles.containerCentered, AppStyles.flex1]}
+                                    containerStyle={[AppStyles.containerCentered, AppStyles.flex1]}
                                     name={'arrow-forward'}
                                     color={AppColors.primary.grey.fiftyPercent}
                                     onPress={() => {

@@ -71,21 +71,40 @@ initialize() {
         lsof -P | grep ':8081' | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
         rm -rf node_modules/ yarn.lock
         yarn
-        sed -i '' 's/23.0.1/26.0.2/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
-        sed -i '' 's/23.0.1/26.0.2/' ./node_modules/react-native-code-push/android/app/build.gradle
-        sed -i '' 's/23.0.1/26.0.2/' ./node_modules/react-native-fabric/android/build.gradle
-        sed -i '' 's/24.0.2/26.0.2/' ./node_modules/react-native-ble-manager/android/build.gradle
-        sed -i '' 's/25.0.2/26.0.2/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-        sed -i '' 's/25.0.2/26.0.2/' ./node_modules/react-native-device-info/android/build.gradle
-        sed -i '' 's/23.0.1/26.0.2/' ./node_modules/react-native-svg/android/build.gradle
-        sed -i '' 's/26.0.1/26.0.2/' ./node_modules/react-native-vector-icons/android/build.gradle
+        sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
+        sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-code-push/android/app/build.gradle
+        sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-fabric/android/build.gradle
+        sed -i '' 's/24.0.2/27.0.3/' ./node_modules/react-native-ble-manager/android/build.gradle
+        sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+        sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-device-info/android/build.gradle
+        sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-svg/android/build.gradle
+        sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-vector-icons/android/build.gradle
+
+        sed -i '' 's/compile /implementation /' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
+        sed -i '' 's/compile /implementation /' ./node_modules/react-native-code-push/android/app/build.gradle
+        sed -i '' 's/compile /implementation /' ./node_modules/react-native-fabric/android/build.gradle
+        sed -i '' 's/compile /implementation /' ./node_modules/react-native-ble-manager/android/build.gradle
+        sed -i '' 's/compile /implementation /' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+        sed -i '' 's/compile /implementation /' ./node_modules/react-native-device-info/android/build.gradle
+        sed -i '' 's/compile /implementation /' ./node_modules/react-native-svg/android/build.gradle
+        sed -i '' 's/compile /implementation /' ./node_modules/react-native-vector-icons/android/build.gradle
+
+        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
+        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-code-push/android/app/build.gradle
+        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-fabric/android/build.gradle
+        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-ble-manager/android/build.gradle
+        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-device-info/android/build.gradle
+        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
+        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-vector-icons/android/build.gradle
+
         sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
         sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
-        # [ -d "./node_modules/react-native/third-party" ] && {
-        #     cd node_modules/react-native/third-party/glog-0.3.4
-        #     ../../scripts/ios-configure-glog.sh                 
-        #     cd ../../../../
-        # } || continue
+        [ -d "./node_modules/react-native/third-party" ] && {
+            cd node_modules/react-native/third-party/glog-0.3.4
+            ../../scripts/ios-configure-glog.sh                 
+            cd ../../../../
+        } || continue
         # cd ios/
         # pod install
         # cd ..

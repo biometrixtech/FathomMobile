@@ -89,7 +89,7 @@ class CalendarHeader extends Component {
                   name={'arrow-back'}
                   color={AppColors.primary.grey.fiftyPercent}
                   onPress={this.onPressLeft}
-                  style={this.style.arrow}
+                  containerStyle={this.style.arrow}
               />
           );
           rightArrow = (
@@ -97,7 +97,7 @@ class CalendarHeader extends Component {
                   name={'arrow-forward'}
                   color={AppColors.primary.grey.fiftyPercent}
                   onPress={this.onPressRight}
-                  style={this.style.arrow}
+                  containerStyle={this.style.arrow}
               />
           );
       }
@@ -110,7 +110,7 @@ class CalendarHeader extends Component {
               <Spacer />
               <View style={this.style.header}>
                   {leftArrow}
-                  <View style={[{ flexDirection: 'row' }, AppStyles.containerCentered, AppStyles.flex2 ]}>
+                  <View style={[AppStyles.row, AppStyles.containerCentered, AppStyles.flex2 ]}>
                       <TouchableOpacity onPress={this.onPressHeader}>
                           <Text allowFontScaling={false} style={{ color: AppColors.primary.grey.fiftyPercent }} accessibilityTraits='header'>
                               {this.props.month.toString(this.props.monthFormat ? this.props.monthFormat : 'MMMM yyyy')}

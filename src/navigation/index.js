@@ -18,7 +18,7 @@ import { AppConfig } from '@constants/';
 import Drawer from '@containers/ui/DrawerContainer';
 
 // Scenes
-import AppLaunch from '@containers/Launch/LaunchContainer';
+// import AppLaunch from '@containers/Launch/LaunchContainer';
 import AppNavigation from './appNavigation';
 // import ManagerNavigation from './managerNavigation';
 // import AdminNavigation from './adminNavigation';

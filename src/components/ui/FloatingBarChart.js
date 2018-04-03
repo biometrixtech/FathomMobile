@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-30 14:00:19
+ * @Last Modified time: 2018-04-02 22:48:16
  */
 
 /**
@@ -181,9 +181,9 @@ class FloatingBarChart extends Component {
         return (
             <View>
                 <Spacer />
-                <View style={{ flexDirection: 'row' }} onLayout={ev => this.setState({ chartHeaderHeight: ev.nativeEvent.layout.height })}>
+                <View style={[AppStyles.row]} onLayout={ev => this.setState({ chartHeaderHeight: ev.nativeEvent.layout.height })}>
                     <Icon
-                        style={[AppStyles.containerCentered, AppStyles.flex1]}
+                        containerStyle={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-back'}
                         color={AppColors.primary.grey.fiftyPercent}
                         onPress={() => {
@@ -196,14 +196,14 @@ class FloatingBarChart extends Component {
                         }}
                     />
                     <TouchableWithoutFeedback onPress={() => userData && !user.loading ? this.setState({ calendarVisible: !this.state.calendarVisible }) : null}>
-                        <View style={[AppStyles.containerCentered, { flex: 2 }]}>
+                        <View style={[AppStyles.containerCentered, AppStyles.flex2]}>
                             <Text style={{ color: AppColors.primary.grey.fiftyPercent }}>
                                 {`${startDateComponents[1]}/${startDateComponents[2]}/${startDateComponents[0].substring(2)}`}-{`${endDateComponents[1]}/${endDateComponents[2]}/${endDateComponents[0].substring(2)}`}
                             </Text>
                         </View>
                     </TouchableWithoutFeedback>
                     <Icon
-                        style={[AppStyles.containerCentered, AppStyles.flex1]}
+                        containerStyle={[AppStyles.containerCentered, AppStyles.flex1]}
                         name={'arrow-forward'}
                         color={AppColors.primary.grey.fiftyPercent}
                         onPress={() => {

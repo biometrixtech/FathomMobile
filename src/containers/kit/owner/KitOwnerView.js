@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:45 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-21 15:02:35
+ * @Last Modified time: 2018-04-02 22:36:34
  */
 
 /**
@@ -17,7 +17,6 @@ import {
     RefreshControl,
     ActivityIndicator
 } from 'react-native';
-import { Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 

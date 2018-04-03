@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-28 10:55:11
+ * @Last Modified time: 2018-04-02 22:36:37
  */
 
 /**
@@ -154,7 +154,7 @@ class DailyLoadChart extends Component {
                     >
                         <View style={{ flexDirection: 'row' }}>
                             <Icon
-                                style={[AppStyles.containerCentered, { padding: 10, paddingRight: 5 }]}
+                                containerStyle={[AppStyles.containerCentered, { padding: 10, paddingRight: 5 }]}
                                 name={'arrow-back'}
                             />
                             <View style={[AppStyles.containerCentered, { padding: 10, paddingLeft: 5 }]}>
@@ -184,7 +184,7 @@ class DailyLoadChart extends Component {
                                 <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold' }}>{nextWeekRange}</Text>
                             </View>
                             <Icon
-                                style={[AppStyles.containerCentered, { padding: 10, paddingLeft: 5 }]}
+                                containerStyle={[AppStyles.containerCentered, { padding: 10, paddingLeft: 5 }]}
                                 name={'arrow-forward'}
                             />
                         </View>
