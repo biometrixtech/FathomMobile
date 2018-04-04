@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-04 03:13:50
+ * @Last Modified time: 2018-04-04 14:45:48
  */
 
 import React, { Component } from 'react';
@@ -202,7 +202,7 @@ class TrainingReport extends Component {
         let controlRFColorIndex = typeof(controlRF) === 'number' ? Thresholds.chart.controlRF.findIndex(colorThreshold => colorThreshold.max >= controlRF && colorThreshold.min <= controlRF) : -1;
         let hipControlColorIndex = typeof(hipControl) === 'number' ? Thresholds.chart.hipControl.findIndex(colorThreshold => colorThreshold.max >= hipControl && colorThreshold.min <= hipControl) : -1;
         let ankleControlColorIndex = typeof(ankleControl) === 'number' ? Thresholds.chart.ankleControl.findIndex(colorThreshold => colorThreshold.max >= ankleControl && colorThreshold.min <= ankleControl) : -1;
-        
+
         let minColorIndex = Math.min(...[fatigueColorIndex, percLRGRFDiffColorIndex, symmetryColorIndex, hipSymmetryColorIndex, ankleSymmetryColorIndex, controlColorIndex, controlLFColorIndex, controlRFColorIndex, hipControlColorIndex, ankleControlColorIndex].filter(value => value !== -1), Number.POSITIVE_INFINITY);
         let color = minColorIndex === Number.POSITIVE_INFINITY ? AppColors.secondary.blue : Thresholds.chart.fatigueRateSingleDay[minColorIndex].color;
 
@@ -220,7 +220,10 @@ class TrainingReport extends Component {
 
         if (hipSymmetryColorIndex !== -1 && ankleSymmetryColorIndex !== -1) {
             if (symmetryColorIndex !== -1) {
-                cards.push(Thresholds.chart.symmetry[symmetryColorIndex]);
+                let card = Thresholds.chart.symmetry[symmetryColorIndex];
+                let tempMinColorIndex = Math.min(...[symmetryColorIndex, hipSymmetryColorIndex, ankleSymmetryColorIndex]);
+                card.cardColor = Thresholds.chart.symmetry[tempMinColorIndex].cardColor;
+                cards.push(card);
             }
         } else if (hipSymmetryColorIndex !== -1) {
             cards.push(Thresholds.chart.hipSymmetry[hipSymmetryColorIndex]);
@@ -231,7 +234,10 @@ class TrainingReport extends Component {
         if (hipControlColorIndex !== -1) {
             if (controlLFColorIndex !== -1 && controlRFColorIndex !== -1) {
                 if (controlColorIndex !== -1) {
-                    cards.push(Thresholds.chart.control[controlColorIndex]);
+                    let card = Thresholds.chart.control[controlColorIndex];
+                    let tempMinColorIndex = Math.min(...[controlColorIndex, controlLFColorIndex, controlRFColorIndex, hipControlColorIndex]);
+                    card.cardColor = Thresholds.chart.control[tempMinColorIndex].cardColor;
+                    cards.push(card);
                 }
             } else {
                 cards.push(Thresholds.chart.hipControl[hipControlColorIndex]);
@@ -245,7 +251,10 @@ class TrainingReport extends Component {
         } else {
             if (controlLFColorIndex !== -1 && controlRFColorIndex !== -1) {
                 if (ankleControlColorIndex !== -1) {
-                    cards.push(Thresholds.chart.ankleControl[ankleControlColorIndex]);
+                    let card = Thresholds.chart.ankleControl[ankleControlColorIndex];
+                    let tempMinColorIndex = Math.min(...[controlLFColorIndex, controlRFColorIndex, ankleControlColorIndex]);
+                    card.cardColor = Thresholds.chart.ankleControl[tempMinColorIndex].cardColor;
+                    cards.push(card);
                 }
             } else {
                 if (controlLFColorIndex !== -1) {
