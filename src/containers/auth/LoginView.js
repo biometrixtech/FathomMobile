@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:32:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-21 15:23:09
+ * @Last Modified time: 2018-04-04 03:16:24
  */
 
 /**
@@ -19,6 +19,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Image,
+    Platform,
 } from 'react-native';
 import FormValidation from 'tcomb-form-native';
 import { Actions } from 'react-native-router-flux';
@@ -61,6 +62,19 @@ const styles = StyleSheet.create({
         height: AppSizes.screen.heightTenth
     }
 });
+
+const Wrapper = props => Platform.OS === 'ios' ?
+    (
+        <KeyboardAvoidingView behavior={'padding'} style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
+            {props.children}
+        </KeyboardAvoidingView>
+    ) :
+    (
+        <View style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
+            {props.children}
+        </View>
+    );
+
 
 /* Component ==================================================================== */
 class Login extends Component {
@@ -167,11 +181,6 @@ class Login extends Component {
             this.setState({ form_values: credentials }, () => {
                 this.setState({ resultMsg: { status: 'One moment...' } });
 
-                // Scroll to top, to show message
-                if (this.scrollView) {
-                    this.scrollView.scrollTo({ y: 0 });
-                }
-
                 return this.props.login({
                     email:    credentials.Email,
                     password: credentials.Password,
@@ -206,44 +215,7 @@ class Login extends Component {
         const Form = FormValidation.form.Form;
 
         return (
-            <KeyboardAvoidingView
-                behavior={'padding'}
-                style={[AppStyles.containerCentered, AppStyles.container, styles.background]}
-            >
-                <Modal
-                    position={'center'}
-                    style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
-                    isOpen={this.state.isModalVisible}
-                    backButtonClose
-                    swipeToClose={false}
-                    coverScreen
-                    onClosed={() => this.setState({ isModalVisible: false })}
-                >
-                    <View onLayout={(ev) => { this.resizeModal(ev); }}>
-                        <Card title={'Select environment'}>
-                            <Spacer size={5} />
-                            <View style={{ borderWidth: 1, borderColor: AppColors.border }}>
-                                {
-                                    Object.entries(APIConfig.APIs).map(([key, value]) => (
-                                        <ListItem
-                                            key={key}
-                                            title={`${key}: ${value}`}
-                                            hideChevron
-                                            containerStyle={{ backgroundColor: value === this.state.apiHost ? AppColors.primary.grey.fiftyPercent : AppColors.white }}
-                                            onPress={() => { this.setState({ isModalVisible: false, apiHost: value }); return AppAPI.storeAPIHost(key, value);  }}
-                                        />
-                                    ))
-                                }
-                            </View>
-                            <Spacer />
-                            <Button
-                                title={'Cancel'}
-                                backgroundColor={AppColors.primary.grey.fiftyPercent}
-                                onPress={() => this.setState({ isModalVisible: false })}
-                            />
-                        </Card>
-                    </View>
-                </Modal>
+            <Wrapper>
                 <Egg
                     setps={'TTT'}
                     onCatch={() => this.setState({ isModalVisible: true })}
@@ -281,17 +253,49 @@ class Login extends Component {
                     </TouchableOpacity>
 
                     {/*<Spacer size={10} />
-
                 <Text p style={[AppStyles.textCenterAligned]}>
                     - or -
                 </Text>
-
                 <Button
                     title={'Sign Up'}
                     onPress={Actions.signUp}
                 />*/}
                 </Card>
-            </KeyboardAvoidingView>
+                <Modal
+                    position={'center'}
+                    style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
+                    isOpen={this.state.isModalVisible}
+                    backButtonClose
+                    swipeToClose={false}
+                    coverScreen
+                    onClosed={() => this.setState({ isModalVisible: false })}
+                >
+                    <View onLayout={(ev) => { this.resizeModal(ev); }}>
+                        <Card title={'Select environment'}>
+                            <Spacer size={5} />
+                            <View style={{ borderWidth: 1, borderColor: AppColors.border }}>
+                                {
+                                    Object.entries(APIConfig.APIs).map(([key, value]) => (
+                                        <ListItem
+                                            key={key}
+                                            title={`${key}: ${value}`}
+                                            hideChevron
+                                            containerStyle={{ backgroundColor: value === this.state.apiHost ? AppColors.primary.grey.fiftyPercent : AppColors.white }}
+                                            onPress={() => { this.setState({ isModalVisible: false, apiHost: value }); return AppAPI.storeAPIHost(key, value);  }}
+                                        />
+                                    ))
+                                }
+                            </View>
+                            <Spacer />
+                            <Button
+                                title={'Cancel'}
+                                backgroundColor={AppColors.primary.grey.fiftyPercent}
+                                onPress={() => this.setState({ isModalVisible: false })}
+                            />
+                        </Card>
+                    </View>
+                </Modal>
+            </Wrapper>
         );
     }
 }

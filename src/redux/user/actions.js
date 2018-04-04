@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:59 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-30 02:25:56
+ * @Last Modified time: 2018-04-04 00:58:12
  */
 
 /**
@@ -389,10 +389,9 @@ const stopRequest = () => {
     }));
 };
 
-const selectGraph = (selectedGraph, selectedGraphIndex) => {
+const selectGraph = (selectedGraphIndex) => {
     return dispatch => Promise.resolve(dispatch({
         type: Actions.SELECT_GRAPH,
-        selectedGraph,
         selectedGraphIndex,
     }));
 };
