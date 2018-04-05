@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-02 22:49:58
+ * @Last Modified time: 2018-04-05 00:36:08
  */
 
 import React, { Component } from 'react';
@@ -22,7 +22,6 @@ import { Placeholder } from '@general/';
 const noData = 'No data to show for this range...';
 
 const DAY_OF_WEEK_MAP = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
-const GRAPH_INDEX_MAP = { CIRCULAR_PROGRESS: 0, DAILY_LOAD_CHART: 1 };
 
 /* Component ==================================================================== */
 class TrainingReport extends Component {
@@ -169,6 +168,7 @@ class TrainingReport extends Component {
         let acwrGRF7ColorIndex = typeof(acwrGRF7) === 'number' ? Thresholds.chart.acwrGRF7.findIndex(colorThreshold => colorThreshold.max > acwrGRF7 && colorThreshold.min <= acwrGRF7) : -1;
         let minColorIndex = Math.min(...[fatigueRateOfChangeColorIndex, avgFatigueColorIndex, acwrTotalAccel7ColorIndex, acwrGRF7ColorIndex].filter(value => value !== -1), Number.POSITIVE_INFINITY);
         let color = minColorIndex === Number.POSITIVE_INFINITY ? AppColors.secondary.blue : Thresholds.chart.acwrTotalAccel7[minColorIndex].color;
+
         if (fatigueRateOfChangeColorIndex !== -1 && avgFatigueColorIndex !== -1) {
             cards.push(Thresholds.chart.fatigueRateAcrossDays[fatigueRateOfChangeColorIndex < avgFatigueColorIndex ? fatigueRateOfChangeColorIndex : avgFatigueColorIndex]);
         } else if (fatigueRateOfChangeColorIndex !== -1) {
@@ -176,10 +176,10 @@ class TrainingReport extends Component {
         } else if (avgFatigueColorIndex !== -1) {
             cards.push(Thresholds.chart.fatigueRateAcrossDays[avgFatigueColorIndex]);
         }
+
         if (acwrTotalAccel7ColorIndex !== -1) {
             cards.push(Thresholds.chart.acwrTotalAccel7[acwrTotalAccel7ColorIndex]);
-        }
-        if (acwrGRF7ColorIndex !== -1) {
+        } else if (acwrGRF7ColorIndex !== -1) {
             cards.push(Thresholds.chart.acwrGRF7[acwrGRF7ColorIndex]);
         }
 
@@ -202,7 +202,7 @@ class TrainingReport extends Component {
         let controlRFColorIndex = typeof(controlRF) === 'number' ? Thresholds.chart.controlRF.findIndex(colorThreshold => colorThreshold.max >= controlRF && colorThreshold.min <= controlRF) : -1;
         let hipControlColorIndex = typeof(hipControl) === 'number' ? Thresholds.chart.hipControl.findIndex(colorThreshold => colorThreshold.max >= hipControl && colorThreshold.min <= hipControl) : -1;
         let ankleControlColorIndex = typeof(ankleControl) === 'number' ? Thresholds.chart.ankleControl.findIndex(colorThreshold => colorThreshold.max >= ankleControl && colorThreshold.min <= ankleControl) : -1;
-        
+
         let minColorIndex = Math.min(...[fatigueColorIndex, percLRGRFDiffColorIndex, symmetryColorIndex, hipSymmetryColorIndex, ankleSymmetryColorIndex, controlColorIndex, controlLFColorIndex, controlRFColorIndex, hipControlColorIndex, ankleControlColorIndex].filter(value => value !== -1), Number.POSITIVE_INFINITY);
         let color = minColorIndex === Number.POSITIVE_INFINITY ? AppColors.secondary.blue : Thresholds.chart.fatigueRateSingleDay[minColorIndex].color;
 
@@ -218,30 +218,52 @@ class TrainingReport extends Component {
             cards.push(card);
         }
 
-        if (symmetryColorIndex !== -1) {
-            cards.push(Thresholds.chart.symmetry[symmetryColorIndex]);
-        }
-        if (hipSymmetryColorIndex !== -1) {
+        if (hipSymmetryColorIndex !== -1 && ankleSymmetryColorIndex !== -1) {
+            if (symmetryColorIndex !== -1) {
+                let card = Thresholds.chart.symmetry[symmetryColorIndex];
+                let tempMinColorIndex = Math.min(...[symmetryColorIndex, hipSymmetryColorIndex, ankleSymmetryColorIndex]);
+                card.cardColor = Thresholds.chart.symmetry[tempMinColorIndex].cardColor;
+                cards.push(card);
+            }
+        } else if (hipSymmetryColorIndex !== -1) {
             cards.push(Thresholds.chart.hipSymmetry[hipSymmetryColorIndex]);
-        }
-        if (ankleSymmetryColorIndex !== -1) {
+        } else if (ankleSymmetryColorIndex !== -1) {
             cards.push(Thresholds.chart.ankleSymmetry[ankleSymmetryColorIndex]);
         }
 
-        if (controlColorIndex !== -1) {
-            cards.push(Thresholds.chart.control[controlColorIndex]);
-        }
-        if (controlLFColorIndex !== -1) {
-            cards.push(Thresholds.chart.controlLF[controlLFColorIndex]);
-        }
-        if (controlRFColorIndex !== -1) {
-            cards.push(Thresholds.chart.controlRF[controlRFColorIndex]);
-        }
         if (hipControlColorIndex !== -1) {
-            cards.push(Thresholds.chart.hipControl[hipControlColorIndex]);
-        }
-        if (ankleControlColorIndex !== -1) {
-            cards.push(Thresholds.chart.ankleControl[ankleControlColorIndex]);
+            if (controlLFColorIndex !== -1 && controlRFColorIndex !== -1) {
+                if (controlColorIndex !== -1) {
+                    let card = Thresholds.chart.control[controlColorIndex];
+                    let tempMinColorIndex = Math.min(...[controlColorIndex, controlLFColorIndex, controlRFColorIndex, hipControlColorIndex]);
+                    card.cardColor = Thresholds.chart.control[tempMinColorIndex].cardColor;
+                    cards.push(card);
+                }
+            } else {
+                cards.push(Thresholds.chart.hipControl[hipControlColorIndex]);
+                if (controlLFColorIndex !== -1) {
+                    cards.push(Thresholds.chart.controlLF[controlLFColorIndex]);
+                }
+                if (controlRFColorIndex !== -1) {
+                    cards.push(Thresholds.chart.controlRF[controlRFColorIndex]);
+                }
+            }
+        } else {
+            if (controlLFColorIndex !== -1 && controlRFColorIndex !== -1) {
+                if (ankleControlColorIndex !== -1) {
+                    let card = Thresholds.chart.ankleControl[ankleControlColorIndex];
+                    let tempMinColorIndex = Math.min(...[controlLFColorIndex, controlRFColorIndex, ankleControlColorIndex]);
+                    card.cardColor = Thresholds.chart.ankleControl[tempMinColorIndex].cardColor;
+                    cards.push(card);
+                }
+            } else {
+                if (controlLFColorIndex !== -1) {
+                    cards.push(Thresholds.chart.controlLF[controlLFColorIndex]);
+                }
+                if (controlRFColorIndex !== -1) {
+                    cards.push(Thresholds.chart.controlRF[controlRFColorIndex]);
+                }
+            }
         }
 
         return ({color, cards});
@@ -370,7 +392,7 @@ class TrainingReport extends Component {
         }
         let isCurrentWeekFocused = this.isCurrentWeekFocused(startDateComponents, endDateComponents);
         let { focusedWeekComparisionPercentageOverall = null, focusedWeekComparisionPercentageToDate = null, weekData = null, progressData = null } = userData ? this.getGraphData(userData, isCurrentWeekFocused) : {};
-        let selectedCards = typeof(user.selectedGraph) === 'number' && typeof(user.selectedGraphIndex) === 'number' ? user.selectedGraph === GRAPH_INDEX_MAP.CIRCULAR_PROGRESS ? progressData.cards : weekData[DAY_OF_WEEK_MAP[user.selectedGraphIndex]].cards : null;
+        let selectedCards = typeof(user.selectedGraphIndex) === 'number' ? weekData[DAY_OF_WEEK_MAP[user.selectedGraphIndex]].cards : progressData ? progressData.cards : null;
         let preprocessingMessages = this.preprocessingMessages(userData, user, role);
         return (
             <View>
@@ -458,9 +480,6 @@ class TrainingReport extends Component {
                                 />
                             </View>
                             <CircularProgress
-                                graphIndex={GRAPH_INDEX_MAP.CIRCULAR_PROGRESS}
-                                selectGraph={selectGraph}
-                                isGraphSelected={user.selectedGraph === GRAPH_INDEX_MAP.CIRCULAR_PROGRESS}
                                 percentageOverall={focusedWeekComparisionPercentageOverall}
                                 percentageToDate={focusedWeekComparisionPercentageToDate}
                                 progressColor={progressData.color}
@@ -472,7 +491,7 @@ class TrainingReport extends Component {
                             <View style={{ backgroundColor: AppColors.white }}>
                                 <View style={[AppStyles.row, AppStyles.containerCentered]}>
                                     <Text h6 style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold', color: AppColors.primary.grey.hundredPercent }]}>
-                                        {'DAILY LOAD COMPARED TO PREVIOUS WEEK'}
+                                        {'DAILY LOAD'}
                                     </Text>
                                     {/* <View style={{ flex: 1 }}>
                                         <ButtonGroup
@@ -487,9 +506,7 @@ class TrainingReport extends Component {
                                 </View>
                                 <Spacer size={20}/>
                                 <DailyLoadChart
-                                    graphIndex={GRAPH_INDEX_MAP.DAILY_LOAD_CHART}
                                     selectGraph={selectGraph}
-                                    isGraphSelected={user.selectedGraph === GRAPH_INDEX_MAP.DAILY_LOAD_CHART}
                                     selectedGraphIndex={user.selectedGraphIndex}
                                     user={user}
                                     data={weekData}
@@ -500,12 +517,12 @@ class TrainingReport extends Component {
                                 />
                             </View>
                             { selectedCards ?
-                                <View style={{ backgroundColor: AppColors.secondary.light_blue.hundredPercent }}>
+                                <View>
                                     {
                                         selectedCards.map((card, index) =>
                                             <Card
                                                 key={index}
-                                                containerStyle={{ backgroundColor: card.cardColor, alignSelf: 'center', borderRadius: 0, borderColor: AppColors.transparent }}
+                                                containerStyle={{ backgroundColor: card.cardColor, alignSelf: 'center', borderRadius: 5, borderColor: AppColors.transparent }}
                                             >
                                                 <Text style={[AppStyles.h3, { color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold', marginBottom: 15 }]}>
                                                     {card.title}

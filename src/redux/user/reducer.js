@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:51 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-30 02:09:05
+ * @Last Modified time: 2018-04-04 00:58:04
  */
 
 /**
@@ -30,7 +30,6 @@ const initialState = {
         athlete:   false,
         athleteId: null,
     },
-    selectedGraph:      null,
     selectedGraphIndex: null,
 };
 
@@ -152,7 +151,6 @@ export default function userReducer(state = initialState, action) {
                 athlete:   state.role === Roles.athlete ? true : false,
                 athleteId: state.role === Roles.athlete ? state.id : null,
             },
-            selectedGraph:      (action.index === null ? action.index : parseInt(action.index, 10)) === state.userIndex ? state.selectedGraph : null,
             selectedGraphIndex: (action.index === null ? action.index : parseInt(action.index, 10)) === state.userIndex ? state.selectedGraphIndex : null,
         });
     case Actions.TRAINING_GROUP_SELECT:
@@ -201,7 +199,6 @@ export default function userReducer(state = initialState, action) {
             previousWeekStatsEndDate:   action.data.previousWeekEndDate,
             nextWeekStatsStartDate:     action.data.nextWeekStartDate,
             nextWeekStatsEndDate:       action.data.nextWeekEndDate,
-            selectedGraph:              null,
             selectedGraphIndex:         null,
         });
     case Actions.SELECT_STATS_CATEGORY:
@@ -220,8 +217,7 @@ export default function userReducer(state = initialState, action) {
         });
     case Actions.SELECT_GRAPH:
         return Object.assign({}, state, {
-            selectedGraph:      state.selectedGraph === action.selectedGraph && state.selectedGraphIndex === action.selectedGraphIndex ? null : action.selectedGraph,
-            selectedGraphIndex: state.selectedGraph === action.selectedGraph && state.selectedGraphIndex === action.selectedGraphIndex ? null : action.selectedGraphIndex,
+            selectedGraphIndex: state.selectedGraphIndex === action.selectedGraphIndex ? null : action.selectedGraphIndex,
         });
     case Actions.SIGN_UP_SUCCESS:
     case Actions.FORGOT_PASSWORD_SUCCESS:

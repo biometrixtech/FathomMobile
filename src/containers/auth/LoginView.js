@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:32:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-02 21:50:56
+ * @Last Modified time: 2018-04-05 00:36:56
  */
 
 /**
@@ -253,11 +253,9 @@ class Login extends Component {
                     </TouchableOpacity>
 
                     {/*<Spacer size={10} />
-
                 <Text p style={[AppStyles.textCenterAligned]}>
                     - or -
                 </Text>
-
                 <Button
                     title={'Sign Up'}
                     onPress={Actions.signUp}

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:59 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-30 02:25:56
+ * @Last Modified time: 2018-04-04 14:58:37
  */
 
 /**
@@ -55,10 +55,13 @@ const login = (credentials, freshLogin) => {
                             ...response,
                             password: userCreds.password
                         };
-                        return dispatch({
-                            type: Actions.USER_REPLACE,
-                            data: storedObject,
-                        });
+                        return Promise.resolve(dispatch({
+                            type: Actions.LOGOUT
+                        }))
+                            .then(() => dispatch({
+                                type: Actions.USER_REPLACE,
+                                data: storedObject,
+                            }));
                     })
                     .then(() => AppAPI.teams.get())
                     .then(teams => {
@@ -389,10 +392,9 @@ const stopRequest = () => {
     }));
 };
 
-const selectGraph = (selectedGraph, selectedGraphIndex) => {
+const selectGraph = (selectedGraphIndex) => {
     return dispatch => Promise.resolve(dispatch({
         type: Actions.SELECT_GRAPH,
-        selectedGraph,
         selectedGraphIndex,
     }));
 };

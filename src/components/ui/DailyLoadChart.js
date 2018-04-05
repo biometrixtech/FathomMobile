@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-02 22:36:37
+ * @Last Modified time: 2018-04-05 00:37:04
  */
 
 /**
@@ -19,7 +19,6 @@ import { Icon } from 'react-native-elements';
 
 // Consts and Libs
 import { AppColors, AppStyles, AppSizes } from '@theme/';
-import { Thresholds } from '@constants/';
 
 // Components
 import { Card, Spacer, Text } from '@ui/';
@@ -45,9 +44,7 @@ const DAYS_OF_WEEK = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
 /* Component ==================================================================== */
 class DailyLoadChart extends Component {
     static propTypes = {
-        graphIndex:         PropTypes.number,
         selectGraph:        PropTypes.func.isRequired,
-        isGraphSelected:    PropTypes.bool,
         selectedGraphIndex: PropTypes.number,
         user:               PropTypes.object,
         data:               PropTypes.object,
@@ -60,7 +57,6 @@ class DailyLoadChart extends Component {
     static defaultProps = {
         width:              AppSizes.screen.width/5,
         height:             AppSizes.screen.width/5,
-        isGraphSelected:    false,
         selectedGraphIndex: null,
         data:               { M: {}, Tu: {}, W: {}, Th: {}, F: {}, Sa: {}, Su: {} },
         resetVisibleStates: () => {},
@@ -133,7 +129,7 @@ class DailyLoadChart extends Component {
     }
 
     render = () => {
-        let { width, height, user, resetVisibleStates, getTeamStats, startRequest, stopRequest, data, graphIndex, selectGraph, isGraphSelected, selectedGraphIndex } = this.props;
+        let { width, height, user, resetVisibleStates, getTeamStats, startRequest, stopRequest, data, selectGraph, selectedGraphIndex } = this.props;
         let maxRadius = height/2;
         let maxValue = this.getMaxValue(data);
 
@@ -166,8 +162,8 @@ class DailyLoadChart extends Component {
                     </TouchableWithoutFeedback>
                     {
                         DAYS_OF_WEEK.map((day, index) =>
-                            <TouchableWithoutFeedback onPress={() => selectGraph(graphIndex, index)} key={day}>
-                                <View style={{ padding: height/15, alignItems: 'center', backgroundColor: isGraphSelected && index === selectedGraphIndex ? AppColors.secondary.light_blue.hundredPercent : null }}>
+                            <TouchableWithoutFeedback onPress={() => selectGraph(index)} key={day}>
+                                <View style={{ padding: height/15, borderRadius: 5, alignItems: 'center', backgroundColor: index === selectedGraphIndex ? AppColors.secondary.light_blue.hundredPercent : null }}>
                                     <Text h6 style={{ color: AppColors.primary.grey.hundredPercent, marginBottom: height/15 }}>{day}</Text>
                                     { this.returnGraph(data[day], width, height, maxRadius, maxValue) }
                                 </View>
