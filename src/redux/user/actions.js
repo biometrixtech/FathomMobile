@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:59 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-04 00:58:12
+ * @Last Modified time: 2018-04-04 14:58:37
  */
 
 /**
@@ -55,10 +55,13 @@ const login = (credentials, freshLogin) => {
                             ...response,
                             password: userCreds.password
                         };
-                        return dispatch({
-                            type: Actions.USER_REPLACE,
-                            data: storedObject,
-                        });
+                        return Promise.resolve(dispatch({
+                            type: Actions.LOGOUT
+                        }))
+                            .then(() => dispatch({
+                                type: Actions.USER_REPLACE,
+                                data: storedObject,
+                            }));
                     })
                     .then(() => AppAPI.teams.get())
                     .then(teams => {
