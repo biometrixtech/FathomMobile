@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-05 00:36:08
+ * @Last Modified time: 2018-04-05 00:58:14
  */
 
 import React, { Component } from 'react';
@@ -460,7 +460,7 @@ class TrainingReport extends Component {
                             <Spacer />
                             <View style={{ flexDirection: 'row' }}>
                                 <Icon
-                                    style={[AppStyles.containerCentered, AppStyles.flex1]}
+                                    containerStyle={[AppStyles.containerCentered, AppStyles.flex1]}
                                     name={'arrow-back'}
                                     color={AppColors.primary.grey.fiftyPercent}
                                     onPress={() => user && !user.loading ? startRequest().then(() => getTeamStats(user, -1)).then(() => this.resetVisibleStates()).then(() => stopRequest()) : null}
@@ -473,7 +473,7 @@ class TrainingReport extends Component {
                                     </View>
                                 </TouchableWithoutFeedback>
                                 <Icon
-                                    style={[AppStyles.containerCentered, AppStyles.flex1]}
+                                    containerStyle={[AppStyles.containerCentered, AppStyles.flex1]}
                                     name={'arrow-forward'}
                                     color={AppColors.primary.grey.fiftyPercent}
                                     onPress={() => user && !user.loading ? startRequest().then(() => getTeamStats(user, 1)).then(() => this.resetVisibleStates()).then(() => stopRequest()) : null}
