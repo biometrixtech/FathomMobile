@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-06 00:49:35
+ * @Last Modified time: 2018-04-06 01:13:21
  */
 
 import React, { Component } from 'react';
@@ -400,7 +400,7 @@ class TrainingReport extends Component {
                     !userData || !userData.stats ? 
                         <View>
                             { preprocessingMessages }
-                            <Spacer size={20}/>
+                            <Spacer size={user.users.length === 1 ? 10 : 20}/>
                             {
                                 user.users.length === 1 ? null :
                                     <View style={[AppStyles.row]} onLayout={ev => this.setState({ nameHeight: ev.nativeEvent.layout.height })}>
@@ -454,7 +454,7 @@ class TrainingReport extends Component {
                         :
                         <ScrollView stickyHeaderIndices={[preprocessingMessages ? 7 : 6]} style={{ height: AppSizes.screen.usableHeight - 10 }}>
                             { preprocessingMessages }
-                            <Spacer size={20}/>
+                            <Spacer size={user.users.length === 1 ? 10 : 20}/>
                             {
                                 user.users.length === 1 ? null :
                                     <View style={[AppStyles.row]}>
