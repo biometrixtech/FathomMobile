@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-04 14:45:48
+ * @Last Modified time: 2018-04-06 00:49:35
  */
 
 import React, { Component } from 'react';
@@ -401,14 +401,19 @@ class TrainingReport extends Component {
                         <View>
                             { preprocessingMessages }
                             <Spacer size={20}/>
-                            <View style={[AppStyles.row]} onLayout={ev => this.setState({ nameHeight: ev.nativeEvent.layout.height })}>
-                                <View style={{ flex: 1 }}/>
-                                <Text style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold' }]}>
-                                    {`${userData ? userData.first_name : ''} ${userData ? userData.last_name : ''}`}
-                                </Text>
-                                <View style={{ flex: 1 }}/>
-                            </View>
-                            <Spacer />
+                            {
+                                user.users.length === 1 ? null :
+                                    <View style={[AppStyles.row]} onLayout={ev => this.setState({ nameHeight: ev.nativeEvent.layout.height })}>
+                                        <View style={{ flex: 1 }}/>
+                                        <Text style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold' }]}>
+                                            {`${userData ? userData.first_name : ''} ${userData ? userData.last_name : ''}`}
+                                        </Text>
+                                        <View style={{ flex: 1 }}/>
+                                    </View>
+                            }
+                            {
+                                user.users.length === 1 ? null : <Spacer />
+                            }
                             <View style={{ flexDirection: 'row' }} onLayout={ev => this.setState({ chartHeaderHeight: ev.nativeEvent.layout.height })}>
                                 <Icon
                                     style={[AppStyles.containerCentered, AppStyles.flex1]}
@@ -450,14 +455,19 @@ class TrainingReport extends Component {
                         <ScrollView stickyHeaderIndices={[preprocessingMessages ? 7 : 6]} style={{ height: AppSizes.screen.usableHeight - 10 }}>
                             { preprocessingMessages }
                             <Spacer size={20}/>
-                            <View style={[AppStyles.row]}>
-                                <View style={{ flex: 1 }}/>
-                                <Text style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold' }]}>
-                                    {`${userData ? userData.first_name : ''} ${userData ? userData.last_name : ''}`}
-                                </Text>
-                                <View style={{ flex: 1 }}/>
-                            </View>
-                            <Spacer />
+                            {
+                                user.users.length === 1 ? null :
+                                    <View style={[AppStyles.row]}>
+                                        <View style={{ flex: 1 }}/>
+                                        <Text style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold' }]}>
+                                            {`${userData ? userData.first_name : ''} ${userData ? userData.last_name : ''}`}
+                                        </Text>
+                                        <View style={{ flex: 1 }}/>
+                                    </View>
+                            }
+                            {
+                                user.users.length === 1 ? null : <Spacer />
+                            }
                             <View style={{ flexDirection: 'row' }}>
                                 <Icon
                                     style={[AppStyles.containerCentered, AppStyles.flex1]}
