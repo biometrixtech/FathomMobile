@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-05 00:58:14
+ * @Last Modified time: 2018-04-06 01:11:55
  */
 
 import React, { Component } from 'react';
@@ -400,15 +400,20 @@ class TrainingReport extends Component {
                     !userData || !userData.stats ? 
                         <View>
                             { preprocessingMessages }
-                            <Spacer size={20}/>
-                            <View style={[AppStyles.row]} onLayout={ev => this.setState({ nameHeight: ev.nativeEvent.layout.height })}>
-                                <View style={[AppStyles.flex1]}/>
-                                <Text style={[AppStyles.textCenterAligned, AppStyles.flex1, { fontWeight: 'bold' }]}>
-                                    {`${userData ? userData.first_name : ''} ${userData ? userData.last_name : ''}`}
-                                </Text>
-                                <View style={[AppStyles.flex1]}/>
-                            </View>
-                            <Spacer />
+                            <Spacer size={user.users.length === 1 ? 10 : 20}/>
+                            {
+                                user.users.length === 1 ? null :
+                                    <View style={[AppStyles.row]} onLayout={ev => this.setState({ nameHeight: ev.nativeEvent.layout.height })}>
+                                        <View style={[AppStyles.flex1]}/>
+                                        <Text style={[AppStyles.textCenterAligned, AppStyles.flex1, { fontWeight: 'bold' }]}>
+                                            {`${userData ? userData.first_name : ''} ${userData ? userData.last_name : ''}`}
+                                        </Text>
+                                        <View style={[AppStyles.flex1]}/>
+                                    </View>
+                            }
+                            {
+                                user.users.length === 1 ? null : <Spacer />
+                            }
                             <View style={[AppStyles.row]} onLayout={ev => this.setState({ chartHeaderHeight: ev.nativeEvent.layout.height })}>
                                 <Icon
                                     containerStyle={[AppStyles.containerCentered, AppStyles.flex1]}
@@ -449,15 +454,20 @@ class TrainingReport extends Component {
                         :
                         <ScrollView stickyHeaderIndices={[preprocessingMessages ? 7 : 6]} style={{ height: AppSizes.screen.usableHeight - 10 }}>
                             { preprocessingMessages }
-                            <Spacer size={20}/>
-                            <View style={[AppStyles.row]}>
-                                <View style={{ flex: 1 }}/>
-                                <Text style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold' }]}>
-                                    {`${userData ? userData.first_name : ''} ${userData ? userData.last_name : ''}`}
-                                </Text>
-                                <View style={{ flex: 1 }}/>
-                            </View>
-                            <Spacer />
+                            <Spacer size={user.users.length === 1 ? 10 : 20}/>
+                            {
+                                user.users.length === 1 ? null :
+                                    <View style={[AppStyles.row]}>
+                                        <View style={{ flex: 1 }}/>
+                                        <Text style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold' }]}>
+                                            {`${userData ? userData.first_name : ''} ${userData ? userData.last_name : ''}`}
+                                        </Text>
+                                        <View style={{ flex: 1 }}/>
+                                    </View>
+                            }
+                            {
+                                user.users.length === 1 ? null : <Spacer />
+                            }
                             <View style={{ flexDirection: 'row' }}>
                                 <Icon
                                     containerStyle={[AppStyles.containerCentered, AppStyles.flex1]}
