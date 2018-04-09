@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:19:55 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-20 21:25:15
+ * @Last Modified time: 2018-04-08 16:01:26
  */
 
 /**
@@ -32,7 +32,7 @@ const base = {
 
 export default {
     base: { ...base },
-    h0:   { ...base, size: base.size * 2.5,  lineHeight: lineHeight(base.size * 2) },
+    h0:   { ...base, size: base.size * 4,    lineHeight: lineHeight(base.size * 4.25) },
     h1:   { ...base, size: base.size * 1.75, lineHeight: lineHeight(base.size * 2) },
     h2:   { ...base, size: base.size * 1.5,  lineHeight: lineHeight(base.size * 1.75) },
     h3:   { ...base, size: base.size * 1.25, lineHeight: lineHeight(base.size * 1.5) },

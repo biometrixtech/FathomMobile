@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-04 03:18:36
+ * @Last Modified time: 2018-04-09 17:46:37
  */
 
 /**
@@ -76,10 +76,10 @@ class DailyLoadChart extends Component {
                 let dailyGraphWidth = this.props.width + this.props.height * 2 / 15;
                 let dayOfWeekOffset = ((new Date()).getDay() + 6) % 7;
                 let offset = sevenTenthsWidth - (7.5 + dailyGraphWidth * (dayOfWeekOffset + 1));
-                let absoluteOffset = Math.abs(offset > 0 ? 0 : offset);
+                let absoluteOffset = Math.abs(offset > 0 ? 15 + this.props.height * 2 / 15 + dailyGraphWidth : offset);
                 this.refs.scrollView.scrollTo({ x: absoluteOffset, animated: true });
             }
-        }, 100);
+        }, 1);
     };
 
     componentWillUnmount = () => {

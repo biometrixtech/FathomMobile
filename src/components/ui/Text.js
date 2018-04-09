@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:30:36 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-18 22:51:24
+ * @Last Modified time: 2018-04-08 12:31:38
  */
 
 /**
@@ -21,6 +21,7 @@ import { AppStyles } from '@theme/';
 /* Component ==================================================================== */
 class CustomText extends Component {
     static propTypes = {
+        h0:      PropTypes.bool,
         h1:      PropTypes.bool,
         h2:      PropTypes.bool,
         h3:      PropTypes.bool,
@@ -38,6 +39,7 @@ class CustomText extends Component {
     }
 
     static defaultProps = {
+        h0:       false,
         h1:       false,
         h2:       false,
         h3:       false,
@@ -59,6 +61,7 @@ class CustomText extends Component {
         };
 
         if (this.props.p)  { props.style = [AppStyles.p];  }
+        if (this.props.h0) { props.style = [AppStyles.h0]; }
         if (this.props.h1) { props.style = [AppStyles.h1]; }
         if (this.props.h2) { props.style = [AppStyles.h2]; }
         if (this.props.h3) { props.style = [AppStyles.h3]; }

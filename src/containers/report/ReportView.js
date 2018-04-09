@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-06 01:13:21
+ * @Last Modified time: 2018-04-08 15:55:53
  */
 
 import React, { Component } from 'react';
@@ -11,7 +11,7 @@ import { ButtonGroup, Icon } from 'react-native-elements';
 import PropTypes from 'prop-types';
 
 // Consts and Libs
-import { AppColors, AppStyles, AppSizes } from '@theme/';
+import { AppColors, AppStyles, AppSizes, AppFonts } from '@theme/';
 import { Roles, Thresholds, ErrorMessages } from '@constants/';
 import { AppUtil } from '@lib/';
 
@@ -497,8 +497,9 @@ class TrainingReport extends Component {
                                 stopRequest={this.props.stopRequest}
                                 resetVisibleStates={this.resetVisibleStates}
                             />
-                            <Spacer size={30}/>
-                            <View style={{ backgroundColor: AppColors.white }}>
+                            <Spacer size={20}/>
+                            <View style={{ backgroundColor: AppColors.white, zIndex: 1 }}>
+                                <Spacer />
                                 <View style={[AppStyles.row, AppStyles.containerCentered]}>
                                     <Text h6 style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold', color: AppColors.primary.grey.hundredPercent }]}>
                                         {'DAILY LOAD'}
@@ -527,7 +528,7 @@ class TrainingReport extends Component {
                                 />
                             </View>
                             { selectedCards ?
-                                <View>
+                                <View style={{ zIndex: 0 }}>
                                     {
                                         selectedCards.map((card, index) =>
                                             <Card
@@ -537,7 +538,7 @@ class TrainingReport extends Component {
                                                 <Text style={[AppStyles.h3, { color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold', marginBottom: 15 }]}>
                                                     {card.title}
                                                 </Text>
-                                                <Text style={{ color: AppColors.white }}>
+                                                <Text style={{ color: AppColors.white, lineHeight: AppFonts.lineHeight(15) }}>
                                                     {card.detectionResponse}
                                                 </Text>
                                                 <View
@@ -547,7 +548,7 @@ class TrainingReport extends Component {
                                                         margin:            5,
                                                     }}
                                                 />
-                                                <Text style={{ color: AppColors.white }}>
+                                                <Text style={{ color: AppColors.white, lineHeight: AppFonts.lineHeight(15) }}>
                                                     {card.recommedationResponse}
                                                 </Text>
                                             </Card>

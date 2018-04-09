@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-04 03:18:21
+ * @Last Modified time: 2018-04-08 16:05:04
  */
 
 /**
@@ -37,8 +37,8 @@ class CircularProgress extends Component {
     }
 
     static defaultProps = {
-        width:              AppSizes.screen.widthThird,
-        height:             AppSizes.screen.widthThird,
+        width:              AppSizes.screen.widthTwoThirds,
+        height:             AppSizes.screen.widthTwoThirds,
         percentageOverall:  0,
         percentageToDate:   0,
         blankColor:         AppColors.secondary.light_blue.fiftyPercent,
@@ -91,7 +91,7 @@ class CircularProgress extends Component {
         let circleWidth = width / 2;
         return (
             <View>
-                <Spacer />
+                <Spacer size={20} />
                 <View style={[AppStyles.row, { height }]} onLayout={ev => this.setState({ graphHeight: ev.nativeEvent.layout.height })}>
                     <View style={[AppStyles.flex1]}/>
                     <View style={[AppStyles.flex2, AppStyles.containerCentered]}>
@@ -109,20 +109,23 @@ class CircularProgress extends Component {
                                 strokeLinejoin={'round'}
                                 fill={progressColor.hundredPercent}
                             />
-                            <Circle cx={circleWidth} cy={circleHeight} r={(circleHeight)*0.75} fill={fillColor}/>
+                            <Circle cx={circleWidth} cy={circleHeight} r={(circleHeight)*0.8} fill={fillColor}/>
                         </Svg>
                         {
                             percentageOverall === 0 && percentageToDate === 0 ?
                                 <View style={textViewStyle}>
-                                    <Text h6 style={{ color: AppColors.primary.grey.hundredPercent }}>Capture one complete</Text>
-                                    <Text h6 style={{ color: AppColors.primary.grey.hundredPercent }}>week of training</Text>
-                                    <Text h6 style={{ color: AppColors.primary.grey.hundredPercent }}>to receive target</Text>
-                                    <Text h6 style={{ color: AppColors.primary.grey.hundredPercent }}>load recommendations</Text>
+                                    <Text h5 style={{ fontWeight: '400'}}>Capture one complete</Text>
+                                    <Text h5 style={{ fontWeight: '400'}}>week of training</Text>
+                                    <Text h5 style={{ fontWeight: '400'}}>to receive target</Text>
+                                    <Text h5 style={{ fontWeight: '400'}}>load recommendations</Text>
                                 </View> :
                                 <View style={textViewStyle}>
-                                    <Text h2 style={{ color: AppColors.primary.grey.hundredPercent }}>{percentageOverall}%</Text>
-                                    <Text h6 style={{ color: AppColors.primary.grey.hundredPercent }}>WEEKLY</Text>
-                                    <Text h6 style={{ color: AppColors.primary.grey.hundredPercent }}>LOAD</Text>
+                                    <View style={[AppStyles.row]}>
+                                        <Text h0>{percentageOverall}</Text>
+                                        <Text h2 style={{ alignSelf: 'flex-end', fontWeight: '400', paddingBottom: 10 }}>%</Text>
+                                    </View>
+                                    <Text h5 style={{ fontWeight: '400'}}>WEEKLY</Text>
+                                    <Text h5 style={{ fontWeight: '400'}}>LOAD</Text>
                                 </View>
                         }
                     </View>
