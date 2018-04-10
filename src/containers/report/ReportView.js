@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-08 21:29:27
+ * @Last Modified time: 2018-04-10 19:08:09
  */
 
 import React, { Component } from 'react';
@@ -452,7 +452,7 @@ class TrainingReport extends Component {
                             <View style={{ height: AppSizes.screen.usableHeight - 30 - chartHeaderHeight - nameHeight - preprocessingHeight }}><Placeholder text={noData} /></View> 
                         </View>
                         :
-                        <ScrollView stickyHeaderIndices={[preprocessingMessages ? 7 : 6]} style={{ height: AppSizes.screen.usableHeight - 10 }}>
+                        <ScrollView stickyHeaderIndices={[preprocessingMessages ? 6 : 5]} style={{ height: AppSizes.screen.usableHeight - 10 }}>
                             { preprocessingMessages }
                             <Spacer size={user.users.length === 1 ? 10 : 20}/>
                             {
@@ -497,9 +497,8 @@ class TrainingReport extends Component {
                                 stopRequest={this.props.stopRequest}
                                 resetVisibleStates={this.resetVisibleStates}
                             />
-                            <Spacer size={20}/>
                             <View style={{ backgroundColor: AppColors.white, zIndex: 1 }}>
-                                <Spacer />
+                                <Spacer size={30}/>
                                 <View style={[AppStyles.row, AppStyles.containerCentered]}>
                                     <Text h6 style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold', color: AppColors.primary.grey.hundredPercent }]}>
                                         {'DAILY LOAD'}
@@ -535,7 +534,7 @@ class TrainingReport extends Component {
                                                 key={index}
                                                 containerStyle={{ backgroundColor: card.cardColor, alignSelf: 'center', borderRadius: 5, borderColor: AppColors.transparent }}
                                             >
-                                                <Text style={[AppStyles.h3, { color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold', marginBottom: 15 }]}>
+                                                <Text style={[AppStyles.h4, { color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold', marginBottom: 15 }]}>
                                                     {card.title}
                                                 </Text>
                                                 <Text style={{ color: AppColors.white, lineHeight: AppFonts.lineHeight(15) }}>

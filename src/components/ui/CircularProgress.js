@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-08 16:05:04
+ * @Last Modified time: 2018-04-10 18:23:02
  */
 
 /**
@@ -122,10 +122,10 @@ class CircularProgress extends Component {
                                 <View style={textViewStyle}>
                                     <View style={[AppStyles.row]}>
                                         <Text h0>{percentageOverall}</Text>
-                                        <Text h2 style={{ alignSelf: 'flex-end', fontWeight: '400', paddingBottom: 10 }}>%</Text>
+                                        <Text h2 style={{ alignSelf: 'flex-end', fontWeight: '500', paddingBottom: 10 }}>%</Text>
                                     </View>
-                                    <Text h5 style={{ fontWeight: '400'}}>WEEKLY</Text>
-                                    <Text h5 style={{ fontWeight: '400'}}>LOAD</Text>
+                                    <Text h5 style={{ fontWeight: '500'}}>WEEKLY</Text>
+                                    <Text h5 style={{ fontWeight: '500'}}>LOAD</Text>
                                 </View>
                         }
                     </View>

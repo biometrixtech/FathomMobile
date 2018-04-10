@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:19:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-08 21:29:39
+ * @Last Modified time: 2018-04-10 19:08:11
  */
 
 /**
@@ -72,7 +72,7 @@ export default {
         fontSize:     Fonts.h0.size,
         lineHeight:   Fonts.h0.lineHeight,
         color:        Colors.primary.grey.hundredPercent,
-        fontWeight:   '600',
+        fontWeight:   '500',
         fontStyle:    'normal',
         margin:       0,
         marginBottom: 4,
