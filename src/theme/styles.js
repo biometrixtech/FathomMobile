@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:19:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-02 23:17:37
+ * @Last Modified time: 2018-04-08 21:29:39
  */
 
 /**
@@ -72,7 +72,7 @@ export default {
         fontSize:     Fonts.h0.size,
         lineHeight:   Fonts.h0.lineHeight,
         color:        Colors.primary.grey.hundredPercent,
-        fontWeight:   '800',
+        fontWeight:   '600',
         fontStyle:    'normal',
         margin:       0,
         marginBottom: 4,
@@ -144,6 +144,7 @@ export default {
         fontFamily: Fonts.h6.family,
         fontSize:   Fonts.h6.size,
         lineHeight: Fonts.h6.lineHeight,
+        color:      Colors.primary.grey.hundredPercent,
         fontWeight: '400',
         fontStyle:  'normal'
     },
@@ -151,6 +152,7 @@ export default {
         fontFamily: Fonts.h7.family,
         fontSize:   Fonts.h7.size,
         lineHeight: Fonts.h7.lineHeight,
+        color:      Colors.primary.grey.hundredPercent,
         fontWeight: '400',
         fontStyle:  'normal'
     },

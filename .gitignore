@@ -52,5 +52,9 @@ buck-out/
 */fastlane/Preview.html
 */fastlane/screenshots
 
+
 # Personal
 *.mobileprovision
+
+# Bundle artifact
+*.jsbundle
