@@ -122,7 +122,7 @@ class CircularProgress extends Component {
                                 <View style={textViewStyle}>
                                     <View style={[AppStyles.row]}>
                                         <Text h0>{percentageOverall}</Text>
-                                        <Text h2 style={{ alignSelf: 'flex-end', fontWeight: '500', paddingBottom: 10 }}>%</Text>
+                                        <Text h2 style={{ alignSelf: 'flex-end', fontWeight: '400', paddingBottom: 10 }}>%</Text>
                                     </View>
                                     <Text h5 style={{ fontWeight: '500'}}>WEEKLY</Text>
                                     <Text h5 style={{ fontWeight: '500'}}>LOAD</Text>
