@@ -72,7 +72,7 @@ export default {
         fontSize:     Fonts.h0.size,
         lineHeight:   Fonts.h0.lineHeight,
         color:        Colors.primary.grey.hundredPercent,
-        fontWeight:   '500',
+        fontWeight:   '400',
         fontStyle:    'normal',
         margin:       0,
         marginBottom: 4,
