@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-23 20:43:14
+ * @Last Modified time: 2018-04-24 23:56:19
  */
 
 /**
@@ -21,6 +21,7 @@ const Report = ({
     startRequest,
     stopRequest,
     selectGraph,
+    userSelect,
     user,
 }) => (
     <Layout
@@ -29,6 +30,7 @@ const Report = ({
         startRequest={startRequest}
         stopRequest={stopRequest}
         selectGraph={selectGraph}
+        userSelect={userSelect}
         user={user}
     />
 );
@@ -40,6 +42,7 @@ Report.propTypes = {
     startRequest: PropTypes.func.isRequired,
     stopRequest:  PropTypes.func.isRequired,
     selectGraph:  PropTypes.func.isRequired,
+    userSelect:   PropTypes.func.isRequired,
     user:         PropTypes.shape({}).isRequired,
 };
 
@@ -57,6 +60,7 @@ const mapDispatchToProps = {
     startRequest: UserActions.startRequest,
     stopRequest:  UserActions.stopRequest,
     selectGraph:  UserActions.setStatsCategory,
+    userSelect:   UserActions.userSelect,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Report);

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-24 01:04:37 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-24 23:38:09
+ * @Last Modified time: 2018-04-25 00:29:44
  */
 
 import React from 'react';
@@ -27,6 +27,8 @@ export default {
         swipeEnabled:            false,
         activeBackgroundColor:   AppColors.primary.grey.fiftyPercent,
         inactiveBackgroundColor: AppColors.primary.grey.thirtyPercent,
+        activeTintColor:         AppColors.primary.grey.hundredPercent,
+        inactiveTintColor:       AppColors.primary.grey.hundredPercent,
         tabBarStyle:             {
             backgroundColor: AppColors.secondary.blue.thirtyPercent,
         },
@@ -36,7 +38,6 @@ export default {
     },
 
     icons: {
-        color: AppColors.primary.grey.hundredPercent,
         size:  30,
         style: {
             width:       50,

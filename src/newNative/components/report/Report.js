@@ -2,12 +2,13 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-24 22:59:53
+ * @Last Modified time: 2018-04-25 00:37:08
  */
 
 import React, { Component } from 'react';
 import { ScrollView, View, ActivityIndicator, TouchableWithoutFeedback } from 'react-native';
 import { ButtonGroup, Icon } from 'react-native-elements';
+import ModalDropdown from 'react-native-modal-dropdown';
 import PropTypes from 'prop-types';
 
 // Consts and Libs
@@ -36,6 +37,7 @@ class TrainingReport extends Component {
         startRequest: PropTypes.func.isRequired,
         stopRequest:  PropTypes.func.isRequired,
         selectGraph:  PropTypes.func.isRequired,
+        userSelect:   PropTypes.func.isRequired,
     }
     
     static defaultProps = {
@@ -407,9 +409,16 @@ class TrainingReport extends Component {
                                 user.users.length === 1 ? null :
                                     <View style={[AppStyles.row]} onLayout={ev => this.setState({ nameHeight: ev.nativeEvent.layout.height })}>
                                         <View style={[AppStyles.flex1]}/>
-                                        <Text style={[AppStyles.textCenterAligned, AppStyles.flex1, { fontWeight: 'bold' }]}>
-                                            {`${userData ? userData.first_name : ''} ${userData ? userData.last_name : ''}`}
-                                        </Text>
+                                        <View style={[AppStyles.flex2, AppStyles.containerCentered]}>
+                                            <ModalDropdown
+                                                textStyle={[AppStyles.textCenterAligned, AppStyles.baseText, { fontWeight: 'bold' }]}
+                                                dropdownTextStyle={[AppStyles.baseText]}
+                                                defaultIndex={user.userIndex}
+                                                defaultValue={`${user.users[user.userIndex].first_name} ${user.users[user.userIndex].last_name}`}
+                                                options={user.users.map(mapUser => `${mapUser.first_name} ${mapUser.last_name}`)}
+                                                onSelect={index => this.props.userSelect(index)}
+                                            />
+                                        </View>
                                         <View style={[AppStyles.flex1]}/>
                                     </View>
                             }
@@ -461,9 +470,16 @@ class TrainingReport extends Component {
                                 user.users.length === 1 ? null :
                                     <View style={[AppStyles.row]}>
                                         <View style={{ flex: 1 }}/>
-                                        <Text style={[AppStyles.textCenterAligned, { flex: 1, fontWeight: 'bold' }]}>
-                                            {`${userData ? userData.first_name : ''} ${userData ? userData.last_name : ''}`}
-                                        </Text>
+                                        <View style={[AppStyles.flex2, AppStyles.containerCentered]}>
+                                            <ModalDropdown
+                                                textStyle={[AppStyles.textCenterAligned, AppStyles.baseText, { fontWeight: 'bold' }]}
+                                                dropdownTextStyle={[AppStyles.baseText]}
+                                                defaultIndex={user.userIndex}
+                                                defaultValue={`${user.users[user.userIndex].first_name} ${user.users[user.userIndex].last_name}`}
+                                                options={user.users.map(mapUser => `${mapUser.first_name} ${mapUser.last_name}`)}
+                                                onSelect={index => this.props.userSelect(index)}
+                                            />
+                                        </View>
                                         <View style={{ flex: 1 }}/>
                                     </View>
                             }

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-13 15:17:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-24 12:44:21
+ * @Last Modified time: 2018-04-24 23:51:52
  */
 
 /**
@@ -224,7 +224,7 @@ class StackedBarChart extends Component {
                                 }
                             </Svg>
                             <Spacer size={20}/>
-                            <View style={{ flexDirection: 'row' }} onLayout={ev => this.setState({ listHeaderHeight: ev.nativeEvent.layout.height })}>
+                            <View style={{ zIndex: 1, flexDirection: 'row', backgroundColor: AppColors.white }} onLayout={ev => this.setState({ listHeaderHeight: ev.nativeEvent.layout.height })}>
                                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', paddingTop: 2 }}>
                                     <View style={{ alignItems: 'center' }}>
                                         <Text style={[styles.subtext]}>7day</Text>
@@ -303,7 +303,7 @@ class StackedBarChart extends Component {
                 trainingGroup.users = trainingGroupUsers;
                 return trainingGroup;
             });
-            return athleteStats ? <ScrollView style={{ backgroundColor: AppColors.secondary.light_blue.hundredPercent, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10 + TAB_NAVIGATOR_HEIGHT) }} scrollEnabled={true} contentContainerStyle={{ height: 220 }}>
+            return athleteStats ? <ScrollView style={{ zIndex: 0, backgroundColor: AppColors.secondary.light_blue.hundredPercent, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10 + TAB_NAVIGATOR_HEIGHT) }} scrollEnabled={true} contentContainerStyle={{ height: 220 }}>
                 <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: AppColors.primary.grey.thirtyPercent }}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
                         <Text style={[AppStyles.subtext, { color: this.getColor(graphNum === 1 ? athleteStats.acwrGRF7 : athleteStats.acwrTotalAccel7) }]}>{graphNum === 1 ? athleteStats.acwrGRF7 || '-' : athleteStats.acwrTotalAccel7 || '-'}</Text>
@@ -336,7 +336,7 @@ class StackedBarChart extends Component {
                 : null;
         }
 
-        return <ScrollView style={{ backgroundColor: AppColors.secondary.light_blue.hundredPercent, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10 + TAB_NAVIGATOR_HEIGHT) }} scrollEnabled={true} contentContainerStyle={{ height: (stats.AthleteMovementQualityData ? stats.AthleteMovementQualityData.length + 1 : 0) * 55 }}>
+        return <ScrollView style={{ zIndex: 0, backgroundColor: AppColors.secondary.light_blue.hundredPercent, height: AppSizes.screen.usableHeight - (this.props.height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10 + TAB_NAVIGATOR_HEIGHT) }} scrollEnabled={true} contentContainerStyle={{ height: (stats.AthleteMovementQualityData ? stats.AthleteMovementQualityData.length + 1 : 0) * 55 }}>
             <TouchableHighlight key={-1} onPress={() => this.props.setStatsCategory(false, null)}>
                 <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete ? AppColors.white : AppColors.primary.grey.thirtyPercent }}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>

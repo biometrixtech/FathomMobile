@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-16 14:59:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-24 12:44:15
+ * @Last Modified time: 2018-04-24 23:49:19
  */
 
 /**
@@ -246,7 +246,7 @@ class FloatingBarChart extends Component {
                                 }
                             </Svg>
                             <Spacer size={20}/>
-                            <View style={{ flexDirection: 'row' }} onLayout={ev => this.setState({ listHeaderHeight: ev.nativeEvent.layout.height })}>
+                            <View style={{ zIndex: 1, flexDirection: 'row', backgroundColor: AppColors.white }} onLayout={ev => this.setState({ listHeaderHeight: ev.nativeEvent.layout.height })}>
                                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around' }}>
                                     <View>
                                         <Text style={[styles.subtext]}>RATE OF CHANGE</Text>
@@ -327,7 +327,7 @@ class FloatingBarChart extends Component {
                 trainingGroup.users = trainingGroupUsers;
                 return trainingGroup;
             });
-            return athleteStats ? <ScrollView style={{ backgroundColor: AppColors.secondary.light_blue.hundredPercent, height: AppSizes.screen.usableHeight - (height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10 + TAB_NAVIGATOR_HEIGHT) }} scrollEnabled={true} contentContainerStyle={{ height: 220 }}>
+            return athleteStats ? <ScrollView style={{ zIndex: 0, backgroundColor: AppColors.secondary.light_blue.hundredPercent, height: AppSizes.screen.usableHeight - (height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10 + TAB_NAVIGATOR_HEIGHT) }} scrollEnabled={true} contentContainerStyle={{ height: 220 }}>
                 <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: AppColors.primary.grey.thirtyPercent }}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
                         <Text style={[AppStyles.subtext, { paddingLeft, color: this.getTextColor(athleteStats.fatigueRateOfChange, null) }]}>{athleteStats.fatigueRateOfChange}</Text>
@@ -360,7 +360,7 @@ class FloatingBarChart extends Component {
                 : null;
         }
 
-        return <ScrollView style={{ backgroundColor: AppColors.secondary.light_blue.hundredPercent, height: AppSizes.screen.usableHeight - (height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10 + TAB_NAVIGATOR_HEIGHT) }} scrollEnabled={true} contentContainerStyle={{ height: (athleteData.length + 1) * 55 }}>
+        return <ScrollView style={{ zIndex: 0, backgroundColor: AppColors.secondary.light_blue.hundredPercent, height: AppSizes.screen.usableHeight - (height + this.state.chartHeaderHeight + this.state.listHeaderHeight + 10 + TAB_NAVIGATOR_HEIGHT) }} scrollEnabled={true} contentContainerStyle={{ height: (athleteData.length + 1) * 55 }}>
             <TouchableHighlight key={-1} onPress={() => setStatsCategory(false, null)}>
                 <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2, backgroundColor: user.selectedStats.athlete ? AppColors.white : AppColors.primary.grey.thirtyPercent }}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingTop: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml }}>
