@@ -2,13 +2,14 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-22 23:11:22 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-23 13:42:05
+ * @Last Modified time: 2018-04-25 01:27:36
  */
 
 /**
  * Support View
  */
 import React, { Component } from 'react';
+import { Platform, BackHandler } from 'react-native';
 
 // Components
 import { Placeholder } from '../general/';
@@ -24,6 +25,18 @@ class Support extends Component {
         super(props);
 
         this.state = {};
+    }
+
+    componentWillMount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', () => null);
+        }
+    }
+
+    componentWillUnmount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.removeEventListener('hardwareBackPress');
+        }
     }
 
     render = () => <Placeholder />

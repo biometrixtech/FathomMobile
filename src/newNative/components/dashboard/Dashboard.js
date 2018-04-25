@@ -2,14 +2,14 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:20 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-24 22:30:38
+ * @Last Modified time: 2018-04-25 01:30:36
  */
 
 /**
  * Dashboard View Screen
  */
 import React, { Component } from 'react';
-import { TouchableWithoutFeedback, View } from 'react-native';
+import { TouchableWithoutFeedback, View, Platform, BackHandler } from 'react-native';
 
 import PropTypes from 'prop-types';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
@@ -55,10 +55,19 @@ class Dashboard extends Component {
     }
 
     componentWillMount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', () => null);
+        }
         let {startRequest, getTeams, user, stopRequest} = this.props;
         return startRequest()
             .then(() => getTeams(user))
             .then(() => stopRequest());
+    }
+    
+    componentWillUnmount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.removeEventListener('hardwareBackPress');
+        }
     }
 
     renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) {

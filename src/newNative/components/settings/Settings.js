@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-23 16:40:29 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-24 22:29:27
+ * @Last Modified time: 2018-04-25 01:27:13
  */
 
 /**
@@ -17,7 +17,7 @@ import { Actions } from 'react-native-router-flux';
 import { AppColors } from '../../../constants/';
 
 // Components
-import { View } from 'react-native';
+import { View, Platform, BackHandler } from 'react-native';
 import { ListItem } from '../custom/';
 
 
@@ -34,6 +34,18 @@ class Settings extends Component {
         super(props);
 
         this.state = {};
+    }
+
+    componentWillMount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', () => null);
+        }
+    }
+
+    componentWillUnmount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.removeEventListener('hardwareBackPress');
+        }
     }
 
     render = () => {

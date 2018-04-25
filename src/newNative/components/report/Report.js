@@ -2,11 +2,11 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-25 00:37:08
+ * @Last Modified time: 2018-04-25 01:28:25
  */
 
 import React, { Component } from 'react';
-import { ScrollView, View, ActivityIndicator, TouchableWithoutFeedback } from 'react-native';
+import { ScrollView, View, ActivityIndicator, TouchableWithoutFeedback, Platform, BackHandler } from 'react-native';
 import { ButtonGroup, Icon } from 'react-native-elements';
 import ModalDropdown from 'react-native-modal-dropdown';
 import PropTypes from 'prop-types';
@@ -64,9 +64,18 @@ class TrainingReport extends Component {
     }
 
     componentWillMount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', () => null);
+        }
         return this.props.startRequest()
             .then(() => this.props.getTeams(this.props.user))
             .then(() => this.props.stopRequest());
+    }
+
+    componentWillUnmount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.removeEventListener('hardwareBackPress');
+        }
     }
 
     preprocessingUpload = (uploadArray, role) => {

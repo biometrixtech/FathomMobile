@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, View } from 'react-native';
-import { Scene, Tabs, Stack } from 'react-native-router-flux';
+import { Scene, Tabs, Stack, ActionConst } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AppColors } from '../theme';
 
@@ -72,14 +72,14 @@ const Index = (
         </Stack>
         <Scene key='tabbar' hideNavBar>
             <Tabs
-                type='replace'
+                type={ActionConst.RESET}
                 {...DefaultProps.tabProps}
                 {...DefaultProps.navbarProps}
                 cardStyle={{ backgroundColor: AppColors.white }}
             >
                 <Scene
                     key='connections'
-                    type='replace'
+                    type={ActionConst.RESET}
                     icon={() => <Icon name='share-variant' {...DefaultProps.icons} />}
                 >
                     <Scene
@@ -93,7 +93,7 @@ const Index = (
                 </Scene>
                 <Scene
                     key='dashboard'
-                    type='replace'
+                    type={ActionConst.RESET}
                     icon={() => <Icon name='chart-bar' {...DefaultProps.icons} />}
                 >
                     <Scene
@@ -108,7 +108,7 @@ const Index = (
                 <Scene
                     initial
                     key='report'
-                    type='replace'
+                    type={ActionConst.RESET}
                     icon={() => (
                         <View style={{
                             width:        50,
@@ -147,7 +147,7 @@ const Index = (
                 </Scene>
                 <Scene
                     key='support'
-                    type='replace'
+                    type={ActionConst.RESET}
                     icon={() => <Icon name='help-circle' {...DefaultProps.icons} />}
                 >
                     <Scene
@@ -161,7 +161,7 @@ const Index = (
                 </Scene>
                 <Scene
                     key='settings'
-                    type='replace'
+                    type={ActionConst.RESET}
                     icon={() => <Icon name='settings' {...DefaultProps.icons} />}
                 >
                     <Scene
