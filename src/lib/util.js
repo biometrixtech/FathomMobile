@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:55 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-30 02:24:45
+ * @Last Modified time: 2018-04-23 18:49:27
  */
 
 /**
@@ -218,7 +218,4 @@ const UTIL = {
 };
 
 /* Export ==================================================================== */
-module.exports = UTIL;
-module.exports.details = {
-    title: 'UTIL',
-};
+export default UTIL;

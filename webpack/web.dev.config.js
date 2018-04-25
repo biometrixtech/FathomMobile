@@ -55,9 +55,10 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {
-                NODE_ENV:     JSON.stringify('development'),
+                NODE_ENV:     JSON.stringify('DEV'),
                 PLATFORM_ENV: JSON.stringify('web'),
             },
+            '__DEV__': true,
         }),
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.HotModuleReplacementPlugin(),

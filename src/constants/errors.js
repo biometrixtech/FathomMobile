@@ -1,20 +1,18 @@
-/*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:31:14 
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-16 17:26:37
- */
-
-/**
- * App Error Messages
- */
-
 export default {
     // Defaults
-    default:     'Hmm, an unknown error occurred',
+    default:     'Hmm, an unknown error occured',
     timeout:     'Server Timed Out. Check your internet connection',
     invalidJson: 'Response returned is not valid JSON',
 
+    // User
+    userExists:         'user already exists',
+    missingFirstName:   'First name is missing',
+    missingLastName:    'Last name is missing',
+    missingEmail:       'Email is missing',
+    missingPassword:    'Password is missing',
+    passwordsDontMatch: 'Passwords do not match',
+
+    // Stats errors
     ATHLETE_PREPROCESSING_UPLOADING:  'Your session is still uploading - make sure your kit has wifi access and check back soon.',
     ATHLETE_PREPROCESSING_PROCESSING: 'We\'re processing your session now - check back soon.',
     ATHLETE_PREPROCESSING_ERROR:      'Uh Oh! One of your sessions was an odd ball. We\'re on it and will get you your results soon.',

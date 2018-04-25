@@ -5,10 +5,8 @@ import android.app.Application;
 import com.facebook.react.ReactApplication;
 import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
 import com.smixx.fabric.FabricPackage;
-import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import com.microsoft.codepush.react.CodePush;
 import com.oblador.vectoricons.VectorIconsPackage;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -39,10 +37,8 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
           new LocationServicesDialogBoxPackage(),
           new FabricPackage(),
-          new GoogleAnalyticsBridgePackage(),
           new CodePush(BuildConfig.CODEPUSH_KEY, getApplicationContext(), BuildConfig.DEBUG),
           new VectorIconsPackage(),
-          new RNDeviceInfo(),
           new BleManagerPackage(),
           new SvgPackage()
       );

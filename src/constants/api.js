@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:30:58 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 11:56:16
+ * @Last Modified time: 2018-04-24 10:55:26
  */
 
 /**
@@ -44,12 +44,12 @@ export default {
     tokenKey: 'login',
 
     STATS_APIs: {
-        DEV:  'https://statsapi.dev.fathomai.com/v1/MQ',
-        QA:   'https://statsapi.qa.fathomai.com/v1/MQ',
-        PROD: 'https://statsapi.production.fathomai.com/v1/MQ'
+        DEV:  'https://apis.dev.fathomai.com/statsapi/MQ',
+        QA:   'https://apis.qa.fathomai.com/statsapi/MQ',
+        PROD: 'https://apis.production.fathomai.com/statsapi/MQ',
     },
 
-    statsHostname: 'https://statsapi.production.fathomai.com/v1/MQ',
+    statsHostname: 'https://apis.production.fathomai.com/statsapi/MQ',
 
     statsEndpoints: new Map([
         ['team_movement_quality',                   '/Team'],
@@ -67,24 +67,24 @@ export default {
     ]),
 
     PREPROCESSING_APIs: {
-        DEV:  'https://preprocessing.dev.fathomai.com/v1',
-        QA:   'https://preprocessing.qa.fathomai.com/v1',
-        PROD: 'https://preprocessing.production.fathomai.com/v1',
+        DEV:  'https://apis.dev.fathomai.com/preprocessing',
+        QA:   'https://apis.qa.fathomai.com/preprocessing',
+        PROD: 'https://apis.production.fathomai.com/preprocessing',
     },
 
-    preprocessingHostname: 'https://preprocessing.production.fathomai.com/v1',
+    preprocessingHostname: 'https://apis.production.fathomai.com/preprocessing',
 
     preprocessingEndpoints: new Map([
         ['status', '/status'] // body: { start_date: '<start of week>', end_date: '<end of week>' }
     ]),
 
     HARDWARE_APIs: {
-        DEV:  'https://hardware.dev.fathomai.com/v1',
-        QA:   'https://hardware.qa.fathomai.com/v1',
-        PROD: 'https://hardware.production.fathomai.com/v1',
+        DEV:  'https://apis.dev.fathomai.com/hardware',
+        QA:   'https://apis.qa.fathomai.com/hardware',
+        PROD: 'https://apis.production.fathomai.com/hardware',
     },
 
-    hardwareHostname: 'https://hardware.production.fathomai.com/v1',
+    hardwareHostname: 'https://apis.production.fathomai.com/hardware',
 
     hardwareEndpoints: new Map([
         ['accessory', '/accessory/{wifiMacAddress}'], // GET: settings key, PATCH: owner-uuid with body: { owner_id: '<uuid>' }

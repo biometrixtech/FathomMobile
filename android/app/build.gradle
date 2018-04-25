@@ -173,25 +173,21 @@ repositories {
 }
 
 dependencies {
-     implementation project(':react-native-google-analytics-bridge')
      implementation project(':react-native-code-push')
      implementation project(':react-native-fabric')
      implementation project(':react-native-vector-icons')
-     implementation project(':react-native-device-info')
      implementation project(':react-native-ble-manager')
      implementation project(':react-native-android-location-services-dialog-box')
      implementation project(':react-native-svg')
      implementation fileTree(dir: "libs", include: ["*.jar"])
-     implementation 'com.android.support:appcompat-v7:27.1.0'
+     implementation 'com.android.support:appcompat-v7:27.1.1'
      implementation 'com.facebook.react:react-native:+' // From node_modules
      implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
          transitive = true;
      }
-//    compile project(':react-native-google-analytics-bridge')
 //    compile project(':react-native-code-push')
 //    compile project(':react-native-fabric')
 //    compile project(':react-native-vector-icons')
-//    compile project(':react-native-device-info')
 //    compile project(':react-native-ble-manager')
 //    compile project(':react-native-android-location-services-dialog-box')
 //    compile project(':react-native-svg')

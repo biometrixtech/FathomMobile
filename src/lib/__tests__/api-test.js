@@ -1,17 +1,10 @@
-/*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:17:11 
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-13 18:41:55
- */
-
 /**
  * Test to check if the API is working as expected
  */
 /* global it expect jest */
 import 'react-native';
 
-import { AppAPI } from '@lib/';
+import { AppAPI } from './';
 
 it('Has endpoints available', () => {
     let numberOfEndpoints = 0;

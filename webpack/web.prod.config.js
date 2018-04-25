@@ -33,9 +33,10 @@ module.exports = {
         new webpack.DefinePlugin({
             'process.env': {
                 // Useful to reduce the size of client-side libraries, e.g. react
-                NODE_ENV:     JSON.stringify('production'),
+                NODE_ENV:     JSON.stringify('PROD'),
                 PLATFORM_ENV: JSON.stringify('web'),
             },
+            '__DEV__': false,
         }),
         // optimizations
         new webpack.optimize.OccurrenceOrderPlugin(),

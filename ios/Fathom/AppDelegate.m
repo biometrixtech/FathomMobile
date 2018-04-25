@@ -29,13 +29,11 @@
 
 
 #ifdef DEBUG
-    // jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.9:8081/index.ios.bundle?platform=ios&dev=true"];
-//    jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.2:8081/index.bundle?platform=ios&dev=true"];
-     jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+    jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.2:8081/index.bundle?platform=ios&dev=true"];
+//     jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 #else
     jsCodeLocation = [CodePush bundleURL];
 #endif
-  // jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithBundleURL:jsCodeLocation
                                             moduleProvider:nil

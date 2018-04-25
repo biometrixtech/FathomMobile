@@ -16,7 +16,7 @@ Using JS/React Style Guide with ESLint linting
 Import files absolutely like so:
 
 ```
-import Error from '@components/general/Error'
+import Error from '/components/general/Error'
 ```
 
 Because it's:

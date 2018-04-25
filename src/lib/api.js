@@ -2,39 +2,32 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:16:44 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 11:09:46
+ * @Last Modified time: 2018-04-24 10:56:45
  */
 
 /**
  * API Functions
  */
 /* global fetch console */
-import DeviceInfo from 'react-native-device-info';
 
 // Consts and Libs
-import JWT from '@lib/api.jwt';
-import { AppUtil } from '@lib/';
-import { AppConfig, ErrorMessages, APIConfig } from '@constants/';
+import JWT from './jwt';
+import { AppConfig, ErrorMessages, APIConfig } from '../constants/';
+import { store } from '../store/index';
 
 // We'll use JWT for API Authentication
 // const Token = {};
 const Token = new JWT();
 
 // Config
-// const HOSTNAME = APIConfig.hostname;
+// const HOSTNAME      = APIConfig.hostname;
 const ENDPOINTS     = APIConfig.endpoints;
 const STATS         = APIConfig.statsEndpoints;
 const PREPROCESSING = APIConfig.preprocessingEndpoints;
 const HARDWARE      = APIConfig.hardwareEndpoints;
+const API_MAP       = ['get', 'post', 'patch', 'put', 'delete'];
 
-let USER_AGENT, HOSTNAME, STATS_HOSTNAME, PREPROCESSING_HOSTNAME, HARDWARE_HOSTNAME;
-try {
-    // Build user agent string
-    USER_AGENT = `${AppConfig.appName} ${DeviceInfo.getVersion()}; ${DeviceInfo.getSystemName()} ` +
-        `${DeviceInfo.getSystemVersion()}; ${DeviceInfo.getBrand()} ${DeviceInfo.getDeviceId()}`;
-} catch (e) {
-    USER_AGENT = `${AppConfig.appName}`;
-}
+let HOSTNAME, STATS_HOSTNAME, PREPROCESSING_HOSTNAME, HARDWARE_HOSTNAME;
 
 // Enable debug output when in Debug mode
 const DEBUG_MODE = AppConfig.DEV;
@@ -99,6 +92,9 @@ function serialize(obj, prefix) {
 function fetcher(method, inputEndpoint, inputParams, body, oldAPI, stats, preprocessing, hardware) {
     let endpoint = inputEndpoint;
     const params = inputParams;
+    let currentState = store.getState();
+    let environment = currentState.init.environment;
+    let jwt = currentState.user.jwt;
     let hostname = '';
 
     return new Promise(async (resolve, reject) => {
@@ -119,19 +115,18 @@ function fetcher(method, inputEndpoint, inputParams, body, oldAPI, stats, prepro
             headers: {
                 'Accept':       'application/json',
                 'Content-Type': 'application/json',
-                'User-Agent':   USER_AGENT,
+                'User-Agent':   AppConfig.appName,
             },
         };
 
         // Add Token
         // Don't add on the login endpoint
-        if (Token.getStoredToken && endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
-            const apiToken = await Token.getStoredToken();
-            if (apiToken) {
+        if (endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
+            if (jwt) {
                 if (oldAPI) {
-                    req.headers.jwt = apiToken;
+                    req.headers.jwt = jwt;
                 } else {
-                    req.headers.Authorization = apiToken;
+                    req.headers.Authorization = jwt;
                 }
             }
         }
@@ -140,22 +135,22 @@ function fetcher(method, inputEndpoint, inputParams, body, oldAPI, stats, prepro
         // Don't add on anything but the login endpoint if host name already exists
         if (oldAPI) {
             if (!HOSTNAME || endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
-                HOSTNAME = await Token.getAPIHost();
+                HOSTNAME = APIConfig.APIs[environment];
             }
             hostname = HOSTNAME;
         } else if (stats) {
             if (!STATS_HOSTNAME) {
-                STATS_HOSTNAME = await Token.getStatsHost();
+                STATS_HOSTNAME = APIConfig.STATS_APIs[environment];
             }
             hostname = STATS_HOSTNAME;
         } else if (preprocessing) {
             if (!PREPROCESSING_HOSTNAME) {
-                PREPROCESSING_HOSTNAME = await Token.getPreprocessingHost();
+                PREPROCESSING_HOSTNAME = APIConfig.PREPROCESSING_APIs[environment];
             }
             hostname = PREPROCESSING_HOSTNAME;
         } else if (hardware) {
             if (!HARDWARE_HOSTNAME) {
-                HARDWARE_HOSTNAME = await Token.getHardwareHost();
+                HARDWARE_HOSTNAME = APIConfig.HARDWARE_APIs[environment];
             }
             hostname = HARDWARE_HOSTNAME;
         }
@@ -230,22 +225,6 @@ function fetcher(method, inputEndpoint, inputParams, body, oldAPI, stats, prepro
                 // API got back to us, clear the timeout
                 clearTimeout(apiTimedOut);
 
-                const apiCredentials = Token.getStoredCredentials ? Token.getStoredCredentials() : {};
-
-                // If unauthorized, try logging them back in
-                if (
-                    !AppUtil.objIsEmpty(apiCredentials) &&
-                    err &&
-                    err.data &&
-                    err.data.status.toString().charAt(0) === 4 &&
-                    err.code !== 'jwt_auth_failed' &&
-                    Token.getToken
-                ) {
-                    return Token.getToken()
-                        .then(() => { fetcher(method, endpoint, params, body); })
-                        .catch(error => reject(error));
-                }
-
                 debug(err, thisUrl);
                 return reject(err);
             });
@@ -260,51 +239,37 @@ function fetcher(method, inputEndpoint, inputParams, body, oldAPI, stats, prepro
 const AppAPI = {
     handleError,
     getToken:      Token.getToken,
-    deleteToken:   Token.deleteToken,
-    storeAPIHost:  Token.storeAPIHost,
     stats:         {},
     preprocessing: {},
     hardware:      {},
 };
 
 ENDPOINTS.forEach((endpoint, key) => {
-    AppAPI[key] = {
-        get:    (params, payload) => fetcher('GET',    endpoint, params, payload, true, false, false, false),
-        post:   (params, payload) => fetcher('POST',   endpoint, params, payload, true, false, false, false),
-        patch:  (params, payload) => fetcher('PATCH',  endpoint, params, payload, true, false, false, false),
-        put:    (params, payload) => fetcher('PUT',    endpoint, params, payload, true, false, false, false),
-        delete: (params, payload) => fetcher('DELETE', endpoint, params, payload, true, false, false, false),
-    };
+    AppAPI[key] = {};
+    API_MAP.forEach(apiType => {
+        AppAPI[key][apiType] = (params, payload) => fetcher(apiType.toUpperCase(), endpoint, params, payload, true, false, false, false);
+    });
 });
 
 STATS.forEach((endpoint, key) => {
-    AppAPI.stats[key] = {
-        get:    (params, payload) => fetcher('GET',    endpoint, params, payload, false, true, false, false),
-        post:   (params, payload) => fetcher('POST',   endpoint, params, payload, false, true, false, false),
-        patch:  (params, payload) => fetcher('PATCH',  endpoint, params, payload, false, true, false, false),
-        put:    (params, payload) => fetcher('PUT',    endpoint, params, payload, false, true, false, false),
-        delete: (params, payload) => fetcher('DELETE', endpoint, params, payload, false, true, false, false),
-    };
+    AppAPI.stats[key] = {};
+    API_MAP.forEach(apiType => {
+        AppAPI.stats[key][apiType] = (params, payload) => fetcher(apiType.toUpperCase(), endpoint, params, payload, false, true, false, false);
+    });
 });
 
 PREPROCESSING.forEach((endpoint, key) => {
-    AppAPI.preprocessing[key] = {
-        get:    (params, payload) => fetcher('GET',    endpoint, params, payload, false, false, true, false),
-        post:   (params, payload) => fetcher('POST',   endpoint, params, payload, false, false, true, false),
-        patch:  (params, payload) => fetcher('PATCH',  endpoint, params, payload, false, false, true, false),
-        put:    (params, payload) => fetcher('PUT',    endpoint, params, payload, false, false, true, false),
-        delete: (params, payload) => fetcher('DELETE', endpoint, params, payload, false, false, true, false),
-    }
+    AppAPI.preprocessing[key] = {};
+    API_MAP.forEach(apiType => {
+        AppAPI.preprocessing[key][apiType] = (params, payload) => fetcher(apiType.toUpperCase(), endpoint, params, payload, false, false, true, false);
+    });
 });
 
 HARDWARE.forEach((endpoint, key) => {
-    AppAPI.hardware[key] = {
-        get:    (params, payload) => fetcher('GET',    endpoint, params, payload, false, false, false, true),
-        post:   (params, payload) => fetcher('POST',   endpoint, params, payload, false, false, false, true),
-        patch:  (params, payload) => fetcher('PATCH',  endpoint, params, payload, false, false, false, true),
-        put:    (params, payload) => fetcher('PUT',    endpoint, params, payload, false, false, false, true),
-        delete: (params, payload) => fetcher('DELETE', endpoint, params, payload, false, false, false, true),
-    }
+    AppAPI.hardware[key] = {};
+    API_MAP.forEach(apiType => {
+        AppAPI.hardware[key][apiType] = (params, payload) => fetcher(apiType.toUpperCase(), endpoint, params, payload, false, false, false, true);
+    });
 })
 
 /* Export ==================================================================== */

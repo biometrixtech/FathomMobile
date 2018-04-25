@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:31:04 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-10 18:57:39
+ * @Last Modified time: 2018-04-23 18:38:09
  */
 
 /**
@@ -10,7 +10,7 @@
  */
 
 // Consts
-import { AppColors } from '@theme/';
+import AppColors from './colors';
 
 export default {
     acwr: [

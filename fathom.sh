@@ -69,32 +69,27 @@ initialize() {
 
         watchman watch-del-all
         lsof -P | grep ':8081' | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
+        lsof -P | grep ':3000' | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
         rm -rf node_modules/ yarn.lock
         yarn
-        sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
         sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-code-push/android/app/build.gradle
         sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-fabric/android/build.gradle
         sed -i '' 's/24.0.2/27.0.3/' ./node_modules/react-native-ble-manager/android/build.gradle
         sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-        sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-device-info/android/build.gradle
         sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-svg/android/build.gradle
         sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-vector-icons/android/build.gradle
 
-        sed -i '' 's/compile /implementation /' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
         sed -i '' 's/compile /implementation /' ./node_modules/react-native-code-push/android/app/build.gradle
         sed -i '' 's/compile /implementation /' ./node_modules/react-native-fabric/android/build.gradle
         sed -i '' 's/compile /implementation /' ./node_modules/react-native-ble-manager/android/build.gradle
         sed -i '' 's/compile /implementation /' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-        sed -i '' 's/compile /implementation /' ./node_modules/react-native-device-info/android/build.gradle
         sed -i '' 's/compile /implementation /' ./node_modules/react-native-svg/android/build.gradle
         sed -i '' 's/compile /implementation /' ./node_modules/react-native-vector-icons/android/build.gradle
 
-        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
         sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-code-push/android/app/build.gradle
         sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-fabric/android/build.gradle
         sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-ble-manager/android/build.gradle
         sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-device-info/android/build.gradle
         sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
         sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-vector-icons/android/build.gradle
 
@@ -252,9 +247,27 @@ codepush() {
     esac
 }
 
+web() {
+    echo
+    read -p "${grey}Choose a web option:${normal}`echo $'\n\n '`[1]: Dev`echo $'\n '`[2]: Prod`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    echo
+    case "$REPLY" in
+        1)
+            yarn web
+            ;;
+        2)
+            yarn web-bundle
+            ;;
+        *)
+            echo "${red}Invalid selection${normal}"
+            web
+            ;;
+    esac
+}
+
 main() {
     echo
-    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n '`[4]: Code Push`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n '`[4]: Code Push`echo $'\n '`[5]: start web server`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
     echo
     case "$REPLY" in
         1)
@@ -268,6 +281,9 @@ main() {
             ;;
         4)
             codepush
+            ;;
+        5)
+            web
             ;;
         *)
             echo "${red}Invalid selection${normal}"
