@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-23 15:49:27 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-25 01:29:44
+ * @Last Modified time: 2018-04-25 02:19:00
  */
 
 /**
@@ -31,7 +31,7 @@ class Connections extends Component {
 
     componentWillMount = () => {
         if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', () => null);
+            BackHandler.addEventListener('hardwareBackPress', () => true);
         }
     }
 

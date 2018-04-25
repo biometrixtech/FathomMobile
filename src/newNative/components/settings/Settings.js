@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-23 16:40:29 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-25 01:27:13
+ * @Last Modified time: 2018-04-25 02:18:19
  */
 
 /**
@@ -38,7 +38,7 @@ class Settings extends Component {
 
     componentWillMount = () => {
         if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', () => null);
+            BackHandler.addEventListener('hardwareBackPress', () => true);
         }
     }
 

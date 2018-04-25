@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-22 23:11:22 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-25 01:27:36
+ * @Last Modified time: 2018-04-25 02:17:53
  */
 
 /**
@@ -29,7 +29,7 @@ class Support extends Component {
 
     componentWillMount = () => {
         if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', () => null);
+            BackHandler.addEventListener('hardwareBackPress', () => true);
         }
     }
 

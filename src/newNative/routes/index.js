@@ -49,8 +49,8 @@ import BluetoothConnectContainer from '../../containers/kit/BluetoothConnect';
 import BluetoothConnectComponent from '../components/kit/BluetoothConnect';
 
 const Index = (
-    <Stack>
-        <Stack hideNavBar key='authorize'>
+    <Scene>
+        <Scene hideNavBar key='authorize'>
             <Scene
                 key='login'
                 hideNavBar
@@ -69,7 +69,7 @@ const Index = (
                 component={ForgotPasswordContainer}
                 Layout={ForgotPasswordComponent}
             />
-        </Stack>
+        </Scene>
         <Scene key='tabbar' hideNavBar>
             <Tabs
                 type={ActionConst.RESET}
@@ -86,6 +86,7 @@ const Index = (
                         key='connections'
                         title='Connections'
                         initial
+                        type={ActionConst.RESET}
                         tabBarLabel='Connections'
                         component={ConnectionsContainer}
                         Layout={ConnectionsComponent}
@@ -100,6 +101,7 @@ const Index = (
                         key='dashboard'
                         title='Dashboard'
                         initial
+                        type={ActionConst.RESET}
                         tabBarLabel='Dashboard'
                         component={DashboardContainer}
                         Layout={DashboardComponent}
@@ -140,6 +142,7 @@ const Index = (
                         key='report'
                         title='Training Report'
                         initial
+                        type={ActionConst.RESET}
                         tabBarLabel=' '
                         component={ReportContainer}
                         Layout={ReportComponent}
@@ -154,6 +157,7 @@ const Index = (
                         key='support'
                         title='Support'
                         initial
+                        type={ActionConst.RESET}
                         tabBarLabel='Support'
                         component={SupportContainer}
                         Layout={SupportComponent}
@@ -168,6 +172,7 @@ const Index = (
                         key='settings'
                         title='Settings'
                         initial
+                        type={ActionConst.RESET}
                         tabBarLabel='Settings'
                         component={SettingsContainer}
                         Layout={SettingsComponent}
@@ -177,6 +182,7 @@ const Index = (
                         title='Kit Management'
                         hideTabBar
                         back
+                        type={ActionConst.PUSH_OR_POP}
                         renderRightButton={<View />}
                         component={KitManagementContainer}
                         Layout={KitManagementComponent}
@@ -186,6 +192,7 @@ const Index = (
                         title='Bluetooth Connect'
                         hideTabBar
                         back
+                        type={ActionConst.PUSH_OR_POP}
                         renderRightButton={<View />}
                         component={BluetoothConnectContainer}
                         Layout={BluetoothConnectComponent}
@@ -195,6 +202,7 @@ const Index = (
                         title='Kit Owner'
                         hideTabBar
                         back
+                        type={ActionConst.PUSH_OR_POP}
                         renderRightButton={<View />}
                         component={KitOwnerContainer}
                         Layout={KitOwnerComponent}
@@ -204,6 +212,7 @@ const Index = (
                         title='Kit Assign'
                         hideTabBar
                         back
+                        type={ActionConst.PUSH_OR_POP}
                         renderRightButton={<View />}
                         component={KitAssignContainer}
                         Layout={KitAssignComponent}
@@ -211,7 +220,7 @@ const Index = (
                 </Scene>
             </Tabs>
         </Scene>
-    </Stack>
+    </Scene>
 );
 
 export default Index;

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:20 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-25 01:30:36
+ * @Last Modified time: 2018-04-25 02:18:49
  */
 
 /**
@@ -56,20 +56,20 @@ class Dashboard extends Component {
 
     componentWillMount = () => {
         if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', () => null);
+            BackHandler.addEventListener('hardwareBackPress', () => true);
         }
         let {startRequest, getTeams, user, stopRequest} = this.props;
         return startRequest()
             .then(() => getTeams(user))
             .then(() => stopRequest());
     }
-    
+
     componentWillUnmount = () => {
         if (Platform.OS === 'android') {
             BackHandler.removeEventListener('hardwareBackPress');
         }
     }
-
+    
     renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) {
         const textStyle = AppStyles.tabHeaders;
         const fontWeight = isTabActive ? 'bold' : 'normal';

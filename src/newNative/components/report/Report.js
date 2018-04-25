@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-25 01:28:25
+ * @Last Modified time: 2018-04-25 02:18:34
  */
 
 import React, { Component } from 'react';
@@ -65,7 +65,7 @@ class TrainingReport extends Component {
 
     componentWillMount = () => {
         if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', () => null);
+            BackHandler.addEventListener('hardwareBackPress', () => true);
         }
         return this.props.startRequest()
             .then(() => this.props.getTeams(this.props.user))
@@ -77,7 +77,7 @@ class TrainingReport extends Component {
             BackHandler.removeEventListener('hardwareBackPress');
         }
     }
-
+    
     preprocessingUpload = (uploadArray, role) => {
         if (!uploadArray || !uploadArray.length) {
             return null;
