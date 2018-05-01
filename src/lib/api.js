@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:16:44 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-24 10:56:45
+ * @Last Modified time: 2018-04-30 00:37:35
  */
 
 /**
@@ -94,7 +94,7 @@ function fetcher(method, inputEndpoint, inputParams, body, oldAPI, stats, prepro
     const params = inputParams;
     let currentState = store.getState();
     let environment = currentState.init.environment;
-    let jwt = currentState.user.jwt;
+    let jwt = currentState.init.jwt;
     let hostname = '';
 
     return new Promise(async (resolve, reject) => {

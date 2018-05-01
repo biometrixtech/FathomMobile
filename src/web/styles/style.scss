@@ -1,11 +1,24 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2018-04-30 13:14:50 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-04-30 13:45:08
+ */
+ 
 @import "bootstrap";
 @import "components/sidebar";
-@import "components/recipes";
 @import "components/loading";
 @import "components/header";
 @import "components/footer";
 
+// body {
+//   padding-top: 3.5em;
+// }
+$secondary_blue: #0B587C;
+$primary: $secondary_blue;
+
 body {
+  font-family: 'Libre Franklin', sans-serif !important;
   padding-top: 3.5em;
 }
 
@@ -45,4 +58,9 @@ body {
 @keyframes fadeInOut {
   0%, 100% { opacity: 0.2 }
   50% { opacity: 0.7 }
+}
+
+.responsive {
+  width: 80%;
+  height: auto;
 }

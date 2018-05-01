@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:19:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-24 23:33:35
+ * @Last Modified time: 2018-04-25 14:35:10
  */
 
 /**
@@ -189,9 +189,9 @@ export default {
     },
     subtext: {
         fontFamily: Fonts.base.family,
-        fontSize:   Fonts.base.size * 0.8,
+        fontSize:   Fonts.base.size * 0.7,
         lineHeight: parseInt(Fonts.base.lineHeight * 0.8, 10),
-        color:      Colors.secondary.blue.hundredPercent,
+        color:      Colors.primary.grey.hundredPercent,
         fontWeight: '400',
     },
 

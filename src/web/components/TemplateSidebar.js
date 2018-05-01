@@ -1,14 +1,21 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2018-04-30 13:19:12 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2018-04-30 13:19:12 
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Container, Row, Col } from 'reactstrap';
-import Member from '../../containers/Member';
-import Header from './Header';
+import HeaderContainer from '../../containers/base/Header';
+import HeaderComponent from './Header';
 import Footer from './Footer';
 import { Sidebar } from './Sidebar';
 
 const Template = ({ children }) => (
-    <div>
-        <Member Layout={Header} />
+    <div style={{ backgroundColor: 'white' }}>
+        <HeaderContainer Layout={HeaderComponent}/>
         <Container fluid>
             <Row>
                 <Sidebar />

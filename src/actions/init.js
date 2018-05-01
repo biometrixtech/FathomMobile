@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:59 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-24 00:05:09
+ * @Last Modified time: 2018-04-30 13:00:05
  */
 
 /**
@@ -16,12 +16,15 @@ import { AppAPI } from '../lib/';
 /**
   * Login to API and receive Token
   */
-const login = (credentials, freshLogin) => {
+const login = (credentials, reload) => {
     return dispatch => new Promise(async (resolve, reject) => {
         const userCreds = credentials || null;
+        dispatch({
+            type: Actions.START_REQUEST,
+        });
 
         // Get a new token from API
-        return AppAPI.getToken(userCreds)
+        return (reload ? Promise.resolve({ user: userCreds }) : AppAPI.getToken(userCreds))
             .then(response => {
                 let decodedToken = '';
                 let token = response.user.jwt;
@@ -35,6 +38,13 @@ const login = (credentials, freshLogin) => {
                 if (!decodedToken || !decodedToken.user_id) {
                     return reject('Token decode failed.');
                 }
+
+                dispatch({
+                    type:     Actions.LOGIN,
+                    email:    userCreds.email,
+                    password: userCreds.password,
+                    jwt:      token,
+                });
 
                 // TODO: auth check on authorized account role
 
@@ -54,14 +64,18 @@ const login = (credentials, freshLogin) => {
                         //     data: storedObject,
                         // }));
                         return Promise.resolve(dispatch({
-                            type: Actions.LOGOUT
+                            type:     Actions.LOGIN,
+                            email:    userCreds.email,
+                            password: userCreds.password,
+                            jwt:      token,
                         }))
                             .then(() => {
-                                dispatch({
-                                    type:     Actions.LOGIN,
-                                    email:    userCreds.email,
-                                    password: userCreds.password,
-                                });
+                                // dispatch({
+                                //     type:     Actions.LOGIN,
+                                //     email:    userCreds.email,
+                                //     password: userCreds.password,
+                                //     jwt:      token,
+                                // });
                                 return dispatch({
                                     type: Actions.USER_REPLACE,
                                     data: storedObject,
@@ -70,6 +84,9 @@ const login = (credentials, freshLogin) => {
                     })
                     .then(() => AppAPI.teams.get())
                     .then(teams => {
+                        dispatch({
+                            type: Actions.STOP_REQUEST,
+                        });
                         return dispatch({
                             type: Actions.GET_TEAMS,
                             data: teams
@@ -85,9 +102,9 @@ const login = (credentials, freshLogin) => {
   * Logout
   */
 const logout = () => {
-    return dispatch => dispatch({
+    return dispatch => Promise.resolve(dispatch({
         type: Actions.LOGOUT
-    });
+    }));
 };
 
 /**

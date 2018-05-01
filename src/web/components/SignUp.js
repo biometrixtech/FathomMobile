@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2018-04-30 13:19:23 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2018-04-30 13:19:23 
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -104,7 +111,7 @@ class SignUp extends React.Component {
                                           type='email'
                                           name='email'
                                           id='email'
-                                          placeholder='john@doe.corp'
+                                          placeholder='example@email.com'
                                           value={this.state.email}
                                           onChange={this.handleChange}
                                       />

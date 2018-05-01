@@ -2,14 +2,13 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:16:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-23 02:18:59
+ * @Last Modified time: 2018-04-25 02:58:11
  */
 
 /**
  * API JWT Auth Functions
  */
 /* global fetch console */
-import { AsyncStorage } from 'react-native';
 import jwtDecode from 'jwt-decode';
 
 // Consts and Libs

@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2018-04-30 13:21:21 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2018-04-30 13:21:21 
+ */
+
 import React from 'react';
 // import { StatusBar, Platform } from 'react-native';
 import PropTypes from 'prop-types';

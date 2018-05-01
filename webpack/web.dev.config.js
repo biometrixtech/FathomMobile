@@ -1,8 +1,16 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2018-04-30 13:17:14 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-04-30 18:46:07
+ */
+
 const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
     devtool: 'cheap-module-eval-source-map',
+    mode:    'development',
     entry:   [
         // 'webpack-hot-middleware/client',
         'babel-polyfill',
@@ -21,18 +29,29 @@ module.exports = {
             // Take all sass files, compile them, and bundle them in with our js bundle
             {
                 test:   /\.scss$/,
-                loader: 'style-loader!css-loader!autoprefixer-loader?browsers=last 2 version!sass-loader',
+                loader: 'style-loader!css-loader!postcss-loader?browsers=last 2 version!sass-loader',
             },
             {
                 test:   /\.json$/,
                 loader: 'json-loader',
             },
             {
+                test: /\.(jpg|png|gif|svg|pdf|ico)$/,
+                use:  [
+                    {
+                        loader:  'file-loader',
+                        options: {
+                            name: '[path][name]-[hash:8].[ext]'
+                        }
+                    }
+                ]
+            },
+            {
                 test:    /\.js$/,
                 exclude: /node_modules/,
                 loader:  'babel-loader',
                 query:   {
-                    presets: ['es2015', 'react', 'stage-0'],
+                    presets: ['env', 'react', 'stage-0'],
                     plugins: [
                         [
                             'react-transform',
@@ -55,7 +74,7 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {
-                NODE_ENV:     JSON.stringify('DEV'),
+                NODE_ENV:     JSON.stringify('development'),
                 PLATFORM_ENV: JSON.stringify('web'),
             },
             '__DEV__': true,
@@ -64,4 +83,10 @@ module.exports = {
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),
     ],
+    devServer: {
+        inline:             true,
+        port:               3000,
+        host:               '0.0.0.0',
+        historyApiFallback: true,
+    }
 };

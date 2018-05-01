@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
     package="com.fathom">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/> -->
 
     <application
       android:name=".MainApplication"
@@ -29,6 +32,12 @@
             android:name="io.fabric.ApiKey"
             android:value="efa01f44b93f35c71f612e0ee7075015e52868cf"
         />
+      <!-- <service android:name="com.robinpowered.react.Intercom.IntercomIntentService" android:exported="false">
+          <intent-filter android:priority="999">
+              <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+          </intent-filter>
+      </service>
+      <receiver android:name="io.intercom.android.sdk.push.IntercomPushBroadcastReceiver" tools:replace="android:exported" android:exported="true" /> -->
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
     </application>
 

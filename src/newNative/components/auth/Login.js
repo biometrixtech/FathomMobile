@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:32:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-24 00:37:59
+ * @Last Modified time: 2018-04-30 13:09:48
  */
 
 /**
@@ -183,7 +183,7 @@ class Login extends Component {
                 return this.props.onFormSubmit({
                     email:    credentials.Email,
                     password: credentials.Password,
-                }, true).then((userData) => {
+                }, false).then((userData) => {
                     return this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {

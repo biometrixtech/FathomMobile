@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2018-04-30 13:19:29 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-04-30 13:29:25
+ */
+
 /* global window */
 import React from 'react';
 import { Col, Nav, NavItem } from 'reactstrap';
@@ -7,14 +14,14 @@ const SidebarNavItems = () => (
     <div>
         <NavItem>
             <Link className={`nav-link ${window.location.pathname === '/' && 'active'}`} to='/'>
-                <i className='icon-home' /> <span>Home</span>
+                <i className='icon-home' /><span>Home</span>
             </Link>
         </NavItem>
-        <NavItem>
+        {/* <NavItem>
             <Link className={`nav-link ${window.location.pathname.startsWith('/recipe') && 'active'}`} to='/recipes'>
                 <i className='icon-notebook' /> <span>Recipes</span>
             </Link>
-        </NavItem>
+        </NavItem> */}
     </div>
 );
 

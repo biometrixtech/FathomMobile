@@ -2,11 +2,11 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-24 01:04:37 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-25 00:29:44
+ * @Last Modified time: 2018-04-25 14:56:00
  */
 
 import React from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { AppStyles, AppColors } from '../theme/';
 import { ActionConst, Actions } from 'react-native-router-flux';
 
@@ -33,17 +33,17 @@ export default {
             backgroundColor: AppColors.secondary.blue.thirtyPercent,
         },
         tabStyle: {
-            paddingTop: 10,
+            paddingTop: Platform.OS === 'ios' ? 10 : 0,
         },
     },
 
     icons: {
         size:  30,
         style: {
-            width:       50,
-            height:      50,
-            paddingLeft: 10,
-            paddingTop:  5,
+            width:       Platform.OS === 'ios' ? 50 : null,
+            height:      Platform.OS === 'ios' ? 50 : null,
+            paddingLeft: Platform.OS === 'ios' ? 10 : null,
+            paddingTop:  Platform.OS === 'ios' ? 5 : null,
         }
     },
 };

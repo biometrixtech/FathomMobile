@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-23 03:55:41 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-23 23:17:58
+ * @Last Modified time: 2018-04-30 00:23:40
  */
 
 /**
@@ -21,6 +21,7 @@ export default function initReducer(state = initialState, action) {
         return Object.assign({}, state, {
             email:    action.email,
             password: action.password,
+            jwt:      action.jwt,
         });
     case Actions.SET_ENVIRONMENT:
         return Object.assign({}, state, {

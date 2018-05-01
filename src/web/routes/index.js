@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2018-04-30 13:19:03 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2018-04-30 13:19:03 
+ */
+
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
@@ -6,86 +13,47 @@ import TemplateNothing from '../components/TemplateNothing';
 import TemplateSidebar from '../components/TemplateSidebar';
 
 // Routes
-import Home from '../components/Home';
+import ReportContainer from '../../containers/report/Report';
+import ReportComponent from '../components/Report';
 
-import RecipesContainer from '../../containers/Recipes';
-import RecipesComponent from '../components/Recipes';
-import RecipeViewComponent from '../components/Recipe';
-
-import SignUpContainer from '../../containers/SignUp';
+import SignUpContainer from '../../containers/auth/SignUp';
 import SignUpComponent from '../components/SignUp';
 
-import LoginContainer from '../../containers/Login';
+import LoginContainer from '../../containers/auth/Login';
 import LoginComponent from '../components/Login';
 
-import ForgotPasswordContainer from '../../containers/ForgotPassword';
+import ForgotPasswordContainer from '../../containers/auth/ForgotPassword';
 import ForgotPasswordComponent from '../components/ForgotPassword';
-
-import UpdateProfileContainer from '../../containers/UpdateProfile';
-import UpdateProfileComponent from '../components/UpdateProfile';
 
 import Error from '../components/Error';
 
 const Index = () => (
     <Switch>
         <Route
+            path="/login"
+            render={props => <TemplateNothing><LoginContainer {...props} Layout={LoginComponent} /></TemplateNothing>}
+        />
+        <Route
             exact
             path="/"
-            render={props => (
-                <TemplateNothing>
-                    <LoginContainer {...props} Layout={LoginComponent} />
-                </TemplateNothing>
-            )}
+            render={props => <TemplateNothing><LoginContainer {...props} Layout={LoginComponent} /></TemplateNothing>}
         />
         <Route
             path="/sign-up"
-            render={props => (
-                <TemplateNothing>
-                    <SignUpContainer {...props} Layout={SignUpComponent} />
-                </TemplateNothing>
-            )}
+            render={props => <TemplateNothing><SignUpContainer {...props} Layout={SignUpComponent} /></TemplateNothing>}
         />
         <Route
             path="/forgot-password"
-            render={props => (
-                <TemplateNothing>
-                    <ForgotPasswordContainer {...props} Layout={ForgotPasswordComponent} />
-                </TemplateNothing>
-            )}
-        />
-        {/* <Route
-            exact
-            path="/home"
-            render={props => (
-                <TemplateSidebar>
-                    <Home {...props} />
-                </TemplateSidebar>
-            )}
+            render={props => <TemplateNothing><ForgotPasswordContainer {...props} Layout={ForgotPasswordComponent} /></TemplateNothing>}
         />
         <Route
-            path="/update-profile"
+            path="/report"
             render={props => (
                 <TemplateSidebar>
-                    <UpdateProfileContainer {...props} Layout={UpdateProfileComponent} />
+                    <ReportContainer {...props} Layout={ReportComponent}/>
                 </TemplateSidebar>
             )}
         />
-        <Route
-            path="/recipes"
-            render={props => (
-                <TemplateSidebar>
-                    <RecipesContainer {...props} Layout={RecipesComponent} />
-                </TemplateSidebar>
-            )}
-        />
-        <Route
-            path="/recipe/:id"
-            render={props => (
-                <TemplateSidebar>
-                    <RecipesContainer {...props} Layout={RecipeViewComponent} />
-                </TemplateSidebar>
-            )}
-        /> */}
         <Route
             render={props => (
                 <TemplateSidebar>

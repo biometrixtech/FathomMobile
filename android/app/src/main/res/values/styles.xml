@@ -6,7 +6,7 @@
         <item name="colorPrimary">#4099FF</item>
         <!-- Details color -->
         <item name="colorAccent">#4099FF</item>
-        <item name="android:clipChildren">false</item>
+        <!--<item name="android:clipChildren">false</item>-->
     </style>
 
 </resources>

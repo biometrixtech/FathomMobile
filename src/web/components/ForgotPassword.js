@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2018-04-30 13:20:10 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2018-04-30 13:20:10 
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -81,7 +88,7 @@ class ForgotPassword extends React.Component {
                                           type='email'
                                           name='email'
                                           id='email'
-                                          placeholder='john@doe.corp'
+                                          placeholder='example@email.com'
                                           value={this.state.email}
                                           onChange={this.handleChange}
                                       />
@@ -96,7 +103,7 @@ class ForgotPassword extends React.Component {
                                     Need an account? <Link to='/sign-up'>Sign Up</Link>
                                   </Col>
                                   <Col sm='6' className='text-right'>
-                                      <Link to='/forgot-password'>Login</Link> to your account.
+                                      <Link to='/login'>Login</Link> to your account.
                                   </Col>
                               </Row>
                           </CardBody>

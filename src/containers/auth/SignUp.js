@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:33:03 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-23 20:42:27
+ * @Last Modified time: 2018-04-30 12:18:58
  */
 
 /**
@@ -19,10 +19,12 @@ const SignUp = ({
     onFormSubmit,
     email,
     password,
+    loading,
 }) => (
     <Layout
         email={email}
         password={password}
+        loading={loading}
         onFormSubmit={onFormSubmit}
     />
 );
@@ -31,17 +33,20 @@ SignUp.propTypes = {
     Layout:       PropTypes.func.isRequired,
     email:        PropTypes.string,
     password:     PropTypes.string,
+    loading:      PropTypes.bool,
     onFormSubmit: PropTypes.func.isRequired,
 };
 
 SignUp.defaultProps = {
     email:    null,
     password: null,
+    loading:  false,
 };
 
 const mapStateToProps = state => ({
     email:    state.init.email,
     password: state.init.password,
+    loading:  state.user.loading || false,
 });
 
 const mapDispatchToProps = {

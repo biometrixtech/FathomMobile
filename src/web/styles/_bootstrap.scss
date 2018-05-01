@@ -1,8 +1,15 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2018-04-30 13:18:20 
+ * @Last Modified by:   Vir Desai 
+ * @Last Modified time: 2018-04-30 13:18:20 
+ */
+ 
 // Override Bootstrap's variables before importing
 
 // Colors
-$purple: #0B587C;
-$primary: $purple;
+$secondary_blue: #0B587C;
+$primary: $secondary_blue;
 $body-bg: #ECF0F3;
 $body-color: #8D8E90;
 
@@ -13,7 +20,6 @@ $jumbotron-bg: white;
 $border-radius: 0;
 
 // Type
-$font-family-sans-serif: 'Inter UI', sans-serif;
 $headings-margin-bottom: 0.5em;
 
 // Then import Bootstrap

@@ -24,95 +24,104 @@ fi
 initialize() {
     echo "Checking installation.."
 
-    xcode=`ls /Applications/Xcode*.app 2>/dev/null | wc -l`
-    if [ $xcode != 0 ]
+    if [ -d ~/.nvm ]
     then
-        yarn=$(which yarn)
-        [ ${#yarn} == 0 ] && { echo "yarn does not exist, installing"; curl -o- -L https://yarnpkg.com/install.sh | bash; } || continue
-        
-        brew=$(which brew)
-        [ ${#brew} == 0 ] && { echo "Homebrew does not exist, installing"; /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"; } || continue
+        xcode=`ls /Applications/Xcode*.app 2>/dev/null | wc -l`
+        if [ $xcode != 0 ]
+        then
+            yarn=$(which yarn)
+            [ ${#yarn} == 0 ] && { echo "yarn does not exist, installing"; curl -o- -L https://yarnpkg.com/install.sh | bash; } || continue
+            
+            brew=$(which brew)
+            [ ${#brew} == 0 ] && { echo "Homebrew does not exist, installing"; /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"; } || continue
 
-        watchman=$(which watchman)
-        [ ${#watchman} == 0 ] && { echo "watchman does not exist, installing"; brew install watchman; } || continue
+            watchman=$(which watchman)
+            [ ${#watchman} == 0 ] && { echo "watchman does not exist, installing"; brew install watchman; } || continue
 
-        # nvmrc=`cat .nvmrc`
-        # [ -e ~/.nvm/nvm.sh ] && . ~/.nvm/nvm.sh || {
-        #     echo "nvm does not exist, installing";
-        #     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
-        #     export NVM_DIR="$HOME/.nvm"
-        #     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-        #     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-        #     . ~/.nvm/nvm.sh
-        # }
-        # nvm install $nvmrc
-        # cd ..
-        # cd FathomMobile
+            # [ -d ~/.nvm ] && continue || {
+            #     echo "nvm does not exist, installing";
+                # curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+                # export NVM_DIR="$HOME/.nvm"
+                # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+                # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+                # . ~/.nvm/nvm.sh
+            # }
+            # nvmrc=`cat .nvmrc`
+            # [ -e ~/.nvm/nvm.sh ] && . ~/.nvm/nvm.sh || {
+            #     echo "nvm does not exist, installing";
+            #     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+            #     export NVM_DIR="$HOME/.nvm"
+            #     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+            #     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+            #     . ~/.nvm/nvm.sh
+            # }
+            # nvm install $nvmrc
+            # cd ../../
+            # cd Fathom/FathomMobile
 
-        # pod=$(which pod)
-        # [ ${#pod} == 0 ] && {
-        #     echo "cocoapods does not exist, installing";
-        #     export GEM_HOME=$HOME/.gem
-        #     export PATH=$GEM_HOME/bin:$PATH
-        #     gem install cocoapods
-        # } || continue
 
+            echo "☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️️☁️☁️☁️☁️☁️☁️☁️☁️☁️️️️️️️"
+            echo "🚀\t${green}✔︎${normal} ${yellow}Xcode installed${normal}\t🚀"
+            echo "🚀\t${green}✔︎${normal} ${blue}yarn installed${normal}\t🚀"
+            echo "🚀\t${green}✔︎${normal} ${magenta}Homebrew installed${normal}\t🚀"
+            echo "🚀\t${green}✔︎${normal} ${cyan}watchman installed${normal}\t🚀"
+            # echo "🚀\t${green}✔︎${normal} ${white}nvm installed${normal}\t\t🚀"
+            echo "🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊"
 
-        echo "☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️️☁️☁️☁️☁️☁️☁️☁️☁️☁️️️️️️️"
-        echo "🚀\t${green}✔︎${normal} ${yellow}Xcode installed${normal}\t🚀"
-        echo "🚀\t${green}✔︎${normal} ${blue}yarn installed${normal}\t🚀"
-        echo "🚀\t${green}✔︎${normal} ${magenta}Homebrew installed${normal}\t🚀"
-        echo "🚀\t${green}✔︎${normal} ${cyan}watchman installed${normal}\t🚀"
-        # echo "🚀\t${green}✔︎${normal} ${white}nvm installed${normal}\t\t🚀"
-        # echo "🚀\t${green}✔︎${normal} ${grey}cocoapods installed${normal}\t🚀"
-        echo "🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊"
+            watchman watch-del-all
+            # lsof -P | grep ':8081' | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
+            lsof -i tcp:8081 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
+            lsof -i tcp:3000 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
+            rm -rf node_modules/ yarn.lock
+            yarn
+            sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-code-push/android/app/build.gradle
+            sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-fabric/android/build.gradle
+            sed -i '' 's/24.0.2/27.0.3/' ./node_modules/react-native-ble-manager/android/build.gradle
+            sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+            sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-svg/android/build.gradle
+            sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-vector-icons/android/build.gradle
 
-        watchman watch-del-all
-        lsof -P | grep ':8081' | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
-        lsof -P | grep ':3000' | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
-        rm -rf node_modules/ yarn.lock
-        yarn
-        sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-code-push/android/app/build.gradle
-        sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-fabric/android/build.gradle
-        sed -i '' 's/24.0.2/27.0.3/' ./node_modules/react-native-ble-manager/android/build.gradle
-        sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-        sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-svg/android/build.gradle
-        sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-vector-icons/android/build.gradle
+            sed -i '' 's/compile /implementation /' ./node_modules/react-native-code-push/android/app/build.gradle
+            sed -i '' 's/compile /implementation /' ./node_modules/react-native-fabric/android/build.gradle
+            sed -i '' 's/compile /implementation /' ./node_modules/react-native-ble-manager/android/build.gradle
+            sed -i '' 's/compile /implementation /' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+            sed -i '' 's/compile /implementation /' ./node_modules/react-native-svg/android/build.gradle
+            sed -i '' 's/compile /implementation /' ./node_modules/react-native-vector-icons/android/build.gradle
 
-        sed -i '' 's/compile /implementation /' ./node_modules/react-native-code-push/android/app/build.gradle
-        sed -i '' 's/compile /implementation /' ./node_modules/react-native-fabric/android/build.gradle
-        sed -i '' 's/compile /implementation /' ./node_modules/react-native-ble-manager/android/build.gradle
-        sed -i '' 's/compile /implementation /' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-        sed -i '' 's/compile /implementation /' ./node_modules/react-native-svg/android/build.gradle
-        sed -i '' 's/compile /implementation /' ./node_modules/react-native-vector-icons/android/build.gradle
+            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-code-push/android/app/build.gradle
+            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-fabric/android/build.gradle
+            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-ble-manager/android/build.gradle
+            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
+            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-vector-icons/android/build.gradle
 
-        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-code-push/android/app/build.gradle
-        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-fabric/android/build.gradle
-        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-ble-manager/android/build.gradle
-        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
-        sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-vector-icons/android/build.gradle
+            # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
+            android_nvm_location=`find ~/ -name '.nvm' -type d -print -quit`
+            nvm_string='/.nvm'
+            android_nvm_location=${android_nvm_location%$nvm_string}
+            android_nvm_location=${android_nvm_location////\\/}
+            sed -i "" "s/\/Users\/virdesai\//$android_nvm_location/" ./android/app/build.gradle
 
-        sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
-        sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
-        [ -d "./node_modules/react-native/third-party" ] && {
-            cd node_modules/react-native/third-party/glog-0.3.4
-            ../../scripts/ios-configure-glog.sh                 
-            cd ../../../../
-        } || continue
-        # cd ios/
-        # pod install
-        # cd ..
-        
-        echo "Everything checked, installed, and prepared.\nPackager ready to be started"
+            sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
+            sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
+            [ -d "./node_modules/react-native/third-party" ] && {
+                cd node_modules/react-native/third-party/glog-0.3.4
+                ../../scripts/ios-configure-glog.sh                 
+                cd ../../../../
+            } || continue
+            
+            echo "Everything checked, installed, and prepared.\nPackager ready to be started"
+        else
+            echo "${red}Error: Xcode does not exist in Applications folder, please download and install it${normal}"
+        fi
     else
-        echo "${red}Error: Xcode does not exist in Applications folder, please download and install it${normal}"
+        echo "${red}Error: nvm does not exist, please see README about installing${normal}"
     fi
 }
 
 start() {
     watchman watch-del-all
-    lsof -P | grep ':8081' | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
+    lsof -i tcp:8081 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
     npm run start -- --reset-cache
 }
 
@@ -253,6 +262,7 @@ web() {
     echo
     case "$REPLY" in
         1)
+            lsof -i tcp:3000 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
             yarn web
             ;;
         2)
