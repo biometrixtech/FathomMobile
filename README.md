@@ -1,10 +1,14 @@
 # Fathom
 
-Basic Building structure of the app
+Fathom Android/iOS Mobile and Web app
 
 ---
 
-## Docs
+## 👋 Intro
+
+This is a joint [React Web app](https://reactjs.org/) and [React Native app](https://facebook.github.io/react-native/) sharing a single code base. It shares the 'business logic' (_i.e. actions, containers, reducers, constants, themes_) across the platforms, whilst allowing flexibility in View components to ensure your project looks and feels native in each platform.
+
+## 📖 Docs
 
 1. [Features](#features)
 1. **Before you start**
@@ -21,9 +25,28 @@ Basic Building structure of the app
 
 ---
 
-## Features
+## :sparkles: Features
 
+| A shared React and React Native structure |
 | Feature | Summary |
+| --- | --- |
+| __Flux architecture__ |
+| [Redux](https://redux.js.org/docs/introduction/) | A predictable state container - Helping you write applications that behave consistently and run in different environments |
+| __Routing and navigation__ |
+| [React Native Router Flux](https://github.com/aksonov/react-native-router-flux) | Router for React Native based on new React Native Navigation API for native mobile <br><br>['How to' Guide &rarr;](/src/navigation/README.md)|
+| [React Router](https://github.com/ReactTraining/react-router) | Router for React based on React Navigation aPI for web |
+| __Data Caching / Offline__ |
+| [Redux Persist](https://github.com/rt2zz/redux-persist) | Persist store data using localStorage for web and AsyncStorage for native mobile |
+| __UI Toolkit/s__ |
+| [React Native Elements](https://react-native-training.github.io/react-native-elements/) | Cross Platform React Native UI Toolkit |
+| [React Native Vector Icons](https://github.com/oblador/react-native-vector-icons) | Easily use icons from a wide range of icon libraries, it's as simple as importing the icon font and then `<Icon name={'ios-alert-outline'} size={50} color={"#CCC"} />` |
+| [Tcomb Form Validation](https://github.com/gcanti/tcomb-form-native) | An example on how to create forms with validation. |
+| [Bootstrap 4](https://getbootstrap.com/) with [Reactstrap](https://reactstrap.github.io/) | Bootstrap based React style UI Componants |
+| __Style__ |
+| [ESLint Linting](https://eslint.org/) | ESLint linting code style guide |
+| [Boilerplate](#understanding-the-file-structure) | Directory/file structure useful for scaling apps |
+
+<!-- | Feature | Summary |
 | --- | --- |
 | [Redux](https://github.com/reactjs/react-redux) | A predictable state container - Helping you write applications that behave consistently and run in different environments. |
 | [React Native Router Flux](https://github.com/aksonov/react-native-router-flux) | Router for React Native based on new React Native Navigation API. <br><br>['How to' Guide &rarr;](/src/navigation/README.md)|
@@ -34,11 +57,11 @@ Basic Building structure of the app
 | [Tcomb Form Validation](https://github.com/gcanti/tcomb-form-native) | An example on how to create forms with validation. |
 | Component Style Guide | A bunch of elements and components to get you started - styled headings, buttons, list rows, alerts etc. |
 | Code Linting / Code Style Guide | I'm using ESLint linting. |
-| Boilerplate | An example directory/file structure I've found useful for scaling apps <br><br>[Learn more &rarr;](#understanding-the-file-structure) |
+| Boilerplate | An example directory/file structure I've found useful for scaling apps <br><br>[Learn more &rarr;](#understanding-the-file-structure) | -->
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 1. Ensure you've followed the [React Native - Get Started Guide](https://facebook.github.io/react-native/docs/getting-started.html) for the platform/s of choice
 1. Run `npm run fathom` from root directory
