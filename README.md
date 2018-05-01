@@ -33,18 +33,22 @@ This is a joint [React Web app](https://reactjs.org/) and [React Native app](htt
 || __Flux architecture__ |
 | [Redux](https://redux.js.org/docs/introduction/) | A predictable state container - Helping you write applications that behave consistently and run in different environments |
 |||
+|||
 || __Routing and navigation__ |
 | [React Native Router Flux](https://github.com/aksonov/react-native-router-flux) | Router for React Native based on new React Native Navigation API for native mobile <br><br>['How to' Guide &rarr;](/src/navigation/README.md) |
 | [React Router](https://github.com/ReactTraining/react-router) | Router for React based on React Navigation aPI for web |
 |||
+|||
 || __Data Caching / Offline__ |
 | [Redux Persist](https://github.com/rt2zz/redux-persist) | Persist store data using localStorage for web and AsyncStorage for native mobile |
+|||
 |||
 || __UI Toolkit/s__ |
 | [React Native Elements](https://react-native-training.github.io/react-native-elements/) | Cross Platform React Native UI Toolkit |
 | [React Native Vector Icons](https://github.com/oblador/react-native-vector-icons) | Easily use icons from a wide range of icon libraries, it's as simple as importing the icon font and then `<Icon name={'ios-alert-outline'} size={50} color={"#CCC"} />` |
 | [Tcomb Form Validation](https://github.com/gcanti/tcomb-form-native) | An example on how to create forms with validation. |
 | [Bootstrap 4](https://getbootstrap.com/) with [Reactstrap](https://reactstrap.github.io/) | Bootstrap based React style UI Componants |
+|||
 |||
 || __Style__ |
 | [ESLint Linting](https://eslint.org/) | ESLint linting code style guide |
