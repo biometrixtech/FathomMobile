@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:27:15 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-12 00:58:00
+ * @Last Modified time: 2018-04-23 10:25:24
  */
 
 /**
@@ -19,7 +19,7 @@ import { View, ActivityIndicator } from 'react-native';
 import { AppStyles } from '../../theme/';
 
 // Components
-import { Spacer, Text } from '../ui/';
+import { Spacer, Text } from '../custom/';
 
 /* Component ==================================================================== */
 const Loading = ({ text, transparent }) => (

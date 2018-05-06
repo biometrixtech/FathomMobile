@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:27:49 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-30 11:36:30
+ * @Last Modified time: 2018-04-24 22:57:25
  */
 
 /**
@@ -16,10 +16,10 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 // Consts and Libs
-import { AppStyles, AppSizes } from '../../theme/';
+import { AppStyles } from '../../theme/';
 
 // Components
-import { Text } from '../ui/';
+import { Text } from '../custom/';
 
 /* Component ==================================================================== */
 const Placeholder = ({ text }) => (

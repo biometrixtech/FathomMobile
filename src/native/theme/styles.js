@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:19:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-12 20:21:46
+ * @Last Modified time: 2018-04-25 14:35:10
  */
 
 /**
@@ -10,7 +10,7 @@
  */
 import { Platform } from 'react-native';
 
-import Colors from './colors';
+import Colors from '../../constants/colors';
 import Fonts from './fonts';
 import Sizes from './sizes';
 
@@ -189,9 +189,9 @@ export default {
     },
     subtext: {
         fontFamily: Fonts.base.family,
-        fontSize:   Fonts.base.size * 0.8,
+        fontSize:   Fonts.base.size * 0.7,
         lineHeight: parseInt(Fonts.base.lineHeight * 0.8, 10),
-        color:      Colors.secondary.blue.hundredPercent,
+        color:      Colors.primary.grey.hundredPercent,
         fontWeight: '400',
     },
 
@@ -291,18 +291,20 @@ export default {
 
     // Navbar
     navbar: {
-        backgroundColor:   Colors.primary.white.hundredPercent,
+        backgroundColor:   Colors.secondary.blue.hundredPercent,
         borderBottomColor: Colors.primary.grey.thirtyPercent,
         borderBottomWidth: 1,
+        justifyContent:    'center',
     },
     navbarTitle: {
         color:      Colors.white,
         fontWeight: 'bold',
         fontFamily: Fonts.base.family,
         fontSize:   Fonts.base.size+5,
+        alignSelf:  'center',
     },
     navbarButton: {
-        tintColor: Colors.secondary.blue.hundredPercent,
+        tintColor: Colors.white,
     },
     navbarImageTitle: {
         height:      Sizes.navbarHeight/(Platform.OS === 'ios' ? 1.8 : 1.5),

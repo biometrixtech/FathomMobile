@@ -1,6 +1,6 @@
 ## Create wrapper components
 
-In `/src/components/ui/` there are various UI elements - some of them don't do much more than call the default React Native component and pass in a style.
+In `/src/native/components/custom/` there are various UI elements - some of them don't do much more than call the default React Native component and pass in a style.
 
 I do this:
 
@@ -16,7 +16,7 @@ Using JS/React Style Guide with ESLint linting
 Import files absolutely like so:
 
 ```
-import Error from '/components/general/Error'
+import Error from '/native/components/general/Error'
 ```
 
 Because it's:

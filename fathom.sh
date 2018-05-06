@@ -21,6 +21,37 @@ if test -t 1; then
     fi
 fi
 
+# install_java() {
+#     current_location=`pwd`
+#     cd ~/Downloads
+#     curl -v -j -k -L -H "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-macosx-x64.dmg > jdk-8u171-macosx-x64.dmg
+#     hdiutil attach jdk-8u171-macosx-x64.dmg
+#     sudo installer -pkg /Volumes/JDK\ 8\ Update\ 171/JDK\ 8\ Update\ 171.pkg -target /
+#     diskutil umount /Volumes/JDK\ 8\ Update\ 171
+#     rm jdk-8u171-macosx-x64.dmg
+#     cd $current_location
+# }
+
+# install_android_studio() {
+#     current_location=`pwd`
+#     cd ~/Downloads
+#     curl -v -j -k -L -H "" https://dl.google.com/dl/android/studio/install/3.1.2.0/android-studio-ide-173.4720617-mac.dmg > android-studio-ide-173.4720617-mac.dmg
+#     hdiutil attach android-studio-ide-173.4720617-mac.dmg
+#     mv /Volumes/Android\ Studio\ 3.1.2/Android\ Studio.app /Applications/
+#     diskutil umount /Volumes/Android\ Studio\ 3.1.2/Android\ Studio.app
+#     rm android-studio-ide-173.4720617-mac.dmg
+#     cd $current_location
+# }
+
+# install_android_sdk_manager_cli() {
+#     current_location=`pwd`
+#     cd ~/Downloads
+#     curl -v -j -k -L -H "" https://dl.google.com/android/repository/sdk-tools-darwin-3859397.zip > sdk-tools-darwin-3859387.zip
+#     unzip -a sdk-tools-darwin-3859387.zip
+#     rm sdk-tools-darwin-3859387.zip
+#     cd $current_location
+# }
+
 initialize() {
     echo "Checking installation.."
 
@@ -195,6 +226,7 @@ build() {
 }
 
 codepushRelease() {
+    # install code push cli first
     echo
     read -p "${grey}Choose which OS to push:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n '`[3]: Both`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
     echo
@@ -277,7 +309,7 @@ web() {
 
 main() {
     echo
-    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n '`[4]: Code Push`echo $'\n '`[5]: start web server`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n '`[4]: CodePush`echo $'\n '`[5]: start web server`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
     echo
     case "$REPLY" in
         1)

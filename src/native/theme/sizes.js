@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:19:46 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-28 03:16:32
+ * @Last Modified time: 2018-04-24 12:34:10
  */
 
 /**
@@ -18,7 +18,7 @@ export default {
     // Window Dimensions
     screen: {
         height:       screenHeight,
-        usableHeight: screenHeight - 64/(Platform.OS === 'ios' ? 1.8 : 1) - ((Platform.OS === 'ios') ? 16 : 0), // screen height under navbar and statusbar
+        usableHeight: screenHeight - 64/(Platform.OS === 'ios' ? 1.8 : 1) - (Platform.OS === 'ios' ? 16 : 0), // screen height under navbar and statusbar
         width:        screenWidth,
 
         heightOneThird:      screenHeight * 0.333,
@@ -35,8 +35,8 @@ export default {
         widthThreeQuarters: screenWidth * 0.75,
         widthFourFifths:    screenWidth * 0.8,
     },
-    navbarHeight:    (Platform.OS === 'ios') ? 64 : 54, // header with title and nav bar buttons
-    statusBarHeight: (Platform.OS === 'ios') ? 16 : 0,  // time and icon indicators
+    navbarHeight:    Platform.OS === 'ios' ? 64 : 54, // header with title and nav bar buttons
+    statusBarHeight: Platform.OS === 'ios' ? 16 : 0,  // time and icon indicators
     tabbarHeight:    51,
 
     padding:    20,

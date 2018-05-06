@@ -16,12 +16,13 @@ This is a joint [React Web app](https://reactjs.org/) and [React Native app](htt
    1. [React Native Quick Tips](/docs/quick-tips.md)
    1. [Understanding the File Structure](#understanding-the-file-structure)
    1. [Opinions Guiding this Project](/docs/opinions.md)
-1. **Using RNSK**
-   1. [Getting Up and Running with RNSK](#getting-started)
+1. **Using this project**
+   1. [Getting Up and Running](#getting-started)
    1. [Renaming the App](/docs/renaming.md)
-   1. [Routing / Navigating](/src/navigation/README.md)
    1. [Interacting with a REST API](/docs/api.md)
    1. [Testing](/docs/testing.md)
+   1. [CodePush](/docs/codepush.md)
+   1. [Contributiing](/docs/contributing.md)
 
 ---
 
@@ -58,22 +59,80 @@ This is a joint [React Web app](https://reactjs.org/) and [React Native app](htt
 
 ## Getting Started
 
-1. Ensure you've followed the [React Native - Get Started Guide](https://facebook.github.io/react-native/docs/getting-started.html) for the platform/s of choice
-1. Run `npm run fathom` from root directory
-1. Start the app in [an emulator](/docs/quick-tips.md#running-in-an-emulator)
+### 1. Setup
+
+Ensure you've followed the [React Native - Get Started Guide](https://facebook.github.io/react-native/docs/getting-started.html) using the `Building Projects with Native Code` section for the platform/s of choice
+  Manual steps for installing Android SDK, SDK Platform, Intel HAXM, and Android Virtual Device for emulating. (TODO: automate as part of the fathom script)
+
+### 2. Project Control
+
+Run `yarn fathom` or `npm run fathom` in the terminal from the root directory and select a desired option
+
+#### 2.1 initialize project
+
+1. Checks to ensure required environment dependencies are present and installs them if not
+1. Installs all package.json dependencies for React and React Native
+1. Manipulates the Android/iOS projects to successfully build with their project dependencies
+
+#### 2.2 start package manager
+
+Starts the React Native packager to develop on:
+- [An emulator](/docs/quick-tips.md#running-in-an-emulator) for Android and/or iOS
+- [A mobile device](/docs/quick-tips.md#running-on-device) for Android and/or iOS
+
+#### 2.3 create release build for Android/iOS
+
+1. Android - Creates an Android deployable build using the current project code
+  1. Release - Creates an Android deployable build for Production using the current project code
+  1. Staging - Creates an Android deployable build for Staging using the current project code
+1. iOS - Creates an iOS deployable build using the current project code
+  1. Release - Creates an iOS deployable build for Production using the current project code
+  1. Staging - Creates an iOS deployable build for Staging using the current project code
+
+#### 2.4 CodePush
+
+1. Release - Bundle and Release the current React Native project code to Staging (check [docs](/docs/codepush.md) to ensure changes in project will all be deployable through CodePush)
+  1. Android - Bundle and Release the current Android encompassed React Native project code to Staging
+  1. iOS - Bundle and Release the current iOS encompassed React Native project code to Staging
+  1. Both - Bundle and Release the current Android and iOS React Native project code to Staging
+1. Promote - Promote a CodePush build from Staging to Production
+  1. Android - Promote the Android CodePush build from Staging to Production
+  1. iOS - Promote the iOS CodePush build from Staging to Production
+  1. Both - Promote both the Android and iOS CodePush builds from Staging to Production
+
+#### 2.5 start web server
+
+1. Dev - Via webpack, starts a localhost server on port 3000 or self customized port: [http://localhost:3000](http://localhost:3000). Save code and it auto refreshes
+  1. If this fails rerun `yarn fathom` or `npm run fathom` and [initialize](#2.1-initialize-project) the project again
+1. Prod - Bundles React web app code and creates required files for production deployment in the `/public` folder
 
 ---
 
 ## Understanding the File Structure
 
 - `/android` - The native Android stuff
+- `/doc` - Extra linked docs
 - `/ios` - The native iOS stuff
-- `/src` - Contains the full React Native App codebase
-  - `/components` - 'Dumb-components' / presentational. [Read More &rarr;](/src/components/README.md)
-  - `/constants` - App-wide variables and config
-  - `/containers` - 'Smart-components' / the business logic. [Read More &rarr;](/src/containers/README.md)
-  - `/images` - Self explanatory right?
-  - `/lib` - Utils, custom libraries, functions
-  - `/navigation`- Routes - wire up the router with any & all screens. [Read More &rarr;](/src/navigation/README.md)
-  - `/redux` - Redux Reducers & Actions grouped by type. [Read More &rarr;](/src/redux/README.md)
-  - `/theme` - Theme specific styles and variables
+- `/keys` - App keys of iOS push notifications, iOS signing certificates, and Code Push deployment keys
+- `/public` - Web app server runs from here
+- `/screenshots` - Screenshots used on the Android and iOS store listings
+- `/src` - Contains the source code for both React web & React Native mobile apps
+  - `/actions` - Redux Actions - payloads of information that send data _from_ your application _to_ your store. [Read More &rarr;](https://redux.js.org/docs/basics/Actions.html)
+  - `/assets` - Storage of app fonts and images
+    - `/fonts` - Fathom branded font files (Libre Franklin)
+    - `/images` - Image assets used throughout the mobile and web apps
+  - `/constants` - Shared variables and configs (across platforms)
+  - `/containers` - 'Smart-components' that connect business logic to presentation [Read More &rarr;](https://redux.js.org/docs/basics/UsageWithReact.html#presentational-and-container-components)
+  - `/lib` - Utils, custom libraries, and functions that are shared across platforms
+  - `/native` - React Native mobile app specific codebase
+    - `/components` - 'Dumb-components' / presentational
+    - `/constants` - Mobile app-wide variables and config
+    - `/routes` - Routing structure for mobile app screens and flow
+    - `/theme` - Theme specific styles and variables
+  - `/reducers` - Redux Reducers - Mobile and Web app Redux Actions dispatch to reducers, which actually change the state [Read More &rarr;](https://redux.js.org/docs/basics/Reducers.html)
+  - `/store` - Redux Store - hooks up the Mobile and Web app Redux stores and provides initial/template states [Read More &rarr;](https://redux.js.org/docs/basics/Store.html)
+  - `/web` - React web app specific codebase
+    - `/components` - 'Dumb-components' / presentational
+    - `/routes` - Routing structure for web app screens and flow
+    - `/styles` - All the SCSS
+- `/webpack` - Contains the dev and production Web App configurations

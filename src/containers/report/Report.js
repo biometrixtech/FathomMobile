@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-03-14 02:31:05 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-30 12:50:57
+ * @Last Modified time: 2018-05-03 13:51:28
  */
 
 /**
@@ -69,7 +69,7 @@ const mapDispatchToProps = {
     getTeamStats: UserActions.getTeamStats,
     startRequest: UserActions.startRequest,
     stopRequest:  UserActions.stopRequest,
-    selectGraph:  UserActions.setStatsCategory,
+    selectGraph:  UserActions.selectGraph,
     userSelect:   UserActions.userSelect,
 };
 

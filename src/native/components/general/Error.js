@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:26:38 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-12 00:57:45
+ * @Last Modified time: 2018-04-23 10:25:46
  */
 
 /**
@@ -20,7 +20,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { AppStyles } from '../../theme/';
 
 // Components
-import { Spacer, Text, Button } from '../ui/';
+import { Spacer, Text, Button } from '../custom/';
 
 /* Component ==================================================================== */
 const Error = ({ text, tryAgain }) => (

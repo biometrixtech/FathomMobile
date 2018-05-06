@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:27:57 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-12 00:58:25
+ * @Last Modified time: 2018-04-23 10:24:24
  */
 
 /**
@@ -64,7 +64,6 @@ class AppWebView extends Component {
     /**
       * Each time page loads, update the URL
       */
-    /* eslint-disable max-len */
     onNavigationStateChange = (navState) => {
         this.state.webViewURL = navState.url;
         if (this.props.onNavigationStateChange) { this.props.onNavigationStateChange(navState.url); }
