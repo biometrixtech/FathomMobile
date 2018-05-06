@@ -117,7 +117,7 @@ Starts the React Native packager to develop on:
 - `/public` - Web app server runs from here
 - `/screenshots` - Screenshots used on the Android and iOS store listings
 - `/src` - Contains the source code for both React web & React Native mobile apps
-  - `/actions` - Redux Actions - payloads of information that send data _from_ your application _to_ your store. [Read More &rarr;](https://redux.js.org/docs/basics/Actions.html)
+  - `/actions` - Redux Actions: payloads of information that send data _from_ your application _to_ your store. [Read More &rarr;](https://redux.js.org/docs/basics/Actions.html)
   - `/assets` - Storage of app fonts and images
     - `/fonts` - Fathom branded font files (Libre Franklin)
     - `/images` - Image assets used throughout the mobile and web apps
@@ -129,8 +129,8 @@ Starts the React Native packager to develop on:
     - `/constants` - Mobile app-wide variables and config
     - `/routes` - Routing structure for mobile app screens and flow
     - `/theme` - Theme specific styles and variables
-  - `/reducers` - Redux Reducers - Mobile and Web app Redux Actions dispatch to reducers, which actually change the state [Read More &rarr;](https://redux.js.org/docs/basics/Reducers.html)
-  - `/store` - Redux Store - hooks up the Mobile and Web app Redux stores and provides initial/template states [Read More &rarr;](https://redux.js.org/docs/basics/Store.html)
+  - `/reducers` - Redux Reducers: Mobile and Web app Redux Actions dispatch to reducers, which actually change the state [Read More &rarr;](https://redux.js.org/docs/basics/Reducers.html)
+  - `/store` - Redux Store: hooks up the Mobile and Web app Redux stores and provides initial/template states [Read More &rarr;](https://redux.js.org/docs/basics/Store.html)
   - `/web` - React web app specific codebase
     - `/components` - 'Dumb-components' / presentational
     - `/routes` - Routing structure for web app screens and flow
