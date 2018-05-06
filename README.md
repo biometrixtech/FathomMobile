@@ -103,7 +103,7 @@ Starts the React Native packager to develop on:
 #### 2.5 start web server
 
 1. Dev - Via webpack, starts a localhost server on port 3000 or self customized port: [http://localhost:3000](http://localhost:3000). Save code and it auto refreshes
-    1. If this fails rerun `yarn fathom` or `npm run fathom` and [initialize](#initialize-project) the project again
+    1. If this fails rerun `yarn fathom` or `npm run fathom` and [initialize](#21-initialize-project) the project again
 1. Prod - Bundles React web app code and creates required files for production deployment in the `/public` folder
 
 ---
