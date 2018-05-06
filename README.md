@@ -83,22 +83,22 @@ Starts the React Native packager to develop on:
 #### 2.3 create release build for Android/iOS
 
 1. __Android__ - Creates an Android deployable build using the current project code
-    1. **Release** - Creates an Android deployable build for Production using the current project code
-    1. **Staging** - Creates an Android deployable build for Staging using the current project code
+    1. *Release* - Creates an Android deployable build for Production using the current project code
+    1. *Staging* - Creates an Android deployable build for Staging using the current project code
 1. __iOS__ - Creates an iOS deployable build using the current project code
-    1. **Release** - Creates an iOS deployable build for Production using the current project code
-    1. **Staging** - Creates an iOS deployable build for Staging using the current project code
+    1. *Release* - Creates an iOS deployable build for Production using the current project code
+    1. *Staging* - Creates an iOS deployable build for Staging using the current project code
 
 #### 2.4 CodePush
 
 1. __Release__ - Bundle and Release the current React Native project code to Staging (check [docs](/docs/codepush.md) to ensure changes in project will all be deployable through CodePush)
-    1. **Android** - Bundle and Release the current Android encompassed React Native project code to Staging
-    1. **iOS** - Bundle and Release the current iOS encompassed React Native project code to Staging
-    1. **Both** - Bundle and Release the current Android and iOS React Native project code to Staging
+    1. *Android* - Bundle and Release the current Android encompassed React Native project code to Staging
+    1. *iOS* - Bundle and Release the current iOS encompassed React Native project code to Staging
+    1. *Both* - Bundle and Release the current Android and iOS React Native project code to Staging
 1. __Promote__ - Promote a CodePush build from Staging to Production
-    1. **Android** - Promote the Android CodePush build from Staging to Production
-    1. **iOS** - Promote the iOS CodePush build from Staging to Production
-    1. **Both** - Promote both the Android and iOS CodePush builds from Staging to Production
+    1. *Android* - Promote the Android CodePush build from Staging to Production
+    1. *iOS* - Promote the iOS CodePush build from Staging to Production
+    1. *Both* - Promote both the Android and iOS CodePush builds from Staging to Production
 
 #### 2.5 start web server
 
