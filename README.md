@@ -22,7 +22,7 @@ This is a joint [React Web app](https://reactjs.org/) and [React Native app](htt
    1. [Interacting with a REST API](/docs/api.md)
    1. [Testing](/docs/testing.md)
    1. [CodePush](/docs/codepush.md)
-   1. [Contributiing](/docs/contributing.md)
+   1. [Contributing](/docs/contributing.md)
 
 ---
 
