@@ -29,4 +29,4 @@ Please ensure you're code is passing the built in linter.
 
 ## Tests
 
-(Future )Please include tests with your code and ensure your code is passing the existing tests.
+(Future) Please include tests with your code and ensure your code is passing the existing tests.
