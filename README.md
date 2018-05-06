@@ -83,27 +83,27 @@ Starts the React Native packager to develop on:
 #### 2.3 create release build for Android/iOS
 
 1. Android - Creates an Android deployable build using the current project code
-  1. Release - Creates an Android deployable build for Production using the current project code
-  1. Staging - Creates an Android deployable build for Staging using the current project code
+    1. Release - Creates an Android deployable build for Production using the current project code
+    1. Staging - Creates an Android deployable build for Staging using the current project code
 1. iOS - Creates an iOS deployable build using the current project code
-  1. Release - Creates an iOS deployable build for Production using the current project code
-  1. Staging - Creates an iOS deployable build for Staging using the current project code
+    1. Release - Creates an iOS deployable build for Production using the current project code
+    1. Staging - Creates an iOS deployable build for Staging using the current project code
 
 #### 2.4 CodePush
 
 1. Release - Bundle and Release the current React Native project code to Staging (check [docs](/docs/codepush.md) to ensure changes in project will all be deployable through CodePush)
-  1. Android - Bundle and Release the current Android encompassed React Native project code to Staging
-  1. iOS - Bundle and Release the current iOS encompassed React Native project code to Staging
-  1. Both - Bundle and Release the current Android and iOS React Native project code to Staging
+    1. Android - Bundle and Release the current Android encompassed React Native project code to Staging
+    1. iOS - Bundle and Release the current iOS encompassed React Native project code to Staging
+    1. Both - Bundle and Release the current Android and iOS React Native project code to Staging
 1. Promote - Promote a CodePush build from Staging to Production
-  1. Android - Promote the Android CodePush build from Staging to Production
-  1. iOS - Promote the iOS CodePush build from Staging to Production
-  1. Both - Promote both the Android and iOS CodePush builds from Staging to Production
+    1. Android - Promote the Android CodePush build from Staging to Production
+    1. iOS - Promote the iOS CodePush build from Staging to Production
+    1. Both - Promote both the Android and iOS CodePush builds from Staging to Production
 
 #### 2.5 start web server
 
 1. Dev - Via webpack, starts a localhost server on port 3000 or self customized port: [http://localhost:3000](http://localhost:3000). Save code and it auto refreshes
-  1. If this fails rerun `yarn fathom` or `npm run fathom` and [initialize](#2.1-initialize-project) the project again
+    1. If this fails rerun `yarn fathom` or `npm run fathom` and [initialize](#getting-started/2.-project-control/2.1-initialize-project) the project again
 1. Prod - Bundles React web app code and creates required files for production deployment in the `/public` folder
 
 ---
