@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-23 18:47:04
+ * @Last Modified time: 2018-05-05 23:14:50
  */
 
 /**
@@ -53,7 +53,7 @@ const convertToUnsigned32BitIntByteArray = (value) => {
 }
 
 // Creating a promise wrapper for setTimeout
-const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay));
+// const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay));
 
 const getOwnerFlag = (id) => {
     let dataArray = [commands.GET_OWNER_FLAG, convertHex('0x00')];

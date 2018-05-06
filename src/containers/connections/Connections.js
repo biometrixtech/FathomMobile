@@ -13,7 +13,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import UserActions from '../../actions/user';
+// import UserActions from '../../actions/user';
 
 const Connections = ({
     Layout,

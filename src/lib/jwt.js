@@ -8,7 +8,6 @@
 /**
  * API JWT Auth Functions
  */
-/* global fetch console */
 import jwtDecode from 'jwt-decode';
 
 // Consts and Libs

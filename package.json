@@ -8,8 +8,9 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios --simulator='iPhone X'",
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "pretest": "./node_modules/.bin/eslint -c .eslintrc --ext .js src",
+    "pretest": "./node_modules/.bin/eslint -c .eslintrc --quiet --ext .js src",
     "test": "jest",
+    "test-watch": "jest --watch",
     "web": "webpack-dev-server --content-base public/ --config webpack/web.dev.config.js --colors",
     "web-bundle": "webpack --config webpack/web.prod.config.js --progress --colors"
   },

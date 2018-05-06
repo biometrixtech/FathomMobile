@@ -60,3 +60,6 @@ buck-out/
 *.jsbundle
 **/public/bundle.js
 **/public/src/assets/
+
+# Test
+**/coverage/*

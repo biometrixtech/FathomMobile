@@ -9,7 +9,6 @@
  * User Actions
  */
 
-import jwtDecode from 'jwt-decode';
 import { Actions } from '../constants/';
 import { AppAPI, AppUtil } from '../lib/';
 

@@ -1,11 +1,11 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:17:54 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:17:54 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-05-06 00:07:25
  */
 
- /* global jest fetch */
+/* global jest fetch */
 
 jest.mock('Linking', () =>
     ({
