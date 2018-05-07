@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:16:44 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-30 00:37:35
+ * @Last Modified time: 2018-05-06 22:56:43
  */
 
 /**
@@ -237,6 +237,7 @@ function fetcher(method, inputEndpoint, inputParams, body, oldAPI, stats, prepro
   * - So we can call AppAPI.users.get() for example
   */
 const AppAPI = {
+    debug,
     handleError,
     getToken:      Token.getToken,
     stats:         {},

@@ -62,4 +62,4 @@ buck-out/
 **/public/src/assets/
 
 # Test
-**/coverage/*
+**/__coverage__/*

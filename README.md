@@ -61,6 +61,7 @@ This is a joint [React Web app](https://reactjs.org/) and [React Native app](htt
 
 ### 1. Setup
 
+For `node/npm` ensure you use [nvm](https://github.com/creationix/nvm)
 Ensure you've followed the [React Native - Get Started Guide](https://facebook.github.io/react-native/docs/getting-started.html) using the `Building Projects with Native Code` section for the platform/s of choice
   Manual steps for installing Android SDK, SDK Platform, Intel HAXM, and Android Virtual Device for emulating. (TODO: automate as part of the fathom script)
 

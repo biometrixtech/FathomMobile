@@ -25,10 +25,13 @@
       "<rootDir>/jest.setup.js"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!react-native|tcomb-form-native|apsl-react-native-button|react-clone-referenced-element)"
+      "node_modules/(?!react-native|tcomb-form-native|apsl-react-native-button|react-clone-referenced-element|react-navigation|redux-persist|react-native-vector-icons)"
     ],
+    "testRegex": ".*test.js$",
     "collectCoverage": true,
-    "verbose": true
+    "coverageDirectory": "__coverage__",
+    "verbose": true,
+    "bail": true
   },
   "dependencies": {
     "babel": "^6.23.0",

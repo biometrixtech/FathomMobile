@@ -141,7 +141,14 @@ initialize() {
                 cd ../../../../
             } || continue
             
-            echo "Everything checked, installed, and prepared.\nPackager ready to be started"
+            echo "Everything checked, installed, and prepared.\nPackager ready to be started.\nRunning unit tests.."
+            yarn test
+            testValue=$?
+            if [ $testValue -ne 0 ]; then
+                echo "${red}Unit testing failed.${normal}"
+            else
+                echo "Unit testing passed."
+            fi
         else
             echo "${red}Error: Xcode does not exist in Applications folder, please download and install it${normal}"
         fi
@@ -162,16 +169,30 @@ iosBuild() {
     echo
     case "$REPLY" in
         1)
-            cd ios
-            xcodebuild clean -project Fathom.xcodeproj -scheme Fathom -configuration Release
-            xcodebuild archive -project Fathom.xcodeproj -scheme Fathom -configuration Release
-            cd ..
+            yarn test
+            testValue=$?
+            if [ $testValue -ne 0 ]; then
+                echo "${red}Unit testing failed, not proceeding.${normal}"
+            else
+                echo "Unit testing passed, proceeding.."
+                cd ios
+                xcodebuild clean -project Fathom.xcodeproj -scheme Fathom -configuration Release
+                xcodebuild archive -project Fathom.xcodeproj -scheme Fathom -configuration Release
+                cd ..
+            fi
             ;;
         2)
-            cd ios
-            xcodebuild clean -project Fathom.xcodeproj -scheme Fathom -configuration Staging
-            xcodebuild archive -project Fathom.xcodeproj -scheme Fathom -configuration Staging
-            cd ..
+            yarn test
+            testValue=$?
+            if [ $testValue -ne 0 ]; then
+                echo "${red}Unit testing failed, not proceeding.${normal}"
+            else
+                echo "Unit testing passed, proceeding.."
+                cd ios
+                xcodebuild clean -project Fathom.xcodeproj -scheme Fathom -configuration Staging
+                xcodebuild archive -project Fathom.xcodeproj -scheme Fathom -configuration Staging
+                cd ..
+            fi
             ;;
         *)
             echo "${red}Invalid selection${normal}"
@@ -186,18 +207,32 @@ androidBuild() {
     echo
     case "$REPLY" in
         1)
-            cd android
-            ./gradlew clean assembleRelease
-            cd ..
-            echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-release#.apk${normal}"
-            open android/app/build/outputs/apk/
+            yarn test
+            testValue=$?
+            if [ $testValue -ne 0 ]; then
+                echo "${red}Unit testing failed, not proceeding.${normal}"
+            else
+                echo "Unit testing passed, proceeding.."
+                cd android
+                ./gradlew clean assembleRelease
+                cd ..
+                echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-release#.apk${normal}"
+                open android/app/build/outputs/apk/
+            fi
             ;;
         2)
-            cd android
-            ./gradlew clean assembleReleaseStaging
-            cd ..
-            echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-releaseStaging#.apk${normal}"
-            open android/app/build/outputs/apk/
+            yarn test
+            testValue=$?
+            if [ $testValue -ne 0 ]; then
+                echo "${red}Unit testing failed, not proceeding.${normal}"
+            else
+                echo "Unit testing passed, proceeding.."
+                cd android
+                ./gradlew clean assembleReleaseStaging
+                cd ..
+                echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-releaseStaging#.apk${normal}"
+                open android/app/build/outputs/apk/
+            fi
             ;;
         *)
             echo "${red}Invalid selection${normal}"
@@ -232,14 +267,35 @@ codepushRelease() {
     echo
     case "$REPLY" in
         1)
-            code-push release-react FathomAI-Android android
+            yarn test
+            testValue=$?
+            if [ $testValue -ne 0 ]; then
+                echo "${red}Unit testing failed, not proceeding.${normal}"
+            else
+                echo "Unit testing passed, proceeding.."
+                code-push release-react FathomAI-Android android
+            fi
             ;;
         2)
-            code-push release-react FathomAI-iOS ios
+            yarn test
+            testValue=$?
+            if [ $testValue -ne 0 ]; then
+                echo "${red}Unit testing failed, not proceeding.${normal}"
+            else
+                echo "Unit testing passed, proceeding.."
+                code-push release-react FathomAI-iOS ios
+            fi
             ;;
         3)
-            code-push release-react FathomAI-Android android
-            code-push release-react FathomAI-iOS ios
+            yarn test
+            testValue=$?
+            if [ $testValue -ne 0 ]; then
+                echo "${red}Unit testing failed, not proceeding.${normal}"
+            else
+                echo "Unit testing passed, proceeding.."
+                code-push release-react FathomAI-Android android
+                code-push release-react FathomAI-iOS ios
+            fi
             ;;
         *)
             echo "${red}Invalid selection${normal}"
@@ -298,7 +354,14 @@ web() {
             yarn web
             ;;
         2)
-            yarn web-bundle
+            yarn test
+            testValue=$?
+            if [ $testValue -ne 0 ]; then
+                echo "${red}Unit testing failed, not proceeding.${normal}"
+            else
+                echo "tests passed"
+                yarn web-bundle
+            fi
             ;;
         *)
             echo "${red}Invalid selection${normal}"

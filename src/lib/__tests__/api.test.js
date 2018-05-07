@@ -2,21 +2,31 @@
  * @Author: Vir Desai 
  * @Date: 2018-05-05 23:34:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-05-06 00:11:19
+ * @Last Modified time: 2018-05-06 22:57:42
  */
 
 /**
  * Test to check if the API is working as expected
  */
+
 /* global it expect jest */
 import 'react-native';
 
 import { AppAPI } from '../';
 
+it('Handle API error', () => {
+    let errorMessage = 'error message';
+    expect(AppAPI.handleError(errorMessage)).toEqual(errorMessage);
+});
+
+it('Has debug', () => {
+    expect(AppAPI.debug).toBeInstanceOf(Function);
+});
+
 it('Has api endpoints available', () => {
     let numberOfEndpoints = 0;
 
-    Object.keys(AppAPI).forEach((endpoint) => {
+    Object.keys(AppAPI).forEach(endpoint => {
         numberOfEndpoints += 1;
         expect(endpoint).not.toBe(null);
     });
@@ -59,6 +69,7 @@ it('Has hardware endpoints available', () => {
 
 it('Has api REST methods available', () => {
     const excludedEndpoints = [
+        'debug',
         'handleError',
         'getToken',
         'stats',

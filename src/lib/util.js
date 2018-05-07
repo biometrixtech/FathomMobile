@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:55 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-23 18:49:27
+ * @Last Modified time: 2018-05-06 22:44:54
  */
 
 /**
@@ -13,20 +13,20 @@ import * as scale from 'd3-scale';
 import * as shape from 'd3-shape';
 import * as d3Array from 'd3-array';
 
-const Entities = require('html-entities').AllHtmlEntities;
+// const Entities = require('html-entities').AllHtmlEntities;
 
 const MS_IN_DAY = 1000 * 60 * 60 * 24;
 
-const entities = new Entities();
+// const entities = new Entities();
 
 const d3 = {
     scale,
     shape,
 };
 
-function striptags(input) {
-    return input.replace(/(<([^>]+)>)/ig, '');
-}
+// function striptags(input) {
+//     return input.replace(/(<([^>]+)>)/ig, '');
+// }
 
 const UTIL = {
     /**
@@ -42,69 +42,77 @@ const UTIL = {
     /**
       * Convert Obj to Arr
       */
-    objToArr: obj => Object.keys(obj).map(k => obj[k]),
+    objToArr: obj => {
+        if (typeof obj === 'object' && !(obj instanceof Array)) {
+            if (Object.keys(obj).length === 0) { return false; }
+        }
+        if (obj instanceof Array) {
+            return false;
+        }
+        return Object.keys(obj).map(k => obj[k]);
+    },
 
     /**
       * Limit characters, placing a ... at the end
       */
     limitChars: (str, limit = 15) => {
-        if (str.length > limit) { return `${str.substr(0, limit).trim()} ...`; }
+        if (str.length > limit) { return `${str.substr(0, limit).trim()}...`; }
         return str;
     },
 
     /**
       * Decode HTML Entites
       */
-    htmlEntitiesDecode: str => entities.decode(str),
+    // htmlEntitiesDecode: str => entities.decode(str),
 
     /**
       * Convert all HTMLEntities when Array
       */
-    convertHtmlEntitiesArray: (arr) => {
-        const finalArr = arr;
+    // convertHtmlEntitiesArray: (arr) => {
+    //     const finalArr = arr;
 
-        if (arr instanceof Array) {
-            arr.forEach((item, key) => {
-                if (item instanceof Array) {
-                    finalArr[key] = UTIL.convertHtmlEntitiesArray(item);
-                } else if (typeof item === 'object') {
-                    finalArr[key] = UTIL.convertHtmlEntitiesObject(item);
-                } else if (typeof item === 'string') {
-                    finalArr[key] = entities.decode(striptags(item));
-                }
-            });
-        }
+    //     if (arr instanceof Array) {
+    //         arr.forEach((item, key) => {
+    //             if (item instanceof Array) {
+    //                 finalArr[key] = UTIL.convertHtmlEntitiesArray(item);
+    //             } else if (typeof item === 'object') {
+    //                 finalArr[key] = UTIL.convertHtmlEntitiesObject(item);
+    //             } else if (typeof item === 'string') {
+    //                 finalArr[key] = entities.decode(striptags(item));
+    //             }
+    //         });
+    //     }
 
-        return finalArr;
-    },
+    //     return finalArr;
+    // },
 
     /**
       * Convert all HTMLEntities when Object
       */
-    convertHtmlEntitiesObject: (obj) => {
-        const finalObj = obj;
+    // convertHtmlEntitiesObject: (obj) => {
+    //     const finalObj = obj;
 
-        if (typeof obj === 'object' && !(obj instanceof Array)) {
-            Object.keys(obj).forEach((key) => {
-                const item = obj[key];
+    //     if (typeof obj === 'object' && !(obj instanceof Array)) {
+    //         Object.keys(obj).forEach((key) => {
+    //             const item = obj[key];
 
-                if (item instanceof Array) {
-                    finalObj[key] = UTIL.convertHtmlEntitiesArray(item);
-                } else if (typeof item === 'object') {
-                    finalObj[key] = UTIL.convertHtmlEntitiesObject(item);
-                } else if (typeof item === 'string') {
-                    finalObj[key] = entities.decode(striptags(item));
-                }
-            });
-        }
+    //             if (item instanceof Array) {
+    //                 finalObj[key] = UTIL.convertHtmlEntitiesArray(item);
+    //             } else if (typeof item === 'object') {
+    //                 finalObj[key] = UTIL.convertHtmlEntitiesObject(item);
+    //             } else if (typeof item === 'string') {
+    //                 finalObj[key] = entities.decode(striptags(item));
+    //             }
+    //         });
+    //     }
 
-        return finalObj;
-    },
+    //     return finalObj;
+    // },
 
     /**
       * Strips all HTML tags
       */
-    stripTags: str => striptags(str),
+    // stripTags: str => striptags(str),
 
     /**
       * Create an time x-scale.
@@ -153,58 +161,57 @@ const UTIL = {
       * @param {number} height Height our graph will render to.
       * @return {Object} Object with data needed to render.
       */
-    createLineGraph({
-        data,
-        xAccessor,
-        yAccessor,
-        width,
-        height,
-    }) {
-        const lastDatum = data[data.length - 1];
+    // createLineGraph({
+    //     data,
+    //     xAccessor,
+    //     yAccessor,
+    //     width,
+    //     height,
+    // }) {
+    //     const lastDatum = data[data.length - 1];
   
-        const scaleX = this.createTimeScaleX(
-            data[0].time,
-            lastDatum.time,
-            width
-        );
+    //     const scaleX = this.createTimeScaleX(
+    //         data[0].time,
+    //         lastDatum.time,
+    //         width
+    //     );
   
-        // Collect all y values.
-        const allYValues = data.reduce((all, datum) => {
-            all.push(yAccessor(datum));
-            return all;
-        }, []);
-        // Get the min and max y value.
-        const extentY = d3Array.extent(allYValues);
-        const scaleY = this.createScaleY(extentY[0], extentY[1], height);
+    //     // Collect all y values.
+    //     const allYValues = data.reduce((all, datum) => {
+    //         all.push(yAccessor(datum));
+    //         return all;
+    //     }, []);
+    //     // Get the min and max y value.
+    //     const extentY = d3Array.extent(allYValues);
+    //     const scaleY = this.createScaleY(extentY[0], extentY[1], height);
     
-        const lineShape = d3.shape.line()
-            .x(d => scaleX(xAccessor(d)))
-            .y(d => scaleY(yAccessor(d)));
+    //     const lineShape = d3.shape.line()
+    //         .x(d => scaleX(xAccessor(d)))
+    //         .y(d => scaleY(yAccessor(d)));
   
-        return {
-            data,
-            scale: {
-                x: scaleX,
-                y: scaleY,
-            },
-            path:  lineShape(data),
-            ticks: data.map((datum) => {
-                const time = xAccessor(datum);
-                const value = yAccessor(datum);
+    //     return {
+    //         data,
+    //         scale: {
+    //             x: scaleX,
+    //             y: scaleY,
+    //         },
+    //         path:  lineShape(data),
+    //         ticks: data.map((datum) => {
+    //             const time = xAccessor(datum);
+    //             const value = yAccessor(datum);
         
-                return {
-                    x: scaleX(time),
-                    y: scaleY(value),
-                    datum,
-                };
-            }),
-        };
-    },
+    //             return {
+    //                 x: scaleX(time),
+    //                 y: scaleY(value),
+    //                 datum,
+    //             };
+    //         }),
+    //     };
+    // },
     MS_IN_DAY,
     MS_IN_WEEK:      MS_IN_DAY * 7,
     formatDate:      (date) => `${date < 10 ? '0' : ''}${date}`,
-    getStartEndDate: (weekOffset) => {
-        let date = new Date();
+    getStartEndDate: (weekOffset, date = new Date()) => {
         date.setTime(date.getTime() + weekOffset * UTIL.MS_IN_WEEK);
         let dayOfWeek = date.getDay();
         let startOfWeekOffset = dayOfWeek === 1 ? 0 : (dayOfWeek+6)%7;
