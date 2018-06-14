@@ -131,7 +131,8 @@ initialize() {
             nvm_string='/.nvm'
             android_nvm_location=${android_nvm_location%$nvm_string}
             android_nvm_location=${android_nvm_location////\\/}
-            sed -i "" "s/\/Users\/virdesai\//$android_nvm_location/" ./android/app/build.gradle
+            user=`whoami`
+            sed -i "" "s/\/Users\/$user\//$android_nvm_location/" ./android/app/build.gradle
 
             sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
             sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
