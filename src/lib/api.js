@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:16:44 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-29 01:11:44
+ * @Last Modified time: 2018-06-29 19:18:11
  */
 
 /**
@@ -11,9 +11,12 @@
 /* global fetch console */
 
 // Consts and Libs
+import Fabric from 'react-native-fabric';
 import JWT from './jwt';
 import { AppConfig, ErrorMessages, APIConfig } from '../constants/';
 import { store } from '../store/';
+
+const { Answers } = Fabric;
 
 // We'll use JWT for API Authentication
 // const Token = {};
@@ -123,7 +126,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
             headers: {
                 'Accept':       'application/json',
                 'Content-Type': 'application/json',
-                'User-Agent':   AppConfig.appName,
+                'User-Agent':   AppConfig.deviceInfo,
             },
         };
 
@@ -221,15 +224,60 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                 if (rawRes && /20[01]/.test(`${rawRes.status}`)) { return jsonRes; }
                 throw jsonRes;
             })
-            .then((res) => {
+            .then(res => {
                 debug(res, `API Response #${requestNum} from ${thisUrl}`);
+
+                // Don't send plaintext password to Answers logs
+                if (endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
+                    let answerBody = Object.assign({}, req.body);
+                    delete answerBody.password;
+                    Answers.logLogin('Mobile App Login', true, {
+                        body:          answerBody,
+                        headers:       JSON.stringify(req.headers),
+                        method:        req.method,
+                        response:      JSON.stringify(res),
+                        requestNumber: requestNum,
+                        url:           thisUrl,
+                    });
+                } else {
+                    Answers.logCustom('API Response success', {
+                        body:          req.body,
+                        headers:       JSON.stringify(req.headers),
+                        method:        req.method,
+                        response:      JSON.stringify(res),
+                        requestNumber: requestNum,
+                        url:           thisUrl,
+                    });
+                }
                 return resolve(res);
             })
-            .catch((err) => {
+            .catch(err => {
                 // API got back to us, clear the timeout
                 clearTimeout(apiTimedOut);
-
                 debug(err, thisUrl);
+
+                // Don't send plaintext password to Answers logs
+                if (endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
+                    let answerBody = Object.assign({}, req.body);
+                    delete answerBody.password;
+                    Answers.logLogin('Mobile App Login', false, {
+                        body:          answerBody,
+                        headers:       JSON.stringify(req.headers),
+                        method:        req.method,
+                        response:      JSON.stringify(err),
+                        requestNumber: requestNum,
+                        url:           thisUrl,
+                    });
+                } else {
+                    Answers.logCustom('API Response failed', {
+                        body:          req.body,
+                        headers:       JSON.stringify(req.headers),
+                        method:        req.method,
+                        response:      JSON.stringify(err),
+                        requestNumber: requestNum,
+                        url:           thisUrl,
+                    });
+                }
                 return reject(err);
             });
     });
