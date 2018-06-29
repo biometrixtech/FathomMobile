@@ -70,17 +70,23 @@ initialize() {
             watchman=$(which watchman)
             [ ${#watchman} == 0 ] && { echo "watchman does not exist, installing"; brew install watchman; } || continue
 
-            # [ -s ~/.nvm/nvm.sh ] && continue || {
-            #     echo "nvm does not exist, installing";
-            #     asdfasdf
-                # curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-                # export NVM_DIR="$HOME/.nvm"
-                # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-                # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-            # }
-            # . ~/.nvm/nvm.sh
-            # nvm install
-            # nvm use
+            unset PREFIX
+            [ -s ~/.nvm/nvm.sh ] && continue || {
+                echo "nvm does not exist, installing";
+                curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+                export NVM_DIR="$HOME/.nvm"
+                [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+                [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+            }
+            . ~/.nvm/nvm.sh
+            nvmrc=`cat .nvmrc`
+            nvm_res=`nvm ls | grep "$nvmrc"`
+            if [ "$nvm_res" != "" ]
+            then
+                nvm use
+            else
+                nvm install
+            fi
 
 
             echo "☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️️☁️☁️☁️☁️☁️☁️☁️☁️☁️️️️️️️"
