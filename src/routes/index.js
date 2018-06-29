@@ -77,65 +77,39 @@ const Index = (
             </Stack>
             <Stack>
                 <Scene
-                    Layout={LoginComponent}
-                    component={LoginContainer}
-                    hideNavBar
-                    key='login'
-                />
-                <Scene
-                    Layout={SignUpComponent}
-                    component={SignUpContainer}
-                    hideNavBar
-                    key='signUp'
-                />
-                <Scene
-                    Layout={ForgotPasswordComponent}
-                    component={ForgotPasswordContainer}
-                    hideNavBar
-                    key='forgotPassword'
-                />
-                <Scene
                     Layout={SettingsComponent}
                     component={SettingsContainer}
                     hideNavBar
                     key='settings'
                 />
-                <Stack>
-                    <Scene
-                        Layout={SettingsComponent}
-                        component={SettingsContainer}
-                        hideNavBar
-                        key='settings'
-                    />
-                    <Scene
-                        key='kitManagement'
-                        title='Kit Management'
-                        component={KitManagementContainer}
-                        Layout={KitManagementComponent}
-                        // {...DefaultProps.navbarProps}
-                    />
-                    <Scene
-                        key='bluetoothConnect'
-                        title='Bluetooth Connect'
-                        component={BluetoothConnectContainer}
-                        Layout={BluetoothConnectComponent}
-                        // {...DefaultProps.navbarProps}
-                    />
-                    <Scene
-                        key='kitOwner'
-                        title='Kit Owner'
-                        component={KitOwnerContainer}
-                        Layout={KitOwnerComponent}
-                        // {...DefaultProps.navbarProps}
-                    />
-                    <Scene
-                        key='kitAssign'
-                        title='Kit Assign'
-                        component={KitAssignContainer}
-                        Layout={KitAssignComponent}
-                        // {...DefaultProps.navbarProps}
-                    />
-                </Stack>
+                <Scene
+                    key='kitManagement'
+                    title='Kit Management'
+                    component={KitManagementContainer}
+                    Layout={KitManagementComponent}
+                    // {...DefaultProps.navbarProps}
+                />
+                <Scene
+                    key='bluetoothConnect'
+                    title='Bluetooth Connect'
+                    component={BluetoothConnectContainer}
+                    Layout={BluetoothConnectComponent}
+                    // {...DefaultProps.navbarProps}
+                />
+                <Scene
+                    key='kitOwner'
+                    title='Kit Owner'
+                    component={KitOwnerContainer}
+                    Layout={KitOwnerComponent}
+                    // {...DefaultProps.navbarProps}
+                />
+                <Scene
+                    key='kitAssign'
+                    title='Kit Assign'
+                    component={KitAssignContainer}
+                    Layout={KitAssignComponent}
+                    // {...DefaultProps.navbarProps}
+                />
             </Stack>
         </Stack>
     </Router>
