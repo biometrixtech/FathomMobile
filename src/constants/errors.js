@@ -1,15 +1,16 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2018-04-30 13:24:02 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2018-04-30 13:24:02 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-06-29 01:24:17
  */
 
 export default {
     // Defaults
-    default:     'Hmm, an unknown error occured',
-    timeout:     'Server Timed Out. Check your internet connection',
-    invalidJson: 'Response returned is not valid JSON',
+    default:          'Hmm, an unknown error occured',
+    timeout:          'Server Timed Out. Check your internet connection',
+    invalidJson:      'Response returned is not valid JSON',
+    deviceRegistered: 'Device already registered',
 
     // User
     userExists:         'user already exists',

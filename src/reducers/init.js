@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-23 03:55:41 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-30 00:23:40
+ * @Last Modified time: 2018-06-28 11:25:27
  */
 
 /**
@@ -23,17 +23,23 @@ export default function initReducer(state = initialState, action) {
             password: action.password,
             jwt:      action.jwt,
         });
+    case Actions.REGISTER_DEVICE:
+        return Object.assign({}, state, {
+            certificate: action.certificate,
+        });
     case Actions.SET_ENVIRONMENT:
         return Object.assign({}, state, {
             environment: action.environment
         });
     case Actions.LOGOUT:
         return Object.assign({}, initialState, {
-            environment: state.environment
+            environment: state.environment,
+            certificate: state.certificate,
         });
-        // return initialState;
     case Actions.SIGN_UP_SUCCESS:
+    case Actions.SIGN_UP_FAILURE:
     case Actions.FORGOT_PASSWORD_SUCCESS:
+    case Actions.FORGOT_PASSWORD_FAILURE:
     default:
         return state;
     }

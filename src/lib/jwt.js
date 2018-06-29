@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:16:35 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-25 02:58:11
+ * @Last Modified time: 2018-06-29 01:17:53
  */
 
 /**
@@ -33,16 +33,16 @@ export default class JWT {
         }
 
         // Let's try logging in
-        return AppAPI[APIConfig.tokenKey].post('accessory', {
+        return AppAPI[APIConfig.tokenKey].post(null, {
             email:    this.apiCredentials.email,
             password: this.apiCredentials.password,
         }).then(async (res) => {
-            if (!res.user.jwt) {
+            if (!res.authorization || !res.authorization.jwt) {
                 return reject(res);
             }
-            const jwt = res.user.jwt;
+            const jwt = res.authorization.jwt;
 
-            const tokenIsNowValid = this.tokenIsValid ? await this.tokenIsValid(jwt,res.user.id) : null;
+            const tokenIsNowValid = this.tokenIsValid ? this.tokenIsValid(jwt,res.user.id) : null;
             if (!tokenIsNowValid) { return reject(res); }
 
             return resolve(res);

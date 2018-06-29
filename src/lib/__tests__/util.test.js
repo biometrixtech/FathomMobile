@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-05-05 23:34:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-05-06 22:44:59
+ * @Last Modified time: 2018-06-28 11:42:43
  */
 
 /**
@@ -60,32 +60,32 @@ it('Util.limitChars more than limit', () => {
     expect(AppUtil.limitChars('Longer string than limit', 15)).toEqual('Longer string t...');
 });
 
-it('Util.createTimeScaleX success', () => {
-    let startDate = new Date(2018, 4, 5);
-    let endDate = new Date(2018, 4, 11);
-    let width = 300;
-    let output = AppUtil.createTimeScaleX(startDate, endDate, width);
-    expect(output).toBeInstanceOf(Function);
-    expect(output(startDate.getTime() + MS_IN_DAY)).toBe('Sun 06');
-    expect(output(endDate.getTime() - MS_IN_DAY)).toBe('Thu 10');
-});
+// it('Util.createTimeScaleX success', () => {
+//     let startDate = new Date(2018, 4, 5);
+//     let endDate = new Date(2018, 4, 11);
+//     let width = 300;
+//     let output = AppUtil.createTimeScaleX(startDate, endDate, width);
+//     expect(output).toBeInstanceOf(Function);
+//     expect(output(startDate.getTime() + MS_IN_DAY)).toBe('Sun 06');
+//     expect(output(endDate.getTime() - MS_IN_DAY)).toBe('Thu 10');
+// });
 
-it('Util.createScaleX success', () => {
-    let start = 100;
-    let end = 500;
-    let width = 400;
-    let output = AppUtil.createScaleX(start, end, width);
-    expect(output).toBeInstanceOf(Function);
-});
+// it('Util.createScaleX success', () => {
+//     let start = 100;
+//     let end = 500;
+//     let width = 400;
+//     let output = AppUtil.createScaleX(start, end, width);
+//     expect(output).toBeInstanceOf(Function);
+// });
 
-it('Util.createScaleY success', () => {
-    let minY = 100;
-    let maxY = 500;
-    let height = 400;
-    let startY = 200;
-    let output = AppUtil.createScaleY(minY, maxY, height, startY);
-    expect(output).toBeInstanceOf(Function);
-});
+// it('Util.createScaleY success', () => {
+//     let minY = 100;
+//     let maxY = 500;
+//     let height = 400;
+//     let startY = 200;
+//     let output = AppUtil.createScaleY(minY, maxY, height, startY);
+//     expect(output).toBeInstanceOf(Function);
+// });
 
 it('Util.MS_IN_DAY is correct', () => {
     expect(AppUtil.MS_IN_DAY).toEqual(MS_IN_DAY);

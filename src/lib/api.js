@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:16:44 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-05-06 22:56:43
+ * @Last Modified time: 2018-06-29 01:11:44
  */
 
 /**
@@ -13,14 +13,20 @@
 // Consts and Libs
 import JWT from './jwt';
 import { AppConfig, ErrorMessages, APIConfig } from '../constants/';
-import { store } from '../store/index';
+import { store } from '../store/';
 
 // We'll use JWT for API Authentication
 // const Token = {};
 const Token = new JWT();
 
+const API_ENUM = {
+    API:           0,
+    HARDWARE:      1,
+    PREPROCESSING: 2,
+    STATS:         3,
+};
+
 // Config
-// const HOSTNAME      = APIConfig.hostname;
 const ENDPOINTS     = APIConfig.endpoints;
 const STATS         = APIConfig.statsEndpoints;
 const PREPROCESSING = APIConfig.preprocessingEndpoints;
@@ -61,6 +67,8 @@ function handleError(err) {
         error = err;
     } else if (err && err.error) {
         error = err.error;
+    } else if (err && err.message) {
+        error = err.message;
     }
 
     if (!error) { error = ErrorMessages.default; }
@@ -89,7 +97,7 @@ function serialize(obj, prefix) {
 /**
   * Sends requests to the API
   */
-function fetcher(method, inputEndpoint, inputParams, body, oldAPI, stats, preprocessing, hardware) {
+function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
     let endpoint = inputEndpoint;
     const params = inputParams;
     let currentState = store.getState();
@@ -123,36 +131,32 @@ function fetcher(method, inputEndpoint, inputParams, body, oldAPI, stats, prepro
         // Don't add on the login endpoint
         if (endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
             if (jwt) {
-                if (oldAPI) {
-                    req.headers.jwt = jwt;
-                } else {
-                    req.headers.Authorization = jwt;
-                }
+                req.headers.Authorization = jwt;
             }
         }
 
         // Add Host name
         // Don't add on anything but the login endpoint if host name already exists
-        if (oldAPI) {
+        if (api_enum === API_ENUM.API) {
             if (!HOSTNAME || endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
                 HOSTNAME = APIConfig.APIs[environment];
             }
             hostname = HOSTNAME;
-        } else if (stats) {
-            if (!STATS_HOSTNAME) {
-                STATS_HOSTNAME = APIConfig.STATS_APIs[environment];
-            }
-            hostname = STATS_HOSTNAME;
-        } else if (preprocessing) {
-            if (!PREPROCESSING_HOSTNAME) {
-                PREPROCESSING_HOSTNAME = APIConfig.PREPROCESSING_APIs[environment];
-            }
-            hostname = PREPROCESSING_HOSTNAME;
-        } else if (hardware) {
+        } else if (api_enum === API_ENUM.HARDWARE) {
             if (!HARDWARE_HOSTNAME) {
                 HARDWARE_HOSTNAME = APIConfig.HARDWARE_APIs[environment];
             }
             hostname = HARDWARE_HOSTNAME;
+        } else if (api_enum === API_ENUM.PREPROCESSING) {
+            if (!PREPROCESSING_HOSTNAME) {
+                PREPROCESSING_HOSTNAME = APIConfig.PREPROCESSING_APIs[environment];
+            }
+            hostname = PREPROCESSING_HOSTNAME;
+        } else if (api_enum === API_ENUM.STATS) {
+            if (!STATS_HOSTNAME) {
+                STATS_HOSTNAME = APIConfig.STATS_APIs[environment];
+            }
+            hostname = STATS_HOSTNAME;
         }
 
         // Add Endpoint Params
@@ -214,7 +218,7 @@ function fetcher(method, inputEndpoint, inputParams, body, oldAPI, stats, prepro
                 }
 
                 // Only continue if the header is successful
-                if (rawRes && rawRes.status === 200) { return jsonRes; }
+                if (rawRes && /20[01]/.test(`${rawRes.status}`)) { return jsonRes; }
                 throw jsonRes;
             })
             .then((res) => {
@@ -239,39 +243,39 @@ function fetcher(method, inputEndpoint, inputParams, body, oldAPI, stats, prepro
 const AppAPI = {
     debug,
     handleError,
-    getToken:      Token.getToken,
-    stats:         {},
-    preprocessing: {},
     hardware:      {},
+    getToken:      Token.getToken,
+    preprocessing: {},
+    stats:         {},
 };
 
 ENDPOINTS.forEach((endpoint, key) => {
     AppAPI[key] = {};
     API_MAP.forEach(apiType => {
-        AppAPI[key][apiType] = (params, payload) => fetcher(apiType.toUpperCase(), endpoint, params, payload, true, false, false, false);
-    });
-});
-
-STATS.forEach((endpoint, key) => {
-    AppAPI.stats[key] = {};
-    API_MAP.forEach(apiType => {
-        AppAPI.stats[key][apiType] = (params, payload) => fetcher(apiType.toUpperCase(), endpoint, params, payload, false, true, false, false);
-    });
-});
-
-PREPROCESSING.forEach((endpoint, key) => {
-    AppAPI.preprocessing[key] = {};
-    API_MAP.forEach(apiType => {
-        AppAPI.preprocessing[key][apiType] = (params, payload) => fetcher(apiType.toUpperCase(), endpoint, params, payload, false, false, true, false);
+        AppAPI[key][apiType] = (params, payload) => fetcher(apiType.toUpperCase(), endpoint, params, payload, API_ENUM.API);
     });
 });
 
 HARDWARE.forEach((endpoint, key) => {
     AppAPI.hardware[key] = {};
     API_MAP.forEach(apiType => {
-        AppAPI.hardware[key][apiType] = (params, payload) => fetcher(apiType.toUpperCase(), endpoint, params, payload, false, false, false, true);
+        AppAPI.hardware[key][apiType] = (params, payload) => fetcher(apiType.toUpperCase(), endpoint, params, payload, API_ENUM.HARDWARE);
     });
-})
+});
+
+PREPROCESSING.forEach((endpoint, key) => {
+    AppAPI.preprocessing[key] = {};
+    API_MAP.forEach(apiType => {
+        AppAPI.preprocessing[key][apiType] = (params, payload) => fetcher(apiType.toUpperCase(), endpoint, params, payload, API_ENUM.PREPROCESSING);
+    });
+});
+
+STATS.forEach((endpoint, key) => {
+    AppAPI.stats[key] = {};
+    API_MAP.forEach(apiType => {
+        AppAPI.stats[key][apiType] = (params, payload) => fetcher(apiType.toUpperCase(), endpoint, params, payload, API_ENUM.STATS);
+    });
+});
 
 /* Export ==================================================================== */
 export default AppAPI;

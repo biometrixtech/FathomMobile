@@ -1,46 +1,58 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2018-04-30 13:23:45 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2018-04-30 13:23:45 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-06-28 16:32:58
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import init from '../../actions/init';
+import { init } from '../../actions/';
 
 const Login = ({
     Layout,
-    onFormSubmit,
-    setEnvironment,
-    environment,
+    authorizeUser,
+    certificate,
     email,
-    password,
+    environment,
+    finalizeLogin,
     loading,
+    onFormSubmit,
+    password,
+    registerDevice,
+    setEnvironment,
 }) => (
     <Layout
-        onFormSubmit={onFormSubmit}
-        setEnvironment={setEnvironment}
-        environment={environment}
+        authorizeUser={authorizeUser}
+        certificate={certificate}
         email={email}
-        password={password}
+        environment={environment}
+        finalizeLogin={finalizeLogin}
         loading={loading}
+        onFormSubmit={onFormSubmit}
+        password={password}
+        registerDevice={registerDevice}
+        setEnvironment={setEnvironment}
     />
 );
 
 Login.propTypes = {
     Layout:         PropTypes.func.isRequired,
-    onFormSubmit:   PropTypes.func.isRequired,
-    setEnvironment: PropTypes.func.isRequired,
-    environment:    PropTypes.string,
+    authorizeUser:  PropTypes.func.isRequired,
+    certificate:    PropTypes.object,
     email:          PropTypes.string,
-    password:       PropTypes.string,
+    environment:    PropTypes.string,
+    finalizeLogin:  PropTypes.func.isRequired,
     loading:        PropTypes.bool,
+    onFormSubmit:   PropTypes.func.isRequired,
+    password:       PropTypes.string,
+    registerDevice: PropTypes.func.isRequired,
+    setEnvironment: PropTypes.func.isRequired,
 };
 
 Login.defaultProps = {
+    certificate: null,
     environment: 'PROD',
     email:       null,
     password:    null,
@@ -48,14 +60,18 @@ Login.defaultProps = {
 };
 
 const mapStateToProps = state => ({
+    certificate: state.init.certificate || null,
     environment: state.init.environment || 'PROD',
     email:       state.init.email || null,
-    password:    state.init.password || null,
     loading:     state.user.loading || false,
+    password:    state.init.password || null,
 });
 
 const mapDispatchToProps = {
-    onFormSubmit:   init.login,
+    authorizeUser:  init.authorizeUser,
+    finalizeLogin:  init.finalizeLogin,
+    onFormSubmit:   init.startLogin,
+    registerDevice: init.registerDevice,
     setEnvironment: init.setEnvironment,
 };
 

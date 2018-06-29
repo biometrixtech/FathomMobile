@@ -109,21 +109,24 @@ initialize() {
             sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-fabric/android/build.gradle
             sed -i '' 's/24.0.2/27.0.3/' ./node_modules/react-native-ble-manager/android/build.gradle
             sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-            sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-svg/android/build.gradle
+            # sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-svg/android/build.gradle
+            sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-device-info/android/build.gradle
             sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-vector-icons/android/build.gradle
 
             sed -i '' 's/compile /implementation /' ./node_modules/react-native-code-push/android/app/build.gradle
             sed -i '' 's/compile /implementation /' ./node_modules/react-native-fabric/android/build.gradle
             sed -i '' 's/compile /implementation /' ./node_modules/react-native-ble-manager/android/build.gradle
             sed -i '' 's/compile /implementation /' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-svg/android/build.gradle
+            # sed -i '' 's/compile /implementation /' ./node_modules/react-native-svg/android/build.gradle
+            sed -i '' 's/compile /implementation /' ./node_modules/react-native-device-info/android/build.gradle
             sed -i '' 's/compile /implementation /' ./node_modules/react-native-vector-icons/android/build.gradle
 
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-code-push/android/app/build.gradle
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-fabric/android/build.gradle
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-ble-manager/android/build.gradle
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
+            # sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
+            sed -i '' 's/compile /implementation /' ./node_modules/react-native-device-info/android/build.gradle
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-vector-icons/android/build.gradle
 
             # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
@@ -135,12 +138,21 @@ initialize() {
             sed -i "" "s/\/Users\/$user\//$android_nvm_location/" ./android/app/build.gradle
 
             sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
-            sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
+            # sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
             [ -d "./node_modules/react-native/third-party" ] && {
                 cd node_modules/react-native/third-party/glog-0.3.4
                 ../../scripts/ios-configure-glog.sh                 
                 cd ../../../../
             } || continue
+
+            # replacing xcode IP with your current computer IP
+            currentip=`grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' ./ios/Fathom/AppDelegate.m`
+            newip=$(for i in `ifconfig -l `; do ipconfig getifaddr $i ; done)
+            if [ ! -z "$newip" -a "$newip" != "" -a ! -z "$currentip" -a "$currentip" != "" ]; then
+                sed -i '' "s/$currentip/$newip/" ./ios/Fathom/AppDelegate.m
+            else
+                echo "${red}IP Replacement failed because file IP or current IP not found.${normal}"
+            fi
             
             echo "Everything checked, installed, and prepared.\nPackager ready to be started.\nRunning unit tests.."
             yarn test
@@ -345,35 +357,9 @@ codepush() {
     esac
 }
 
-web() {
-    echo
-    read -p "${grey}Choose a web option:${normal}`echo $'\n\n '`[1]: Dev`echo $'\n '`[2]: Prod`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
-    echo
-    case "$REPLY" in
-        1)
-            lsof -i tcp:3000 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
-            yarn web
-            ;;
-        2)
-            yarn test
-            testValue=$?
-            if [ $testValue -ne 0 ]; then
-                echo "${red}Unit testing failed, not proceeding.${normal}"
-            else
-                echo "tests passed"
-                yarn web-bundle
-            fi
-            ;;
-        *)
-            echo "${red}Invalid selection${normal}"
-            web
-            ;;
-    esac
-}
-
 main() {
     echo
-    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n '`[4]: CodePush`echo $'\n '`[5]: start web server`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n '`[4]: CodePush`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
     echo
     case "$REPLY" in
         1)
@@ -387,9 +373,6 @@ main() {
             ;;
         4)
             codepush
-            ;;
-        5)
-            web
             ;;
         *)
             echo "${red}Invalid selection${normal}"

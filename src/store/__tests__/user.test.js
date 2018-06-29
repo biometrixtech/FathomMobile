@@ -3,7 +3,7 @@ import Fixture from './fixtures/user.fixture';
 
 /* global it expect jest */
 
-it('Action types exist', () => {
+it('User default store exists', () => {
     let numberOfConstants = 0;
 
     Object.keys(Store).forEach(constant => {
@@ -14,6 +14,6 @@ it('Action types exist', () => {
     expect(numberOfConstants).not.toBe(0);
 });
 
-it('All action types expected exist', () => {
+it('All User default store values exist as expected', () => {
     expect(Store).toMatchObject(Fixture);
 });

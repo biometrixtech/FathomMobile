@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:17:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-05-05 18:49:56
+ * @Last Modified time: 2018-06-28 11:09:05
  */
 
 /**
@@ -11,8 +11,8 @@
 
 import React from 'react';
 import { AppRegistry, YellowBox } from 'react-native';
-import AppContainer from './src/native/';
-import {configureStore} from './src/store/index';
+import Root from './src/';
+import {configureStore} from './src/store/';
 import codePush from 'react-native-code-push';
 
 
@@ -26,7 +26,7 @@ let codePushOptions = {
 const { persistor, store } = configureStore();
 
 const App = () => {
-    return <AppContainer store={store} persistor={persistor}/>;
+    return <Root store={store} persistor={persistor}/>;
 }
 
 AppRegistry.registerComponent('Fathom', () => codePush(codePushOptions)(App));

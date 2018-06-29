@@ -3,6 +3,7 @@ package com.fathom;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 // import com.robinpowered.react.Intercom.IntercomPackage;
 // import io.intercom.android.sdk.Intercom;
 import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
@@ -14,7 +15,6 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import it.innove.BleManagerPackage;
-import com.horcrux.svg.SvgPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,13 +37,13 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNDeviceInfo(),
           // new IntercomPackage(),
           new LocationServicesDialogBoxPackage(),
           new FabricPackage(),
           new CodePush(BuildConfig.CODEPUSH_KEY, getApplicationContext(), BuildConfig.DEBUG),
           new VectorIconsPackage(),
-          new BleManagerPackage(),
-          new SvgPackage()
+          new BleManagerPackage()
       );
     }
 

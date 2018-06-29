@@ -1,12 +1,12 @@
 # Fathom
 
-Fathom Android/iOS Mobile and Web app
+Fathom Android/iOS Mobile app
 
 ---
 
 ## Intro
 
-This is a joint [React Web app](https://reactjs.org/) and [React Native app](https://facebook.github.io/react-native/) sharing a single code base. It shares the 'business logic' (_i.e. actions, containers, reducers, constants, themes_) across the platforms, whilst allowing flexibility in View components to ensure your project looks and feels native in each platform.
+This is a starter [React Native app](https://facebook.github.io/react-native/). It contains structured 'business logic' (_i.e. actions, containers, reducers, constants, themes_) across the iOS/Android platforms, whilst allowing flexibility in View components to ensure your project looks and feels native on each device.
 
 ## Docs
 
@@ -37,18 +37,16 @@ This is a joint [React Web app](https://reactjs.org/) and [React Native app](htt
 |||
 || __Routing and navigation__ |
 | [React Native Router Flux](https://github.com/aksonov/react-native-router-flux) | Router for React Native based on new React Native Navigation API for native mobile <br><br>['How to' Guide &rarr;](/src/navigation/README.md) |
-| [React Router](https://github.com/ReactTraining/react-router) | Router for React based on React Navigation aPI for web |
 |||
 |||
 || __Data Caching / Offline__ |
-| [Redux Persist](https://github.com/rt2zz/redux-persist) | Persist store data using localStorage for web and AsyncStorage for native mobile |
+| [Redux Persist](https://github.com/rt2zz/redux-persist) | Persist store data using AsyncStorage for native mobile |
 |||
 |||
 || __UI Toolkit/s__ |
 | [React Native Elements](https://react-native-training.github.io/react-native-elements/) | Cross Platform React Native UI Toolkit |
 | [React Native Vector Icons](https://github.com/oblador/react-native-vector-icons) | Easily use icons from a wide range of icon libraries, it's as simple as importing the icon font and then `<Icon name={'ios-alert-outline'} size={50} color={"#CCC"} />` |
 | [Tcomb Form Validation](https://github.com/gcanti/tcomb-form-native) | An example on how to create forms with validation. |
-| [Bootstrap 4](https://getbootstrap.com/) with [Reactstrap](https://reactstrap.github.io/) | Bootstrap based React style UI Componants |
 |||
 |||
 || __Style__ |
@@ -101,12 +99,6 @@ Starts the React Native packager to develop on:
     1. *iOS* - Promote the iOS CodePush build from Staging to Production
     1. *Both* - Promote both the Android and iOS CodePush builds from Staging to Production
 
-#### 2.5 start web server
-
-1. __Dev__ - Via webpack, starts a localhost server on port 3000 or self customized port: [http://localhost:3000](http://localhost:3000). Save code and it auto refreshes
-    1. If this fails rerun `yarn fathom` or `npm run fathom` and [initialize](#21-initialize-project) the project again
-1. __Prod__ - Bundles React web app code and creates required files for production deployment in the `/public` folder
-
 ---
 
 ## Understanding the File Structure
@@ -115,25 +107,16 @@ Starts the React Native packager to develop on:
 - `/doc` - Extra linked docs
 - `/ios` - The native iOS stuff
 - `/keys` - App keys of iOS push notifications, iOS signing certificates, and Code Push deployment keys
-- `/public` - Web app server runs from here
 - `/screenshots` - Screenshots used on the Android and iOS store listings
-- `/src` - Contains the source code for both React web & React Native mobile apps
+- `/src` - Contains the source code for both React Native mobile apps
   - `/actions` - Redux Actions: payloads of information that send data _from_ your application _to_ your store. [Read More &rarr;](https://redux.js.org/docs/basics/Actions.html)
-  - `/assets` - Storage of app fonts and images
-    - `/fonts` - Fathom branded font files (Libre Franklin)
-    - `/images` - Image assets used throughout the mobile and web apps
-  - `/constants` - Shared variables and configs (across platforms)
+  - `/components` - 'Dumb-components' / presentational
+  - `/constants` - Shared variables, configs, and theme specific styles/variables (across platforms)
+    - `/assets` - Storage of app fonts and images
+      - `/fonts` - Fathom branded font files (Libre Franklin)
+      - `/images` - Image assets used throughout the mobile apps
   - `/containers` - 'Smart-components' that connect business logic to presentation [Read More &rarr;](https://redux.js.org/docs/basics/UsageWithReact.html#presentational-and-container-components)
   - `/lib` - Utils, custom libraries, and functions that are shared across platforms
-  - `/native` - React Native mobile app specific codebase
-    - `/components` - 'Dumb-components' / presentational
-    - `/constants` - Mobile app-wide variables and config
-    - `/routes` - Routing structure for mobile app screens and flow
-    - `/theme` - Theme specific styles and variables
-  - `/reducers` - Redux Reducers: Mobile and Web app Redux Actions dispatch to reducers, which actually change the state [Read More &rarr;](https://redux.js.org/docs/basics/Reducers.html)
-  - `/store` - Redux Store: hooks up the Mobile and Web app Redux stores and provides initial/template states [Read More &rarr;](https://redux.js.org/docs/basics/Store.html)
-  - `/web` - React web app specific codebase
-    - `/components` - 'Dumb-components' / presentational
-    - `/routes` - Routing structure for web app screens and flow
-    - `/styles` - All the SCSS
-- `/webpack` - Contains the dev and production Web App configurations
+  - `/reducers` - Redux Reducers: Mobile app Redux Actions dispatch to reducers, which actually change the state [Read More &rarr;](https://redux.js.org/docs/basics/Reducers.html)
+  - `/routes` - Routing structure for mobile app screens and flow
+  - `/store` - Redux Store: hooks up the Mobile app Redux store and provides initial/template states [Read More &rarr;](https://redux.js.org/docs/basics/Store.html)

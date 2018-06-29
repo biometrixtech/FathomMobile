@@ -2,16 +2,16 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:08:55 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-05-06 22:44:54
+ * @Last Modified time: 2018-06-28 11:41:51
  */
 
 /**
  * Global Util Functions
  */
 
-import * as scale from 'd3-scale';
-import * as shape from 'd3-shape';
-import * as d3Array from 'd3-array';
+// import * as scale from 'd3-scale';
+// import * as shape from 'd3-shape';
+// import * as d3Array from 'd3-array';
 
 // const Entities = require('html-entities').AllHtmlEntities;
 
@@ -19,10 +19,10 @@ const MS_IN_DAY = 1000 * 60 * 60 * 24;
 
 // const entities = new Entities();
 
-const d3 = {
-    scale,
-    shape,
-};
+// const d3 = {
+//     scale,
+//     shape,
+// };
 
 // function striptags(input) {
 //     return input.replace(/(<([^>]+)>)/ig, '');
@@ -121,10 +121,10 @@ const UTIL = {
       * @param {number} width Width to create the scale with.
       * @return {Function} D3 scale instance.
       */
-    createTimeScaleX: (start, end, width) => d3.scale.scaleTime()
-        .domain([start, end])
-        .range([0, width])
-        .tickFormat(7, '%a %d'),
+    // createTimeScaleX: (start, end, width) => d3.scale.scaleTime()
+    //     .domain([start, end])
+    //     .range([0, width])
+    //     .tickFormat(7, '%a %d'),
 
     /**
       * Create an x-scale.
@@ -133,9 +133,9 @@ const UTIL = {
       * @param {number} width Width to create the scale with.
       * @return {Function} D3 scale instance.
       */
-    createScaleX: (start, end, width) => d3.scale.scaleLinear()
-        .domain([start, end]).nice()
-        .range([0, width]),
+    // createScaleX: (start, end, width) => d3.scale.scaleLinear()
+    //     .domain([start, end]).nice()
+    //     .range([0, width]),
   
     /**
       * Create a y-scale.
@@ -144,11 +144,11 @@ const UTIL = {
       * @param {number} height Height for our scale's range.
       * @return {Function} D3 scale instance.
       */
-    createScaleY: (minY, maxY, height, startY) => d3.scale.scaleLinear()
-        .domain([minY, maxY]).nice()
-        // We invert our range so it outputs using the axis that React uses.
-        .range([height, startY])
-        .clamp(true),
+    // createScaleY: (minY, maxY, height, startY) => d3.scale.scaleLinear()
+    //     .domain([minY, maxY]).nice()
+    //     // We invert our range so it outputs using the axis that React uses.
+    //     .range([height, startY])
+    //     .clamp(true),
   
     /**
       * Creates a line graph SVG path that we can then use to render in our

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:23 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-23 20:43:46
+ * @Last Modified time: 2018-06-28 18:44:31
  */
 
 /**
@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 // Actions
-import BluetoothActions from '../../actions/bluetooth';
+import BluetoothActions from '../../actions/ble';
 import UserActions from '../../actions/user';
 
 const KitAssign = ({

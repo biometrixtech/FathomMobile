@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 // Actions
-import BluetoothActions from '../../actions/bluetooth';
+import BluetoothActions from '../../actions/ble';
 
 const KitManagement = ({
     Layout,
