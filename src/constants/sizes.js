@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:19:46 
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-24 12:34:10
- */
-
 /**
  * App Theme - Sizes
  */
@@ -26,6 +19,7 @@ export default {
         heightTwoFifths:     screenHeight * 0.40,
         heightThreeQuarters: screenHeight * 0.75,
         heightHalf:          screenHeight * 0.5,
+        heightTwentieth:     screenHeight * 0.2,
         heightTenth:         screenHeight * 0.1,
 
         widthHalf:          screenWidth * 0.5,

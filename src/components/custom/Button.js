@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:28:39 
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 16:43:26
- */
-
 /**
  * Buttons
  *
@@ -42,8 +35,8 @@ class CustomButton extends Component {
     buttonProps = () => {
         // Defaults
         const props = {
-            title:              'Coming Soon...',
-            color:              '#fff',
+            title:              this.props.title || 'Coming Soon...',
+            color:              this.props.textColor || '#fff',
             fontWeight:         'bold',
             onPress:            this.props.onPress,
             fontFamily:         AppFonts.base.family,
