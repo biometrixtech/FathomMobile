@@ -40,100 +40,102 @@ import OnboardingComponent from '../components/onboarding/Onboarding';
 
 const Index = (
     <Router>
-        <Stack key='root'>
-            <Scene
-                Layout={StartComponent}
-                component={StartContainer}
-                key='start'
-                title='FathomAI'
-            />
-            <Scene
-                Layout={OnboardingComponent}
-                backTitle=' '
-                component={OnboardingContainer}
-                key='onboarding'
-                title='Get Started'
-            />
-            <Scene
-                Layout={LoginComponent}
-                backTitle=' '
-                component={LoginContainer}
-                key='login'
-                title='Get Started'
-            />
-            <Scene
-                Layout={SignUpComponent}
-                component={SignUpContainer}
-                hideNavBar
-                key='signUp'
-            />
-            <Scene
-                Layout={ForgotPasswordComponent}
-                component={ForgotPasswordContainer}
-                hideNavBar
-                key='forgotPassword'
-            />
-        </Stack>
-        <Stack>
-            <Scene
-                Layout={LoginComponent}
-                component={LoginContainer}
-                hideNavBar
-                key='login'
-            />
-            <Scene
-                Layout={SignUpComponent}
-                component={SignUpContainer}
-                hideNavBar
-                key='signUp'
-            />
-            <Scene
-                Layout={ForgotPasswordComponent}
-                component={ForgotPasswordContainer}
-                hideNavBar
-                key='forgotPassword'
-            />
-            <Scene
-                Layout={SettingsComponent}
-                component={SettingsContainer}
-                hideNavBar
-                key='settings'
-            />
+        <Stack hideNavBar>
+            <Stack key='root'>
+                <Scene
+                    Layout={StartComponent}
+                    component={StartContainer}
+                    key='start'
+                    title='FathomAI'
+                />
+                <Scene
+                    Layout={OnboardingComponent}
+                    backTitle=' '
+                    component={OnboardingContainer}
+                    key='onboarding'
+                    title='Get Started'
+                />
+                <Scene
+                    Layout={LoginComponent}
+                    backTitle=' '
+                    component={LoginContainer}
+                    key='login'
+                    title='Get Started'
+                />
+                <Scene
+                    Layout={SignUpComponent}
+                    component={SignUpContainer}
+                    hideNavBar
+                    key='signUp'
+                />
+                <Scene
+                    Layout={ForgotPasswordComponent}
+                    component={ForgotPasswordContainer}
+                    hideNavBar
+                    key='forgotPassword'
+                />
+            </Stack>
             <Stack>
+                <Scene
+                    Layout={LoginComponent}
+                    component={LoginContainer}
+                    hideNavBar
+                    key='login'
+                />
+                <Scene
+                    Layout={SignUpComponent}
+                    component={SignUpContainer}
+                    hideNavBar
+                    key='signUp'
+                />
+                <Scene
+                    Layout={ForgotPasswordComponent}
+                    component={ForgotPasswordContainer}
+                    hideNavBar
+                    key='forgotPassword'
+                />
                 <Scene
                     Layout={SettingsComponent}
                     component={SettingsContainer}
                     hideNavBar
                     key='settings'
                 />
-                <Scene
-                    key='kitManagement'
-                    title='Kit Management'
-                    component={KitManagementContainer}
-                    Layout={KitManagementComponent}
-                    // {...DefaultProps.navbarProps}
-                />
-                <Scene
-                    key='bluetoothConnect'
-                    title='Bluetooth Connect'
-                    component={BluetoothConnectContainer}
-                    Layout={BluetoothConnectComponent}
-                    // {...DefaultProps.navbarProps}
-                />
-                <Scene
-                    key='kitOwner'
-                    title='Kit Owner'
-                    component={KitOwnerContainer}
-                    Layout={KitOwnerComponent}
-                    // {...DefaultProps.navbarProps}
-                />
-                <Scene
-                    key='kitAssign'
-                    title='Kit Assign'
-                    component={KitAssignContainer}
-                    Layout={KitAssignComponent}
-                    // {...DefaultProps.navbarProps}
-                />
+                <Stack>
+                    <Scene
+                        Layout={SettingsComponent}
+                        component={SettingsContainer}
+                        hideNavBar
+                        key='settings'
+                    />
+                    <Scene
+                        key='kitManagement'
+                        title='Kit Management'
+                        component={KitManagementContainer}
+                        Layout={KitManagementComponent}
+                        // {...DefaultProps.navbarProps}
+                    />
+                    <Scene
+                        key='bluetoothConnect'
+                        title='Bluetooth Connect'
+                        component={BluetoothConnectContainer}
+                        Layout={BluetoothConnectComponent}
+                        // {...DefaultProps.navbarProps}
+                    />
+                    <Scene
+                        key='kitOwner'
+                        title='Kit Owner'
+                        component={KitOwnerContainer}
+                        Layout={KitOwnerComponent}
+                        // {...DefaultProps.navbarProps}
+                    />
+                    <Scene
+                        key='kitAssign'
+                        title='Kit Assign'
+                        component={KitAssignContainer}
+                        Layout={KitAssignComponent}
+                        // {...DefaultProps.navbarProps}
+                    />
+                </Stack>
             </Stack>
         </Stack>
     </Router>

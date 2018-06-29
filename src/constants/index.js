@@ -7,6 +7,7 @@ import AppSizes from './sizes';
 import AppStyles from './styles';
 import BLEConfig from './ble';
 import ErrorMessages from './errors';
+import Roles from './roles';
 import Thresholds from './thresholds';
 import UserAccount from './userAccount';
 
@@ -20,6 +21,7 @@ export {
     AppStyles,
     BLEConfig,
     ErrorMessages,
+    Roles,
     Thresholds,
     UserAccount,
 };
