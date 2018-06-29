@@ -60,35 +60,27 @@ initialize() {
         xcode=`ls /Applications/Xcode*.app 2>/dev/null | wc -l`
         if [ $xcode != 0 ]
         then
-            yarn=$(which yarn)
-            [ ${#yarn} == 0 ] && { echo "yarn does not exist, installing"; curl -o- -L https://yarnpkg.com/install.sh | bash; } || continue
-            
             brew=$(which brew)
             [ ${#brew} == 0 ] && { echo "Homebrew does not exist, installing"; /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"; } || continue
+            
+            yarn=$(which yarn)
+            [ ${#yarn} == 0 ] && { echo "yarn does not exist, installing"; brew install yarn --without-node; } || continue
+            # [ ${#yarn} == 0 ] && { echo "yarn does not exist, installing"; curl -o- -L https://yarnpkg.com/install.sh | bash; } || continue
 
             watchman=$(which watchman)
             [ ${#watchman} == 0 ] && { echo "watchman does not exist, installing"; brew install watchman; } || continue
 
-            # [ -d ~/.nvm ] && continue || {
+            # [ -s ~/.nvm/nvm.sh ] && continue || {
             #     echo "nvm does not exist, installing";
+            #     asdfasdf
                 # curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
                 # export NVM_DIR="$HOME/.nvm"
                 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
                 # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-                # . ~/.nvm/nvm.sh
             # }
-            # nvmrc=`cat .nvmrc`
-            # [ -e ~/.nvm/nvm.sh ] && . ~/.nvm/nvm.sh || {
-            #     echo "nvm does not exist, installing";
-            #     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-            #     export NVM_DIR="$HOME/.nvm"
-            #     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-            #     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-            #     . ~/.nvm/nvm.sh
-            # }
-            # nvm install $nvmrc
-            # cd ../../
-            # cd Fathom/FathomMobile
+            # . ~/.nvm/nvm.sh
+            # nvm install
+            # nvm use
 
 
             echo "☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️️☁️☁️☁️☁️☁️☁️☁️☁️☁️️️️️️️"
@@ -96,7 +88,7 @@ initialize() {
             echo "🚀\t${green}✔︎${normal} ${blue}yarn installed${normal}\t🚀"
             echo "🚀\t${green}✔︎${normal} ${magenta}Homebrew installed${normal}\t🚀"
             echo "🚀\t${green}✔︎${normal} ${cyan}watchman installed${normal}\t🚀"
-            # echo "🚀\t${green}✔︎${normal} ${white}nvm installed${normal}\t\t🚀"
+            echo "🚀\t${green}✔︎${normal} ${white}nvm installed${normal}\t\t🚀"
             echo "🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊"
 
             watchman watch-del-all
@@ -126,7 +118,7 @@ initialize() {
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-ble-manager/android/build.gradle
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
             # sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-device-info/android/build.gradle
+            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-device-info/android/build.gradle
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-vector-icons/android/build.gradle
 
             # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
@@ -134,8 +126,8 @@ initialize() {
             nvm_string='/.nvm'
             android_nvm_location=${android_nvm_location%$nvm_string}
             android_nvm_location=${android_nvm_location////\\/}
-            user=`whoami`
-            sed -i "" "s/\/Users\/$user\//$android_nvm_location/" ./android/app/build.gradle
+            old_user=`awk -v FS="(Users\/|\/.nvm)" '{if ($2) print $2;}' ./android/app/build.gradle`
+            sed -i "" "s/\/Users\/$old_user\//$android_nvm_location/" ./android/app/build.gradle
 
             sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
             # sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
