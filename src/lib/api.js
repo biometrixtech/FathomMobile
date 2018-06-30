@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:16:44 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-29 19:18:11
+ * @Last Modified time: 2018-06-30 13:03:45
  */
 
 /**
@@ -232,7 +232,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                     let answerBody = Object.assign({}, req.body);
                     delete answerBody.password;
                     Answers.logLogin('Mobile App Login', true, {
-                        body:          answerBody,
+                        body:          JSON.stringify(answerBody),
                         headers:       JSON.stringify(req.headers),
                         method:        req.method,
                         response:      JSON.stringify(res),
@@ -241,7 +241,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                     });
                 } else {
                     Answers.logCustom('API Response success', {
-                        body:          req.body,
+                        body:          JSON.stringify(req.body),
                         headers:       JSON.stringify(req.headers),
                         method:        req.method,
                         response:      JSON.stringify(res),
@@ -261,7 +261,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                     let answerBody = Object.assign({}, req.body);
                     delete answerBody.password;
                     Answers.logLogin('Mobile App Login', false, {
-                        body:          answerBody,
+                        body:          JSON.stringify(answerBody),
                         headers:       JSON.stringify(req.headers),
                         method:        req.method,
                         response:      JSON.stringify(err),
@@ -270,7 +270,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                     });
                 } else {
                     Answers.logCustom('API Response failed', {
-                        body:          req.body,
+                        body:          JSON.stringify(req.body),
                         headers:       JSON.stringify(req.headers),
                         method:        req.method,
                         response:      JSON.stringify(err),
