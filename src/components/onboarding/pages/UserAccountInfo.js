@@ -9,14 +9,26 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes } from '../../../constants';
+import { AppColors, AppSizes, AppStyles } from '../../../constants';
 import { FormInput, FormLabel, Text } from '../../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    background: {
+        backgroundColor: AppColors.secondary.blue.hundredPercent,
+        height:          AppSizes.screen.height,
+        width:           AppSizes.screen.width,
+    },
     inlineWrapper: {
         flexDirection: 'row',
     },
@@ -37,9 +49,21 @@ const styles = StyleSheet.create({
     },
 });
 
+const Wrapper = props => Platform.OS === 'ios' ?
+    (
+        <KeyboardAvoidingView behavior={'padding'} style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
+            {props.children}
+        </KeyboardAvoidingView>
+    ) :
+    (
+        <View style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
+            {props.children}
+        </View>
+    );
+
 /* Component ==================================================================== */
 const UserAccountInfo = ({ handleFormChange, user }) => (
-    <KeyboardAvoidingView behavior={'padding'} style={[styles.wrapper]}>
+    <Wrapper>
         <View style={[styles.inlineWrapper]}>
             <View style={[styles.leftItem]}>
                 <FormLabel>{'First Name'}</FormLabel>
@@ -76,7 +100,7 @@ const UserAccountInfo = ({ handleFormChange, user }) => (
             secureTextEntry={true}
             value={user.password}
         />
-    </KeyboardAvoidingView>
+    </Wrapper>
 );
 
 UserAccountInfo.propTypes = {

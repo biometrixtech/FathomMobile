@@ -4,22 +4,17 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import moment from 'moment';
 import {
     View,
-    // KeyboardAvoidingView,
     ScrollView,
     StyleSheet,
     TouchableOpacity,
-    // Image,
     Platform,
 } from 'react-native';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
 import Carousel from 'react-native-snap-carousel';
-// import Egg from 'react-native-egg';
-// import FormValidation from 'tcomb-form-native';
 import Modal from 'react-native-modalbox';
 
 // Consts, Libs, and Utils

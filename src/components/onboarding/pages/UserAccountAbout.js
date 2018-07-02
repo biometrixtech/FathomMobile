@@ -10,10 +10,20 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import {
+    KeyboardAvoidingView,
+    Platform,
+    StyleSheet,
+    TouchableOpacity,
+} from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, UserAccount as UserAccountConstants } from '../../../constants';
+import {
+    AppColors,
+    AppSizes,
+    AppStyles,
+    UserAccount as UserAccountConstants,
+} from '../../../constants';
 import { FormInput, FormLabel, RadioButton, Text } from '../../custom';
 
 // import third-party libraries
@@ -22,6 +32,11 @@ import RNPickerSelect from 'react-native-picker-select';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    background: {
+        backgroundColor: AppColors.secondary.blue.hundredPercent,
+        height:          AppSizes.screen.height,
+        width:           AppSizes.screen.width,
+    },
     pickerSelectAndroid: {},
     pickerSelectIOS:     {
         height:         40,
@@ -42,9 +57,21 @@ const styles = StyleSheet.create({
     },
 });
 
+const Wrapper = props => Platform.OS === 'ios' ?
+    (
+        <KeyboardAvoidingView behavior={'padding'} style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
+            {props.children}
+        </KeyboardAvoidingView>
+    ) :
+    (
+        <View style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
+            {props.children}
+        </View>
+    );
+
 /* Component ==================================================================== */
 const UserAccountAbout = ({ handleFormChange, heightPressed, user }) => (
-    <KeyboardAvoidingView behavior={'padding'} style={[styles.wrapper]}>
+    <Wrapper>
         <FormLabel>{'Date of Birth'}</FormLabel>
         <DatePicker
             cancelBtnText={'Cancel'}
@@ -100,7 +127,7 @@ const UserAccountAbout = ({ handleFormChange, heightPressed, user }) => (
             options={UserAccountConstants.missedDueToInjuryOptions}
             value={user.missedDueToInjury}
         />
-    </KeyboardAvoidingView>
+    </Wrapper>
 );
 
 UserAccountAbout.propTypes = {

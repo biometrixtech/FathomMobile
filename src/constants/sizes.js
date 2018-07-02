@@ -1,4 +1,11 @@
-/**
+/*
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:19:46
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-04-24 12:34:10
+ */
+
+ /**
  * App Theme - Sizes
  */
 import { Dimensions, Platform } from 'react-native';

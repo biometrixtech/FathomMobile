@@ -1,3 +1,10 @@
+/*
+ * @Author: Vir Desai
+ * @Date: 2018-04-30 13:23:56 	
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-06-28 11:49:27
+ */
+
 import Actions from './actionTypes';
 import APIConfig from './api';
 import AppFonts from './fonts';
