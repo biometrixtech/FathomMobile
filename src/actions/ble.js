@@ -118,7 +118,7 @@ const startBluetooth = () => {
 };
 
 const startScan = () => {
-    return dispatch => BleManager.scan([], 5, false, { scanMode: 2 }) // TODO: make 30 seconds
+    return dispatch => BleManager.scan([], 30, false, { scanMode: 2 })
         .then(() => dispatch({
             type: Actions.START_SCAN
         }))
@@ -159,85 +159,45 @@ const stopConnect = () => {
 };
 
 const connectToAccessory = (data) => {
-    console.log(data);
     const addToListArray = [commands.ADD_TO_TRUSTED_LIST, convertHex('0x00')];
-    const getSetupModeArray = [commands.IS_SINGLE_SENSOR_IN_SETUP_MODE, convertHex('0x00')];
-    const getWipeDataArray = [commands.WIPE_SINGLE_SENSOR_DATA, convertHex('0x00')];
     return dispatch => BleManager.disconnect(data.id)
         .catch(err => {
-            console.log('err, could not disconnect, trying again',err);
+            console.log(err);
             return BleManager.disconnect(data.id);
         })
         .then(() => BleManager.connect(data.id))
         .catch(err => {
-            console.log('err, could not connect, trying again',err);
+            console.log(err);
             return BleManager.connect(data.id);
         })
         .then(() => BleManager.retrieveServices(data.id))
         .catch(err => {
-            console.log('err, could not retrieveServices, trying again',err);
+            console.log(err);
             return BleManager.retrieveServices(data.id);
         })
         .then(peripheralInfo => {
             console.log('peripheralInfo',peripheralInfo);
-            return write(data.id, getSetupModeArray);
+            return write(data.id, addToListArray); // add to trusted list - 0x72
         })
         .then(response => {
-            console.log('response #2',response);
-            // return BleManager.read(data.id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID);
-        })
-        .catch(err => {
-            console.log('err', err);
-            return Promise.reject(err);
-        });
-
-    /*return dispatch => BleManager.disconnect(data.id)
-        .catch(err => {
-            console.log('err #1',err);
-            return BleManager.disconnect(data.id);
-        })
-        .then(() => BleManager.connect(data.id))
-        .catch(err => {
-            console.log('err #2',err);
-            return BleManager.connect(data.id);
-        })
-        .then(() => BleManager.retrieveServices(data.id))
-        .catch(err => {
-            console.log('err #3',err);
-            return BleManager.retrieveServices(data.id);
-        })
-        .then(response => {
-            console.log('response',response);
-            // write here?
-        })
-        .catch(err => {
-            console.log('err #4', err);
-            return Promise.reject(err);
-        })*/
-
-    /* NOTE: OLD FUNCTION
-    return dispatch => BleManager.disconnect(data.id)
-        .catch(err => {
-            console.log(err);
-            return BleManager.disconnect(data.id);
-        })
-        .then(() => BleManager.connect(data.id))
-        .catch(err => {
-            console.log(err);
-            return BleManager.connect(data.id);
-        })
-        .then(() => BleManager.retrieveServices(data.id))
-        .catch(err => {
-            console.log(err);
-            return BleManager.retrieveServices(data.id);
-        })
-        .then(services => {
             return dispatch({
                 type: Actions.CONNECT_TO_ACCESSORY,
                 data
             });
         })
-        .catch(err => Promise.reject(err));*/
+        .catch(err => Promise.reject(err));
+};
+
+const getSingleSensorPractices = (data) => {
+    const dataArray = [commands.GET_SINGLE_SENSOR_LIST, convertHex('0x01')];
+    return dispatch => write(data.id, dataArray)
+        .then(response => {
+            console.log('response', response);
+        })
+        .catch(err => {
+            console.log(err);
+            return Promise.reject(err);
+        });
 };
 
 const loginToAccessory = (accessoryData) => {
@@ -665,41 +625,42 @@ const getAccessoryKey = (id, user) => {
 }
 
 export default {
-    assignType,
-    checkState,
-    changeState,
-    enableBluetooth,
-    startBluetooth,
-    startScan,
-    stopScan,
-    deviceFound,
-    startConnect,
-    stopConnect,
-    connectToAccessory,
-    loginToAccessory,
-    setWiFiSSID,
-    setWiFiPassword,
-    connectWiFi,
-    getOwnerFlag,
-    getKitName,
-    resetAccessory,
-    systemReset,
-    readSSID,
-    scanWiFi,
-    assignKitName,
-    setOwnerFlag,
     assignKitIndividual,
-    assignKitTeam,
+    assignKitName,
     assignKitOrganization,
+    assignKitTeam,
+    assignType,
+    changeState,
+    checkState,
+    connectToAccessory,
+    connectWiFi,
+    deviceFound,
     disconnect,
-    handleDisconnect,
-    setKitTime,
-    setKitState,
-    storeParams,
+    enableBluetooth,
+    getAccessoryKey,
+    getKitName,
+    getOwnerFlag,
+    getSingleSensorPractices,
     getWifiMacAddress,
-    setIdentity,
+    handleDisconnect,
+    loginToAccessory,
+    readSSID,
+    resetAccessory,
+    scanWiFi,
     setAnonymousIdentity,
     setEAPType,
     setGyroCalibration,
-    getAccessoryKey,
+    setIdentity,
+    setKitState,
+    setKitTime,
+    setOwnerFlag,
+    setWiFiPassword,
+    setWiFiSSID,
+    startBluetooth,
+    startConnect,
+    startScan,
+    stopConnect,
+    stopScan,
+    storeParams,
+    systemReset,
 };

@@ -43,23 +43,25 @@ class BluetoothConnectView extends Component {
     static componentName = 'BluetoothConnectView';
 
     static propTypes = {
-        bluetooth:          PropTypes.shape({}),
-        user:               PropTypes.shape({}),
-        changeState:        PropTypes.func.isRequired,
-        checkState:         PropTypes.func.isRequired,
-        connectToAccessory: PropTypes.func.isRequired,
-        deviceFound:        PropTypes.func.isRequired,
-        disconnect:         PropTypes.func.isRequired,
-        enableBluetooth:    PropTypes.func.isRequired,
-        getAccessoryKey:    PropTypes.func.isRequired,
-        getOwnerFlag:       PropTypes.func.isRequired,
-        getWifiMacAddress:  PropTypes.func.isRequired,
-        loginToAccessory:   PropTypes.func.isRequired,
-        startBluetooth:     PropTypes.func.isRequired,
-        startConnect:       PropTypes.func.isRequired,
-        startScan:          PropTypes.func.isRequired,
-        stopConnect:        PropTypes.func.isRequired,
-        stopScan:           PropTypes.func.isRequired,
+        bluetooth:                PropTypes.shape({}),
+        changeState:              PropTypes.func.isRequired,
+        checkState:               PropTypes.func.isRequired,
+        connectToAccessory:       PropTypes.func.isRequired,
+        deviceFound:              PropTypes.func.isRequired,
+        disconnect:               PropTypes.func.isRequired,
+        enableBluetooth:          PropTypes.func.isRequired,
+        getAccessoryKey:          PropTypes.func.isRequired,
+        getOwnerFlag:             PropTypes.func.isRequired,
+        getSingleSensorPractices: PropTypes.func.isRequired,
+        getWifiMacAddress:        PropTypes.func.isRequired,
+        loginToAccessory:         PropTypes.func.isRequired,
+        setKitTime:               PropTypes.func.isRequired,
+        startBluetooth:           PropTypes.func.isRequired,
+        startConnect:             PropTypes.func.isRequired,
+        startScan:                PropTypes.func.isRequired,
+        stopConnect:              PropTypes.func.isRequired,
+        stopScan:                 PropTypes.func.isRequired,
+        user:                     PropTypes.shape({}),
     }
 
     static defaultProps = {
@@ -176,27 +178,10 @@ class BluetoothConnectView extends Component {
             .then(() => this.props.connectToAccessory(data))
             .catch(err => {
                 console.log(err);
-                return this.props.stopConnect();//this.props.connectToAccessory(data);
+                return this.props.connectToAccessory(data);
             })
-            /*.catch(err => this.props.stopConnect())
-            .then(() => this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
-            .catch(err => {
-                console.log(err);
-                return this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id);
-            })
-            .then(() => this.props.getAccessoryKey(this.props.bluetooth.accessoryData.wifiMacAddress, this.props.user))
-            .catch(err => {
-                console.log(err);
-                return this.props.getAccessoryKey(this.props.bluetooth.accessoryData.wifiMacAddress, this.props.user);
-            })
-            .then(() => this.props.loginToAccessory(this.props.bluetooth.accessoryData))
-            .catch((err) => {
-                console.log(err);
-                return this.props.loginToAccessory(this.props.bluetooth.accessoryData);
-            })
-            .then(() => {
-                return !this.props.bluetooth.accessoryData.id ? Promise.resolve() : this.props.getOwnerFlag(this.props.bluetooth.accessoryData.id);
-            })
+            .catch(err => this.props.stopConnect())
+            .then(() => this.props.setKitTime(this.props.bluetooth.accessoryData.id))
             .then(() => {
                 if (Object.keys(this.props.bluetooth.accessoryData).length === 0 && this.props.bluetooth.accessoryData.constructor === Object) {
                     this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
@@ -206,7 +191,7 @@ class BluetoothConnectView extends Component {
                 }
                 return this.props.stopConnect();
             })
-            .catch((err) => {
+            .catch(err => {
                 console.log(err);
                 if (Object.keys(this.props.bluetooth.accessoryData).length === 0 && this.props.bluetooth.accessoryData.constructor === Object) {
                     this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
@@ -216,7 +201,17 @@ class BluetoothConnectView extends Component {
                 }
                 return this.props.stopConnect();
             })
-            .catch((err) => this.props.stopConnect());*/
+            .catch(err => this.props.stopConnect());
+    }
+
+    fetchPracticeData = () => {
+        return this.props.getSingleSensorPractices(this.props.bluetooth.accessoryData)
+            .then(response => {
+                console.log(response);
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 
     _onLayoutDidChange = (e) => {
