@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:34:40 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:34:40
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-06-28 18:44:00
  */
@@ -84,7 +84,7 @@ BluetoothConnect.defaultProps = {
 
 const mapStateToProps = state => ({
     user:      state.user || {},
-    bluetooth: state.bluetooth || {},
+    bluetooth: state.ble || {},
 });
 
 const mapDispatchToProps = {

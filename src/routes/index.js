@@ -42,6 +42,14 @@ const Index = (
     <Router>
         <Stack hideNavBar>
             <Stack key='root'>
+                {/*TODO: REMOVE KIT MGMT ROUTE FROM HERE*/}
+                <Scene
+                    key='kitManagement'
+                    title='Kit Management'
+                    component={KitManagementContainer}
+                    Layout={KitManagementComponent}
+                    // {...DefaultProps.navbarProps}
+                />
                 <Scene
                     Layout={StartComponent}
                     component={StartContainer}
@@ -79,8 +87,9 @@ const Index = (
                 <Scene
                     Layout={SettingsComponent}
                     component={SettingsContainer}
-                    hideNavBar
+                    // hideNavBar
                     key='settings'
+                    title='Settings'
                 />
                 <Scene
                     key='kitManagement'

@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:31:04 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:31:04
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-05-06 17:42:32
  */
@@ -127,6 +127,12 @@ export default {
         SET_ANONYMOUS_IDENTITY_CONT: parseInt('0x5D', 16),
         SET_EAP_TYPE:                parseInt('0x5E', 16),
         SET_GYRO_CALIBRATION:        parseInt('0x60', 16),
+
+        // SINGLE SENSOR COMMANDS
+        ADD_TO_TRUSTED_LIST:            parseInt('0x72', 16),
+        IS_SINGLE_SENSOR_IN_SETUP_MODE: parseInt('0x74', 16),
+        GET_SINGLE_SENSOR_LIST:         parseInt('0x75', 16),
+        WIPE_SINGLE_SENSOR_DATA:        parseInt('0x7B', 16),
     },
 
     roles: {

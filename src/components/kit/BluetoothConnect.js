@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:34:33 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:34:33
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-06-28 16:49:40
  */
@@ -150,7 +150,8 @@ class BluetoothConnectView extends Component {
         if (data.advertising && data.advertising.kCBAdvDataLocalName) {
             data.name = data.advertising.kCBAdvDataLocalName;
         }
-        return data.name && /Fathom_kit_/i.test(data.name) ? this.props.deviceFound(data) : null;
+        // return data.name && /Fathom_kit_/i.test(data.name) ? this.props.deviceFound(data) : null;
+        return data.name && /fathomSensor/i.test(data.name) ? this.props.deviceFound(data) : null; // single sensor solution
     }
 
     handleBleStateChange = (data) => {
@@ -175,9 +176,9 @@ class BluetoothConnectView extends Component {
             .then(() => this.props.connectToAccessory(data))
             .catch(err => {
                 console.log(err);
-                return this.props.connectToAccessory(data);
+                return this.props.stopConnect();//this.props.connectToAccessory(data);
             })
-            .catch(err => this.props.stopConnect())
+            /*.catch(err => this.props.stopConnect())
             .then(() => this.props.getWifiMacAddress(this.props.bluetooth.accessoryData.id))
             .catch(err => {
                 console.log(err);
@@ -215,7 +216,7 @@ class BluetoothConnectView extends Component {
                 }
                 return this.props.stopConnect();
             })
-            .catch((err) => this.props.stopConnect());
+            .catch((err) => this.props.stopConnect());*/
     }
 
     _onLayoutDidChange = (e) => {
@@ -304,7 +305,7 @@ class BluetoothConnectView extends Component {
                     </View>
                     <Spacer />
                     <View style={{ flex: 4 }}>
-                        <Toast 
+                        <Toast
                             ref={'toast'}
                             position={'top'}
                         />
@@ -312,18 +313,19 @@ class BluetoothConnectView extends Component {
                             {
                                 this.props.bluetooth.devicesFound.map(device => {
                                     return <ListItem
-                                        key={device.id}
-                                        title={device.name}
-                                        onPress={() => this.props.startConnect(device).then(() => this.connect(device))}
-                                        titleContainerStyle={{ alignSelf: 'center' }}
                                         hideChevron
+                                        key={device.id}
+                                        onPress={() => this.props.startConnect(device).then(() => this.connect(device))}
+                                        subtitle={device.id}
+                                        title={device.name}
+                                        titleContainerStyle={{ alignSelf: 'center' }}
                                     />
                                 })
                             }
                         </ScrollView>
                     </View>
                     <View style={{ flex: 1 }}/>
-                    { this.props.bluetooth.indicator ? 
+                    { this.props.bluetooth.indicator ?
                         <ActivityIndicator
                             style={[AppStyles.activityIndicator]}
                             size={'large'}

@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:34:56 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:34:56
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-04-24 01:27:42
  */
@@ -84,7 +84,7 @@ KitManagement.defaultProps = {
 
 const mapStateToProps = state => ({
     user:      state.user || {},
-    bluetooth: state.bluetooth || {},
+    bluetooth: state.ble || {},
 });
 
 const mapDispatchToProps = {

@@ -62,7 +62,7 @@ initialize() {
         then
             yarn=$(which yarn)
             [ ${#yarn} == 0 ] && { echo "yarn does not exist, installing"; curl -o- -L https://yarnpkg.com/install.sh | bash; } || continue
-            
+
             brew=$(which brew)
             [ ${#brew} == 0 ] && { echo "Homebrew does not exist, installing"; /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"; } || continue
 
@@ -141,7 +141,7 @@ initialize() {
             # sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
             [ -d "./node_modules/react-native/third-party" ] && {
                 cd node_modules/react-native/third-party/glog-0.3.4
-                ../../scripts/ios-configure-glog.sh                 
+                ../../scripts/ios-configure-glog.sh
                 cd ../../../../
             } || continue
 
@@ -153,7 +153,7 @@ initialize() {
             else
                 echo "${red}IP Replacement failed because file IP or current IP not found.${normal}"
             fi
-            
+
             echo "Everything checked, installed, and prepared.\nPackager ready to be started.\nRunning unit tests.."
             yarn test
             testValue=$?
