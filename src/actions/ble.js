@@ -189,13 +189,19 @@ const connectToAccessory = (data) => {
 };
 
 const getSingleSensorPractices = (data) => {
-    const dataArray = [commands.GET_SINGLE_SENSOR_LIST, convertHex('0x01')];
-    return dispatch => write(data.id, dataArray)
+    const macAddress = data.id; // 'DB:73:92:B4:99:F6';
+    const dataArray = [commands.GET_SINGLE_SENSOR_LIST, convertHex('0x01'), convertHex('0x01')];
+    return dispatch => BleManager.connect(macAddress)
+        .then(() => BleManager.retrieveServices(macAddress))
+        .then(peripheralInfo => {
+            console.log('peripheralInfo',peripheralInfo);
+            return write(peripheralInfo.id, dataArray); // get single sensor practices - 0x75
+        })
         .then(response => {
             console.log('response', response);
         })
         .catch(err => {
-            console.log(err);
+            console.log('err',err);
             return Promise.reject(err);
         });
 };

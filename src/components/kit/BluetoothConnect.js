@@ -205,12 +205,13 @@ class BluetoothConnectView extends Component {
     }
 
     fetchPracticeData = () => {
+        console.log('triggered fetchPracticeData function');
         return this.props.getSingleSensorPractices(this.props.bluetooth.accessoryData)
             .then(response => {
-                console.log(response);
+                // console.log(response);
             })
             .catch(err => {
-                console.log(err);
+                // console.log(err);
             });
     }
 
@@ -264,6 +265,12 @@ class BluetoothConnectView extends Component {
                                 this.pages.progress = 1;
                                 return this.props.checkState();
                             }}
+                            raised
+                        />
+                        {/*NOTE: REMOVE WHEN DONE TESTEING*/}
+                        <Button
+                            title={'fetch practice'}
+                            onPress={() => this.fetchPracticeData()}
                             raised
                         />
                     </View>
