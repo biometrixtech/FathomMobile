@@ -40,9 +40,11 @@ export default {
     statusBarHeight: Platform.OS === 'ios' ? 16 : 0,  // time and icon indicators
     tabbarHeight:    51,
 
-    padding:    20,
-    paddingSml: 10,
-    tickSize:   5,
+    padding:     20,
+    paddingLrg:  30,
+    paddingXLrg: 50,
+    paddingSml:  10,
+    tickSize:    5,
 
     borderRadius: 5,
 };

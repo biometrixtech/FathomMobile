@@ -40,13 +40,6 @@ const styles = StyleSheet.create({
         borderLeftColor: AppColors.primary.grey.thirtyPercent,
         width:           '50%',
     },
-    text: {
-        fontWeight: 'bold',
-        fontSize:   15,
-    },
-    wrapper: {
-        // padding: 5,
-    },
 });
 
 const Wrapper = props => Platform.OS === 'ios' ?
@@ -69,18 +62,18 @@ const UserAccountInfo = ({ handleFormChange, user }) => (
                 <FormLabel>{'First Name'}</FormLabel>
                 <FormInput
                     containerStyle={{marginLeft: 0, marginRight: 0, paddingLeft: 20}}
-                    onChangeText={(text) => handleFormChange('firstName', text)}
+                    onChangeText={(text) => handleFormChange('personal_data.first_name', text)}
                     returnKeyType={'next'}
-                    value={user.firstName}
+                    value={user.personal_data.first_name}
                 />
             </View>
             <View style={[styles.rightItem]}>
                 <FormLabel>{'Last Name'}</FormLabel>
                 <FormInput
                     containerStyle={{marginLeft: 0, paddingLeft: 20}}
-                    onChangeText={(text) => handleFormChange('lastName', text)}
+                    onChangeText={(text) => handleFormChange('personal_data.last_name', text)}
                     returnKeyType={'next'}
-                    value={user.lastName}
+                    value={user.personal_data.last_name}
                 />
             </View>
         </View>

@@ -5,15 +5,13 @@
 import UserAccount from './UserAccount';
 import UserAccountAbout from './UserAccountAbout';
 import UserAccountInfo from './UserAccountInfo';
+import UserRole from './UserRole';
 import UserSports from './UserSports';
-import UserSportSeason from './UserSportSeason';
-import UserType from './UserType';
 
 export {
     UserAccount,
     UserAccountAbout,
     UserAccountInfo,
+    UserRole,
     UserSports,
-    UserSportSeason,
-    UserType,
 };

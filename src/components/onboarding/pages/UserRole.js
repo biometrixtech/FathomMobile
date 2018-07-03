@@ -1,7 +1,7 @@
 /**
- * UserType
+ * UserRole
  *
-    <UserType
+    <UserRole
         componentStep={1}
         currentStep={step}
         handleClick={this._handleUserFormChange}
@@ -14,70 +14,49 @@ import PropTypes from 'prop-types';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes } from '../../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
 import { Text } from '../../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     cardWrapper: {
-        alignItems:      'center',
         backgroundColor: AppColors.primary.grey.thirtyPercent,
         borderRadius:    5,
         height:          AppSizes.screen.heightTwentieth,
-        justifyContent:  'center',
         marginBottom:    15,
         position:        'relative',
         width:           '100%',
     },
     overlay: {
-        alignItems:      'center',
-        backgroundColor: AppColors.primary.grey.thirtyPercent,
+        backgroundColor: AppColors.primary.grey.hundredPercent,
         borderRadius:    5,
         height:          '100%',
-        justifyContent:  'center',
+        opacity:         0.75,
         position:        'absolute',
         width:           '100%',
-    },
-    text: {
-        fontWeight: 'bold',
-        fontSize:   15,
-    },
-    textWrapper: {
-        paddingBottom: 50,
-        paddingTop:    50,
-        paddingRight:  30,
-        paddingLeft:   30,
-    },
-    title: {
-        fontSize:   20,
-        fontWeight: 'bold',
-        textAlign:  'center',
-    },
-    wrapper: {
-        padding: 20,
     },
 });
 
 /* Component ==================================================================== */
-const UserType = ({ componentStep, currentStep, handleClick, user }) => (
-    <View style={[styles.wrapper, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
-        <View style={[styles.textWrapper]}>
-            <Text style={[styles.title]}>{'Which one of the follow describes you the best?'}</Text>
+const UserRole = ({ componentStep, currentStep, handleClick, user }) => (
+    <View style={[AppStyles.padding, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
+        <View style={[AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg]}>
+            <Text style={[AppFonts.h1, AppStyles.bold, AppStyles.textCenterAligned]}>{'Which one of the follow describes you the best?'}</Text>
         </View>
-        <TouchableOpacity onPress={() => handleClick('type', 'athlete')} style={[styles.cardWrapper]}>
-            <Text style={[styles.text]}>{'ATHLETE'}</Text>
-            { user.type === 'athlete' ?
-                <View style={[styles.overlay]}>
+        <TouchableOpacity onPress={() => handleClick('role', 'athlete')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
+            <Text style={[AppFonts.h1, AppStyles.bold]}>{'ATHLETE'}</Text>
+            { user.role === 'athlete' ?
+                <View style={[AppStyles.containerCentered, styles.overlay]}>
                     <Image source={require('../../../constants/assets/images/checkmark.png')} />
                 </View>
                 :
                 null
             }
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleClick('type', 'parent')} style={[styles.cardWrapper]}>
-            <Text style={[styles.text]}>{'ATHLETE\'S PARENT'}</Text>
-            { user.type === 'parent' ?
-                <View style={[styles.overlay]}>
+        <TouchableOpacity onPress={() => handleClick('role', 'manager')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
+            <Text style={[AppFonts.h1, AppStyles.bold]}>{'ATHLETE\'S PARENT'}</Text>
+            { user.role === 'manager' ?
+                <View style={[AppStyles.containerCentered, styles.overlay]}>
                     <Image source={require('../../../constants/assets/images/checkmark.png')} />
                 </View>
                 :
@@ -87,14 +66,14 @@ const UserType = ({ componentStep, currentStep, handleClick, user }) => (
     </View>
 );
 
-UserType.propTypes = {
+UserRole.propTypes = {
     componentStep: PropTypes.number.isRequired,
     currentStep:   PropTypes.number.isRequired,
     handleClick:   PropTypes.func.isRequired,
     user:          PropTypes.object.isRequired,
 };
-UserType.defaultProps = {};
-UserType.componentName = 'UserType';
+UserRole.defaultProps = {};
+UserRole.componentName = 'UserRole';
 
 /* Export Component ==================================================================== */
-export default UserType;
+export default UserRole;

@@ -15,6 +15,7 @@ import {
     Platform,
     StyleSheet,
     TouchableOpacity,
+    View,
 } from 'react-native';
 
 // Consts and Libs
@@ -52,9 +53,6 @@ const styles = StyleSheet.create({
         marginRight:       20,
         paddingLeft:       20,
     },
-    wrapper: {
-        // paddingTop: 10,
-    },
 });
 
 const Wrapper = props => Platform.OS === 'ios' ?
@@ -77,55 +75,67 @@ const UserAccountAbout = ({ handleFormChange, heightPressed, user }) => (
             cancelBtnText={'Cancel'}
             confirmBtnText={'Confirm'}
             customStyles={{dateInput: styles.reusableCustomSpacing}}
-            date={user.dob ? user.dob : ''}
-            format={'YYYY-MM-DD'}
+            date={user.personal_data.birth_date ? user.personal_data.birth_date : ''}
+            format={'MM/DD/YYYY'}
             maxDate={new Date()}
             mode={'date'}
-            onDateChange={(date) => handleFormChange('dob', date)}
+            onDateChange={(date) => handleFormChange('personal_data.birth_date', date)}
             showIcon={false}
             style={{width: '100%'}}
         />
+        <FormLabel>{'Gender'}</FormLabel>
+        <RNPickerSelect
+            hideIcon={true}
+            items={UserAccountConstants.possibleGenders}
+            onValueChange={(value) => handleFormChange('biometric_data.gender', value)}
+            placeholder={{
+                label: 'Select a Gender...',
+                value: null,
+            }}
+            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
+            value={user.biometric_data.gender}
+        />
         <FormLabel>{'Height'}</FormLabel>
         <TouchableOpacity onPress={heightPressed} style={[styles.reusableCustomSpacing, {height: 40, justifyContent: 'center'}]}>
-            <Text>{Math.floor(user.height / 12) + '\'' + user.height % 12 + '"'}</Text>
+            <Text>{Math.floor(user.biometric_data.height.in / 12) + '\'' + user.biometric_data.height.in % 12 + '"'}</Text>
         </TouchableOpacity>
         <FormLabel>{'Weight (lbs)'}</FormLabel>
         <FormInput
             containerStyle={{marginLeft: 0, paddingLeft: 20}}
             keyboardType={'numeric'}
-            onChangeText={(text) => handleFormChange('weight', text)}
+            onChangeText={(text) => handleFormChange('biometric_data.mass.lb', text)}
             returnKeyType={'next'}
-            value={user.weight}
+            value={user.biometric_data.mass.lb}
         />
         <FormLabel>{'Injury Status'}</FormLabel>
         <RNPickerSelect
             hideIcon={true}
             items={UserAccountConstants.possibleInjuryStatuses}
-            onValueChange={(value) => handleFormChange('injuryStatus', value)}
+            onValueChange={(value) => handleFormChange('injury_status', value)}
             placeholder={{
                 label: 'Select an Injury Status...',
                 value: null,
             }}
             style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
-            value={user.injuryStatus}
+            value={user.injury_status}
         />
         <FormLabel>{'System Type'}</FormLabel>
         <RNPickerSelect
             hideIcon={true}
             items={UserAccountConstants.possibleSystemTypes}
-            onValueChange={(value) => handleFormChange('systemType', value)}
+            onValueChange={(value) => handleFormChange('system_type', value)}
             placeholder={{
                 label: 'Select a System Type...',
                 value: null,
             }}
             style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
-            value={user.systemType}
+            value={user.system_type}
         />
         <RadioButton
-            label={'Have you missed any game or practice time in the past due to injury?'}
-            onChange={(option) => handleFormChange('missedDueToInjury', option)}
+            label={'Have you had any injuries before?'}
+            onChange={(option) => handleFormChange('missed_due_to_injury', option)}
             options={UserAccountConstants.missedDueToInjuryOptions}
-            value={user.missedDueToInjury}
+            value={user.missed_due_to_injury ? user.missed_due_to_injury : false}
         />
     </Wrapper>
 );

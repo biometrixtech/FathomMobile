@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:19:33 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:19:33
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-06-28 14:55:28
  */
@@ -249,6 +249,19 @@ export default {
         paddingBottom: Sizes.paddingSml,
     },
 
+    paddingVerticalLrg: {
+        paddingVertical: Sizes.paddingLrg,
+    },
+    paddingHorizontalLrg: {
+        paddingHorizontal: Sizes.paddingLrg,
+    },
+    paddingVerticalXLrg: {
+        paddingVertical: Sizes.paddingXLrg,
+    },
+    paddingHorizontalXLrg: {
+        paddingHorizontal: Sizes.paddingXLrg,
+    },
+
     // General HTML-like Elements
     hr: {
         left:              0,
@@ -368,5 +381,10 @@ export default {
         bottom:         0,
         alignItems:     'center',
         justifyContent: 'center'
-    }
+    },
+
+    // onboarding
+
+
+
 };

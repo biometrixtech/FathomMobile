@@ -24,7 +24,7 @@ import { onboardingUtils } from '../../constants/utils';
 
 // Components
 import { Alerts, Button, Card, ListItem, ProgressBar, Spacer, Text } from '../custom/';
-import { UserAccount, UserType } from './pages/';
+import { UserAccount, UserRole } from './pages/';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -67,59 +67,76 @@ const styles = StyleSheet.create({
 class Onboarding extends Component {
     static componentName = 'Onboarding';
 
-    static propTypes = {
-        // onFormSubmit:   PropTypes.func,
-        // registerDevice: PropTypes.func.isRequired,
-        // finalizeLogin:  PropTypes.func.isRequired,
-        // authorizeUser:  PropTypes.func.isRequired,
-        // setEnvironment: PropTypes.func,
-        // environment:    PropTypes.string,
-        // email:          PropTypes.string,
-        // password:       PropTypes.string,
-    }
+    static propTypes = {}
 
-    static defaultProps = {
-        // environment: 'PROD',
-        // email:       null,
-        // password:    null,
-    }
+    static defaultProps = {}
 
     constructor(props) {
         super(props);
 
-        const season = {
-            levelOfPlay:     '',
-            positions:       [],
-            seasonEndDate:   null,
-            seasonStartDate: null,
-        };
-
-        const userSport = {
-            seasons:      [season],
-            sport:        '',
-            yearsInSport: null,
+        const sportArray = {
+            competition_level:  '',
+            end_date:           '', // 'MM/DD/YYYY' or 'current'
+            name:               '',
+            positions:          [],
+            season_end_month:   '',
+            season_start_month: '',
+            start_date:         '',
         };
 
         this.state = {
             form_fields: {
                 user: {
-                    // step 1 - user type
-                    type:              '', // athlete, parent, coach
-                    // step 2 - account setup
-                    firstName:         '',
-                    lastName:          '',
-                    email:             '',
-                    password:          '',
-                    dob:               null,
-                    height:            71,
-                    weight:            '',
-                    systemType:        '1-sensor', // 1-sensor, 3-sensor
-                    injuryStatus:      '', // healthy, healthy-chronically-injured, returning-from-injury
-                    missedDueToInjury: false, // true, false
-                    sports:            [userSport], // user userSport object
-                    // step 3 - sport schedule
-                    // step 4 - strength + conditioning
-                    // step 5 - injury
+                    email:          '',
+                    password:       '',
+                    biometric_data: {
+                        gender: '',
+                        height: {
+                            in: 71
+                        },
+                        mass: {
+                            lb: ''
+                        }
+                    },
+                    personal_data: {
+                        birth_date:     '',
+                        zip_code:       '', // STRING
+                        first_name:     '',
+                        last_name:      '',
+                        phone_number:   '', // STRING
+                        account_type:   'paid', // "paid", "free"
+                        account_status: 'active', // "active", "pending", "past_due", "expired"
+                    },
+                    role:              '',
+                    system_type:       '1-sensor',
+                    injury_status:     '',
+                    injuries:          {}, // COMING SOON
+                    training_groups:   [], // COMING SOON
+                    training_schedule: [ // TODO: STILL NEED TO BUILD OUT
+                        {
+                            practice: {
+                                days_of_week:     'Mon,Tue,Wed,Thu,Fri,Sat',
+                                duration_minutes: 90,
+                            },
+                            competition: {
+                                days_of_week:     'Sun',
+                                duration_minutes: 60,
+                            }
+                        }
+                    ],
+                    training_strength_conditioning: [ // TODO: STILL NEED TO BUILD OUT
+                        {
+                            activity:         'weight_lifting', // "endurance", "running", "sprinting", "cycling", "swimming", "rowing", "cardio", "interval_training", "weight_lifting", "yoga"
+                            days_of_week:     'Tue,Thu',
+                            duration_minutes: 30
+                        },
+                        {
+                            activity:         'yoga',
+                            days_of_week:     'Fri',
+                            duration_minutes: 60
+                        }
+                    ],
+                    sports: [sportArray],
                 }
             },
             isFormValid:       false,
@@ -157,14 +174,14 @@ class Onboarding extends Component {
         }
         feetToInches = feet * 12;
         totalInches = feetToInches + inches;
-        this._handleUserFormChange('height', totalInches);
+        this._handleUserFormChange('biometric_data.height.in', totalInches);
     }
 
     _validateForm = () => {
         const { form_fields, step } = this.state;
         let errorsArray = [];
-        if(step === 1) { // select a user type
-            errorsArray = onboardingUtils.isUserTypeValid(form_fields.user.type).errorsArray;
+        if(step === 1) { // select a user role
+            errorsArray = onboardingUtils.isUserRoleValid(form_fields.user.role).errorsArray;
         } else if(step === 2) { // enter user information
             errorsArray = onboardingUtils.isUserAccountInformationValid(form_fields.user).errorsArray;
             errorsArray = onboardingUtils.isUserAboutValid(form_fields.user).errorsArray;
@@ -251,7 +268,7 @@ class Onboarding extends Component {
                     null
                 }
                 <ScrollView>
-                    <UserType
+                    <UserRole
                         componentStep={1}
                         currentStep={step}
                         handleClick={this._handleUserFormChange}

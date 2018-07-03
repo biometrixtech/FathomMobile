@@ -27,16 +27,6 @@ import Collapsible from 'react-native-collapsible';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    // cardWrapper: {
-    //     alignItems:      'center',
-    //     backgroundColor: AppColors.primary.grey.thirtyPercent,
-    //     borderRadius:    5,
-    //     height:          AppSizes.screen.height / 5,
-    //     justifyContent:  'center',
-    //     marginBottom:    15,
-    //     position:        'relative',
-    //     width:           '100%',
-    // },
     coachText: {
         flex:     1,
         flexWrap: 'wrap'
@@ -51,21 +41,6 @@ const styles = StyleSheet.create({
     headerWrapper: {
         flexDirection: 'row',
         paddingTop:    10,
-    },
-    // overlay: {
-    //     alignItems:      'center',
-    //     backgroundColor: 'rgba(117, 117, 117, 0.8)',
-    //     borderRadius:    5,
-    //     height:          '100%',
-    //     justifyContent:  'center',
-    //     position:        'absolute',
-    //     width:           '100%',
-    // },
-    // text: {
-    //     fontWeight: 'bold',
-    //     fontSize:   15,
-    // },
-    textWrapper: {
     },
     title: {
         fontSize:   15,
@@ -146,59 +121,26 @@ class UserAccount extends Component {
         handleFormChange('sports', newSportsArray);
     };
 
-    _handleSeasonChange = (i, name, value) => {
-        const { handleFormChange, user } = this.props;
-        let newSportsArray = user.sports;
-        newSportsArray[i.sport].seasons[i.season][name] = value;
-        handleFormChange('sports', newSportsArray);
-    };
-
     _addAnotherSport = (index) => {
         const { handleFormChange, user } = this.props;
-        // TODO: check if current sport is valid
-        const newSeason = {
-            levelOfPlay:     '',
-            positions:       [],
-            seasonEndDate:   null,
-            seasonStartDate: null,
-        };
-        const newUserSport = {
-            seasons:      [newSeason],
-            sport:        '',
-            yearsInSport: null,
-        };
-        let newSportsArray = user.sports;
-        newSportsArray.push(newUserSport);
-        handleFormChange('sports', newSportsArray);
-        /*const sportValidation = onboardingUtils.isSportValid(user.sports[index]);
+        const sportValidation = onboardingUtils.isSportValid(user.sports[index]);
         if(sportValidation.isValid) {
-            console.log('TRUE');
+            const newSportArray = {
+                competition_level:  '',
+                end_date:           '', // 'MM/DD/YYYY' or 'current'
+                name:               '',
+                positions:          [],
+                season_end_month:   '',
+                season_start_month: '',
+                start_date:         '',
+            };
+            let newSportsArray = user.sports;
+            newSportsArray.push(newSportArray);
+            handleFormChange('sports', newSportsArray);
         } else {
             // TODO: ERROR NOTIFICATION HERE
             console.log('NOT TRUE');
-        }*/
-    };
-
-    _addAnotherSeason = (index) => {
-        const { handleFormChange, user } = this.props;
-        // TODO: check if current season is valid
-        const newSeason = {
-            levelOfPlay:     '',
-            positions:       [],
-            seasonEndDate:   null,
-            seasonStartDate: null,
-        };
-        let newSeasonsArray = user.sports[index].seasons;
-        newSeasonsArray.push(newSeason);
-        handleFormChange('seasons', newSeasonsArray);
-        // console.log(index, user.seasons[index]);
-        // const sportValidation = onboardingUtils.isSportValid(user.sports[index].season);
-        // if(sportValidation.isValid) {
-        //     console.log('TRUE');
-        // } else {
-        //     // TODO: ERROR NOTIFICATION HERE
-        //     console.log('NOT TRUE');
-        // }
+        }
     };
 
     render = () => {
@@ -232,10 +174,8 @@ class UserAccount extends Component {
             },
             {
                 content: <UserSports
-                    addAnotherSeason={this._addAnotherSeason}
                     addAnotherSport={this._addAnotherSport}
                     handleFormChange={this._handleSportsFormChange}
-                    handleSeasonChange={this._handleSeasonChange}
                     sports={user.sports}
                 />,
                 header: 'Sport Details',
@@ -244,7 +184,7 @@ class UserAccount extends Component {
         ];
         return (
             <View style={[styles.wrapper, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
-                <View style={[styles.textWrapper]}>
+                <View>
                     <Accordion
                         renderContent={this._renderContent}
                         renderHeader={this._renderHeader}
