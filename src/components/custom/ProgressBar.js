@@ -25,15 +25,15 @@ import { AppColors, AppSizes } from '../../constants';
 const ProgressBar = ({ currentStep, totalSteps }) => (
     <View
         style={{
-            backgroundColor: AppColors.primary.grey.thirtyPercent,
+            backgroundColor: '#E4E4E4',
             width:           AppSizes.screen.width,
         }}
     >
         <View
             style={{
-                backgroundColor: AppColors.primary.grey.hundredPercent,
-                width:           (currentStep / totalSteps) * 100,
-                height:          10,
+                backgroundColor: AppColors.primary.yellow.hundredPercent,
+                width:           `${(currentStep / totalSteps) * 100}%`,
+                height:          5,
             }}
         />
     </View>

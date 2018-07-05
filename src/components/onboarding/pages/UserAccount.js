@@ -11,10 +11,10 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, StyleSheet, View } from 'react-native';
 
 // Consts, Libs, and Utils
-import { AppColors, AppSizes } from '../../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
 import { onboardingUtils } from '../../../constants/utils';
 import { Text } from '../../custom';
 
@@ -28,6 +28,7 @@ import Collapsible from 'react-native-collapsible';
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     coachText: {
+        color:    AppColors.white,
         flex:     1,
         flexWrap: 'wrap'
     },
@@ -41,6 +42,11 @@ const styles = StyleSheet.create({
     headerWrapper: {
         flexDirection: 'row',
         paddingTop:    10,
+    },
+    checkmark: {
+        height:      20,
+        marginRight: 10,
+        width:       20,
     },
     title: {
         fontSize:   15,
@@ -80,9 +86,9 @@ class UserAccount extends Component {
                             :
                             require('../../../constants/assets/images/unchecked-circle.png')
                         }
-                        style={{width: 20, height: 20, marginRight: 10}}
+                        style={[styles.checkmark, isFormValid ? {tintColor: AppColors.primary.yellow.hundredPercent} : {}]}
                     />
-                    <Text style={[styles.title]}>{section.header}</Text>
+                    <Text style={[styles.title, isFormValid ? {color: AppColors.primary.yellow.hundredPercent} : {color: AppColors.black}]}>{section.header}</Text>
                 </View>
                 { section.index === 1 || section.index === 2 ?
                     <Text style={{width: 20, height: 20, textAlign: 'center', color: AppColors.primary.grey.thirtyPercent,}}>|</Text>
@@ -97,10 +103,10 @@ class UserAccount extends Component {
         return(
             <View>
                 { section.subtitle ?
-                    <View style={[styles.coachWrapper]}>
+                    <View style={[AppStyles.containerCentered, styles.coachWrapper]}>
                         <Image
                             source={require('../../../constants/assets/images/coach-avatar.png')}
-                            style={{width: 30, height: 30, marginRight: 10}}
+                            style={{width: 40, height: 70, marginRight: 10}}
                         />
                         <Text style={[styles.coachText]}>{section.subtitle}</Text>
                     </View>
@@ -119,6 +125,13 @@ class UserAccount extends Component {
         let newSportsArray = user.sports;
         newSportsArray[i][name] = value;
         handleFormChange('sports', newSportsArray);
+        if(name === 'name') {
+            let newTrainingScheduleArray = user.training_schedule;
+            newTrainingScheduleArray[value] = {};
+            newTrainingScheduleArray[value].practice = {days_of_week: '', duration_minutes: ''};
+            newTrainingScheduleArray[value].competition = {days_of_week: ''};
+            handleFormChange('training_schedule', newTrainingScheduleArray);
+        }
     };
 
     _addAnotherSport = (index) => {
@@ -138,18 +151,42 @@ class UserAccount extends Component {
             newSportsArray.push(newSportArray);
             handleFormChange('sports', newSportsArray);
         } else {
-            // TODO: ERROR NOTIFICATION HERE
-            console.log('NOT TRUE');
+            Alert.alert(
+                'Error',
+                'Please make sure to fill out all the sports related information before trying to add a new one!',
+                [
+                    {text: 'Try Again', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                ],
+                { cancelable: true }
+            )
+        }
+    };
+
+    _removeSport = (index) => {
+        const { handleFormChange, user } = this.props;
+        if(index > 0) {
+            let newSportsArray = user.sports;
+            newSportsArray.splice(index, 1);
+            handleFormChange('sports', newSportsArray);
+        } else {
+            Alert.alert(
+                'Error',
+                'You cannot remove your first sport, at least one sport is required!',
+                [
+                    {text: 'Try Again', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                ],
+                { cancelable: true }
+            )
         }
     };
 
     render = () => {
         const {
-            componentStep
-            , currentStep
-            , handleFormChange
-            , heightPressed
-            , user
+            componentStep,
+            currentStep,
+            handleFormChange,
+            heightPressed,
+            user,
         } = this.props;
         // Accordion sections
         const SECTIONS = [
@@ -158,7 +195,7 @@ class UserAccount extends Component {
                     handleFormChange={handleFormChange}
                     user={user}
                 />,
-                header:   'Account Information',
+                header:   'ACCOUNT INFORMATION',
                 index:    1,
                 subtitle: 'Let\'s start with creating your account, then we\'ll be ready to develop your routine.',
             },
@@ -168,7 +205,7 @@ class UserAccount extends Component {
                     heightPressed={heightPressed}
                     user={user}
                 />,
-                header:   'Tell us about you',
+                header:   'TELL US ABOUT YOU',
                 index:    2,
                 subtitle: 'Now, let\'s understand how you train and how we can help you to get better!',
             },
@@ -176,9 +213,10 @@ class UserAccount extends Component {
                 content: <UserSports
                     addAnotherSport={this._addAnotherSport}
                     handleFormChange={this._handleSportsFormChange}
+                    removeSport={this._removeSport}
                     sports={user.sports}
                 />,
-                header: 'Sport Details',
+                header: 'SPORT DETAILS',
                 index:  3,
             },
         ];

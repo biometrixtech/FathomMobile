@@ -25,9 +25,8 @@ import { FormInput, FormLabel, Text } from '../../custom';
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: AppColors.secondary.blue.hundredPercent,
-        height:          AppSizes.screen.height,
-        width:           AppSizes.screen.width,
+        height: AppSizes.screen.height,
+        width:  AppSizes.screen.width,
     },
     inlineWrapper: {
         flexDirection: 'row',

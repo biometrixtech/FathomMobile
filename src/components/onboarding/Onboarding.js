@@ -14,6 +14,7 @@ import {
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
+import _ from 'lodash';
 import Carousel from 'react-native-snap-carousel';
 import Modal from 'react-native-modalbox';
 
@@ -24,7 +25,7 @@ import { onboardingUtils } from '../../constants/utils';
 
 // Components
 import { Alerts, Button, Card, ListItem, ProgressBar, Spacer, Text } from '../custom/';
-import { UserAccount, UserRole } from './pages/';
+import { UserAccount, UserRole, UserSportSchedule } from './pages/';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     },
     nextButtonWrapper: {
         alignItems:      'center',
-        backgroundColor: '#000',
+        backgroundColor: AppColors.primary.yellow.hundredPercent,
         justifyContent:  'center',
         width:           AppSizes.screen.width ,
     },
@@ -107,25 +108,14 @@ class Onboarding extends Component {
                         account_type:   'paid', // "paid", "free"
                         account_status: 'active', // "active", "pending", "past_due", "expired"
                     },
-                    role:              '',
-                    system_type:       '1-sensor',
-                    injury_status:     '',
-                    injuries:          {}, // COMING SOON
-                    training_groups:   [], // COMING SOON
-                    training_schedule: [ // TODO: STILL NEED TO BUILD OUT
-                        {
-                            practice: {
-                                days_of_week:     'Mon,Tue,Wed,Thu,Fri,Sat',
-                                duration_minutes: 90,
-                            },
-                            competition: {
-                                days_of_week:     'Sun',
-                                duration_minutes: 60,
-                            }
-                        }
-                    ],
+                    role:                           '',
+                    system_type:                    '1-sensor',
+                    injury_status:                  '',
+                    injuries:                       {}, // COMING SOON
+                    training_groups:                [], // COMING SOON
+                    training_schedule:              {},
                     training_strength_conditioning: [ // TODO: STILL NEED TO BUILD OUT
-                        {
+                        /*{
                             activity:         'weight_lifting', // "endurance", "running", "sprinting", "cycling", "swimming", "rowing", "cardio", "interval_training", "weight_lifting", "yoga"
                             days_of_week:     'Tue,Thu',
                             duration_minutes: 30
@@ -134,7 +124,7 @@ class Onboarding extends Component {
                             activity:         'yoga',
                             days_of_week:     'Fri',
                             duration_minutes: 60
-                        }
+                        }*/
                     ],
                     sports: [sportArray],
                 }
@@ -148,19 +138,23 @@ class Onboarding extends Component {
                 success: '',
             },
             step:       1,
-            totalSteps: 5,
+            totalSteps: 5, // TODO: UPDATE THIS VALUE WHEN DONE
         };
     }
 
     _handleUserFormChange = (name, value) => {
-        const { form_fields } = this.state;
-        const newFormFields = form_fields;
-        newFormFields.user[name] = value;
+        /**
+          * This let's us change arbitrarily nested objects with one pass
+          */
+        let newFormFields = _.update( this.state.form_fields.user, name, () => value);
         let errorsArray = this._validateForm();
         this.setState({
-            form_fields: newFormFields,
-            isFormValid: errorsArray.length === 0 ? true : false,
+            ['form_fields.user']: newFormFields,
+            isFormValid:          errorsArray.length === 0 ? true : false,
         });
+        if(name === 'role') {
+            this._nextStep();
+        }
     }
 
     _handleUserHeightFormChange = (index) => {
@@ -174,20 +168,20 @@ class Onboarding extends Component {
         }
         feetToInches = feet * 12;
         totalInches = feetToInches + inches;
-        this._handleUserFormChange('biometric_data.height.in', totalInches);
+        this._handleUserFormChange('biometric_data.height.in', totalInches.toString());
     }
 
     _validateForm = () => {
         const { form_fields, step } = this.state;
         let errorsArray = [];
         if(step === 1) { // select a user role
-            errorsArray = onboardingUtils.isUserRoleValid(form_fields.user.role).errorsArray;
+            errorsArray = errorsArray.concat(onboardingUtils.isUserRoleValid(form_fields.user.role).errorsArray);
         } else if(step === 2) { // enter user information
-            errorsArray = onboardingUtils.isUserAccountInformationValid(form_fields.user).errorsArray;
-            errorsArray = onboardingUtils.isUserAboutValid(form_fields.user).errorsArray;
-            errorsArray = onboardingUtils.areSportsValid(form_fields.user.sports).errorsArray;
-        } else if(step === 3) { //
-
+            errorsArray = errorsArray.concat(onboardingUtils.isUserAccountInformationValid(form_fields.user).errorsArray);
+            errorsArray = errorsArray.concat(onboardingUtils.isUserAboutValid(form_fields.user).errorsArray);
+            errorsArray = errorsArray.concat(onboardingUtils.areSportsValid(form_fields.user.sports).errorsArray);
+        } else if(step === 3) { // sport(s) schedule
+            errorsArray = errorsArray.concat(onboardingUtils.areTrainingSchedulesValid(form_fields.user.training_schedule).errorsArray);
         } else if(step === 4) { //
 
         } else if(step === 5) { //
@@ -201,7 +195,7 @@ class Onboarding extends Component {
         // validation
         let errorsArray = this._validateForm();
         if(step === 1) {
-            // Actions.();
+            Actions.start();
         } else {
             this.setState({
                 isFormValid: errorsArray.length === 0 ? true : false,
@@ -211,14 +205,14 @@ class Onboarding extends Component {
     }
 
     _nextStep = () => {
-        const { resultMsg, step } = this.state;
+        const { step } = this.state;
         // validation
         let errorsArray = this._validateForm();
         // should we save it as a draft at this point so the user can always come back to it?
         this.setState({
-            [resultMsg.error]: errorsArray,
-            isFormValid:       false,//errorsArray.length === 0 ? true : false,
-            step:              step + 1,
+            ['resultMsg.error']: errorsArray,
+            isFormValid:         false,
+            step:                step + 1,
         });
     }
 
@@ -252,6 +246,7 @@ class Onboarding extends Component {
             step,
             totalSteps,
         } = this.state;
+        console.log(form_fields.user);
         return (
             <View style={[styles.background]}>
                 <ProgressBar
@@ -281,8 +276,14 @@ class Onboarding extends Component {
                         heightPressed={this._heightPressed}
                         user={form_fields.user}
                     />
+                    <UserSportSchedule
+                        componentStep={3}
+                        currentStep={step}
+                        handleFormChange={this._handleUserFormChange}
+                        user={form_fields.user}
+                    />
                 </ScrollView>
-                { isFormValid ?
+                { isFormValid && step > 1 ?
                     <TouchableOpacity onPress={this._nextStep} style={[styles.nextButtonWrapper]}>
                         <Text style={[styles.nextButtonText]}>{step === totalSteps ? 'Done' : 'Next Step'}</Text>
                     </TouchableOpacity>
@@ -302,7 +303,7 @@ class Onboarding extends Component {
                         activeSlideAlignment={'center'}
                         contentContainerCustomStyle={[styles.carouselCustomStyles]}
                         data={UserAccountConstants.heights}
-                        firstItem={47}
+                        firstItem={form_fields.user.biometric_data.height.in ? parseFloat(form_fields.user.biometric_data.height.in) : 47}
                         inactiveSlideOpacity={0.7}
                         inactiveSlideScale={0.9}
                         itemWidth={AppSizes.screen.width / 3}

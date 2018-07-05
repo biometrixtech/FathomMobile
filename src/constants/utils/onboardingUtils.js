@@ -66,11 +66,11 @@ const onboardingUtils = {
         let isValid;
         // possible array strings
         const possibleSystemTypes = ['1-sensor', '3-sensor'];
-        const possibleInjuryStatuses = ['healthy', 'healthy-chronically-injured', 'returning-from-injury'];
+        const possibleInjuryStatuses = ['healthy', 'healthy_chronically_injured', 'returning_from_injury'];
         const possibleGenders = ['male', 'female', 'other'];
         if(
             user.personal_data.birth_date.length > 0
-            && user.biometric_data.height.in > 0
+            && user.biometric_data.height.in.length > 0
             && user.biometric_data.mass.lb.length > 0
             && possibleInjuryStatuses.includes(user.injury_status)
             && possibleSystemTypes.includes(user.system_type)
@@ -132,6 +132,32 @@ const onboardingUtils = {
             error,
             isValid,
         }
+    },
+
+    areTrainingSchedulesValid(training_schedule) {
+        let errorsArray = [];
+        let isValid;
+        Object.keys(training_schedule).map((sport, index) => {
+            let sportSchedule = training_schedule[sport];
+            if(
+                sportSchedule.competition.days_of_week.length > 0
+                && sportSchedule.practice.days_of_week.length > 0
+                && sportSchedule.practice.duration_minutes > 0
+            ) {
+                isValid = true;
+            } else {
+                errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
+            }
+        });
+        isValid = errorsArray.length > 0 ? false : true;
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
+    capitalizeFirstLetter(str) {
+        return str.replace(/^\w/, s => s.toUpperCase());
     },
 
 }

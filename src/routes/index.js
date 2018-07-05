@@ -45,6 +45,7 @@ const Index = (
                 <Scene
                     Layout={StartComponent}
                     component={StartContainer}
+                    headerTitleStyle={{alignSelf: 'center', textAlign: 'center', flex: 1}}
                     key='start'
                     title='FathomAI'
                 />
@@ -53,7 +54,7 @@ const Index = (
                     backTitle=' '
                     component={OnboardingContainer}
                     key='onboarding'
-                    title='Get Started'
+                    title='GET STARTED'
                 />
                 <Scene
                     Layout={LoginComponent}

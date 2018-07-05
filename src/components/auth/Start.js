@@ -62,7 +62,7 @@ class Start extends Component {
                         backgroundColor={'#fff'}
                         large
                         onPress={this._routeToOnboarding}
-                        textColor='#000'
+                        textColor={'#000'}
                         title={'Get Started'}
                     />
                 </View>

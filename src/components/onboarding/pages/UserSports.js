@@ -4,6 +4,7 @@
     <UserSports
         addAnotherSport={addAnotherSport}
         handleFormChange={handleSportsFormChange}
+        removeSport={removeSport}
         sports={user.sports}
     />
  *
@@ -13,8 +14,8 @@ import PropTypes from 'prop-types';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, UserAccount as UserAccountConstants } from '../../../constants';
-import { FormInput, FormLabel, Text } from '../../custom';
+import { AppColors, AppStyles, UserAccount as UserAccountConstants } from '../../../constants';
+import { Button, FormInput, FormLabel, Text } from '../../custom';
 
 // import third-party libraries
 import DatePicker from 'react-native-datepicker';
@@ -65,13 +66,27 @@ const styles = StyleSheet.create({
 const UserSports = ({
     addAnotherSport,
     handleFormChange,
+    removeSport,
     sports,
 }) => (
     sports.map((sport, i) => {
         return(
             <View key={i}>
-                <View style={[styles.textWrapper]}>
-                    <Text style={[styles.text]}>{`Sport #${i+1}`}</Text>
+                <View style={[AppStyles.row, styles.textWrapper]}>
+                    <Text style={[styles.text]}>
+                        {`Sport #${i+1}`}
+                    </Text>
+                    { i > 0 ?
+                        <Button
+                            backgroundColor={'#fff'}
+                            small
+                            onPress={() => removeSport(i)}
+                            textColor={'#000'}
+                            title={'X'}
+                        />
+                        :
+                        null
+                    }
                 </View>
                 <View style={[styles.inlineWrapper]}>
                     <View style={[styles.leftItem]}>
@@ -164,12 +179,7 @@ const UserSports = ({
                         <FormLabel>{'Season End Month'}</FormLabel>
                         <RNPickerSelect
                             hideIcon={true}
-                            items={
-                                sport.season_start_month.length > 0 ?
-                                    UserAccountConstants.seasonStartEndMonths.slice(UserAccountConstants.seasonStartEndMonths.findIndex(month => month.value === sport.season_start_month) + 1)
-                                    :
-                                    []
-                            }
+                            items={UserAccountConstants.seasonStartEndMonths}
                             onValueChange={(value) => handleFormChange(i, 'season_end_month', value)}
                             placeholder={{
                                 label: 'Select Season End Month...',
@@ -189,12 +199,13 @@ const UserSports = ({
 );
 
 UserSports.propTypes = {
-    addAnotherSport:    PropTypes.func.isRequired,
-    handleFormChange:   PropTypes.func.isRequired,
-    sports:             PropTypes.array.isRequired,
+    addAnotherSport:  PropTypes.func.isRequired,
+    handleFormChange: PropTypes.func.isRequired,
+    removeSport:      PropTypes.func.isRequired,
+    sports:           PropTypes.array.isRequired,
 };
 UserSports.defaultProps = {};
-UserSports.componentName = 'UserSports';
+UserSports.componentNa = 'UserSports';
 
-/* Export Component ==================================================================== */
+/* Export Component ================================================================== */
 export default UserSports;

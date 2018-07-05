@@ -11,7 +11,12 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+    ImageBackground,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
@@ -20,48 +25,39 @@ import { Text } from '../../custom';
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     cardWrapper: {
-        backgroundColor: AppColors.primary.grey.thirtyPercent,
-        borderRadius:    5,
-        height:          AppSizes.screen.heightTwentieth,
-        marginBottom:    15,
-        position:        'relative',
-        width:           '100%',
+        height:       AppSizes.screen.heightQuarter,
+        marginBottom: 15,
+        position:     'relative',
+        width:        '100%',
     },
     overlay: {
         backgroundColor: AppColors.primary.grey.hundredPercent,
-        borderRadius:    5,
-        height:          '100%',
         opacity:         0.75,
         position:        'absolute',
-        width:           '100%',
     },
 });
 
 /* Component ==================================================================== */
 const UserRole = ({ componentStep, currentStep, handleClick, user }) => (
-    <View style={[AppStyles.padding, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
-        <View style={[AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg]}>
-            <Text style={[AppFonts.h1, AppStyles.bold, AppStyles.textCenterAligned]}>{'Which one of the follow describes you the best?'}</Text>
+    <View style={[AppStyles.paddingHorizontalSml, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
+        <View style={[AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalXLrg]}>
+            <Text style={[AppFonts.h2, AppStyles.bold, AppStyles.textCenterAligned, {color: AppColors.primary.grey.hundredPercent}]}>{'Which one of the follow describes you the best?'}</Text>
         </View>
         <TouchableOpacity onPress={() => handleClick('role', 'athlete')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
-            <Text style={[AppFonts.h1, AppStyles.bold]}>{'ATHLETE'}</Text>
-            { user.role === 'athlete' ?
-                <View style={[AppStyles.containerCentered, styles.overlay]}>
-                    <Image source={require('../../../constants/assets/images/checkmark.png')} />
-                </View>
-                :
-                null
-            }
+            <ImageBackground
+                source={require('../../../constants/assets/images/athlete.jpg')}
+                style={[AppStyles.containerCentered, AppStyles.fullHeightWeight]}
+            >
+                <Text style={[AppFonts.h2, AppStyles.bold, {color: AppColors.white}]}>{'ATHLETE'}</Text>
+            </ImageBackground>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleClick('role', 'manager')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
-            <Text style={[AppFonts.h1, AppStyles.bold]}>{'ATHLETE\'S PARENT'}</Text>
-            { user.role === 'manager' ?
-                <View style={[AppStyles.containerCentered, styles.overlay]}>
-                    <Image source={require('../../../constants/assets/images/checkmark.png')} />
-                </View>
-                :
-                null
-            }
+            <ImageBackground
+                source={require('../../../constants/assets/images/parent.jpg')}
+                style={[AppStyles.containerCentered, AppStyles.fullHeightWeight]}
+            >
+                <Text style={[AppFonts.h2, AppStyles.bold, {color: AppColors.white}]}>{'ATHLETE\'S PARENT'}</Text>
+            </ImageBackground>
         </TouchableOpacity>
     </View>
 );

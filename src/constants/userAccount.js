@@ -27,6 +27,7 @@ const SPORTS_POSITIONS = {
         { label: 'Cross Country', value: 'cross_country', },
         { label: 'Cycling', value: 'cycling', },
         { label: 'Field Hockey', value: 'field_hockey', },
+        { label: 'Football', value: 'football', },
         { label: 'General Fitness', value: 'general_fitness', },
         { label: 'Golf', value: 'golf', },
         { label: 'Gymnastics', value: 'gymnastics', },
@@ -34,7 +35,6 @@ const SPORTS_POSITIONS = {
         { label: 'Lacrosse', value: 'lacrosse', },
         { label: 'Rowing', value: 'rowing', },
         { label: 'Rugby', value: 'rugby', },
-        { label: 'Running', value: 'running', },
         { label: 'Soccer', value: 'soccer', },
         { label: 'Swimming / Diving', value: 'swimming_diving', },
         { label: 'Tennis', value: 'tennis', },
@@ -58,15 +58,28 @@ const SPORTS_POSITIONS = {
         ['cross_country']: [
             { label: 'Distance Runner', value: 'distance_runner', }
         ],
-        ['cycling']:      [],
+        ['cycling']: [
+            { label: 'Cyclist', value: 'cyclist', },
+        ],
         ['field_hockey']: [
             { label: 'Forward', value: 'forward', },
             { label: 'Fullback', value: 'fullback', },
             { label: 'Goalie', value: 'goalie', },
             { label: 'Midfielder', value: 'midfielder', },
         ],
-        ['general_fitness']: [],
-        ['golf']:            [
+        ['football']: [
+            { label: 'Defensive Back', value: 'defensive_back', },
+            { label: 'Kicker', value: 'kicker', },
+            { label: 'Linebacker', value: 'linebacker', },
+            { label: 'Lineman', value: 'lineman', },
+            { label: 'Offensive Back', value: 'offensive_back', },
+            { label: 'Quarterback', value: 'quarterback', },
+            { label: 'Receiver', value: 'receiver', },
+        ],
+        ['general_fitness']: [
+            { label: 'Athlete', value: 'athlete', },
+        ],
+        ['golf']: [
             { label: 'Golfer', value: 'golfer', },
         ],
         ['gymnastics']: [
@@ -87,12 +100,14 @@ const SPORTS_POSITIONS = {
         ['rowing']: [
             { label: 'Rower', value: 'rower', },
         ],
-        ['rugby']:   [],
-        ['running']: [],
-        ['soccer']:  [
+        ['rugby']: [
+            { label: 'Back', value: 'back', },
+            { label: 'Forward', value: 'forward', },
+        ],
+        ['soccer']: [
             { label: 'Defender', value: 'defender', },
             { label: 'Forward', value: 'forward', },
-            { label: 'Goalie', value: 'goalie', },
+            { label: 'Goalkeeper', value: 'goalkeeper', },
             { label: 'Midfielder', value: 'midfielder', },
         ],
         ['swimming_diving']: [
@@ -100,7 +115,9 @@ const SPORTS_POSITIONS = {
             { label: 'Diver', value: 'diver', },
             { label: 'Sprint', value: 'sprint', },
         ],
-        ['tennis']:      [],
+        ['tennis']: [
+            { label: 'Athlete', value: 'athlete', },
+        ],
         ['track_field']: [
             { label: 'Jumping', value: 'jumping', },
             { label: 'Long Distance', value: 'long_distance', },
@@ -116,7 +133,9 @@ const SPORTS_POSITIONS = {
         ['wrestling']: [
             { label: 'Wrestler', value: 'wrestler', },
         ],
-        ['weightlifting']: [],
+        ['weightlifting']: [
+            { label: 'Athlete', value: 'athlete', },
+        ],
     },
 };
 
@@ -200,12 +219,55 @@ const seasonStartEndMonths = [
     { label: 'December', value: 'december', },
 ];
 
+const possiblePracticeCompetitionDays = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+];
+
+const possibleShorthandPracticeCompetitionDays = [
+    'Mon',
+    'Tues',
+    'Wed',
+    'Thurs',
+    'Fri',
+    'Sat',
+    'Sun',
+];
+
+const getMinutesToTimeFormat = (minutes) => {
+    let h = Math.floor(minutes / 60);
+    let m = minutes % 60;
+    h = h < 10 ? '0' + h : h;
+    m = m < 10 ? '0' + m : m;
+    return `${h}:${m}`;
+};
+
+const getCompetitionTime = () => {
+    let timeList = [];
+    for (let minutes = 5; minutes <= 300; minutes += 5) {
+        timeList.push({label: getMinutesToTimeFormat(minutes), value: minutes});
+    }
+    return timeList;
+}
+
+const COMPETITION_TIME = {
+    competitionTimes: getCompetitionTime(),
+};
+
 export default {
+    ...COMPETITION_TIME,
     ...HEIGHT_SECTIONS,
     ...LEVELS_OF_PLAY,
     ...SPORTS_POSITIONS,
     missedDueToInjuryOptions,
     possibleGenders,
+    possiblePracticeCompetitionDays,
+    possibleShorthandPracticeCompetitionDays,
     possibleSystemTypes,
     possibleInjuryStatuses,
     seasonStartEndMonths,

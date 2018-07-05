@@ -75,7 +75,7 @@ class CustomButton extends Component {
 
             if (props.icon && props.icon.name) {
                 props.icon = {
-                    size: AppFonts.scaleFonts(14),
+                    size: AppFonts.scaleFont(14),
                     ...props.icon,
                 };
             }

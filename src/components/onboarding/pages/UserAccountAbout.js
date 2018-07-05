@@ -34,9 +34,8 @@ import RNPickerSelect from 'react-native-picker-select';
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: AppColors.secondary.blue.hundredPercent,
-        height:          AppSizes.screen.height,
-        width:           AppSizes.screen.width,
+        height: AppSizes.screen.height,
+        width:  AppSizes.screen.width,
     },
     pickerSelectAndroid: {},
     pickerSelectIOS:     {
