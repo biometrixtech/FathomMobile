@@ -16,7 +16,7 @@ import { Alert, Image, StyleSheet, View } from 'react-native';
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
 import { onboardingUtils } from '../../../constants/utils';
-import { Text } from '../../custom';
+import { Coach, Text } from '../../custom';
 
 // import components
 import { UserAccountAbout, UserAccountInfo, UserSports } from './';
@@ -28,18 +28,6 @@ import Collapsible from 'react-native-collapsible';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    coachText: {
-        color:    AppColors.white,
-        flex:     1,
-        flexWrap: 'wrap'
-    },
-    coachWrapper: {
-        backgroundColor: AppColors.primary.grey.thirtyPercent,
-        borderRadius:    5,
-        flexDirection:   'row',
-        marginBottom:    5,
-        padding:         20,
-    },
     headerWrapper: {
         flexDirection: 'row',
         paddingTop:    10,
@@ -104,13 +92,9 @@ class UserAccount extends Component {
         return(
             <View>
                 { section.subtitle ?
-                    <View style={[AppStyles.containerCentered, styles.coachWrapper]}>
-                        <Image
-                            source={require('../../../constants/assets/images/coach-avatar.png')}
-                            style={{width: 40, height: 70, marginRight: 10}}
-                        />
-                        <Text style={[styles.coachText]}>{section.subtitle}</Text>
-                    </View>
+                    <Coach
+                        text={section.subtitle}
+                    />
                     :
                     null
                 }

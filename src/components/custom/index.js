@@ -12,6 +12,7 @@
 import Alerts from './Alerts';
 import Button from './Button';
 import Card from './Card';
+import Coach from './Coach';
 import FormInput from './FormInput';
 import FormLabel from './FormLabel';
 import Indicator from './Indicator';
@@ -29,6 +30,7 @@ export {
     Alerts,
     Button,
     Card,
+    Coach,
     FormInput,
     FormLabel,
     Indicator,
