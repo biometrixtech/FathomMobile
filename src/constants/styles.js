@@ -202,6 +202,9 @@ export default {
     textRightAligned: {
         textAlign: 'right',
     },
+    textBold: {
+        fontWeight: 'bold',
+    },
 
     // Padding
     padding: {
@@ -387,7 +390,18 @@ export default {
     fullHeightWeight: {
         height: '100%',
         width:  '100%',
-    }
-
+    },
+    nextButtonText: {
+        color:         Colors.white,
+        fontWeight:    'bold',
+        paddingBottom: 20,
+        paddingTop:    20,
+    },
+    nextButtonWrapper: {
+        alignItems:      'center',
+        backgroundColor: Colors.primary.yellow.hundredPercent,
+        justifyContent:  'center',
+        width:           Sizes.screen.width,
+    },
 
 };

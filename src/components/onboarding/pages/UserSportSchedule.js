@@ -112,15 +112,15 @@ class UserSportSchedule extends Component {
                 { Object.keys(user.training_schedule).map((sport, i) =>
                     <View key={i} style={{paddingBottom: 20,}}>
                         <Text style={[AppFonts.h1, {textAlign: 'center'}]}>
-                            <Text style={{color: AppColors.black, fontWeight: 'bold'}}>{'This week I have '}</Text>
+                            <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{'This week I have '}</Text>
                             <Text style={[styles.selectedText]}>{onboardingUtils.capitalizeFirstLetter(sport)}</Text>
-                            <Text style={{color: AppColors.black, fontWeight: 'bold'}}>{' practice on '}</Text>
+                            <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' practice on '}</Text>
                             { user.training_schedule[sport].practice.days_of_week.length > 0 ?
                                 <Text style={[styles.selectedText]}>{user.training_schedule[sport].practice.days_of_week}</Text>
                                 :
                                 <Text style={[styles.unselectedText]}>{'day(s)'}</Text>
                             }
-                            <Text style={{color: AppColors.black, fontWeight: 'bold'}}>{' for '}</Text>
+                            <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' for '}</Text>
                         </Text>
                         <RNPickerSelect
                             hideIcon={true}
@@ -134,7 +134,7 @@ class UserSportSchedule extends Component {
                             value={user.training_schedule[sport].competition.duration_minutes}
                         />
                         <Text style={[AppFonts.h1, {textAlign: 'center'}]}>
-                            <Text style={{color: AppColors.black, fontWeight: 'bold'}}>{' and compete on '}</Text>
+                            <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' and compete on '}</Text>
                             { user.training_schedule[sport].competition.days_of_week.length > 0 ?
                                 <Text style={[styles.selectedText]}>{user.training_schedule[sport].competition.days_of_week}</Text>
                                 :

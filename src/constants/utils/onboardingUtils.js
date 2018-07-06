@@ -191,6 +191,24 @@ const onboardingUtils = {
         }
     },
 
+    isUserClearedValid(user) {
+        let errorsArray = [];
+        let isValid;
+        if(
+            user.agreed_tou
+            && user.agreed_pp
+        ) {
+            isValid = true;
+        } else {
+            isValid = false;
+            errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
+        }
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
     capitalizeFirstLetter(str) {
         return str.replace(/^\w/, s => s.toUpperCase());
     },

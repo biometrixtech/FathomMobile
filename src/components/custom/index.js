@@ -1,8 +1,8 @@
 /*
 * @Author: Vir Desai
  * @Date: 2017-10-12 11:08:33
- * @Last Modified by: Vir Desai	
- * @Last Modified time: 2018-03-26 17:02:51	
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-03-26 17:02:51
  */
 
 /**
@@ -23,6 +23,7 @@ import RadioButton from './RadioButton';
 import Spacer from './Spacer';
 import TabIcon from './TabIcon';
 import Text from './Text';
+import WebViewPage from './WebViewPage';
 
 export {
     Alerts,
@@ -39,4 +40,5 @@ export {
     Spacer,
     TabIcon,
     Text,
+    WebViewPage,
 };

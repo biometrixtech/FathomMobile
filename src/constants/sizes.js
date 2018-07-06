@@ -21,6 +21,8 @@ export default {
         usableHeight: screenHeight - 64/(Platform.OS === 'ios' ? 1.8 : 1) - (Platform.OS === 'ios' ? 16 : 0), // screen height under navbar and statusbar
         width:        screenWidth,
 
+        progressBarHeight: 5,
+
         heightOneThird:      screenHeight * 0.333,
         heightTwoThirds:     screenHeight * 0.666,
         heightTwoFifths:     screenHeight * 0.40,

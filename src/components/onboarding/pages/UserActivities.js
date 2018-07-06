@@ -122,19 +122,19 @@ class UserActivities extends Component {
         return (
             <View style={[styles.wrapper, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
                 <Text style={[AppFonts.h1, {textAlign: 'center'}]}>
-                    <Text style={{color: AppColors.black, fontWeight: 'bold'}}>{'I do '}</Text>
+                    <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{'I do '}</Text>
                     { user.training_strength_conditioning.activities.length > 0 ?
                         <Text style={[styles.selectedText]}>{selectedActvitiesIndexes.map(value => UserAccountConstants.possibleActivities.label[value]).join(',')}</Text>
                         :
                         <Text style={[styles.unselectedText]}>{'activity'}</Text>
                     }
-                    <Text style={{color: AppColors.black, fontWeight: 'bold'}}>{' on '}</Text>
+                    <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' on '}</Text>
                     { user.training_strength_conditioning.days.length > 0 ?
                         <Text style={[styles.selectedText]}>{user.training_strength_conditioning.days}</Text>
                         :
                         <Text style={[styles.unselectedText]}>{'day(s)'}</Text>
                     }
-                    <Text style={{color: AppColors.black, fontWeight: 'bold'}}>{' for '}</Text>
+                    <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' for '}</Text>
                     { user.training_strength_conditioning.totalDurations.length > 0 ?
                         <Text style={[styles.selectedText]}>{user.training_strength_conditioning.totalDurations}</Text>
                         :

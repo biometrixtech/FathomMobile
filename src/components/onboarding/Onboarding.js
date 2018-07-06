@@ -5,11 +5,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-    View,
+    Alert,
+    Platform,
     ScrollView,
     StyleSheet,
     TouchableOpacity,
-    Platform,
+    View,
 } from 'react-native';
 
 // import third-party libraries
@@ -30,10 +31,16 @@ import {
 import { onboardingUtils } from '../../constants/utils';
 
 // Components
-import { Alerts, Button, Card, ListItem, ProgressBar, Spacer, Text } from '../custom/';
+import {
+    Alerts,
+    ProgressBar,
+    Text,
+    WebViewPage,
+} from '../custom/';
 import {
     UserAccount,
     UserActivities,
+    UserClearedQuestion,
     UserRole,
     UserSportSchedule,
     UserWorkoutQuestion,
@@ -62,18 +69,6 @@ const styles = StyleSheet.create({
         borderLeftWidth: 1,
         width:           '20%',
     },
-    nextButtonText: {
-        color:         '#fff',
-        fontWeight:    'bold',
-        paddingBottom: 20,
-        paddingTop:    20,
-    },
-    nextButtonWrapper: {
-        alignItems:      'center',
-        backgroundColor: AppColors.primary.yellow.hundredPercent,
-        justifyContent:  'center',
-        width:           AppSizes.screen.width ,
-    },
 });
 
 /* Component ==================================================================== */
@@ -100,6 +95,8 @@ class Onboarding extends Component {
         this.state = {
             form_fields: {
                 user: {
+                    agreed_tou:     false,
+                    agreed_pp:      false,
                     email:          '',
                     password:       '',
                     biometric_data: {
@@ -138,15 +135,25 @@ class Onboarding extends Component {
             },
             isFormValid:       false,
             isHeightModalOpen: false,
+            isPPOpen:          false,
+            isTOUOpen:         false,
             modalStyle:        {},
             resultMsg:         {
                 error:   [],
                 status:  '',
                 success: '',
             },
-            step:       4,
-            totalSteps: 7, // TODO: UPDATE THIS VALUE WHEN DONE
+            step:       7, // TODO: UPDATE THIS VALUE BACK TO '1'
+            totalSteps: 8, // TODO: UPDATE THIS VALUE WHEN DONE
         };
+    }
+
+    _toggleTOUWebView = () => {
+        this.setState({ isTOUOpen: !this.state.isTOUOpen })
+    }
+
+    _togglePPWebView = () => {
+        this.setState({ isPPOpen: !this.state.isPPOpen })
     }
 
     _handleUserFormChange = (name, value) => {
@@ -195,6 +202,7 @@ class Onboarding extends Component {
             errorsArray = errorsArray.concat(onboardingUtils.isActivitiesValid(form_fields.user.training_strength_conditioning).errorsArray);
         } else if(step === 6) { // injury
         } else if(step === 7) { // cleared?
+            errorsArray = errorsArray.concat(onboardingUtils.isUserClearedValid(form_fields.user).errorsArray);
         } else if(step === 8) { // pair device
         }
         return errorsArray;
@@ -261,11 +269,25 @@ class Onboarding extends Component {
         );
     }
 
+    _notClearedBtnPressed = () => {
+        Alert.alert(
+            'Warning!',
+            'You will be using this app at your own risk!',
+            [
+                {text: 'Cancel', style: 'cancel'},
+                {text: 'Continue', onPress: this._nextStep},
+            ],
+            { cancelable: true }
+        )
+    }
+
     render = () => {
         const {
             form_fields,
             isFormValid,
             isHeightModalOpen,
+            isPPOpen,
+            isTOUOpen,
             resultMsg,
             step,
             totalSteps,
@@ -319,9 +341,22 @@ class Onboarding extends Component {
                         user={form_fields.user}
                     />
                 </ScrollView>
-                { isFormValid && step > 1 ?
-                    <TouchableOpacity onPress={this._nextStep} style={[styles.nextButtonWrapper]}>
-                        <Text style={[styles.nextButtonText]}>{step === totalSteps ? 'Done' : 'Next Step'}</Text>
+                <UserClearedQuestion
+                    componentStep={7}
+                    currentStep={step}
+                    handleFormChange={this._handleUserFormChange}
+                    isFormValid={isFormValid}
+                    isPPOpen={isPPOpen}
+                    isTOUOpen={isTOUOpen}
+                    nextStep={this._nextStep}
+                    notClearedBtnPressed={this._notClearedBtnPressed}
+                    togglePPWebView={this._togglePPWebView}
+                    toggleTOUWebView={this._toggleTOUWebView}
+                    user={form_fields.user}
+                />
+                { isFormValid && step > 1 && step !== 7 ?
+                    <TouchableOpacity onPress={this._nextStep} style={[AppStyles.nextButtonWrapper]}>
+                        <Text style={[AppStyles.nextButtonText]}>{step === totalSteps ? 'Done' : 'Next Step'}</Text>
                     </TouchableOpacity>
                     :
                     null
@@ -333,7 +368,7 @@ class Onboarding extends Component {
                     swipeToClose={false}
                 >
                     <View style={[styles.carouselCustomStyles, styles.carouselBanner]}>
-                        <Text style={{fontWeight: 'bold'}}>{'Height'}</Text>
+                        <Text style={[AppStyles.textBold]}>{'Height'}</Text>
                     </View>
                     <Carousel
                         activeSlideAlignment={'center'}
@@ -348,8 +383,34 @@ class Onboarding extends Component {
                         renderItem={this._renderHeightItem}
                         sliderWidth={AppSizes.screen.width}
                     />
-                    <TouchableOpacity onPress={this._heightPressed} style={[styles.nextButtonWrapper]}>
-                        <Text style={[styles.nextButtonText]}>{'Done'}</Text>
+                    <TouchableOpacity onPress={this._heightPressed} style={[AppStyles.nextButtonWrapper]}>
+                        <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
+                    </TouchableOpacity>
+                </Modal>
+                <Modal
+                    backdropPressToClose={false}
+                    coverScreen={true}
+                    isOpen={isTOUOpen}
+                    swipeToClose={false}
+                >
+                    <WebViewPage
+                        source={'https://www.fathomai.com/'}
+                    />
+                    <TouchableOpacity onPress={this._toggleTOUWebView} style={[AppStyles.nextButtonWrapper]}>
+                        <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
+                    </TouchableOpacity>
+                </Modal>
+                <Modal
+                    backdropPressToClose={false}
+                    coverScreen={true}
+                    isOpen={isPPOpen}
+                    swipeToClose={false}
+                >
+                    <WebViewPage
+                        source={'https://www.fathomai.com/'}
+                    />
+                    <TouchableOpacity onPress={this._togglePPWebView} style={[AppStyles.nextButtonWrapper]}>
+                        <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
                     </TouchableOpacity>
                 </Modal>
             </View>
