@@ -70,6 +70,7 @@ const onboardingUtils = {
         const possibleGenders = ['male', 'female', 'other'];
         if(
             user.personal_data.birth_date.length > 0
+            && user.personal_data.phone_number.length === 5
             && user.biometric_data.height.in.length > 0
             && user.biometric_data.mass.lb.length > 0
             && possibleInjuryStatuses.includes(user.injury_status)

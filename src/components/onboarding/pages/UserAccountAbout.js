@@ -82,6 +82,15 @@ const UserAccountAbout = ({ handleFormChange, heightPressed, user }) => (
             showIcon={false}
             style={{width: '100%'}}
         />
+        <FormLabel>{'Phone Number'}</FormLabel>
+        <FormInput
+            containerStyle={{marginLeft: 0, paddingLeft: 20}}
+            keyboardType={'numeric'}
+            maxLength={5}
+            onChangeText={(text) => handleFormChange('personal_data.phone_number', text)}
+            returnKeyType={'next'}
+            value={user.personal_data.phone_number}
+        />
         <FormLabel>{'Gender'}</FormLabel>
         <RNPickerSelect
             hideIcon={true}

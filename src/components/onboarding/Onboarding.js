@@ -114,7 +114,7 @@ class Onboarding extends Component {
                         birth_date:     '',
                         first_name:     '',
                         last_name:      '',
-                        phone_number:   '', // STRING
+                        phone_number:   '',
                         account_type:   'free', // "paid", "free"
                         account_status: 'active', // "active", "pending", "past_due", "expired"
                     },
@@ -144,7 +144,7 @@ class Onboarding extends Component {
                 status:  '',
                 success: '',
             },
-            step:       7, // TODO: UPDATE THIS VALUE BACK TO '1'
+            step:       2, // TODO: UPDATE THIS VALUE BACK TO '1'
             totalSteps: 8, // TODO: UPDATE THIS VALUE WHEN DONE
         };
     }
