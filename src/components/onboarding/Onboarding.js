@@ -95,11 +95,13 @@ class Onboarding extends Component {
         this.state = {
             form_fields: {
                 user: {
-                    agreed_tou:     false,
-                    agreed_pp:      false,
-                    email:          '',
-                    password:       '',
-                    biometric_data: {
+                    agreed_terms_of_use:   null,
+                    agreed_privacy_policy: null,
+                    cleared_to_play:       null,
+                    onboarding_status:     '', // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
+                    email:                 '',
+                    password:              '',
+                    biometric_data:        {
                         gender: '',
                         height: {
                             in: 71
@@ -110,11 +112,10 @@ class Onboarding extends Component {
                     },
                     personal_data: {
                         birth_date:     '',
-                        zip_code:       '', // STRING
                         first_name:     '',
                         last_name:      '',
                         phone_number:   '', // STRING
-                        account_type:   'paid', // "paid", "free"
+                        account_type:   'free', // "paid", "free"
                         account_status: 'active', // "active", "pending", "past_due", "expired"
                     },
                     role:                           '',
@@ -209,15 +210,28 @@ class Onboarding extends Component {
     }
 
     _previousStep = () => {
-        const { step } = this.state;
+        const { form_fields, step } = this.state;
         // validation
         let errorsArray = this._validateForm();
         if(step === 1) {
             Actions.start();
         } else {
+            let newStep = step - 1;
+            if (
+                newStep === 4
+                && !form_fields.user.workout_outside_practice
+            ) {
+                if(
+                    form_fields.user.injury_status === 'healthy'
+                ) { // if user is health and they don't workout outside of practice
+                    newStep = step + 3;
+                } else { // if the user doesn't workout outside of practice
+                    newStep = step + 2;
+                }
+            }
             this.setState({
                 isFormValid: errorsArray.length === 0 ? true : false,
-                step:        step - 1,
+                step:        newStep,
             });
         }
     }

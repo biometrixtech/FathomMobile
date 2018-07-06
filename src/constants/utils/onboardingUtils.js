@@ -195,8 +195,8 @@ const onboardingUtils = {
         let errorsArray = [];
         let isValid;
         if(
-            user.agreed_tou
-            && user.agreed_pp
+            user.agreed_terms_of_use
+            && user.agreed_privacy_policy
         ) {
             isValid = true;
         } else {

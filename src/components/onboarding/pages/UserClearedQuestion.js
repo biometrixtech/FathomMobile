@@ -26,6 +26,7 @@ import { TabIcon, Text } from '../../custom';
 
 // import third-party libraries
 import { CheckBox } from 'react-native-elements';
+import moment from 'moment';
 
 /* Component ==================================================================== */
 const UserClearedQuestion = ({
@@ -51,8 +52,8 @@ const UserClearedQuestion = ({
                 <View style={{width: '90%', marginRight: 5}}>
                     <CheckBox
                         title={'I accept the Terms of Use'}
-                        checked={user.agreed_tou}
-                        onPress={() => handleFormChange('agreed_tou', !user.agreed_tou)}
+                        checked={user.agreed_terms_of_use ? true : false}
+                        onPress={() => handleFormChange('agreed_terms_of_use', user.agreed_terms_of_use ? null : moment().format())}
                     />
                 </View>
                 <View style={{width: '10%',}}>
@@ -66,8 +67,8 @@ const UserClearedQuestion = ({
                 <View style={{width: '90%', marginRight: 5}}>
                     <CheckBox
                         title={'I accept the Privacy Policy'}
-                        checked={user.agreed_pp}
-                        onPress={() => handleFormChange('agreed_pp', !user.agreed_pp)}
+                        checked={user.agreed_privacy_policy ? true : false}
+                        onPress={() => handleFormChange('agreed_privacy_policy', user.agreed_privacy_policy ? null : moment().format())}
                     />
                 </View>
                 <View style={{width: '10%',}}>
@@ -79,13 +80,13 @@ const UserClearedQuestion = ({
             </View>
             { isFormValid ?
                 <View>
-                    <TouchableOpacity onPress={nextStep} style={[AppStyles.nextButtonWrapper]}>
+                    <TouchableOpacity onPress={() => {nextStep(); handleFormChange('cleared_to_play', moment().format());}} style={[AppStyles.nextButtonWrapper]}>
                         <Text style={[AppStyles.nextButtonText]}>{'Yes, I confirm'}</Text>
                     </TouchableOpacity>
                     { user.injury_status === 'healthy' ?
                         null
                         :
-                        <TouchableOpacity onPress={notClearedBtnPressed} style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.thirtyPercent}]}>
+                        <TouchableOpacity onPress={() => {notClearedBtnPressed(); handleFormChange('cleared_to_play', moment().format());}} style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.thirtyPercent}]}>
                             <Text style={[AppStyles.nextButtonText, {color: AppColors.black}]}>{'No, I haven\'t been seen by a doctor'}</Text>
                         </TouchableOpacity>
                     }
