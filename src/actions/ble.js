@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-05-05 23:14:50
+ * @Last Modified time: 2018-06-29 16:14:11
  */
 
 /**
@@ -15,9 +15,14 @@ import { AppAPI } from '../lib/';
 const commands = BLEConfig.commands;
 const state = BLEConfig.state;
 
+
+const read = (id) => {
+    return BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID);
+};
+
 const write = (id, data) => {
     return BleManager.write(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID, data)
-        .then(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID));
+        .then(() => read(id));
 };
 
 /**
@@ -299,7 +304,7 @@ const connectWiFi = (id, networkType) => {
 };
 
 const readSSID = (id) => {
-    return id ? dispatch => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID)
+    return id ? dispatch => read(id)
         .then(response => {
             console.log(response);
             return dispatch({
