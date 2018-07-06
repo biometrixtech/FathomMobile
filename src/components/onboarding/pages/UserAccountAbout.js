@@ -130,12 +130,6 @@ const UserAccountAbout = ({ handleFormChange, heightPressed, user }) => (
             style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
             value={user.system_type}
         />
-        <RadioButton
-            label={'Have you had any injuries before?'}
-            onChange={(option) => handleFormChange('missed_due_to_injury', option)}
-            options={UserAccountConstants.missedDueToInjuryOptions}
-            value={user.missed_due_to_injury ? user.missed_due_to_injury : false}
-        />
     </Wrapper>
 );
 

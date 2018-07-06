@@ -20,12 +20,24 @@ import Modal from 'react-native-modalbox';
 
 // Consts, Libs, and Utils
 import { AppAPI } from '../../lib/';
-import { APIConfig, AppColors, AppStyles, AppSizes, UserAccount as UserAccountConstants } from '../../constants';
+import {
+    APIConfig,
+    AppColors,
+    AppStyles,
+    AppSizes,
+    UserAccount as UserAccountConstants,
+} from '../../constants';
 import { onboardingUtils } from '../../constants/utils';
 
 // Components
 import { Alerts, Button, Card, ListItem, ProgressBar, Spacer, Text } from '../custom/';
-import { UserAccount, UserRole, UserSportSchedule } from './pages/';
+import {
+    UserAccount,
+    UserActivities,
+    UserRole,
+    UserSportSchedule,
+    UserWorkoutQuestion,
+} from './pages/';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -114,19 +126,14 @@ class Onboarding extends Component {
                     injuries:                       {}, // COMING SOON
                     training_groups:                [], // COMING SOON
                     training_schedule:              {},
-                    training_strength_conditioning: [ // TODO: STILL NEED TO BUILD OUT
-                        /*{
-                            activity:         'weight_lifting', // "endurance", "running", "sprinting", "cycling", "swimming", "rowing", "cardio", "interval_training", "weight_lifting", "yoga"
-                            days_of_week:     'Tue,Thu',
-                            duration_minutes: 30
-                        },
-                        {
-                            activity:         'yoga',
-                            days_of_week:     'Fri',
-                            duration_minutes: 60
-                        }*/
-                    ],
-                    sports: [sportArray],
+                    training_strength_conditioning: {
+                        activities:     '',
+                        days:           '',
+                        durations:      '',
+                        totalDurations: '',
+                    },
+                    sports:                   [sportArray],
+                    workout_outside_practice: null,
                 }
             },
             isFormValid:       false,
@@ -137,8 +144,8 @@ class Onboarding extends Component {
                 status:  '',
                 success: '',
             },
-            step:       1,
-            totalSteps: 5, // TODO: UPDATE THIS VALUE WHEN DONE
+            step:       4,
+            totalSteps: 7, // TODO: UPDATE THIS VALUE WHEN DONE
         };
     }
 
@@ -182,10 +189,10 @@ class Onboarding extends Component {
             errorsArray = errorsArray.concat(onboardingUtils.areSportsValid(form_fields.user.sports).errorsArray);
         } else if(step === 3) { // sport(s) schedule
             errorsArray = errorsArray.concat(onboardingUtils.areTrainingSchedulesValid(form_fields.user.training_schedule).errorsArray);
-        } else if(step === 4) { //
-
-        } else if(step === 5) { //
-
+        } else if(step === 4) { // workout outside of practice?
+            errorsArray = errorsArray.concat(onboardingUtils.isWorkoutOutsidePracticeValid(form_fields.user.workout_outside_practice).errorsArray);
+        } else if(step === 5) { // activities
+            errorsArray = errorsArray.concat(onboardingUtils.isActivitiesValid(form_fields.user.training_strength_conditioning).errorsArray);
         }
         return errorsArray;
     }
@@ -205,14 +212,28 @@ class Onboarding extends Component {
     }
 
     _nextStep = () => {
-        const { step } = this.state;
+        const { form_fields, step } = this.state;
         // validation
         let errorsArray = this._validateForm();
-        // should we save it as a draft at this point so the user can always come back to it?
+        let newStep;
+        if (
+            step === 4
+            && !form_fields.user.workout_outside_practice
+        ) {
+            if(
+                form_fields.user.injury_status === 'healthy'
+            ) { // if user is health and they don't workout outside of practice
+                newStep = step + 3;
+            } else { // if the user doesn't workout outside of practice
+                newStep = step + 2;
+            }
+        } else {
+            newStep = step + 1;
+        }
         this.setState({
             ['resultMsg.error']: errorsArray,
             isFormValid:         false,
-            step:                step + 1,
+            step:                newStep,
         });
     }
 
@@ -266,7 +287,7 @@ class Onboarding extends Component {
                     <UserRole
                         componentStep={1}
                         currentStep={step}
-                        handleClick={this._handleUserFormChange}
+                        handleFormChange={this._handleUserFormChange}
                         user={form_fields.user}
                     />
                     <UserAccount
@@ -278,6 +299,18 @@ class Onboarding extends Component {
                     />
                     <UserSportSchedule
                         componentStep={3}
+                        currentStep={step}
+                        handleFormChange={this._handleUserFormChange}
+                        user={form_fields.user}
+                    />
+                    <UserWorkoutQuestion
+                        componentStep={4}
+                        currentStep={step}
+                        handleFormChange={this._handleUserFormChange}
+                        user={form_fields.user}
+                    />
+                    <UserActivities
+                        componentStep={5}
                         currentStep={step}
                         handleFormChange={this._handleUserFormChange}
                         user={form_fields.user}

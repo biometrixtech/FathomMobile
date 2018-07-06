@@ -4,7 +4,7 @@
     <UserRole
         componentStep={1}
         currentStep={step}
-        handleClick={this._handleUserFormChange}
+        handleFormChange={this._handleUserFormChange}
         user={form_fields.user}
     />
  *
@@ -38,12 +38,12 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const UserRole = ({ componentStep, currentStep, handleClick, user }) => (
+const UserRole = ({ componentStep, currentStep, handleFormChange, user }) => (
     <View style={[AppStyles.paddingHorizontalSml, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
         <View style={[AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalXLrg]}>
             <Text style={[AppFonts.h2, AppStyles.bold, AppStyles.textCenterAligned, {color: AppColors.primary.grey.hundredPercent}]}>{'Which one of the follow describes you the best?'}</Text>
         </View>
-        <TouchableOpacity onPress={() => handleClick('role', 'athlete')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
+        <TouchableOpacity onPress={() => handleFormChange('role', 'athlete')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
             <ImageBackground
                 source={require('../../../constants/assets/images/athlete.jpg')}
                 style={[AppStyles.containerCentered, AppStyles.fullHeightWeight]}
@@ -51,7 +51,7 @@ const UserRole = ({ componentStep, currentStep, handleClick, user }) => (
                 <Text style={[AppFonts.h2, AppStyles.bold, {color: AppColors.white}]}>{'ATHLETE'}</Text>
             </ImageBackground>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleClick('role', 'manager')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
+        <TouchableOpacity onPress={() => handleFormChange('role', 'manager')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
             <ImageBackground
                 source={require('../../../constants/assets/images/parent.jpg')}
                 style={[AppStyles.containerCentered, AppStyles.fullHeightWeight]}
@@ -63,10 +63,10 @@ const UserRole = ({ componentStep, currentStep, handleClick, user }) => (
 );
 
 UserRole.propTypes = {
-    componentStep: PropTypes.number.isRequired,
-    currentStep:   PropTypes.number.isRequired,
-    handleClick:   PropTypes.func.isRequired,
-    user:          PropTypes.object.isRequired,
+    componentStep:    PropTypes.number.isRequired,
+    currentStep:      PropTypes.number.isRequired,
+    handleFormChange: PropTypes.func.isRequired,
+    user:             PropTypes.object.isRequired,
 };
 UserRole.defaultProps = {};
 UserRole.componentName = 'UserRole';

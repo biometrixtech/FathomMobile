@@ -48,7 +48,7 @@ class RadioButton extends Component {
                             {width: `${100/options.length}%`},
                             [
                                 value === option.value ?
-                                    {backgroundColor: '#000'}
+                                    {backgroundColor: AppColors.secondary.blue.eightyPercent}
                                     :
                                     {}
                             ],
@@ -56,7 +56,7 @@ class RadioButton extends Component {
                     >
                         <Text style={
                             value === option.value ?
-                                {backgroundColor: '#000', color: '#fff'}
+                                {backgroundColor: AppColors.transparent, color: AppColors.white}
                                 :
                                 {}
                         }>
@@ -73,9 +73,11 @@ RadioButton.propTypes = {
     label:    PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     options:  PropTypes.array.isRequired,
-    value:    PropTypes.bool.isRequired,
+    value:    PropTypes.bool,
 };
-RadioButton.defaultProps = {};
+RadioButton.defaultProps = {
+    value: null,
+};
 RadioButton.componentName = 'RadioButton';
 
 /* Export Component ==================================================================== */

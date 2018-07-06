@@ -156,6 +156,41 @@ const onboardingUtils = {
         }
     },
 
+    isWorkoutOutsidePracticeValid(value) {
+        let errorsArray = [];
+        let isValid;
+        if(value === true || value === false) {
+            isValid = true;
+        } else {
+            isValid = false;
+            errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
+        }
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
+    isActivitiesValid(training_strength_conditioning) {
+        let errorsArray = [];
+        let isValid;
+        if(
+            training_strength_conditioning.activities.length > 0
+            && training_strength_conditioning.days.length > 0
+            && training_strength_conditioning.durations > 0
+            && training_strength_conditioning.totalDurations.length > 0
+        ) {
+            isValid = true;
+        } else {
+            isValid = false;
+            errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
+        }
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
     capitalizeFirstLetter(str) {
         return str.replace(/^\w/, s => s.toUpperCase());
     },

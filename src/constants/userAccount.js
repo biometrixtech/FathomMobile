@@ -193,17 +193,6 @@ const possibleGenders = [
     },
 ];
 
-const missedDueToInjuryOptions = [
-    {
-        label: 'Yes',
-        value: true,
-    },
-    {
-        label: 'No',
-        value: false,
-    },
-];
-
 const seasonStartEndMonths = [
     { label: 'January', value: 'january', },
     { label: 'February', value: 'february', },
@@ -219,7 +208,7 @@ const seasonStartEndMonths = [
     { label: 'December', value: 'december', },
 ];
 
-const possiblePracticeCompetitionDays = [
+const possibleDaysOfWeek = [
     'Monday',
     'Tuesday',
     'Wednesday',
@@ -229,7 +218,7 @@ const possiblePracticeCompetitionDays = [
     'Sunday',
 ];
 
-const possibleShorthandPracticeCompetitionDays = [
+const possibleShorthandDaysOfWeek = [
     'Mon',
     'Tues',
     'Wed',
@@ -247,16 +236,55 @@ const getMinutesToTimeFormat = (minutes) => {
     return `${h}:${m}`;
 };
 
-const getCompetitionTime = () => {
+const getTimes = (startValue, endValue, incrementValue) => {
     let timeList = [];
-    for (let minutes = 5; minutes <= 300; minutes += 5) {
+    for (let minutes = startValue; minutes <= endValue; minutes += incrementValue) {
         timeList.push({label: getMinutesToTimeFormat(minutes), value: minutes});
     }
     return timeList;
 }
 
 const COMPETITION_TIME = {
-    competitionTimes: getCompetitionTime(),
+    competitionTimes: getTimes(5, 300, 5),
+    activitiesTimes:  getTimes(15, 120, 15),
+};
+
+const workoutOutsidePracticeOptions = [
+    {
+        label: 'Yes',
+        value: true,
+    },
+    {
+        label: 'No',
+        value: false,
+    },
+];
+
+const possibleActivities = {
+    label: [
+        'Calisthenics',
+        'Cardio',
+        'Cycling',
+        'Endurance Running',
+        'Interval Training',
+        'Rowing',
+        'Sprinting',
+        'Swimming',
+        'Weightlifting',
+        'Yoga',
+    ],
+    value: [
+        'calisthenics',
+        'cardio',
+        'cycling',
+        'endurance_running',
+        'interval_training',
+        'rowing',
+        'sprinting',
+        'swimming',
+        'weightlifting',
+        'yoga',
+    ],
 };
 
 export default {
@@ -264,11 +292,12 @@ export default {
     ...HEIGHT_SECTIONS,
     ...LEVELS_OF_PLAY,
     ...SPORTS_POSITIONS,
-    missedDueToInjuryOptions,
+    possibleActivities,
+    possibleDaysOfWeek,
     possibleGenders,
-    possiblePracticeCompetitionDays,
-    possibleShorthandPracticeCompetitionDays,
+    possibleShorthandDaysOfWeek,
     possibleSystemTypes,
     possibleInjuryStatuses,
     seasonStartEndMonths,
+    workoutOutsidePracticeOptions,
 };

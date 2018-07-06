@@ -70,7 +70,7 @@ class UserSportSchedule extends Component {
         this.setState({ selectedPracticeIndexes: { [sport]: newIndexesArray } });
         // dynamically update our training_schedule object for the user
         let newUserTrainingSchedule = user.training_schedule;
-        newUserTrainingSchedule[sport].practice.days_of_week = newIndexesArray.map(value => UserAccountConstants.possibleShorthandPracticeCompetitionDays[value]).join(',');
+        newUserTrainingSchedule[sport].practice.days_of_week = newIndexesArray.map(value => UserAccountConstants.possibleShorthandDaysOfWeek[value]).join(',');
         handleFormChange('training_schedule', newUserTrainingSchedule);
     };
 
@@ -88,7 +88,7 @@ class UserSportSchedule extends Component {
         this.setState({ selectedCompetitionIndexes: { [sport]: newIndexesArray } });
         // dynamically update our training_schedule object for the user
         let newUserTrainingSchedule = user.training_schedule;
-        newUserTrainingSchedule[sport].competition.days_of_week = newIndexesArray.map(value => UserAccountConstants.possibleShorthandPracticeCompetitionDays[value]).join(',');
+        newUserTrainingSchedule[sport].competition.days_of_week = newIndexesArray.map(value => UserAccountConstants.possibleShorthandDaysOfWeek[value]).join(',');
         handleFormChange('training_schedule', newUserTrainingSchedule);
     };
 
@@ -142,13 +142,13 @@ class UserSportSchedule extends Component {
                         </Text>
                         <FormLabel>Practice</FormLabel>
                         <ButtonGroup
-                            buttons={UserAccountConstants.possiblePracticeCompetitionDays}
+                            buttons={UserAccountConstants.possibleDaysOfWeek}
                             onPress={(index) => this._updateSportSchedulePractice(sport, index)}
                             selectedIndexes={selectedPracticeIndexes[sport] ? selectedPracticeIndexes[sport] : []}
                         />
                         <FormLabel>Competition</FormLabel>
                         <ButtonGroup
-                            buttons={UserAccountConstants.possiblePracticeCompetitionDays}
+                            buttons={UserAccountConstants.possibleDaysOfWeek}
                             onPress={(index) => this._updateSportScheduleCompetition(sport, index)}
                             selectedIndexes={selectedCompetitionIndexes[sport] ? selectedCompetitionIndexes[sport] : []}
                         />
