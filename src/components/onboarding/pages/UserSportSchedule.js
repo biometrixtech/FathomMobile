@@ -19,6 +19,7 @@ import { onboardingUtils } from '../../../constants/utils';
 import { Text, FormLabel } from '../../custom';
 
 // import third-party libraries
+import _ from 'lodash';
 import { ButtonGroup } from 'react-native-elements';
 import RNPickerSelect from 'react-native-picker-select';
 
@@ -60,7 +61,7 @@ class UserSportSchedule extends Component {
         const { handleFormChange, user } = this.props;
         const { selectedPracticeIndexes } = this.state;
         // upate our state - for button styling
-        let newIndexesArray = selectedPracticeIndexes[sport];
+        let newIndexesArray = _.cloneDeep(selectedPracticeIndexes[sport]);
         if(newIndexesArray && newIndexesArray.indexOf(index) > -1) {
             newIndexesArray.splice(newIndexesArray.indexOf(index), 1)
         } else {
@@ -69,7 +70,7 @@ class UserSportSchedule extends Component {
         }
         this.setState({ selectedPracticeIndexes: { [sport]: newIndexesArray } });
         // dynamically update our training_schedule object for the user
-        let newUserTrainingSchedule = user.training_schedule;
+        let newUserTrainingSchedule = _.cloneDeep(user.training_schedule);
         newUserTrainingSchedule[sport].practice.days_of_week = newIndexesArray.map(value => UserAccountConstants.possibleShorthandDaysOfWeek[value]).join(',');
         handleFormChange('training_schedule', newUserTrainingSchedule);
     };
@@ -78,7 +79,7 @@ class UserSportSchedule extends Component {
         const { handleFormChange, user } = this.props;
         const { selectedCompetitionIndexes } = this.state;
         // upate our state - for button styling
-        let newIndexesArray = selectedCompetitionIndexes[sport];
+        let newIndexesArray = _.cloneDeep(selectedCompetitionIndexes[sport]);
         if(newIndexesArray && newIndexesArray.indexOf(index) > -1) {
             newIndexesArray.splice(newIndexesArray.indexOf(index), 1)
         } else {
@@ -87,14 +88,14 @@ class UserSportSchedule extends Component {
         }
         this.setState({ selectedCompetitionIndexes: { [sport]: newIndexesArray } });
         // dynamically update our training_schedule object for the user
-        let newUserTrainingSchedule = user.training_schedule;
+        let newUserTrainingSchedule = _.cloneDeep(user.training_schedule);
         newUserTrainingSchedule[sport].competition.days_of_week = newIndexesArray.map(value => UserAccountConstants.possibleShorthandDaysOfWeek[value]).join(',');
         handleFormChange('training_schedule', newUserTrainingSchedule);
     };
 
     _handlePracticeTimeChange = (sport, value) => {
         const { handleFormChange, user } = this.props;
-        let newUserTrainingSchedule = user.training_schedule;
+        let newUserTrainingSchedule = _.cloneDeep(user.training_schedule);
         newUserTrainingSchedule[sport].practice.duration_minutes = value;
         handleFormChange('training_schedule', newUserTrainingSchedule);
     };

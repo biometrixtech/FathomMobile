@@ -193,6 +193,9 @@ class Onboarding extends Component {
             errorsArray = errorsArray.concat(onboardingUtils.isWorkoutOutsidePracticeValid(form_fields.user.workout_outside_practice).errorsArray);
         } else if(step === 5) { // activities
             errorsArray = errorsArray.concat(onboardingUtils.isActivitiesValid(form_fields.user.training_strength_conditioning).errorsArray);
+        } else if(step === 6) { // injury
+        } else if(step === 7) { // cleared?
+        } else if(step === 8) { // pair device
         }
         return errorsArray;
     }

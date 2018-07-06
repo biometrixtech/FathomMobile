@@ -22,6 +22,7 @@ import { Text } from '../../custom';
 import { UserAccountAbout, UserAccountInfo, UserSports } from './';
 
 // import third-party libraries
+import _ from 'lodash';
 import Accordion from 'react-native-collapsible/Accordion';
 import Collapsible from 'react-native-collapsible';
 
@@ -122,7 +123,7 @@ class UserAccount extends Component {
 
     _handleSportsFormChange = (i, name, value) => {
         const { handleFormChange, user } = this.props;
-        let newSportsArray = user.sports;
+        let newSportsArray = _.cloneDeep(user.sports);
         newSportsArray[i][name] = value;
         handleFormChange('sports', newSportsArray);
         if(name === 'name') {
@@ -147,7 +148,7 @@ class UserAccount extends Component {
                 season_start_month: '',
                 start_date:         '',
             };
-            let newSportsArray = user.sports;
+            let newSportsArray = _.cloneDeep(user.sports);
             newSportsArray.push(newSportArray);
             handleFormChange('sports', newSportsArray);
         } else {
@@ -165,7 +166,7 @@ class UserAccount extends Component {
     _removeSport = (index) => {
         const { handleFormChange, user } = this.props;
         if(index > 0) {
-            let newSportsArray = user.sports;
+            let newSportsArray = _.cloneDeep(user.sports);
             newSportsArray.splice(index, 1);
             handleFormChange('sports', newSportsArray);
         } else {
