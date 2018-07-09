@@ -41,6 +41,7 @@ import {
     UserAccount,
     UserActivities,
     UserClearedQuestion,
+    UserPairDevice,
     UserRole,
     UserSportSchedule,
     UserWorkoutQuestion,
@@ -144,7 +145,7 @@ class Onboarding extends Component {
                 status:  '',
                 success: '',
             },
-            step:       2, // TODO: UPDATE THIS VALUE BACK TO '1'
+            step:       8, // TODO: UPDATE THIS VALUE BACK TO '1'
             totalSteps: 8, // TODO: UPDATE THIS VALUE WHEN DONE
         };
     }
@@ -350,6 +351,12 @@ class Onboarding extends Component {
                     />
                     <UserActivities
                         componentStep={5}
+                        currentStep={step}
+                        handleFormChange={this._handleUserFormChange}
+                        user={form_fields.user}
+                    />
+                    <UserPairDevice
+                        componentStep={8}
                         currentStep={step}
                         handleFormChange={this._handleUserFormChange}
                         user={form_fields.user}

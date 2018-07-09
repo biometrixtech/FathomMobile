@@ -7,6 +7,7 @@ import UserAccountAbout from './UserAccountAbout';
 import UserAccountInfo from './UserAccountInfo';
 import UserActivities from './UserActivities';
 import UserClearedQuestion from './UserClearedQuestion';
+import UserPairDevice from './UserPairDevice';
 import UserRole from './UserRole';
 import UserSports from './UserSports';
 import UserSportSchedule from './UserSportSchedule';
@@ -18,6 +19,7 @@ export {
     UserAccountInfo,
     UserActivities,
     UserClearedQuestion,
+    UserPairDevice,
     UserRole,
     UserSports,
     UserSportSchedule,
