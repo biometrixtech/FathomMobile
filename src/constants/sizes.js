@@ -29,7 +29,7 @@ export default {
         heightThreeQuarters: screenHeight * 0.75,
         heightHalf:          screenHeight * 0.5,
         heightQuarter:       screenHeight * 0.25,
-        heightTwentieth:     screenHeight * 0.2,
+        heightFifth:         screenHeight * 0.2,
         heightTenth:         screenHeight * 0.1,
 
         widthHalf:          screenWidth * 0.5,
