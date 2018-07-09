@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:06 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-09 00:49:11
+ * @Last Modified time: 2018-04-23 16:46:33
  */
 
 /**
@@ -22,17 +22,15 @@ const brand = {
     primary: {
         // Smokey Grey
         grey: {
-            hundredPercent:     '#2B2B2B',
-            eightyPercent:      '#3A3A3A',
-            seventyFivePercent: '#505050',
-            fiftyPercent:       '#757575',
-            thirtyPercent:      '#D5D5D5',
+            hundredPercent: '#505050',
+            fiftyPercent:   '#757575',
+            thirtyPercent:  '#D5D5D5'
         },
         // Medal Gold
         yellow: {
-            hundredPercent: '#EBBA2D',
-            seventyPercent: '#FFED60',
-            fiftyPercent:   '#FFFFAC',
+            hundredPercent: '#E0AF12',
+            seventyPercent: '#E9C766',
+            fiftyPercent:   '#EFD792',
         },
         // Finish Line White
         white: {
@@ -55,7 +53,6 @@ const brand = {
         // Fathom Blue
         blue: {
             hundredPercent: '#0B587C',
-            eightyPercent:  '#17678C',
             seventyPercent: '#548AA3',
             fiftyPercent:   '#85ACBE',
             thirtyPercent:  '#B6CDD8',

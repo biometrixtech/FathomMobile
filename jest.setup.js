@@ -2,22 +2,10 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:17:54 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-09 00:58:36
+ * @Last Modified time: 2018-05-06 22:52:38
  */
 
 /* global jest fetch */
-
-jest.mock('react-native-fabric', () => {
-    return {
-        Answers: {
-            logContentView: () => {},
-            logCustom:      () => {},
-        },
-        Crashlytics: {
-            crash: () => {},
-        },
-    }
-});
 
 // jest.mock('Linking', () =>{
 //     return {
