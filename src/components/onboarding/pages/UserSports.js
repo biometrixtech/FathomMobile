@@ -2,10 +2,9 @@
  * UserSports
  *
     <UserSports
-        addAnotherSeason={addAnotherSeason}
         addAnotherSport={addAnotherSport}
         handleFormChange={handleSportsFormChange}
-        handleSeasonChange={handleSeasonChange}
+        removeSport={removeSport}
         sports={user.sports}
     />
  *
@@ -15,14 +14,13 @@ import PropTypes from 'prop-types';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, UserAccount as UserAccountConstants } from '../../../constants';
-import { FormInput, FormLabel, Text } from '../../custom';
-
-// import components
-import { UserSportSeason } from './';
+import { AppColors, AppStyles, UserAccount as UserAccountConstants } from '../../../constants';
+import { Button, FormInput, FormLabel, Text } from '../../custom';
 
 // import third-party libraries
+import DatePicker from 'react-native-datepicker';
 import RNPickerSelect from 'react-native-picker-select';
+import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -62,22 +60,33 @@ const styles = StyleSheet.create({
         marginTop:       10,
         width:           '100%',
     },
-    wrapper: {},
 });
 
 /* Component ==================================================================== */
 const UserSports = ({
-    addAnotherSeason,
     addAnotherSport,
     handleFormChange,
-    handleSeasonChange,
+    removeSport,
     sports,
 }) => (
     sports.map((sport, i) => {
         return(
-            <View key={i} style={[styles.wrapper]}>
-                <View style={[styles.textWrapper]}>
-                    <Text style={[styles.text]}>{`Sport #${i+1}`}</Text>
+            <View key={i}>
+                <View style={[AppStyles.row, styles.textWrapper]}>
+                    <Text style={[styles.text]}>
+                        {`Sport #${i+1}`}
+                    </Text>
+                    { i > 0 ?
+                        <Button
+                            backgroundColor={'#fff'}
+                            small
+                            onPress={() => removeSport(i)}
+                            textColor={'#000'}
+                            title={'X'}
+                        />
+                        :
+                        null
+                    }
                 </View>
                 <View style={[styles.inlineWrapper]}>
                     <View style={[styles.leftItem]}>
@@ -85,38 +94,102 @@ const UserSports = ({
                         <RNPickerSelect
                             hideIcon={true}
                             items={UserAccountConstants.sports}
-                            onValueChange={(value) => handleFormChange(i, 'sport', value)}
+                            onValueChange={(value) => handleFormChange(i, 'name', value)}
                             placeholder={{
                                 label: 'Select a Sport...',
                                 value: null,
                             }}
                             style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
-                            value={sport.sport}
+                            value={sport.name}
                         />
                     </View>
                     <View style={[styles.rightItem]}>
-                        <FormLabel>{'Years of Playing'}</FormLabel>
-                        <FormInput
-                            containerStyle={{height: 30, marginLeft: 0, paddingLeft: 20}}
-                            keyboardType={'numeric'}
-                            onChangeText={(text) => handleFormChange(i, 'yearsInSport', text)}
-                            returnKeyType={'next'}
-                            value={sport.yearsInSport}
+                        <FormLabel>{'Level of Play'}</FormLabel>
+                        <RNPickerSelect
+                            hideIcon={true}
+                            items={UserAccountConstants.levelsOfPlay}
+                            onValueChange={(value) => handleFormChange(i, 'competition_level', value)}
+                            placeholder={{
+                                label: 'Select a Level...',
+                                value: null,
+                            }}
+                            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
+                            value={sport.competition_level}
                         />
                     </View>
                 </View>
-                { sport.seasons.map((season, index) =>
-                    <UserSportSeason
-                        handleSeasonChange={handleSeasonChange}
-                        index={{season: index, sport: i}}
-                        key={index}
-                        season={season}
-                        sport={sport}
+                <FormLabel>{'Positions'}</FormLabel>
+                <View style={styles.multiSelect}>
+                    <SectionedMultiSelect
+                        displayKey={'label'}
+                        items={sport.name.length > 0 ? UserAccountConstants.positions[sport.name] : []}
+                        onSelectedItemsChange={item => handleFormChange(i, 'positions', item)}
+                        selectedItems={sport.positions}
+                        selectText={'Select Positions...'}
+                        showCancelButton={true}
+                        uniqueKey={'value'}
                     />
-                )}
-                <TouchableOpacity onPress={() => addAnotherSeason(i)} style={[styles.textWrapper]}>
-                    <Text style={[styles.text, {paddingLeft: 20}]}>{'+ ADD ANOTHER SEASON'}</Text>
-                </TouchableOpacity>
+                </View>
+                <View style={[styles.inlineWrapper]}>
+                    <View style={[styles.leftItem]}>
+                        <FormLabel>{'Start Date'}</FormLabel>
+                        <DatePicker
+                            cancelBtnText={'Cancel'}
+                            confirmBtnText={'Confirm'}
+                            customStyles={{dateInput: styles.reusableCustomSpacing}}
+                            date={sport.start_date}
+                            format={'MM/DD/YYYY'}
+                            mode={'date'}
+                            onDateChange={(date) => handleFormChange(i, 'start_date', date)}
+                            showIcon={false}
+                            style={{width: '100%'}}
+                        />
+                    </View>
+                    <View style={[styles.rightItem]}>
+                        <FormLabel>{'End Date'}</FormLabel>
+                        <DatePicker
+                            cancelBtnText={'Cancel'}
+                            confirmBtnText={'Confirm'}
+                            customStyles={{dateInput: styles.reusableCustomSpacing}}
+                            date={sport.end_date}
+                            format={'MM/DD/YYYY'}
+                            mode={'date'}
+                            onDateChange={(date) => handleFormChange(i, 'end_date', date)}
+                            showIcon={false}
+                            style={{width: '100%'}}
+                        />
+                    </View>
+                </View>
+                <View style={[styles.inlineWrapper]}>
+                    <View style={[styles.leftItem]}>
+                        <FormLabel>{'Season Start Month'}</FormLabel>
+                        <RNPickerSelect
+                            hideIcon={true}
+                            items={UserAccountConstants.seasonStartEndMonths}
+                            onValueChange={(value) => handleFormChange(i, 'season_start_month', value)}
+                            placeholder={{
+                                label: 'Select Season Start Month...',
+                                value: null,
+                            }}
+                            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
+                            value={sport.season_start_month}
+                        />
+                    </View>
+                    <View style={[styles.rightItem]}>
+                        <FormLabel>{'Season End Month'}</FormLabel>
+                        <RNPickerSelect
+                            hideIcon={true}
+                            items={UserAccountConstants.seasonStartEndMonths}
+                            onValueChange={(value) => handleFormChange(i, 'season_end_month', value)}
+                            placeholder={{
+                                label: 'Select Season End Month...',
+                                value: null,
+                            }}
+                            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
+                            value={sport.season_end_month}
+                        />
+                    </View>
+                </View>
                 <TouchableOpacity onPress={() => addAnotherSport(i)} style={[styles.textWrapper]}>
                     <Text style={[styles.text, {paddingLeft: 20}]}>{'+ ADD ANOTHER SPORT'}</Text>
                 </TouchableOpacity>
@@ -126,14 +199,13 @@ const UserSports = ({
 );
 
 UserSports.propTypes = {
-    addAnotherSeason:   PropTypes.func.isRequired,
-    addAnotherSport:    PropTypes.func.isRequired,
-    handleFormChange:   PropTypes.func.isRequired,
-    handleSeasonChange: PropTypes.func.isRequired,
-    sports:             PropTypes.array.isRequired,
+    addAnotherSport:  PropTypes.func.isRequired,
+    handleFormChange: PropTypes.func.isRequired,
+    removeSport:      PropTypes.func.isRequired,
+    sports:           PropTypes.array.isRequired,
 };
 UserSports.defaultProps = {};
-UserSports.componentName = 'UserSports';
+UserSports.componentNa = 'UserSports';
 
-/* Export Component ==================================================================== */
+/* Export Component ================================================================== */
 export default UserSports;

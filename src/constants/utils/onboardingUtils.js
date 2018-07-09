@@ -1,11 +1,11 @@
 const onboardingUtils = {
 
-    isUserTypeValid(type) {
+    isUserRoleValid(role) {
         let errorsArray = [];
         let isValid;
-        const possibleTypes = ['athlete', 'parent', 'coach'];
+        const possibleRoles = ['athlete', 'manager', 'subject', 'consumer']; // , 'admin', 'super_admin', 'biometrix_admin'
         if(
-            !possibleTypes.includes(type)
+            !possibleRoles.includes(role)
         ) {
             const newError = 'Please select a valid item from the list below!';
             errorsArray.push(newError);
@@ -31,6 +31,13 @@ const onboardingUtils = {
         const upperCaseLettersRegex = /[A-Z]/g;
         const lowerCaseLettersRegex = /[a-z]/g;
         if(
+            user.personal_data.first_name.length === 0
+            || user.personal_data.last_name.length === 0
+        ) {
+            const newError = 'Your First and Last Name are required';
+            errorsArray.push(newError);
+            isValid = false;
+        } else if(
             user.password.length < 8
             || user.password.length > 16
             || !numbersRegex.test(user.password)
@@ -59,14 +66,17 @@ const onboardingUtils = {
         let isValid;
         // possible array strings
         const possibleSystemTypes = ['1-sensor', '3-sensor'];
-        const possibleInjuryStatuses = ['healthy', 'healthy-chronically-injured', 'returning-from-injury'];
+        const possibleInjuryStatuses = ['healthy', 'healthy_chronically_injured', 'returning_from_injury'];
+        const possibleGenders = ['male', 'female', 'other'];
         if(
-            user.dob
-            && user.height > 0
-            && user.weight.length > 0
-            && possibleInjuryStatuses.includes(user.injuryStatus)
-            && possibleSystemTypes.includes(user.systemType)
+            user.personal_data.birth_date.length > 0
+            && user.personal_data.phone_number.length === 5
+            && user.biometric_data.height.in.length > 0
+            && user.biometric_data.mass.lb.length > 0
+            && possibleInjuryStatuses.includes(user.injury_status)
+            && possibleSystemTypes.includes(user.system_type)
             && user.sports.length > 0
+            && possibleGenders.includes(user.biometric_data.gender)
         ) {
             errorsArray = [];
             isValid = true;
@@ -98,12 +108,20 @@ const onboardingUtils = {
     },
 
     isSportValid(sport) {
-        const possibleSports = ['basketball', 'baseball-softball', 'cross-country', 'cycling', 'field-hockey', 'general-fitness', 'golf', 'gymnastics', 'ice-hockey', 'lacrosse', 'rowing', 'rugby', 'running', 'soccer', 'swimming-diving', 'tennis', 'track-field', 'volleyball', 'wrestling', 'weightlifting'];
+        const possibleSports = ['basketball', 'baseball_softball', 'cross_country', 'cycling', 'field_hockey', 'general_fitness', 'golf', 'gymnastics', 'ice_hockey', 'lacrosse', 'rowing', 'rugby', 'running', 'soccer', 'swimming_diving', 'tennis', 'track_and_field', 'volleyball', 'wrestling', 'weightlifting'];
+        const possiblePositions = ['forward', 'guard', 'center', 'pitcher', 'catcher', 'infielder', 'outfielder', 'distance-runner', 'goalie', 'fullback', 'golfer', 'gymnast', 'defensemen', 'wing', 'defender', 'attackers', 'rower', 'midfielder', 'distance', 'sprint', 'diver', 'long-distance', 'jumping', 'throwing', 'hitter', 'setter', 'libero', 'blocker', 'wrestler'];
+        const possibleCompetitionLevels = ['recreational_challenge', 'high_school', 'club_travel', 'development_league', 'ncaa_division_iii', 'ncaa_division_ii', 'ncaa_division_i', 'professional'];
         let error = '';
         let isValid;
         if(
-            possibleSports.includes(sport.sport)
-            && sport.yearsInSport
+            possibleSports.includes(sport.name)
+            && sport.positions.length > 0
+            && sport.positions.map(position => possiblePositions.includes(position))
+            && possibleCompetitionLevels.includes(sport.competition_level)
+            && sport.end_date.length > 0
+            && sport.season_end_month.length > 0
+            && sport.season_start_month.length > 0
+            && sport.start_date.length > 0
         ) {
             error = '';
             isValid = true;
@@ -111,30 +129,89 @@ const onboardingUtils = {
             error = 'You\'re still missing some required fields in your Sport(s) section. Please check your inputs and try again';
             isValid = false;
         }
-        sport.seasons.map((season, index) => {
-            if(!this.isSeasonValid(season)) {
-                isValid = false;
-                error = 'You\'re still missing some required fields in your Sport(s) section. Please check your inputs and try again';
-            }
-        });
         return {
             error,
             isValid,
         }
     },
 
-    isSeasonValid(season) {
-        const possiblePositions = ['forward', 'guard', 'center', 'pitcher', 'catcher', 'infielder', 'outfielder', 'distance-runner', 'goalie', 'fullback', 'golfer', 'gymnast', 'defensemen', 'wing', 'defender', 'attackers', 'rower', 'midfielder', 'distance', 'sprint', 'diver', 'long-distance', 'jumping', 'throwing', 'hitter', 'setter', 'libero', 'blocker', 'wrestler'];
-        if(
-            season.positions.length > 0
-            && season.positions.map(position => possiblePositions.includes(position))
-            && season.seasonEndDate
-            && season.seasonStartDate
-            && season.levelOfPlay.length > 0
-        ) {
-            return true;
+    areTrainingSchedulesValid(training_schedule) {
+        let errorsArray = [];
+        let isValid;
+        Object.keys(training_schedule).map((sport, index) => {
+            let sportSchedule = training_schedule[sport];
+            if(
+                sportSchedule.competition.days_of_week.length > 0
+                && sportSchedule.practice.days_of_week.length > 0
+                && sportSchedule.practice.duration_minutes > 0
+            ) {
+                isValid = true;
+            } else {
+                errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
+            }
+        });
+        isValid = errorsArray.length > 0 ? false : true;
+        return {
+            errorsArray,
+            isValid,
         }
-        return false
+    },
+
+    isWorkoutOutsidePracticeValid(value) {
+        let errorsArray = [];
+        let isValid;
+        if(value === true || value === false) {
+            isValid = true;
+        } else {
+            isValid = false;
+            errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
+        }
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
+    isActivitiesValid(training_strength_conditioning) {
+        let errorsArray = [];
+        let isValid;
+        if(
+            training_strength_conditioning.activities.length > 0
+            && training_strength_conditioning.days.length > 0
+            && training_strength_conditioning.durations > 0
+            && training_strength_conditioning.totalDurations.length > 0
+        ) {
+            isValid = true;
+        } else {
+            isValid = false;
+            errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
+        }
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
+    isUserClearedValid(user) {
+        let errorsArray = [];
+        let isValid;
+        if(
+            user.agreed_terms_of_use
+            && user.agreed_privacy_policy
+        ) {
+            isValid = true;
+        } else {
+            isValid = false;
+            errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
+        }
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
+    capitalizeFirstLetter(str) {
+        return str.replace(/^\w/, s => s.toUpperCase());
     },
 
 }

@@ -1,7 +1,17 @@
+/*
+ * @Author: Mazen Chami
+ * @Date: 2018-06-29 11:28:39
+ * @Last Modified by: Mazen Chami
+ * @Last Modified time: 2018-07-02 16:54:00
+ */
+
 /**
- * Spacer
+ * ProgressBar
  *
-    <Spacer size={10} />
+    <ProgressBar
+        currentStep={step}
+        totalSteps={totalSteps}
+    />
  *
  */
 import React from 'react';
@@ -21,9 +31,9 @@ const ProgressBar = ({ currentStep, totalSteps }) => (
     >
         <View
             style={{
-                backgroundColor: AppColors.primary.grey.hundredPercent,
-                width:           (currentStep / totalSteps) * 100,
-                height:          10,
+                backgroundColor: AppColors.primary.yellow.hundredPercent,
+                width:           `${(currentStep / totalSteps) * 100}%`,
+                height:          AppSizes.screen.progressBarHeight,
             }}
         />
     </View>

@@ -4,32 +4,47 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import moment from 'moment';
 import {
-    View,
-    // KeyboardAvoidingView,
+    Alert,
+    Platform,
     ScrollView,
     StyleSheet,
     TouchableOpacity,
-    // Image,
-    Platform,
+    View,
 } from 'react-native';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
+import _ from 'lodash';
 import Carousel from 'react-native-snap-carousel';
-// import Egg from 'react-native-egg';
-// import FormValidation from 'tcomb-form-native';
 import Modal from 'react-native-modalbox';
 
 // Consts, Libs, and Utils
 import { AppAPI } from '../../lib/';
-import { APIConfig, AppColors, AppStyles, AppSizes, UserAccount as UserAccountConstants } from '../../constants';
+import {
+    APIConfig,
+    AppColors,
+    AppStyles,
+    AppSizes,
+    UserAccount as UserAccountConstants,
+} from '../../constants';
 import { onboardingUtils } from '../../constants/utils';
 
 // Components
-import { Alerts, Button, Card, ListItem, ProgressBar, Spacer, Text } from '../custom/';
-import { UserAccount, UserType } from './pages/';
+import {
+    Alerts,
+    ProgressBar,
+    Text,
+    WebViewPage,
+} from '../custom/';
+import {
+    UserAccount,
+    UserActivities,
+    UserClearedQuestion,
+    UserRole,
+    UserSportSchedule,
+    UserWorkoutQuestion,
+} from './pages/';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -54,101 +69,107 @@ const styles = StyleSheet.create({
         borderLeftWidth: 1,
         width:           '20%',
     },
-    nextButtonText: {
-        color:         '#fff',
-        fontWeight:    'bold',
-        paddingBottom: 20,
-        paddingTop:    20,
-    },
-    nextButtonWrapper: {
-        alignItems:      'center',
-        backgroundColor: '#000',
-        justifyContent:  'center',
-        width:           AppSizes.screen.width ,
-    },
 });
 
 /* Component ==================================================================== */
 class Onboarding extends Component {
     static componentName = 'Onboarding';
 
-    static propTypes = {
-        // onFormSubmit:   PropTypes.func,
-        // registerDevice: PropTypes.func.isRequired,
-        // finalizeLogin:  PropTypes.func.isRequired,
-        // authorizeUser:  PropTypes.func.isRequired,
-        // setEnvironment: PropTypes.func,
-        // environment:    PropTypes.string,
-        // email:          PropTypes.string,
-        // password:       PropTypes.string,
-    }
+    static propTypes = {}
 
-    static defaultProps = {
-        // environment: 'PROD',
-        // email:       null,
-        // password:    null,
-    }
+    static defaultProps = {}
 
     constructor(props) {
         super(props);
 
-        const season = {
-            levelOfPlay:     '',
-            positions:       [],
-            seasonEndDate:   null,
-            seasonStartDate: null,
-        };
-
-        const userSport = {
-            seasons:      [season],
-            sport:        '',
-            yearsInSport: null,
+        const sportArray = {
+            competition_level:  '',
+            end_date:           '', // 'MM/DD/YYYY' or 'current'
+            name:               '',
+            positions:          [],
+            season_end_month:   '',
+            season_start_month: '',
+            start_date:         '',
         };
 
         this.state = {
             form_fields: {
                 user: {
-                    // step 1 - user type
-                    type:              '', // athlete, parent, coach
-                    // step 2 - account setup
-                    firstName:         '',
-                    lastName:          '',
-                    email:             '',
-                    password:          '',
-                    dob:               null,
-                    height:            71,
-                    weight:            '',
-                    systemType:        '1-sensor', // 1-sensor, 3-sensor
-                    injuryStatus:      '', // healthy, healthy-chronically-injured, returning-from-injury
-                    missedDueToInjury: false, // true, false
-                    sports:            [userSport], // user userSport object
-                    // step 3 - sport schedule
-                    // step 4 - strength + conditioning
-                    // step 5 - injury
+                    agreed_terms_of_use:   null,
+                    agreed_privacy_policy: null,
+                    cleared_to_play:       null,
+                    onboarding_status:     '', // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
+                    email:                 '',
+                    password:              '',
+                    biometric_data:        {
+                        gender: '',
+                        height: {
+                            in: 71
+                        },
+                        mass: {
+                            lb: ''
+                        }
+                    },
+                    personal_data: {
+                        birth_date:     '',
+                        first_name:     '',
+                        last_name:      '',
+                        phone_number:   '',
+                        account_type:   'free', // "paid", "free"
+                        account_status: 'active', // "active", "pending", "past_due", "expired"
+                    },
+                    role:                           '',
+                    system_type:                    '1-sensor',
+                    injury_status:                  '',
+                    injuries:                       {}, // COMING SOON
+                    training_groups:                [], // COMING SOON
+                    training_schedule:              {},
+                    training_strength_conditioning: {
+                        activities:     [],
+                        days:           [],
+                        durations:      '',
+                        totalDurations: '',
+                    },
+                    sports:                   [sportArray],
+                    workout_outside_practice: null,
                 }
             },
-            isFormValid:       false,
-            isHeightModalOpen: false,
-            modalStyle:        {},
-            resultMsg:         {
+            isFormValid:         false,
+            isHeightModalOpen:   false,
+            isPrivacyPolicyOpen: false,
+            isTermsOpen:         false,
+            modalStyle:          {},
+            resultMsg:           {
                 error:   [],
                 status:  '',
                 success: '',
             },
-            step:       1,
-            totalSteps: 5,
+            step:       2, // TODO: UPDATE THIS VALUE BACK TO '1'
+            totalSteps: 8, // TODO: UPDATE THIS VALUE WHEN DONE
         };
     }
 
+    _toggleTermsWebView = () => {
+        this.setState({ isTermsOpen: !this.state.isTermsOpen })
+    }
+
+    _togglePrivacyPolicyWebView = () => {
+        this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen })
+    }
+
     _handleUserFormChange = (name, value) => {
-        const { form_fields } = this.state;
-        const newFormFields = form_fields;
-        newFormFields.user[name] = value;
+        /**
+          * This let's us change arbitrarily nested objects with one pass
+          */
+        let newFormFields = _.update( this.state.form_fields.user, name, () => value);
         let errorsArray = this._validateForm();
         this.setState({
-            form_fields: newFormFields,
-            isFormValid: errorsArray.length === 0 ? true : false,
+            ['form_fields.user']: newFormFields,
+            isFormValid:          errorsArray.length === 0 ? true : false,
         });
+        if(name === 'role') {
+            this._nextStep();
+        }
     }
 
     _handleUserHeightFormChange = (index) => {
@@ -162,51 +183,82 @@ class Onboarding extends Component {
         }
         feetToInches = feet * 12;
         totalInches = feetToInches + inches;
-        this._handleUserFormChange('height', totalInches);
+        this._handleUserFormChange('biometric_data.height.in', totalInches.toString());
     }
 
     _validateForm = () => {
         const { form_fields, step } = this.state;
         let errorsArray = [];
-        if(step === 1) { // select a user type
-            errorsArray = onboardingUtils.isUserTypeValid(form_fields.user.type).errorsArray;
+        if(step === 1) { // select a user role
+            errorsArray = errorsArray.concat(onboardingUtils.isUserRoleValid(form_fields.user.role).errorsArray);
         } else if(step === 2) { // enter user information
-            errorsArray = onboardingUtils.isUserAccountInformationValid(form_fields.user).errorsArray;
-            errorsArray = onboardingUtils.isUserAboutValid(form_fields.user).errorsArray;
-            errorsArray = onboardingUtils.areSportsValid(form_fields.user.sports).errorsArray;
-        } else if(step === 3) { //
-
-        } else if(step === 4) { //
-
-        } else if(step === 5) { //
-
+            errorsArray = errorsArray.concat(onboardingUtils.isUserAccountInformationValid(form_fields.user).errorsArray);
+            errorsArray = errorsArray.concat(onboardingUtils.isUserAboutValid(form_fields.user).errorsArray);
+            errorsArray = errorsArray.concat(onboardingUtils.areSportsValid(form_fields.user.sports).errorsArray);
+        } else if(step === 3) { // sport(s) schedule
+            errorsArray = errorsArray.concat(onboardingUtils.areTrainingSchedulesValid(form_fields.user.training_schedule).errorsArray);
+        } else if(step === 4) { // workout outside of practice?
+            errorsArray = errorsArray.concat(onboardingUtils.isWorkoutOutsidePracticeValid(form_fields.user.workout_outside_practice).errorsArray);
+        } else if(step === 5) { // activities
+            errorsArray = errorsArray.concat(onboardingUtils.isActivitiesValid(form_fields.user.training_strength_conditioning).errorsArray);
+        } else if(step === 6) { // injury
+        } else if(step === 7) { // cleared?
+            errorsArray = errorsArray.concat(onboardingUtils.isUserClearedValid(form_fields.user).errorsArray);
+        } else if(step === 8) { // pair device
         }
         return errorsArray;
     }
 
     _previousStep = () => {
-        const { step } = this.state;
+        const { form_fields, step } = this.state;
         // validation
         let errorsArray = this._validateForm();
         if(step === 1) {
-            // Actions.();
+            Actions.start();
         } else {
+            let newStep = step - 1;
+            if (
+                newStep === 4
+                && !form_fields.user.workout_outside_practice
+            ) {
+                if(
+                    form_fields.user.injury_status === 'healthy'
+                ) { // if user is health and they don't workout outside of practice
+                    newStep = step + 3;
+                } else { // if the user doesn't workout outside of practice
+                    newStep = step + 2;
+                }
+            }
             this.setState({
                 isFormValid: errorsArray.length === 0 ? true : false,
-                step:        step - 1,
+                step:        newStep,
             });
         }
     }
 
     _nextStep = () => {
-        const { resultMsg, step } = this.state;
+        const { form_fields, step } = this.state;
         // validation
         let errorsArray = this._validateForm();
-        // should we save it as a draft at this point so the user can always come back to it?
+        let newStep;
+        if (
+            step === 4
+            && !form_fields.user.workout_outside_practice
+        ) {
+            if(
+                form_fields.user.injury_status === 'healthy'
+            ) { // if user is health and they don't workout outside of practice
+                newStep = step + 3;
+            } else { // if the user doesn't workout outside of practice
+                newStep = step + 2;
+            }
+        } else {
+            newStep = step + 1;
+        }
         this.setState({
-            [resultMsg.error]: errorsArray,
-            isFormValid:       false,//errorsArray.length === 0 ? true : false,
-            step:              step + 1,
+            ['resultMsg.error']: errorsArray,
+            isFormValid:         false,
+            step:                newStep,
         });
     }
 
@@ -231,15 +283,30 @@ class Onboarding extends Component {
         );
     }
 
+    _notClearedBtnPressed = () => {
+        Alert.alert(
+            'Warning!',
+            'You will be using this app at your own risk!',
+            [
+                {text: 'Cancel', style: 'cancel'},
+                {text: 'Continue', onPress: this._nextStep},
+            ],
+            { cancelable: true }
+        )
+    }
+
     render = () => {
         const {
             form_fields,
             isFormValid,
             isHeightModalOpen,
+            isPrivacyPolicyOpen,
+            isTermsOpen,
             resultMsg,
             step,
             totalSteps,
         } = this.state;
+        console.log(form_fields.user);
         return (
             <View style={[styles.background]}>
                 <ProgressBar
@@ -256,10 +323,10 @@ class Onboarding extends Component {
                     null
                 }
                 <ScrollView>
-                    <UserType
+                    <UserRole
                         componentStep={1}
                         currentStep={step}
-                        handleClick={this._handleUserFormChange}
+                        handleFormChange={this._handleUserFormChange}
                         user={form_fields.user}
                     />
                     <UserAccount
@@ -269,10 +336,41 @@ class Onboarding extends Component {
                         heightPressed={this._heightPressed}
                         user={form_fields.user}
                     />
+                    <UserSportSchedule
+                        componentStep={3}
+                        currentStep={step}
+                        handleFormChange={this._handleUserFormChange}
+                        user={form_fields.user}
+                    />
+                    <UserWorkoutQuestion
+                        componentStep={4}
+                        currentStep={step}
+                        handleFormChange={this._handleUserFormChange}
+                        user={form_fields.user}
+                    />
+                    <UserActivities
+                        componentStep={5}
+                        currentStep={step}
+                        handleFormChange={this._handleUserFormChange}
+                        user={form_fields.user}
+                    />
                 </ScrollView>
-                { isFormValid ?
-                    <TouchableOpacity onPress={this._nextStep} style={[styles.nextButtonWrapper]}>
-                        <Text style={[styles.nextButtonText]}>{step === totalSteps ? 'Done' : 'Next Step'}</Text>
+                <UserClearedQuestion
+                    componentStep={7}
+                    currentStep={step}
+                    handleFormChange={this._handleUserFormChange}
+                    isFormValid={isFormValid}
+                    isPrivacyPolicyOpen={isPrivacyPolicyOpen}
+                    isTermsOpen={isTermsOpen}
+                    nextStep={this._nextStep}
+                    notClearedBtnPressed={this._notClearedBtnPressed}
+                    togglePrivacyPolicyWebView={this._togglePrivacyPolicyWebView}
+                    toggleTermsWebView={this._toggleTermsWebView}
+                    user={form_fields.user}
+                />
+                { isFormValid && step > 1 && step !== 7 ?
+                    <TouchableOpacity onPress={this._nextStep} style={[AppStyles.nextButtonWrapper]}>
+                        <Text style={[AppStyles.nextButtonText]}>{step === totalSteps ? 'Done' : 'Next Step'}</Text>
                     </TouchableOpacity>
                     :
                     null
@@ -284,13 +382,13 @@ class Onboarding extends Component {
                     swipeToClose={false}
                 >
                     <View style={[styles.carouselCustomStyles, styles.carouselBanner]}>
-                        <Text style={{fontWeight: 'bold'}}>{'Height'}</Text>
+                        <Text style={[AppStyles.textBold]}>{'Height'}</Text>
                     </View>
                     <Carousel
                         activeSlideAlignment={'center'}
                         contentContainerCustomStyle={[styles.carouselCustomStyles]}
                         data={UserAccountConstants.heights}
-                        firstItem={47}
+                        firstItem={form_fields.user.biometric_data.height.in ? parseFloat(form_fields.user.biometric_data.height.in) : 47}
                         inactiveSlideOpacity={0.7}
                         inactiveSlideScale={0.9}
                         itemWidth={AppSizes.screen.width / 3}
@@ -299,8 +397,34 @@ class Onboarding extends Component {
                         renderItem={this._renderHeightItem}
                         sliderWidth={AppSizes.screen.width}
                     />
-                    <TouchableOpacity onPress={this._heightPressed} style={[styles.nextButtonWrapper]}>
-                        <Text style={[styles.nextButtonText]}>{'Done'}</Text>
+                    <TouchableOpacity onPress={this._heightPressed} style={[AppStyles.nextButtonWrapper]}>
+                        <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
+                    </TouchableOpacity>
+                </Modal>
+                <Modal
+                    backdropPressToClose={false}
+                    coverScreen={true}
+                    isOpen={isTermsOpen}
+                    swipeToClose={false}
+                >
+                    <WebViewPage
+                        source={'https://www.fathomai.com/'}
+                    />
+                    <TouchableOpacity onPress={this._toggleTermsWebView} style={[AppStyles.nextButtonWrapper]}>
+                        <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
+                    </TouchableOpacity>
+                </Modal>
+                <Modal
+                    backdropPressToClose={false}
+                    coverScreen={true}
+                    isOpen={isPrivacyPolicyOpen}
+                    swipeToClose={false}
+                >
+                    <WebViewPage
+                        source={'https://www.fathomai.com/'}
+                    />
+                    <TouchableOpacity onPress={this._togglePrivacyPolicyWebView} style={[AppStyles.nextButtonWrapper]}>
+                        <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
                     </TouchableOpacity>
                 </Modal>
             </View>

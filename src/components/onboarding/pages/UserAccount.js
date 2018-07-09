@@ -11,61 +11,37 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, StyleSheet, View } from 'react-native';
 
 // Consts, Libs, and Utils
-import { AppColors, AppSizes } from '../../../constants';
+import { AppColors, AppSizes, AppStyles } from '../../../constants';
 import { onboardingUtils } from '../../../constants/utils';
-import { Text } from '../../custom';
+import { Coach, TabIcon, Text } from '../../custom';
 
 // import components
 import { UserAccountAbout, UserAccountInfo, UserSports } from './';
 
 // import third-party libraries
+import _ from 'lodash';
 import Accordion from 'react-native-collapsible/Accordion';
 import Collapsible from 'react-native-collapsible';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    // cardWrapper: {
-    //     alignItems:      'center',
-    //     backgroundColor: AppColors.primary.grey.thirtyPercent,
-    //     borderRadius:    5,
-    //     height:          AppSizes.screen.height / 5,
-    //     justifyContent:  'center',
-    //     marginBottom:    15,
-    //     position:        'relative',
-    //     width:           '100%',
-    // },
-    coachText: {
-        flex:     1,
-        flexWrap: 'wrap'
-    },
-    coachWrapper: {
-        backgroundColor: AppColors.primary.grey.thirtyPercent,
-        borderRadius:    5,
-        flexDirection:   'row',
-        marginBottom:    5,
-        padding:         20,
-    },
     headerWrapper: {
         flexDirection: 'row',
         paddingTop:    10,
     },
-    // overlay: {
-    //     alignItems:      'center',
-    //     backgroundColor: 'rgba(117, 117, 117, 0.8)',
-    //     borderRadius:    5,
-    //     height:          '100%',
-    //     justifyContent:  'center',
-    //     position:        'absolute',
-    //     width:           '100%',
-    // },
-    // text: {
-    //     fontWeight: 'bold',
-    //     fontSize:   15,
-    // },
-    textWrapper: {
+    iconContainer: {
+        backgroundColor: AppColors.transparent, //AppColors.black,
+        marginBottom:    0,
+        marginLeft:      0,
+        marginRight:     10,
+        marginTop:       0,
+        padding:         0,
+    },
+    iconStyle: {
+        fontSize: 20,
     },
     title: {
         fontSize:   15,
@@ -99,15 +75,15 @@ class UserAccount extends Component {
         return(
             <View>
                 <View style={[styles.headerWrapper]}>
-                    <Image
-                        source={isFormValid ?
-                            require('../../../constants/assets/images/checked-circle.png')
-                            :
-                            require('../../../constants/assets/images/unchecked-circle.png')
-                        }
-                        style={{width: 20, height: 20, marginRight: 10}}
+                    <TabIcon
+                        containerStyle={[styles.iconContainer]}
+                        icon={isFormValid ? 'check-circle' : 'circle-outline'}
+                        iconStyle={[styles.iconStyle, isFormValid ? {color: AppColors.primary.yellow.hundredPercent} : {color: AppColors.black}]}
+                        reverse={true}
+                        size={10}
+                        type={'material-community'}
                     />
-                    <Text style={[styles.title]}>{section.header}</Text>
+                    <Text style={[styles.title, isFormValid ? {color: AppColors.primary.yellow.hundredPercent} : {color: AppColors.black}]}>{section.header}</Text>
                 </View>
                 { section.index === 1 || section.index === 2 ?
                     <Text style={{width: 20, height: 20, textAlign: 'center', color: AppColors.primary.grey.thirtyPercent,}}>|</Text>
@@ -122,13 +98,9 @@ class UserAccount extends Component {
         return(
             <View>
                 { section.subtitle ?
-                    <View style={[styles.coachWrapper]}>
-                        <Image
-                            source={require('../../../constants/assets/images/coach-avatar.png')}
-                            style={{width: 30, height: 30, marginRight: 10}}
-                        />
-                        <Text style={[styles.coachText]}>{section.subtitle}</Text>
-                    </View>
+                    <Coach
+                        text={section.subtitle}
+                    />
                     :
                     null
                 }
@@ -141,73 +113,71 @@ class UserAccount extends Component {
 
     _handleSportsFormChange = (i, name, value) => {
         const { handleFormChange, user } = this.props;
-        let newSportsArray = user.sports;
+        let newSportsArray = _.cloneDeep(user.sports);
         newSportsArray[i][name] = value;
         handleFormChange('sports', newSportsArray);
-    };
-
-    _handleSeasonChange = (i, name, value) => {
-        const { handleFormChange, user } = this.props;
-        let newSportsArray = user.sports;
-        newSportsArray[i.sport].seasons[i.season][name] = value;
-        handleFormChange('sports', newSportsArray);
+        if(name === 'name') {
+            let newTrainingScheduleArray = user.training_schedule;
+            newTrainingScheduleArray[value] = {};
+            newTrainingScheduleArray[value].practice = {days_of_week: '', duration_minutes: ''};
+            newTrainingScheduleArray[value].competition = {days_of_week: ''};
+            handleFormChange('training_schedule', newTrainingScheduleArray);
+        }
     };
 
     _addAnotherSport = (index) => {
         const { handleFormChange, user } = this.props;
-        // TODO: check if current sport is valid
-        const newSeason = {
-            levelOfPlay:     '',
-            positions:       [],
-            seasonEndDate:   null,
-            seasonStartDate: null,
-        };
-        const newUserSport = {
-            seasons:      [newSeason],
-            sport:        '',
-            yearsInSport: null,
-        };
-        let newSportsArray = user.sports;
-        newSportsArray.push(newUserSport);
-        handleFormChange('sports', newSportsArray);
-        /*const sportValidation = onboardingUtils.isSportValid(user.sports[index]);
+        const sportValidation = onboardingUtils.isSportValid(user.sports[index]);
         if(sportValidation.isValid) {
-            console.log('TRUE');
+            const newSportArray = {
+                competition_level:  '',
+                end_date:           '', // 'MM/DD/YYYY' or 'current'
+                name:               '',
+                positions:          [],
+                season_end_month:   '',
+                season_start_month: '',
+                start_date:         '',
+            };
+            let newSportsArray = _.cloneDeep(user.sports);
+            newSportsArray.push(newSportArray);
+            handleFormChange('sports', newSportsArray);
         } else {
-            // TODO: ERROR NOTIFICATION HERE
-            console.log('NOT TRUE');
-        }*/
+            Alert.alert(
+                'Error',
+                'Please make sure to fill out all the sports related information before trying to add a new one!',
+                [
+                    {text: 'Try Again', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                ],
+                { cancelable: true }
+            )
+        }
     };
 
-    _addAnotherSeason = (index) => {
+    _removeSport = (index) => {
         const { handleFormChange, user } = this.props;
-        // TODO: check if current season is valid
-        const newSeason = {
-            levelOfPlay:     '',
-            positions:       [],
-            seasonEndDate:   null,
-            seasonStartDate: null,
-        };
-        let newSeasonsArray = user.sports[index].seasons;
-        newSeasonsArray.push(newSeason);
-        handleFormChange('seasons', newSeasonsArray);
-        // console.log(index, user.seasons[index]);
-        // const sportValidation = onboardingUtils.isSportValid(user.sports[index].season);
-        // if(sportValidation.isValid) {
-        //     console.log('TRUE');
-        // } else {
-        //     // TODO: ERROR NOTIFICATION HERE
-        //     console.log('NOT TRUE');
-        // }
+        if(index > 0) {
+            let newSportsArray = _.cloneDeep(user.sports);
+            newSportsArray.splice(index, 1);
+            handleFormChange('sports', newSportsArray);
+        } else {
+            Alert.alert(
+                'Error',
+                'You cannot remove your first sport, at least one sport is required!',
+                [
+                    {text: 'Try Again', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                ],
+                { cancelable: true }
+            )
+        }
     };
 
     render = () => {
         const {
-            componentStep
-            , currentStep
-            , handleFormChange
-            , heightPressed
-            , user
+            componentStep,
+            currentStep,
+            handleFormChange,
+            heightPressed,
+            user,
         } = this.props;
         // Accordion sections
         const SECTIONS = [
@@ -216,7 +186,7 @@ class UserAccount extends Component {
                     handleFormChange={handleFormChange}
                     user={user}
                 />,
-                header:   'Account Information',
+                header:   'ACCOUNT INFORMATION',
                 index:    1,
                 subtitle: 'Let\'s start with creating your account, then we\'ll be ready to develop your routine.',
             },
@@ -226,25 +196,24 @@ class UserAccount extends Component {
                     heightPressed={heightPressed}
                     user={user}
                 />,
-                header:   'Tell us about you',
+                header:   'TELL US ABOUT YOU',
                 index:    2,
                 subtitle: 'Now, let\'s understand how you train and how we can help you to get better!',
             },
             {
                 content: <UserSports
-                    addAnotherSeason={this._addAnotherSeason}
                     addAnotherSport={this._addAnotherSport}
                     handleFormChange={this._handleSportsFormChange}
-                    handleSeasonChange={this._handleSeasonChange}
+                    removeSport={this._removeSport}
                     sports={user.sports}
                 />,
-                header: 'Sport Details',
+                header: 'SPORT DETAILS',
                 index:  3,
             },
         ];
         return (
             <View style={[styles.wrapper, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
-                <View style={[styles.textWrapper]}>
+                <View>
                     <Accordion
                         renderContent={this._renderContent}
                         renderHeader={this._renderHeader}
