@@ -6,12 +6,12 @@
       currentStep={step}
       handleFormChange={this._handleUserFormChange}
       isFormValid={isFormValid}
-      isPPOpen={isPPOpen}
-      isTOUOpen={isTOUOpen}
+      isPrivacyPolicyOpen={isPrivacyPolicyOpen}
+      isTermsOpen={isTermsOpen}
       nextStep={this._nextStep}
       notClearedBtnPressed={this._notClearedBtnPressed}
-      togglePPWebView={this._togglePPWebView}
-      toggleTOUWebView={this._toggleTOUWebView}
+      togglePrivacyPolicyWebView={this._togglePrivacyPolicyWebView}
+      toggleTermsWebView={this._toggleTermsWebView}
       user={form_fields.user}
    />
  *
@@ -34,12 +34,12 @@ const UserClearedQuestion = ({
     currentStep,
     handleFormChange,
     isFormValid,
-    isPPOpen,
-    isTOUOpen,
+    isPrivacyPolicyOpen,
+    isTermsOpen,
     nextStep,
     notClearedBtnPressed,
-    togglePPWebView,
-    toggleTOUWebView,
+    togglePrivacyPolicyWebView,
+    toggleTermsWebView,
     user,
 }) => (
     <View style={[componentStep === currentStep ? {flex: 1} : {display: 'none'}]}>
@@ -59,7 +59,7 @@ const UserClearedQuestion = ({
                 <View style={{width: '10%',}}>
                     <TabIcon
                         icon={'link'}
-                        onPress={toggleTOUWebView}
+                        onPress={toggleTermsWebView}
                     />
                 </View>
             </View>
@@ -74,7 +74,7 @@ const UserClearedQuestion = ({
                 <View style={{width: '10%',}}>
                     <TabIcon
                         icon={'link'}
-                        onPress={togglePPWebView}
+                        onPress={togglePrivacyPolicyWebView}
                     />
                 </View>
             </View>
@@ -99,17 +99,17 @@ const UserClearedQuestion = ({
 );
 
 UserClearedQuestion.propTypes = {
-    componentStep:        PropTypes.number.isRequired,
-    currentStep:          PropTypes.number.isRequired,
-    handleFormChange:     PropTypes.func.isRequired,
-    isFormValid:          PropTypes.bool.isRequired,
-    isPPOpen:             PropTypes.bool.isRequired,
-    isTOUOpen:            PropTypes.bool.isRequired,
-    nextStep:             PropTypes.func.isRequired,
-    notClearedBtnPressed: PropTypes.func.isRequired,
-    togglePPWebView:      PropTypes.func.isRequired,
-    toggleTOUWebView:     PropTypes.func.isRequired,
-    user:                 PropTypes.object.isRequired,
+    componentStep:              PropTypes.number.isRequired,
+    currentStep:                PropTypes.number.isRequired,
+    handleFormChange:           PropTypes.func.isRequired,
+    isFormValid:                PropTypes.bool.isRequired,
+    isPrivacyPolicyOpen:        PropTypes.bool.isRequired,
+    isTermsOpen:                PropTypes.bool.isRequired,
+    nextStep:                   PropTypes.func.isRequired,
+    notClearedBtnPressed:       PropTypes.func.isRequired,
+    togglePrivacyPolicyWebView: PropTypes.func.isRequired,
+    toggleTermsWebView:         PropTypes.func.isRequired,
+    user:                       PropTypes.object.isRequired,
 };
 UserClearedQuestion.defaultProps = {};
 UserClearedQuestion.componentName = 'UserClearedQuestion';
