@@ -16,7 +16,7 @@ import { Alert, Image, StyleSheet, View } from 'react-native';
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
 import { onboardingUtils } from '../../../constants/utils';
-import { Coach, Text } from '../../custom';
+import { Coach, TabIcon, Text } from '../../custom';
 
 // import components
 import { UserAccountAbout, UserAccountInfo, UserSports } from './';
@@ -32,10 +32,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingTop:    10,
     },
-    checkmark: {
-        height:      20,
-        marginRight: 10,
-        width:       20,
+    iconContainer: {
+        backgroundColor: AppColors.transparent, //AppColors.black,
+        marginBottom:    0,
+        marginLeft:      0,
+        marginRight:     10,
+        marginTop:       0,
+        padding:         0,
+    },
+    iconStyle: {
+        fontSize: 20,
     },
     title: {
         fontSize:   15,
@@ -69,13 +75,13 @@ class UserAccount extends Component {
         return(
             <View>
                 <View style={[styles.headerWrapper]}>
-                    <Image
-                        source={isFormValid ?
-                            require('../../../constants/assets/images/checked-circle.png')
-                            :
-                            require('../../../constants/assets/images/unchecked-circle.png')
-                        }
-                        style={[styles.checkmark, isFormValid ? {tintColor: AppColors.primary.yellow.hundredPercent} : {}]}
+                    <TabIcon
+                        containerStyle={[styles.iconContainer]}
+                        icon={isFormValid ? 'check-circle' : 'circle-outline'}
+                        iconStyle={[styles.iconStyle, isFormValid ? {color: AppColors.primary.yellow.hundredPercent} : {color: AppColors.black}]}
+                        reverse={true}
+                        size={10}
+                        type={'material-community'}
                     />
                     <Text style={[styles.title, isFormValid ? {color: AppColors.primary.yellow.hundredPercent} : {color: AppColors.black}]}>{section.header}</Text>
                 </View>

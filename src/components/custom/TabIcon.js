@@ -22,24 +22,51 @@ import { Icon } from 'react-native-elements';
 import { AppColors } from '../../constants/';
 
 /* Component ==================================================================== */
-const TabIcon = ({ icon, onPress, selected }) => (
+const TabIcon = ({
+    containerStyle,
+    icon,
+    iconStyle,
+    onPress,
+    raised,
+    reverse,
+    selected,
+    size,
+    type,
+}) => (
     <Icon
         color={selected ? AppColors.tabbar.iconSelected : AppColors.tabbar.iconDefault}
+        containerStyle={containerStyle ? containerStyle : {}}
+        iconStyle={iconStyle ? iconStyle : {}}
         name={icon}
         onPress={onPress}
-        size={26}
+        raised={raised}
+        reverse={reverse}
+        size={size}
+        type={type}
     />
 );
 
 TabIcon.propTypes = {
-    icon:     PropTypes.string.isRequired,
-    onPress:  PropTypes.func,
-    selected: PropTypes.bool,
+    containerStyle: PropTypes.array,
+    icon:           PropTypes.string.isRequired,
+    iconStyle:      PropTypes.array,
+    onPress:        PropTypes.func,
+    raised:         PropTypes.bool,
+    reverse:        PropTypes.bool,
+    selected:       PropTypes.bool,
+    size:           PropTypes.number,
+    type:           PropTypes.string,
 };
 TabIcon.defaultProps = {
-    icon:     'search',
-    onPress:  null,
-    selected: false,
+    containerStyle: null,
+    icon:           'search',
+    iconStyle:      null,
+    onPress:        null,
+    raised:         false,
+    reverse:        false,
+    selected:       false,
+    size:           26,
+    type:           'material',
 };
 
 /* Export Component ==================================================================== */

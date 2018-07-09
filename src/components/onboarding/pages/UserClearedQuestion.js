@@ -44,8 +44,8 @@ const UserClearedQuestion = ({
 }) => (
     <View style={[componentStep === currentStep ? {flex: 1} : {display: 'none'}]}>
         <View style={[AppStyles.paddingHorizontalSml]}>
-            <Text style={[AppSizes.h2, AppStyles.textCenterAligned, AppStyles.textBold]}>You need to be cleared by a doctor to start training</Text>
-            <Text style={[AppSizes.h2, AppStyles.textCenterAligned]}>Do you confirm that you are eligable to start training?</Text>
+            <Text style={[AppSizes.h2, AppStyles.textCenterAligned, AppStyles.textBold]}>{'You need to be cleared to run by a doctor to start training'}</Text>
+            <Text style={[AppSizes.h2, AppStyles.textCenterAligned]}>{'Do you confirm that you are eligable to start training?'}</Text>
         </View>
         <View style={{position: 'absolute', left: 0, right: 0, bottom: 0,}}>
             <View style={[AppStyles.containerCentered, {flexDirection: 'row'}]}>
