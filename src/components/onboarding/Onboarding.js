@@ -125,8 +125,8 @@ class Onboarding extends Component {
                     training_groups:                [], // COMING SOON
                     training_schedule:              {},
                     training_strength_conditioning: {
-                        activities:     '',
-                        days:           '',
+                        activities:     [],
+                        days:           [],
                         durations:      '',
                         totalDurations: '',
                     },
@@ -144,7 +144,7 @@ class Onboarding extends Component {
                 status:  '',
                 success: '',
             },
-            step:       2, // TODO: UPDATE THIS VALUE BACK TO '1'
+            step:       5, // TODO: UPDATE THIS VALUE BACK TO '1'
             totalSteps: 8, // TODO: UPDATE THIS VALUE WHEN DONE
         };
     }

@@ -69,7 +69,8 @@ class UserActivities extends Component {
         this.setState({ selectedActvitiesIndexes: newIndexesArray });
         // dynamically update our training_strength_conditioning object for the user
         let newActivitiesActivities = _.cloneDeep(user.training_strength_conditioning);
-        newActivitiesActivities.activities = newIndexesArray.map(value => UserAccountConstants.possibleActivities.value[value]).join(',');
+        newActivitiesActivities.activities = [];
+        newActivitiesActivities.activities.push( newIndexesArray.map(value => UserAccountConstants.possibleActivities.value[value]) );
         handleFormChange('training_strength_conditioning', newActivitiesActivities);
     };
 
@@ -86,7 +87,8 @@ class UserActivities extends Component {
         this.setState({ selectedDaysIndexes: newIndexesArray });
         // dynamically update our training_strength_conditioning object for the user
         let newActivitiesDays = _.cloneDeep(user.training_strength_conditioning);
-        newActivitiesDays.days = newIndexesArray.map(value => UserAccountConstants.possibleShorthandDaysOfWeek[value]).join(',');
+        newActivitiesDays.days = [];
+        newActivitiesDays.days.push( newIndexesArray.map(value => UserAccountConstants.possibleShorthandDaysOfWeek[value]) );
         handleFormChange('training_strength_conditioning', newActivitiesDays);
     };
 
@@ -124,13 +126,13 @@ class UserActivities extends Component {
                 <Text style={[AppFonts.h1, {textAlign: 'center'}]}>
                     <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{'I do '}</Text>
                     { user.training_strength_conditioning.activities.length > 0 ?
-                        <Text style={[styles.selectedText]}>{selectedActvitiesIndexes.map(value => UserAccountConstants.possibleActivities.label[value]).join(',')}</Text>
+                        <Text style={[styles.selectedText]}>{selectedActvitiesIndexes.map(value => UserAccountConstants.possibleActivities.label[value]).join(', ')}</Text>
                         :
                         <Text style={[styles.unselectedText]}>{'activity'}</Text>
                     }
                     <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' on '}</Text>
                     { user.training_strength_conditioning.days.length > 0 ?
-                        <Text style={[styles.selectedText]}>{user.training_strength_conditioning.days}</Text>
+                        <Text style={[styles.selectedText]}>{user.training_strength_conditioning.days.join(', ')}</Text>
                         :
                         <Text style={[styles.unselectedText]}>{'day(s)'}</Text>
                     }
