@@ -64,6 +64,8 @@
 		F507A64C1F96F19000248C44 /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F507A5B51F96C9DC00248C44 /* libCodePush.a */; };
 		F543BC7C1F2999240096364F /* libBleManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F520840C1F0C345800752BE0 /* libBleManager.a */; };
 		F57A2C851F7DE3A5008C3E8A /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C97D708F1E23756B00C3C793 /* libRNVectorIcons.a */; };
+		F59B1ACE20E6EC6400196E25 /* libSMXCrashlytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CCEC7161E8CB7C20054E113 /* libSMXCrashlytics.a */; };
+		F59B1AFC20E6EC7100196E25 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F58C2E4B20E588E9002A661E /* libRNDeviceInfo.a */; };
 		FBB98E6D3D5B4932BE8FB7EE /* LibreFranklin-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73E0EE3E0A994B4F858FD5B9 /* LibreFranklin-SemiBoldItalic.ttf */; };
 /* End PBXBuildFile section */
 
@@ -519,6 +521,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F59B1AFC20E6EC7100196E25 /* libRNDeviceInfo.a in Frameworks */,
+				F59B1ACE20E6EC6400196E25 /* libSMXCrashlytics.a in Frameworks */,
 				F57A2C851F7DE3A5008C3E8A /* libRNVectorIcons.a in Frameworks */,
 				F543BC7C1F2999240096364F /* libBleManager.a in Frameworks */,
 				7C3C0AF41E9B3B04008B335E /* libART.a in Frameworks */,
@@ -541,7 +545,6 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
-				C4FBD0611C3E4CD3925A337C /* libRNDeviceInfo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

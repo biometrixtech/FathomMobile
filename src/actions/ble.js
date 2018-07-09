@@ -2,22 +2,43 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:21:33
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-05-05 23:14:50
+ * @Last Modified time: 2018-06-29 19:17:43
  */
 
 /**
  * Bluetooth Actions
  */
+import Fabric from 'react-native-fabric';
 import BleManager from 'react-native-ble-manager';
-import { BLEConfig, Actions } from '../constants';
+import { Actions, AppConfig, BLEConfig } from '../constants/';
 import { AppAPI } from '../lib/';
+
+const { Answers } = Fabric;
 
 const commands = BLEConfig.commands;
 const state = BLEConfig.state;
 
+
+const read = (id) => {
+    return BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID)
+        .then(data => {
+            Answers.logCustom('BLE read', {
+                data,
+                deviceInfo: AppConfig.deviceInfo,
+                id,
+            });
+            return data;
+        });
+};
+
 const write = (id, data) => {
+    Answers.logCustom('BLE write', {
+        data,
+        deviceInfo: AppConfig.deviceInfo,
+        id,
+    });
     return BleManager.write(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID, data)
-        .then(() => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID));
+        .then(() => read(id));
 };
 
 /**
@@ -322,7 +343,7 @@ const connectWiFi = (id, networkType) => {
 };
 
 const readSSID = (id) => {
-    return id ? dispatch => BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID)
+    return id ? dispatch => read(id)
         .then(response => {
             console.log(response);
             return dispatch({
