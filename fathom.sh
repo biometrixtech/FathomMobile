@@ -108,7 +108,7 @@ initialize() {
             yarn
             sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-code-push/android/app/build.gradle
             sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-fabric/android/build.gradle
-            sed -i '' 's/24.0.2/27.0.3/' ./node_modules/react-native-ble-manager/android/build.gradle
+            sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-ble-manager/android/build.gradle
             sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
             # sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-svg/android/build.gradle
             sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-device-info/android/build.gradle
