@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-04-30 13:21:35 
+ * @Author: Vir Desai
+ * @Date: 2018-04-30 13:21:35
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-06-28 11:22:27
  */
@@ -32,9 +32,19 @@ import KitAssignComponent from '../components/kit/KitAssign';
 import BluetoothConnectContainer from '../containers/kit/BluetoothConnect';
 import BluetoothConnectComponent from '../components/kit/BluetoothConnect';
 
+import MyPlanContainer from '../containers/myPlan/MyPlan';
+import MyPlanComponent from '../components/myPlan/MyPlan';
+
 const Index = (
     <Router>
         <Stack hideNavBar key='root'>
+            {/*TODO: REMOVE WHEN DONE!*/}
+            <Scene
+                Layout={MyPlanComponent}
+                component={MyPlanContainer}
+                hideNavBar
+                key='myPlan'
+            />
             <Scene
                 Layout={LoginComponent}
                 component={LoginContainer}
