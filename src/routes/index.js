@@ -45,7 +45,8 @@ const Index = (
                 <Scene
                     Layout={StartComponent}
                     component={StartContainer}
-                    headerTitleStyle={{alignSelf: 'center', textAlign: 'center', flex: 1}}
+                    // headerTitleStyle={{alignSelf: 'center', textAlign: 'center', flex: 1}}
+                    hideNavBar
                     key='start'
                     title='FathomAI'
                 />

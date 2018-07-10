@@ -5,26 +5,20 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
-import { AppColors, AppSizes } from '../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 
 // Components
 import { Button, Spacer, Text } from '../custom/';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    cardBackground: {
-        alignItems:      'center',
-        backgroundColor: AppColors.primary.grey.fiftyPercent,
-        height:          AppSizes.screen.heightHalf,
-        justifyContent:  'center',
-        width:           AppSizes.screen.width,
-    },
+
 });
 
 /* Component ==================================================================== */
@@ -46,38 +40,43 @@ class Start extends Component {
     render = () => {
         return (
             <View>
-                <View style={[styles.cardBackground]}>
-                    <Text style={{
-                        color:         '#000',
-                        fontSize:      30,
-                        fontWeight:    'bold',
-                        lineHeight:    30,
-                        paddingBottom: 10,
-                    }}>{'Join the FathomAI Team'}</Text>
-                    <Text style={{
-                        color:         AppColors.primary.grey.thirtyPercent,
-                        paddingBottom: 10,
-                    }}>{'Create your account within minutes.'}</Text>
+                <ImageBackground
+                    source={require('../../constants/assets/images/start.png')}
+                    style={[AppStyles.containerCentered, {height: AppSizes.screen.heightTwoThirds, width: AppSizes.screen.width,}]}
+                >
+                    <Text style={[AppStyles.paddingVertical, {
+                        color:      AppColors.white,
+                        fontFamily: AppFonts.base.family,
+                        fontSize:   AppFonts.h1.size,
+                        fontWeight: 'bold',
+                        lineHeight: AppFonts.h1.lineHeight,
+                    }]}>{'Join Fathom'}</Text>
+                    <Text style={[AppStyles.paddingBottom, {
+                        color: AppColors.white,
+                    }]}>{'Create your account'}</Text>
                     <Button
-                        backgroundColor={'#fff'}
+                        backgroundColor={AppColors.primary.yellow.hundredPercent}
                         large
                         onPress={this._routeToOnboarding}
-                        textColor={'#000'}
+                        textColor={AppColors.white}
                         title={'Get Started'}
                     />
-                </View>
+                </ImageBackground>
                 <Spacer size={5} />
-                <TouchableOpacity onPress={this._routeToLogin} style={[styles.cardBackground]}>
+                <TouchableOpacity
+                    onPress={this._routeToLogin}
+                    style={[AppStyles.containerCentered, {height: AppSizes.screen.heightOneThird, width: AppSizes.screen.width,}]}
+                >
+                    <Text style={[AppStyles.paddingBottom, {
+                        color:      AppColors.black,
+                        fontFamily: AppFonts.base.family,
+                        fontSize:   AppFonts.h1.size,
+                        fontWeight: 'bold',
+                        lineHeight: AppFonts.h1.lineHeight,
+                    }]}>{'Already a memeber?'}</Text>
                     <Text style={{
-                        color:         '#000',
-                        fontSize:      20,
-                        fontWeight:    'bold',
-                        lineHeight:    30,
-                        paddingBottom: 10,
-                    }}>{'Already a memeber?'}</Text>
-                    <Text style={{
-                        color: AppColors.primary.grey.thirtyPercent,
-                    }}>{'Let\'s login now.'}</Text>
+                        color: AppColors.primary.yellow.hundredPercent,
+                    }}>{'Login now.'}</Text>
                 </TouchableOpacity>
             </View>
         );

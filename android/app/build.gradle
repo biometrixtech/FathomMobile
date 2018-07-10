@@ -74,7 +74,7 @@ import com.android.build.OutputFile
  */
 
  project.ext.react = [
-    nodeExecutableAndArgs: ["/Users/virdesai/.nvm/versions/node/v10.4.1/bin/node"],
+    nodeExecutableAndArgs: ["/Users/mazenchami/.nvm/versions/node/v10.4.1/bin/node"],
     entryFile: "index.js"
 ]
 
