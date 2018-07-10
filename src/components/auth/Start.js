@@ -6,13 +6,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import SplashScreen from 'react-native-splash-screen';
-import moment from 'moment';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
+import moment from 'moment';
+import SplashScreen from 'react-native-splash-screen';
 
-// Consts and Libs
 // Consts and Libs
 import { AppAPI } from '../../lib/';
 import { AppColors, AppSizes } from '../../constants';
