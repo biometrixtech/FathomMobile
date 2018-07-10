@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     reusableCustomSpacing: {
         alignItems:        'flex-start',
         borderBottomWidth: 1,
-        borderColor:       AppColors.primary.grey.thirtyPercent,
+        borderColor:       AppColors.border,
         borderLeftWidth:   0,
         borderRightWidth:  0,
         borderTopWidth:    0,

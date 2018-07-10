@@ -11,7 +11,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Image, StyleSheet, View } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, View } from 'react-native';
 
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         paddingTop:    10,
     },
     iconContainer: {
-        backgroundColor: AppColors.transparent, //AppColors.black,
+        backgroundColor: AppColors.transparent,
         marginBottom:    0,
         marginLeft:      0,
         marginRight:     10,
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     wrapper: {
-        paddingBottom: 20,
+        marginBottom: 20,
         paddingTop:    10,
         paddingRight:  10,
         paddingLeft:   10,
@@ -59,7 +59,11 @@ const styles = StyleSheet.create({
 class UserAccount extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            accordionSection: 1, // TODO: return to - false,
+            coachContent:     '',
+            isPasswordSecure: true,
+        };
     }
 
     _renderHeader = (section) => {
@@ -97,15 +101,8 @@ class UserAccount extends Component {
     _renderContent = (section) => {
         return(
             <View>
-                { section.subtitle ?
-                    <Coach
-                        text={section.subtitle}
-                    />
-                    :
-                    null
-                }
-                <View style={{marginLeft: 10, borderLeftWidth: 1, borderColor: AppColors.primary.grey.thirtyPercent,}}>
-                    <View>{section.content}</View>
+                <View style={{marginLeft: 10, borderLeftWidth: 1, borderColor: AppColors.border,}}>
+                    {section.content}
                 </View>
             </View>
         )
@@ -171,6 +168,47 @@ class UserAccount extends Component {
         }
     };
 
+    _setAccordionSection = (section, nextStep) => {
+        const { user } = this.props;
+        let errorsArray = [];
+        if(nextStep) {
+            // Validation to make sure we can go to the next step
+            if(section === 0) {
+                errorsArray = onboardingUtils.isUserAccountInformationValid(user).errorsArray;
+            } else if(section === 1) {
+                errorsArray = onboardingUtils.isUserAboutValid(user).errorsArray;
+            } else if(section === 2) {
+                errorsArray = onboardingUtils.areSportsValid(user.sports).errorsArray;
+            }
+            if(errorsArray.length > 0) {
+                this.setState({ coachContent: errorsArray });
+            } else {
+                this.setState({ accordionSection: nextStep });
+            }
+        } else {
+            let coachesMessage = '';
+            if(section === 1) {
+                errorsArray = onboardingUtils.isUserAccountInformationValid(user).errorsArray;
+                coachesMessage = 'The ACCOUNT INFORMATION section has invalid fields. Please complete first and try agian.';
+            } else if(section === 2) {
+                errorsArray = onboardingUtils.isUserAboutValid(user).errorsArray;
+                coachesMessage = 'The TELL US ABOUT YOU section has invalid fields. Please complete first and try agian.';
+            }
+            if(errorsArray.length > 0) {
+                this.setState({ coachContent: coachesMessage });
+            } else {
+                this.setState({
+                    accordionSection: section,
+                    coachContent:     '',
+                });
+            }
+        }
+    };
+
+    _toggleShowPassword = () => {
+        this.setState({ isPasswordSecure: !this.state.isPasswordSecure});
+    };
+
     render = () => {
         const {
             componentStep,
@@ -184,6 +222,9 @@ class UserAccount extends Component {
             {
                 content: <UserAccountInfo
                     handleFormChange={handleFormChange}
+                    isPasswordSecure={this.state.isPasswordSecure}
+                    setAccordionSection={this._setAccordionSection}
+                    toggleShowPassword={this._toggleShowPassword}
                     user={user}
                 />,
                 header:   'ACCOUNT INFORMATION',
@@ -207,19 +248,33 @@ class UserAccount extends Component {
                     removeSport={this._removeSport}
                     sports={user.sports}
                 />,
-                header: 'SPORT DETAILS',
+                header: 'TRAINING DETAILS',
                 index:  3,
             },
         ];
         return (
-            <View style={[styles.wrapper, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
-                <View>
+            <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1} : {display: 'none'}] ]}>
+                { this.state.coachContent.length > 0 ?
+                    <Coach
+                        text={this.state.coachContent}
+                    />
+                    : this.state.accordionSection !== false && _.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle ?
+                        <Coach
+                            text={_.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle}
+                        />
+                        :
+                        null
+                }
+                <ScrollView>
                     <Accordion
+                        activeSection={this.state.accordionSection}
+                        onChange={this._setAccordionSection}
+                        onHeaderClicked={this._onAccordionHeaderClicked}
                         renderContent={this._renderContent}
                         renderHeader={this._renderHeader}
                         sections={SECTIONS}
                     />
-                </View>
+                </ScrollView>
             </View>
         );
     }

@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import {
     Alert,
     Platform,
-    ScrollView,
     StyleSheet,
     TouchableOpacity,
     View,
@@ -58,14 +57,14 @@ const styles = StyleSheet.create({
         height:            AppSizes.navbarHeight,
         paddingTop:        20,
         borderBottomWidth: 1,
-        borderBottomColor: '#000',
+        borderBottomColor: AppColors.border,
     },
     carouselCustomStyles: {
         alignItems:     'center',
         justifyContent: 'center',
     },
     carouselTick: {
-        borderLeftColor: '#000',
+        borderLeftColor: AppColors.border,
         borderLeftWidth: 1,
         width:           '20%',
     },
@@ -144,8 +143,9 @@ class Onboarding extends Component {
                 status:  '',
                 success: '',
             },
-            step:       2, // TODO: UPDATE THIS VALUE BACK TO '1'
-            totalSteps: 8, // TODO: UPDATE THIS VALUE WHEN DONE
+            step:                1, // TODO: UPDATE THIS VALUE BACK TO '1'
+            totalSteps:          8, // TODO: UPDATE THIS VALUE WHEN DONE
+            heightsCarouselData: [],
         };
     }
 
@@ -173,7 +173,9 @@ class Onboarding extends Component {
     }
 
     _handleUserHeightFormChange = (index) => {
-        const f = UserAccountConstants.heights[index].title;
+        console.log('index',index);
+        const f = this.state.heightsCarouselData[index].title;
+        console.log('f',f);
         const rex = /^(\d+)'(\d+)(?:''|")$/;
         let match = rex.exec(f);
         let feet, inches, feetToInches, totalInches;
@@ -183,7 +185,23 @@ class Onboarding extends Component {
         }
         feetToInches = feet * 12;
         totalInches = feetToInches + inches;
+        console.log(feet,inches);
         this._handleUserFormChange('biometric_data.height.in', totalInches.toString());
+        // update carousel data
+        this._handleHeightsArray(f);
+    }
+
+    _handleHeightsArray = (title, index = 47) => {
+        const wholeHeightsArray = UserAccountConstants.heights;
+        index = title ? _.findIndex(wholeHeightsArray, {title: title}) : index;
+        console.log('index', index);
+        console.log('wholeHeightsArray',wholeHeightsArray);
+        let newHeightsArray = _.cloneDeep(wholeHeightsArray);
+        newHeightsArray = newHeightsArray.splice(index - 4, 9);
+        console.log('newHeightsArray',newHeightsArray);
+        this.setState({
+            heightsCarouselData: newHeightsArray
+        });
     }
 
     _validateForm = () => {
@@ -263,6 +281,7 @@ class Onboarding extends Component {
     }
 
     _heightPressed = () => {
+        this._handleHeightsArray();
         this.setState({ isHeightModalOpen: !this.state.isHeightModalOpen });
     }
 
@@ -270,7 +289,7 @@ class Onboarding extends Component {
         return (
             <View style={[styles.carouselCustomStyles, {height: AppSizes.screen.height / 3}]}>
                 <View style={[styles.carouselCustomStyles, {height: '50%', width: '100%'}]}>
-                    <Text style={{fontSize: 35, lineHeight: 35}}>{ item.title }</Text>
+                    <Text style={[AppStyles.h1]}>{ item.title }</Text>
                 </View>
                 <View style={[styles.carouselCustomStyles, {flexDirection: 'row', height: '50%', width: '100%', margin: 'auto'}]}>
                     <View style={[styles.carouselTick, {height: '50%'}]} />
@@ -298,6 +317,7 @@ class Onboarding extends Component {
     render = () => {
         const {
             form_fields,
+            heightsCarouselData,
             isFormValid,
             isHeightModalOpen,
             isPrivacyPolicyOpen,
@@ -322,39 +342,37 @@ class Onboarding extends Component {
                     :
                     null
                 }
-                <ScrollView>
-                    <UserRole
-                        componentStep={1}
-                        currentStep={step}
-                        handleFormChange={this._handleUserFormChange}
-                        user={form_fields.user}
-                    />
-                    <UserAccount
-                        componentStep={2}
-                        currentStep={step}
-                        handleFormChange={this._handleUserFormChange}
-                        heightPressed={this._heightPressed}
-                        user={form_fields.user}
-                    />
-                    <UserSportSchedule
-                        componentStep={3}
-                        currentStep={step}
-                        handleFormChange={this._handleUserFormChange}
-                        user={form_fields.user}
-                    />
-                    <UserWorkoutQuestion
-                        componentStep={4}
-                        currentStep={step}
-                        handleFormChange={this._handleUserFormChange}
-                        user={form_fields.user}
-                    />
-                    <UserActivities
-                        componentStep={5}
-                        currentStep={step}
-                        handleFormChange={this._handleUserFormChange}
-                        user={form_fields.user}
-                    />
-                </ScrollView>
+                <UserRole
+                    componentStep={1}
+                    currentStep={step}
+                    handleFormChange={this._handleUserFormChange}
+                    user={form_fields.user}
+                />
+                <UserAccount
+                    componentStep={2}
+                    currentStep={step}
+                    handleFormChange={this._handleUserFormChange}
+                    heightPressed={this._heightPressed}
+                    user={form_fields.user}
+                />
+                <UserSportSchedule
+                    componentStep={3}
+                    currentStep={step}
+                    handleFormChange={this._handleUserFormChange}
+                    user={form_fields.user}
+                />
+                <UserWorkoutQuestion
+                    componentStep={4}
+                    currentStep={step}
+                    handleFormChange={this._handleUserFormChange}
+                    user={form_fields.user}
+                />
+                <UserActivities
+                    componentStep={5}
+                    currentStep={step}
+                    handleFormChange={this._handleUserFormChange}
+                    user={form_fields.user}
+                />
                 <UserClearedQuestion
                     componentStep={7}
                     currentStep={step}
@@ -382,13 +400,13 @@ class Onboarding extends Component {
                     swipeToClose={false}
                 >
                     <View style={[styles.carouselCustomStyles, styles.carouselBanner]}>
-                        <Text style={[AppStyles.textBold]}>{'Height'}</Text>
+                        <Text style={[AppStyles.textBold, AppStyles.h2]}>{'HEIGHT'}</Text>
                     </View>
                     <Carousel
                         activeSlideAlignment={'center'}
                         contentContainerCustomStyle={[styles.carouselCustomStyles]}
-                        data={UserAccountConstants.heights}
-                        firstItem={form_fields.user.biometric_data.height.in ? parseFloat(form_fields.user.biometric_data.height.in) : 47}
+                        data={heightsCarouselData}
+                        firstItem={4}//form_fields.user.biometric_data.height.in ? parseFloat(form_fields.user.biometric_data.height.in) : 71}
                         inactiveSlideOpacity={0.7}
                         inactiveSlideScale={0.9}
                         itemWidth={AppSizes.screen.width / 3}

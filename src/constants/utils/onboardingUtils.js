@@ -37,6 +37,10 @@ const onboardingUtils = {
             const newError = 'Your First and Last Name are required';
             errorsArray.push(newError);
             isValid = false;
+        } else if( !emailRegex.test(user.email) ) {
+            const newError = 'Your Email must be a valid email format';
+            errorsArray.push(newError);
+            isValid = false;
         } else if(
             user.password.length < 8
             || user.password.length > 16
@@ -45,10 +49,6 @@ const onboardingUtils = {
             || !lowerCaseLettersRegex.test(user.password)
         ) {
             const newError = 'Your password must be 8-16 characters, include an uppercase letter, a lowercase letter, and a number';
-            errorsArray.push(newError);
-            isValid = false;
-        } else if( !emailRegex.test(user.email) ) {
-            const newError = 'Your Email must be a valid email format';
             errorsArray.push(newError);
             isValid = false;
         } else {
@@ -212,6 +212,12 @@ const onboardingUtils = {
 
     capitalizeFirstLetter(str) {
         return str.replace(/^\w/, s => s.toUpperCase());
+    },
+
+    formatPhoneNumber(s) {
+        let s2 = (''+s).replace(/\D/g, '');
+        let m = s2.match(/^(\d{3})(\d{3})(\d{4})$/);
+        return (!m) ? null : '(' + m[1] + ') ' + m[2] + '-' + m[3];
     },
 
 }

@@ -123,7 +123,7 @@ class UserActivities extends Component {
         } = this.state;
         return (
             <View style={[styles.wrapper, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
-                <Text style={[AppFonts.h1, {textAlign: 'center'}]}>
+                <Text style={{textAlign: 'center', fontFamily: AppFonts.base.family, fontSize: AppFonts.h1.size, lineHeight: AppFonts.h1.lineHeight,}}>
                     <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{'I do '}</Text>
                     { user.training_strength_conditioning.activities.length > 0 ?
                         <Text style={[styles.selectedText]}>{selectedActvitiesIndexes.map(value => UserAccountConstants.possibleActivities.label[value]).join(', ')}</Text>

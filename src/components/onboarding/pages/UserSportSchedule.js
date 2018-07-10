@@ -111,7 +111,7 @@ class UserSportSchedule extends Component {
             <View style={[styles.wrapper, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
                 { Object.keys(user.training_schedule).map((sport, i) =>
                     <View key={i} style={{paddingBottom: 20,}}>
-                        <Text style={[AppFonts.h1, {textAlign: 'center'}]}>
+                        <Text style={{textAlign: 'center', fontFamily: AppFonts.base.family, fontSize: AppFonts.h1.size, lineHeight: AppFonts.h1.lineHeight,}}>
                             <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{'This week I have '}</Text>
                             <Text style={[styles.selectedText]}>{onboardingUtils.capitalizeFirstLetter(sport)}</Text>
                             <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' practice on '}</Text>
@@ -133,7 +133,7 @@ class UserSportSchedule extends Component {
                             style={{inputIOS: [styles.pickerSelect], inputAndroid: [styles.pickerSelect]}}
                             value={user.training_schedule[sport].competition.duration_minutes}
                         />
-                        <Text style={[AppFonts.h1, {textAlign: 'center'}]}>
+                        <Text style={{textAlign: 'center', fontFamily: AppFonts.base.family, fontSize: AppFonts.h1.size, lineHeight: AppFonts.h1.lineHeight,}}>
                             <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' and compete on '}</Text>
                             { user.training_schedule[sport].competition.days_of_week.length > 0 ?
                                 <Text style={[styles.selectedText]}>{user.training_schedule[sport].competition.days_of_week}</Text>

@@ -3,6 +3,9 @@
  *
     <UserAccountInfo
         handleClick={this._handleUserFormChange}
+        isPasswordSecure={this.state.isPasswordSecure}
+        setAccordionSection={this._setAccordionSection}
+        toggleShowPassword={this._toggleShowPassword}
         user={form_fields.user}
     />
  *
@@ -20,13 +23,22 @@ import {
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles } from '../../../constants';
-import { FormInput, FormLabel, Text } from '../../custom';
+import { FormInput, FormLabel, TabIcon, Text } from '../../custom';
+
+// import third-party libraries
+import { Input, Icon } from 'react-native-elements';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     background: {
-        height: AppSizes.screen.height,
-        width:  AppSizes.screen.width,
+        width: AppSizes.screen.width,
+    },
+    continueButton: {
+        backgroundColor:    AppColors.transparent,
+        color:              AppColors.primary.yellow.hundredPercent,
+        fontWeight:         'bold',
+        paddingLeft:        20,
+        textDecorationLine: 'none',
     },
     inlineWrapper: {
         flexDirection: 'row',
@@ -36,29 +48,29 @@ const styles = StyleSheet.create({
     },
     rightItem: {
         borderLeftWidth: 1,
-        borderLeftColor: AppColors.primary.grey.thirtyPercent,
+        borderLeftColor: AppColors.border,
         width:           '50%',
     },
 });
 
 const Wrapper = props => Platform.OS === 'ios' ?
     (
-        <KeyboardAvoidingView behavior={'padding'} style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
+        <KeyboardAvoidingView behavior={'padding'} style={[styles.background]}>
             {props.children}
         </KeyboardAvoidingView>
     ) :
     (
-        <View style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
+        <View style={[styles.background]}>
             {props.children}
         </View>
     );
 
 /* Component ==================================================================== */
-const UserAccountInfo = ({ handleFormChange, user }) => (
+const UserAccountInfo = ({ handleFormChange, isPasswordSecure, setAccordionSection, toggleShowPassword, user }) => (
     <Wrapper>
-        <View style={[styles.inlineWrapper]}>
+        <View style={[styles.inlineWrapper, {borderTopWidth: 1, borderTopColor: AppColors.border,}]}>
             <View style={[styles.leftItem]}>
-                <FormLabel>{'First Name'}</FormLabel>
+                <FormLabel labelStyle={{color: AppColors.border}}>{'First Name'}</FormLabel>
                 <FormInput
                     containerStyle={{marginLeft: 0, marginRight: 0, paddingLeft: 20}}
                     onChangeText={(text) => handleFormChange('personal_data.first_name', text)}
@@ -67,7 +79,7 @@ const UserAccountInfo = ({ handleFormChange, user }) => (
                 />
             </View>
             <View style={[styles.rightItem]}>
-                <FormLabel>{'Last Name'}</FormLabel>
+                <FormLabel labelStyle={{color: AppColors.border}}>{'Last Name'}</FormLabel>
                 <FormInput
                     containerStyle={{marginLeft: 0, paddingLeft: 20}}
                     onChangeText={(text) => handleFormChange('personal_data.last_name', text)}
@@ -76,7 +88,7 @@ const UserAccountInfo = ({ handleFormChange, user }) => (
                 />
             </View>
         </View>
-        <FormLabel>{'Email'}</FormLabel>
+        <FormLabel labelStyle={{color: AppColors.border}}>{'Email'}</FormLabel>
         <FormInput
             containerStyle={{marginLeft: 0, paddingLeft: 20}}
             onChangeText={(text) => handleFormChange('email', text)}
@@ -84,20 +96,36 @@ const UserAccountInfo = ({ handleFormChange, user }) => (
             returnKeyType={'next'}
             value={user.email}
         />
-        <FormLabel>{'Password'}</FormLabel>
+        <FormLabel labelStyle={{color: AppColors.border}}>{'Password'}</FormLabel>
         <FormInput
             containerStyle={{marginLeft: 0, paddingLeft: 20}}
             onChangeText={(text) => handleFormChange('password', text)}
             returnKeyType={'done'}
-            secureTextEntry={true}
+            rightIcon={
+                <TabIcon
+                    color={'black'}//AppColors.border}
+                    name={isPasswordSecure ? 'visibility' : 'visibility-off'}
+                    onPress={toggleShowPassword}
+                    size={24}
+                />
+            }
+            rightIconContainerStyle={{backgroundColor: 'red', width: '50%'}}
+            secureTextEntry={isPasswordSecure}
             value={user.password}
         />
+        <Text
+            onPress={() => setAccordionSection(0, 1)}
+            style={[AppStyles.paddingVertical, styles.continueButton]}
+        >{'CONTINUE'}</Text>
     </Wrapper>
 );
 
 UserAccountInfo.propTypes = {
-    handleFormChange: PropTypes.func.isRequired,
-    user:             PropTypes.object.isRequired,
+    handleFormChange:    PropTypes.func.isRequired,
+    isPasswordSecure:    PropTypes.bool.isRequired,
+    setAccordionSection: PropTypes.func.isRequired,
+    toggleShowPassword:  PropTypes.func.isRequired,
+    user:                PropTypes.object.isRequired,
 };
 UserAccountInfo.defaultProps = {};
 UserAccountInfo.componentName = 'UserAccountInfo';
