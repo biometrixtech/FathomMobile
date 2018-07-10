@@ -1565,7 +1565,7 @@ babel-preset-jest@^23.2.0:
     babel-plugin-jest-hoist "^23.2.0"
     babel-plugin-syntax-object-rest-spread "^6.13.0"
 
-babel-preset-react-native@^5.0.0, babel-preset-react-native@^5.0.1:
+babel-preset-react-native@^5.0.0, babel-preset-react-native@^5.0.2:
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/babel-preset-react-native/-/babel-preset-react-native-5.0.2.tgz#dfed62379712a9c017ff99ce4fbeac1e11d42285"
   dependencies:
@@ -1648,10 +1648,6 @@ babel-types@^6.0.0, babel-types@^6.18.0, babel-types@^6.24.1, babel-types@^6.26.
     esutils "^2.0.2"
     lodash "^4.17.4"
     to-fast-properties "^1.0.3"
-
-babel@^6.23.0:
-  version "6.23.0"
-  resolved "https://registry.yarnpkg.com/babel/-/babel-6.23.0.tgz#d0d1e7d803e974765beea3232d4e153c0efb90f4"
 
 babylon@6.15.0:
   version "6.15.0"
@@ -4869,7 +4865,7 @@ jest-worker@^23.0.1, jest-worker@^23.2.0:
   dependencies:
     merge-stream "^1.0.1"
 
-jest@^23.2.0:
+jest@^23.3.0:
   version "23.3.0"
   resolved "https://registry.yarnpkg.com/jest/-/jest-23.3.0.tgz#1355cd792f38cf20fba4da02dddb7ca14d9484b5"
   dependencies:
@@ -6904,15 +6900,15 @@ react-lifecycles-compat@^1.0.2:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-1.1.4.tgz#fc005c72849b7ed364de20a0f64ff58ebdc2009a"
 
-react-native-android-location-services-dialog-box@^2.6.0:
+react-native-android-location-services-dialog-box@2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/react-native-android-location-services-dialog-box/-/react-native-android-location-services-dialog-box-2.6.0.tgz#b0209ddc2dd55191a6b500b75a166db97b34de1e"
 
-react-native-ble-manager@^6.4.0:
+react-native-ble-manager@6.4.0:
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/react-native-ble-manager/-/react-native-ble-manager-6.4.0.tgz#2f9e47e35313db3984a24faefa2bc42af89a804b"
 
-react-native-code-push@^5.3.5:
+react-native-code-push@5.3.5:
   version "5.3.5"
   resolved "https://registry.yarnpkg.com/react-native-code-push/-/react-native-code-push-5.3.5.tgz#fd092a9cf5097cb3ce674cf9a2447e43b7c1108a"
   dependencies:
@@ -6935,7 +6931,7 @@ react-native-datepicker@^1.7.2:
   dependencies:
     moment "^2.22.0"
 
-react-native-device-info@^0.21.5:
+react-native-device-info@0.21.5:
   version "0.21.5"
   resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.21.5.tgz#99478a2d68182e012297f2d63f2bd1b788106dee"
 
@@ -6976,7 +6972,7 @@ react-native-elements@^0.19.1:
     opencollective "^1.0.3"
     prop-types "^15.5.8"
 
-react-native-fabric@^0.5.1:
+react-native-fabric@0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/react-native-fabric/-/react-native-fabric-0.5.1.tgz#e5eb65c56196355b41f230c14adcc9c4bcf60dda"
 
@@ -7034,7 +7030,7 @@ react-native-snap-carousel@^3.7.2:
   dependencies:
     prop-types "^15.6.0"
 
-react-native-vector-icons@^4.6.0:
+react-native-vector-icons@4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-4.6.0.tgz#e4014311ffa6de397d914ffc31b7097a874cc8d5"
   dependencies:
