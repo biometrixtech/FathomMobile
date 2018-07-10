@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:59 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-29 01:24:48
+ * @Last Modified time: 2018-07-10 01:33:49
  */
 
 /**
@@ -174,14 +174,14 @@ const logout = () => {
   */
 const forgotPassword = (email) => {
     return dispatch => AppAPI.forgotPassword.post(email)
-        .then((result) => {
+        .then(result => {
             dispatch({
                 type: Actions.FORGOT_PASSWORD_SUCCESS,
                 data: result,
             });
             return result;
         })
-        .catch((err) => {
+        .catch(err => {
             dispatch({
                 type: Actions.FORGOT_PASSWORD_FAILED,
             });
@@ -194,14 +194,14 @@ const forgotPassword = (email) => {
   */
 const signUp = (credentials) => {
     return dispatch => AppAPI.user.post(credentials)
-        .then((result) => {
+        .then(result => {
             dispatch({
                 type: Actions.SIGN_UP_SUCCESS,
                 data: result,
             });
             return result;
         })
-        .catch((err) => {
+        .catch(err => {
             dispatch({
                 type: Actions.SIGN_UP_FAILED,
             });
