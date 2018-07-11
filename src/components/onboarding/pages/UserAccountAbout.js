@@ -82,7 +82,7 @@ const UserAccountAbout = ({ handleFormChange, heightPressed, user }) => (
             cancelBtnText={'Cancel'}
             confirmBtnText={'Confirm'}
             customStyles={{dateInput: styles.reusableCustomSpacing}}
-            date={user.personal_data.birth_date ? user.personal_data.birth_date : ''}
+            date={user.personal_data.birth_date || ''}
             format={'MM/DD/YYYY'}
             maxDate={new Date()}
             mode={'date'}

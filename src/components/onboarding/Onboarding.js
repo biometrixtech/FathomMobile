@@ -326,7 +326,7 @@ class Onboarding extends Component {
             step,
             totalSteps,
         } = this.state;
-        console.log(form_fields.user);
+        console.log(Object.assign({}, form_fields.user));
         return (
             <View style={[styles.background]}>
                 <ProgressBar
