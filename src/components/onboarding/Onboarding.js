@@ -134,27 +134,27 @@ class Onboarding extends Component {
                     workout_outside_practice: null,
                 }
             },
-            isFormValid:         false,
-            isHeightModalOpen:   false,
-            isPrivacyPolicyOpen: false,
-            isTermsOpen:         false,
-            modalStyle:          {},
-            resultMsg:           {
+            isFormValid:       false,
+            isHeightModalOpen: false,
+            isPPOpen:          false,
+            isTOUOpen:         false,
+            modalStyle:        {},
+            resultMsg:         {
                 error:   [],
                 status:  '',
                 success: '',
             },
-            step:       2, // TODO: UPDATE THIS VALUE BACK TO '1'
+            step:       5, // TODO: UPDATE THIS VALUE BACK TO '1'
             totalSteps: 8, // TODO: UPDATE THIS VALUE WHEN DONE
         };
     }
 
-    _toggleTermsWebView = () => {
-        this.setState({ isTermsOpen: !this.state.isTermsOpen })
+    _toggleTOUWebView = () => {
+        this.setState({ isTOUOpen: !this.state.isTOUOpen })
     }
 
-    _togglePrivacyPolicyWebView = () => {
-        this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen })
+    _togglePPWebView = () => {
+        this.setState({ isPPOpen: !this.state.isPPOpen })
     }
 
     _handleUserFormChange = (name, value) => {
@@ -300,8 +300,8 @@ class Onboarding extends Component {
             form_fields,
             isFormValid,
             isHeightModalOpen,
-            isPrivacyPolicyOpen,
-            isTermsOpen,
+            isPPOpen,
+            isTOUOpen,
             resultMsg,
             step,
             totalSteps,
@@ -360,12 +360,12 @@ class Onboarding extends Component {
                     currentStep={step}
                     handleFormChange={this._handleUserFormChange}
                     isFormValid={isFormValid}
-                    isPrivacyPolicyOpen={isPrivacyPolicyOpen}
-                    isTermsOpen={isTermsOpen}
+                    isPPOpen={isPPOpen}
+                    isTOUOpen={isTOUOpen}
                     nextStep={this._nextStep}
                     notClearedBtnPressed={this._notClearedBtnPressed}
-                    togglePrivacyPolicyWebView={this._togglePrivacyPolicyWebView}
-                    toggleTermsWebView={this._toggleTermsWebView}
+                    togglePPWebView={this._togglePPWebView}
+                    toggleTOUWebView={this._toggleTOUWebView}
                     user={form_fields.user}
                 />
                 { isFormValid && step > 1 && step !== 7 ?
@@ -404,26 +404,26 @@ class Onboarding extends Component {
                 <Modal
                     backdropPressToClose={false}
                     coverScreen={true}
-                    isOpen={isTermsOpen}
+                    isOpen={isTOUOpen}
                     swipeToClose={false}
                 >
                     <WebViewPage
                         source={'https://www.fathomai.com/'}
                     />
-                    <TouchableOpacity onPress={this._toggleTermsWebView} style={[AppStyles.nextButtonWrapper]}>
+                    <TouchableOpacity onPress={this._toggleTOUWebView} style={[AppStyles.nextButtonWrapper]}>
                         <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
                     </TouchableOpacity>
                 </Modal>
                 <Modal
                     backdropPressToClose={false}
                     coverScreen={true}
-                    isOpen={isPrivacyPolicyOpen}
+                    isOpen={isPPOpen}
                     swipeToClose={false}
                 >
                     <WebViewPage
                         source={'https://www.fathomai.com/'}
                     />
-                    <TouchableOpacity onPress={this._togglePrivacyPolicyWebView} style={[AppStyles.nextButtonWrapper]}>
+                    <TouchableOpacity onPress={this._togglePPWebView} style={[AppStyles.nextButtonWrapper]}>
                         <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
                     </TouchableOpacity>
                 </Modal>
