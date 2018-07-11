@@ -17,7 +17,7 @@
 #if RCT_DEV
 #import <React/RCTDevLoadingView.h>
 #endif
-#import "SplashScreen.h"
+#import "RNSplashScreen.h"
 
 @implementation AppDelegate
 
@@ -67,7 +67,7 @@
 
   // [Intercom setApiKey:@"ios_sdk-ebf51a128738d061651930aff903b341e18b99a2" forAppId:@"oxawi3kv"]
   // [Intercom registerUnidentifiedUser]
-  [SplashScreen show];
+  [RNSplashScreen show];
   return YES;
 }
 
