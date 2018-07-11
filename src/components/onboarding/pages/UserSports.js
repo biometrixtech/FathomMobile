@@ -137,10 +137,11 @@ const UserSports = ({
                             cancelBtnText={'Cancel'}
                             confirmBtnText={'Confirm'}
                             customStyles={{dateInput: styles.reusableCustomSpacing}}
-                            date={sport.start_date}
+                            date={sport.start_date || ''}
                             format={'MM/DD/YYYY'}
                             mode={'date'}
                             onDateChange={(date) => handleFormChange(i, 'start_date', date)}
+                            placeholder={' '}
                             showIcon={false}
                             style={{width: '100%'}}
                         />
@@ -151,10 +152,11 @@ const UserSports = ({
                             cancelBtnText={'Cancel'}
                             confirmBtnText={'Confirm'}
                             customStyles={{dateInput: styles.reusableCustomSpacing}}
-                            date={sport.end_date}
+                            date={sport.end_date || ''}
                             format={'MM/DD/YYYY'}
                             mode={'date'}
                             onDateChange={(date) => handleFormChange(i, 'end_date', date)}
+                            placeholder={' '}
                             showIcon={false}
                             style={{width: '100%'}}
                         />

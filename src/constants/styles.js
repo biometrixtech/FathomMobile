@@ -387,6 +387,13 @@ export default {
     },
 
     // onboarding
+    continueButton: {
+        backgroundColor:    Colors.transparent,
+        color:              Colors.primary.yellow.hundredPercent,
+        fontWeight:         'bold',
+        paddingLeft:        20,
+        textDecorationLine: 'none',
+    },
     fullHeightWeight: {
         height: '100%',
         width:  '100%',

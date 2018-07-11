@@ -4,6 +4,7 @@
     <UserAccountAbout
         handleFormChange={handleFormChange}
         heightPressed={heightPressed}
+        setAccordionSection={this._setAccordionSection}
         user={user}
     />
  *
@@ -75,14 +76,14 @@ const Wrapper = props => Platform.OS === 'ios' ?
     );
 
 /* Component ==================================================================== */
-const UserAccountAbout = ({ handleFormChange, heightPressed, user }) => (
+const UserAccountAbout = ({ handleFormChange, heightPressed, setAccordionSection, user }) => (
     <Wrapper>
         <FormLabel labelStyle={{color: AppColors.border}}>{'Date of Birth'}</FormLabel>
         <DatePicker
             cancelBtnText={'Cancel'}
             confirmBtnText={'Confirm'}
             customStyles={{dateInput: styles.reusableCustomSpacing}}
-            date={user.personal_data.birth_date ? user.personal_data.birth_date : ''}
+            date={user.personal_data.birth_date || ''}
             format={'MM/DD/YYYY'}
             maxDate={new Date()}
             mode={'date'}
@@ -149,13 +150,18 @@ const UserAccountAbout = ({ handleFormChange, heightPressed, user }) => (
             style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS], viewContainer: [styles.androidViewContainer] , inputAndroid: [styles.pickerSelectAndroid]}}
             value={user.system_type}
         />
+        <Text
+            onPress={() => setAccordionSection(1, 2)}
+            style={[AppStyles.paddingVertical, AppStyles.continueButton]}
+        >{'CONTINUE'}</Text>
     </Wrapper>
 );
 
 UserAccountAbout.propTypes = {
-    handleFormChange: PropTypes.func.isRequired,
-    heightPressed:    PropTypes.func.isRequired,
-    user:             PropTypes.object.isRequired,
+    handleFormChange:    PropTypes.func.isRequired,
+    heightPressed:       PropTypes.func.isRequired,
+    setAccordionSection: PropTypes.func.isRequired,
+    user:                PropTypes.object.isRequired,
 };
 UserAccountAbout.defaultProps = {};
 UserAccountAbout.componentName = 'UserAccountAbout';

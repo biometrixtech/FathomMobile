@@ -33,13 +33,6 @@ const styles = StyleSheet.create({
     background: {
         width: AppSizes.screen.width,
     },
-    continueButton: {
-        backgroundColor:    AppColors.transparent,
-        color:              AppColors.primary.yellow.hundredPercent,
-        fontWeight:         'bold',
-        paddingLeft:        20,
-        textDecorationLine: 'none',
-    },
     inlineWrapper: {
         flexDirection: 'row',
     },
@@ -115,7 +108,7 @@ const UserAccountInfo = ({ handleFormChange, isPasswordSecure, setAccordionSecti
         />
         <Text
             onPress={() => setAccordionSection(0, 1)}
-            style={[AppStyles.paddingVertical, styles.continueButton]}
+            style={[AppStyles.paddingVertical, AppStyles.continueButton]}
         >{'CONTINUE'}</Text>
     </Wrapper>
 );

@@ -235,6 +235,7 @@ class UserAccount extends Component {
                 content: <UserAccountAbout
                     handleFormChange={handleFormChange}
                     heightPressed={heightPressed}
+                    setAccordionSection={this._setAccordionSection}
                     user={user}
                 />,
                 header:   'TELL US ABOUT YOU',

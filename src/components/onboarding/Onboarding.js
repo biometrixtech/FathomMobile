@@ -173,9 +173,8 @@ class Onboarding extends Component {
     }
 
     _handleUserHeightFormChange = (index) => {
-        console.log('index',index);
+        // set height in inches
         const f = this.state.heightsCarouselData[index].title;
-        console.log('f',f);
         const rex = /^(\d+)'(\d+)(?:''|")$/;
         let match = rex.exec(f);
         let feet, inches, feetToInches, totalInches;
@@ -185,7 +184,6 @@ class Onboarding extends Component {
         }
         feetToInches = feet * 12;
         totalInches = feetToInches + inches;
-        console.log(feet,inches);
         this._handleUserFormChange('biometric_data.height.in', totalInches.toString());
         // update carousel data
         this._handleHeightsArray(f);
@@ -194,11 +192,18 @@ class Onboarding extends Component {
     _handleHeightsArray = (title, index = 47) => {
         const wholeHeightsArray = UserAccountConstants.heights;
         index = title ? _.findIndex(wholeHeightsArray, {title: title}) : index;
-        console.log('index', index);
-        console.log('wholeHeightsArray',wholeHeightsArray);
         let newHeightsArray = _.cloneDeep(wholeHeightsArray);
-        newHeightsArray = newHeightsArray.splice(index - 4, 9);
-        console.log('newHeightsArray',newHeightsArray);
+        if(title && index > 47) {
+            let newIndexLength = ((index + 4) - 47) + 1;
+            let objToAddToEnd = newHeightsArray.splice(47, newIndexLength);
+            newHeightsArray = _.unionBy(this.state.heightsCarouselData, objToAddToEnd, 'title');
+        } else if(title && index < 47) {
+            let newIndex = (index - 4);
+            let objToAddToFront = newHeightsArray.splice(newIndex, 1);
+            newHeightsArray = _.unionBy(objToAddToFront, this.state.heightsCarouselData, 'title');
+        } else if(!title) {
+            newHeightsArray = newHeightsArray.splice(index - 4, 9);
+        }
         this.setState({
             heightsCarouselData: newHeightsArray
         });
@@ -406,7 +411,7 @@ class Onboarding extends Component {
                         activeSlideAlignment={'center'}
                         contentContainerCustomStyle={[styles.carouselCustomStyles]}
                         data={heightsCarouselData}
-                        firstItem={4}//form_fields.user.biometric_data.height.in ? parseFloat(form_fields.user.biometric_data.height.in) : 71}
+                        firstItem={4}
                         inactiveSlideOpacity={0.7}
                         inactiveSlideScale={0.9}
                         itemWidth={AppSizes.screen.width / 3}
