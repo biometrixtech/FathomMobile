@@ -143,7 +143,7 @@ class Onboarding extends Component {
                 status:  '',
                 success: '',
             },
-            step:                4, // TODO: UPDATE THIS VALUE BACK TO '1'
+            step:                1, // TODO: UPDATE THIS VALUE BACK TO '1'
             totalSteps:          4,
             heightsCarouselData: [],
         };
