@@ -94,13 +94,13 @@ class Onboarding extends Component {
         this.state = {
             form_fields: {
                 user: {
-                    agreed_terms_of_use:   null,
-                    agreed_privacy_policy: null,
-                    cleared_to_play:       null,
-                    onboarding_status:     [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    email:                 '',
-                    password:              '',
-                    biometric_data:        {
+                    // agreed_terms_of_use:   null,
+                    // agreed_privacy_policy: null,
+                    cleared_to_play:   null,
+                    onboarding_status: [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
+                    email:             '',
+                    password:          '',
+                    biometric_data:    {
                         gender: '',
                         height: {
                             in: 71
@@ -114,8 +114,8 @@ class Onboarding extends Component {
                         first_name:     '',
                         last_name:      '',
                         phone_number:   '',
-                        account_type:   'free', // "paid", "free"
-                        account_status: 'active', // "active", "pending", "past_due", "expired"
+                        account_type:   'free', // 'paid', 'free'
+                        account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                     },
                     role:                           '',
                     system_type:                    '1-sensor',
@@ -143,8 +143,8 @@ class Onboarding extends Component {
                 status:  '',
                 success: '',
             },
-            step:                1, // TODO: UPDATE THIS VALUE BACK TO '1'
-            totalSteps:          8, // TODO: UPDATE THIS VALUE WHEN DONE
+            step:                4, // TODO: UPDATE THIS VALUE BACK TO '1'
+            totalSteps:          4,
             heightsCarouselData: [],
         };
     }
@@ -263,7 +263,7 @@ class Onboarding extends Component {
         const { form_fields, step } = this.state;
         // validation
         let errorsArray = this._validateForm();
-        let newStep;
+        /*let newStep;
         if (
             step === 4
             && !form_fields.user.workout_outside_practice
@@ -277,12 +277,21 @@ class Onboarding extends Component {
             }
         } else {
             newStep = step + 1;
-        }
+        }*/
+        let newStep = step + 1;
         this.setState({
             ['resultMsg.error']: errorsArray,
-            isFormValid:         false,
-            step:                newStep,
+            // isFormValid:         false,
+            // step:                newStep,
         });
+        // save or update, if no errors
+        if(errorsArray.length === 0) {
+            this._handleUpdateForm();
+        }
+    }
+
+    _handleUpdateForm = () => {
+
     }
 
     _heightPressed = () => {
@@ -366,7 +375,7 @@ class Onboarding extends Component {
                     handleFormChange={this._handleUserFormChange}
                     user={form_fields.user}
                 />
-                <UserWorkoutQuestion
+                {/*<UserWorkoutQuestion
                     componentStep={4}
                     currentStep={step}
                     handleFormChange={this._handleUserFormChange}
@@ -377,9 +386,9 @@ class Onboarding extends Component {
                     currentStep={step}
                     handleFormChange={this._handleUserFormChange}
                     user={form_fields.user}
-                />
+                />*/}
                 <UserClearedQuestion
-                    componentStep={7}
+                    componentStep={4}
                     currentStep={step}
                     handleFormChange={this._handleUserFormChange}
                     isFormValid={isFormValid}
