@@ -11,7 +11,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Image, ScrollView, StyleSheet, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, View } from 'react-native';
 
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
@@ -49,9 +49,9 @@ const styles = StyleSheet.create({
     },
     wrapper: {
         marginBottom: 20,
-        paddingTop:    10,
-        paddingRight:  10,
-        paddingLeft:   10,
+        paddingTop:   10,
+        paddingRight: 10,
+        paddingLeft:  10,
     },
 });
 
@@ -60,7 +60,7 @@ class UserAccount extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            accordionSection: 2, // TODO: return to - false,
+            accordionSection: false,
             coachContent:     '',
             isPasswordSecure: true,
         };
@@ -109,6 +109,7 @@ class UserAccount extends Component {
     };
 
     _handleSportsFormChange = (i, name, value) => {
+        this.setState({ coachContent: '' });
         const { handleFormChange, user } = this.props;
         let newSportsArray = _.cloneDeep(user.sports);
         newSportsArray[i][name] = value;
@@ -126,6 +127,7 @@ class UserAccount extends Component {
         const { handleFormChange, user } = this.props;
         const sportValidation = onboardingUtils.isSportValid(user.sports[index]);
         if(sportValidation.isValid) {
+            this.setState({ coachContent: '' });
             const newSportArray = {
                 competition_level:  '',
                 end_date:           '', // 'MM/DD/YYYY' or 'current'
@@ -139,33 +141,19 @@ class UserAccount extends Component {
             newSportsArray.push(newSportArray);
             handleFormChange('sports', newSportsArray);
         } else {
-            // TODO: put error in COACH.js
-            Alert.alert(
-                'Error',
-                'Please make sure to fill out all the sports related information before trying to add a new one!',
-                [
-                    {text: 'Try Again', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                ],
-                { cancelable: true }
-            )
+            this.setState({ coachContent: 'Please make sure to fill out all the sports related information before trying to add a new one!' });
         }
     };
 
     _removeSport = (index) => {
         const { handleFormChange, user } = this.props;
         if(index > 0) {
+            this.setState({ coachContent: '' });
             let newSportsArray = _.cloneDeep(user.sports);
             newSportsArray.splice(index, 1);
             handleFormChange('sports', newSportsArray);
         } else {
-            Alert.alert(
-                'Error',
-                'You cannot remove your first sport, at least one sport is required!',
-                [
-                    {text: 'Try Again', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                ],
-                { cancelable: true }
-            )
+            this.setState({ coachContent: 'You cannot remove your first sport, at least one sport is required!' });
         }
     };
 
