@@ -15,10 +15,10 @@
     "@babel/highlight" "7.0.0-beta.47"
 
 "@babel/code-frame@^7.0.0-beta.35":
-  version "7.0.0-beta.52"
-  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0-beta.52.tgz#192483bfa0d1e467c101571c21029ccb74af2801"
+  version "7.0.0-beta.53"
+  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0-beta.53.tgz#980d1560b863575bf5a377925037e0132ef5921e"
   dependencies:
-    "@babel/highlight" "7.0.0-beta.52"
+    "@babel/highlight" "7.0.0-beta.53"
 
 "@babel/core@7.0.0-beta.47":
   version "7.0.0-beta.47"
@@ -249,9 +249,9 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@babel/highlight@7.0.0-beta.52":
-  version "7.0.0-beta.52"
-  resolved "https://registry.yarnpkg.com/@babel/highlight/-/highlight-7.0.0-beta.52.tgz#ef24931432f06155e7bc39cdb8a6b37b4a28b3d0"
+"@babel/highlight@7.0.0-beta.53":
+  version "7.0.0-beta.53"
+  resolved "https://registry.yarnpkg.com/@babel/highlight/-/highlight-7.0.0-beta.53.tgz#f4e952dad1787d205e188d3e384cdce49ca368fb"
   dependencies:
     chalk "^2.0.0"
     esutils "^2.0.2"
@@ -3651,8 +3651,8 @@ gauge@~2.7.3:
     wide-align "^1.1.0"
 
 get-caller-file@^1.0.1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-1.0.2.tgz#f702e63127e7e231c160a80c1554acb70d5047e5"
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-1.0.3.tgz#f978fa4c90d1dfe7ff2d6beda2a515e713bdcf4a"
 
 get-func-name@^2.0.0:
   version "2.0.0"
@@ -4866,7 +4866,7 @@ jest-worker@^23.0.1, jest-worker@^23.2.0:
   dependencies:
     merge-stream "^1.0.1"
 
-jest@^23.3.0:
+jest@^23.4.0:
   version "23.4.0"
   resolved "https://registry.yarnpkg.com/jest/-/jest-23.4.0.tgz#ebce63f6529c27c646d80c610866f0306f66dcbf"
   dependencies:
@@ -5368,9 +5368,9 @@ methods@^1.1.1, methods@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/methods/-/methods-1.1.2.tgz#5529a4d67654134edcc5266656835b0f851afcee"
 
-metro-babel-register@0.38.1, metro-babel-register@^0.38.1:
-  version "0.38.1"
-  resolved "https://registry.yarnpkg.com/metro-babel-register/-/metro-babel-register-0.38.1.tgz#7b564191fd86387c48f6dfa4ded07afb693a1986"
+metro-babel-register@0.38.2, metro-babel-register@^0.38.1:
+  version "0.38.2"
+  resolved "https://registry.yarnpkg.com/metro-babel-register/-/metro-babel-register-0.38.2.tgz#4bf4e0f0973937114ced5573f3644b1a7bedb95b"
   dependencies:
     "@babel/plugin-proposal-class-properties" "7.0.0-beta.47"
     "@babel/plugin-proposal-object-rest-spread" "7.0.0-beta.47"
@@ -5382,9 +5382,9 @@ metro-babel-register@0.38.1, metro-babel-register@^0.38.1:
     core-js "^2.2.2"
     escape-string-regexp "^1.0.5"
 
-metro-babel7-plugin-react-transform@0.38.1:
-  version "0.38.1"
-  resolved "https://registry.yarnpkg.com/metro-babel7-plugin-react-transform/-/metro-babel7-plugin-react-transform-0.38.1.tgz#a39ee73f6a6df1bac1e65045129621d70d53adbe"
+metro-babel7-plugin-react-transform@0.38.2:
+  version "0.38.2"
+  resolved "https://registry.yarnpkg.com/metro-babel7-plugin-react-transform/-/metro-babel7-plugin-react-transform-0.38.2.tgz#fab6f256ffd86ff1bd256db0cf86e05522b415c1"
   dependencies:
     "@babel/helper-module-imports" "7.0.0-beta.47"
     lodash "^4.17.5"
@@ -5396,49 +5396,49 @@ metro-babel7-plugin-react-transform@^0.39.1:
     "@babel/helper-module-imports" "7.0.0-beta.47"
     lodash "^4.17.5"
 
-metro-cache@0.38.1:
-  version "0.38.1"
-  resolved "https://registry.yarnpkg.com/metro-cache/-/metro-cache-0.38.1.tgz#bd3a6de283f339627f6e1039b8fd9383332eeae1"
+metro-cache@0.38.2:
+  version "0.38.2"
+  resolved "https://registry.yarnpkg.com/metro-cache/-/metro-cache-0.38.2.tgz#490691c603abff0d6f689a351531b7f8a5085270"
   dependencies:
     jest-serializer "23.0.1"
-    metro-core "0.38.1"
+    metro-core "0.38.2"
     mkdirp "^0.5.1"
     rimraf "^2.5.4"
 
-metro-core@0.38.1, metro-core@^0.38.1:
-  version "0.38.1"
-  resolved "https://registry.yarnpkg.com/metro-core/-/metro-core-0.38.1.tgz#da87bcce03c17ec1085d040360459b4404d13079"
+metro-core@0.38.2, metro-core@^0.38.1:
+  version "0.38.2"
+  resolved "https://registry.yarnpkg.com/metro-core/-/metro-core-0.38.2.tgz#d97727799db299cbcec7a091cc81987132bad93b"
   dependencies:
     jest-haste-map "23.1.0"
     lodash.throttle "^4.1.1"
-    metro-resolver "0.38.1"
+    metro-resolver "0.38.2"
     wordwrap "^1.0.0"
 
 metro-memory-fs@^0.38.1:
-  version "0.38.1"
-  resolved "https://registry.yarnpkg.com/metro-memory-fs/-/metro-memory-fs-0.38.1.tgz#951067da1df2f2985e551c9f718626844b049c94"
+  version "0.38.2"
+  resolved "https://registry.yarnpkg.com/metro-memory-fs/-/metro-memory-fs-0.38.2.tgz#6dbb1e9db63787c47ef061bd3740e48ab74a9148"
 
-metro-minify-uglify@0.38.1:
-  version "0.38.1"
-  resolved "https://registry.yarnpkg.com/metro-minify-uglify/-/metro-minify-uglify-0.38.1.tgz#8959094b7d340ebb50b9382d74521a5beda1215e"
+metro-minify-uglify@0.38.2:
+  version "0.38.2"
+  resolved "https://registry.yarnpkg.com/metro-minify-uglify/-/metro-minify-uglify-0.38.2.tgz#e09f35dbb2f059564efc76ddc50043332cd47a04"
   dependencies:
     uglify-es "^3.1.9"
 
-metro-resolver@0.38.1:
-  version "0.38.1"
-  resolved "https://registry.yarnpkg.com/metro-resolver/-/metro-resolver-0.38.1.tgz#e5ddc02609d1a54bdd13b9681ad514b57cbf96ad"
+metro-resolver@0.38.2:
+  version "0.38.2"
+  resolved "https://registry.yarnpkg.com/metro-resolver/-/metro-resolver-0.38.2.tgz#ee377b987e03c8020e21488796f882a209c6c08b"
   dependencies:
     absolute-path "^0.0.0"
 
-metro-source-map@0.38.1:
-  version "0.38.1"
-  resolved "https://registry.yarnpkg.com/metro-source-map/-/metro-source-map-0.38.1.tgz#6b7fb99745cd0cc71ac17c59cc2e012b2b729dc5"
+metro-source-map@0.38.2:
+  version "0.38.2"
+  resolved "https://registry.yarnpkg.com/metro-source-map/-/metro-source-map-0.38.2.tgz#c3ed4730079cf9c85c65cf11261ea7c6172e32ba"
   dependencies:
     source-map "^0.5.6"
 
 metro@^0.38.1:
-  version "0.38.1"
-  resolved "https://registry.yarnpkg.com/metro/-/metro-0.38.1.tgz#063d6ff18cf29481140e882a3f49488a97cb89d1"
+  version "0.38.2"
+  resolved "https://registry.yarnpkg.com/metro/-/metro-0.38.2.tgz#dc1ec8b2ca196a7b052a5c3d9df0bc4bfb166de2"
   dependencies:
     "@babel/core" "7.0.0-beta.47"
     "@babel/generator" "7.0.0-beta.47"
@@ -5502,13 +5502,13 @@ metro@^0.38.1:
     left-pad "^1.1.3"
     lodash.throttle "^4.1.1"
     merge-stream "^1.0.1"
-    metro-babel-register "0.38.1"
-    metro-babel7-plugin-react-transform "0.38.1"
-    metro-cache "0.38.1"
-    metro-core "0.38.1"
-    metro-minify-uglify "0.38.1"
-    metro-resolver "0.38.1"
-    metro-source-map "0.38.1"
+    metro-babel-register "0.38.2"
+    metro-babel7-plugin-react-transform "0.38.2"
+    metro-cache "0.38.2"
+    metro-core "0.38.2"
+    metro-minify-uglify "0.38.2"
+    metro-resolver "0.38.2"
+    metro-source-map "0.38.2"
     mime-types "2.1.11"
     mkdirp "^0.5.1"
     node-fetch "^1.3.3"
@@ -6913,9 +6913,9 @@ react-native-ble-manager@6.4.0:
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/react-native-ble-manager/-/react-native-ble-manager-6.4.0.tgz#2f9e47e35313db3984a24faefa2bc42af89a804b"
 
-react-native-code-push@5.3.5:
-  version "5.3.5"
-  resolved "https://registry.yarnpkg.com/react-native-code-push/-/react-native-code-push-5.3.5.tgz#fd092a9cf5097cb3ce674cf9a2447e43b7c1108a"
+react-native-code-push@5.4.0:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-code-push/-/react-native-code-push-5.4.0.tgz#f8e1309a89c66c624079cd4a158a6dac31a8aa1d"
   dependencies:
     code-push "2.0.5"
     glob "^5.0.15"
@@ -6981,6 +6981,12 @@ react-native-fabric@0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/react-native-fabric/-/react-native-fabric-0.5.1.tgz#e5eb65c56196355b41f230c14adcc9c4bcf60dda"
 
+react-native-linear-gradient@2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.4.0.tgz#51d8ea12bb72a59bede9edc87b694b16b64cf435"
+  dependencies:
+    prop-types "^15.5.10"
+
 react-native-modal-dropdown@^0.6.2:
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/react-native-modal-dropdown/-/react-native-modal-dropdown-0.6.2.tgz#da6027b3546d2031fbce46242bffc95561e13599"
@@ -7018,7 +7024,7 @@ react-native-safe-area-view@^0.7.0:
   dependencies:
     hoist-non-react-statics "^2.3.1"
 
-react-native-sectioned-multi-select@^0.5.1:
+react-native-sectioned-multi-select@^0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/react-native-sectioned-multi-select/-/react-native-sectioned-multi-select-0.5.2.tgz#5a9a93a5785c89892314950f65568e0ba6f32d97"
 
@@ -7028,6 +7034,10 @@ react-native-snap-carousel@^3.7.2:
   dependencies:
     prop-types "^15.6.1"
     react-addons-shallow-compare "15.6.2"
+
+react-native-splash-screen@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-splash-screen/-/react-native-splash-screen-3.1.0.tgz#9636f83d711dadded27167cdc3dc6aa98ec222ee"
 
 "react-native-tab-view@github:react-navigation/react-native-tab-view":
   version "0.0.74"

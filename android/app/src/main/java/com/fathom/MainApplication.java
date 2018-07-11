@@ -3,6 +3,8 @@ package com.fathom;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.BV.LinearGradient.LinearGradientPackage;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 // import com.robinpowered.react.Intercom.IntercomPackage;
 // import io.intercom.android.sdk.Intercom;
@@ -37,7 +39,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNDeviceInfo(),
+          new LinearGradientPackage(),
+          new SplashScreenReactPackage(),
+          new RNDeviceInfo(),
           // new IntercomPackage(),
           new LocationServicesDialogBoxPackage(),
           new FabricPackage(),

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:17:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 11:09:05
+ * @Last Modified time: 2018-07-09 21:37:20
  */
 
 /**
@@ -25,8 +25,6 @@ let codePushOptions = {
 
 const { persistor, store } = configureStore();
 
-const App = () => {
-    return <Root store={store} persistor={persistor}/>;
-}
+const App = () => <Root store={store} persistor={persistor}/>;
 
 AppRegistry.registerComponent('Fathom', () => codePush(codePushOptions)(App));
