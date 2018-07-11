@@ -97,22 +97,22 @@ const UserAccountInfo = ({ handleFormChange, isPasswordSecure, setAccordionSecti
             value={user.email}
         />
         <FormLabel labelStyle={{color: AppColors.border}}>{'Password'}</FormLabel>
-        <FormInput
-            containerStyle={{marginLeft: 0, paddingLeft: 20}}
-            onChangeText={(text) => handleFormChange('password', text)}
-            returnKeyType={'done'}
-            rightIcon={
-                <TabIcon
-                    color={'black'}//AppColors.border}
-                    name={isPasswordSecure ? 'visibility' : 'visibility-off'}
-                    onPress={toggleShowPassword}
-                    size={24}
-                />
-            }
-            rightIconContainerStyle={{backgroundColor: 'red', width: '50%'}}
-            secureTextEntry={isPasswordSecure}
-            value={user.password}
-        />
+        <View>
+            <FormInput
+                containerStyle={{marginLeft: 0, paddingLeft: 20}}
+                onChangeText={(text) => handleFormChange('password', text)}
+                returnKeyType={'done'}
+                secureTextEntry={isPasswordSecure}
+                value={user.password}
+            />
+            <TabIcon
+                color={'black'} //AppColors.border}
+                icon={isPasswordSecure ? 'visibility' : 'visibility-off'}
+                onPress={toggleShowPassword}
+                size={24}
+                containerStyle={[{position: 'absolute', top: 15, right: 25, width: '10%'}]}
+            />
+        </View>
         <Text
             onPress={() => setAccordionSection(0, 1)}
             style={[AppStyles.paddingVertical, styles.continueButton]}
