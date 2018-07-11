@@ -64,7 +64,7 @@ const brand = {
 };
 
 const borders = {
-    border: brand.primary.grey.hundredPercent,
+    border: brand.primary.grey.thirtyPercent,
 };
 
 const tabbar = {

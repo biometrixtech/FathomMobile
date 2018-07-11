@@ -1,3 +1,6 @@
+import _ from 'lodash';
+import { UserAccount } from '../';
+
 const onboardingUtils = {
 
     isUserRoleValid(role) {
@@ -65,17 +68,16 @@ const onboardingUtils = {
         let errorsArray = [];
         let isValid;
         // possible array strings
-        const possibleSystemTypes = ['1-sensor', '3-sensor'];
-        const possibleInjuryStatuses = ['healthy', 'healthy_chronically_injured', 'returning_from_injury'];
-        const possibleGenders = ['male', 'female', 'other'];
+        const possibleSystemTypes =  UserAccount.possibleSystemTypes.map(systemTypes => systemTypes.value); // ['1-sensor', '3-sensor'];
+        const possibleInjuryStatuses = UserAccount.possibleInjuryStatuses.map(injuryStatus => injuryStatus.value); // ['healthy', 'healthy_chronically_injured', 'returning_from_injury'];
+        const possibleGenders = UserAccount.possibleGenders.map(gender => gender.value); // ['male', 'female', 'other'];
         if(
             user.personal_data.birth_date.length > 0
-            && user.personal_data.phone_number.length === 5
-            && user.biometric_data.height.in.length > 0
-            && user.biometric_data.mass.lb.length > 0
+            && user.personal_data.phone_number.length === 10
+            && user.biometric_data.height.in > 0
+            && parseInt(user.biometric_data.mass.lb || 0, 10) > 0
             && possibleInjuryStatuses.includes(user.injury_status)
             && possibleSystemTypes.includes(user.system_type)
-            && user.sports.length > 0
             && possibleGenders.includes(user.biometric_data.gender)
         ) {
             errorsArray = [];
@@ -108,9 +110,12 @@ const onboardingUtils = {
     },
 
     isSportValid(sport) {
-        const possibleSports = ['basketball', 'baseball_softball', 'cross_country', 'cycling', 'field_hockey', 'general_fitness', 'golf', 'gymnastics', 'ice_hockey', 'lacrosse', 'rowing', 'rugby', 'running', 'soccer', 'swimming_diving', 'tennis', 'track_and_field', 'volleyball', 'wrestling', 'weightlifting'];
-        const possiblePositions = ['forward', 'guard', 'center', 'pitcher', 'catcher', 'infielder', 'outfielder', 'distance-runner', 'goalie', 'fullback', 'golfer', 'gymnast', 'defensemen', 'wing', 'defender', 'attackers', 'rower', 'midfielder', 'distance', 'sprint', 'diver', 'long-distance', 'jumping', 'throwing', 'hitter', 'setter', 'libero', 'blocker', 'wrestler'];
-        const possibleCompetitionLevels = ['recreational_challenge', 'high_school', 'club_travel', 'development_league', 'ncaa_division_iii', 'ncaa_division_ii', 'ncaa_division_i', 'professional'];
+        const possibleSports = UserAccount.sports.map(sportConst => sportConst.value); // ['basketball', 'baseball_softball', 'cross_country', 'cycling', 'field_hockey', 'general_fitness', 'golf', 'gymnastics', 'ice_hockey', 'lacrosse', 'rowing', 'rugby', 'running', 'soccer', 'swimming_diving', 'tennis', 'track_and_field', 'volleyball', 'wrestling', 'weightlifting'];
+        // unsure if we want all of the positions from all sports from UserAccount constants or not
+        const possiblePositions = possibleSports.reduce((totalPositions, currentSport) => {
+            return _.union(totalPositions, UserAccount.positions[currentSport] ? UserAccount.positions[currentSport].map(position => position.value) : []);
+        },[]); // ['forward', 'guard', 'center', 'pitcher', 'catcher', 'infielder', 'outfielder', 'distance-runner', 'goalie', 'fullback', 'golfer', 'gymnast', 'defensemen', 'wing', 'defender', 'attackers', 'rower', 'midfielder', 'distance', 'sprint', 'diver', 'long-distance', 'jumping', 'throwing', 'hitter', 'setter', 'libero', 'blocker', 'wrestler'];
+        const possibleCompetitionLevels  = UserAccount.levelsOfPlay.map(levelOfPlay => levelOfPlay.value) // ['recreational_challenge', 'high_school', 'club_travel', 'development_league', 'ncaa_division_iii', 'ncaa_division_ii', 'ncaa_division_i', 'professional'];
         let error = '';
         let isValid;
         if(
