@@ -17,6 +17,7 @@ import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import Carousel from 'react-native-snap-carousel';
 import Modal from 'react-native-modalbox';
+import moment from 'moment';
 
 // Consts, Libs, and Utils
 import { AppAPI } from '../../lib/';
@@ -74,7 +75,11 @@ const styles = StyleSheet.create({
 class Onboarding extends Component {
     static componentName = 'Onboarding';
 
-    static propTypes = {}
+    static propTypes = {
+        finalizeLogin:  PropTypes.func.isRequired,
+        registerDevice: PropTypes.func.isRequired,
+        signUpUser:     PropTypes.func.isRequired,
+    }
 
     static defaultProps = {}
 
@@ -260,9 +265,73 @@ class Onboarding extends Component {
     }
 
     _nextStep = () => {
-        const { form_fields, step } = this.state;
         // validation
         let errorsArray = this._validateForm();
+        this.setState({
+            ['resultMsg.error']: errorsArray,
+        });
+        // save or update, if no errors
+        if(errorsArray.length === 0) {
+            this._handleUpdateForm();
+        }
+    }
+
+    _handleUpdateForm = () => {
+        const { form_fields, step } = this.state;
+        if(step === 2) {
+            /**
+              * (1) signUpUser - this also authorizes the user
+              * (2) registerDevice
+              * (3) finalizeLogin
+              * (4) - save training details TODO
+              */
+            let newUserObj = {};
+            newUserObj.onboarding_status = ['account_setup'];
+            newUserObj.email = form_fields.user.email;
+            newUserObj.password = form_fields.user.password;
+            newUserObj.cleared_to_play = form_fields.user.cleared_to_play;
+            newUserObj.biometric_data = form_fields.user.biometric_data;
+            newUserObj.personal_data = form_fields.user.personal_data;
+            newUserObj.role = form_fields.user.role;
+            newUserObj.system_type = form_fields.user.system_type;
+            newUserObj.injury_status = form_fields.user.injury_status;
+            console.log('newUserObj',newUserObj);
+            let newUserSportsObj = {};
+            newUserSportsObj.sports = form_fields.user.sports;
+            console.log('newUserSportsObj',newUserSportsObj);
+
+            this.props.signUpUser(newUserObj).then(response => {
+                console.log('response',response);
+                // CREATE USER AND REGISTER DEVICE
+                let { authorization, user } = response;
+                return (
+                    this.props.certificate && this.props.certificate.id
+                        ? Promise.resolve()
+                        : this.props.registerDevice()
+                )
+                    .then(() => this.props.finalizeLogin(user, {Email: form_fields.user.email, Password: form_fields.user.password}, authorization.jwt));
+            })
+                .then(response => {
+                    // SAVE TRAINING DETAILS
+                    // let { authorization, user } = response;
+                    // return this.props.();
+                    return response;
+                })
+                .then(() => this._handleNextStepLogic())
+                .catch((err) => {
+                    console.log(err);
+                    const error = AppAPI.handleError(err);
+                    return this.setState({
+                        ['resultMsg.error']: error,
+                    });
+                });
+        } else {
+            this._handleNextStepLogic();
+        }
+    }
+
+    _handleNextStepLogic = () => {
+        const { form_fields, step } = this.state;
         /*let newStep;
         if (
             step === 4
@@ -280,18 +349,9 @@ class Onboarding extends Component {
         }*/
         let newStep = step + 1;
         this.setState({
-            ['resultMsg.error']: errorsArray,
-            // isFormValid:         false,
-            // step:                newStep,
+            isFormValid: false,
+            step:        newStep,
         });
-        // save or update, if no errors
-        if(errorsArray.length === 0) {
-            this._handleUpdateForm();
-        }
-    }
-
-    _handleUpdateForm = () => {
-
     }
 
     _heightPressed = () => {

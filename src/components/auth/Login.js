@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:32:47 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:32:47
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-06-29 01:20:06
  */
@@ -190,13 +190,7 @@ class Login extends Component {
                     password: credentials.Password,
                 }, false).then(response => {
                     let { authorization, user } = response;
-                    return (
-                        authorization && authorization.expires && moment(authorization.expires) > moment.utc()
-                            ? Promise.resolve(response)
-                            : authorization && authorization.session_token
-                                ? this.props.authorizeUser(authorization, user, credentials)
-                                : Promise.reject('Unexpected response authorization')
-                    );
+                    return Promise.resolve(response);
                 })
                     .then(response => {
                         let { authorization, user } = response;

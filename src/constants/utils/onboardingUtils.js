@@ -124,8 +124,8 @@ const onboardingUtils = {
             && sport.positions.map(position => possiblePositions.includes(position))
             && possibleCompetitionLevels.includes(sport.competition_level)
             && sport.end_date.length > 0
-            && sport.season_end_month.length > 0
-            && sport.season_start_month.length > 0
+            // && sport.season_end_month.length > 0
+            // && sport.season_start_month.length > 0
             && sport.start_date.length > 0
         ) {
             error = '';
@@ -238,7 +238,7 @@ const onboardingUtils = {
         words = this.generateWords(num);
         return words;
     },
-    
+
     generateWords(number) {
         const LESS_THAN_TWENTY = [
             'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',

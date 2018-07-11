@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:30:58 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:30:58
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-06-28 11:53:11
  */
@@ -31,7 +31,8 @@ export default {
         ['authorize',       '/users/user/{userId}/authorize'],
         ['forgot_password', '/users/user/forgot_password'],
         ['login',           '/users/user/sign_in'], // If you change the key, update the reference below
-        ['register_device', '/users/device/{device_uuid}']
+        ['register_device', '/users/device/{device_uuid}'],
+        ['user',            '/v1/user'],
     ]),
 
     // Which 'endpoint' key deals with our tokens?
