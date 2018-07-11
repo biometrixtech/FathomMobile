@@ -215,15 +215,58 @@ const onboardingUtils = {
         }
     },
 
-    capitalizeFirstLetter(str) {
-        return str.replace(/^\w/, s => s.toUpperCase());
-    },
-
     formatPhoneNumber(s) {
         let s2 = (''+s).replace(/\D/g, '');
         let m = s2.match(/^(\d{3})(\d{3})(\d{4})$/);
         return (!m) ? null : '(' + m[1] + ') ' + m[2] + '-' + m[3];
     },
+
+    /**
+     * Converts an integer into words.
+     * If number is decimal, the decimals will be removed.
+     * @example toWords(12) => 'twelve'
+     * @param {number|string} number
+     * @param {boolean} [asOrdinal] - Deprecated, use toWordsOrdinal() instead!
+     * @returns {string}
+     */
+    numToWords(number) {
+        let words;
+        let num = parseInt(number, 10);
+        if (!isFinite(num)) {
+            throw new TypeError('Not a finite number: ' + number + ' (' + typeof number + ')');
+        }
+        words = this.generateWords(num);
+        return words;
+    },
+    
+    generateWords(number) {
+        const LESS_THAN_TWENTY = [
+            'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+            'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
+        ];
+        let remainder,word;
+        let words = arguments[1];
+        // We’re done
+        if (number === 0) {
+            return !words ? 'zero' : words.join(' ').replace(/,$/, '');
+        }
+        // First run
+        if (!words) {
+            words = [];
+        }
+        // If negative, prepend “minus”
+        if (number < 0) {
+            words.push('minus');
+            number = Math.abs(number);
+        }
+        if (number < 20) {
+            remainder = 0;
+            word = LESS_THAN_TWENTY[number];
+
+        }
+        words.push(word);
+        return this.generateWords(remainder, words);
+    }
 
 }
 

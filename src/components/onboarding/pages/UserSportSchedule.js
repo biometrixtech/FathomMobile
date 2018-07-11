@@ -15,7 +15,6 @@ import { StyleSheet, View } from 'react-native';
 
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppStyles, UserAccount as UserAccountConstants } from '../../../constants';
-import { onboardingUtils } from '../../../constants/utils';
 import { Text, FormLabel } from '../../custom';
 
 // import third-party libraries
@@ -113,7 +112,7 @@ class UserSportSchedule extends Component {
                     <View key={i} style={{paddingBottom: 20,}}>
                         <Text style={{textAlign: 'center', fontFamily: AppFonts.base.family, fontSize: AppFonts.h1.size, lineHeight: AppFonts.h1.lineHeight,}}>
                             <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{'This week I have '}</Text>
-                            <Text style={[styles.selectedText]}>{onboardingUtils.capitalizeFirstLetter(sport)}</Text>
+                            <Text style={[styles.selectedText]}>{_.capitalize(sport)}</Text>
                             <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' practice on '}</Text>
                             { user.training_schedule[sport].practice.days_of_week.length > 0 ?
                                 <Text style={[styles.selectedText]}>{user.training_schedule[sport].practice.days_of_week}</Text>

@@ -25,16 +25,10 @@ import {
 import { AppColors, AppSizes, AppStyles } from '../../../constants';
 import { FormInput, FormLabel, TabIcon, Text } from '../../custom';
 
-// import third-party libraries
-import { Input, Icon } from 'react-native-elements';
-
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     background: {
         width: AppSizes.screen.width,
-    },
-    inlineWrapper: {
-        flexDirection: 'row',
     },
     leftItem: {
         width: '50%',
@@ -61,7 +55,7 @@ const Wrapper = props => Platform.OS === 'ios' ?
 /* Component ==================================================================== */
 const UserAccountInfo = ({ handleFormChange, isPasswordSecure, setAccordionSection, toggleShowPassword, user }) => (
     <Wrapper>
-        <View style={[styles.inlineWrapper, {borderTopWidth: 1, borderTopColor: AppColors.border,}]}>
+        <View style={[AppStyles.row, {borderTopWidth: 1, borderTopColor: AppColors.border,}]}>
             <View style={[styles.leftItem]}>
                 <FormLabel labelStyle={{color: AppColors.border}}>{'First Name'}</FormLabel>
                 <FormInput
@@ -99,11 +93,11 @@ const UserAccountInfo = ({ handleFormChange, isPasswordSecure, setAccordionSecti
                 value={user.password}
             />
             <TabIcon
-                color={'black'} //AppColors.border}
+                color={AppColors.border}
+                containerStyle={[{position: 'absolute', top: 15, right: 25, width: '10%'}]}
                 icon={isPasswordSecure ? 'visibility' : 'visibility-off'}
                 onPress={toggleShowPassword}
                 size={24}
-                containerStyle={[{position: 'absolute', top: 15, right: 25, width: '10%'}]}
             />
         </View>
         <Text

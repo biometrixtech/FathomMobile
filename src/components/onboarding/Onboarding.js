@@ -97,7 +97,7 @@ class Onboarding extends Component {
                     agreed_terms_of_use:   null,
                     agreed_privacy_policy: null,
                     cleared_to_play:       null,
-                    onboarding_status:     '', // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
+                    onboarding_status:     [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
                     email:                 '',
                     password:              '',
                     biometric_data:        {

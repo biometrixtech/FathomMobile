@@ -11,11 +11,12 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, UserAccount as UserAccountConstants } from '../../../constants';
-import { Button, FormInput, FormLabel, Text } from '../../custom';
+import { AppColors, AppFonts, AppStyles, UserAccount as UserAccountConstants } from '../../../constants';
+import { Button, FormInput, FormLabel, TabIcon, Text } from '../../custom';
+import { onboardingUtils } from '../../../constants/utils';
 
 // import third-party libraries
 import DatePicker from 'react-native-datepicker';
@@ -24,8 +25,14 @@ import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    inlineWrapper: {
-        flexDirection: 'row',
+    androidViewContainer: {
+        borderBottomWidth: 1,
+        borderBottomColor: AppColors.border,
+        height:            40,
+        justifyContent:    'center',
+        marginRight:       20,
+        paddingLeft:       10,
+        width:             '100%',
     },
     leftItem: {
         width: '50%',
@@ -46,15 +53,17 @@ const styles = StyleSheet.create({
     },
     rightItem: {
         borderLeftWidth: 1,
-        borderLeftColor: AppColors.primary.grey.thirtyPercent,
+        borderLeftColor: AppColors.border,
         width:           '50%',
     },
     text: {
+        color:      AppColors.primary.grey.hundredPercent,
+        fontFamily: AppFonts.base.family,
         fontWeight: 'bold',
     },
     textWrapper: {
         alignItems:      'center',
-        backgroundColor: AppColors.primary.grey.thirtyPercent,
+        backgroundColor: '#F5F5F5',
         height:          50,
         justifyContent:  'center',
         marginTop:       10,
@@ -74,7 +83,7 @@ const UserSports = ({
             <View key={i}>
                 <View style={[AppStyles.row, styles.textWrapper]}>
                     <Text style={[styles.text]}>
-                        {`Sport #${i+1}`}
+                        {`SEASON ${onboardingUtils.numToWords(i+1).toUpperCase()}`}
                     </Text>
                     { i > 0 ?
                         <Button
@@ -88,9 +97,9 @@ const UserSports = ({
                         null
                     }
                 </View>
-                <View style={[styles.inlineWrapper]}>
+                <View style={[AppStyles.row]}>
                     <View style={[styles.leftItem]}>
-                        <FormLabel>{'Sport'}</FormLabel>
+                        <FormLabel labelStyle={{color: AppColors.border}}>{'Sport'}</FormLabel>
                         <RNPickerSelect
                             hideIcon={true}
                             items={UserAccountConstants.sports}
@@ -99,12 +108,12 @@ const UserSports = ({
                                 label: 'Select a Sport...',
                                 value: null,
                             }}
-                            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
+                            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS], viewContainer: [styles.androidViewContainer] , inputAndroid: [styles.pickerSelectAndroid]}}
                             value={sport.name}
                         />
                     </View>
                     <View style={[styles.rightItem]}>
-                        <FormLabel>{'Level of Play'}</FormLabel>
+                        <FormLabel labelStyle={{color: AppColors.border}}>{'Level of Play'}</FormLabel>
                         <RNPickerSelect
                             hideIcon={true}
                             items={UserAccountConstants.levelsOfPlay}
@@ -113,26 +122,36 @@ const UserSports = ({
                                 label: 'Select a Level...',
                                 value: null,
                             }}
-                            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
+                            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS], viewContainer: [styles.androidViewContainer] , inputAndroid: [styles.pickerSelectAndroid]}}
                             value={sport.competition_level}
                         />
                     </View>
                 </View>
-                <FormLabel>{'Positions'}</FormLabel>
-                <View style={styles.multiSelect}>
+                <FormLabel labelStyle={{color: AppColors.border}}>{'Positions'}</FormLabel>
+                <View style={{borderBottomWidth: 1, borderBottomColor: AppColors.border}}>
                     <SectionedMultiSelect
                         displayKey={'label'}
                         items={sport.name.length > 0 ? UserAccountConstants.positions[sport.name] : []}
                         onSelectedItemsChange={item => handleFormChange(i, 'positions', item)}
                         selectedItems={sport.positions}
-                        selectText={'Select Positions...'}
+                        selectText={'Select sport position(s)...'}
+                        selectToggleIconComponent={
+                            <TabIcon
+                                color={AppColors.border}
+                                icon={'add'}
+                                size={24}
+                            />
+                        }
                         showCancelButton={true}
+                        styles={{
+                            chipContainer: [{borderColor: AppColors.border}],
+                        }}
                         uniqueKey={'value'}
                     />
                 </View>
-                <View style={[styles.inlineWrapper]}>
+                <View style={[AppStyles.row]}>
                     <View style={[styles.leftItem]}>
-                        <FormLabel>{'Start Date'}</FormLabel>
+                        <FormLabel labelStyle={{color: AppColors.border}}>{'Start Date'}</FormLabel>
                         <DatePicker
                             cancelBtnText={'Cancel'}
                             confirmBtnText={'Confirm'}
@@ -147,7 +166,7 @@ const UserSports = ({
                         />
                     </View>
                     <View style={[styles.rightItem]}>
-                        <FormLabel>{'End Date'}</FormLabel>
+                        <FormLabel labelStyle={{color: AppColors.border}}>{'End Date'}</FormLabel>
                         <DatePicker
                             cancelBtnText={'Cancel'}
                             confirmBtnText={'Confirm'}
@@ -162,39 +181,10 @@ const UserSports = ({
                         />
                     </View>
                 </View>
-                <View style={[styles.inlineWrapper]}>
-                    <View style={[styles.leftItem]}>
-                        <FormLabel>{'Season Start Month'}</FormLabel>
-                        <RNPickerSelect
-                            hideIcon={true}
-                            items={UserAccountConstants.seasonStartEndMonths}
-                            onValueChange={(value) => handleFormChange(i, 'season_start_month', value)}
-                            placeholder={{
-                                label: 'Select Season Start Month...',
-                                value: null,
-                            }}
-                            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
-                            value={sport.season_start_month}
-                        />
-                    </View>
-                    <View style={[styles.rightItem]}>
-                        <FormLabel>{'Season End Month'}</FormLabel>
-                        <RNPickerSelect
-                            hideIcon={true}
-                            items={UserAccountConstants.seasonStartEndMonths}
-                            onValueChange={(value) => handleFormChange(i, 'season_end_month', value)}
-                            placeholder={{
-                                label: 'Select Season End Month...',
-                                value: null,
-                            }}
-                            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
-                            value={sport.season_end_month}
-                        />
-                    </View>
-                </View>
-                <TouchableOpacity onPress={() => addAnotherSport(i)} style={[styles.textWrapper]}>
-                    <Text style={[styles.text, {paddingLeft: 20}]}>{'+ ADD ANOTHER SPORT'}</Text>
-                </TouchableOpacity>
+                <Text
+                    onPress={() => addAnotherSport(i)}
+                    style={[AppStyles.paddingVertical, AppStyles.continueButton]}
+                >{'+ ADD ANOTHER TRAINING SEASON'}</Text>
             </View>
         )
     })

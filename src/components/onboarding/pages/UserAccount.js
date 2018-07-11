@@ -60,7 +60,7 @@ class UserAccount extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            accordionSection: 1, // TODO: return to - false,
+            accordionSection: 2, // TODO: return to - false,
             coachContent:     '',
             isPasswordSecure: true,
         };
@@ -139,6 +139,7 @@ class UserAccount extends Component {
             newSportsArray.push(newSportArray);
             handleFormChange('sports', newSportsArray);
         } else {
+            // TODO: put error in COACH.js
             Alert.alert(
                 'Error',
                 'Please make sure to fill out all the sports related information before trying to add a new one!',
