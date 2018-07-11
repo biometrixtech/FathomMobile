@@ -25,7 +25,7 @@ import { AppColors, AppSizes, AppStyles } from '../../../constants';
 import { TabIcon, Text } from '../../custom';
 
 // import third-party libraries
-import { CheckBox } from 'react-native-elements';
+// import { CheckBox } from 'react-native-elements';
 import moment from 'moment';
 
 /* Component ==================================================================== */
@@ -43,12 +43,12 @@ const UserClearedQuestion = ({
     user,
 }) => (
     <View style={[componentStep === currentStep ? {flex: 1} : {display: 'none'}]}>
-        <View style={[AppStyles.paddingHorizontalSml]}>
-            <Text style={[AppSizes.h2, AppStyles.textCenterAligned, AppStyles.textBold]}>{'You need to be cleared to run by a doctor to start training'}</Text>
-            <Text style={[AppSizes.h2, AppStyles.textCenterAligned]}>{'Do you confirm that you are eligable to start training?'}</Text>
+        <View style={[AppStyles.containerCentered, AppStyles.paddingHorizontalLrg, {flex: 1}]}>
+            <Text style={[AppStyles.h2, AppStyles.textCenterAligned, AppStyles.textBold]}>{'You need to be cleared to run by a doctor to start training'}</Text>
+            <Text style={[AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{'Do you confirm that you are eligable to start training?'}</Text>
         </View>
-        <View style={{position: 'absolute', left: 0, right: 0, bottom: 0,}}>
-            <View style={[AppStyles.containerCentered, {flexDirection: 'row'}]}>
+        <View>
+            {/*<View style={[AppStyles.containerCentered, {flexDirection: 'row'}]}>
                 <View style={{width: '90%', marginRight: 5}}>
                     <CheckBox
                         title={'I accept the Terms of Use'}
@@ -77,23 +77,30 @@ const UserClearedQuestion = ({
                         onPress={togglePrivacyPolicyWebView}
                     />
                 </View>
-            </View>
-            { isFormValid ?
-                <View>
-                    <TouchableOpacity onPress={() => {nextStep(); handleFormChange('cleared_to_play', moment().format());}} style={[AppStyles.nextButtonWrapper]}>
-                        <Text style={[AppStyles.nextButtonText]}>{'Yes, I confirm'}</Text>
+            </View>*/}
+            <Text style={[AppStyles.containerCentered, AppStyles.padding, AppStyles.textCenterAligned, AppStyles.row]}>
+                <Text
+                    onPress={toggleTermsWebView}
+                    style={[AppStyles.link]}
+                >{'Terms of use'}</Text>
+                <Text>{' and '}</Text>
+                <Text
+                    onPress={togglePrivacyPolicyWebView}
+                    style={[AppStyles.link]}
+                >{'Privacy Policy'}</Text>
+            </Text>
+            <View>
+                <TouchableOpacity onPress={() => {nextStep(); handleFormChange('cleared_to_play', moment().format());}} style={[AppStyles.nextButtonWrapper]}>
+                    <Text style={[AppStyles.nextButtonText]}>{'Yes, I confirm'}</Text>
+                </TouchableOpacity>
+                { user.injury_status === 'healthy' ?
+                    null
+                    :
+                    <TouchableOpacity onPress={() => {notClearedBtnPressed(); handleFormChange('cleared_to_play', moment().format());}} style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.thirtyPercent}]}>
+                        <Text style={[AppStyles.nextButtonText, {color: AppColors.black}]}>{'No, I haven\'t been seen by a doctor'}</Text>
                     </TouchableOpacity>
-                    { user.injury_status === 'healthy' ?
-                        null
-                        :
-                        <TouchableOpacity onPress={() => {notClearedBtnPressed(); handleFormChange('cleared_to_play', moment().format());}} style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.thirtyPercent}]}>
-                            <Text style={[AppStyles.nextButtonText, {color: AppColors.black}]}>{'No, I haven\'t been seen by a doctor'}</Text>
-                        </TouchableOpacity>
-                    }
-                </View>
-                :
-                null
-            }
+                }
+            </View>
         </View>
     </View>
 );

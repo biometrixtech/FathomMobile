@@ -184,8 +184,8 @@ export default {
         fontWeight: '900',
     },
     link: {
-        textDecorationLine: 'underline',
-        color:              Colors.secondary.blue.hundredPercent,
+        color: Colors.secondary.blue.hundredPercent,
+        // textDecorationLine: 'underline',
     },
     subtext: {
         fontFamily: Fonts.base.family,
