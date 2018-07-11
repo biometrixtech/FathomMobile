@@ -266,7 +266,16 @@ const onboardingUtils = {
         }
         words.push(word);
         return this.generateWords(remainder, words);
-    }
+    },
+
+    inchesToMeters(inches) {
+        let inToFeet = parseFloat(inches) / 12;
+        return (inToFeet / 3.2808).toFixed(2);
+    },
+
+    lbsToKgs(lbs) {
+        return (parseFloat(lbs) / 2.2046).toFixed(2);
+    },
 
 }
 

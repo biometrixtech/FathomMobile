@@ -108,10 +108,12 @@ class Onboarding extends Component {
                     biometric_data:    {
                         gender: '',
                         height: {
-                            in: 71
+                            in: 71,
+                            m:  0,
                         },
                         mass: {
-                            lb: ''
+                            kg: '',
+                            lb: '',
                         }
                     },
                     personal_data: {
@@ -289,8 +291,9 @@ class Onboarding extends Component {
             newUserObj.onboarding_status = ['account_setup'];
             newUserObj.email = form_fields.user.email;
             newUserObj.password = form_fields.user.password;
-            newUserObj.cleared_to_play = form_fields.user.cleared_to_play;
             newUserObj.biometric_data = form_fields.user.biometric_data;
+            newUserObj.biometric_data.mass.kg = onboardingUtils.lbsToKgs(form_fields.user.biometric_data.mass.lb);
+            newUserObj.biometric_data.height.m = onboardingUtils.inchesToMeters(form_fields.user.biometric_data.height.in);
             newUserObj.personal_data = form_fields.user.personal_data;
             newUserObj.role = form_fields.user.role;
             newUserObj.system_type = form_fields.user.system_type;

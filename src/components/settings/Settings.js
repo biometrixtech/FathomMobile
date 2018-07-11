@@ -58,7 +58,7 @@ class Settings extends Component {
                 />
                 <ListItem
                     leftIcon={{ name: 'power-settings-new', color: AppColors.primary.grey.hundredPercent }}
-                    onPress={() => Promise.resolve(this.props.logout()).then(() => Actions.login())}
+                    onPress={() => Promise.resolve(this.props.logout()).then(() => Actions.start())}
                     title='Logout'
                 />
             </View>

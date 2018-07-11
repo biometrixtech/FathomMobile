@@ -32,7 +32,7 @@ export default {
         ['forgot_password', '/users/user/forgot_password'],
         ['login',           '/users/user/sign_in'], // If you change the key, update the reference below
         ['register_device', '/users/device/{device_uuid}'],
-        ['user',            '/v1/user'],
+        ['user',            '/users/user'],
     ]),
 
     // Which 'endpoint' key deals with our tokens?

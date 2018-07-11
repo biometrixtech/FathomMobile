@@ -28,6 +28,12 @@ import Collapsible from 'react-native-collapsible';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    headerLine: {
+        borderLeftColor: AppColors.border,
+        borderLeftWidth: 1,
+        height:          20,
+        marginLeft:      10,
+    },
     headerWrapper: {
         flexDirection: 'row',
         paddingTop:    10,
@@ -90,7 +96,7 @@ class UserAccount extends Component {
                     <Text style={[styles.title, isFormValid ? {color: AppColors.primary.yellow.hundredPercent} : {color: AppColors.black}]}>{section.header}</Text>
                 </View>
                 { section.index === 1 || section.index === 2 ?
-                    <Text style={{width: 20, height: 20, textAlign: 'center', color: AppColors.primary.grey.thirtyPercent,}}>|</Text>
+                    <View style={[styles.headerLine]}></View>
                     :
                     null
                 }
