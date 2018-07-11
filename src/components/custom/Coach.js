@@ -6,10 +6,12 @@
     />
  *
  */
-import LinearGradient from 'react-native-linear-gradient';
-import PropTypes from 'prop-types';
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import PropTypes from 'prop-types';
+ import { Image, StyleSheet, Text, View } from 'react-native';
+
+// import third-parties libraries
+import LinearGradient from 'react-native-linear-gradient';
 
 // Consts
 import { AppColors, AppStyles } from '../../constants/';
