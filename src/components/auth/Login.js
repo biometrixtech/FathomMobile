@@ -190,7 +190,13 @@ class Login extends Component {
                     password: credentials.Password,
                 }, false).then(response => {
                     let { authorization, user } = response;
-                    return Promise.resolve(response);
+                    return (
+                        authorization && authorization.expires && moment(authorization.expires) > moment.utc()
+                            ? Promise.resolve(response)
+                            : authorization && authorization.session_token
+                                ? this.props.authorizeUser(authorization, user, credentials)
+                                : Promise.reject('Unexpected response authorization')
+                    );
                 })
                     .then(response => {
                         let { authorization, user } = response;
