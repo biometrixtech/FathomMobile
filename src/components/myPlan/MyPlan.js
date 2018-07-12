@@ -14,6 +14,7 @@ import {
 
 // import third-party libraries
 import moment from 'moment';
+import SplashScreen from 'react-native-splash-screen';
 
 // Consts, Libs, and Utils
 import { AppColors, AppStyles, AppSizes, } from '../../constants';
@@ -50,6 +51,10 @@ class MyPlan extends Component {
             //     }
             // ]
         };
+    }
+
+    componentDidMount = () => {
+        SplashScreen.hide();
     }
 
     _onDateSelected = (date) => {
