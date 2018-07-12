@@ -123,32 +123,7 @@ class Onboarding extends Component {
                     injuries:          {}, // COMING SOON
                     training_groups:   [], // COMING SOON
                     training_schedule: {
-                        sports: [
-                            // {
-                            //     sport:    'soccer',
-                            //     practice: {
-                            //         days_of_week: [],
-                            //         duration:     '',
-                            //         skipped:      false, // app only config that will need to be interjected from api response
-                            //     },
-                            //     competition: {
-                            //         days_of_week: [],
-                            //         skipped:      false, // app only config that will need to be interjected from api response
-                            //     },
-                            // },
-                            // {
-                            //     sport:    'baseball',
-                            //     practice: {
-                            //         days_of_week: [],
-                            //         duration:     '',
-                            //         skipped:      false, // app only config that will need to be interjected from api response
-                            //     },
-                            //     competition: {
-                            //         days_of_week: [],
-                            //         skipped:      false, // app only config that will need to be interjected from api response
-                            //     },
-                            // },
-                        ],
+                        sports: [],
                     },
                     training_strength_conditioning: {
                         activities:   [],

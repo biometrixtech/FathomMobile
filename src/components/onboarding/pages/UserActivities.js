@@ -87,8 +87,8 @@ class UserActivities extends Component {
         this.setState({ selectedDaysIndexes: newIndexesArray });
         // dynamically update our training_strength_conditioning object for the user
         let newActivitiesDays = _.cloneDeep(user.training_strength_conditioning);
-        newActivitiesDays.days = [];
-        newActivitiesDays.days.push( newIndexesArray.map(value => UserAccountConstants.possibleShorthandDaysOfWeek[value]) );
+        newActivitiesDays.days_of_week = [];
+        newActivitiesDays.days_of_week.push( newIndexesArray.map(value => UserAccountConstants.possibleShorthandDaysOfWeek[value]) );
         handleFormChange('training_strength_conditioning', newActivitiesDays);
     };
 
@@ -105,8 +105,9 @@ class UserActivities extends Component {
         this.setState({ selectedTotalDurationsIndexes: newIndexesArray });
         // dynamically update our training_strength_conditioning object for the user
         let newActivitiesDurations = _.cloneDeep(user.training_strength_conditioning);
-        newActivitiesDurations.durations = _.meanBy(newIndexesArray, i => UserAccountConstants.activitiesTimes[i].value);
-        newActivitiesDurations.totalDurations = newIndexesArray.map(value => UserAccountConstants.activitiesTimes[value].label).join(',');
+        // TODO: unsure which of these should be used for the duration key in the new data structure
+        newActivitiesDurations.duration = _.meanBy(newIndexesArray, i => UserAccountConstants.activitiesTimes[i].value);
+        // newActivitiesDurations.totalDurations = newIndexesArray.map(value => UserAccountConstants.activitiesTimes[value].label).join(',');
         handleFormChange('training_strength_conditioning', newActivitiesDurations);
     };
 
@@ -125,20 +126,20 @@ class UserActivities extends Component {
             <View style={[styles.wrapper, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
                 <Text style={{textAlign: 'center', fontFamily: AppFonts.base.family, fontSize: AppFonts.h1.size, lineHeight: AppFonts.h1.lineHeight,}}>
                     <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{'I do '}</Text>
-                    { user.training_strength_conditioning.activities.length > 0 ?
+                    { user.training_strength_conditioning.activities.length ?
                         <Text style={[styles.selectedText]}>{selectedActvitiesIndexes.map(value => UserAccountConstants.possibleActivities.label[value]).join(', ')}</Text>
                         :
                         <Text style={[styles.unselectedText]}>{'activity'}</Text>
                     }
                     <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' on '}</Text>
-                    { user.training_strength_conditioning.days.length > 0 ?
-                        <Text style={[styles.selectedText]}>{user.training_strength_conditioning.days.join(', ')}</Text>
+                    { user.training_strength_conditioning.days_of_week.length ?
+                        <Text style={[styles.selectedText]}>{user.training_strength_conditioning.days_of_week.join(', ')}</Text>
                         :
                         <Text style={[styles.unselectedText]}>{'day(s)'}</Text>
                     }
                     <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' for '}</Text>
-                    { user.training_strength_conditioning.totalDurations.length > 0 ?
-                        <Text style={[styles.selectedText]}>{user.training_strength_conditioning.totalDurations}</Text>
+                    { user.training_strength_conditioning.duration ?
+                        <Text style={[styles.selectedText]}>{user.training_strength_conditioning.duration}</Text>
                         :
                         <Text style={[styles.unselectedText]}>{'minutes'}</Text>
                     }

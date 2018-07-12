@@ -116,9 +116,10 @@ class UserAccount extends Component {
         handleFormChange('sports', newSportsArray);
         if(name === 'name') {
             let newTrainingScheduleArray = user.training_schedule;
-            newTrainingScheduleArray[value] = {};
-            newTrainingScheduleArray[value].practice = {days_of_week: '', duration_minutes: ''};
-            newTrainingScheduleArray[value].competition = {days_of_week: ''};
+            newTrainingScheduleArray.sports.push(value);
+            newTrainingScheduleArray.sports[value] = {};
+            newTrainingScheduleArray.sports[value].practice = {days_of_week: '', duration: '', skipped: false}; // false is an app only config that will need to be interjected from api response
+            newTrainingScheduleArray.sports[value].competition = {days_of_week: '', skipped: false}; // false is an app only config that will need to be interjected from api response
             handleFormChange('training_schedule', newTrainingScheduleArray);
         }
     };

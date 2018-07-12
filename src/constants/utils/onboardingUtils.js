@@ -178,10 +178,9 @@ const onboardingUtils = {
         let errorsArray = [];
         let isValid;
         if(
-            training_strength_conditioning.activities.length > 0
-            && training_strength_conditioning.days.length > 0
-            && training_strength_conditioning.durations > 0
-            && training_strength_conditioning.totalDurations.length > 0
+            training_strength_conditioning.activities.length
+            && training_strength_conditioning.days_of_week.length
+            && training_strength_conditioning.duration
         ) {
             isValid = true;
         } else {
