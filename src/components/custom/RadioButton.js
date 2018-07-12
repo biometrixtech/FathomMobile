@@ -25,32 +25,28 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const RadioButton = ({ label, onChange, options, value }) => (
-    <View style={[styles.view]}>
-        <FormLabel>{label}</FormLabel>
+const RadioButton = ({ color, label, onChange, options, style, value }) => (
+    <View style={[styles.view, style]}>
+        {label && label.length ? <FormLabel>{label}</FormLabel> : null}
         { options.map((option, index) => (
             <TouchableOpacity
                 key={index}
-                onPress={() => {
-                    onChange(option.value);
-                }}
+                onPress={() => onChange(option.value)}
                 style={[
                     AppStyles.containerCentered,
                     styles.textWrapper,
-                    {width: `${100/options.length}%`},
-                    [
-                        value === option.value ?
-                            {backgroundColor: AppColors.secondary.blue.eightyPercent}
-                            :
-                            {}
-                    ],
+                    {width: `${95/options.length}%`},
+                    value === option.value ?
+                        {backgroundColor: AppColors.secondary.blue.eightyPercent}
+                        :
+                        {backgroundColor: color},
                 ]}
             >
                 <Text style={
                     value === option.value ?
                         {backgroundColor: AppColors.transparent, color: AppColors.white}
                         :
-                        {}
+                        {color: AppColors.white}
                 }>
                     {option.label}
                 </Text>
@@ -60,12 +56,16 @@ const RadioButton = ({ label, onChange, options, value }) => (
 );
 
 RadioButton.propTypes = {
+    color:    PropTypes.string,
     label:    PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     options:  PropTypes.array.isRequired,
+    style:    PropTypes.object,
     value:    PropTypes.bool,
 };
 RadioButton.defaultProps = {
+    color: null,
+    style: {},
     value: null,
 };
 RadioButton.componentName = 'RadioButton';

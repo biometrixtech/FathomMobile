@@ -11,21 +11,36 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 // Consts and Libs
-import { AppStyles, UserAccount as UserAccountConstants } from '../../../constants';
-import { RadioButton } from '../../custom';
+import { AppColors,AppStyles, UserAccount as UserAccountConstants } from '../../../constants';
+import { RadioButton, Text } from '../../custom';
+
+/* Styles ==================================================================== */
+const styles = StyleSheet.create({
+    wrapper: {
+        paddingLeft:  20,
+        paddingRight: 20,
+    }
+});
 
 /* Component ==================================================================== */
 const UserWorkoutQuestion = ({ componentStep, currentStep, handleFormChange, user }) => (
-    <View style={[AppStyles.paddingHorizontalSml, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
-        <RadioButton
-            label={'Do you workout outside of practice?'}
-            onChange={(option) => handleFormChange('workout_outside_practice', option)}
-            options={UserAccountConstants.workoutOutsidePracticeOptions}
-            value={user.workout_outside_practice}
-        />
+    <View style={[AppStyles.paddingHorizontalSml, styles.wrapper, [componentStep === currentStep ? {flex: 1} : {display: 'none'}] ]}>
+        <View style={{flex: 1, justifyContent: 'center'}}>
+            <Text h1 style={{color: AppColors.black, textAlign: 'center'}}>{'Do you workout'}</Text>
+            <Text h1 style={{color: AppColors.black, textAlign: 'center'}}>{'outside of'}</Text>
+            <Text h1 style={{color: AppColors.black, textAlign: 'center'}}>{'practice?'}</Text>
+            <RadioButton
+                color={`${AppColors.primary.grey.eightyPercent}80`}
+                label={''}
+                onChange={(option) => handleFormChange('workout_outside_practice', option)}
+                options={UserAccountConstants.workoutOutsidePracticeOptions}
+                style={{justifyContent: 'space-evenly'}}
+                value={user.workout_outside_practice}
+            />
+        </View>
     </View>
 );
 
