@@ -46,9 +46,9 @@ const getMyPlan = (userId, startDate, endDate) => {
 /**
   * Get Readiness Survey Data
   */
-const postReadinessSurvey = (userId, startDate, endDate) => {
+const postReadinessSurvey = (dailyReadinessObj) => {
     return dispatch => new Promise((resolve, reject) => {
-        return AppAPI.post_readiness_survey.post(false, {})
+        return AppAPI.post_readiness_survey.post(false, dailyReadinessObj)
             .then((myPlanData) => {
                 // dispatch({
                 //     type: Actions.USER_REPLACE,

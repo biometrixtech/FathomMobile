@@ -37,12 +37,12 @@ const SoreBodyPart = ({
     } else if (bodyPartGroup === 'muscle') {
         severityString = MyPlanConstants.muscleLevels[severityValue].toUpperCase();
     }
-    let bodyPartImage;
-    try {
-        // bodyPartImage = require(`../../../constants/assets/images/body/${bodyPartMap.image[bodyPart.side]}`);
-    } catch (e) {
-        // bodyPartImage = require(`../../../constants/assets/images/body/${bodyPartMap.image[2]}`);
-    }
+    // let bodyPartImage;
+    // try {
+    //     bodyPartImage = require(`../../../constants/assets/images/body/${bodyPartMap.image[bodyPart.side]}`);
+    // } catch (e) {
+    //     bodyPartImage = require(`../../../constants/assets/images/body/${bodyPartMap.image[2]}`);
+    // }
     return(
         <View>
             <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>

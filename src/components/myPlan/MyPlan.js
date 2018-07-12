@@ -56,8 +56,8 @@ class MyPlan extends Component {
                 // date_time: '2018-07-03 10:42:20.1234',
                 // user_id:   '02cb7965-7921-493a-80d4-6b278c928fad',
                 soreness: [
-                //     {body_part: 8, severity: 2},
-                //     {body_part: 14, severity: 3},
+                //     {body_part: 8, severity: 2, side: 0-2},
+                //     {body_part: 14, severity: 3, side: 0-2},
                 ],
                 sleep_quality: 0,
                 readiness:     0,
@@ -109,10 +109,6 @@ class MyPlan extends Component {
         // console.log(name, value);
         let newFormFields;
         if(name === 'soreness' && bodyPart) {
-            // soreness: [
-            //     {body_part: 8, severity: 2, side: 0-2},
-            //     {body_part: 14, severity: 3, side: 0-2},
-            // ],
             let newSorenessFields = _.cloneDeep(this.state.dailyReadiness.soreness);
             if(_.findIndex(this.state.dailyReadiness.soreness, (o) => o.body_part === bodyPart) > -1) {
                 // body part already exists
@@ -135,9 +131,11 @@ class MyPlan extends Component {
     }
 
     _handleReadinessSurveySubmit = () => {
-        let userId = this.props.user.id || '02cb7965-7921-493a-80d4-6b278c928fad';
-        console.log(this.state.soreBodyParts);
-        /*this.props.postReadinessSurvey(userId,)
+        let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+        newDailyReadiness.user_id = this.props.user.id || '02cb7965-7921-493a-80d4-6b278c928fad';
+        newDailyReadiness.date_time = moment().format();
+        console.log('newDailyReadiness',newDailyReadiness);
+        /*this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
                 // console.log('response', response);
             })
@@ -151,7 +149,27 @@ class MyPlan extends Component {
         console.log(`${selectedDate.calendar()} selected`);
     }
 
+    _handleAreaOfSorenessClick = (areaClicked, side) => {
+        let newSorenessFields = _.cloneDeep(this.state.dailyReadiness.soreness);
+        if(_.findIndex(this.state.dailyReadiness.soreness, (o) => o.body_part === areaClicked) > -1) {
+            // body part already exists
+            newSorenessFields = _.filter(newSorenessFields, (o) => o.body_part !== areaClicked);
+        } else {
+            // doesn't exist, create new object
+            let newSorenessPart = {};
+            newSorenessPart.body_part = areaClicked;
+            newSorenessPart.side = side;
+            newSorenessPart.severity = 0;
+            newSorenessFields.push(newSorenessPart);
+        }
+        let newFormFields = _.update( this.state.dailyReadiness, 'soreness', () => newSorenessFields);
+        this.setState({
+            dailyReadiness: newFormFields
+        });
+    }
+
     render = () => {
+        console.log(this.state.dailyReadiness);
         return (
             <View style={[styles.background]}>
                 <Text>MY PLAN</Text>
@@ -200,6 +218,7 @@ class MyPlan extends Component {
                 >
                     <ReadinessSurvey
                         dailyReadiness={this.state.dailyReadiness}
+                        handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handleDailyReadinessFormChange}
                         handleFormSubmit={this._handleReadinessSurveySubmit}
                         soreBodyParts={this.state.soreBodyParts || {}} // TODO: this needs to come from the reducer
