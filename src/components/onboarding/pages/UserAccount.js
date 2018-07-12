@@ -24,7 +24,6 @@ import { UserAccountAbout, UserAccountInfo, UserSports } from './';
 // import third-party libraries
 import _ from 'lodash';
 import Accordion from 'react-native-collapsible/Accordion';
-import Collapsible from 'react-native-collapsible';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -166,7 +165,11 @@ class UserAccount extends Component {
     _setAccordionSection = (section, nextStep) => {
         const { user } = this.props;
         let errorsArray = [];
-        if(nextStep) {
+        if(section === false && !nextStep) {
+            // they're all closed
+            this.setState({ coachContent: 'Please select the ACCOUNT INFORMATION section below to get started.' });
+            this.setState({ accordionSection: false });
+        } else if(nextStep) {
             // Validation to make sure we can go to the next step
             if(section === 0) {
                 errorsArray = onboardingUtils.isUserAccountInformationValid(user).errorsArray;
@@ -265,7 +268,6 @@ class UserAccount extends Component {
                     <Accordion
                         activeSection={this.state.accordionSection}
                         onChange={this._setAccordionSection}
-                        onHeaderClicked={this._onAccordionHeaderClicked}
                         renderContent={this._renderContent}
                         renderHeader={this._renderHeader}
                         sections={SECTIONS}

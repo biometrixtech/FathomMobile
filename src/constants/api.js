@@ -33,6 +33,7 @@ export default {
         ['login',           '/users/user/sign_in'], // If you change the key, update the reference below
         ['register_device', '/users/device/{device_uuid}'],
         ['user',            '/users/user'],
+        ['athlete_season',  '/plans/athlete_season'],
     ]),
 
     // Which 'endpoint' key deals with our tokens?

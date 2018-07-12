@@ -1,8 +1,8 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:20:41 
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 11:52:24
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:20:41
+ * @Last Modified by: Mazen Chami
+ * @Last Modified time: 2018-07-12 09:23:00
  */
 
 export default {
@@ -18,6 +18,9 @@ export default {
     START_REQUEST:           'START_REQUEST',
     STOP_REQUEST:            'STOP_REQUEST',
     USER_REPLACE:            'USER_REPLACE',
+    // MY PLAN
+    ATHLETE_SEASON_SUCCESS:  'ATHLETE_SEASON_SUCCESS',
+    ATHLETE_SEASON_FAILED:   'ATHLETE_SEASON_FAILED',
     // BLE
     ACCESSORY_RESET:         'ACCESSORY_RESET',
     ASSIGN_KIT_NAME:         'ASSIGN_KIT_NAME',

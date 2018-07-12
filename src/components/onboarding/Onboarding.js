@@ -76,6 +76,7 @@ class Onboarding extends Component {
     static componentName = 'Onboarding';
 
     static propTypes = {
+        athleteSeason:  PropTypes.func.isRequired,
         finalizeLogin:  PropTypes.func.isRequired,
         registerDevice: PropTypes.func.isRequired,
         signUpUser:     PropTypes.func.isRequired,
@@ -300,9 +301,17 @@ class Onboarding extends Component {
             newUserObj.injury_status = form_fields.user.injury_status;
             console.log('newUserObj',newUserObj);
             let newUserSportsObj = {};
-            newUserSportsObj.sports = form_fields.user.sports;
+            newUserSportsObj.seasons = [];
+            _.map(form_fields.user.sports, (sport, index) => {
+                let newSeason = {};
+                newSeason.sport = sport.name;
+                newSeason.competition_level = sport.competition_level;
+                newSeason.start_date = moment(sport.start_date, 'MM/DD/YYYY').format('YYYY-MM');
+                newSeason.end_date = moment(sport.end_date, 'MM/DD/YYYY').format('YYYY-MM');
+                newSeason.positions = sport.positions;
+                newUserSportsObj.seasons.push(newSeason);
+            });
             console.log('newUserSportsObj',newUserSportsObj);
-
             this.props.signUpUser(newUserObj).then(response => {
                 console.log('response',response);
                 // CREATE USER AND REGISTER DEVICE
@@ -316,9 +325,9 @@ class Onboarding extends Component {
             })
                 .then(response => {
                     // SAVE TRAINING DETAILS
-                    // let { authorization, user } = response;
-                    // return this.props.();
-                    return response;
+                    let { user } = response;
+                    newUserSportsObj.user_id = user.id;
+                    return this.props.athleteSeason(newUserSportsObj);
                 })
                 .then(() => this._handleNextStepLogic())
                 .catch((err) => {

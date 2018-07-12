@@ -1,27 +1,27 @@
 /*
- * @Author: Vir Desai
- * @Date: 2018-04-23 03:55:33
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 11:24:35
+ * @Author: Mazen Chami
+ * @Date: 2018-07-12 09:00:00
+ * @Last Modified by: Mazen Chami
+ * @Last Modified time: 2018-07-12 09:00:00
  */
 
 /**
- * User Reducer
+ * My Plan Reducer
  */
 
 import { Actions } from '../constants/';
 
-import Store from '../store/user';
+import Store from '../store/plan';
 
 const initialState = Store;
 
 export default function userReducer(state = initialState, action) {
     switch (action.type) {
-    case Actions.USER_REPLACE:
+    case Actions.ATHLETE_SEASON_SUCCESS:
         return  Object.assign({}, state, {
             ...action.data,
         });
-    case Actions.LOGOUT:
+    case Actions.ATHLETE_SEASON_FAILED:
         return initialState;
     case Actions.START_REQUEST:
         return Object.assign({}, state, {
