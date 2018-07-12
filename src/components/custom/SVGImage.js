@@ -2,13 +2,13 @@
  * @Author: Vir Desai 
  * @Date: 2018-07-12 18:48:09 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-12 18:56:32
+ * @Last Modified time: 2018-07-12 19:08:55
  */
 
 /**
  * SVGImage
  *
-     <SVGImage svg={height: 100, width: 100} image={source: '../some/image/path.svg'} />
+     <SVGImage svg={height: 100, width: 100} image={source: require('../some/image/path.svg')} />
  *
  */
 import React, { Component } from 'react';
@@ -31,7 +31,7 @@ class SVGImage extends Component {
         // Defaults
         const props = {
             ...this.props.image,
-            href: require(this.props.image.source) // just a guess if that works or not
+            href: this.props.image.source // just a guess if that works or not
         };
 
         return props;

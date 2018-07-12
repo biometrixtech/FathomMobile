@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:06 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-09 00:49:11
+ * @Last Modified time: 2018-07-12 19:01:34
  */
 
 /**
@@ -22,11 +22,10 @@ const brand = {
     primary: {
         // Smokey Grey
         grey: {
-            hundredPercent:     '#2B2B2B',
-            eightyPercent:      '#3A3A3A',
-            seventyFivePercent: '#505050',
-            fiftyPercent:       '#757575',
-            thirtyPercent:      '#D5D5D5',
+            hundredPercent: '#505050',
+            fiftyPercent:   '#757575',
+            thirtyPercent:  '#D5D5D5',
+            twentyPercent:  '#F5F5F5',
         },
         // Medal Gold
         yellow: {
@@ -43,6 +42,7 @@ const brand = {
         // Blood Sweet & Tears
         red: {
             hundredPercent: '#972C2F',
+            eightyPercent:  '#A44648',
             seventyPercent: '#B66B6D',
             fiftyPercent:   '#CB9597',
         },
@@ -55,13 +55,24 @@ const brand = {
         // Fathom Blue
         blue: {
             hundredPercent: '#0B587C',
-            eightyPercent:  '#17678C',
+            eightyPercent:  '#17678B',
             seventyPercent: '#548AA3',
             fiftyPercent:   '#85ACBE',
             thirtyPercent:  '#B6CDD8',
         }
     }
 };
+
+const sliders = {
+    slider: [
+        brand.primary.yellow.hundredPercent, // 0
+        brand.secondary.blue.fiftyPercent, // 1
+        brand.secondary.blue.seventyPercent, // 2
+        brand.secondary.blue.eightyPercent, // 3
+        brand.secondary.red.seventyPercent, // 4
+        brand.secondary.red.eightyPercent, // 5
+    ]
+}
 
 const borders = {
     border: brand.primary.grey.hundredPercent,
@@ -77,7 +88,8 @@ const tabbar = {
 
 export default {
     ...app,
-    ...brand,
     ...borders,
+    ...brand,
+    ...sliders,
     ...tabbar,
 };

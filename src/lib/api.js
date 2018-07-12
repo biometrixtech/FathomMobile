@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:16:44 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:16:44
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-10 01:40:48
  */
@@ -105,7 +105,8 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
     const params = inputParams;
     let currentState = store.getState();
     let environment = currentState.init.environment;
-    let jwt = currentState.init.jwt;
+    // TODO: REMOVE STRING BELOW!!!!!!! WARNING!!!!!!!!
+    let jwt = currentState.init.jwt || 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMDJjYjc5NjUtNzkyMS00OTNhLTgwZDQtNmIyNzhjOTI4ZmFkIiwiY3JlYXRlZF9hdCI6IjIwMTgtMDEtMDQgMTU6MDI6NDIgLTA1MDAiLCJzaWduX2luX21ldGhvZCI6bnVsbH0.xH8zpcdoGI3JDjpt39jvNmDxUmk1Kh9tVZDGUYAmzX0';
     let hostname = '';
 
     return new Promise(async (resolve, reject) => {

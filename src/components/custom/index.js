@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:08:33
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-12 18:49:09
+ * @Last Modified time: 2018-07-12 18:58:58
  */
 
 /**
@@ -14,6 +14,7 @@ import Button from './Button';
 import CalendarStrip from './CalendarStrip';
 import Card from './Card';
 import Coach from './Coach';
+import FathomSlider from './FathomSlider';
 import FormInput from './FormInput';
 import FormLabel from './FormLabel';
 import Indicator from './Indicator';
@@ -34,6 +35,7 @@ export {
     CalendarStrip,
     Card,
     Coach,
+    FathomSlider,
     FormInput,
     FormLabel,
     Indicator,

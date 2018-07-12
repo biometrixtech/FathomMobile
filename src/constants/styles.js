@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:19:33
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 14:55:28
+ * @Last Modified time: 2018-07-12 19:05:28
  */
 
 /**
@@ -211,6 +211,18 @@ export default {
         paddingVertical:   Sizes.padding,
         paddingHorizontal: Sizes.padding,
     },
+    paddingLrg: {
+        paddingVertical:   Sizes.paddingLrg,
+        paddingHorizontal: Sizes.paddingLrg,
+    },
+    paddingXLrg: {
+        paddingVertical:   Sizes.paddingXLrg,
+        paddingHorizontal: Sizes.paddingXLrg,
+    },
+    paddingMed: {
+        paddingVertical:   Sizes.paddingMed,
+        paddingHorizontal: Sizes.paddingMed,
+    },
     paddingHorizontal: {
         paddingHorizontal: Sizes.padding,
     },
@@ -236,6 +248,9 @@ export default {
     paddingHorizontalSml: {
         paddingHorizontal: Sizes.paddingSml,
     },
+    paddingHorizontalMed: {
+        paddingHorizontal: Sizes.paddingMed,
+    },
     paddingLeftSml: {
         paddingLeft: Sizes.paddingSml,
     },
@@ -245,13 +260,15 @@ export default {
     paddingVerticalSml: {
         paddingVertical: Sizes.paddingSml,
     },
+    paddingVerticalMed: {
+        paddingVertical: Sizes.paddingMed,
+    },
     paddingTopSml: {
         paddingTop: Sizes.paddingSml,
     },
     paddingBottomSml: {
         paddingBottom: Sizes.paddingSml,
     },
-
     paddingVerticalLrg: {
         paddingVertical: Sizes.paddingLrg,
     },
@@ -386,11 +403,6 @@ export default {
         justifyContent: 'center'
     },
 
-    // onboarding
-    fullHeightWeight: {
-        height: '100%',
-        width:  '100%',
-    },
     nextButtonText: {
         color:         Colors.white,
         fontWeight:    'bold',
@@ -401,7 +413,6 @@ export default {
         alignItems:      'center',
         backgroundColor: Colors.primary.yellow.hundredPercent,
         justifyContent:  'center',
-        width:           Sizes.screen.width,
-    },
-
+        // width:           Sizes.screen.width,
+    }
 };
