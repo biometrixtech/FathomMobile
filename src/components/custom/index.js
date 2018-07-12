@@ -13,6 +13,7 @@ import Alerts from './Alerts';
 import Button from './Button';
 import CalendarStrip from './CalendarStrip';
 import Card from './Card';
+import FathomSlider from './FathomSlider';
 import FormInput from './FormInput';
 import FormLabel from './FormLabel';
 import Indicator from './Indicator';
@@ -28,6 +29,7 @@ export {
     Button,
     CalendarStrip,
     Card,
+    FathomSlider,
     FormInput,
     FormLabel,
     Indicator,

@@ -38,7 +38,6 @@ import MyPlanComponent from '../components/myPlan/MyPlan';
 const Index = (
     <Router>
         <Stack hideNavBar key='root'>
-            {/*TODO: REMOVE WHEN DONE!*/}
             <Scene
                 Layout={MyPlanComponent}
                 component={MyPlanContainer}

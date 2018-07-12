@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:19:46 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:19:46
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-04-24 12:34:10
  */
@@ -39,9 +39,12 @@ export default {
     statusBarHeight: Platform.OS === 'ios' ? 16 : 0,  // time and icon indicators
     tabbarHeight:    51,
 
-    padding:    20,
-    paddingSml: 10,
-    tickSize:   5,
+    padding:     20,
+    paddingLrg:  30,
+    paddingXLrg: 50,
+    paddingSml:  10,
+    paddingMed:  15,
+    tickSize:    5,
 
     borderRadius: 5,
 };

@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-04-30 13:23:56 
+ * @Author: Vir Desai
+ * @Date: 2018-04-30 13:23:56
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-06-28 11:49:27
  */
@@ -14,6 +14,7 @@ import AppSizes from './sizes';
 import AppStyles from './styles';
 import BLEConfig from './ble';
 import ErrorMessages from './errors';
+import MyPlan from './myPlan';
 import Roles from './roles';
 import Thresholds from './thresholds';
 
@@ -27,6 +28,7 @@ export {
     AppStyles,
     BLEConfig,
     ErrorMessages,
+    MyPlan,
     Roles,
     Thresholds
 };
