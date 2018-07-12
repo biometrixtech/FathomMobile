@@ -3,6 +3,7 @@
  *
     <ReadinessSurvey
         dailyReadiness={this.state.dailyReadiness}
+        handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handleReadinessSurveySubmit}
         soreBodyParts={this.state.soreBodyParts}
@@ -19,11 +20,12 @@ import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '../../../consta
 import { FathomSlider, Text } from '../../custom';
 
 // Components
-import { SoreBodyPart } from './';
+import { AreasOfSoreness, SoreBodyPart } from './';
 
 /* Component ==================================================================== */
 const ReadinessSurvey = ({
     dailyReadiness,
+    handleAreaOfSorenessClick,
     handleFormChange,
     handleFormSubmit,
     soreBodyParts,
@@ -91,17 +93,17 @@ const ReadinessSurvey = ({
                 <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
                     {'If yes, select area of soreness or pains'}
                 </Text>
-                <Image
-                    source={require('../../../constants/assets/images/body/R_Quad.svg')}
-                    style={{width: 100, height: 100, backgroundColor: 'yellow'}}
+                <AreasOfSoreness
+                    handleAreaOfSorenessClick={handleAreaOfSorenessClick}
+                    soreBodyParts={soreBodyParts}
                 />
-                <FathomSlider
+                {/*<FathomSlider
                     handleFormChange={handleFormChange}
                     maximumValue={9}
                     minimumValue={0}
                     name={'sleep_quality'}
                     value={dailyReadiness.sleep_quality}
-                />
+                />*/}
             </View>
             <TouchableOpacity onPress={handleFormSubmit} style={[AppStyles.nextButtonWrapper, {margin: 10}]}>
                 <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
@@ -111,11 +113,12 @@ const ReadinessSurvey = ({
 );
 
 ReadinessSurvey.propTypes = {
-    dailyReadiness:   PropTypes.object.isRequired,
-    handleFormChange: PropTypes.func.isRequired,
-    handleFormSubmit: PropTypes.func.isRequired,
-    soreBodyParts:    PropTypes.array.isRequired,
-    user:             PropTypes.object.isRequired,
+    dailyReadiness:            PropTypes.object.isRequired,
+    handleAreaOfSorenessClick: PropTypes.func.isRequired,
+    handleFormChange:          PropTypes.func.isRequired,
+    handleFormSubmit:          PropTypes.func.isRequired,
+    soreBodyParts:             PropTypes.array.isRequired,
+    user:                      PropTypes.object.isRequired,
 };
 ReadinessSurvey.defaultProps = {};
 ReadinessSurvey.componentName = 'ReadinessSurvey';
