@@ -124,8 +124,6 @@ const onboardingUtils = {
             && sport.positions.map(position => possiblePositions.includes(position))
             && possibleCompetitionLevels.includes(sport.competition_level)
             && sport.end_date.length > 0
-            && sport.season_end_month.length > 0
-            && sport.season_start_month.length > 0
             && sport.start_date.length > 0
         ) {
             error = '';
@@ -143,12 +141,11 @@ const onboardingUtils = {
     areTrainingSchedulesValid(training_schedule) {
         let errorsArray = [];
         let isValid;
-        Object.keys(training_schedule).map((sport, index) => {
-            let sportSchedule = training_schedule[sport];
+        training_schedule.sports.map(sport => {
             if(
-                sportSchedule.competition.days_of_week.length > 0
-                && sportSchedule.practice.days_of_week.length > 0
-                && sportSchedule.practice.duration_minutes > 0
+                (sport.competition.skipped || sport.competition.days_of_week.length)
+                && (sport.practice.skipped || (sport.practice.days_of_week.length
+                && sport.practice.duration))
             ) {
                 isValid = true;
             } else {

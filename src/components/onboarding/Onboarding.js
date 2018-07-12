@@ -117,17 +117,43 @@ class Onboarding extends Component {
                         account_type:   'free', // 'paid', 'free'
                         account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                     },
-                    role:                           '',
-                    system_type:                    '1-sensor',
-                    injury_status:                  '',
-                    injuries:                       {}, // COMING SOON
-                    training_groups:                [], // COMING SOON
-                    training_schedule:              {},
+                    role:              '',
+                    system_type:       '1-sensor',
+                    injury_status:     '',
+                    injuries:          {}, // COMING SOON
+                    training_groups:   [], // COMING SOON
+                    training_schedule: {
+                        sports: [
+                            {
+                                sport:    'soccer',
+                                practice: {
+                                    days_of_week: [],
+                                    duration:     '',
+                                    skipped:      false, // app only config that will need to be interjected from api response
+                                },
+                                competition: {
+                                    days_of_week: [],
+                                    skipped:      false, // app only config that will need to be interjected from api response
+                                },
+                            },
+                            {
+                                sport:    'baseball',
+                                practice: {
+                                    days_of_week: [],
+                                    duration:     '',
+                                    skipped:      false, // app only config that will need to be interjected from api response
+                                },
+                                competition: {
+                                    days_of_week: [],
+                                    skipped:      false, // app only config that will need to be interjected from api response
+                                },
+                            },
+                        ],
+                    },
                     training_strength_conditioning: {
-                        activities:     [],
-                        days:           [],
-                        durations:      '',
-                        totalDurations: '',
+                        activities:   [],
+                        days_of_week: [],
+                        duration:     '',
                     },
                     sports:                   [sportArray],
                     workout_outside_practice: null,
@@ -143,7 +169,7 @@ class Onboarding extends Component {
                 status:  '',
                 success: '',
             },
-            step:                4, // TODO: UPDATE THIS VALUE BACK TO '1'
+            step:                1, // TODO: UPDATE THIS VALUE BACK TO '1'
             totalSteps:          4,
             heightsCarouselData: [],
         };
@@ -281,8 +307,8 @@ class Onboarding extends Component {
         let newStep = step + 1;
         this.setState({
             ['resultMsg.error']: errorsArray,
-            // isFormValid:         false,
-            // step:                newStep,
+            isFormValid:         false,
+            step:                newStep,
         });
         // save or update, if no errors
         if(errorsArray.length === 0) {

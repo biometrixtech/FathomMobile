@@ -11,11 +11,11 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppStyles, UserAccount as UserAccountConstants } from '../../../constants';
-import { Text, FormLabel } from '../../custom';
+import { Button, Text, Spacer } from '../../custom';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -39,10 +39,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     wrapper: {
-        paddingBottom: 20,
-        paddingTop:    10,
-        paddingRight:  10,
-        paddingLeft:   10,
+        paddingTop:   10,
+        paddingRight: 10,
     },
 });
 
@@ -51,52 +49,115 @@ class UserSportSchedule extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedCompetitionIndexes: {},
-            selectedPracticeIndexes:    {},
+            activeSportIndex: 0,
+            sports:           [],
         };
     }
 
-    _updateSportSchedulePractice = (sport, index) => {
+    componentWillMount = () => {
+        this.setState({
+            sports: this.props.user.training_schedule.sports.map(() => ({
+                activeButtonGroupIndex:     0,
+                competitionSkipped:         false,
+                practiceSkipped:            false,
+                selectedCompetitionIndexes: [],
+                selectedPracticeIndexes:    [],
+            }) )
+        });
+    };
+
+    _updateSportSchedulePractice = (sportIndex, practiceIndex) => {
         const { handleFormChange, user } = this.props;
-        const { selectedPracticeIndexes } = this.state;
+        const { sports } = this.state;
         // upate our state - for button styling
-        let newIndexesArray = _.cloneDeep(selectedPracticeIndexes[sport]);
-        if(newIndexesArray && newIndexesArray.indexOf(index) > -1) {
-            newIndexesArray.splice(newIndexesArray.indexOf(index), 1)
+        let newSportsArray = _.cloneDeep(sports);
+        if (newSportsArray[sportIndex].selectedPracticeIndexes && newSportsArray[sportIndex].selectedPracticeIndexes.indexOf(practiceIndex) > -1) {
+            newSportsArray[sportIndex].selectedPracticeIndexes.splice(newSportsArray[sportIndex].selectedPracticeIndexes.indexOf(practiceIndex), 1);
         } else {
-            if(!newIndexesArray) {newIndexesArray = []}
-            newIndexesArray.push(index);
+            if (!newSportsArray[sportIndex].selectedPracticeIndexes) {
+                newSportsArray[sportIndex].selectedPracticeIndexes = [];
+            }
+            newSportsArray[sportIndex].selectedPracticeIndexes.push(practiceIndex);
         }
-        this.setState({ selectedPracticeIndexes: { [sport]: newIndexesArray } });
+        this.setState({ sports: newSportsArray });
         // dynamically update our training_schedule object for the user
         let newUserTrainingSchedule = _.cloneDeep(user.training_schedule);
-        newUserTrainingSchedule[sport].practice.days_of_week = newIndexesArray.map(value => UserAccountConstants.possibleShorthandDaysOfWeek[value]).join(',');
+        newUserTrainingSchedule.sports[sportIndex].practice.days_of_week = UserAccountConstants.possibleShorthandDaysOfWeek.filter((value, index) => newSportsArray[sportIndex].selectedPracticeIndexes.includes(index)).join(', ');
         handleFormChange('training_schedule', newUserTrainingSchedule);
     };
 
-    _updateSportScheduleCompetition = (sport, index) => {
+    _updateSportScheduleCompetition = (sportIndex, competitionIndex) => {
         const { handleFormChange, user } = this.props;
-        const { selectedCompetitionIndexes } = this.state;
+        const { sports } = this.state;
         // upate our state - for button styling
-        let newIndexesArray = _.cloneDeep(selectedCompetitionIndexes[sport]);
-        if(newIndexesArray && newIndexesArray.indexOf(index) > -1) {
-            newIndexesArray.splice(newIndexesArray.indexOf(index), 1)
+        let newSportsArray = _.cloneDeep(sports);
+        if (newSportsArray[sportIndex].selectedCompetitionIndexes && newSportsArray[sportIndex].selectedCompetitionIndexes.indexOf(competitionIndex) > -1) {
+            newSportsArray[sportIndex].selectedCompetitionIndexes.splice(newSportsArray[sportIndex].selectedCompetitionIndexes.indexOf(competitionIndex), 1);
         } else {
-            if(!newIndexesArray) {newIndexesArray = []}
-            newIndexesArray.push(index);
+            if (!newSportsArray[sportIndex].selectedCompetitionIndexes) {
+                newSportsArray[sportIndex].selectedCompetitionIndexes = [];
+            }
+            newSportsArray[sportIndex].selectedCompetitionIndexes.push(competitionIndex);
         }
-        this.setState({ selectedCompetitionIndexes: { [sport]: newIndexesArray } });
+        if (!newSportsArray[sportIndex].selectedCompetitionIndexes.length && !newSportsArray[sportIndex].selectedPracticeIndexes.length) {
+            newSportsArray[sportIndex].activeButtonGroupIndex = 0;
+        }
+        this.setState({ sports: newSportsArray });
         // dynamically update our training_schedule object for the user
         let newUserTrainingSchedule = _.cloneDeep(user.training_schedule);
-        newUserTrainingSchedule[sport].competition.days_of_week = newIndexesArray.map(value => UserAccountConstants.possibleShorthandDaysOfWeek[value]).join(',');
+        newUserTrainingSchedule.sports[sportIndex].competition.days_of_week = UserAccountConstants.possibleShorthandDaysOfWeek.filter((value, index) => newSportsArray[sportIndex].selectedCompetitionIndexes.includes(index)).join(', ');
         handleFormChange('training_schedule', newUserTrainingSchedule);
     };
 
-    _handlePracticeTimeChange = (sport, value) => {
+    _handlePracticeTimeChange = (sportIndex, value) => {
         const { handleFormChange, user } = this.props;
         let newUserTrainingSchedule = _.cloneDeep(user.training_schedule);
-        newUserTrainingSchedule[sport].practice.duration_minutes = value;
+        newUserTrainingSchedule.sports[sportIndex].practice.duration = value;
         handleFormChange('training_schedule', newUserTrainingSchedule);
+    };
+
+    _switchButtonGroupIndex = (newIndex) => {
+        let { activeSportIndex, sports } = this.state;
+        let newSports = _.cloneDeep(sports);
+        newSports[activeSportIndex].activeButtonGroupIndex = newIndex; 
+        this.setState({ sports: newSports });
+    };
+
+    _handleButtonPress = (buttonGroupIndex, stateSports, sportIndex) => {
+        let { handleFormChange, user } = this.props;
+        let propSports = user.training_schedule.sports;
+        if (buttonGroupIndex === 0) {
+            if (!propSports[sportIndex].practice.days_of_week.length) { // skipping practice
+                let newStateSportsArray = _.cloneDeep(stateSports);
+                newStateSportsArray[sportIndex].practiceSkipped = true;
+                
+                let newPropSports = _.cloneDeep(propSports);
+                newPropSports[sportIndex].practice.skipped = true;
+                
+                return Promise.resolve(this.setState({ sports: newStateSportsArray }))
+                    .then(() => Promise.resolve(this._switchButtonGroupIndex(2)))
+                    .then(() => handleFormChange('training_schedule.sports', newPropSports));
+            }
+            return this._switchButtonGroupIndex(1);
+        } else if (buttonGroupIndex === 1) { // duration set
+            return this._switchButtonGroupIndex(2);
+        } else if (buttonGroupIndex === 2) {
+            if (!propSports[sportIndex].competition.days_of_week.length) { // skipping competition
+                let newSportsArray = _.cloneDeep(stateSports);
+                newSportsArray[sportIndex].competitionSkipped = true;
+
+                let newPropSports = _.cloneDeep(propSports);
+                newPropSports[sportIndex].competition.skipped = true;
+
+                return Promise.resolve(this.setState({ sports: newSportsArray }))
+                    .then(() => Promise.resolve(stateSports.length > sportIndex + 1 ? this.setState({ activeSportIndex: sportIndex +1 }) : null))
+                    .then(() => handleFormChange('training_schedule.sports', newPropSports));
+            }
+            if (stateSports.length > sportIndex + 1) {
+                return this.setState({ activeSportIndex: sportIndex +1 });
+            }
+        }
+        return null;
     };
 
     render = () => {
@@ -105,54 +166,168 @@ class UserSportSchedule extends Component {
             currentStep,
             user,
         } = this.props;
-        const { selectedCompetitionIndexes, selectedPracticeIndexes } = this.state;
+        const {
+            activeSportIndex,
+            sports,
+        } = this.state;
+        let complete = user.training_schedule.sports.every(sport => (sport.competition.skipped || sport.competition.days_of_week.length)
+            && (sport.practice.skipped || (sport.practice.days_of_week.length && sport.practice.duration)));
         return (
-            <View style={[styles.wrapper, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
-                { Object.keys(user.training_schedule).map((sport, i) =>
-                    <View key={i} style={{paddingBottom: 20,}}>
-                        <Text style={{textAlign: 'center', fontFamily: AppFonts.base.family, fontSize: AppFonts.h1.size, lineHeight: AppFonts.h1.lineHeight,}}>
-                            <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{'This week I have '}</Text>
-                            <Text style={[styles.selectedText]}>{_.capitalize(sport)}</Text>
-                            <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' practice on '}</Text>
-                            { user.training_schedule[sport].practice.days_of_week.length > 0 ?
-                                <Text style={[styles.selectedText]}>{user.training_schedule[sport].practice.days_of_week}</Text>
-                                :
-                                <Text style={[styles.unselectedText]}>{'day(s)'}</Text>
-                            }
-                            <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' for '}</Text>
-                        </Text>
-                        <RNPickerSelect
-                            hideIcon={true}
-                            items={UserAccountConstants.competitionTimes}
-                            onValueChange={(value) => this._handlePracticeTimeChange(sport, value)}
-                            placeholder={{
-                                label: 'minutes',
-                                value: null,
-                            }}
-                            style={{inputIOS: [styles.pickerSelect], inputAndroid: [styles.pickerSelect]}}
-                            value={user.training_schedule[sport].competition.duration_minutes}
-                        />
-                        <Text style={{textAlign: 'center', fontFamily: AppFonts.base.family, fontSize: AppFonts.h1.size, lineHeight: AppFonts.h1.lineHeight,}}>
-                            <Text style={[AppStyles.textBold, {color: AppColors.black}]}>{' and compete on '}</Text>
-                            { user.training_schedule[sport].competition.days_of_week.length > 0 ?
-                                <Text style={[styles.selectedText]}>{user.training_schedule[sport].competition.days_of_week}</Text>
-                                :
-                                <Text style={[styles.unselectedText]}>{'day(s)'}</Text>
-                            }
-                        </Text>
-                        <FormLabel>Practice</FormLabel>
-                        <ButtonGroup
-                            buttons={UserAccountConstants.possibleDaysOfWeek}
-                            onPress={(index) => this._updateSportSchedulePractice(sport, index)}
-                            selectedIndexes={selectedPracticeIndexes[sport] ? selectedPracticeIndexes[sport] : []}
-                        />
-                        <FormLabel>Competition</FormLabel>
-                        <ButtonGroup
-                            buttons={UserAccountConstants.possibleDaysOfWeek}
-                            onPress={(index) => this._updateSportScheduleCompetition(sport, index)}
-                            selectedIndexes={selectedCompetitionIndexes[sport] ? selectedCompetitionIndexes[sport] : []}
-                        />
-                    </View>
+            <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1} : {display: 'none'}] ]}>
+                { user.training_schedule.sports.map((sport, i) =>
+                    activeSportIndex === i ? <View style={{ flex: 1, justifyContent: 'space-between' }}key={`0+${i}`}>
+                        <View style={{ paddingLeft: 10 }}>
+                            <Text style={{textAlign: 'center'}}>
+                                <Text h1 style={{color: AppColors.black}}>{`This week I ${sports[i].practiceSkipped ? 'play' : 'have'} `}</Text>
+                                <Text h1 style={[styles.selectedText]}>{_.capitalize(sport.sport)}</Text>
+                                <Text h1 style={{color: AppColors.black}}>{` ${sports[i].practiceSkipped ? 'Games' : 'practice'} on `}</Text>
+                                { sports[i].practiceSkipped ? null : sport.practice.days_of_week.length ?
+                                    <Text
+                                        h1
+                                        style={[styles.selectedText]}
+                                        onPress={() => this._switchButtonGroupIndex(0)}
+                                    >
+                                        {sport.practice.days_of_week}
+                                    </Text>
+                                    :
+                                    <Text
+                                        h1
+                                        style={[styles.unselectedText]}
+                                        onPress={() => this._switchButtonGroupIndex(0)}
+                                    >
+                                        {'day(s)'}
+                                    </Text>
+                                }
+                                { sports[i].practiceSkipped ? null : <Text h1 style={{color: AppColors.black}}>{' for '}</Text> }
+                                { sports[i].practiceSkipped ? null : sport.practice.duration ?
+                                    <Text
+                                        h1
+                                        style={[styles.selectedText]}
+                                        onPress={() => this._switchButtonGroupIndex(1)}
+                                    >
+                                        {UserAccountConstants.getMinutesToTimeFormat(sport.practice.duration)}
+                                    </Text>
+                                    :
+                                    <Text
+                                        h1
+                                        style={[styles.unselectedText]}
+                                        onPress={() => sport.practice.days_of_week.length ? this._switchButtonGroupIndex(1) : null}
+                                    >
+                                        {'select duration'}
+                                    </Text>
+                                }
+                                { !sports[i].practiceSkipped ?
+                                    <Text h1 style={{color: AppColors.black}}>{` and play ${_.capitalize(sport.sport)} Games on `}</Text>
+                                    :
+                                    null
+                                }
+                                { sport.competition.days_of_week.length ?
+                                    <Text
+                                        h1
+                                        onPress={() => this._switchButtonGroupIndex(2)}
+                                        style={[styles.selectedText]}
+                                    >
+                                        {sport.competition.days_of_week}
+                                    </Text>
+                                    :
+                                    <Text
+                                        h1
+                                        onPress={() => sports[i].practiceSkipped || sports[i].selectedPracticeIndexes.length && sport.practice.duration ? this._switchButtonGroupIndex(2) : null}
+                                        style={[styles.unselectedText]}
+                                    >
+                                        {'day(s)'}
+                                    </Text>
+                                }
+                            </Text>
+                        </View>
+                        <View style={{ justifyContent: 'flex-end'}}>
+                            <View style={{ paddingLeft: 10 }}>
+                                {/* Buttons for practice days */}
+                                { sports[i].activeButtonGroupIndex === 0 ?
+                                    _.chunk(UserAccountConstants.possibleDaysOfWeek, 3 /* num of columns */).map((daysOfWeekChunk, chunkIndex) => (
+                                        <View key={`1+${chunkIndex}`} style={{ flexDirection: 'row', paddingBottom: 10 }}>
+                                            { daysOfWeekChunk.map((dayOfWeek, dayOfWeekIndex) => (
+                                                <Button
+                                                    backgroundColor={sports[i].selectedPracticeIndexes.includes(((chunkIndex % 3) * 3) + dayOfWeekIndex) ? null : `${AppColors.primary.grey.eightyPercent}80`} // 80 is hex for 50% opacity
+                                                    borderRadius={0}
+                                                    key={`2+${dayOfWeekIndex}`}
+                                                    onPress={() => this._updateSportSchedulePractice(i, ((chunkIndex % 3) * 3) + dayOfWeekIndex)}
+                                                    raised={false}
+                                                    title={dayOfWeek}
+                                                />
+                                            ))}
+                                        </View>
+                                    ))
+                                    :
+                                    null
+                                }
+                                {/* Buttons for practice duration */}
+                                { sports[i].activeButtonGroupIndex === 1 ?
+                                    _.chunk(UserAccountConstants.practiceTimes.map(practiceTime => practiceTime.label), 4 /* num of columns */).map((practiceTimeChunk, chunkIndex) => (
+                                        <View key={`3+${chunkIndex}`} style={{ flexDirection: 'row', paddingBottom: 10 }}>
+                                            { practiceTimeChunk.map((practiceTime, practiceTimeIndex) => (
+                                                <Button
+                                                    backgroundColor={practiceTime === UserAccountConstants.getMinutesToTimeFormat(sport.practice.duration) ? null : `${AppColors.primary.grey.eightyPercent}80`} // 80 is hex for 50% opacity
+                                                    borderRadius={0}
+                                                    buttonStyle={{ paddingLeft: 15, paddingRight: 15 }}
+                                                    key={`4+${practiceTimeIndex}`}
+                                                    onPress={() => this._handlePracticeTimeChange(i, UserAccountConstants.practiceTimes[((chunkIndex % 4) * 4) + practiceTimeIndex].value)}
+                                                    raised={false}
+                                                    title={practiceTime}
+                                                />
+                                            ))}
+                                        </View>
+                                    ))
+                                    :
+                                    null
+                                }
+                                {/* Buttons for game days */}
+                                { sports[i].activeButtonGroupIndex === 2 ?
+                                    _.chunk(UserAccountConstants.possibleDaysOfWeek, 3 /* num of columns */).map((daysOfWeekChunk, chunkIndex) => (
+                                        <View key={`5+${chunkIndex}`} style={{ flexDirection: 'row', paddingBottom: 10 }}>
+                                            { daysOfWeekChunk.map((dayOfWeek, dayOfWeekIndex) => (
+                                                <Button
+                                                    backgroundColor={sports[i].selectedCompetitionIndexes.includes(((chunkIndex % 3) * 3) + dayOfWeekIndex) ? null : `${AppColors.primary.grey.eightyPercent}80`} // 80 is hex for 50% opacity
+                                                    borderRadius={0}
+                                                    key={`6+${dayOfWeekIndex}`}
+                                                    onPress={() => this._updateSportScheduleCompetition(i, ((chunkIndex % 3) * 3) + dayOfWeekIndex)}
+                                                    raised={false}
+                                                    title={dayOfWeek}
+                                                />
+                                            ))}
+                                        </View>
+                                    ))
+                                    :
+                                    null
+                                }
+                            </View>
+                            <Spacer size={20}/>
+                            <View>
+                                {
+                                    complete ? null :sports[i].activeButtonGroupIndex !== 1 ||
+                                    (sports[i].activeButtonGroupIndex === 1 && sport.practice.duration) ?
+                                        <TouchableOpacity onPress={() => this._handleButtonPress(sports[i].activeButtonGroupIndex, sports, i)} style={[AppStyles.nextButtonWrapper]}>
+                                            <Text style={[AppStyles.nextButtonText]}>
+                                                {
+                                                    sports[i].activeButtonGroupIndex === 0 && !sport.practice.days_of_week.length ?
+                                                        `I don't have ${sport.sport} practice`
+                                                        :
+                                                        sports[i].activeButtonGroupIndex === 1 ?
+                                                            'Next Step'
+                                                            :
+                                                            sports[i].activeButtonGroupIndex === 2 && !sport.competition.days_of_week.length ?
+                                                                'I don\'t have a game this week'
+                                                                :
+                                                                'Next Step'
+                                                }
+                                            </Text>
+                                        </TouchableOpacity>
+                                        :
+                                        <Spacer size={50}/>
+                                }
+                            </View>
+                        </View>
+                    </View> : null
                 )}
             </View>
         );

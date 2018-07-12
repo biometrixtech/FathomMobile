@@ -231,22 +231,24 @@ const possibleShorthandDaysOfWeek = [
 const getMinutesToTimeFormat = (minutes) => {
     let h = Math.floor(minutes / 60);
     let m = minutes % 60;
-    h = h < 10 ? '0' + h : h;
-    m = m < 10 ? '0' + m : m;
-    return `${h}:${m}`;
+    let hourString = h > 0 ? `${h}h${m > 0 ? ' ' : ''}` : '';
+    let minuteString = m > 0 ? `${m}m` : '';
+    return `${hourString}${minuteString}`;
 };
 
 const getTimes = (startValue, endValue, incrementValue) => {
     let timeList = [];
     for (let minutes = startValue; minutes <= endValue; minutes += incrementValue) {
-        timeList.push({label: getMinutesToTimeFormat(minutes), value: minutes});
+        if (minutes !== 90 && minutes !== 105) { // mockups skip 90 (1h 30m) and 105 (1h 45m) 
+            timeList.push({label: getMinutesToTimeFormat(minutes), value: minutes});
+        }
     }
     return timeList;
-}
+};
 
 const COMPETITION_TIME = {
-    competitionTimes: getTimes(5, 300, 5),
-    activitiesTimes:  getTimes(15, 120, 15),
+    activitiesTimes: getTimes(15, 120, 15),
+    practiceTimes:   getTimes(15, 120, 15),
 };
 
 const workoutOutsidePracticeOptions = [
@@ -292,6 +294,7 @@ export default {
     ...HEIGHT_SECTIONS,
     ...LEVELS_OF_PLAY,
     ...SPORTS_POSITIONS,
+    getMinutesToTimeFormat,
     possibleActivities,
     possibleDaysOfWeek,
     possibleGenders,

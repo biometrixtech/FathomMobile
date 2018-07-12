@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:28:39
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 16:43:26
+ * @Last Modified time: 2018-07-12 11:18:41
  */
 
 /**
@@ -21,22 +21,26 @@ import { AppColors, AppFonts, AppSizes } from '../../constants/';
 /* Component ==================================================================== */
 class CustomButton extends Component {
     static propTypes = {
-        small:           PropTypes.bool,
-        large:           PropTypes.bool,
-        outlined:        PropTypes.bool,
         backgroundColor: PropTypes.string,
-        onPress:         PropTypes.func.isRequired,
         icon:            PropTypes.shape({
             name: PropTypes.string,
         }),
+        large:    PropTypes.bool,
+        onPress:  PropTypes.func.isRequired,
+        outlined: PropTypes.bool,
+        raised:   PropTypes.bool,
+        rounded:  PropTypes.bool,
+        small:    PropTypes.bool,
     }
 
     static defaultProps = {
-        small:           false,
+        backgroundColor: null,
+        icon:            {},
         large:           false,
         outlined:        false,
-        icon:            {},
-        backgroundColor: null,
+        raised:          true,
+        rounded:         false,
+        small:           false,
     }
 
     buttonProps = () => {
@@ -50,7 +54,8 @@ class CustomButton extends Component {
             fontSize:           AppFonts.base.size,
             borderRadius:       AppSizes.borderRadius,
             containerViewStyle: { borderRadius: AppSizes.borderRadius },
-            raised:             true,
+            raised:             this.props.raised,
+            rounded:            this.props.rounded,
             buttonStyle:        {
                 padding:     AppFonts.scaleFont(12),
                 marginLeft:  0,
