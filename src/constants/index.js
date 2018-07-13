@@ -17,6 +17,7 @@ import ErrorMessages from './errors';
 import MyPlan from './myPlan';
 import Roles from './roles';
 import Thresholds from './thresholds';
+import UserAccount from './userAccount';
 
 export {
     Actions,
@@ -30,5 +31,6 @@ export {
     ErrorMessages,
     MyPlan,
     Roles,
-    Thresholds
+    Thresholds,
+    UserAccount,
 };

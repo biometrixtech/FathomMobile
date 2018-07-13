@@ -17,6 +17,7 @@
 #if RCT_DEV
 #import <React/RCTDevLoadingView.h>
 #endif
+#import "RNSplashScreen.h"
 
 @implementation AppDelegate
 
@@ -30,8 +31,9 @@
 
 
 #ifdef DEBUG
-    jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.122:8081/index.bundle?platform=ios&dev=true"];
-//     jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  jsCodeLocation = [NSURL URLWithString:@"http://192.168.1.9:8081/index.bundle?platform=ios&dev=true"];
+//  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+
 #else
     jsCodeLocation = [CodePush bundleURL];
 #endif
@@ -57,13 +59,15 @@
    * Custom
    * Get launch image - saves annoying white flash
    */
-  UIImageView *launchScreenView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Launch"]]; // Image named "Launch"
-  launchScreenView.frame = self.window.bounds;
-  launchScreenView.contentMode = UIViewContentModeScaleAspectFill;
-  rootView.loadingView = launchScreenView;
+//  UIImageView *launchScreenView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LaunchScreen"]]; // Image named "LaunchScreen"
+//  launchScreenView.frame = self.window.bounds;
+//  
+//  launchScreenView.contentMode = UIViewContentModeScaleAspectFill;
+//  rootView.loadingView = launchScreenView;
 
   // [Intercom setApiKey:@"ios_sdk-ebf51a128738d061651930aff903b341e18b99a2" forAppId:@"oxawi3kv"]
   // [Intercom registerUnidentifiedUser]
+  [RNSplashScreen show];
   return YES;
 }
 

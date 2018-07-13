@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:19:33
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 14:55:28
+ * @Last Modified time: 2018-07-12 19:05:28
  */
 
 /**
@@ -201,6 +201,9 @@ export default {
     },
     textRightAligned: {
         textAlign: 'right',
+    },
+    textBold: {
+        fontWeight: 'bold',
     },
 
     // Padding

@@ -16,6 +16,7 @@ import {
 import _ from 'lodash';
 import Modal from 'react-native-modalbox';
 import moment from 'moment';
+import SplashScreen from 'react-native-splash-screen';
 
 // Consts, Libs, and Utils
 import { AppColors, AppStyles, AppSizes, } from '../../constants';
@@ -79,6 +80,7 @@ class MyPlan extends Component {
                 // console.log('response', response);
                 if(response.daily_plans.length > 0) {
                     // -- AM/PM Survey
+                    SplashScreen.hide();
                 } else {
                     this.props.getSoreBodyParts()
                         .then(soreBodyParts => {
@@ -87,14 +89,17 @@ class MyPlan extends Component {
                                 isReadinessSurveyModalOpen: true,
                                 soreBodyParts:              soreBodyParts.body_parts, // TODO: THIS NEEDS TO COME FROM THE REDUCER
                             });
+                            SplashScreen.hide();
                         })
                         .catch(err => {
+                            SplashScreen.hide();
                             // console.log('err',err);
                         });
                     // -- postReadinessSurvey.post()
                 }
             })
             .catch(error => {
+                SplashScreen.hide();
                 // console.log('error',error);
             });
     }

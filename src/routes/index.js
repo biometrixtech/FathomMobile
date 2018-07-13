@@ -17,6 +17,9 @@ import SignUpComponent from '../components/auth/SignUp';
 import ForgotPasswordContainer from '../containers/auth/ForgotPassword';
 import ForgotPasswordComponent from '../components/auth/ForgotPassword';
 
+import StartContainer from '../containers/auth/Start';
+import StartComponent from '../components/auth/Start';
+
 import SettingsContainer from '../containers/settings/Settings';
 import SettingsComponent from '../components/settings/Settings';
 
