@@ -29,6 +29,6 @@
 
 ## App Icons
 
-- [Generate the Icons](https://makeappicon.com/)
+- Generate the Icons with [this](https://makeappicon.com/) or [this](https://appicon.co/)
   - **iOS** - Place the contents into: `/ios/Fathom/Images.xcassets/AppIcon.appiconset`
   - **Android** - Place the contents into: `/android/app/src/main/res/mipmap-*/ic_launcher.png`
