@@ -14,20 +14,26 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="SplashIcon" translatesAutoresizingMaskIntoConstraints="NO" id="zgD-ok-oRY">
-                    <rect key="frame" x="120" y="176" width="240" height="128"/>
-                </imageView>
                 <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="zdU-00-0oa">
                     <rect key="frame" x="221" y="358" width="37" height="37"/>
                     <color key="tintColor" red="0.043137254901960784" green="0.34509803921568627" blue="0.48627450980392156" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </activityIndicatorView>
+                <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SplashIcon" translatesAutoresizingMaskIntoConstraints="NO" id="zgD-ok-oRY">
+                    <rect key="frame" x="140" y="140" width="200" height="200"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="200" id="LoQ-35-wOM"/>
+                        <constraint firstAttribute="height" constant="200" id="Za3-Eb-8ah"/>
+                    </constraints>
+                </imageView>
             </subviews>
             <color key="backgroundColor" red="0.043137254901960784" green="0.34509803921568627" blue="0.48627450980392156" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstAttribute="trailing" secondItem="zgD-ok-oRY" secondAttribute="trailing" constant="140" id="9es-Nk-0cw"/>
+                <constraint firstItem="zgD-ok-oRY" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="140" id="EAC-ri-RHH"/>
                 <constraint firstAttribute="bottom" secondItem="zdU-00-0oa" secondAttribute="bottom" constant="85" id="Nq9-B7-mhq"/>
-                <constraint firstItem="zdU-00-0oa" firstAttribute="centerX" secondItem="zgD-ok-oRY" secondAttribute="centerX" id="gd7-RD-cPk"/>
+                <constraint firstItem="zgD-ok-oRY" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="140" id="Pea-3g-mEb"/>
+                <constraint firstAttribute="bottom" secondItem="zgD-ok-oRY" secondAttribute="bottom" constant="140" id="jOC-tR-qgA"/>
                 <constraint firstItem="zdU-00-0oa" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="jOT-9T-lIm"/>
-                <constraint firstItem="zdU-00-0oa" firstAttribute="top" secondItem="zgD-ok-oRY" secondAttribute="bottom" constant="54" id="nWv-vf-oBm"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
