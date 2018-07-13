@@ -52,14 +52,14 @@ class Settings extends Component {
         return (
             <View style={{ backgroundColor: AppColors.white }} >
                 <ListItem
-                    leftIcon={{ name: 'power-settings-new', color: AppColors.primary.grey.hundredPercent }}
-                    onPress={() => Promise.resolve(this.props.logout()).then(() => Actions.login())}
-                    title='Logout'
-                />
-                <ListItem
                     leftIcon={{ name: 'bluetooth', color: AppColors.primary.grey.hundredPercent }}
                     onPress={() => Actions.kitManagement()}
                     title='Kit Management'
+                />
+                <ListItem
+                    leftIcon={{ name: 'power-settings-new', color: AppColors.primary.grey.hundredPercent }}
+                    onPress={() => Promise.resolve(this.props.logout()).then(() => Actions.login())}
+                    title='Logout'
                 />
             </View>
         );

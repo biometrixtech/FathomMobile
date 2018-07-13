@@ -1,8 +1,8 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:32:47 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:32:47
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-29 01:20:06
+ * @Last Modified time: 2018-07-13 10:32:57
  */
 
 /**
@@ -27,6 +27,7 @@ import { Actions } from 'react-native-router-flux';
 import Egg from 'react-native-egg';
 import FormValidation from 'tcomb-form-native';
 import Modal from 'react-native-modalbox';
+import SplashScreen from 'react-native-splash-screen';
 
 // Consts and Libs
 import { AppAPI } from '../../lib/';
@@ -155,7 +156,11 @@ class Login extends Component {
                         Password: this.props.password,
                     },
                 });
-                this.login();
+                Promise.resolve(this.login())
+                    .then(() => SplashScreen.hide())
+                    .catch(() => SplashScreen.hide());
+            } else {
+                SplashScreen.hide();
             }
         }, 10);
     }
@@ -189,6 +194,7 @@ class Login extends Component {
                     email:    credentials.Email,
                     password: credentials.Password,
                 }, false).then(response => {
+                    console.log('response #1', response);
                     let { authorization, user } = response;
                     return (
                         authorization && authorization.expires && moment(authorization.expires) > moment.utc()
@@ -199,6 +205,7 @@ class Login extends Component {
                     );
                 })
                     .then(response => {
+                        console.log('response #2', response);
                         let { authorization, user } = response;
                         return (
                             this.props.certificate && this.props.certificate.id
@@ -210,12 +217,12 @@ class Login extends Component {
                     .then(() => this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
-                        Actions.settings();
+                        Actions.myPlan();
                     })).catch((err) => {
-                        console.log(err);
+                        console.log('err',err);
                         const error = AppAPI.handleError(err);
                         return this.setState({ resultMsg: { error } });
-                    })
+                    });
             });
         }
     }
