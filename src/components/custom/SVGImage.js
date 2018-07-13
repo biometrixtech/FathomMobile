@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-07-12 18:48:09 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-12 19:08:55
+ * @Last Modified time: 2018-07-13 11:27:41
  */
 
 /**
@@ -13,7 +13,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Svg, Image } from 'react-native-svg';
 
 /* Component ==================================================================== */
 class SVGImage extends Component {
@@ -46,11 +45,7 @@ class SVGImage extends Component {
         return props;
     }
 
-    render = () => (
-        <Svg {...this.svgProps()} >
-            <Image {...this.imageProps()}/>
-        </Svg>
-    );
+    render = () => (null);
 }
 
 /* Export Component ==================================================================== */
