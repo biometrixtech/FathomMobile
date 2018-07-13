@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:08:55 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:08:55
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-06-28 11:41:51
  */
@@ -136,7 +136,7 @@ const UTIL = {
     // createScaleX: (start, end, width) => d3.scale.scaleLinear()
     //     .domain([start, end]).nice()
     //     .range([0, width]),
-  
+
     /**
       * Create a y-scale.
       * @param {number} minY Minimum y value to use in our domain.
@@ -149,7 +149,7 @@ const UTIL = {
     //     // We invert our range so it outputs using the axis that React uses.
     //     .range([height, startY])
     //     .clamp(true),
-  
+
     /**
       * Creates a line graph SVG path that we can then use to render in our
       * React Native application with ART.
@@ -169,13 +169,13 @@ const UTIL = {
     //     height,
     // }) {
     //     const lastDatum = data[data.length - 1];
-  
+
     //     const scaleX = this.createTimeScaleX(
     //         data[0].time,
     //         lastDatum.time,
     //         width
     //     );
-  
+
     //     // Collect all y values.
     //     const allYValues = data.reduce((all, datum) => {
     //         all.push(yAccessor(datum));
@@ -184,11 +184,11 @@ const UTIL = {
     //     // Get the min and max y value.
     //     const extentY = d3Array.extent(allYValues);
     //     const scaleY = this.createScaleY(extentY[0], extentY[1], height);
-    
+
     //     const lineShape = d3.shape.line()
     //         .x(d => scaleX(xAccessor(d)))
     //         .y(d => scaleY(yAccessor(d)));
-  
+
     //     return {
     //         data,
     //         scale: {
@@ -199,7 +199,7 @@ const UTIL = {
     //         ticks: data.map((datum) => {
     //             const time = xAccessor(datum);
     //             const value = yAccessor(datum);
-        
+
     //             return {
     //                 x: scaleX(time),
     //                 y: scaleY(value),
@@ -221,7 +221,7 @@ const UTIL = {
         let newStartDate = `${startDateObject.getFullYear()}-${UTIL.formatDate(startDateObject.getMonth()+1)}-${UTIL.formatDate(startDateObject.getDate())}`;
         let newEndDate = `${endDateObject.getFullYear()}-${UTIL.formatDate(endDateObject.getMonth()+1)}-${UTIL.formatDate(endDateObject.getDate())}`;
         return ({ newStartDate, newEndDate });
-    },
+    }
 };
 
 /* Export ==================================================================== */
