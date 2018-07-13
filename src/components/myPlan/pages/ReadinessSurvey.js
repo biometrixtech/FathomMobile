@@ -6,7 +6,7 @@
         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handleReadinessSurveySubmit}
-        soreBodyParts={this.state.soreBodyParts}
+        soreBodyParts={this.props.soreBodyParts}
         user={user}
     />
  *
@@ -33,7 +33,7 @@ const ReadinessSurvey = ({
 }) => (
     <View style={{flex: 1}}>
         <View style={{backgroundColor: AppColors.primary.grey.twentyPercent}}>
-            <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, {color: AppColors.black}]}>{`GOOD MORNING, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
+            <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, {color: AppColors.black}]}>{`GOOD MORNING${user.personal_data && user.personal_data.first_name ? ', ' + user.personal_data.first_name.toUpperCase(): ''}!`}</Text>
         </View>
         <ScrollView>
             <View>
@@ -72,10 +72,10 @@ const ReadinessSurvey = ({
                     value={dailyReadiness.sleep_quality}
                 />
             </View>
-            { Object.keys(soreBodyParts).map((bodyPart, i) => {
+            { soreBodyParts.map((bodyPart, i) => {
                 return(
                     <SoreBodyPart
-                        bodyPart={soreBodyParts[bodyPart]}
+                        bodyPart={bodyPart}
                         dailyReadiness={dailyReadiness}
                         handleFormChange={handleFormChange}
                         index={i+3}
@@ -85,7 +85,7 @@ const ReadinessSurvey = ({
             })}
             <View>
                 <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
-                    {Object.keys(soreBodyParts).length > 0 ? Object.keys(soreBodyParts).length + 3 : '3'}
+                    {soreBodyParts.length > 0 ? soreBodyParts.length + 3 : '3'}
                 </Text>
                 <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
                     {'Is anything bothering you?'}

@@ -43,7 +43,7 @@ class MyPlan extends Component {
         getMyPlan:           PropTypes.func.isRequired,
         getSoreBodyParts:    PropTypes.func.isRequired,
         postReadinessSurvey: PropTypes.func.isRequired,
-        soreBodyParts:       PropTypes.object.isRequired,
+        soreBodyParts:       PropTypes.array.isRequired,
         user:                PropTypes.object.isRequired,
     }
 
@@ -218,7 +218,7 @@ class MyPlan extends Component {
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handleDailyReadinessFormChange}
                         handleFormSubmit={this._handleReadinessSurveySubmit}
-                        soreBodyParts={this.props.soreBodyParts || {}}
+                        soreBodyParts={this.props.soreBodyParts || []}
                         user={this.props.user || {personal_data: {first_name: 'Gabby'}}} // TODO: this needs to come from the reducer
                     />
                 </Modal>

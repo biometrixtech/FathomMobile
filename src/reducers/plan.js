@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-07-13 02:44:48 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-13 03:09:38
+ * @Last Modified time: 2018-07-13 10:26:27
  */
 
 /**
@@ -19,7 +19,7 @@ export default function planReducer(state = initialState, action) {
     switch (action.type) {
     case Actions.GET_SORE_BODY_PARTS:
         return Object.assign({}, state, {
-            soreBodyParts: action.data,
+            soreBodyParts: action.data.body_parts,
         });
     case Actions.GET_MY_PLAN:
         return Object.assign({}, state, {
