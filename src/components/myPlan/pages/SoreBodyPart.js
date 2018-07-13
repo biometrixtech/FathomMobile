@@ -11,11 +11,11 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
-import { FathomSlider, Text } from '../../custom';
+import { FathomSlider, SVGImage, Text } from '../../custom';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -27,9 +27,9 @@ const SoreBodyPart = ({
     handleFormChange,
     index,
 }) => {
-    let bodyPartSorenessIndex = _.findIndex(dailyReadiness.soreness, (o) => o.body_part === bodyPart.body_part);
+    let bodyPartSorenessIndex = _.findIndex(dailyReadiness.soreness, (o) => o.body_part === bodyPart.index);
     let severityValue = dailyReadiness.soreness[bodyPartSorenessIndex] ? dailyReadiness.soreness[bodyPartSorenessIndex].severity : 0;
-    let bodyPartMap = MyPlanConstants.bodyPartMapping[bodyPart.body_part];
+    let bodyPartMap = MyPlanConstants.bodyPartMapping[bodyPart.index];
     let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
     let severityString = '';
     if(bodyPartGroup === 'joint') {
@@ -37,25 +37,27 @@ const SoreBodyPart = ({
     } else if (bodyPartGroup === 'muscle') {
         severityString = MyPlanConstants.muscleLevels[severityValue].toUpperCase();
     }
-    // let bodyPartImage;
-    // try {
-    //     bodyPartImage = require(`../../../constants/assets/images/body/${bodyPartMap.image[bodyPart.side]}`);
-    // } catch (e) {
-    //     bodyPartImage = require(`../../../constants/assets/images/body/${bodyPartMap.image[2]}`);
-    // }
     return(
         <View>
-            <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
-                {index}
-            </Text>
-            <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
-                {`Is/are your ${bodyPartMap ? bodyPartMap.label.toUpperCase() : ''} bothering you today?`}
-            </Text>
+            { index ?
+                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
+                    {index}
+                </Text>
+                :
+                null
+            }
+            { index ?
+                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
+                    {`Is/are your ${bodyPartMap ? bodyPartMap.label.toUpperCase() : ''} bothering you today?`}
+                </Text>
+                :
+                null
+            }
             <View style={[AppStyles.containerCentered]}>
-                {/*<Image
-                    source={bodyPartImage}
-                    style={{width: 100, height: 100, backgroundColor: 'yellow'}}
-                />*/}
+                <SVGImage
+                    image={bodyPartMap.image[0] ? bodyPartMap.image[0] : bodyPartMap.image[2]}
+                    style={{width: 100, height: 100}}
+                />
             </View>
             <View style={[AppStyles.row, AppStyles.paddingVerticalSml, {justifyContent: 'space-between'}]}>
                 <Text style={[AppStyles.paddingHorizontal, AppStyles.bold, {color: AppColors.black}]}>
@@ -66,7 +68,7 @@ const SoreBodyPart = ({
                 </Text>
             </View>
             <FathomSlider
-                bodyPart={bodyPart.body_part}
+                bodyPart={bodyPart.index}
                 handleFormChange={handleFormChange}
                 maximumValue={5}
                 minimumValue={0}
@@ -79,10 +81,10 @@ const SoreBodyPart = ({
 };
 
 SoreBodyPart.propTypes = {
-    handleFormChange: PropTypes.func.isRequired,
     dailyReadiness:   PropTypes.object,
+    handleFormChange: PropTypes.func.isRequired,
     bodyPart:         PropTypes.object.isRequired,
-    index:            PropTypes.number.isRequired,
+    index:            PropTypes.number,
 };
 SoreBodyPart.defaultProps = {};
 SoreBodyPart.componentName = 'SoreBodyPart';

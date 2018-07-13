@@ -7,6 +7,7 @@
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handleReadinessSurveySubmit}
         soreBodyParts={this.state.soreBodyParts}
+        soreBodyPartsState={this.state.dailyReadiness.soreness}
         user={user}
     />
  *
@@ -29,6 +30,7 @@ const ReadinessSurvey = ({
     handleFormChange,
     handleFormSubmit,
     soreBodyParts,
+    soreBodyPartsState,
     user,
 }) => (
     <View style={{flex: 1}}>
@@ -72,10 +74,10 @@ const ReadinessSurvey = ({
                     value={dailyReadiness.sleep_quality}
                 />
             </View>
-            { Object.keys(soreBodyParts).map((bodyPart, i) => {
+            { soreBodyParts.body_parts.map((bodyPart, i) => {
                 return(
                     <SoreBodyPart
-                        bodyPart={soreBodyParts[bodyPart]}
+                        bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
                         dailyReadiness={dailyReadiness}
                         handleFormChange={handleFormChange}
                         index={i+3}
@@ -94,16 +96,12 @@ const ReadinessSurvey = ({
                     {'If yes, select area of soreness or pains'}
                 </Text>
                 <AreasOfSoreness
+                    dailyReadiness={dailyReadiness}
                     handleAreaOfSorenessClick={handleAreaOfSorenessClick}
-                    soreBodyParts={soreBodyParts}
-                />
-                {/*<FathomSlider
                     handleFormChange={handleFormChange}
-                    maximumValue={9}
-                    minimumValue={0}
-                    name={'sleep_quality'}
-                    value={dailyReadiness.sleep_quality}
-                />*/}
+                    soreBodyParts={soreBodyParts}
+                    soreBodyPartsState={soreBodyPartsState}
+                />
             </View>
             <TouchableOpacity onPress={handleFormSubmit} style={[AppStyles.nextButtonWrapper, {margin: 10}]}>
                 <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
@@ -117,7 +115,8 @@ ReadinessSurvey.propTypes = {
     handleAreaOfSorenessClick: PropTypes.func.isRequired,
     handleFormChange:          PropTypes.func.isRequired,
     handleFormSubmit:          PropTypes.func.isRequired,
-    soreBodyParts:             PropTypes.array.isRequired,
+    soreBodyParts:             PropTypes.object.isRequired,
+    soreBodyPartsState:        PropTypes.array.isRequired,
     user:                      PropTypes.object.isRequired,
 };
 ReadinessSurvey.defaultProps = {};

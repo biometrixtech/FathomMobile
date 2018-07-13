@@ -19,7 +19,7 @@ import moment from 'moment';
 import SplashScreen from 'react-native-splash-screen';
 
 // Consts, Libs, and Utils
-import { AppColors, AppStyles, AppSizes, } from '../../constants';
+import { AppColors, AppStyles, AppSizes } from '../../constants';
 
 // Components
 import { CalendarStrip, Card, Text, } from '../custom/';
@@ -84,7 +84,7 @@ class MyPlan extends Component {
                 } else {
                     this.props.getSoreBodyParts()
                         .then(soreBodyParts => {
-                            console.log('soreBodyParts',soreBodyParts);
+                            // console.log('soreBodyParts',soreBodyParts);
                             this.setState({ isReadinessSurveyModalOpen: true });
                             SplashScreen.hide();
                         })
@@ -102,8 +102,6 @@ class MyPlan extends Component {
     }
 
     _handleDailyReadinessFormChange = (name, value, bodyPart) => {
-        // console.log(this.state.soreBodyParts);
-        // console.log(name, value);
         let newFormFields;
         if(name === 'soreness' && bodyPart) {
             let newSorenessFields = _.cloneDeep(this.state.dailyReadiness.soreness);
@@ -166,7 +164,6 @@ class MyPlan extends Component {
     }
 
     render = () => {
-        console.log(this.state.dailyReadiness);
         return (
             <View style={[styles.background]}>
                 <Text>{'MY PLAN'}</Text>
@@ -219,7 +216,8 @@ class MyPlan extends Component {
                         handleFormChange={this._handleDailyReadinessFormChange}
                         handleFormSubmit={this._handleReadinessSurveySubmit}
                         soreBodyParts={this.props.soreBodyParts || {}}
-                        user={this.props.user || {personal_data: {first_name: 'Gabby'}}} // TODO: this needs to come from the reducer
+                        soreBodyPartsState={this.state.dailyReadiness.soreness}
+                        user={this.props.user.personal_data ? this.props.user : {personal_data: {first_name: 'Gabby'}}} // TODO: this needs to come from the reducer
                     />
                 </Modal>
             </View>

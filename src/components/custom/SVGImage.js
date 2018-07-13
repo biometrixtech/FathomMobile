@@ -1,55 +1,121 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-07-12 18:48:09 
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-12 19:08:55
+ * @Author: Vir Desai
+ * @Date: 2018-07-12 18:48:09
+ * @Last Modified by: Mazen Chami
+ * @Last Modified time: 2018-07-13 11:14:55
  */
 
 /**
  * SVGImage
  *
-     <SVGImage svg={height: 100, width: 100} image={source: require('../some/image/path.svg')} />
+    <SVGImage
+        image={bodyPartMap.image[0] ? bodyPartMap.image[0] : bodyPartMap.image[2]}
+        style={{width: 100, height: 100}}
+    />
  *
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Svg, Image } from 'react-native-svg';
+import Image from 'react-native-remote-svg';
 
 /* Component ==================================================================== */
 class SVGImage extends Component {
     static propTypes = {
-        svg:   PropTypes.object,
-        image: PropTypes.object,
+        image: PropTypes.string.isRequired,
+        style: PropTypes.object.isRequired,
     }
 
-    static defaultProps = {
-        svg:   {},
-        image: {}
-    }
+    static defaultProps = {}
 
-    imageProps = () => {
+    imageString = () => {
         // Defaults
-        const props = {
-            ...this.props.image,
-            href: this.props.image.source // just a guess if that works or not
-        };
-
-        return props;
-    }
-
-    svgProp = () => {
-        // Defaults
-        const props = {
-            ...this.props.svg
-        };
-
-        return props;
+        const { image } = this.props;
+        let imageName = image === 'Abs.svg' ?
+            require('../../constants/assets/images/body/Abs.svg')
+          : image === 'Hip.svg' ?
+            require('../../constants/assets/images/body/Hip.svg')
+          : image === 'L_Hip.svg' ?
+            require('../../constants/assets/images/body/L_Hip.svg')
+          : image === 'R_Hip.svg' ?
+            require('../../constants/assets/images/body/R_Hip.svg')
+          : image === 'Groin.svg' ?
+            require('../../constants/assets/images/body/Groin.svg')
+          : image === 'L_Groin.svg' ?
+            require('../../constants/assets/images/body/L_Groin.svg')
+          : image === 'R_Groin.svg' ?
+            require('../../constants/assets/images/body/R_Groin.svg')
+          : image === 'Quad.svg' ?
+            require('../../constants/assets/images/body/Quad.svg')
+          : image === 'L_Quad.svg' ?
+            require('../../constants/assets/images/body/L_Quad.svg')
+          : image === 'R_Quad.svg' ?
+            require('../../constants/assets/images/body/R_Quad.svg')
+          : image === 'Knee.svg' ?
+            require('../../constants/assets/images/body/Knee.svg')
+          : image === 'L_Knee.svg' ?
+            require('../../constants/assets/images/body/L_Knee.svg')
+          : image === 'R_Knee.svg' ?
+            require('../../constants/assets/images/body/R_Knee.svg')
+          : image === 'Shin.svg' ?
+            require('../../constants/assets/images/body/Shin.svg')
+          : image === 'L_Shin.svg' ?
+            require('../../constants/assets/images/body/L_Shin.svg')
+          : image === 'R_Shin.svg' ?
+            require('../../constants/assets/images/body/R_Shin.svg')
+          : image === 'Ankle.svg' ?
+            require('../../constants/assets/images/body/Ankle.svg')
+          : image === 'L_Ankle.svg' ?
+            require('../../constants/assets/images/body/L_Ankle.svg')
+          : image === 'R_Ankle.svg' ?
+            require('../../constants/assets/images/body/R_Ankle.svg')
+          : image === 'Foot.svg' ?
+            require('../../constants/assets/images/body/Foot.svg')
+          : image === 'L_Foot.svg' ?
+            require('../../constants/assets/images/body/L_Foot.svg')
+          : image === 'R_Foot.svg' ?
+            require('../../constants/assets/images/body/R_Foot.svg')
+          : image === 'ITBand.svg' ?
+            require('../../constants/assets/images/body/ITBand.svg')
+          : image === 'L_ITBand.svg' ?
+            require('../../constants/assets/images/body/L_ITBand.svg')
+          : image === 'R_ITBand.svg' ?
+            require('../../constants/assets/images/body/R_ITBand.svg')
+          : image === 'LowBack.svg' ?
+            require('../../constants/assets/images/body/LowBack.svg')
+          : image === 'Glute.svg' ?
+            require('../../constants/assets/images/body/Glute.svg')
+          : image === 'L_Glute.svg' ?
+            require('../../constants/assets/images/body/L_Glute.svg')
+          : image === 'R_Glute.svg' ?
+            require('../../constants/assets/images/body/R_Glute.svg')
+          : image === 'Hamstring.svg' ?
+            require('../../constants/assets/images/body/Hamstring.svg')
+          : image === 'L_Hamstring.svg' ?
+            require('../../constants/assets/images/body/L_Hamstring.svg')
+          : image === 'R_Hamstring.svg' ?
+            require('../../constants/assets/images/body/R_Hamstring.svg')
+          : image === 'Calf.svg' ?
+            require('../../constants/assets/images/body/Calf.svg')
+          : image === 'L_Calf.svg' ?
+            require('../../constants/assets/images/body/L_Calf.svg')
+          : image === 'R_Calf.svg' ?
+            require('../../constants/assets/images/body/R_Calf.svg')
+          : image === 'Achilles.svg' ?
+            require('../../constants/assets/images/body/Achilles.svg')
+          : image === 'L_Achilles.svg' ?
+            require('../../constants/assets/images/body/L_Achilles.svg')
+          : image === 'R_Achilles.svg' ?
+            require('../../constants/assets/images/body/R_Achilles.svg')
+          :
+            require('../../constants/assets/images/body/Abs.svg');
+        return imageName;
     }
 
     render = () => (
-        <Svg {...this.svgProps()} >
-            <Image {...this.imageProps()}/>
-        </Svg>
+        <Image
+            source={this.imageString()}
+            style={this.props.style}
+        />
     );
 }
 
