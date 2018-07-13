@@ -1,8 +1,8 @@
 /*
  * @Author: Mazen Chami
  * @Date: 2018-07-12 11:06:00
- * @Last Modified by: Mazen Chami
- * @Last Modified time: 2018-07-12 11:06:00
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-07-13 03:09:31
  */
 
 /**
@@ -26,63 +26,57 @@ const getMyPlan = (userId, startDate, endDate) => {
         myPlanObj.end_date = endDate;
     }
     console.log('myPlanObj',myPlanObj);
-    return dispatch => new Promise((resolve, reject) => {
-        return AppAPI.get_my_plan.post(false, myPlanObj)
-            .then((myPlanData) => {
-                // dispatch({
-                //     type: Actions.USER_REPLACE,
-                //     data: myPlanData,
-                // });
-                console.log('myPlanData',myPlanData);
-                return resolve(myPlanData);
-            }).catch(err => {
-                console.log('err',err);
-                const error = AppAPI.handleError(err);
-                return reject(error);
+    return dispatch => AppAPI.get_my_plan.post(false, myPlanObj)
+        .then(myPlanData => {
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: myPlanData,
             });
-    });
+            console.log('myPlanData',myPlanData);
+            return Promise.resolve(myPlanData);
+        }).catch(err => {
+            console.log('err',err);
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
 };
 
 /**
   * Get Readiness Survey Data
   */
-const postReadinessSurvey = (dailyReadinessObj) => {
-    return dispatch => new Promise((resolve, reject) => {
-        return AppAPI.post_readiness_survey.post(false, dailyReadinessObj)
-            .then((myPlanData) => {
-                // dispatch({
-                //     type: Actions.USER_REPLACE,
-                //     data: myPlanData,
-                // });
-                console.log('myPlanData',myPlanData);
-                return resolve(myPlanData);
-            }).catch(err => {
-                console.log('err',err);
-                const error = AppAPI.handleError(err);
-                return reject(error);
+const postReadinessSurvey = dailyReadinessObj => {
+    return dispatch => AppAPI.post_readiness_survey.post(false, dailyReadinessObj)
+        .then(myPlanData => {
+            dispatch({
+                type: Actions.POST_READINESS_SURVEY,
+                data: myPlanData,
             });
-    });
+            console.log('myPlanData',myPlanData);
+            return Promise.resolve(myPlanData);
+        }).catch(err => {
+            console.log('err',err);
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
 };
 
 /**
   * Get Sore Body Parts Data
   */
-const getSoreBodyParts = (user_id) => {
-    return dispatch => new Promise((resolve, reject) => {
-        return AppAPI.get_sore_body_parts.get()
-            .then((soreBodyParts) => {
-                // dispatch({
-                //     type: Actions.USER_REPLACE,
-                //     data: soreBodyParts,
-                // });
-                console.log('soreBodyParts',soreBodyParts);
-                return resolve(soreBodyParts);
-            }).catch(err => {
-                console.log('err',err);
-                const error = AppAPI.handleError(err);
-                return reject(error);
+const getSoreBodyParts = user_id => {
+    return dispatch => AppAPI.get_sore_body_parts.get()
+        .then(soreBodyParts => {
+            dispatch({
+                type: Actions.GET_SORE_BODY_PARTS,
+                data: soreBodyParts,
             });
-    });
+            console.log('soreBodyParts',soreBodyParts);
+            return Promise.resolve(soreBodyParts);
+        }).catch(err => {
+            console.log('err',err);
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
 };
 
 export default {
