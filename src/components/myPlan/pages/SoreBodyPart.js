@@ -51,7 +51,7 @@ const SoreBodyPart = ({
                     </Text>
                     <View style={[AppStyles.containerCentered]}>
                         <SVGImage
-                            image={bodyPartMap.image[0] ? bodyPartMap.image[0] : bodyPartMap.image[2]}
+                            image={bodyPartMap.image[0] || bodyPartMap.image[2]}
                             style={{width: 100, height: 100}}
                         />
                     </View>
