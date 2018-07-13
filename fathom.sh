@@ -133,6 +133,8 @@ initialize() {
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-splash-screen/android/build.gradle
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-linear-gradient/android/build.gradle
 
+            sed -i '' 's/provided/compileOnly/' ./node_modules/react-native-linear-gradient/android/build.gradle
+            sed -i '' 's/Compile/Implementation/' ./node_modules/react-native-splash-screen/android/build.gradle
             sed -i '' 's/babel\-jest/\<rootDir\>\/node_modules\/react-native\/jest\/preprocessor.js/' ./node_modules/react-native/jest-preset.json
 
             # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
