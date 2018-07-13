@@ -103,6 +103,7 @@ initialize() {
             lsof -i tcp:3000 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
             rm -rf node_modules/ yarn.lock
             yarn
+            # android build tools and gradle patches
             sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-code-push/android/app/build.gradle
             sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-fabric/android/build.gradle
             sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-ble-manager/android/build.gradle
@@ -133,6 +134,7 @@ initialize() {
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-splash-screen/android/build.gradle
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-linear-gradient/android/build.gradle
 
+            # extra android patches
             sed -i '' 's/provided/compileOnly/' ./node_modules/react-native-linear-gradient/android/build.gradle
             sed -i '' 's/Compile/Implementation/' ./node_modules/react-native-splash-screen/android/build.gradle
             sed -i '' 's/babel\-jest/\<rootDir\>\/node_modules\/react-native\/jest\/preprocessor.js/' ./node_modules/react-native/jest-preset.json
@@ -145,6 +147,8 @@ initialize() {
             old_user=`awk -v FS="(Users\/|\/.nvm)" '{if ($2) print $2;}' ./android/app/build.gradle`
             sed -i "" "s/\/Users\/$old_user\//$android_nvm_location/" ./android/app/build.gradle
 
+            # iOS patches
+            sed -i '' 's/<WebView/<WebView originWhitelist={["*"]}/' ./node_modules/react-native-remote-svg/SvgImage.js
             sed -i '' 's/\[SplashScreen/[RNSplashScreen/' ./node_modules/react-native-splash-screen/ios/RNSplashScreen.m
             sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
             # sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
