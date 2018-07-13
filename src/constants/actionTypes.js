@@ -2,15 +2,18 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:41 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 11:52:24
+ * @Last Modified time: 2018-07-13 02:41:40
  */
 
 export default {
     // API
     FORGOT_PASSWORD_FAILED:  'FORGOT_PASSWORD_FAILED',
     FORGOT_PASSWORD_SUCCESS: 'FORGOT_PASSWORD_SUCCESS',
+    GET_SORE_BODY_PARTS:     'GET_SORE_BODY_PARTS',
+    GET_MY_PLAN:             'GET_MY_PLAN',
     LOGIN:                   'LOGIN',
     LOGOUT:                  'LOGOUT',
+    POST_READINESS_SURVEY:   'POST_READINESS_SURVEY',
     REGISTER_DEVICE:         'REGISTER_DEVICE',
     SET_ENVIRONMENT:         'SET_ENVIRONMENT',
     SIGN_UP_FAILED:          'SIGN_UP_FAILED',
