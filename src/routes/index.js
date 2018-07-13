@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-04-30 13:21:35
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 11:22:27
+ * @Last Modified time: 2018-07-13 10:28:20
  */
 
 import React from 'react';
@@ -42,12 +42,6 @@ const Index = (
     <Router>
         <Stack hideNavBar key='root'>
             <Scene
-                Layout={MyPlanComponent}
-                component={MyPlanContainer}
-                hideNavBar
-                key='myPlan'
-            />
-            <Scene
                 Layout={LoginComponent}
                 component={LoginContainer}
                 hideNavBar
@@ -70,6 +64,12 @@ const Index = (
                 component={SettingsContainer}
                 hideNavBar
                 key='settings'
+            />
+            <Scene
+                Layout={MyPlanComponent}
+                component={MyPlanContainer}
+                hideNavBar
+                key='myPlan'
             />
             <Stack>
                 <Scene
