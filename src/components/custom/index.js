@@ -13,6 +13,7 @@ import Alerts from './Alerts';
 import Button from './Button';
 import CalendarStrip from './CalendarStrip';
 import Card from './Card';
+import Checkbox from './Checkbox';
 import Coach from './Coach';
 import FathomSlider from './FathomSlider';
 import FormInput from './FormInput';
@@ -34,6 +35,7 @@ export {
     Button,
     CalendarStrip,
     Card,
+    Checkbox,
     Coach,
     FathomSlider,
     FormInput,

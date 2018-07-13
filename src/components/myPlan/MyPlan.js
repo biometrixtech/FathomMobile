@@ -4,8 +4,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-    Alert,
-    Platform,
+    ActivityIndicator,
+    Image,
     ScrollView,
     StyleSheet,
     TouchableOpacity,
@@ -14,21 +14,22 @@ import {
 
 // import third-party libraries
 import _ from 'lodash';
+import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modalbox';
-import moment from 'moment';
 import SplashScreen from 'react-native-splash-screen';
+import moment from 'moment';
 
 // Consts, Libs, and Utils
 import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../../constants';
 
 // Components
-import { CalendarStrip, Card, Text, } from '../custom/';
-import { ReadinessSurvey } from './pages';
+import { CalendarStrip, Card, TabIcon, Text, } from '../custom/';
+import { ExerciseItem, ReadinessSurvey } from './pages';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: AppColors.primary.white.hundredPercent,
+        backgroundColor: AppColors.white,
         flex:            1,
         height:          AppSizes.screen.height,
         width:           AppSizes.screen.width,
@@ -42,6 +43,7 @@ class MyPlan extends Component {
     static propTypes = {
         getMyPlan:           PropTypes.func.isRequired,
         getSoreBodyParts:    PropTypes.func.isRequired,
+        myPlan:              PropTypes.object.isRequired,
         postReadinessSurvey: PropTypes.func.isRequired,
         soreBodyParts:       PropTypes.object.isRequired,
         user:                PropTypes.object.isRequired,
@@ -182,46 +184,64 @@ class MyPlan extends Component {
     }
 
     render = () => {
+        let hourOfDay = moment().get('hour');
+        let dailyPlanObj = this.props.myPlan ? this.props.myPlan.dailyPlan[0] : false;
+        let recoveryObj = dailyPlanObj && hourOfDay >= 12 ?
+            dailyPlanObj.recovery_pm
+            : dailyPlanObj && hourOfDay < 12 ?
+                dailyPlanObj.recovery_am
+                :
+                {};
+        let timeOfDay = (hourOfDay > 12 ? 'P' : 'A') + 'M';
         return (
             <View style={[styles.background]}>
-                <Text>{'MY PLAN'}</Text>
-                <CalendarStrip
-                    onDateSelected={this._onDateSelected}
-                />
-                <ScrollView>
-                    <Card>
-                        <Text>{'STRENGTH & CONDITIONING'}</Text>
-                        <Text>{'Stretch and Mobilize'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'PRACTICE'}</Text>
-                        <Text>{'Soccer Practice'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'RECOVER'}</Text>
-                        <Text>{'Time to reduce the injury risk'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'RECOVER'}</Text>
-                        <Text>{'Time to reduce the injury risk'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'RECOVER'}</Text>
-                        <Text>{'Time to reduce the injury risk'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'RECOVER'}</Text>
-                        <Text>{'Time to reduce the injury risk'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'RECOVER'}</Text>
-                        <Text>{'Time to reduce the injury risk'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'RECOVER'}</Text>
-                        <Text>{'Time to reduce the injury risk'}</Text>
-                    </Card>
-                </ScrollView>
+                <LinearGradient
+                    colors={['#05425e', '#0f6187']}
+                    style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
+                >
+                    <Image
+                        source={require('../../constants/assets/images/coach-avatar.png')}
+                        style={{resizeMode: 'contain', width: 40, height: 40}}
+                    />
+                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, AppStyles.h1, {color: AppColors.white}]}>{timeOfDay} {'RECOVERY'}</Text>
+                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Check the box to indicate completed exercises.'}</Text>
+                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Or click the plus sign below to log a practice & update your recovery!'}</Text>
+                    <TabIcon
+                        containerStyle={[{alignSelf: 'flex-end'}]}
+                        icon={'plus-circle-outline'}
+                        iconStyle={[{color: AppColors.white}]}
+                        onPress={() => console.log('TAKE ME TO POST SESSION SURVEY')}
+                        reverse={false}
+                        size={30}
+                        type={'material-community'}
+                    />
+                </LinearGradient>
+                { !recoveryObj ?
+                    <View style={[AppStyles.containerCentered, {flex: 1}]}>
+                        <ActivityIndicator
+                            color={AppColors.primary.yellow.hundredPercent}
+                            size={'large'}
+                        />
+                    </View>
+                    :
+                    <View style={{flex: 1}}>
+                        <ScrollView>
+                            {_.map(recoveryObj.exercises, exercise =>
+                                <ExerciseItem
+                                    exercise={exercise}
+                                    key={exercise.library_id}
+                                />
+                            )}
+                            <TouchableOpacity
+                                disabled={true}
+                                onPress={() => console.log('TAKE ME TO MESSAGE MODAL')}
+                                style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.hundredPercent}]}
+                            >
+                                <Text style={[AppStyles.nextButtonText]}>{'complete the exercises to log'}</Text>
+                            </TouchableOpacity>
+                        </ScrollView>
+                    </View>
+                }
                 <Modal
                     backdropPressToClose={false}
                     coverScreen={true}
@@ -238,6 +258,16 @@ class MyPlan extends Component {
                         user={this.props.user}
                     />
                 </Modal>
+                {/*<Text>{'MY PLAN'}</Text>
+                <CalendarStrip
+                    onDateSelected={this._onDateSelected}
+                />
+                <ScrollView>
+                    <Card>
+                        <Text>{'STRENGTH & CONDITIONING'}</Text>
+                        <Text>{'Stretch and Mobilize'}</Text>
+                    </Card>
+                </ScrollView>*/}
             </View>
         );
     }
