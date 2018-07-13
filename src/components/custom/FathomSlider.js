@@ -30,6 +30,7 @@ const FathomSlider = ({
     maximumValue,
     minimumValue,
     name,
+    side,
     step,
     thumbTintColor,
     value,
@@ -37,7 +38,7 @@ const FathomSlider = ({
     <Slider
         maximumValue={maximumValue}
         minimumValue={minimumValue}
-        onSlidingComplete={val => handleFormChange(name, val, bodyPart)}
+        onSlidingComplete={val => handleFormChange(name, val, bodyPart, side)}
         step={step}
         thumbTintColor={thumbTintColor}
         value={value}
@@ -50,11 +51,13 @@ FathomSlider.propTypes = {
     maximumValue:     PropTypes.number.isRequired,
     minimumValue:     PropTypes.number.isRequired,
     name:             PropTypes.string.isRequired,
+    side:             PropTypes.number,
     step:             PropTypes.number,
     thumbTintColor:   PropTypes.string,
     value:            PropTypes.number.isRequired,
 };
 FathomSlider.defaultProps = {
+    side:           null,
     step:           1,
     thumbTintColor: AppColors.secondary.blue.hundredPercent,
 };

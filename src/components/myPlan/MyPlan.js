@@ -19,7 +19,7 @@ import moment from 'moment';
 import SplashScreen from 'react-native-splash-screen';
 
 // Consts, Libs, and Utils
-import { AppColors, AppStyles, AppSizes } from '../../constants';
+import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../../constants';
 
 // Components
 import { CalendarStrip, Card, Text, } from '../custom/';
@@ -54,12 +54,7 @@ class MyPlan extends Component {
 
         this.state = {
             dailyReadiness: {
-                // date_time: '2018-07-03 10:42:20.1234',
-                // user_id:   '02cb7965-7921-493a-80d4-6b278c928fad',
-                soreness: [
-                //     {body_part: 8, severity: 2, side: 0-2},
-                //     {body_part: 14, severity: 3, side: 0-2},
-                ],
+                soreness:      [],
                 sleep_quality: 0,
                 readiness:     0,
             },
@@ -74,25 +69,31 @@ class MyPlan extends Component {
     }
 
     componentDidMount = () => {
-        let userId = this.props.user.id || '02cb7965-7921-493a-80d4-6b278c928fad';
+        let userId = this.props.user.id;
         this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
             .then(response => {
                 // console.log('response', response);
-                if(response.daily_plans.length > 0) {
+                if(response.daily_plans[0].daily_readiness_survey_completed) {
                     // -- AM/PM Survey
                     SplashScreen.hide();
                 } else {
                     this.props.getSoreBodyParts()
                         .then(soreBodyParts => {
                             // console.log('soreBodyParts',soreBodyParts);
-                            this.setState({ isReadinessSurveyModalOpen: true });
+                            this.setState({
+                                isReadinessSurveyModalOpen:  true,
+                                ['dailyReadiness.soreness']: soreBodyParts.body_parts,
+                            });
                             SplashScreen.hide();
                         })
                         .catch(err => {
+                            // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
+                            this.setState({
+                                isReadinessSurveyModalOpen:  true,
+                                ['dailyReadiness.soreness']: [],
+                            });
                             SplashScreen.hide();
-                            // console.log('err',err);
                         });
-                    // -- postReadinessSurvey.post()
                 }
             })
             .catch(error => {
@@ -101,19 +102,20 @@ class MyPlan extends Component {
             });
     }
 
-    _handleDailyReadinessFormChange = (name, value, bodyPart) => {
+    _handleDailyReadinessFormChange = (name, value, bodyPart, side) => {
         let newFormFields;
         if(name === 'soreness' && bodyPart) {
             let newSorenessFields = _.cloneDeep(this.state.dailyReadiness.soreness);
-            if(_.findIndex(this.state.dailyReadiness.soreness, (o) => o.body_part === bodyPart) > -1) {
+            if(_.findIndex(this.state.dailyReadiness.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
                 // body part already exists
-                let sorenessIndex = [_.findIndex(this.state.dailyReadiness.soreness, (o) => o.body_part === bodyPart)];
+                let sorenessIndex = [_.findIndex(this.state.dailyReadiness.soreness, (o) => o.body_part === bodyPart && o.side === side)];
                 newSorenessFields[sorenessIndex].severity = value;
             } else {
                 // doesn't exist, create new object
                 let newSorenessPart = {};
                 newSorenessPart.body_part = bodyPart;
                 newSorenessPart.severity = value;
+                newSorenessPart.side = side ? side : 0;
                 newSorenessFields.push(newSorenessPart);
             }
             newFormFields = _.update( this.state.dailyReadiness, 'soreness', () => newSorenessFields);
@@ -127,16 +129,19 @@ class MyPlan extends Component {
 
     _handleReadinessSurveySubmit = () => {
         let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-        newDailyReadiness.user_id = this.props.user.id || '02cb7965-7921-493a-80d4-6b278c928fad';
-        newDailyReadiness.date_time = moment().format();
-        console.log('newDailyReadiness',newDailyReadiness);
-        /*this.props.postReadinessSurvey(newDailyReadiness)
+        newDailyReadiness.user_id = this.props.user.id;
+        newDailyReadiness.date_time = moment().toISOString().split('.')[0] + 'Z';
+        newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality + 1;
+        newDailyReadiness.readiness = newDailyReadiness.readiness + 1;
+        this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
-                // console.log('response', response);
+                this.setState({
+                    isReadinessSurveyModalOpen: false,
+                });
             })
             .catch(error => {
-                // console.log('error',error);
-            });*/
+                console.log('error',error);
+            });
     }
 
     _onDateSelected = (date) => {
@@ -144,18 +149,31 @@ class MyPlan extends Component {
         console.log(`${selectedDate.calendar()} selected`);
     }
 
-    _handleAreaOfSorenessClick = (areaClicked, side) => {
+    _handleAreaOfSorenessClick = areaClicked => {
         let newSorenessFields = _.cloneDeep(this.state.dailyReadiness.soreness);
-        if(_.findIndex(this.state.dailyReadiness.soreness, (o) => o.body_part === areaClicked) > -1) {
+        if(_.findIndex(this.state.dailyReadiness.soreness, (o) => o.body_part === areaClicked.index) > -1) {
             // body part already exists
-            newSorenessFields = _.filter(newSorenessFields, (o) => o.body_part !== areaClicked);
+            newSorenessFields = _.filter(newSorenessFields, (o) => o.body_part !== areaClicked.index);
         } else {
             // doesn't exist, create new object
-            let newSorenessPart = {};
-            newSorenessPart.body_part = areaClicked;
-            newSorenessPart.side = side;
-            newSorenessPart.severity = 0;
-            newSorenessFields.push(newSorenessPart);
+            if(areaClicked.bilateral) {
+                let newLeftSorenessPart = {};
+                newLeftSorenessPart.body_part = areaClicked.index;
+                newLeftSorenessPart.severity = 0;
+                newLeftSorenessPart.side = 1;
+                newSorenessFields.push(newLeftSorenessPart);
+                let newRightSorenessPart = {};
+                newRightSorenessPart.body_part = areaClicked.index;
+                newRightSorenessPart.severity = 0;
+                newRightSorenessPart.side = 2;
+                newSorenessFields.push(newRightSorenessPart);
+            } else {
+                let newSorenessPart = {};
+                newSorenessPart.body_part = areaClicked.index;
+                newSorenessPart.severity = 0;
+                newSorenessPart.side = 0;
+                newSorenessFields.push(newSorenessPart);
+            }
         }
         let newFormFields = _.update( this.state.dailyReadiness, 'soreness', () => newSorenessFields);
         this.setState({
@@ -217,7 +235,7 @@ class MyPlan extends Component {
                         handleFormSubmit={this._handleReadinessSurveySubmit}
                         soreBodyParts={this.props.soreBodyParts || {}}
                         soreBodyPartsState={this.state.dailyReadiness.soreness}
-                        user={this.props.user.personal_data ? this.props.user : {personal_data: {first_name: 'Gabby'}}} // TODO: this needs to come from the reducer
+                        user={this.props.user}
                     />
                 </Modal>
             </View>

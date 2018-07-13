@@ -23,6 +23,9 @@ import { FathomSlider, Text } from '../../custom';
 // Components
 import { AreasOfSoreness, SoreBodyPart } from './';
 
+// import third-party libraries
+import _ from 'lodash';
+
 /* Component ==================================================================== */
 const ReadinessSurvey = ({
     dailyReadiness,
@@ -34,10 +37,10 @@ const ReadinessSurvey = ({
     user,
 }) => (
     <View style={{flex: 1}}>
-        <View style={{backgroundColor: AppColors.primary.grey.twentyPercent}}>
-            <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, {color: AppColors.black}]}>{`GOOD MORNING, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
-        </View>
         <ScrollView>
+            <View style={{backgroundColor: AppColors.primary.grey.twentyPercent}}>
+                <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, {color: AppColors.black}]}>{`GOOD MORNING, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
+            </View>
             <View>
                 <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
                     {'1'}
@@ -74,17 +77,15 @@ const ReadinessSurvey = ({
                     value={dailyReadiness.sleep_quality}
                 />
             </View>
-            { soreBodyParts.body_parts.map((bodyPart, i) => {
-                return(
-                    <SoreBodyPart
-                        bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
-                        dailyReadiness={dailyReadiness}
-                        handleFormChange={handleFormChange}
-                        index={i+3}
-                        key={i}
-                    />
-                )
-            })}
+            { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
+                <SoreBodyPart
+                    bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
+                    dailyReadiness={dailyReadiness}
+                    handleFormChange={handleFormChange}
+                    index={i+3}
+                    key={i}
+                />
+            )}
             <View>
                 <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
                     {Object.keys(soreBodyParts).length > 0 ? Object.keys(soreBodyParts).length + 3 : '3'}

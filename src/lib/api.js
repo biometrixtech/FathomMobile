@@ -105,8 +105,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
     const params = inputParams;
     let currentState = store.getState();
     let environment = currentState.init.environment;
-    // TODO: REMOVE STRING BELOW!!!!!!! WARNING!!!!!!!!
-    let jwt = currentState.init.jwt || 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMDJjYjc5NjUtNzkyMS00OTNhLTgwZDQtNmIyNzhjOTI4ZmFkIiwiY3JlYXRlZF9hdCI6IjIwMTgtMDEtMDQgMTU6MDI6NDIgLTA1MDAiLCJzaWduX2luX21ldGhvZCI6bnVsbH0.xH8zpcdoGI3JDjpt39jvNmDxUmk1Kh9tVZDGUYAmzX0';
+    let jwt = currentState.init.jwt;
     let hostname = '';
 
     return new Promise(async (resolve, reject) => {

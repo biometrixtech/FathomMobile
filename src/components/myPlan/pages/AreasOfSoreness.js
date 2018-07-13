@@ -16,7 +16,7 @@ import { Image, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
-import { FathomSlider, SVGImage, Text } from '../../custom';
+import { SVGImage, Text } from '../../custom';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -44,15 +44,22 @@ const AreasOfSoreness = ({
         <View>
             <View style={[AppStyles.row, AppStyles.containerCentered, {flexWrap: 'wrap'}]}>
                 {_.map(newBodyPartMap, (body, index) => {
+                    let isSelected = false;
+                    _.map(areaOfSorenessClicked, area => {
+                        if(area.body_part === body.index) {
+                            isSelected = true;
+                        }
+                    });
                     return(
                         <TouchableOpacity
                             activeOpacity={0.5}
                             key={index}
-                            onPress={() => handleAreaOfSorenessClick(body.index, 2)}
-                            style={[AppStyles.paddingMed]}
+                            onPress={() => handleAreaOfSorenessClick(body)}
+                            style={[AppStyles.paddingSml]}
                         >
                             <SVGImage
                                 image={body.image[0] || body.image[2]}
+                                selected={isSelected}
                                 style={{width: 100, height: 100}}
                             />
                         </TouchableOpacity>
@@ -64,6 +71,7 @@ const AreasOfSoreness = ({
                     <View key={i} style={[AppStyles.paddingVertical]}>
                         <SoreBodyPart
                             bodyPart={MyPlanConstants.bodyPartMapping[area.body_part]}
+                            bodyPartSide={area.side}
                             dailyReadiness={dailyReadiness}
                             handleFormChange={handleFormChange}
                         />

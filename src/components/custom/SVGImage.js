@@ -10,22 +10,32 @@
  *
     <SVGImage
         image={bodyPartMap.image[0] ? bodyPartMap.image[0] : bodyPartMap.image[2]}
+        selected={true}
         style={{width: 100, height: 100}}
     />
  *
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
+
+// Consts and Libs
+import { AppColors } from '../../constants';
+
+// import third-party libraries
 import Image from 'react-native-remote-svg';
 
 /* Component ==================================================================== */
 class SVGImage extends Component {
     static propTypes = {
-        image: PropTypes.string.isRequired,
-        style: PropTypes.object.isRequired,
+        image:    PropTypes.string.isRequired,
+        selected: PropTypes.bool,
+        style:    PropTypes.object.isRequired,
     }
 
-    static defaultProps = {}
+    static defaultProps = {
+        selected: false,
+    }
 
     imageString = () => {
         // Defaults
@@ -112,10 +122,18 @@ class SVGImage extends Component {
     }
 
     render = () => (
-        <Image
-            source={this.imageString()}
-            style={this.props.style}
-        />
+        <View style={{
+            height:       110,
+            width:        110,
+            borderRadius: 110,
+            borderWidth:  4,
+            borderColor:  this.props.selected ? AppColors.secondary.blue.hundredPercent : AppColors.white
+        }}>
+            <Image
+                source={this.imageString()}
+                style={this.props.style}
+            />
+        </View>
     );
 }
 
