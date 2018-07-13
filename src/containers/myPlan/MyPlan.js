@@ -9,12 +9,14 @@ const MyPlan = ({
     getMyPlan,
     getSoreBodyParts,
     postReadinessSurvey,
+    soreBodyParts,
     user,
 }) => (
     <Layout
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
         postReadinessSurvey={postReadinessSurvey}
+        soreBodyParts={soreBodyParts}
         user={user}
     />
 );
@@ -24,6 +26,7 @@ MyPlan.propTypes = {
     getMyPlan:           PropTypes.func.isRequired,
     getSoreBodyParts:    PropTypes.func.isRequired,
     postReadinessSurvey: PropTypes.func.isRequired,
+    soreBodyParts:       PropTypes.object.isRequired,
     user:                PropTypes.object.isRequired,
 };
 
@@ -31,7 +34,8 @@ MyPlan.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    user: state.user,
+    soreBodyParts: state.plan.soreBodyParts,
+    user:          state.user,
 });
 
 const mapDispatchToProps = {

@@ -43,6 +43,7 @@ class MyPlan extends Component {
         getMyPlan:           PropTypes.func.isRequired,
         getSoreBodyParts:    PropTypes.func.isRequired,
         postReadinessSurvey: PropTypes.func.isRequired,
+        soreBodyParts:       PropTypes.object.isRequired,
         user:                PropTypes.object.isRequired,
     }
 
@@ -63,7 +64,6 @@ class MyPlan extends Component {
                 readiness:     0,
             },
             isReadinessSurveyModalOpen: false,
-            soreBodyParts:              [], // TODO: this needs to come from a reducer
             // datesWhitelist: [
             //     {
             //         end:   moment().add(3, 'days'),  // total 4 days enabled
@@ -85,10 +85,7 @@ class MyPlan extends Component {
                     this.props.getSoreBodyParts()
                         .then(soreBodyParts => {
                             console.log('soreBodyParts',soreBodyParts);
-                            this.setState({
-                                isReadinessSurveyModalOpen: true,
-                                soreBodyParts:              soreBodyParts.body_parts, // TODO: THIS NEEDS TO COME FROM THE REDUCER
-                            });
+                            this.setState({ isReadinessSurveyModalOpen: true });
                             SplashScreen.hide();
                         })
                         .catch(err => {
@@ -172,7 +169,7 @@ class MyPlan extends Component {
         console.log(this.state.dailyReadiness);
         return (
             <View style={[styles.background]}>
-                <Text>MY PLAN</Text>
+                <Text>{'MY PLAN'}</Text>
                 <CalendarStrip
                     onDateSelected={this._onDateSelected}
                 />
@@ -221,8 +218,8 @@ class MyPlan extends Component {
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handleDailyReadinessFormChange}
                         handleFormSubmit={this._handleReadinessSurveySubmit}
-                        soreBodyParts={this.state.soreBodyParts || {}} // TODO: this needs to come from the reducer
-                        user={{personal_data: {first_name: 'Gabby'}}} // TODO: this needs to come from the reducer
+                        soreBodyParts={this.props.soreBodyParts || {}}
+                        user={this.props.user || {personal_data: {first_name: 'Gabby'}}} // TODO: this needs to come from the reducer
                     />
                 </Modal>
             </View>
