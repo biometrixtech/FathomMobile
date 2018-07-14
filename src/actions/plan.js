@@ -52,8 +52,12 @@ const postReadinessSurvey = dailyReadinessObj => {
                 data: myPlanData,
             });
             console.log('myPlanData',myPlanData);
-            return Promise.resolve(myPlanData);
-        }).catch(err => {
+            return myPlanData;
+        }).then(myPlanData => {
+            AppAPI.post_daily_plan.post({ user_id: dailyReadinessObj.user_id });
+            return myPlanData;
+        }).then(response => Promise.resolve(response))
+        .catch(err => {
             console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
