@@ -25,6 +25,7 @@ import { AreasOfSoreness, SoreBodyPart } from './';
 
 // import third-party libraries
 import _ from 'lodash';
+import moment from 'moment';
 
 /* Component ==================================================================== */
 const ReadinessSurvey = ({
@@ -35,81 +36,94 @@ const ReadinessSurvey = ({
     soreBodyParts,
     soreBodyPartsState,
     user,
-}) => (
-    <View style={{flex: 1}}>
-        <ScrollView>
-            <View style={{backgroundColor: AppColors.primary.grey.twentyPercent}}>
-                <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, {color: AppColors.black}]}>{`GOOD MORNING, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
-            </View>
-            <View>
-                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
-                    {'1'}
-                </Text>
-                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
-                    {'How ready do you feel to attack the day?'}
-                </Text>
-                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.secondary.blue.hundredPercent}]}>
-                    {`${dailyReadiness.readiness + 1} - ${MyPlanConstants.overallReadiness[dailyReadiness.readiness].toUpperCase()}`}
-                </Text>
-                <FathomSlider
-                    handleFormChange={handleFormChange}
-                    maximumValue={9}
-                    minimumValue={0}
-                    name={'readiness'}
-                    value={dailyReadiness.readiness}
-                />
-            </View>
-            <View>
-                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
-                    {'2'}
-                </Text>
-                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
-                    {'How well did you sleep last nights?'}
-                </Text>
-                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.secondary.blue.hundredPercent}]}>
-                    {`${dailyReadiness.sleep_quality + 1} - ${MyPlanConstants.sleepQuality[dailyReadiness.sleep_quality].toUpperCase()}`}
-                </Text>
-                <FathomSlider
-                    handleFormChange={handleFormChange}
-                    maximumValue={9}
-                    minimumValue={0}
-                    name={'sleep_quality'}
-                    value={dailyReadiness.sleep_quality}
-                />
-            </View>
-            { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
-                <SoreBodyPart
-                    bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
-                    dailyReadiness={dailyReadiness}
-                    handleFormChange={handleFormChange}
-                    index={i+3}
-                    key={i}
-                />
-            )}
-            <View>
-                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
-                    {Object.keys(soreBodyParts).length > 0 ? Object.keys(soreBodyParts).length + 3 : '3'}
-                </Text>
-                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
-                    {'Is anything bothering you?'}
-                </Text>
-                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
-                    {'If yes, select area of soreness or pains'}
-                </Text>
-                <AreasOfSoreness
-                    dailyReadiness={dailyReadiness}
-                    handleAreaOfSorenessClick={handleAreaOfSorenessClick}
-                    handleFormChange={handleFormChange}
-                    soreBodyParts={soreBodyParts}
-                    soreBodyPartsState={soreBodyPartsState}
-                />
-            </View>
-            <TouchableOpacity onPress={handleFormSubmit} style={[AppStyles.nextButtonWrapper, {margin: 10}]}>
-                <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
-            </TouchableOpacity>
-        </ScrollView>
-    </View>
-);
+}) => {
+    let hourOfDay = moment().get('hour');
+    let partOfDay = hourOfDay >= 12 ? 'AFTERNOON' : 'MORNING';
+    let isAnythingBotheringText = (
+        dailyReadiness.sleep_quality === 0 &&
+        dailyReadiness.readiness === 0 &&
+        soreBodyPartsState.length === 0 &&
+        _.map(soreBodyPartsState, bodyPart => bodyPart.severity === 0).length === 0
+    ) ?
+        'No, nothing is bothering me'
+        :
+        'Done';
+    return(
+        <View style={{flex: 1}}>
+            <ScrollView>
+                <View style={{backgroundColor: AppColors.primary.grey.twentyPercent}}>
+                    <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, {color: AppColors.black}]}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
+                </View>
+                <View>
+                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
+                        {'1'}
+                    </Text>
+                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
+                        {'How ready do you feel to attack the day?'}
+                    </Text>
+                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.secondary.blue.hundredPercent}]}>
+                        {`${dailyReadiness.readiness + 1} - ${MyPlanConstants.overallReadiness[dailyReadiness.readiness].toUpperCase()}`}
+                    </Text>
+                    <FathomSlider
+                        handleFormChange={handleFormChange}
+                        maximumValue={9}
+                        minimumValue={0}
+                        name={'readiness'}
+                        value={dailyReadiness.readiness}
+                    />
+                </View>
+                <View>
+                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
+                        {'2'}
+                    </Text>
+                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
+                        {'How well did you sleep last nights?'}
+                    </Text>
+                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.secondary.blue.hundredPercent}]}>
+                        {`${dailyReadiness.sleep_quality + 1} - ${MyPlanConstants.sleepQuality[dailyReadiness.sleep_quality].toUpperCase()}`}
+                    </Text>
+                    <FathomSlider
+                        handleFormChange={handleFormChange}
+                        maximumValue={9}
+                        minimumValue={0}
+                        name={'sleep_quality'}
+                        value={dailyReadiness.sleep_quality}
+                    />
+                </View>
+                { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
+                    <SoreBodyPart
+                        bodyPart={bodyPart}
+                        dailyReadiness={dailyReadiness}
+                        handleFormChange={handleFormChange}
+                        index={i+3}
+                        key={i}
+                    />
+                )}
+                <View>
+                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
+                        {soreBodyParts.body_parts.length > 0 ? soreBodyParts.body_parts.length + 3 : '3'}
+                    </Text>
+                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
+                        {'Is anything bothering you?'}
+                    </Text>
+                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
+                        {'If yes, select area of soreness or pains'}
+                    </Text>
+                    <AreasOfSoreness
+                        dailyReadiness={dailyReadiness}
+                        handleAreaOfSorenessClick={handleAreaOfSorenessClick}
+                        handleFormChange={handleFormChange}
+                        soreBodyParts={soreBodyParts}
+                        soreBodyPartsState={soreBodyPartsState}
+                    />
+                </View>
+                <TouchableOpacity onPress={handleFormSubmit} style={[AppStyles.nextButtonWrapper, {margin: 10}]}>
+                    <Text style={[AppStyles.nextButtonText]}>{isAnythingBotheringText}</Text>
+                </TouchableOpacity>
+            </ScrollView>
+        </View>
+    )
+};
 
 ReadinessSurvey.propTypes = {
     dailyReadiness:            PropTypes.object.isRequired,

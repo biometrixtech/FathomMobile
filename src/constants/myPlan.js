@@ -5,6 +5,8 @@
  * @Last Modified time: 2017-07-12 12:28:00
  */
 
+import _ from 'lodash';
+
 /**
  * MyPlan Config
  */
@@ -77,8 +79,24 @@ const jointLevels = [
     'inability to move',
 ];
 
+const exerciseListOrder = [
+    'inhibit_exercises',
+    'lengthen_exercises',
+    'activate_exercises',
+    'integrate_exercises',
+];
+
+function cleanExerciseList(recoveryObj) {
+    let cleanedExerciseList = [];
+    _.map(exerciseListOrder, list => {
+        cleanedExerciseList = _.concat(cleanedExerciseList, recoveryObj[list]);
+    });
+    return _.orderBy(cleanedExerciseList, ['position_order'], ['asc']);
+}
+
 export default {
     bodyPartMapping,
+    cleanExerciseList,
     jointLevels,
     muscleLevels,
     overallReadiness,

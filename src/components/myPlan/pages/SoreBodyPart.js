@@ -29,9 +29,9 @@ const SoreBodyPart = ({
     handleFormChange,
     index,
 }) => {
-    let bodyPartSorenessIndex = _.findIndex(dailyReadiness.soreness, (o) => o.body_part === bodyPart.index && o.side === bodyPartSide);
+    let bodyPartMap = MyPlanConstants.bodyPartMapping[bodyPart.body_part];
+    let bodyPartSorenessIndex = _.findIndex(dailyReadiness.soreness, (o) => o.body_part === bodyPart.body_part && o.side === bodyPartSide);
     let severityValue = dailyReadiness.soreness[bodyPartSorenessIndex] ? dailyReadiness.soreness[bodyPartSorenessIndex].severity : 0;
-    let bodyPartMap = MyPlanConstants.bodyPartMapping[bodyPart.index];
     let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
     let severityString = '';
     if(bodyPartGroup === 'joint') {
@@ -39,6 +39,12 @@ const SoreBodyPart = ({
     } else if (bodyPartGroup === 'muscle') {
         severityString = MyPlanConstants.muscleLevels[severityValue].toUpperCase();
     }
+    let bodyPartString = bodyPartMap ?
+        (bodyPartMap.bilateral ? (bodyPartSide === 1 || bodyPart.side === 1) ? 'LEFT ' : (bodyPartSide === 2 || bodyPart.side === 2) ? 'RIGHT ' : '' : '')
+            +
+            bodyPartMap.label.toUpperCase()
+        :
+        '';
     return(
         <View>
             { index ?
@@ -47,7 +53,7 @@ const SoreBodyPart = ({
                         {index}
                     </Text>
                     <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
-                        {`Is/are your ${bodyPartMap ? bodyPartMap.label.toUpperCase() : ''} bothering you today?`}
+                        {`Is/are your ${bodyPartString} bothering you today?`}
                     </Text>
                     <View style={[AppStyles.containerCentered]}>
                         <SVGImage
@@ -61,7 +67,7 @@ const SoreBodyPart = ({
             }
             <View style={[AppStyles.row, AppStyles.paddingVerticalSml, {justifyContent: 'space-between'}]}>
                 <Text style={[AppStyles.paddingHorizontal, AppStyles.bold, {color: AppColors.black}]}>
-                    {bodyPart.bilateral ? bodyPartSide === 1 ? 'LEFT' : bodyPartSide === 2 ? 'RIGHT' : '' : ''} {bodyPartMap ? bodyPartMap.label.toUpperCase() : ''}
+                    {bodyPartString}
                 </Text>
                 <Text style={[AppStyles.paddingHorizontal, AppStyles.textRightAligned, AppStyles.bold, {color: AppColors.slider[severityValue]}]}>
                     {severityString.length > 0 ? `${severityValue}: ${severityString}` : ''}

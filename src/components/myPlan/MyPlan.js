@@ -24,7 +24,7 @@ import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../..
 
 // Components
 import { CalendarStrip, Card, TabIcon, Text, } from '../custom/';
-import { ExerciseItem, ReadinessSurvey } from './pages';
+import { Exercises, ReadinessSurvey } from './pages';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -72,7 +72,8 @@ class MyPlan extends Component {
 
     componentDidMount = () => {
         let userId = this.props.user.id;
-        this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
+        // this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
+        this.props.getMyPlan('morning_practice_2', moment('2018-07-11', 'YYYY-MM-DD').format('YYYY-MM-DD'))
             .then(response => {
                 // console.log('response', response);
                 if(response.daily_plans[0].daily_readiness_survey_completed) {
@@ -185,14 +186,16 @@ class MyPlan extends Component {
 
     render = () => {
         let hourOfDay = moment().get('hour');
+        let isDailyReadinessSurveyCompleted = this.props.myPlan.dailyPlan[0] && this.props.myPlan.dailyPlan[0].daily_readiness_survey_completed ? true : false;
         let dailyPlanObj = this.props.myPlan ? this.props.myPlan.dailyPlan[0] : false;
-        let recoveryObj = dailyPlanObj && hourOfDay >= 12 ?
+        let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && hourOfDay >= 12 ?
             dailyPlanObj.recovery_pm
-            : dailyPlanObj && hourOfDay < 12 ?
+            : isDailyReadinessSurveyCompleted && dailyPlanObj && hourOfDay < 12 ?
                 dailyPlanObj.recovery_am
                 :
-                {};
-        let timeOfDay = (hourOfDay > 12 ? 'P' : 'A') + 'M';
+                false;
+        let timeOfDay = (hourOfDay >= 12 ? 'P' : 'A') + 'M';
+        let partOfDay = hourOfDay >= 12 ? 'AFTERNOON' : 'MORNING';
         return (
             <View style={[styles.background]}>
                 <LinearGradient
@@ -203,18 +206,24 @@ class MyPlan extends Component {
                         source={require('../../constants/assets/images/coach-avatar.png')}
                         style={{resizeMode: 'contain', width: 40, height: 40}}
                     />
-                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, AppStyles.h1, {color: AppColors.white}]}>{timeOfDay} {'RECOVERY'}</Text>
-                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Check the box to indicate completed exercises.'}</Text>
-                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Or click the plus sign below to log a practice & update your recovery!'}</Text>
-                    <TabIcon
-                        containerStyle={[{alignSelf: 'flex-end'}]}
-                        icon={'plus-circle-outline'}
-                        iconStyle={[{color: AppColors.white}]}
-                        onPress={() => console.log('TAKE ME TO POST SESSION SURVEY')}
-                        reverse={false}
-                        size={30}
-                        type={'material-community'}
-                    />
+                    { !isDailyReadinessSurveyCompleted ?
+                        <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, AppStyles.textCenterAligned, {color: AppColors.white}]}>{`GOOD ${partOfDay}, ${this.props.user.personal_data.first_name.toUpperCase()}!`}</Text>
+                        :
+                        <View>
+                            <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, AppStyles.h1, {color: AppColors.white}]}>{timeOfDay} {'RECOVERY'}</Text>
+                            <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Check the box to indicate completed exercises.'}</Text>
+                            <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Or click the plus sign below to log a practice & update your recovery!'}</Text>
+                            <TabIcon
+                                containerStyle={[{alignSelf: 'flex-end'}]}
+                                icon={'plus-circle-outline'}
+                                iconStyle={[{color: AppColors.white}]}
+                                onPress={() => console.log('TAKE ME TO POST SESSION SURVEY')}
+                                reverse={false}
+                                size={30}
+                                type={'material-community'}
+                            />
+                        </View>
+                    }
                 </LinearGradient>
                 { !recoveryObj ?
                     <View style={[AppStyles.containerCentered, {flex: 1}]}>
@@ -224,23 +233,9 @@ class MyPlan extends Component {
                         />
                     </View>
                     :
-                    <View style={{flex: 1}}>
-                        <ScrollView>
-                            {_.map(recoveryObj.exercises, exercise =>
-                                <ExerciseItem
-                                    exercise={exercise}
-                                    key={exercise.library_id}
-                                />
-                            )}
-                            <TouchableOpacity
-                                disabled={true}
-                                onPress={() => console.log('TAKE ME TO MESSAGE MODAL')}
-                                style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.hundredPercent}]}
-                            >
-                                <Text style={[AppStyles.nextButtonText]}>{'complete the exercises to log'}</Text>
-                            </TouchableOpacity>
-                        </ScrollView>
-                    </View>
+                    <Exercises
+                        recoveryObj={recoveryObj}
+                    />
                 }
                 <Modal
                     backdropPressToClose={false}
