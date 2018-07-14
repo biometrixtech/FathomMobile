@@ -23,7 +23,7 @@ import moment from 'moment';
 import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../../constants';
 
 // Components
-import { CalendarStrip, Card, TabIcon, Text, } from '../custom/';
+import { Button, CalendarStrip, Card, TabIcon, Text, } from '../custom/';
 import { Exercises, ReadinessSurvey } from './pages';
 
 /* Styles ==================================================================== */
@@ -60,7 +60,8 @@ class MyPlan extends Component {
                 sleep_quality: 0,
                 readiness:     0,
             },
-            isReadinessSurveyModalOpen: false,
+            isCompletedAMPMRecoveryModalOpen: false,
+            isReadinessSurveyModalOpen:       false,
             // datesWhitelist: [
             //     {
             //         end:   moment().add(3, 'days'),  // total 4 days enabled
@@ -184,6 +185,12 @@ class MyPlan extends Component {
         });
     }
 
+    _toggleCompletedAMPMRecoveryModal = () => {
+        this.setState({
+            isCompletedAMPMRecoveryModalOpen: !this.state.isCompletedAMPMRecoveryModalOpen
+        });
+    }
+
     render = () => {
         let hourOfDay = moment().get('hour');
         let isDailyReadinessSurveyCompleted = this.props.myPlan.dailyPlan[0] && this.props.myPlan.dailyPlan[0].daily_readiness_survey_completed ? true : false;
@@ -196,6 +203,10 @@ class MyPlan extends Component {
                 false;
         let timeOfDay = (hourOfDay >= 12 ? 'P' : 'A') + 'M';
         let partOfDay = hourOfDay >= 12 ? 'AFTERNOON' : 'MORNING';
+        let completedAMPMRecoverMessage = hourOfDay >= 12 ?
+            'Log a training session to update your next Recovery, else we\'ll see you tomorrow. Rest well!'
+            :
+            'Comeback this afternoon or log a training session to update your PM Recovery.';
         return (
             <View style={[styles.background]}>
                 <LinearGradient
@@ -252,6 +263,36 @@ class MyPlan extends Component {
                         soreBodyPartsState={this.state.dailyReadiness.soreness}
                         user={this.props.user}
                     />
+                </Modal>
+                <Modal
+                    backdropPressToClose={false}
+                    coverScreen={true}
+                    isOpen={this.state.isCompletedAMPMRecoveryModalOpen}
+                    swipeToClose={false}
+                >
+                    <LinearGradient
+                        colors={['#05425e', '#0f6187']}
+                        style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal, {flex: 1}]}
+                    >
+                        <Text style={[AppStyles. paddingVertical, AppStyles.h1, AppStyles.textCenterAligned, {color: AppColors.white, fontWeight: 'bold'}]}>{`You've completed your ${timeOfDay} Recovery!`}</Text>
+                        <Text style={[AppStyles. paddingVertical, AppStyles.h3, AppStyles.textCenterAligned, {color: AppColors.white}]}>{completedAMPMRecoverMessage}</Text>
+                        <Button
+                            backgroundColor={AppColors.primary.yellow.hundredPercent}
+                            buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
+                            containerViewStyle={{marginVertical: AppSizes.paddingMed}}
+                            onPress={() => console.log('TAKE ME TO POST SESSION SURVEY')}
+                            textColor={AppColors.white}
+                            title={'Log a session to customize recovery'}
+                        />
+                        <Button
+                            backgroundColor={AppColors.white}
+                            buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
+                            containerViewStyle={{marginVertical: AppSizes.paddingMed}}
+                            onPress={() => this._toggleCompletedAMPMRecoveryModal}
+                            textColor={AppColors.primary.yellow.hundredPercent}
+                            title={`Do ${timeOfDay} Recovery again`}
+                        />
+                    </LinearGradient>
                 </Modal>
                 {/*<Text>{'MY PLAN'}</Text>
                 <CalendarStrip
