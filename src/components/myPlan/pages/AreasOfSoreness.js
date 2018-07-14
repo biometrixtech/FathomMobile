@@ -2,11 +2,11 @@
  * AreasOfSoreness
  *
     <AreasOfSoreness
-        dailyReadiness={dailyReadiness}
         handleAreaOfSorenessClick={handleAreaOfSorenessClick}
         handleFormChange={handleFormChange}
         soreBodyParts={soreBodyParts}
         soreBodyPartsState={soreBodyPartsState}
+        surveyObject={surveyObject}
     />
  *
  */
@@ -26,20 +26,20 @@ import { SoreBodyPart } from './';
 
 /* Component ==================================================================== */
 const AreasOfSoreness = ({
-    dailyReadiness,
     handleAreaOfSorenessClick,
     handleFormChange,
     soreBodyParts,
     soreBodyPartsState,
+    surveyObject,
 }) => {
     let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, (u, i) => {
         return _.findIndex(soreBodyParts, (o) => o.body_part === i) === -1;
     });
     let newBodyPartMap = _.filter(filteredBodyPartMap, o => o.order);
     newBodyPartMap = _.orderBy(newBodyPartMap, ['order'], ['asc']);
-    let areaOfSorenessClicked = _.filter(soreBodyPartsState, (u, i) => {
-        return _.findIndex(soreBodyParts, (o) => o.body_part === u.body_part) === -1;
-    }) || [];
+    let areaOfSorenessClicked = soreBodyPartsState.filter(bodyPartState => {
+        return soreBodyParts.body_parts.findIndex(bodyPartProp => bodyPartProp.body_part === bodyPartState.body_part) === -1;
+    });
     return(
         <View>
             <View style={[AppStyles.row, AppStyles.containerCentered, {flexWrap: 'wrap'}]}>
@@ -53,7 +53,7 @@ const AreasOfSoreness = ({
                     return(
                         <TouchableOpacity
                             activeOpacity={0.5}
-                            key={index}
+                            key={`AreasOfSoreness0${index}`}
                             onPress={() => handleAreaOfSorenessClick(body)}
                             style={[AppStyles.paddingSml]}
                         >
@@ -68,12 +68,12 @@ const AreasOfSoreness = ({
             </View>
             {_.map(areaOfSorenessClicked, (area, i) => {
                 return(
-                    <View key={i} style={[AppStyles.paddingVertical]}>
+                    <View key={`AreasOfSoreness1${i}`} style={[AppStyles.paddingVertical]}>
                         <SoreBodyPart
                             bodyPart={MyPlanConstants.bodyPartMapping[area.body_part]}
                             bodyPartSide={area.side}
-                            dailyReadiness={dailyReadiness}
                             handleFormChange={handleFormChange}
+                            surveyObject={surveyObject}
                         />
                     </View>
                 )
@@ -83,11 +83,11 @@ const AreasOfSoreness = ({
 };
 
 AreasOfSoreness.propTypes = {
-    dailyReadiness:            PropTypes.object,
     handleAreaOfSorenessClick: PropTypes.func.isRequired,
     handleFormChange:          PropTypes.func.isRequired,
     soreBodyParts:             PropTypes.object.isRequired,
     soreBodyPartsState:        PropTypes.array.isRequired,
+    surveyObject:              PropTypes.object,
 };
 AreasOfSoreness.defaultProps = {};
 AreasOfSoreness.componentName = 'AreasOfSoreness';

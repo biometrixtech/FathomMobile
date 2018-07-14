@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:30:58
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 11:53:11
+ * @Last Modified time: 2018-07-14 12:50:12
  */
 
 /**
@@ -37,6 +37,7 @@ export default {
         ['get_sore_body_parts',   '/plans/daily_readiness/previous'], // GET
         ['post_readiness_survey', '/plans/daily_readiness'], // POST
         ['post_daily_plan',       '/plans/athlete/{user_id}/daily_plan'], // POST
+        ['post_session_survey',   '/plans/post_session_survey'], // POST
     ]),
 
     // Which 'endpoint' key deals with our tokens?

@@ -24,7 +24,7 @@ import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../..
 
 // Components
 import { Button, CalendarStrip, Card, TabIcon, Text, } from '../custom/';
-import { Exercises, ReadinessSurvey } from './pages';
+import { Exercises, PostSessionSurvey, ReadinessSurvey } from './pages';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -43,9 +43,9 @@ class MyPlan extends Component {
     static propTypes = {
         getMyPlan:           PropTypes.func.isRequired,
         getSoreBodyParts:    PropTypes.func.isRequired,
-        myPlan:              PropTypes.object.isRequired,
+        plan:                PropTypes.object.isRequired,
         postReadinessSurvey: PropTypes.func.isRequired,
-        soreBodyParts:       PropTypes.object.isRequired,
+        postSessionSurvey:   PropTypes.func.isRequired,
         user:                PropTypes.object.isRequired,
     }
 
@@ -56,12 +56,17 @@ class MyPlan extends Component {
 
         this.state = {
             dailyReadiness: {
-                soreness:      [],
-                sleep_quality: 0,
                 readiness:     0,
+                sleep_quality: 0,
+                soreness:      [],
             },
             isCompletedAMPMRecoveryModalOpen: false,
             isReadinessSurveyModalOpen:       false,
+            isPostSessionSurveyModalOpen:     false,
+            postSession:                      {
+                RPE:      0,
+                soreness: []
+            },
             // datesWhitelist: [
             //     {
             //         end:   moment().add(3, 'days'),  // total 4 days enabled
@@ -79,22 +84,32 @@ class MyPlan extends Component {
                 // console.log('response', response);
                 if(response.daily_plans[0].daily_readiness_survey_completed) {
                     // -- AM/PM Survey
+                    this.setState({
+                        isPostSessionSurveyModalOpen: true,
+                        isReadinessSurveyModalOpen:   false,
+                    });
                     SplashScreen.hide();
                 } else {
                     this.props.getSoreBodyParts()
                         .then(soreBodyParts => {
                             // console.log('soreBodyParts',soreBodyParts);
+                            let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+                            newDailyReadiness.soreness = soreBodyParts.body_parts;
                             this.setState({
-                                isReadinessSurveyModalOpen:  true,
-                                ['dailyReadiness.soreness']: soreBodyParts.body_parts,
+                                isPostSessionSurveyModalOpen: false,
+                                isReadinessSurveyModalOpen:   true,
+                                dailyReadiness:               newDailyReadiness,
                             });
                             SplashScreen.hide();
                         })
                         .catch(err => {
                             // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
+                            let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+                            newDailyReadiness.soreness = [];
                             this.setState({
-                                isReadinessSurveyModalOpen:  true,
-                                ['dailyReadiness.soreness']: [],
+                                isPostSessionSurveyModalOpen: false,
+                                isReadinessSurveyModalOpen:   true,
+                                dailyReadiness:               newDailyReadiness,
                             });
                             SplashScreen.hide();
                         });
@@ -131,6 +146,31 @@ class MyPlan extends Component {
         });
     }
 
+    _handlePostSessionFormChange = (name, value, bodyPart, side) => {
+        let newFormFields;
+        if(name === 'soreness' && bodyPart) {
+            let newSorenessFields = _.cloneDeep(this.state.postSession.soreness);
+            if(_.findIndex(this.state.postSession.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
+                // body part already exists
+                let sorenessIndex = [_.findIndex(this.state.postSession.soreness, (o) => o.body_part === bodyPart && o.side === side)];
+                newSorenessFields[sorenessIndex].severity = value;
+            } else {
+                // doesn't exist, create new object
+                let newSorenessPart = {};
+                newSorenessPart.body_part = bodyPart;
+                newSorenessPart.severity = value;
+                newSorenessPart.side = side ? side : 0;
+                newSorenessFields.push(newSorenessPart);
+            }
+            newFormFields = _.update( this.state.postSession, 'soreness', () => newSorenessFields);
+        } else {
+            newFormFields = _.update( this.state.postSession, name, () => value);
+        }
+        this.setState({
+            postSession: newFormFields
+        });
+    }
+
     _handleReadinessSurveySubmit = () => {
         let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
         newDailyReadiness.user_id = this.props.user.id;
@@ -148,14 +188,36 @@ class MyPlan extends Component {
             });
     }
 
+    _handlePostSessionSurveySubmit = () => {
+        let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
+        let session_type = Object.keys(MyPlanConstants.sessionTypes).find(sessionType => this.props.plan.dailyPlan[0][sessionType].length);
+        let postSession = {
+            user_id:      this.props.user.id,
+            date_time:    `${moment().toISOString().split('.')[0]}Z`,
+            sessionId:    session_type ? this.props.plan.dailyPlan[0][session_type].session_id : null,
+            session_type: session_type ? MyPlanConstants.sessionTypes[session_type] : 0,
+            survey:       newPostSessionSurvey,
+        };
+        this.props.postSessionSurvey(postSession)
+            .then(response => {
+                this.setState({
+                    isPostSessionSurveyModalOpen: false,
+                });
+            })
+            .catch(error => {
+                console.log('error',error);
+            });
+    }
+
     _onDateSelected = (date) => {
         const selectedDate = moment(date);
         console.log(`${selectedDate.calendar()} selected`);
     }
 
-    _handleAreaOfSorenessClick = areaClicked => {
-        let newSorenessFields = _.cloneDeep(this.state.dailyReadiness.soreness);
-        if(_.findIndex(this.state.dailyReadiness.soreness, (o) => o.body_part === areaClicked.index) > -1) {
+    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness) => {
+        let stateObject = isDailyReadiness ? this.state.dailyReadiness : this.state.postSession;
+        let newSorenessFields = _.cloneDeep(stateObject.soreness);
+        if(_.findIndex(stateObject.soreness, (o) => o.body_part === areaClicked.index) > -1) {
             // body part already exists
             newSorenessFields = _.filter(newSorenessFields, (o) => o.body_part !== areaClicked.index);
         } else {
@@ -179,10 +241,16 @@ class MyPlan extends Component {
                 newSorenessFields.push(newSorenessPart);
             }
         }
-        let newFormFields = _.update( this.state.dailyReadiness, 'soreness', () => newSorenessFields);
-        this.setState({
-            dailyReadiness: newFormFields
-        });
+        let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);
+        if (isDailyReadiness) {
+            this.setState({
+                dailyReadiness: newFormFields,
+            });
+        } else {
+            this.setState({
+                postSession: newFormFields,
+            });
+        }
     }
 
     _toggleCompletedAMPMRecoveryModal = () => {
@@ -193,8 +261,8 @@ class MyPlan extends Component {
 
     render = () => {
         let hourOfDay = moment().get('hour');
-        let isDailyReadinessSurveyCompleted = this.props.myPlan.dailyPlan[0] && this.props.myPlan.dailyPlan[0].daily_readiness_survey_completed ? true : false;
-        let dailyPlanObj = this.props.myPlan ? this.props.myPlan.dailyPlan[0] : false;
+        let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && this.props.plan.dailyPlan[0].daily_readiness_survey_completed ? true : false;
+        let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
         let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && hourOfDay >= 12 ?
             dailyPlanObj.recovery_pm
             : isDailyReadinessSurveyCompleted && dailyPlanObj && hourOfDay < 12 ?
@@ -259,9 +327,22 @@ class MyPlan extends Component {
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handleDailyReadinessFormChange}
                         handleFormSubmit={this._handleReadinessSurveySubmit}
-                        soreBodyParts={this.props.soreBodyParts || {}}
-                        soreBodyPartsState={this.state.dailyReadiness.soreness}
+                        soreBodyParts={this.props.plan.soreBodyParts}
                         user={this.props.user}
+                    />
+                </Modal>
+                <Modal
+                    backdropPressToClose={false}
+                    coverScreen={true}
+                    isOpen={this.state.isPostSessionSurveyModalOpen}
+                    swipeToClose={false}
+                >
+                    <PostSessionSurvey
+                        postSession={this.state.postSession}
+                        handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+                        handleFormChange={this._handlePostSessionFormChange}
+                        handleFormSubmit={this._handlePostSessionSurveySubmit}
+                        soreBodyParts={this.props.plan.soreBodyParts}
                     />
                 </Modal>
                 <Modal

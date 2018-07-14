@@ -7,7 +7,6 @@
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handleReadinessSurveySubmit}
         soreBodyParts={this.state.soreBodyParts}
-        soreBodyPartsState={this.state.dailyReadiness.soreness}
         user={user}
     />
  *
@@ -34,16 +33,15 @@ const ReadinessSurvey = ({
     handleFormChange,
     handleFormSubmit,
     soreBodyParts,
-    soreBodyPartsState,
     user,
 }) => {
     let hourOfDay = moment().get('hour');
     let partOfDay = hourOfDay >= 12 ? 'AFTERNOON' : 'MORNING';
     let isAnythingBotheringText = (
         dailyReadiness.sleep_quality === 0 &&
-        dailyReadiness.readiness === 0 &&
-        soreBodyPartsState.length === 0 &&
-        _.map(soreBodyPartsState, bodyPart => bodyPart.severity === 0).length === 0
+        dailyReadiness.readiness === 0
+        // soreBodyPartsState.length === 0 &&
+        // _.map(soreBodyPartsState, bodyPart => bodyPart.severity === 0).length === 0
     ) ?
         'No, nothing is bothering me'
         :
@@ -93,10 +91,11 @@ const ReadinessSurvey = ({
                 { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
                     <SoreBodyPart
                         bodyPart={bodyPart}
-                        dailyReadiness={dailyReadiness}
+                        bodyPartSide={bodyPart.side}
                         handleFormChange={handleFormChange}
                         index={i+3}
                         key={i}
+                        surveyObject={dailyReadiness}
                     />
                 )}
                 <View>
@@ -110,11 +109,11 @@ const ReadinessSurvey = ({
                         {'If yes, select area of soreness or pains'}
                     </Text>
                     <AreasOfSoreness
-                        dailyReadiness={dailyReadiness}
-                        handleAreaOfSorenessClick={handleAreaOfSorenessClick}
+                        handleAreaOfSorenessClick={body => handleAreaOfSorenessClick(body, true)}
                         handleFormChange={handleFormChange}
                         soreBodyParts={soreBodyParts}
-                        soreBodyPartsState={soreBodyPartsState}
+                        soreBodyPartsState={dailyReadiness.soreness}
+                        surveyObject={dailyReadiness}
                     />
                 </View>
                 <TouchableOpacity onPress={handleFormSubmit} style={[AppStyles.nextButtonWrapper, {margin: 10}]}>
@@ -131,7 +130,6 @@ ReadinessSurvey.propTypes = {
     handleFormChange:          PropTypes.func.isRequired,
     handleFormSubmit:          PropTypes.func.isRequired,
     soreBodyParts:             PropTypes.object.isRequired,
-    soreBodyPartsState:        PropTypes.array.isRequired,
     user:                      PropTypes.object.isRequired,
 };
 ReadinessSurvey.defaultProps = {};

@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -790,7 +791,6 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				5AF35C8DD5E04D5D8A9EB48D /* Resources */,
 				C97D70A11E23777B00C3C793 /* Frameworks */,
-				F52660311F950A69006259C1 /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";

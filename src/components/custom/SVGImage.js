@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai
  * @Date: 2018-07-12 18:48:09
- * @Last Modified by: Mazen Chami
- * @Last Modified time: 2018-07-13 11:14:55
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-07-14 15:05:57
  */
 
 /**
@@ -20,7 +20,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 // Consts and Libs
-import { AppColors } from '../../constants';
+import { AppColors, AppSizes } from '../../constants';
 
 // import third-party libraries
 import Image from 'react-native-remote-svg';
@@ -40,6 +40,7 @@ class SVGImage extends Component {
     imageString = () => {
         // Defaults
         const { image } = this.props;
+        /* eslint-disable indent */
         let imageName = image === 'Abs.svg' ?
             require('../../constants/assets/images/body/Abs.svg')
           : image === 'Hip.svg' ?
@@ -123,11 +124,13 @@ class SVGImage extends Component {
 
     render = () => (
         <View style={{
-            height:       110,
-            width:        110,
-            borderRadius: 110,
-            borderWidth:  4,
-            borderColor:  this.props.selected ? AppColors.secondary.blue.hundredPercent : AppColors.white
+            height:         AppSizes.screen.widthQuarter,
+            width:          AppSizes.screen.widthQuarter,
+            borderRadius:   AppSizes.screen.widthQuarter,
+            borderWidth:    10,
+            borderColor:    this.props.selected ? AppColors.secondary.blue.hundredPercent : AppColors.white,
+            justifyContent: 'center',
+            alignItems:     'center'
         }}>
             <Image
                 source={this.imageString()}
