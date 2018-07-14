@@ -2,10 +2,10 @@
  * ReadinessSurvey
  *
     <PostSessionSurvey
-        postSession={this.state.postSession}
         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handlePostSessionSurveySubmit}
+        postSession={this.state.postSession}
         soreBodyParts={this.state.soreBodyParts}
     />
  *
@@ -26,10 +26,10 @@ import _ from 'lodash';
 
 /* Component ==================================================================== */
 const PostSessionSurvey = ({
-    postSession,
     handleAreaOfSorenessClick,
     handleFormChange,
     handleFormSubmit,
+    postSession,
     soreBodyParts,
 }) => (
     <View style={{flex: 1}}>
@@ -91,10 +91,10 @@ const PostSessionSurvey = ({
 );
 
 PostSessionSurvey.propTypes = {
-    postSession:               PropTypes.object.isRequired,
     handleAreaOfSorenessClick: PropTypes.func.isRequired,
     handleFormChange:          PropTypes.func.isRequired,
     handleFormSubmit:          PropTypes.func.isRequired,
+    postSession:               PropTypes.object.isRequired,
     soreBodyParts:             PropTypes.object.isRequired,
 };
 PostSessionSurvey.defaultProps = {};

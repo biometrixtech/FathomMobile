@@ -27,7 +27,7 @@ MyPlan.propTypes = {
     Layout:              PropTypes.func.isRequired,
     getMyPlan:           PropTypes.func.isRequired,
     getSoreBodyParts:    PropTypes.func.isRequired,
-    myPlan:              PropTypes.object.isRequired,
+    plan:                PropTypes.object.isRequired,
     postReadinessSurvey: PropTypes.func.isRequired,
     postSessionSurvey:   PropTypes.func.isRequired,
     user:                PropTypes.object.isRequired,

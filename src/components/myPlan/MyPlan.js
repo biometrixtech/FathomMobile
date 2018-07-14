@@ -78,8 +78,8 @@ class MyPlan extends Component {
 
     componentDidMount = () => {
         let userId = this.props.user.id;
-        // this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
-        this.props.getMyPlan('morning_practice_2', moment('2018-07-11', 'YYYY-MM-DD').format('YYYY-MM-DD'))
+        // this.props.getMyPlan('morning_practice_2', moment('2018-07-11', 'YYYY-MM-DD').format('YYYY-MM-DD'))
+        this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
             .then(response => {
                 // console.log('response', response);
                 if(response.daily_plans[0].daily_readiness_survey_completed) {
@@ -259,6 +259,12 @@ class MyPlan extends Component {
         });
     }
 
+    _togglePostSessionSurveyModal = () => {
+        this.setState({
+            isPostSessionSurveyModalOpen: !this.state.isPostSessionSurveyModalOpen
+        });
+    }
+
     render = () => {
         let hourOfDay = moment().get('hour');
         let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && this.props.plan.dailyPlan[0].daily_readiness_survey_completed ? true : false;
@@ -296,7 +302,7 @@ class MyPlan extends Component {
                                 containerStyle={[{alignSelf: 'flex-end'}]}
                                 icon={'plus-circle-outline'}
                                 iconStyle={[{color: AppColors.white}]}
-                                onPress={() => console.log('TAKE ME TO POST SESSION SURVEY')}
+                                onPress={() => this._togglePostSessionSurveyModal}
                                 reverse={false}
                                 size={30}
                                 type={'material-community'}
@@ -338,10 +344,10 @@ class MyPlan extends Component {
                     swipeToClose={false}
                 >
                     <PostSessionSurvey
-                        postSession={this.state.postSession}
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handlePostSessionFormChange}
                         handleFormSubmit={this._handlePostSessionSurveySubmit}
+                        postSession={this.state.postSession}
                         soreBodyParts={this.props.plan.soreBodyParts}
                     />
                 </Modal>
@@ -361,7 +367,7 @@ class MyPlan extends Component {
                             backgroundColor={AppColors.primary.yellow.hundredPercent}
                             buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
                             containerViewStyle={{marginVertical: AppSizes.paddingMed}}
-                            onPress={() => console.log('TAKE ME TO POST SESSION SURVEY')}
+                            onPress={() => this._togglePostSessionSurveyModal}
                             textColor={AppColors.white}
                             title={'Log a session to customize recovery'}
                         />
