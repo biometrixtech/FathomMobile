@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:41 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-13 02:41:40
+ * @Last Modified time: 2018-07-14 12:51:32
  */
 
 export default {
@@ -14,6 +14,7 @@ export default {
     LOGIN:                   'LOGIN',
     LOGOUT:                  'LOGOUT',
     POST_READINESS_SURVEY:   'POST_READINESS_SURVEY',
+    POST_SESSION_SURVEY:     'POST_SESSION_SURVEY',
     REGISTER_DEVICE:         'REGISTER_DEVICE',
     SET_ENVIRONMENT:         'SET_ENVIRONMENT',
     SIGN_UP_FAILED:          'SIGN_UP_FAILED',
