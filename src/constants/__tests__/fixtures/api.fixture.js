@@ -36,6 +36,7 @@ export default {
         ['get_my_plan',           '/plans/daily_plan'], // POST
         ['get_sore_body_parts',   '/plans/daily_readiness/previous'], // GET
         ['post_readiness_survey', '/plans/daily_readiness'], // POST
+        ['post_session_survey', '/plans/post_session_survey'], // POST
     ]),
 
     // Which 'endpoint' key deals with our tokens?

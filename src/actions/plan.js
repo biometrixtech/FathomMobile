@@ -2,7 +2,7 @@
  * @Author: Mazen Chami
  * @Date: 2018-07-12 11:06:00
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-13 03:09:31
+ * @Last Modified time: 2018-07-14 13:16:54
  */
 
 /**
@@ -42,7 +42,7 @@ const getMyPlan = (userId, startDate, endDate) => {
 };
 
 /**
-  * Get Readiness Survey Data
+  * Post Readiness Survey Data
   */
 const postReadinessSurvey = dailyReadinessObj => {
     return dispatch => AppAPI.post_readiness_survey.post(false, dailyReadinessObj)
@@ -50,6 +50,25 @@ const postReadinessSurvey = dailyReadinessObj => {
             dispatch({
                 type: Actions.POST_READINESS_SURVEY,
                 data: myPlanData,
+            });
+            console.log('myPlanData',myPlanData);
+            return Promise.resolve(myPlanData);
+        }).catch(err => {
+            console.log('err',err);
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+};
+
+/**
+  * Post Session Survey Data
+  */
+const postSessionSurvey = postSessionObj => {
+    return dispatch => AppAPI.post_session_survey.post(false, postSessionObj)
+        .then(myPlanData => {
+            dispatch({
+                type: Actions.POST_SESSION_SURVEY,
+                data: postSessionObj,
             });
             console.log('myPlanData',myPlanData);
             return Promise.resolve(myPlanData);
@@ -83,4 +102,5 @@ export default {
     getMyPlan,
     getSoreBodyParts,
     postReadinessSurvey,
+    postSessionSurvey,
 };

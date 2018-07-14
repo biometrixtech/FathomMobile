@@ -1,14 +1,12 @@
 /**
  * ReadinessSurvey
  *
-    <ReadinessSurvey
-        dailyReadiness={this.state.dailyReadiness}
+    <PostSessionSurvey
+        postSession={this.state.postSession}
         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
         handleFormChange={this._handleFormChange}
-        handleFormSubmit={this._handleReadinessSurveySubmit}
+        handleFormSubmit={this._handlePostSessionSurveySubmit}
         soreBodyParts={this.state.soreBodyParts}
-        soreBodyPartsState={this.state.dailyReadiness.soreness}
-        user={user}
     />
  *
  */
@@ -27,54 +25,34 @@ import { AreasOfSoreness, SoreBodyPart } from './';
 import _ from 'lodash';
 
 /* Component ==================================================================== */
-const ReadinessSurvey = ({
-    dailyReadiness,
+const PostSessionSurvey = ({
+    postSession,
     handleAreaOfSorenessClick,
     handleFormChange,
     handleFormSubmit,
     soreBodyParts,
-    soreBodyPartsState,
-    user,
 }) => (
     <View style={{flex: 1}}>
         <ScrollView>
             <View style={{backgroundColor: AppColors.primary.grey.twentyPercent}}>
-                <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, {color: AppColors.black}]}>{`GOOD MORNING, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
+                <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, {color: AppColors.black}]}>{'HOW WAS YOUR WORKOUT?'}</Text>
             </View>
             <View>
                 <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
                     {'1'}
                 </Text>
                 <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
-                    {'How ready do you feel to attack the day?'}
+                    {'How hard did that practice feel?'}
                 </Text>
                 <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.secondary.blue.hundredPercent}]}>
-                    {`${dailyReadiness.readiness + 1} - ${MyPlanConstants.overallReadiness[dailyReadiness.readiness].toUpperCase()}`}
+                    {`${postSession.RPE + 1} - ${MyPlanConstants.overallReadiness[postSession.RPE].toUpperCase()}`}
                 </Text>
                 <FathomSlider
                     handleFormChange={handleFormChange}
                     maximumValue={9}
                     minimumValue={0}
-                    name={'readiness'}
-                    value={dailyReadiness.readiness}
-                />
-            </View>
-            <View>
-                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
-                    {'2'}
-                </Text>
-                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
-                    {'How well did you sleep last nights?'}
-                </Text>
-                <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.secondary.blue.hundredPercent}]}>
-                    {`${dailyReadiness.sleep_quality + 1} - ${MyPlanConstants.sleepQuality[dailyReadiness.sleep_quality].toUpperCase()}`}
-                </Text>
-                <FathomSlider
-                    handleFormChange={handleFormChange}
-                    maximumValue={9}
-                    minimumValue={0}
-                    name={'sleep_quality'}
-                    value={dailyReadiness.sleep_quality}
+                    name={'RPE'}
+                    value={postSession.RPE}
                 />
             </View>
             { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
@@ -82,27 +60,27 @@ const ReadinessSurvey = ({
                     bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
                     bodyPartSide={bodyPart.side}
                     handleFormChange={handleFormChange}
-                    index={i+3}
+                    index={i+2}
                     key={i}
-                    surveyObject={dailyReadiness}
+                    surveyObject={postSession}
                 />
             )}
             <View>
                 <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
-                    {soreBodyParts.body_parts.length > 0 ? soreBodyParts.body_parts.length + 3 : '3'}
+                    {soreBodyParts.body_parts.length > 0 ? soreBodyParts.body_parts.length + 2 : '2'}
                 </Text>
                 <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
-                    {'Is anything bothering you?'}
+                    {'Did anything bother you?'}
                 </Text>
                 <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
                     {'If yes, select area of soreness or pains'}
                 </Text>
                 <AreasOfSoreness
-                    handleAreaOfSorenessClick={body => handleAreaOfSorenessClick(body, true)}
+                    handleAreaOfSorenessClick={body => handleAreaOfSorenessClick(body, false)}
                     handleFormChange={handleFormChange}
                     soreBodyParts={soreBodyParts}
-                    soreBodyPartsState={soreBodyPartsState}
-                    surveyObject={dailyReadiness}
+                    soreBodyPartsState={postSession.soreness}
+                    surveyObject={postSession}
                 />
             </View>
             <TouchableOpacity onPress={handleFormSubmit} style={[AppStyles.nextButtonWrapper, {margin: 10}]}>
@@ -112,17 +90,15 @@ const ReadinessSurvey = ({
     </View>
 );
 
-ReadinessSurvey.propTypes = {
-    dailyReadiness:            PropTypes.object.isRequired,
+PostSessionSurvey.propTypes = {
+    postSession:               PropTypes.object.isRequired,
     handleAreaOfSorenessClick: PropTypes.func.isRequired,
     handleFormChange:          PropTypes.func.isRequired,
     handleFormSubmit:          PropTypes.func.isRequired,
     soreBodyParts:             PropTypes.object.isRequired,
-    soreBodyPartsState:        PropTypes.array.isRequired,
-    user:                      PropTypes.object.isRequired,
 };
-ReadinessSurvey.defaultProps = {};
-ReadinessSurvey.componentName = 'ReadinessSurvey';
+PostSessionSurvey.defaultProps = {};
+PostSessionSurvey.componentName = 'PostSessionSurvey';
 
 /* Export Component ================================================================== */
-export default ReadinessSurvey;
+export default PostSessionSurvey;

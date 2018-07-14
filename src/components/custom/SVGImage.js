@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-07-12 18:48:09
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-13 17:43:57
+ * @Last Modified time: 2018-07-14 15:05:57
  */
 
 /**
@@ -124,11 +124,13 @@ class SVGImage extends Component {
 
     render = () => (
         <View style={{
-            height:       AppSizes.screen.widthQuarter,
-            width:        AppSizes.screen.widthQuarter,
-            borderRadius: AppSizes.screen.widthQuarter,
-            borderWidth:  4,
-            borderColor:  this.props.selected ? AppColors.secondary.blue.hundredPercent : AppColors.white
+            height:         AppSizes.screen.widthQuarter,
+            width:          AppSizes.screen.widthQuarter,
+            borderRadius:   AppSizes.screen.widthQuarter,
+            borderWidth:    10,
+            borderColor:    this.props.selected ? AppColors.secondary.blue.hundredPercent : AppColors.white,
+            justifyContent: 'center',
+            alignItems:     'center'
         }}>
             <Image
                 source={this.imageString()}

@@ -4,9 +4,9 @@
     <SoreBodyPart
         bodyPart={bodyPart}
         bodyPartSide={bodyPartSide}
-        dailyReadiness={dailyReadiness}
         handleFormChange={handleFormChange}
         index={i+3}
+        surveyObject={surveyObject}
     />
  *
  */
@@ -25,12 +25,12 @@ import _ from 'lodash';
 const SoreBodyPart = ({
     bodyPart,
     bodyPartSide,
-    dailyReadiness,
     handleFormChange,
     index,
+    surveyObject,
 }) => {
-    let bodyPartSorenessIndex = _.findIndex(dailyReadiness.soreness, (o) => o.body_part === bodyPart.index && o.side === bodyPartSide);
-    let severityValue = dailyReadiness.soreness[bodyPartSorenessIndex] ? dailyReadiness.soreness[bodyPartSorenessIndex].severity : 0;
+    let bodyPartSorenessIndex = _.findIndex(surveyObject.soreness, (o) => o.body_part === bodyPart.index && o.side === bodyPartSide);
+    let severityValue = surveyObject.soreness[bodyPartSorenessIndex] ? surveyObject.soreness[bodyPartSorenessIndex].severity || 0 : 0;
     let bodyPartMap = MyPlanConstants.bodyPartMapping[bodyPart.index];
     let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
     let severityString = '';
@@ -39,6 +39,19 @@ const SoreBodyPart = ({
     } else if (bodyPartGroup === 'muscle') {
         severityString = MyPlanConstants.muscleLevels[severityValue].toUpperCase();
     }
+    let helpingVerb = bodyPartMap ? bodyPartMap.helping_verb : '';
+    let mainBodyPartName = bodyPartMap ? bodyPartMap.label.toUpperCase() : '';
+    if (mainBodyPartName.slice(-1) === 'S' && bodyPart.bilateral && bodyPartSide !== 0) {
+        if (mainBodyPartName === 'ACHILLES') {
+            // do nothing
+        } else if (mainBodyPartName === 'CALVES') {
+            mainBodyPartName = 'CALF';
+        } else {
+            mainBodyPartName = mainBodyPartName.slice(0, -1);
+        }
+        helpingVerb = 'is';
+    }
+    let bodyPartName = `${bodyPart.bilateral ? bodyPartSide === 1 ? 'LEFT ' : bodyPartSide === 2 ? 'RIGHT ' : '' : ''}${mainBodyPartName}`;
     return(
         <View>
             { index ?
@@ -47,11 +60,11 @@ const SoreBodyPart = ({
                         {index}
                     </Text>
                     <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
-                        {`Is/are your ${bodyPartMap ? bodyPartMap.label.toUpperCase() : ''} bothering you today?`}
+                        {`How ${helpingVerb} your ${bodyPartName} feeling?`}
                     </Text>
                     <View style={[AppStyles.containerCentered]}>
                         <SVGImage
-                            image={bodyPartMap.image[0] || bodyPartMap.image[2]}
+                            image={bodyPartMap.image[bodyPartSide]}
                             style={{width: 100, height: 100}}
                         />
                     </View>
@@ -61,7 +74,7 @@ const SoreBodyPart = ({
             }
             <View style={[AppStyles.row, AppStyles.paddingVerticalSml, {justifyContent: 'space-between'}]}>
                 <Text style={[AppStyles.paddingHorizontal, AppStyles.bold, {color: AppColors.black}]}>
-                    {bodyPart.bilateral ? bodyPartSide === 1 ? 'LEFT' : bodyPartSide === 2 ? 'RIGHT' : '' : ''} {bodyPartMap ? bodyPartMap.label.toUpperCase() : ''}
+                    {bodyPartName}
                 </Text>
                 <Text style={[AppStyles.paddingHorizontal, AppStyles.textRightAligned, AppStyles.bold, {color: AppColors.slider[severityValue]}]}>
                     {severityString.length > 0 ? `${severityValue}: ${severityString}` : ''}
@@ -84,14 +97,14 @@ const SoreBodyPart = ({
 SoreBodyPart.propTypes = {
     bodyPart:         PropTypes.object.isRequired,
     bodyPartSide:     PropTypes.number,
-    dailyReadiness:   PropTypes.object,
     handleFormChange: PropTypes.func.isRequired,
     index:            PropTypes.number,
+    surveyObject:     PropTypes.object,
 };
 SoreBodyPart.defaultProps = {
-    bodyPartSide:   0,
-    dailyReadiness: {},
-    index:          null,
+    bodyPartSide: 0,
+    index:        null,
+    surveyObject: {},
 };
 SoreBodyPart.componentName = 'SoreBodyPart';
 
