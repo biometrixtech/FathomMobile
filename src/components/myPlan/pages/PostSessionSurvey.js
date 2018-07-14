@@ -67,7 +67,7 @@ const PostSessionSurvey = ({
             )}
             <View>
                 <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
-                    {soreBodyParts.body_parts.length > 0 ? soreBodyParts.body_parts.length + 2 : '2'}
+                    {soreBodyParts.body_parts.length ? soreBodyParts.body_parts.length + 2 : '2'}
                 </Text>
                 <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
                     {'Did anything bother you?'}
