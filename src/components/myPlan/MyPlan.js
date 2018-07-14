@@ -177,6 +177,9 @@ class MyPlan extends Component {
         newDailyReadiness.date_time = moment().toISOString().split('.')[0] + 'Z';
         newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality + 1;
         newDailyReadiness.readiness = newDailyReadiness.readiness + 1;
+        _.map(newDailyReadiness.soreness, bodyPart => {
+            newDailyReadiness.soreness = _.filter(newDailyReadiness.soreness, u => { return u.severity && u.severity > 0; });
+        });
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
                 this.setState({

@@ -29,13 +29,9 @@ const SoreBodyPart = ({
     index,
     surveyObject,
 }) => {
-    console.log(bodyPart,
-        bodyPartSide,
-        index,
-        surveyObject,);
-    let bodyPartSorenessIndex = _.findIndex(surveyObject.soreness, (o) => o.body_part === bodyPart.body_part && o.side === bodyPartSide);
+    let bodyPartSorenessIndex = _.findIndex(surveyObject.soreness, (o) => (o.body_part === bodyPart.body_part || o.body_part === bodyPart.index) && o.side === bodyPartSide);
     let severityValue = surveyObject.soreness[bodyPartSorenessIndex] ? surveyObject.soreness[bodyPartSorenessIndex].severity || 0 : 0;
-    let bodyPartMap = MyPlanConstants.bodyPartMapping[bodyPart.body_part];
+    let bodyPartMap = bodyPart.body_part ? MyPlanConstants.bodyPartMapping[bodyPart.body_part] : MyPlanConstants.bodyPartMapping[bodyPart.index];
     let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
     let severityString = '';
     if(bodyPartGroup === 'joint') {
@@ -89,7 +85,7 @@ const SoreBodyPart = ({
                 </Text>
             </View>
             <FathomSlider
-                bodyPart={bodyPart.index}
+                bodyPart={bodyPartMap.index}
                 handleFormChange={handleFormChange}
                 maximumValue={5}
                 minimumValue={0}

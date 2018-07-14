@@ -100,7 +100,7 @@ const ReadinessSurvey = ({
                 )}
                 <View>
                     <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
-                        {soreBodyParts.body_parts.length > 0 ? soreBodyParts.body_parts.length + 3 : '3'}
+                        {soreBodyParts.body_parts && soreBodyParts.body_parts.length > 0 ? soreBodyParts.body_parts.length + 3 : '3'}
                     </Text>
                     <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
                         {'Is anything bothering you?'}
