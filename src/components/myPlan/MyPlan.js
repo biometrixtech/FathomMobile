@@ -303,7 +303,6 @@ class MyPlan extends Component {
                         handleFormChange={this._handleDailyReadinessFormChange}
                         handleFormSubmit={this._handleReadinessSurveySubmit}
                         soreBodyParts={this.props.plan.soreBodyParts}
-                        soreBodyPartsState={this.state.dailyReadiness.soreness}
                         user={this.props.user}
                     />
                 </Modal>

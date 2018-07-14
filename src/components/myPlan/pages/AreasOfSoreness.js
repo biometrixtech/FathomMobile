@@ -37,9 +37,9 @@ const AreasOfSoreness = ({
     });
     let newBodyPartMap = _.filter(filteredBodyPartMap, o => o.order);
     newBodyPartMap = _.orderBy(newBodyPartMap, ['order'], ['asc']);
-    let areaOfSorenessClicked = _.filter(soreBodyPartsState, (u, i) => {
-        return _.findIndex(soreBodyParts, (o) => o.body_part === u.body_part) === -1;
-    }) || [];
+    let areaOfSorenessClicked = soreBodyPartsState.filter(bodyPartState => {
+        return soreBodyParts.body_parts.findIndex(bodyPartProp => bodyPartProp.body_part === bodyPartState.body_part) === -1;
+    });
     return(
         <View>
             <View style={[AppStyles.row, AppStyles.containerCentered, {flexWrap: 'wrap'}]}>

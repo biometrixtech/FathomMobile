@@ -7,7 +7,6 @@
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handleReadinessSurveySubmit}
         soreBodyParts={this.state.soreBodyParts}
-        soreBodyPartsState={this.state.dailyReadiness.soreness}
         user={user}
     />
  *
@@ -33,7 +32,6 @@ const ReadinessSurvey = ({
     handleFormChange,
     handleFormSubmit,
     soreBodyParts,
-    soreBodyPartsState,
     user,
 }) => (
     <View style={{flex: 1}}>
@@ -101,7 +99,7 @@ const ReadinessSurvey = ({
                     handleAreaOfSorenessClick={body => handleAreaOfSorenessClick(body, true)}
                     handleFormChange={handleFormChange}
                     soreBodyParts={soreBodyParts}
-                    soreBodyPartsState={soreBodyPartsState}
+                    soreBodyPartsState={dailyReadiness.soreness}
                     surveyObject={dailyReadiness}
                 />
             </View>
@@ -118,7 +116,6 @@ ReadinessSurvey.propTypes = {
     handleFormChange:          PropTypes.func.isRequired,
     handleFormSubmit:          PropTypes.func.isRequired,
     soreBodyParts:             PropTypes.object.isRequired,
-    soreBodyPartsState:        PropTypes.array.isRequired,
     user:                      PropTypes.object.isRequired,
 };
 ReadinessSurvey.defaultProps = {};
