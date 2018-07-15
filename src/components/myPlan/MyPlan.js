@@ -4,31 +4,31 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-    Alert,
-    Platform,
+    ActivityIndicator,
+    Image,
     ScrollView,
     StyleSheet,
-    TouchableOpacity,
     View,
 } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
+import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modalbox';
-import moment from 'moment';
 import SplashScreen from 'react-native-splash-screen';
+import moment from 'moment';
 
 // Consts, Libs, and Utils
 import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../../constants';
 
 // Components
-import { CalendarStrip, Card, Text, } from '../custom/';
-import { ReadinessSurvey, PostSessionSurvey } from './pages';
+import { Button, TabIcon, Text, } from '../custom/';
+import { Exercises, PostSessionSurvey, ReadinessSurvey } from './pages';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: AppColors.primary.white.hundredPercent,
+        backgroundColor: AppColors.white,
         flex:            1,
         height:          AppSizes.screen.height,
         width:           AppSizes.screen.width,
@@ -59,31 +59,27 @@ class MyPlan extends Component {
                 sleep_quality: 0,
                 soreness:      [],
             },
-            isReadinessSurveyModalOpen:   false,
-            isPostSessionSurveyModalOpen: false,
-            postSession:                  {
+            isCompletedAMPMRecoveryModalOpen: false,
+            isExerciseListRefreshing:         false,
+            isReadinessSurveyModalOpen:       false,
+            isPostSessionSurveyModalOpen:     false,
+            postSession:                      {
                 RPE:      0,
                 soreness: []
             },
-            // datesWhitelist: [
-            //     {
-            //         end:   moment().add(3, 'days'),  // total 4 days enabled
-            //         start: moment(),
-            //     }
-            // ]
         };
     }
 
     componentDidMount = () => {
         let userId = this.props.user.id;
+        // this.props.getMyPlan('morning_practice_2', moment('2018-07-11', 'YYYY-MM-DD').format('YYYY-MM-DD'))
         this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
             .then(response => {
                 // console.log('response', response);
                 if(response.daily_plans[0].daily_readiness_survey_completed) {
                     // -- AM/PM Survey
                     this.setState({
-                        isPostSessionSurveyModalOpen: true,
-                        isReadinessSurveyModalOpen:   false,
+                        isReadinessSurveyModalOpen: false,
                     });
                     SplashScreen.hide();
                 } else {
@@ -91,7 +87,7 @@ class MyPlan extends Component {
                         .then(soreBodyParts => {
                             // console.log('soreBodyParts',soreBodyParts);
                             let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                            newDailyReadiness.soreness = soreBodyParts.body_parts;
+                            newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
                             this.setState({
                                 isPostSessionSurveyModalOpen: false,
                                 isReadinessSurveyModalOpen:   true,
@@ -171,9 +167,12 @@ class MyPlan extends Component {
     _handleReadinessSurveySubmit = () => {
         let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
         newDailyReadiness.user_id = this.props.user.id;
-        newDailyReadiness.date_time = moment().toISOString().split('.')[0] + 'Z';
+        newDailyReadiness.date_time = `${moment().toISOString().split('.')[0]}Z`;
         newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality + 1;
         newDailyReadiness.readiness = newDailyReadiness.readiness + 1;
+        newDailyReadiness.soreness.map(bodyPart => {
+            newDailyReadiness.soreness = newDailyReadiness.soreness.filter(u => { return !!u.severity && u.severity > 0; });
+        });
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
                 this.setState({
@@ -187,11 +186,15 @@ class MyPlan extends Component {
 
     _handlePostSessionSurveySubmit = () => {
         let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
+        newPostSessionSurvey.RPE = newPostSessionSurvey.RPE + 1;
+        newPostSessionSurvey.soreness.map(bodyPart => {
+            newPostSessionSurvey.soreness = newPostSessionSurvey.soreness.filter(u => { return !!u.severity && u.severity > 0; });
+        });
         let session_type = Object.keys(MyPlanConstants.sessionTypes).find(sessionType => this.props.plan.dailyPlan[0][sessionType].length);
         let postSession = {
             user_id:      this.props.user.id,
-            date_time:    `${moment().toISOString().split('.')[0]}Z`,
-            sessionId:    session_type ? this.props.plan.dailyPlan[0][session_type].session_id : null,
+            event_date:   moment().format('YYYY-MM-DD'),
+            session_id:   session_type ? this.props.plan.dailyPlan[0][session_type].session_id : '',
             session_type: session_type ? MyPlanConstants.sessionTypes[session_type] : 0,
             survey:       newPostSessionSurvey,
         };
@@ -206,17 +209,12 @@ class MyPlan extends Component {
             });
     }
 
-    _onDateSelected = (date) => {
-        const selectedDate = moment(date);
-        console.log(`${selectedDate.calendar()} selected`);
-    }
-
     _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness) => {
         let stateObject = isDailyReadiness ? this.state.dailyReadiness : this.state.postSession;
         let newSorenessFields = _.cloneDeep(stateObject.soreness);
-        if(_.findIndex(stateObject.soreness, (o) => o.body_part === areaClicked.index) > -1) {
+        if(_.findIndex(stateObject.soreness, o => o.body_part === areaClicked.index) > -1) {
             // body part already exists
-            newSorenessFields = _.filter(newSorenessFields, (o) => o.body_part !== areaClicked.index);
+            newSorenessFields = newSorenessFields.filter(o => o.body_part !== areaClicked.index);
         } else {
             // doesn't exist, create new object
             if(areaClicked.bilateral) {
@@ -250,47 +248,120 @@ class MyPlan extends Component {
         }
     }
 
+    _toggleCompletedAMPMRecoveryModal = () => {
+        this.setState({
+            isCompletedAMPMRecoveryModalOpen: !this.state.isCompletedAMPMRecoveryModalOpen
+        });
+    }
+
+    _togglePostSessionSurveyModal = () => {
+        if(!this.state.isPostSessionSurveyModalOpen) {
+            this.props.getSoreBodyParts()
+                .then(soreBodyParts => {
+                    // console.log('soreBodyParts',soreBodyParts);
+                    let newDailyReadiness = _.cloneDeep(this.state.postSession);
+                    newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
+                    this.setState({
+                        isPostSessionSurveyModalOpen: true,
+                        postSession:                  newDailyReadiness,
+                    });
+                })
+                .catch(err => {
+                    // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
+                    let newDailyReadiness = _.cloneDeep(this.state.postSession);
+                    newDailyReadiness.soreness = [];
+                    this.setState({
+                        isPostSessionSurveyModalOpen: true,
+                        postSession:                  newDailyReadiness,
+                    });
+                });
+        } else {
+            this.setState({
+                isPostSessionSurveyModalOpen: false
+            });
+        }
+    }
+
+    _handleExerciseListRefresh = () => {
+        this.setState({
+            isExerciseListRefreshing: true
+        });
+        let userId = this.props.user.id;
+        this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
+            .then(response => {
+                // console.log('response', response);
+                this.setState({
+                    isExerciseListRefreshing: false
+                });
+            })
+            .catch(error => {
+                // console.log('error',error);
+                this.setState({
+                    isExerciseListRefreshing: false
+                });
+            });
+    }
+
     render = () => {
+        let hourOfDay = moment().get('hour');
+        let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && this.props.plan.dailyPlan[0].daily_readiness_survey_completed ? true : false;
+        let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
+        let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && hourOfDay >= 12 ?
+            dailyPlanObj.recovery_pm
+            : isDailyReadinessSurveyCompleted && dailyPlanObj && hourOfDay < 12 ?
+                dailyPlanObj.recovery_am
+                :
+                false;
+        let timeOfDay = (hourOfDay >= 12 ? 'P' : 'A') + 'M';
+        let partOfDay = hourOfDay >= 12 ? 'AFTERNOON' : 'MORNING';
+        let completedAMPMRecoverMessage = hourOfDay >= 12 ?
+            'Log a training session to update your next Recovery, else we\'ll see you tomorrow. Rest well!'
+            :
+            'Comeback this afternoon or log a training session to update your PM Recovery.';
         return (
             <View style={[styles.background]}>
-                <Text>{'MY PLAN'}</Text>
-                <CalendarStrip
-                    onDateSelected={this._onDateSelected}
-                />
-                <ScrollView>
-                    <Card>
-                        <Text>{'STRENGTH & CONDITIONING'}</Text>
-                        <Text>{'Stretch and Mobilize'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'PRACTICE'}</Text>
-                        <Text>{'Soccer Practice'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'RECOVER'}</Text>
-                        <Text>{'Time to reduce the injury risk'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'RECOVER'}</Text>
-                        <Text>{'Time to reduce the injury risk'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'RECOVER'}</Text>
-                        <Text>{'Time to reduce the injury risk'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'RECOVER'}</Text>
-                        <Text>{'Time to reduce the injury risk'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'RECOVER'}</Text>
-                        <Text>{'Time to reduce the injury risk'}</Text>
-                    </Card>
-                    <Card>
-                        <Text>{'RECOVER'}</Text>
-                        <Text>{'Time to reduce the injury risk'}</Text>
-                    </Card>
-                </ScrollView>
+                <LinearGradient
+                    colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
+                    style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
+                >
+                    <Image
+                        source={require('../../constants/assets/images/coach-avatar.png')}
+                        style={{resizeMode: 'contain', width: 40, height: 40}}
+                    />
+                    { !isDailyReadinessSurveyCompleted ?
+                        <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, AppStyles.textCenterAligned, {color: AppColors.white}]}>{`GOOD ${partOfDay}, ${this.props.user.personal_data.first_name.toUpperCase()}!`}</Text>
+                        :
+                        <View>
+                            <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, AppStyles.h1, {color: AppColors.white}]}>{timeOfDay} {'RECOVERY'}</Text>
+                            <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Check the box to indicate completed exercises.'}</Text>
+                            <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Or click the plus sign below to log a practice & update your recovery!'}</Text>
+                            <TabIcon
+                                containerStyle={[{alignSelf: 'flex-end'}]}
+                                icon={'plus-circle-outline'}
+                                iconStyle={[{color: AppColors.white}]}
+                                onPress={this._togglePostSessionSurveyModal}
+                                reverse={false}
+                                size={30}
+                                type={'material-community'}
+                            />
+                        </View>
+                    }
+                </LinearGradient>
+                { !recoveryObj ?
+                    <View style={[AppStyles.containerCentered, {flex: 1}]}>
+                        <ActivityIndicator
+                            color={AppColors.primary.yellow.hundredPercent}
+                            size={'large'}
+                        />
+                    </View>
+                    :
+                    <Exercises
+                        handleExerciseListRefresh={this._handleExerciseListRefresh}
+                        isExerciseListRefreshing={this.state.isExerciseListRefreshing}
+                        recoveryObj={recoveryObj}
+                        toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
+                    />
+                }
                 <Modal
                     backdropPressToClose={false}
                     coverScreen={true}
@@ -313,12 +384,42 @@ class MyPlan extends Component {
                     swipeToClose={false}
                 >
                     <PostSessionSurvey
-                        postSession={this.state.postSession}
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handlePostSessionFormChange}
                         handleFormSubmit={this._handlePostSessionSurveySubmit}
+                        postSession={this.state.postSession}
                         soreBodyParts={this.props.plan.soreBodyParts}
                     />
+                </Modal>
+                <Modal
+                    backdropPressToClose={false}
+                    coverScreen={true}
+                    isOpen={this.state.isCompletedAMPMRecoveryModalOpen}
+                    swipeToClose={false}
+                >
+                    <LinearGradient
+                        colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
+                        style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal, {flex: 1}]}
+                    >
+                        <Text style={[AppStyles. paddingVertical, AppStyles.h1, AppStyles.textCenterAligned, {color: AppColors.white, fontWeight: 'bold'}]}>{`You've completed your ${timeOfDay} Recovery!`}</Text>
+                        <Text style={[AppStyles. paddingVertical, AppStyles.h3, AppStyles.textCenterAligned, {color: AppColors.white}]}>{completedAMPMRecoverMessage}</Text>
+                        <Button
+                            backgroundColor={AppColors.primary.yellow.hundredPercent}
+                            buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
+                            containerViewStyle={{marginVertical: AppSizes.paddingMed}}
+                            onPress={this._togglePostSessionSurveyModal}
+                            textColor={AppColors.white}
+                            title={'Log a session to customize recovery'}
+                        />
+                        <Button
+                            backgroundColor={AppColors.white}
+                            buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
+                            containerViewStyle={{marginVertical: AppSizes.paddingMed}}
+                            onPress={this._toggleCompletedAMPMRecoveryModal}
+                            textColor={AppColors.primary.yellow.hundredPercent}
+                            title={`Do ${timeOfDay} Recovery again`}
+                        />
+                    </LinearGradient>
                 </Modal>
             </View>
         );

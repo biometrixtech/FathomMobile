@@ -5,6 +5,8 @@
  * @Last Modified time: 2018-07-14 14:33:27
  */
 
+import _ from 'lodash';
+
 /**
  * MyPlan Config
  */
@@ -29,9 +31,6 @@ const bodyPartMapping = [
     {index: 16, order: 11, label: 'Calves', group: 'muscle', image: {0: 'Calf.svg', 1: 'L_Calf.svg', 2: 'R_Calf.svg'}, bilateral: true, helping_verb: 'are'},
     {index: 17, order: 13, label: 'Achilles', group: 'muscle', image: {0: 'Achilles.svg', 1: 'L_Achilles.svg', 2: 'R_Achilles.svg'}, bilateral: true, helping_verb: 'are'},
 ];
-// 0 = None/both
-// 1 = left
-// 2 = right
 
 const overallReadiness = [
     'Not At All',
@@ -77,20 +76,50 @@ const jointLevels = [
     'inability to move',
 ];
 
+const exerciseListOrder = [
+    'inhibit_exercises',
+    'lengthen_exercises',
+    'activate_exercises',
+    'integrate_exercises',
+];
+
+function cleanExerciseList(recoveryObj) {
+    let cleanedExerciseList = [];
+    exerciseListOrder.map(list => {
+        cleanedExerciseList = cleanedExerciseList.concat(recoveryObj[list]);
+    });
+    return _.orderBy(cleanedExerciseList, ['position_order'], ['asc']);
+}
+
 const sessionTypes = {
-    practice_sessions:                  0,
-    strength_and_conditioning_sessions: 1,
-    games:                              2,
-    tournaments:                        3,
-    bump_up_sessions:                   4,
-    corrective_sessions:                5,
+    practice_sessions:              0,
+    strength_conditioning_sessions: 1,
+    games:                          2,
+    tournaments:                    3,
+    bump_up_sessions:               4,
+    corrective_sessions:            5,
 };
+
+const postSessionFeel = [
+    'Resting, like nothing',
+    'Very Easy, I could do that all day!',
+    'Light, I could do that for a few hours!',
+    'Moderate, Broke a sweat, but feeling good!',
+    'Considerable, harder... but could hold a conversation.',
+    'Challenging, Breathing hard...not in my comfort zone anymore.',
+    'Hard,  That was straight-up uncomfortable.',
+    'Very Hard, Talking was not an option!',
+    'Extremely Hard, I could only hold that intensity for a minute more.',
+    'Maximum, carry me off the field',
+];
 
 export default {
     bodyPartMapping,
+    cleanExerciseList,
     jointLevels,
     muscleLevels,
     overallReadiness,
+    postSessionFeel,
     sessionTypes,
     sleepQuality,
 };

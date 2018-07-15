@@ -124,9 +124,9 @@ class SVGImage extends Component {
 
     render = () => (
         <View style={{
-            height:         AppSizes.screen.widthQuarter,
-            width:          AppSizes.screen.widthQuarter,
-            borderRadius:   AppSizes.screen.widthQuarter,
+            height:         AppSizes.screen.widthQuarter + 5,
+            width:          AppSizes.screen.widthQuarter + 5,
+            borderRadius:   AppSizes.screen.widthQuarter + 5,
             borderWidth:    10,
             borderColor:    this.props.selected ? AppColors.secondary.blue.hundredPercent : AppColors.white,
             justifyContent: 'center',
