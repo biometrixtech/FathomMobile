@@ -37,11 +37,7 @@ const ReadinessSurvey = ({
 }) => {
     let hourOfDay = moment().get('hour');
     let partOfDay = hourOfDay >= 12 ? 'AFTERNOON' : 'MORNING';
-    let isAnythingBotheringText = (
-        dailyReadiness.sleep_quality === 0 &&
-        dailyReadiness.readiness === 0 &&
-        dailyReadiness.soreness.length === 0
-    ) ?
+    let isAnythingBotheringText = !dailyReadiness.sleep_quality && !dailyReadiness.readiness && !dailyReadiness.soreness.length ?
         'No, nothing is bothering me'
         :
         'Done';
@@ -87,7 +83,7 @@ const ReadinessSurvey = ({
                         value={dailyReadiness.sleep_quality}
                     />
                 </View>
-                { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
+                { soreBodyParts.body_parts.map((bodyPart, i) =>
                     <SoreBodyPart
                         bodyPart={bodyPart}
                         bodyPartSide={bodyPart.side}

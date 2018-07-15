@@ -29,7 +29,7 @@ const SoreBodyPart = ({
     index,
     surveyObject,
 }) => {
-    let bodyPartSorenessIndex = _.findIndex(surveyObject.soreness, (o) => (o.body_part === bodyPart.body_part || o.body_part === bodyPart.index) && o.side === bodyPartSide);
+    let bodyPartSorenessIndex = _.findIndex(surveyObject.soreness, o => (o.body_part === bodyPart.body_part || o.body_part === bodyPart.index) && o.side === bodyPartSide);
     let severityValue = surveyObject.soreness[bodyPartSorenessIndex] ? surveyObject.soreness[bodyPartSorenessIndex].severity || 0 : 0;
     let bodyPartMap = bodyPart.body_part ? MyPlanConstants.bodyPartMapping[bodyPart.body_part] : MyPlanConstants.bodyPartMapping[bodyPart.index];
     let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
@@ -41,7 +41,7 @@ const SoreBodyPart = ({
     }
     let helpingVerb = bodyPartMap ? bodyPartMap.helping_verb : '';
     let mainBodyPartName = bodyPartMap ? bodyPartMap.label.toUpperCase() : '';
-    if (mainBodyPartName.slice(-1) === 'S' && bodyPartMap.bilateral && bodyPartSide !== 0) {
+    if (mainBodyPartName.slice(-1) === 'S' && bodyPartMap.bilateral && !!bodyPartSide) {
         if (mainBodyPartName === 'ACHILLES') {
             // do nothing
         } else if (mainBodyPartName === 'CALVES') {

@@ -8,7 +8,6 @@ import {
     Image,
     ScrollView,
     StyleSheet,
-    TouchableOpacity,
     View,
 } from 'react-native';
 
@@ -23,7 +22,7 @@ import moment from 'moment';
 import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../../constants';
 
 // Components
-import { Button, CalendarStrip, Card, TabIcon, Text, } from '../custom/';
+import { Button, TabIcon, Text, } from '../custom/';
 import { Exercises, PostSessionSurvey, ReadinessSurvey } from './pages';
 
 /* Styles ==================================================================== */
@@ -68,12 +67,6 @@ class MyPlan extends Component {
                 RPE:      0,
                 soreness: []
             },
-            // datesWhitelist: [
-            //     {
-            //         end:   moment().add(3, 'days'),  // total 4 days enabled
-            //         start: moment(),
-            //     }
-            // ]
         };
     }
 
@@ -94,7 +87,7 @@ class MyPlan extends Component {
                         .then(soreBodyParts => {
                             // console.log('soreBodyParts',soreBodyParts);
                             let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                            newDailyReadiness.soreness = soreBodyParts.body_parts;
+                            newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
                             this.setState({
                                 isPostSessionSurveyModalOpen: false,
                                 isReadinessSurveyModalOpen:   true,
@@ -177,8 +170,8 @@ class MyPlan extends Component {
         newDailyReadiness.date_time = `${moment().toISOString().split('.')[0]}Z`;
         newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality + 1;
         newDailyReadiness.readiness = newDailyReadiness.readiness + 1;
-        _.map(newDailyReadiness.soreness, bodyPart => {
-            newDailyReadiness.soreness = _.filter(newDailyReadiness.soreness, u => { return u.severity && u.severity > 0; });
+        newDailyReadiness.soreness.map(bodyPart => {
+            newDailyReadiness.soreness = newDailyReadiness.soreness.filter(u => { return !!u.severity && u.severity > 0; });
         });
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
@@ -194,8 +187,8 @@ class MyPlan extends Component {
     _handlePostSessionSurveySubmit = () => {
         let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
         newPostSessionSurvey.RPE = newPostSessionSurvey.RPE + 1;
-        _.map(newPostSessionSurvey.soreness, bodyPart => {
-            newPostSessionSurvey.soreness = _.filter(newPostSessionSurvey.soreness, u => { return u.severity && u.severity > 0; });
+        newPostSessionSurvey.soreness.map(bodyPart => {
+            newPostSessionSurvey.soreness = newPostSessionSurvey.soreness.filter(u => { return !!u.severity && u.severity > 0; });
         });
         let session_type = Object.keys(MyPlanConstants.sessionTypes).find(sessionType => this.props.plan.dailyPlan[0][sessionType].length);
         let postSession = {
@@ -216,17 +209,12 @@ class MyPlan extends Component {
             });
     }
 
-    _onDateSelected = (date) => {
-        const selectedDate = moment(date);
-        console.log(`${selectedDate.calendar()} selected`);
-    }
-
     _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness) => {
         let stateObject = isDailyReadiness ? this.state.dailyReadiness : this.state.postSession;
         let newSorenessFields = _.cloneDeep(stateObject.soreness);
-        if(_.findIndex(stateObject.soreness, (o) => o.body_part === areaClicked.index) > -1) {
+        if(_.findIndex(stateObject.soreness, o => o.body_part === areaClicked.index) > -1) {
             // body part already exists
-            newSorenessFields = _.filter(newSorenessFields, (o) => o.body_part !== areaClicked.index);
+            newSorenessFields = newSorenessFields.filter(o => o.body_part !== areaClicked.index);
         } else {
             // doesn't exist, create new object
             if(areaClicked.bilateral) {
@@ -272,7 +260,7 @@ class MyPlan extends Component {
                 .then(soreBodyParts => {
                     // console.log('soreBodyParts',soreBodyParts);
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
-                    newDailyReadiness.soreness = soreBodyParts.body_parts;
+                    newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
                     this.setState({
                         isPostSessionSurveyModalOpen: true,
                         postSession:                  newDailyReadiness,
@@ -433,16 +421,6 @@ class MyPlan extends Component {
                         />
                     </LinearGradient>
                 </Modal>
-                {/*<Text>{'MY PLAN'}</Text>
-                <CalendarStrip
-                    onDateSelected={this._onDateSelected}
-                />
-                <ScrollView>
-                    <Card>
-                        <Text>{'STRENGTH & CONDITIONING'}</Text>
-                        <Text>{'Stretch and Mobilize'}</Text>
-                    </Card>
-                </ScrollView>*/}
             </View>
         );
     }

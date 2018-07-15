@@ -21,9 +21,6 @@ import { FathomSlider, Text } from '../../custom';
 // Components
 import { AreasOfSoreness, SoreBodyPart } from './';
 
-// import third-party libraries
-import _ from 'lodash';
-
 /* Component ==================================================================== */
 const PostSessionSurvey = ({
     handleAreaOfSorenessClick,
@@ -32,10 +29,7 @@ const PostSessionSurvey = ({
     postSession,
     soreBodyParts,
 }) => {
-    let isAnythingBotheringText = (
-        postSession.RPE === 0 &&
-        postSession.soreness.length === 0
-    ) ?
+    let isAnythingBotheringText = !postSession.RPE && !postSession.soreness.length ?
         'No, nothing is bothering me'
         :
         'Done';
@@ -63,7 +57,7 @@ const PostSessionSurvey = ({
                         value={postSession.RPE}
                     />
                 </View>
-                { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
+                { soreBodyParts.body_parts.map((bodyPart, i) =>
                     <SoreBodyPart
                         bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
                         bodyPartSide={bodyPart.side}

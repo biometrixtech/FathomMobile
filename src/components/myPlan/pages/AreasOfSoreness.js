@@ -32,12 +32,12 @@ const AreasOfSoreness = ({
     soreBodyPartsState,
     surveyObject,
 }) => {
-    let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, (u, i) => {
-        return _.findIndex(soreBodyParts, (o) => o.body_part === i) === -1;
+    let filteredBodyPartMap = MyPlanConstants.bodyPartMapping.filter((u, i) => {
+        return _.findIndex(soreBodyParts, o => o.body_part === i) === -1;
     });
-    let newBodyPartMap = _.filter(filteredBodyPartMap, o => o.order);
+    let newBodyPartMap = filteredBodyPartMap.filter(o => o.order);
     newBodyPartMap = _.orderBy(newBodyPartMap, ['order'], ['asc']);
-    let areaOfSorenessClicked = _.filter(soreBodyPartsState, bodyPartState => {
+    let areaOfSorenessClicked = soreBodyPartsState.filter(bodyPartState => {
         return _.findIndex(soreBodyParts.body_parts, bodyPartProp => bodyPartProp.body_part === bodyPartState.body_part) === -1;
     });
     return(
