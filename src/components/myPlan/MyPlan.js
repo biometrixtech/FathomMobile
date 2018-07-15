@@ -200,8 +200,8 @@ class MyPlan extends Component {
         let session_type = Object.keys(MyPlanConstants.sessionTypes).find(sessionType => this.props.plan.dailyPlan[0][sessionType].length);
         let postSession = {
             user_id:      this.props.user.id,
-            event_date:   `${moment().toISOString().split('.')[0]}Z`,
-            session_id:   session_type ? this.props.plan.dailyPlan[0][session_type].session_id : null,
+            event_date:   moment().format('YYYY-MM-DD'),
+            session_id:   session_type ? this.props.plan.dailyPlan[0][session_type].session_id : '',
             session_type: session_type ? MyPlanConstants.sessionTypes[session_type] : 0,
             survey:       newPostSessionSurvey,
         };
