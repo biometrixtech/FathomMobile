@@ -40,7 +40,12 @@ const styles = StyleSheet.create({
 /* Component ==================================================================== */
 const Coach = ({ text }) => (
     // Diagonal gradient from bottom left to top right
-    <LinearGradient start={{x: 0, y: 1}} end={{x: 1, y: 0}} colors={['#05425e', '#0f6187']} style={[AppStyles.containerCentered, styles.coachWrapper]}>
+    <LinearGradient
+        colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
+        end={{x: 1, y: 0}}
+        start={{x: 0, y: 1}}
+        style={[AppStyles.containerCentered, styles.coachWrapper]}
+    >
         <Image
             source={require('../../constants/assets/images/coach-avatar.png')}
             style={[styles.imageStyle]}

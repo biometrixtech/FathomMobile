@@ -74,6 +74,9 @@ const postSessionSurvey = postSessionObj => {
                 data: postSessionObj,
             });
             console.log('myPlanData',myPlanData);
+            return myPlanData;
+        }).then(myPlanData => {
+            AppAPI.post_daily_plan.post({ user_id: postSessionObj.user_id });
             return Promise.resolve(myPlanData);
         }).catch(err => {
             console.log('err',err);

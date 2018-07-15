@@ -39,9 +39,8 @@ const ReadinessSurvey = ({
     let partOfDay = hourOfDay >= 12 ? 'AFTERNOON' : 'MORNING';
     let isAnythingBotheringText = (
         dailyReadiness.sleep_quality === 0 &&
-        dailyReadiness.readiness === 0
-        // soreBodyPartsState.length === 0 &&
-        // _.map(soreBodyPartsState, bodyPart => bodyPart.severity === 0).length === 0
+        dailyReadiness.readiness === 0 &&
+        dailyReadiness.soreness.length === 0
     ) ?
         'No, nothing is bothering me'
         :

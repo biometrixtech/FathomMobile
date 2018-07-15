@@ -59,6 +59,12 @@ const brand = {
             seventyPercent: '#548AA3',
             fiftyPercent:   '#85ACBE',
             thirtyPercent:  '#B6CDD8',
+        },
+    },
+    gradient: {
+        blue: {
+            gradientStart: '#05425e',
+            gradientEnd:   '#0f6187',
         }
     }
 };

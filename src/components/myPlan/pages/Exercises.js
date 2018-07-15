@@ -2,13 +2,16 @@
  * ReadinessSurvey
  *
     <Exercises
+        handleExerciseListRefresh={this._handleExerciseListRefresh}
+        isExerciseListRefreshing={this.state.isExerciseListRefreshing}
         recoveryObj={recoveryObj}
+        toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
     />
  *
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
@@ -22,33 +25,51 @@ import _ from 'lodash';
 
 /* Component ==================================================================== */
 const Exercises = ({
-    recoveryObj
+    handleExerciseListRefresh,
+    isExerciseListRefreshing,
+    recoveryObj,
+    toggleCompletedAMPMRecoveryModal,
 }) => {
     let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj);
     return(
         <View style={{flex: 1}}>
-            <ScrollView>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        colors={[AppColors.primary.yellow.hundredPercent]}
+                        onRefresh={handleExerciseListRefresh}
+                        refreshing={isExerciseListRefreshing}
+                        tintColor={AppColors.primary.yellow.hundredPercent}
+                    />
+                }
+            >
                 {_.map(exerciseList, (exercise, i) =>
                     <ExerciseItem
                         exercise={exercise}
                         isLastItem={i + 1 === exerciseList.length}
-                        key={exercise.library_id}
+                        key={exercise.library_id+i}
                     />
                 )}
-                <TouchableOpacity
-                    disabled={true}
-                    onPress={() => console.log('TAKE ME TO MESSAGE MODAL')}
-                    style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.hundredPercent}]}
-                >
+                <View style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.hundredPercent}]}>
                     <Text style={[AppStyles.nextButtonText]}>{'complete the exercises to log'}</Text>
-                </TouchableOpacity>
+                </View>
+                {/* // TODO: when it comes time to mark exercises as completd, this button should show up if one item is marked as completed
+                <TouchableOpacity
+                    onPress={toggleCompletedAMPMRecoveryModal}
+                    style={[AppStyles.nextButtonWrapper]}
+                >
+                    <Text style={[AppStyles.nextButtonText]}>{'Finish'}</Text>
+                </TouchableOpacity>*/}
             </ScrollView>
         </View>
     )
 };
 
 Exercises.propTypes = {
-    recoveryObj: PropTypes.object.isRequired,
+    handleExerciseListRefresh:        PropTypes.func.isRequired,
+    isExerciseListRefreshing:         PropTypes.bool.isRequired,
+    recoveryObj:                      PropTypes.object.isRequired,
+    toggleCompletedAMPMRecoveryModal: PropTypes.func.isRequired,
 };
 Exercises.defaultProps = {};
 Exercises.componentName = 'Exercises';

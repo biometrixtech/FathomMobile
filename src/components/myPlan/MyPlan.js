@@ -61,6 +61,7 @@ class MyPlan extends Component {
                 soreness:      [],
             },
             isCompletedAMPMRecoveryModalOpen: false,
+            isExerciseListRefreshing:         false,
             isReadinessSurveyModalOpen:       false,
             isPostSessionSurveyModalOpen:     false,
             postSession:                      {
@@ -85,8 +86,7 @@ class MyPlan extends Component {
                 if(response.daily_plans[0].daily_readiness_survey_completed) {
                     // -- AM/PM Survey
                     this.setState({
-                        isPostSessionSurveyModalOpen: true,
-                        isReadinessSurveyModalOpen:   false,
+                        isReadinessSurveyModalOpen: false,
                     });
                     SplashScreen.hide();
                 } else {
@@ -174,7 +174,7 @@ class MyPlan extends Component {
     _handleReadinessSurveySubmit = () => {
         let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
         newDailyReadiness.user_id = this.props.user.id;
-        newDailyReadiness.date_time = moment().toISOString().split('.')[0] + 'Z';
+        newDailyReadiness.date_time = `${moment().toISOString().split('.')[0]}Z`;
         newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality + 1;
         newDailyReadiness.readiness = newDailyReadiness.readiness + 1;
         _.map(newDailyReadiness.soreness, bodyPart => {
@@ -193,11 +193,15 @@ class MyPlan extends Component {
 
     _handlePostSessionSurveySubmit = () => {
         let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
+        newPostSessionSurvey.RPE = newPostSessionSurvey.RPE + 1;
+        _.map(newPostSessionSurvey.soreness, bodyPart => {
+            newPostSessionSurvey.soreness = _.filter(newPostSessionSurvey.soreness, u => { return u.severity && u.severity > 0; });
+        });
         let session_type = Object.keys(MyPlanConstants.sessionTypes).find(sessionType => this.props.plan.dailyPlan[0][sessionType].length);
         let postSession = {
             user_id:      this.props.user.id,
-            date_time:    `${moment().toISOString().split('.')[0]}Z`,
-            sessionId:    session_type ? this.props.plan.dailyPlan[0][session_type].session_id : null,
+            event_date:   `${moment().toISOString().split('.')[0]}Z`,
+            session_id:   session_type ? this.props.plan.dailyPlan[0][session_type].session_id : null,
             session_type: session_type ? MyPlanConstants.sessionTypes[session_type] : 0,
             survey:       newPostSessionSurvey,
         };
@@ -263,9 +267,51 @@ class MyPlan extends Component {
     }
 
     _togglePostSessionSurveyModal = () => {
+        if(!this.state.isPostSessionSurveyModalOpen) {
+            this.props.getSoreBodyParts()
+                .then(soreBodyParts => {
+                    // console.log('soreBodyParts',soreBodyParts);
+                    let newDailyReadiness = _.cloneDeep(this.state.postSession);
+                    newDailyReadiness.soreness = soreBodyParts.body_parts;
+                    this.setState({
+                        isPostSessionSurveyModalOpen: true,
+                        postSession:                  newDailyReadiness,
+                    });
+                })
+                .catch(err => {
+                    // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
+                    let newDailyReadiness = _.cloneDeep(this.state.postSession);
+                    newDailyReadiness.soreness = [];
+                    this.setState({
+                        isPostSessionSurveyModalOpen: true,
+                        postSession:                  newDailyReadiness,
+                    });
+                });
+        } else {
+            this.setState({
+                isPostSessionSurveyModalOpen: false
+            });
+        }
+    }
+
+    _handleExerciseListRefresh = () => {
         this.setState({
-            isPostSessionSurveyModalOpen: !this.state.isPostSessionSurveyModalOpen
+            isExerciseListRefreshing: true
         });
+        let userId = this.props.user.id;
+        this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
+            .then(response => {
+                // console.log('response', response);
+                this.setState({
+                    isExerciseListRefreshing: false
+                });
+            })
+            .catch(error => {
+                // console.log('error',error);
+                this.setState({
+                    isExerciseListRefreshing: false
+                });
+            });
     }
 
     render = () => {
@@ -287,7 +333,7 @@ class MyPlan extends Component {
         return (
             <View style={[styles.background]}>
                 <LinearGradient
-                    colors={['#05425e', '#0f6187']}
+                    colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
                     style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
                 >
                     <Image
@@ -305,7 +351,7 @@ class MyPlan extends Component {
                                 containerStyle={[{alignSelf: 'flex-end'}]}
                                 icon={'plus-circle-outline'}
                                 iconStyle={[{color: AppColors.white}]}
-                                onPress={() => this._togglePostSessionSurveyModal}
+                                onPress={this._togglePostSessionSurveyModal}
                                 reverse={false}
                                 size={30}
                                 type={'material-community'}
@@ -322,7 +368,10 @@ class MyPlan extends Component {
                     </View>
                     :
                     <Exercises
+                        handleExerciseListRefresh={this._handleExerciseListRefresh}
+                        isExerciseListRefreshing={this.state.isExerciseListRefreshing}
                         recoveryObj={recoveryObj}
+                        toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
                     />
                 }
                 <Modal
@@ -361,7 +410,7 @@ class MyPlan extends Component {
                     swipeToClose={false}
                 >
                     <LinearGradient
-                        colors={['#05425e', '#0f6187']}
+                        colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
                         style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal, {flex: 1}]}
                     >
                         <Text style={[AppStyles. paddingVertical, AppStyles.h1, AppStyles.textCenterAligned, {color: AppColors.white, fontWeight: 'bold'}]}>{`You've completed your ${timeOfDay} Recovery!`}</Text>
@@ -370,7 +419,7 @@ class MyPlan extends Component {
                             backgroundColor={AppColors.primary.yellow.hundredPercent}
                             buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
                             containerViewStyle={{marginVertical: AppSizes.paddingMed}}
-                            onPress={() => this._togglePostSessionSurveyModal}
+                            onPress={this._togglePostSessionSurveyModal}
                             textColor={AppColors.white}
                             title={'Log a session to customize recovery'}
                         />
@@ -378,7 +427,7 @@ class MyPlan extends Component {
                             backgroundColor={AppColors.white}
                             buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
                             containerViewStyle={{marginVertical: AppSizes.paddingMed}}
-                            onPress={() => this._toggleCompletedAMPMRecoveryModal}
+                            onPress={this._toggleCompletedAMPMRecoveryModal}
                             textColor={AppColors.primary.yellow.hundredPercent}
                             title={`Do ${timeOfDay} Recovery again`}
                         />
