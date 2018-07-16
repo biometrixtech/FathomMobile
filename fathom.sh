@@ -297,6 +297,8 @@ handleIOSVersionBump() {
 
 iosBuild() {
     echo
+    echo "iOS"
+    echo
     read -p "${grey}Choose which build type:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Staging`echo $'\n\n '`${standout}Enter selection:${normal} " -rn1
     echo
     case "$REPLY" in
@@ -358,6 +360,8 @@ handleAndroidVersionBump() {
 }
 
 androidBuild() {
+    echo
+    echo "Android"
     echo
     read -p "${grey}Choose which build type:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Staging`echo $'\n\n '`${standout}Enter selection:${normal} " -rn1
     echo
