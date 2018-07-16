@@ -34,6 +34,13 @@ import com.android.build.OutputFile
  *   // bundleInPaidRelease: true,
  *   // bundleInBeta: true,
  *
+ *   // whether to disable dev mode in custom build variants (by default only disabled in release)
+ *   // for example: to disable dev mode in the staging build type (if configured)
+ *   devDisabledInStaging: true,
+ *   // The configuration property can be in the following formats
+ *   //         'devDisabledIn${productFlavor}${buildType}'
+ *   //         'devDisabledIn${buildType}'
+ *
  *   // the root of your project, i.e. where "package.json" lives
  *   root: "../../",
  *
@@ -66,10 +73,9 @@ import com.android.build.OutputFile
  * ]
  */
 
-// CHANGE THIS TO YOUR OWN DIRECTORY FOR NODE WHEN YOU DEVELOP/TRY TO BUILD FROM ANDROID STUDIO
  project.ext.react = [
-    nodeExecutableAndArgs: ["/Users/virdesai/.nvm/versions/node/v9.2.0/bin/node"],
-    // entryFile: "index.js"
+    nodeExecutableAndArgs: ["/Users/mazenchami/.nvm/versions/node/v10.4.1/bin/node"],
+    entryFile: "index.js"
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -91,8 +97,8 @@ def enableSeparateBuildPerCPUArchitecture = false
 //def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     signingConfigs {
         release {
@@ -105,10 +111,10 @@ android {
 
     defaultConfig {
         applicationId 'com.fathom.fathomai'
-        minSdkVersion 19
-        targetSdkVersion 26
-        versionCode 3
-        versionName "1.2"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 4
+        versionName "1.3"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -132,22 +138,12 @@ android {
             buildConfigField "String", "CODEPUSH_KEY", '"yUip94F_KaezxSrrlFCDJDrnIRkHNy8a-_BnM"'
             signingConfig signingConfigs.release
             matchingFallbacks = ['release', 'debug']
-            applicationVariants.all { variant ->
-                variant.outputs.all { output ->
-                    outputFileName = new File(output.outputFile.parent, outputFileName.replace(".apk", "_" + defaultConfig.versionCode + ".apk"))
-                }
-            }
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             buildConfigField "String", "CODEPUSH_KEY", '"7LJiescWwsZkIPqAU3IRpm0l_5pVNy8a-_BnM"'
             signingConfig signingConfigs.release
-            applicationVariants.all { variant ->
-                variant.outputs.all { output ->
-                    outputFileName = new File(output.outputFile.parent, outputFileName.replace(".apk", "_" + defaultConfig.versionCode + ".apk"))
-                }
-            }
         }
     }
     // applicationVariants are e.g. debug, release
@@ -174,21 +170,23 @@ repositories {
 }
 
 dependencies {
-    compile project(':react-native-google-analytics-bridge')
-    compile project(':react-native-code-push')
-    compile project(':react-native-fabric')
-    compile project(':react-native-vector-icons')
-    compile project(':react-native-device-info')
-    compile project(':react-native-ble-manager')
-    compile project(':react-native-android-location-services-dialog-box')
-    compile project(':react-native-svg')
-    compile fileTree(dir: "libs", include: ["*.jar"])
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    compile 'com.facebook.react:react-native:+'
-    // From node_modules
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-        transitive = true;
-    }
+     implementation project(':react-native-linear-gradient')
+     implementation project(':react-native-splash-screen')
+     implementation project(':react-native-code-push')
+     implementation project(':react-native-fabric')
+     implementation project(':react-native-vector-icons')
+     implementation project(':react-native-ble-manager')
+     implementation project(':react-native-device-info')
+     implementation project(':react-native-android-location-services-dialog-box')
+     implementation fileTree(dir: "libs", include: ["*.jar"])
+    //  implementation 'io.intercom.android:intercom-sdk-base:5.+'
+    //  implementation 'io.intercom.android:intercom-sdk-fcm:5.+'
+    //  implementation 'com.google.firebase:firebase-messaging:11.+'
+     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+     implementation 'com.facebook.react:react-native:+' // From node_modules
+     implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
+         transitive = true;
+     }
 }
 
 
@@ -198,3 +196,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+//apply plugin: 'com.google.gms.google-services'

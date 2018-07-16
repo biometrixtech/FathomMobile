@@ -1,6 +1,6 @@
 # Interacting with a Rest API
 
-`/src/lib/api.js` is a nice and simple little utility to interact with our RESTful APIs. We've kept it as a modifiable lib so that we can edit it on a per-project basis to deal with a variety of circumstances.
+`/src/lib/api.js` is a nice and simple little utility to interact with our RESTful APIs. I've kept it as a modifiable lib so that we can edit it to deal with a variety of circumstances.
 
 The API util allows us to make API calls in a nice, shorthand way, eg.
 
@@ -34,11 +34,11 @@ Configuration should be fairly straightforward. Within `/src/constants/api.js` -
 
 ## JWT Authentication
 
-We've setup JWT Authentication as a default to show how it can work. Basically:
+I've setup JWT Authentication. Basically:
 
 - The app asks the API for a token (by sending user credentials to the API)
 - If the credentials are correct, the API will send back a JWT token
-- The App stores this token in AsyncStorage and will provide this token within a `Authorization: Bearer ...` header for all future requests
+- The App stores this token in the redux store and AsyncStorage/localStorage and will provide this token within a request header for all future requests
 - The API will then use this token to Authorize the request against secured endpoints - eg. perhaps you need to be logged in, to list user data - if the token is correct, the API will provide the correct data, otherwise it'll likely provide an error message
 
 *You can turn off JWT Auth in `/lib/api.js` by simply making `const Token = {};` equal an empty object.

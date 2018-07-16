@@ -2,53 +2,53 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:31:04 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-03-08 04:06:38
+ * @Last Modified time: 2018-05-06 17:42:32
  */
 
 /**
  * BLE Config
  */
 
-var _byteToHex = [];
-var _hexToByte = {};
-for (let i = 0; i < 256; i++) {
-    _byteToHex[i] = (i + 0x100).toString(16).substr(1);
-    _hexToByte[_byteToHex[i]] = i;
-}
+// var _byteToHex = [];
+// var _hexToByte = {};
+// for (let i = 0; i < 256; i++) {
+//     _byteToHex[i] = (i + 0x100).toString(16).substr(1);
+//     _hexToByte[_byteToHex[i]] = i;
+// }
 
-const parse = function parse(s, buf, offset) {
-    return new Promise(resolve => {
-        let i = (buf && offset) || 0;
-        let j = 0;
+// const parse = function parse(s, buf, offset) {
+//     return new Promise(resolve => {
+//         let i = (buf && offset) || 0;
+//         let j = 0;
 
-        buf = buf || [];
-        s.toLowerCase().replace(/[0-9a-f]{2}/g, (oct) => {
-            if (j < 16) { // Don't overflow!
-                buf[i + (j++)] = _hexToByte[oct];
-            }
-        });
+//         buf = buf || [];
+//         s.toLowerCase().replace(/[0-9a-f]{2}/g, (oct) => {
+//             if (j < 16) { // Don't overflow!
+//                 buf[i + (j++)] = _hexToByte[oct];
+//             }
+//         });
 
-        // Zero out remaining bytes if string was short
-        while (j < 16) {
-            buf[i + (j++)] = 0;
-        }
+//         // Zero out remaining bytes if string was short
+//         while (j < 16) {
+//             buf[i + (j++)] = 0;
+//         }
 
-        return resolve(buf);
-    });
-}
+//         return resolve(buf);
+//     });
+// }
 
-function unparse(buf, offset) {
-    let i = offset || 0;
-    let bth = _byteToHex;
-    return  bth[buf[i++]] + bth[buf[i++]] +
-            bth[buf[i++]] + bth[buf[i++]] + '-' +
-            bth[buf[i++]] + bth[buf[i++]] + '-' +
-            bth[buf[i++]] + bth[buf[i++]] + '-' +
-            bth[buf[i++]] + bth[buf[i++]] + '-' +
-            bth[buf[i++]] + bth[buf[i++]] +
-            bth[buf[i++]] + bth[buf[i++]] +
-            bth[buf[i++]] + bth[buf[i++]];
-}
+// function unparse(buf, offset) {
+//     let i = offset || 0;
+//     let bth = _byteToHex;
+//     return  bth[buf[i++]] + bth[buf[i++]] +
+//             bth[buf[i++]] + bth[buf[i++]] + '-' +
+//             bth[buf[i++]] + bth[buf[i++]] + '-' +
+//             bth[buf[i++]] + bth[buf[i++]] + '-' +
+//             bth[buf[i++]] + bth[buf[i++]] + '-' +
+//             bth[buf[i++]] + bth[buf[i++]] +
+//             bth[buf[i++]] + bth[buf[i++]] +
+//             bth[buf[i++]] + bth[buf[i++]];
+// }
 
 export default {
     serviceUUID:        '3282ae19-ab8b-f495-7544-67e11bb6223f',
@@ -181,6 +181,6 @@ export default {
         HARD: parseInt('0x02', 16),
     },
 
-    parse,
-    unparse
+    // parse,
+    // unparse
 };

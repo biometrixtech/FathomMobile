@@ -1,17 +1,16 @@
 /*
  * @Author: Vir Desai 
- * @Date: 2017-10-13 18:39:00 
+ * @Date: 2018-04-30 13:22:42 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-13 18:40:22
+ * @Last Modified time: 2018-06-28 11:27:57
  */
 
 /**
  * App Library Function
  */
 
-import Analytics from './analytics';
 import AppAPI from './api';
-import JWT from './api.jwt';
 import AppUtil from './util';
+import JWT from './jwt';
 
-export { Analytics, AppAPI, JWT, AppUtil };
+export { AppAPI, AppUtil, JWT };

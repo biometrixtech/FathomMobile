@@ -1,0 +1,182 @@
+/*
+ * @Author: Vir Desai 
+ * @Date: 2017-10-12 11:34:13 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-04-23 16:48:51
+ */
+
+/**
+ * Kit Assign Screen
+ */
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import {
+    Image,
+    ScrollView,
+    View,
+    KeyboardAvoidingView,
+    Platform,
+    ActivityIndicator
+} from 'react-native';
+import { SearchBar } from 'react-native-elements';
+import { Actions } from 'react-native-router-flux';
+
+// Consts and Libs
+import { Roles, AppColors, AppStyles, AppSizes, AppFonts } from '../../constants/';
+
+// Components
+import { Spacer, Button, FormLabel, Text, ListItem } from '../custom/';
+
+const font10 = AppFonts.scaleFont(10);
+const font14 = AppFonts.scaleFont(14);
+
+const Wrapper = props => Platform.OS === 'ios' ?
+    (
+        <KeyboardAvoidingView behavior={'padding'} style={[AppStyles.container, { backgroundColor: AppColors.secondary.light_blue.hundredPercent }]}>
+            {props.children}
+        </KeyboardAvoidingView>
+    ) :
+    (
+        <View style={[AppStyles.container, { backgroundColor: AppColors.secondary.light_blue.hundredPercent }]}>
+            {props.children}
+        </View>
+    );
+
+/* Component ==================================================================== */
+class KitAssignView extends Component {
+    static componentName = 'KitAssignView';
+
+    static propTypes = {
+        bluetooth:             PropTypes.shape({}),
+        user:                  PropTypes.shape({}),
+        assignKitOrganization: PropTypes.func.isRequired,
+        assignKitIndividual:   PropTypes.func.isRequired,
+        assignKitTeam:         PropTypes.func.isRequired,
+    }
+
+    static defaultProps = {
+        bluetooth: {},
+        user:      {},
+    }
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            categoryHeight:  0,
+            searchBarHeight: 0,
+            searchText:      '',
+        };
+    }
+
+    render = () => {
+        let accessory = this.props.bluetooth.accessoryData;
+        let assignType = this.props.bluetooth.assignType;
+        let users = this.props.user.teams[this.props.user.teamIndex].users_with_training_groups.filter(user => user.role === Roles.athlete);
+        let extraMargin = AppFonts.scaleFont(Platform.OS === 'android' ? 40 : 20);
+        let category, name;
+        switch(assignType) {
+        case 'team':
+            category =  'TEAM';
+            name = this.props.bluetooth.accessoryData.team ? this.props.bluetooth.accessoryData.team.name : '{None}';
+            break;
+        case 'individual':
+            category = 'INDIVIDUAL';
+            name = this.props.bluetooth.accessoryData.individual ? `${this.props.bluetooth.accessoryData.individual.first_name} ${this.props.bluetooth.accessoryData.individual.last_name}` : '{None}';
+            break;
+        case 'organization':
+            category = 'ORGANIZATION';
+            name = this.props.bluetooth.accessoryData.organization ? this.props.bluetooth.accessoryData.organization.name : '{None}';
+            break;
+        default:
+            category = '';
+            name = '';
+            break;
+        }
+
+        return (
+            <Wrapper>
+                <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', height: AppSizes.screen.heightOneThird }}>
+                    <Image source={require('../../constants/assets/images/kit-diagram.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthTwoThirds, height: AppSizes.screen.widthTwoThirds * 268/509 }}/>
+                    <Spacer size={5}/>
+                    <Text>{accessory.name || ''}</Text>
+                    <Text style={{ fontSize: font10 }}>{accessory.wifiMacAddress || ''}</Text>
+                </View>
+                <View>
+                    <ListItem
+                        title={category}
+                        containerStyle={{ padding: 10, backgroundColor: AppColors.secondary.light_blue.hundredPercent }}
+                        hideChevron
+                        onLayout={(ev) => { this.setState({ categoryHeight: ev.nativeEvent.layout.height }); }}
+                    />
+                    {
+                        assignType !== 'organization' ?
+                            <SearchBar
+                                containerStyle={{ backgroundColor: '#FFFFFF', borderWidth: 0 }}
+                                inputStyle={{ backgroundColor: '#FFFFFF' }}
+                                placeholder={`Enter ${assignType}`}
+                                onChangeText={text => this.setState({ searchText: text })}
+                                lightTheme
+                                onLayout={(ev) => { this.setState({ searchBarHeight: ev.nativeEvent.layout.height }); }}
+                            /> : null
+                    }
+                    <ScrollView style={{ height: AppSizes.screen.heightTwoThirds - AppSizes.navbarHeight - this.state.categoryHeight - this.state.searchBarHeight - extraMargin }}>
+                        {
+                            assignType === 'individual'
+                                ?
+                                users.filter(user => `${user.first_name} ${user.last_name}`.toUpperCase().indexOf(this.state.searchText.toUpperCase()) > -1).map(user => {
+                                    return <ListItem
+                                        key={user.id}
+                                        title={`${user.first_name} ${user.last_name}`}
+                                        containerStyle={{ backgroundColor: `${user.first_name} ${user.last_name}` === name ? AppColors.primary.grey.thirtyPercent : AppColors.white }}
+                                        onPress={() => this.props.assignKitIndividual(accessory, user)}
+                                        hideChevron
+                                    />
+                                })
+                                :
+                                assignType === 'team'
+                                    ?
+                                    this.props.user.teams.filter(team => team.name.toUpperCase().indexOf(this.state.searchText.toUpperCase()) > -1).map((team, teamIndex) => {
+                                        return <ListItem
+                                            key={team.id}
+                                            title={team.name}
+                                            containerStyle={{ backgroundColor: team.name === name ? AppColors.primary.grey.thirtyPercent : AppColors.white }}
+                                            onPress={() => this.props.assignKitTeam(accessory, team)}
+                                            hideChevron
+                                        />
+                                    })
+                                    :
+                                    <ListItem
+                                        title={this.props.user.organization.name}
+                                        containerStyle={{ backgroundColor: this.props.user.organization.name === name ? AppColors.primary.grey.thirtyPercent : AppColors.white }}
+                                        onPress={() => this.props.assignKitOrganization(accessory, this.props.user.organization)}
+                                        hideChevron
+                                    />
+                        }
+                        <Text style={{
+                            paddingLeft: 20,
+                            fontSize:    name === '{None}' ? font14 : font10,
+                            fontWeight:  name === '{None}' ? 'bold' : 'normal'
+                        }}>{`Step 1: Select the ${category} to assign to this kit`}</Text>
+                        <Text style={{
+                            paddingLeft: 20,
+                            fontSize:    name !== '{None}' ? font14 : font10,
+                            fontWeight:  name !== '{None}' ? 'bold' : 'normal'
+                        }}>{`Step 2: Select another ${category} or go to the previous menu`}</Text>
+                        <Spacer/>
+                    </ScrollView>
+                </View>
+                { this.props.bluetooth.indicator ? 
+                    <ActivityIndicator
+                        style={[AppStyles.activityIndicator]}
+                        size={'large'}
+                        color={'#C1C5C8'}
+                    /> : null
+                }
+            </Wrapper>
+        );
+    }
+}
+
+/* Export Component ==================================================================== */
+export default KitAssignView;

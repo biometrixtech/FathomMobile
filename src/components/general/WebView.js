@@ -1,8 +1,8 @@
 /*
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:27:57 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2017-10-12 11:27:57 
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-06-28 16:49:20
  */
 
 /**
@@ -20,11 +20,10 @@ import {
 } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles } from '@theme/';
+import { AppColors, AppStyles } from '../../constants/';
 
 // Components
-import Loading from '@components/general/Loading';
-import Error from '@components/general/Error';
+import { Error, Loading } from './';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -65,7 +64,6 @@ class AppWebView extends Component {
     /**
       * Each time page loads, update the URL
       */
-    /* eslint-disable max-len */
     onNavigationStateChange = (navState) => {
         this.state.webViewURL = navState.url;
         if (this.props.onNavigationStateChange) { this.props.onNavigationStateChange(navState.url); }

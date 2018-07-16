@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:27:15 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2017-10-17 20:12:12
+ * @Last Modified time: 2018-06-28 16:48:55
  */
 
 /**
@@ -16,10 +16,10 @@ import PropTypes from 'prop-types';
 import { View, ActivityIndicator } from 'react-native';
 
 // Consts and Libs
-import { AppStyles } from '@theme/';
+import { AppStyles } from '../../constants/';
 
 // Components
-import { Spacer, Text } from '@ui/';
+import { Spacer, Text } from '../custom/';
 
 /* Component ==================================================================== */
 const Loading = ({ text, transparent }) => (
@@ -36,7 +36,7 @@ const Loading = ({ text, transparent }) => (
             color={transparent ? '#000' : '#AAA'}
         />
 
-        <Spacer size={10} />
+        <Spacer />
 
         {!!text && <Text>{text}</Text>}
     </View>
