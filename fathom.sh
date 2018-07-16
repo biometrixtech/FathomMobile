@@ -113,30 +113,25 @@ initialize() {
             sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-vector-icons/android/build.gradle
             sed -i '' 's/"26.0.3"/"27.0.3"/' ./node_modules/react-native-splash-screen/android/build.gradle
             sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-linear-gradient/android/build.gradle
+            sed -i '' 's/23.0.1/27.0.3/g' ./node_modules/react-native-push-notification/android/build.gradle
 
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-code-push/android/app/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-fabric/android/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-ble-manager/android/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-code-push/android/app/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-fabric/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-ble-manager/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
             # sed -i '' 's/compile /implementation /' ./node_modules/react-native-svg/android/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-device-info/android/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-vector-icons/android/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-splash-screen/android/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-linear-gradient/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-device-info/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-vector-icons/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-splash-screen/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-push-notification/android/build.gradle
 
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-code-push/android/app/build.gradle
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-fabric/android/build.gradle
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-ble-manager/android/build.gradle
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+            sed -i '' 's/compile(/implementation(/g' ./node_modules/react-native-fabric/android/build.gradle
             # sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-device-info/android/build.gradle
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-vector-icons/android/build.gradle
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-splash-screen/android/build.gradle
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-linear-gradient/android/build.gradle
 
             # extra android patches
-            sed -i '' 's/provided/compileOnly/' ./node_modules/react-native-linear-gradient/android/build.gradle
-            sed -i '' 's/Compile/Implementation/' ./node_modules/react-native-splash-screen/android/build.gradle
+            sed -i '' 's/provided/compileOnly/g' ./node_modules/react-native-linear-gradient/android/build.gradle
+            sed -i '' 's/Compile /Implementation /g' ./node_modules/react-native-splash-screen/android/build.gradle
+            sed -i '' 's/Compile /Implementation /g' ./node_modules/react-native-push-notification/android/build.gradle
             sed -i '' 's/babel\-jest/\<rootDir\>\/node_modules\/react-native\/jest\/preprocessor.js/' ./node_modules/react-native/jest-preset.json
 
             # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
