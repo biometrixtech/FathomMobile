@@ -21,6 +21,86 @@ if test -t 1; then
     fi
 fi
 
+
+# Renders a text based list of options that can be selected by the
+# user using up, down, and enter keys and returns the chosen option.
+#
+#   Arguments   : list of options, maximum of 256
+#                 "opt1" "opt2" ...
+#   Return value: selected index(es) (0 for opt1, 1 for opt2 ...)
+function select_option {
+
+    # little helpers for terminal print control and key input
+    ESC=$( printf "\033")
+    cursor_blink_on()  { printf "$ESC[?25h"; }
+    cursor_blink_off() { printf "$ESC[?25l"; }
+    cursor_to()        { printf "$ESC[$1;${2:-1}H"; }
+    print_option()     { printf "   $1 "; }
+    print_selected()   { printf "  $ESC[7m $1 $ESC[27m"; }
+    get_cursor_row()   { IFS=';' read -sdR -p $'\E[6n' ROW COL; echo ${ROW#*[}; }
+    key_input()        { read -s -n3 key 2>/dev/null >&2
+                         if [[ $key = $ESC[A ]]; then echo up;    fi
+                         if [[ $key = $ESC[B ]]; then echo down;  fi
+                        #  if [[ $key = $ESC[C ]]; then echo right; fi
+                        #  if [[ $key = $ESC[D ]]; then echo left;  fi
+                         if [[ $key = ""     ]]; then echo enter; fi; }
+
+    # initially print empty new lines (scroll down if at bottom of screen)
+    for opt; do printf "\n"; done
+
+    # determine current screen position for overwriting the options
+    local lastrow=`get_cursor_row`
+    local startrow=$(($lastrow - $#))
+
+    # ensure cursor and input echoing back on upon a ctrl+c during read -s
+    trap "cursor_blink_on; stty echo; printf '\n'; exit" 2
+    cursor_blink_off
+
+    local selected=0
+    while true; do
+        # print options by overwriting the last lines
+        local idx=0
+        for opt; do
+            cursor_to $(($startrow + $idx))
+            if [ $idx -eq $selected ]; then
+                print_selected "$opt"
+            else
+                print_option "$opt"
+            fi
+            ((idx++))
+        done
+
+        # user key control
+        case `key_input` in
+            enter)
+                break
+                ;;
+            up)
+                ((selected--));
+                if [ $selected -lt 0 ]; then selected=$(($# - 1)); fi
+                ;;
+            down)
+                ((selected++));
+                if [ $selected -ge $# ]; then selected=0; fi
+                ;;
+            # left)
+            #     echo "left"
+            #     ;;
+            # right)
+            #     echo "right"
+            #     ;;
+        esac
+    done
+
+    # cursor position back to normal
+    cursor_to $lastrow
+    printf "\n"
+    cursor_blink_on
+
+    return $selected
+}
+
+
 # install_java() {
 #     current_location=`pwd`
 #     cd ~/Downloads
@@ -103,6 +183,7 @@ initialize() {
             lsof -i tcp:3000 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
             rm -rf node_modules/ yarn.lock
             yarn
+            # android build tools and gradle patches
             sed -i '' 's/26.0.3/27.0.3/' ./node_modules/react-native-code-push/android/app/build.gradle
             sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-fabric/android/build.gradle
             sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-ble-manager/android/build.gradle
@@ -133,9 +214,9 @@ initialize() {
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-splash-screen/android/build.gradle
             sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-linear-gradient/android/build.gradle
 
+            # extra android patches
             sed -i '' 's/provided/compileOnly/' ./node_modules/react-native-linear-gradient/android/build.gradle
             sed -i '' 's/Compile/Implementation/' ./node_modules/react-native-splash-screen/android/build.gradle
-
             sed -i '' 's/babel\-jest/\<rootDir\>\/node_modules\/react-native\/jest\/preprocessor.js/' ./node_modules/react-native/jest-preset.json
 
             # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
@@ -146,6 +227,8 @@ initialize() {
             old_user=`awk -v FS="(Users\/|\/.nvm)" '{if ($2) print $2;}' ./android/app/build.gradle`
             sed -i "" "s/\/Users\/$old_user\//$android_nvm_location/" ./android/app/build.gradle
 
+            # iOS patches
+            # sed -i '' 's/<WebView/<WebView originWhitelist={["*"]}/' ./node_modules/react-native-remote-svg/SvgImage.js
             sed -i '' 's/\[SplashScreen/[RNSplashScreen/' ./node_modules/react-native-splash-screen/ios/RNSplashScreen.m
             sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
             # sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
@@ -188,7 +271,7 @@ start() {
 
 iosBuild() {
     echo
-    read -p "${grey}Choose which build type:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Staging`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose which build type:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Staging`echo $'\n\n '`${standout}Enter selection:${normal} " -rn1
     echo
     case "$REPLY" in
         1)
@@ -226,7 +309,7 @@ iosBuild() {
 
 androidBuild() {
     echo
-    read -p "${grey}Choose which build type:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Staging`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose which build type:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Staging`echo $'\n\n '`${standout}Enter selection:${normal} " -rn1
     echo
     case "$REPLY" in
         1)
@@ -267,7 +350,7 @@ androidBuild() {
 
 build() {
     echo
-    read -p "${grey}Choose which OS to build:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose which OS to build:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n\n '`${standout}Enter selection:${normal} " -rn1
     echo
     case "$REPLY" in
         1)
@@ -286,7 +369,7 @@ build() {
 codepushRelease() {
     # install code push cli first
     echo
-    read -p "${grey}Choose which OS to push:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n '`[3]: Both`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose which OS to push:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n '`[3]: Both`echo $'\n\n '`${standout}Enter selection:${normal} " -rn1
     echo
     case "$REPLY" in
         1)
@@ -329,7 +412,7 @@ codepushRelease() {
 
 codepushPromote() {
     echo
-    read -p "${grey}Choose which OS to promote:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n '`[3]: Both`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose which OS to promote:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n '`[3]: Both`echo $'\n\n '`${standout}Enter selection:${normal} " -rn1
     echo
     case "$REPLY" in
         1)
@@ -351,7 +434,7 @@ codepushPromote() {
 
 codepush() {
     echo
-    read -p "${grey}Choose a codepush option:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Promote`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose a codepush option:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Promote`echo $'\n\n '`${standout}Enter selection:${normal} " -rn1
     echo
     case "$REPLY" in
         1)
@@ -367,9 +450,54 @@ codepush() {
     esac
 }
 
+deleteBranch() {
+    echo
+    echo "Deleting branch \"${1}\".."
+    echo
+    git push -d origin $branch_name
+    git branch -D $branch_name
+    echo
+    echo "Done"
+    echo
+}
+
+pickBranch() {
+    echo
+    echo "Choose which branch to delete. (Navigate with <up arrow> and <down arrow>. Press <enter> to delete)"
+    echo
+
+    local_branches=`git branch`
+
+    options=(`echo "$local_branches" | sed 's/\* //g'`)
+
+    # whenever I get around to selection lists for multiple branches at a time or checking if remote and local branches match up or deleting only local branches
+    # remote_branches=`git branch -r`
+    # options=(`echo "$local_branches $remote_branches" | sed 's/\* //g' | sed 's/\-\>//g' | sed 's/remotes\///g' | sed 's/origin\/HEAD//g'`)
+
+    select_option "${options[@]}"
+    choice=$?
+
+    echo
+    read -p "${grey}Are you sure you want to delete the \"${options[$choice]}\" branch?${normal}`echo $'\n\n '`[y]: Yes`echo $'\n '`[n]: No`echo $'\n\n '`${standout}Enter selection:${normal} " -rn1
+    echo
+    case "$REPLY" in
+        [yY])
+            deleteBranch "${options[$choice]}"
+            ;;
+        [nN])
+            echo "Not deleting branch \"${options[$choice]}\""
+            echo
+            ;;
+        *)
+            echo "${red}Invalid selection${normal}"
+            codepush
+            ;;
+    esac
+}
+
 main() {
     echo
-    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n '`[4]: CodePush`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n '`[4]: CodePush`echo $'\n '`[5]: Delete branch`echo $'\n\n '`${standout}Enter selection:${normal} " -rn1
     echo
     case "$REPLY" in
         1)
@@ -383,6 +511,9 @@ main() {
             ;;
         4)
             codepush
+            ;;
+        5)
+            pickBranch
             ;;
         *)
             echo "${red}Invalid selection${normal}"
