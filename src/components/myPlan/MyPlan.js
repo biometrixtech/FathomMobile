@@ -19,10 +19,10 @@ import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
 
 // Consts, Libs, and Utils
-import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../../constants';
+import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '@constants';
 
 // Components
-import { Button, TabIcon, Text, } from '../custom/';
+import { Button, TabIcon, Text, } from '@custom';
 import { Exercises, PostSessionSurvey, ReadinessSurvey } from './pages';
 
 /* Styles ==================================================================== */

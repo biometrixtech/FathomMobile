@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:28:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 16:43:41
+ * @Last Modified time: 2018-07-16 18:49:35
  */
 
 /**
@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import { Card } from 'react-native-elements';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles } from '../../constants/';
+import { AppColors, AppSizes, AppStyles } from '@constants';
 
 /* Component ==================================================================== */
 class CustomCard extends Component {

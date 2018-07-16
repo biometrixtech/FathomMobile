@@ -10,7 +10,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, WebView } from 'react-native';
 
-import { AppColors, AppSizes } from '../../constants/';
+import { AppColors, AppSizes } from '@constants';
 
 /* Component ==================================================================== */
 const WebViewPage = ({ source, style }) => (

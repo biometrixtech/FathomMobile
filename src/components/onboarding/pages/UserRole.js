@@ -19,8 +19,8 @@ import {
 } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
-import { Text } from '../../custom';
+import { AppColors, AppFonts, AppSizes, AppStyles } from '@constants';
+import { Text } from '@custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({

@@ -16,10 +16,10 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 // Consts and Libs
-import { AppStyles } from '../../constants/';
+import { AppStyles } from '@constants';
 
 // Components
-import { Text } from '../custom/';
+import { Text } from '@custom';
 
 /* Component ==================================================================== */
 const Placeholder = ({ text }) => (

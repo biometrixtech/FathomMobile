@@ -20,15 +20,15 @@ import Carousel from 'react-native-snap-carousel';
 import Modal from 'react-native-modalbox';
 
 // Consts, Libs, and Utils
-import { AppAPI } from '../../lib/';
+import { AppAPI } from '@lib';
 import {
     APIConfig,
     AppColors,
     AppStyles,
     AppSizes,
     UserAccount as UserAccountConstants,
-} from '../../constants';
-import { onboardingUtils } from '../../constants/utils';
+} from '@constants/';
+import { onboardingUtils } from '@constants/utils';
 
 // Components
 import {
@@ -36,7 +36,7 @@ import {
     ProgressBar,
     Text,
     WebViewPage,
-} from '../custom/';
+} from '@custom';
 import {
     UserAccount,
     UserActivities,
@@ -44,7 +44,7 @@ import {
     UserRole,
     UserSportSchedule,
     UserWorkoutQuestion,
-} from './pages/';
+} from './pages';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({

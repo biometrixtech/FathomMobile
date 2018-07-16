@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:59 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-10 01:33:49
+ * @Last Modified time: 2018-07-16 18:41:03
  */
 
 /**
@@ -10,8 +10,8 @@
  */
 
 import jwtDecode from 'jwt-decode';
-import { Actions } from '../constants/';
-import { AppAPI } from '../lib/';
+import { Actions, ErrorMessages } from '@constants';
+import { AppAPI } from '@lib';
 
 // Components
 import { Platform } from 'react-native';
@@ -19,8 +19,6 @@ import { Platform } from 'react-native';
 // import third-party libraries
 import DeviceInfo from 'react-native-device-info';
 import uuidByString from 'uuid-by-string';
-
-import { ErrorMessages } from '../constants/';
 
 /**
   * Authorize User

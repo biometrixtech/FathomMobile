@@ -2,15 +2,15 @@
  * @Author: Mazen Chami
  * @Date: 2018-07-12 11:06:00
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-14 13:16:54
+ * @Last Modified time: 2018-07-16 18:27:55
  */
 
 /**
  * MyPlan Actions
  */
 
-import { Actions } from '../constants/';
-import { AppAPI, AppUtil } from '../lib/';
+import { Actions } from '@constants';
+import { AppAPI, AppUtil } from '@lib';
 
 // import third-party libraries
 import moment from 'moment';

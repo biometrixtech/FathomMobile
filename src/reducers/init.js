@@ -2,16 +2,16 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-23 03:55:41 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 11:25:27
+ * @Last Modified time: 2018-07-16 18:44:25
  */
 
 /**
  * User Reducer
  */
 
-import { Actions } from '../constants/';
+import { Actions } from '@constants';
 
-import Store from '../store/init';
+import Store from '@store/init';
 
 const initialState = Store;
 

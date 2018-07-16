@@ -14,8 +14,8 @@ import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 
 // Consts, Libs, and Utils
-import { AppColors, AppFonts, AppStyles, UserAccount as UserAccountConstants } from '../../../constants';
-import { Text, FormLabel } from '../../custom';
+import { AppColors, AppFonts, AppStyles, UserAccount as UserAccountConstants } from '@constants';
+import { Text, FormLabel } from '@custom';
 
 // import third-party libraries
 import { ButtonGroup } from 'react-native-elements';

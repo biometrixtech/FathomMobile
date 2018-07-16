@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-07-12 18:48:09
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-14 15:05:57
+ * @Last Modified time: 2018-07-16 18:51:09
  */
 
 /**
@@ -20,7 +20,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes } from '../../constants';
+import { AppColors, AppSizes } from '@constants';
 
 // import third-party libraries
 import Image from 'react-native-remote-svg';

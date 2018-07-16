@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:33:09 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-23 14:49:46
+ * @Last Modified time: 2018-07-16 18:33:01
  */
 
 /**
@@ -17,11 +17,11 @@ import FormValidation from 'tcomb-form-native';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
-import { AppAPI } from '../../lib/';
-import { AppStyles } from '../../constants/';
+import { AppAPI } from '@lib';
+import { AppStyles } from '@constants';
 
 // Components
-import { Alerts, Card, Text, Button } from '../custom/';
+import { Alerts, Card, Text, Button } from '@custom';
 
 /* Component ==================================================================== */
 class ForgotPassword extends Component {

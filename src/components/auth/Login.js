@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:32:47
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-13 10:32:57
+ * @Last Modified time: 2018-07-16 18:41:36
  */
 
 /**
@@ -30,11 +30,11 @@ import Modal from 'react-native-modalbox';
 import SplashScreen from 'react-native-splash-screen';
 
 // Consts and Libs
-import { AppAPI } from '../../lib/';
-import { APIConfig, AppColors, AppStyles, AppSizes } from '../../constants';
+import { AppAPI } from '@lib/';
+import { APIConfig, AppColors, AppStyles, AppSizes } from '@constants';
 
 // Components
-import { Spacer, Button, Card, Alerts, Text, ListItem } from '../custom/';
+import { Spacer, Button, Card, Alerts, Text, ListItem } from '@custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({

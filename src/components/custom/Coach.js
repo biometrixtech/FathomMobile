@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import LinearGradient from 'react-native-linear-gradient';
 
 // Consts
-import { AppColors, AppStyles } from '../../constants/';
+import { AppColors, AppStyles } from '@constants';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({

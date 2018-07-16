@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-30 13:20:48 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 11:14:11
+ * @Last Modified time: 2018-07-16 18:44:42
  */
 
 /* global window __DEV__ */
@@ -11,7 +11,7 @@ import { persistStore, persistCombineReducers } from 'redux-persist';
 import { createLogger } from 'redux-logger';
 import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
-import reducers from '../reducers/';
+import reducers from '@reducers';
 
 let store;
 // Redux Persist config

@@ -13,7 +13,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import init from '../../actions/init';
+import init from '@actions/init';
 
 const Settings = ({
     Layout,
