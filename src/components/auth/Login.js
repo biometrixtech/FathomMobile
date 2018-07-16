@@ -285,11 +285,12 @@ class Login extends Component {
                                 {
                                     Object.entries(APIConfig.APIs).map(([key, value]) => (
                                         <ListItem
-                                            key={key}
-                                            title={`${key}: ${value}`}
-                                            hideChevron
                                             containerStyle={{ backgroundColor: key === this.props.environment ? AppColors.primary.grey.fiftyPercent : AppColors.white }}
+                                            hideChevron
+                                            key={key}
                                             onPress={() => { this.setState({ isModalVisible: false }); return this.props.setEnvironment(key);  }}
+                                            title={`${key}: ${value}`}
+                                            titleStyle={{ color: key === this.props.environment ? AppColors.white : AppColors.primary.grey.fiftyPercent }}
                                         />
                                     ))
                                 }
