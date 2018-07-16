@@ -269,6 +269,32 @@ start() {
     npm run start -- --reset-cache
 }
 
+handleIOSVersionBump() {
+    local build_location="./ios/Fathom/Info.plist"
+    # build version code
+    local currentBuildVersionCode=`cat $build_location | awk '/CFBundleShortVersionString/{getline; print}' | sed -e 's/^[[:space:]]*//' | awk -v FS="(\<string\>|\<\/string\>)" '{if ($2) print $2;}' | tr -d '\r'`
+    # build version name
+    local currentBuildVersionName=`cat $build_location | awk '/CFBundleVersion/{getline; print}' | sed -e 's/^[[:space:]]*//' | awk -v FS="(\<string\>|\<\/string\>)" '{if ($2) print $2;}' | tr -d '\r'`
+    # bump version code by 1
+    local newBuildVersionCode=`echo $currentBuildVersionCode 1 | awk '{print $1 + $2}'`
+
+    echo
+    read -p "${grey} Enter version name if you want to change from: $currentBuildVersionName`echo $'\n '`App version will auto bump from: $currentBuildVersionCode -> $newBuildVersionCode`echo $'\n '`Leave blank if no changes desired${normal}`echo $'\n\n '`${standout}New version:${normal} " -r
+    echo
+    if [ "$REPLY" == "" ]; then
+        echo "Changing nothing"
+    else
+        # find line number to replace version code and version name
+        local version_code_line_num=`grep -Fn 'CFBundleShortVersionString' $build_location | cut -d':' -f1 | awk '{print $1 + 1}'`
+        local version_name_line_num=`grep -Fn 'CFBundleVersion' $build_location | cut -d':' -f1 | awk '{print $1 + 1}'`
+
+        echo "Updating iOS version name to $REPLY and version code to $newBuildVersionCode.."
+        sed -i '' "${version_code_line_num}s/$currentBuildVersionCode/$newBuildVersionCode/" $build_location
+        sed -i '' "${version_name_line_num}s/$currentBuildVersionName/$REPLY/" $build_location
+        echo "Done updating build versions"
+    fi
+}
+
 iosBuild() {
     echo
     read -p "${grey}Choose which build type:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Staging`echo $'\n\n '`${standout}Enter selection:${normal} " -rn1
@@ -282,6 +308,7 @@ iosBuild() {
             else
                 echo "Unit testing passed, proceeding.."
                 cd ios
+                handleIOSVersionBump
                 xcodebuild clean -project Fathom.xcodeproj -scheme Fathom -configuration Release
                 xcodebuild archive -project Fathom.xcodeproj -scheme Fathom -configuration Release
                 cd ..
@@ -295,6 +322,7 @@ iosBuild() {
             else
                 echo "Unit testing passed, proceeding.."
                 cd ios
+                handleIOSVersionBump
                 xcodebuild clean -project Fathom.xcodeproj -scheme Fathom -configuration Staging
                 xcodebuild archive -project Fathom.xcodeproj -scheme Fathom -configuration Staging
                 cd ..
@@ -305,6 +333,28 @@ iosBuild() {
             iosBuild
             ;;
     esac
+}
+
+handleAndroidVersionBump() {
+    local build_location="./app/build.gradle"
+    # build version code
+    local currentBuildVersionCode=`cat $build_location | grep 'versionCode ' | sed -e 's/^[[:space:]]*//' | cut -d' ' -f2 | tr -d '\r'`
+    # build version name
+    local currentBuildVersionName=`cat $build_location | grep 'versionName ' | sed -e 's/^[[:space:]]*//' | cut -d' ' -f2 | tr -d '\"' | tr -d '\r'`
+    # bump version code by 1
+    local newBuildVersionCode=`echo $currentBuildVersionCode 1 | awk '{print $1 + $2}'`
+
+    echo
+    read -p "${grey} Enter version name if you want to change from: $currentBuildVersionName`echo $'\n '`App version will auto bump from: $currentBuildVersionCode -> $newBuildVersionCode`echo $'\n '`Leave blank if no changes desired${normal}`echo $'\n\n '`${standout}New version:${normal} " -r
+    echo
+    if [ "$REPLY" == "" ]; then
+        echo "Changing nothing"
+    else
+        echo "Updating version name to $REPLY and version code to $newBuildVersionCode.."
+        sed -i '' "s/versionCode $currentBuildVersionCode/versionCode $newBuildVersionCode/" $build_location
+        sed -i '' "s/versionName \"$currentBuildVersionName/versionName \"$REPLY/" $build_location
+        echo "Done updating build versions"
+    fi
 }
 
 androidBuild() {
@@ -320,6 +370,8 @@ androidBuild() {
             else
                 echo "Unit testing passed, proceeding.."
                 cd android
+                sed -i '' 's/android\.enableAapt2\=true/android\.enableAapt2\=false/' ./gradle.properties
+                handleAndroidVersionBump
                 ./gradlew clean assembleRelease
                 cd ..
                 echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-release#.apk${normal}"
@@ -334,6 +386,8 @@ androidBuild() {
             else
                 echo "Unit testing passed, proceeding.."
                 cd android
+                sed -i '' 's/android\.enableAapt2\=true/android\.enableAapt2\=false/' ./gradle.properties
+                handleAndroidVersionBump
                 ./gradlew clean assembleReleaseStaging
                 cd ..
                 echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-releaseStaging#.apk${normal}"
