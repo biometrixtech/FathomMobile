@@ -56,10 +56,8 @@ const postReadinessSurvey = dailyReadinessObj => {
             });
             console.log('myPlanData',myPlanData);
             return myPlanData;
-        }).then(myPlanData => {
-            AppAPI.post_daily_plan.post({ user_id: dailyReadinessObj.user_id });
-            return Promise.resolve(myPlanData);
-        }).catch(err => {
+        }).then(myPlanData => Promise.resolve(myPlanData))
+        .catch(err => {
             console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
@@ -78,10 +76,8 @@ const postSessionSurvey = postSessionObj => {
             });
             console.log('myPlanData',myPlanData);
             return myPlanData;
-        }).then(myPlanData => {
-            AppAPI.post_daily_plan.post({ user_id: postSessionObj.user_id });
-            return Promise.resolve(myPlanData);
-        }).catch(err => {
+        }).then(myPlanData => Promise.resolve(myPlanData))
+        .catch(err => {
             console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);

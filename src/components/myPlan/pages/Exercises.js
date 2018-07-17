@@ -20,6 +20,9 @@ import { Text } from '@custom';
 // Components
 import { ExerciseItem } from './';
 
+// import third-party libraries
+import _ from 'lodash';
+
 /* Component ==================================================================== */
 const Exercises = ({
     handleExerciseListRefresh,
@@ -40,7 +43,7 @@ const Exercises = ({
                     />
                 }
             >
-                {exerciseList.map((exercise, i) =>
+                {_.map(exerciseList, (exercise, i) =>
                     <ExerciseItem
                         exercise={exercise}
                         isLastItem={i + 1 === exerciseList.length}
