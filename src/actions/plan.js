@@ -2,7 +2,7 @@
  * @Author: Mazen Chami
  * @Date: 2018-07-12 11:06:00
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-16 18:27:55
+ * @Last Modified time: 2018-07-17 00:18:03
  */
 
 /**
@@ -10,6 +10,7 @@
  */
 
 import { Actions } from '@constants';
+import { store } from '@store';
 import { AppAPI, AppUtil } from '@lib';
 
 // import third-party libraries
@@ -19,8 +20,10 @@ import moment from 'moment';
   * Get My Plan Data
   */
 const getMyPlan = (userId, startDate, endDate) => {
+    let currentState = store.getState();
     let myPlanObj = {};
-    myPlanObj.user_id = userId;
+    // Defaulting user id to whatever is in the store if nothing is sent for Push Notifications
+    myPlanObj.user_id = userId || currentState.user.id;
     myPlanObj.start_date = startDate ? startDate : moment().format('YYYY-MM-DD');
     if(endDate) {
         myPlanObj.end_date = endDate;

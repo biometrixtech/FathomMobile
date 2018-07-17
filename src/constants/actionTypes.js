@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:41 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-14 12:51:32
+ * @Last Modified time: 2018-07-17 00:06:59
  */
 
 export default {
@@ -16,6 +16,7 @@ export default {
     POST_READINESS_SURVEY:   'POST_READINESS_SURVEY',
     POST_SESSION_SURVEY:     'POST_SESSION_SURVEY',
     REGISTER_DEVICE:         'REGISTER_DEVICE',
+    SEND_DEVICE_TOKEN:       'SEND_DEVICE_TOKEN',
     SET_ENVIRONMENT:         'SET_ENVIRONMENT',
     SIGN_UP_FAILED:          'SIGN_UP_FAILED',
     SIGN_UP_SUCCESS:         'SIGN_UP_SUCCESS',

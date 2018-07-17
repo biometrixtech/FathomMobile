@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:59 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-16 18:41:03
+ * @Last Modified time: 2018-07-17 00:16:56
  */
 
 /**
@@ -218,6 +218,23 @@ const setEnvironment = (environment) => {
     });
 };
 
+/**
+ *
+ * @param {push notification token for device} token
+ * @param {operating system of device ['Android', 'iOS']} deviceOS
+ */
+const sendDeviceToken = (token, deviceOS) => {
+    /**
+     * TODO: integrate API for sending PN token and deviceOS to backend
+     * user_id should come from the JWT injected into the APIs
+     */
+    return dispatch => dispatch({
+        type: Actions.SEND_DEVICE_TOKEN,
+        token,
+        deviceOS,
+    });
+};
+
 
 export default {
     forgotPassword,
@@ -226,6 +243,7 @@ export default {
     startLogin,
     finalizeLogin,
     logout,
+    sendDeviceToken,
     setEnvironment,
     signUp,
 };

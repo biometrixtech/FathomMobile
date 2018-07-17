@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:17:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-16 18:57:54
+ * @Last Modified time: 2018-07-17 00:10:08
  */
 
 /**
@@ -11,7 +11,7 @@
 
 import React from 'react';
 import { AppRegistry, YellowBox } from 'react-native';
-import Root from './src/';
+import Root from './src';
 import {configureStore} from '@store';
 import codePush from 'react-native-code-push';
 
