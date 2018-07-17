@@ -21,6 +21,9 @@ import { FathomSlider, Text } from '@custom';
 // Components
 import { AreasOfSoreness, SoreBodyPart } from './';
 
+// import third-party libraries
+import _ from 'lodash';
+
 /* Component ==================================================================== */
 const PostSessionSurvey = ({
     handleAreaOfSorenessClick,
@@ -57,7 +60,7 @@ const PostSessionSurvey = ({
                         value={postSession.RPE}
                     />
                 </View>
-                { soreBodyParts.body_parts.map((bodyPart, i) =>
+                { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
                     <SoreBodyPart
                         bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
                         bodyPartSide={bodyPart.side}
