@@ -47,7 +47,7 @@ const Coach = ({ text }) => (
         style={[AppStyles.containerCentered, styles.coachWrapper]}
     >
         <Image
-            source={require('../../constants/assets/images/coach-avatar.png')}
+            source={require('@images/coach-avatar.png')}
             style={[styles.imageStyle]}
         />
         <Text style={[styles.coachText]}>{text}</Text>

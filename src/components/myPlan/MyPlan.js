@@ -325,7 +325,7 @@ class MyPlan extends Component {
                     style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
                 >
                     <Image
-                        source={require('../../constants/assets/images/coach-avatar.png')}
+                        source={require('@images/coach-avatar.png')}
                         style={{resizeMode: 'contain', width: 40, height: 40}}
                     />
                     { !isDailyReadinessSurveyCompleted ?

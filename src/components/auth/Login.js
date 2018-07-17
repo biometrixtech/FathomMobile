@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:32:47
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-16 18:41:36
+ * @Last Modified time: 2018-07-17 00:24:11
  */
 
 /**
@@ -236,7 +236,7 @@ class Login extends Component {
                     setps={'TTT'}
                     onCatch={() => this.setState({ isModalVisible: true })}
                 >
-                    <Image source={require('../../constants/assets/images/fathom-white.png')} resizeMode={'contain'} style={styles.mainLogo} />
+                    <Image source={require('@images/fathom-white.png')} resizeMode={'contain'} style={styles.mainLogo} />
                 </Egg>
 
                 <Card dividerStyle={{ height: 0, width: 0 }} titleStyle={{ marginBottom: 0 }}>
