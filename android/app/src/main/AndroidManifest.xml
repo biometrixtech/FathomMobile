@@ -35,7 +35,7 @@
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="${applicationId}" />
+                <category android:name="5bcc5a1891d3385c" />
             </intent-filter>
         </receiver>
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
