@@ -7,11 +7,12 @@
 
 /* eslint-disable no-process-env */
 export default {
-    certificate: null,
-    email:       null,
-    environment: 'DEV', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
-    jwt:         null,
-    password:    null,
-    token:       null, // push notification token
-    device:      null,
+    device:       null,
+    certificate:  null,
+    email:        null,
+    environment:  'DEV', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
+    jwt:          null,
+    notification: false,
+    password:     null,
+    token:        null, // push notification token
 };

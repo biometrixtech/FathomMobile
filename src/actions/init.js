@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:20:59
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-17 12:07:52
+ * @Last Modified time: 2018-07-18 17:09:23
  */
 
 /**
@@ -72,9 +72,8 @@ const registerDevice = () => {
             token:   currentState.init.token,
             enabled: true,
         } : null;
-        let bodyObj = {};
-        bodyObj.device_type = device_type;
-        if(push_notifications) {
+        let bodyObj = { device_type };
+        if (push_notifications) {
             bodyObj.push_notifications = push_notifications;
         }
         return AppAPI.register_device.post({ device_uuid: uniqueId }, bodyObj)

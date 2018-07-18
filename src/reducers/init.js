@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-04-23 03:55:41
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-17 18:01:19
+ * @Last Modified time: 2018-07-18 18:19:28
  */
 
 /**
@@ -22,6 +22,14 @@ export default function initReducer(state = initialState, action) {
             email:    action.email,
             password: action.password,
             jwt:      action.jwt,
+        });
+    case Actions.GET_MY_PLAN: // double reducer for editing 2 stores
+        return Object.assign({}, state, {
+            notification: false, // so we can receive notifications when the app is active too
+        });
+    case Actions.NOTIFICATION_RECEIVED:
+        return Object.assign({}, state, {
+            notification: true,
         });
     case Actions.REGISTER_DEVICE:
         return Object.assign({}, state, {

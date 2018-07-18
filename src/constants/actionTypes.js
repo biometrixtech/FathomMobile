@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:41 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-17 00:06:59
+ * @Last Modified time: 2018-07-18 18:19:50
  */
 
 export default {
@@ -13,6 +13,7 @@ export default {
     GET_MY_PLAN:             'GET_MY_PLAN',
     LOGIN:                   'LOGIN',
     LOGOUT:                  'LOGOUT',
+    NOTIFICATION_RECEIVED:   'NOTIFICATION_RECEIVED',
     POST_READINESS_SURVEY:   'POST_READINESS_SURVEY',
     POST_SESSION_SURVEY:     'POST_SESSION_SURVEY',
     REGISTER_DEVICE:         'REGISTER_DEVICE',

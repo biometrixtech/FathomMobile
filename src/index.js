@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-04-30 13:21:21
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-17 18:57:33
+ * @Last Modified time: 2018-07-18 19:29:33
  */
 
 import React, { Component } from 'react';
@@ -12,7 +12,6 @@ import { Provider } from 'react-redux';
 import { Router, Stack } from 'react-native-router-flux';
 import { PersistGate } from 'redux-persist/es/integration/react';
 import { Actions } from '@constants';
-import { plan as PlanActions, init as InitActions } from '@actions';
 import { Platform, PushNotificationIOS } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 
@@ -31,9 +30,7 @@ class Root extends Component {
 
     constructor(props) {
         super(props);
-    }
 
-    componentDidMount() {
         /**
          * Setting up Push Notifications here as this encapsulates
          * all of the embedded components so we'll be able to receive
@@ -46,10 +43,9 @@ class Root extends Component {
             // (optional) Called when Token is generated (iOS and Android)
             onRegister: token => this._onRegisterForPushNotifications(token),
 
-            popInitialNotification: true,
-            requestPermissions:     true,
+            requestPermissions: true,
             // ANDROID ONLY: GCM or FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)
-            senderID:               Platform.OS === 'ios' ? null : '394820950629', // Both the Android and iOS senderID in Firebase
+            senderID:           Platform.OS === 'ios' ? null : '394820950629', // Both the Android and iOS senderID in Firebase
         });
     }
 
@@ -68,14 +64,18 @@ class Root extends Component {
     _onNotificationReceived = (notification) => {
         console.log( 'NOTIFICATION:', notification );
         /**
-         * Unsure if this logic below will work for the redux actions
-         *
-         * Other option is to change a store property (see below) which
-         * triggers a refresh of data in whatever component we're in?
+         * Unsure if this logic below will work for redux in active and inactive
          */
-        return PlanActions.getMyPlan()
-            // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
-            .then(() => Platform.OS === 'ios' ? notification.finish(PushNotificationIOS.FetchResult.NoData) : null);
+        return notification.foreground
+            ? Promise.resolve(this.props.store.dispatch({
+                type: Actions.NOTIFICATION_RECEIVED
+            }))
+                // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
+                .then(() => Platform.OS === 'ios'
+                    ? notification.finish(PushNotificationIOS.FetchResult.NoData)
+                    : notification.finish()
+                )
+            : null;
     }
 
     _onRegisterForPushNotifications = (registration) => {
