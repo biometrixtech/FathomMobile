@@ -1860,7 +1860,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fathom.fathomai;
 				PRODUCT_NAME = Fathom;
-				PROVISIONING_PROFILE = "8fbd289c-3adb-461f-a84f-0fbd2c1360f7";
+				PROVISIONING_PROFILE = "3e7427bb-3ac7-45b2-adc9-f350830e62fc";
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom Ad Hoc Provisioning Profile";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

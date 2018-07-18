@@ -318,6 +318,10 @@ class MyPlan extends Component {
             'Log a training session to update your next Recovery, else we\'ll see you tomorrow. Rest well!'
             :
             'Comeback this afternoon or log a training session to update your PM Recovery.';
+        let loadingText = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ?
+            'Creating/updating you plan...'
+            :
+            'Loading...';
         return (
             <View style={[styles.background]}>
                 <LinearGradient
@@ -348,11 +352,16 @@ class MyPlan extends Component {
                     }
                 </LinearGradient>
                 { !recoveryObj ?
-                    <View style={[AppStyles.containerCentered, {flex: 1}]}>
-                        <ActivityIndicator
-                            color={AppColors.primary.yellow.hundredPercent}
-                            size={'large'}
-                        />
+                    <View style={{flex: 1}}>
+                        <ScrollView
+                            contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
+                        >
+                            <ActivityIndicator
+                                color={AppColors.primary.yellow.hundredPercent}
+                                size={'large'}
+                            />
+                            <Text style={[AppStyles.h1, AppStyles.textCenterAligned]}>{loadingText}</Text>
+                        </ScrollView>
                     </View>
                     :
                     <Exercises

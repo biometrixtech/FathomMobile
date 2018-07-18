@@ -13,4 +13,5 @@ export default {
     jwt:         null,
     password:    null,
     token:       null, // push notification token
+    device:      null,
 };

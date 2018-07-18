@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:20:59 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:20:59
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-17 12:07:52
  */
@@ -72,12 +72,17 @@ const registerDevice = () => {
             token:   currentState.init.token,
             enabled: true,
         } : null;
-
-        return AppAPI.register_device.post({ device_uuid: uniqueId }, { device_type, push_notifications })
+        let bodyObj = {};
+        bodyObj.device_type = device_type;
+        if(push_notifications) {
+            bodyObj.push_notifications = push_notifications;
+        }
+        return AppAPI.register_device.post({ device_uuid: uniqueId }, bodyObj)
             .then(response => {
                 dispatch({
                     type:        Actions.REGISTER_DEVICE,
                     certificate: response.certificate,
+                    device:      response.device,
                 });
 
                 return resolve(response);

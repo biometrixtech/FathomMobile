@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-04-30 13:21:21 
+ * @Author: Vir Desai
+ * @Date: 2018-04-30 13:21:21
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-17 18:57:33
  */
@@ -54,22 +54,22 @@ class Root extends Component {
     }
 
     /**
-     * 
+     *
      * Example Notification Object:
-     * 
+     *
      * {
      *      foreground:      false,                     // BOOLEAN: If the notification was received in foreground or not
      *      userInteraction: false,                     // BOOLEAN: If the notification was opened by the user from the notification area or not
      *      message:         'My Notification Message', // STRING: The notification message
      *      data:            {},                        // OBJECT: The push data
      * }
-     * 
+     *
      */
     _onNotificationReceived = (notification) => {
         console.log( 'NOTIFICATION:', notification );
         /**
          * Unsure if this logic below will work for the redux actions
-         * 
+         *
          * Other option is to change a store property (see below) which
          * triggers a refresh of data in whatever component we're in?
          */
@@ -77,7 +77,7 @@ class Root extends Component {
             // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
             .then(() => Platform.OS === 'ios' ? notification.finish(PushNotificationIOS.FetchResult.NoData) : null);
     }
-    
+
     _onRegisterForPushNotifications = (registration) => {
         console.log(`about to register with deviceToken: ${registration.token}`);
         return this.props.store.dispatch({

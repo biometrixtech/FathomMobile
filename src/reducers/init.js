@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-04-23 03:55:41 
+ * @Author: Vir Desai
+ * @Date: 2018-04-23 03:55:41
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-17 18:01:19
  */
@@ -26,6 +26,7 @@ export default function initReducer(state = initialState, action) {
     case Actions.REGISTER_DEVICE:
         return Object.assign({}, state, {
             certificate: action.certificate,
+            device:      action.device,
         });
     case Actions.SEND_DEVICE_TOKEN:
         return Object.assign({}, state, {
@@ -37,8 +38,9 @@ export default function initReducer(state = initialState, action) {
         });
     case Actions.LOGOUT:
         return Object.assign({}, initialState, {
-            environment: state.environment,
             certificate: state.certificate,
+            device:      state.device,
+            environment: state.environment,
         });
     case Actions.SIGN_UP_SUCCESS:
     case Actions.SIGN_UP_FAILURE:
