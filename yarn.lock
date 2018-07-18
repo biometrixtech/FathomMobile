@@ -4870,8 +4870,8 @@ jest@^23.4.1:
     jest-cli "^23.4.1"
 
 js-base64@^2.1.9:
-  version "2.4.6"
-  resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.4.6.tgz#1d49f618bef43630cd191f4e122447acfdb947d8"
+  version "2.4.8"
+  resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.4.8.tgz#57a9b130888f956834aa40c5b165ba59c758f033"
 
 js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
@@ -5058,8 +5058,8 @@ klaw@^1.0.0:
     graceful-fs "^4.1.9"
 
 kleur@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/kleur/-/kleur-1.0.1.tgz#6b64a4a42c7226fc0319fec35904f824ad945f7e"
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/kleur/-/kleur-1.0.2.tgz#637f126d3cda40a423b1297da88cf753bd04ebdd"
 
 lazy-cache@^1.0.3:
   version "1.0.4"
@@ -7018,7 +7018,7 @@ react-native-picker-select@^4.0.0:
   dependencies:
     lodash.isequal "^4.5.0"
 
-react-native-push-notification@^3.0.2:
+react-native-push-notification@3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/react-native-push-notification/-/react-native-push-notification-3.0.2.tgz#3fa7d654cfd915436597b0dd5ba8b0f898c4b0f5"
 

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-23 03:55:41 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-17 00:07:52
+ * @Last Modified time: 2018-07-17 18:01:19
  */
 
 /**
@@ -28,8 +28,9 @@ export default function initReducer(state = initialState, action) {
             certificate: action.certificate,
         });
     case Actions.SEND_DEVICE_TOKEN:
-        // TODO: implement reducer for PN device registration?
-        return Object.assign({}, state, {});
+        return Object.assign({}, state, {
+            token: action.token,
+        });
     case Actions.SET_ENVIRONMENT:
         return Object.assign({}, state, {
             environment: action.environment

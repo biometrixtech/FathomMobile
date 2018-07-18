@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:20:59 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-17 00:16:56
+ * @Last Modified time: 2018-07-17 12:07:52
  */
 
 /**
@@ -12,6 +12,7 @@
 import jwtDecode from 'jwt-decode';
 import { Actions, ErrorMessages } from '@constants';
 import { AppAPI } from '@lib';
+import { store } from '@store';
 
 // Components
 import { Platform } from 'react-native';
@@ -59,15 +60,20 @@ const registerDevice = () => {
     return dispatch => new Promise((resolve, reject) => {
         // register the device
         let uniqueId = DeviceInfo.getUniqueID();
-        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        let uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
         if(!uuidRegex.test(uniqueId)) {
             // not a uuid, lets unparse it
             uniqueId = uuidByString(uniqueId);
         }
         uniqueId = uniqueId.toLowerCase();
-        const device_type = Platform.OS;
+        let device_type = Platform.OS;
+        let currentState = store.getState();
+        let push_notifications = currentState.init.token ? {
+            token:   currentState.init.token,
+            enabled: true,
+        } : null;
 
-        return AppAPI.register_device.post({ device_uuid: uniqueId }, { device_type })
+        return AppAPI.register_device.post({ device_uuid: uniqueId }, { device_type, push_notifications })
             .then(response => {
                 dispatch({
                     type:        Actions.REGISTER_DEVICE,
@@ -212,27 +218,21 @@ const signUp = (credentials) => {
  * @param {new environment to be used} environment
  */
 const setEnvironment = (environment) => {
-    return dispatch => dispatch({
+    return dispatch => Promise.resolve(dispatch({
         type: Actions.SET_ENVIRONMENT,
         environment
-    });
+    }));
 };
 
 /**
  *
  * @param {push notification token for device} token
- * @param {operating system of device ['Android', 'iOS']} deviceOS
  */
-const sendDeviceToken = (token, deviceOS) => {
-    /**
-     * TODO: integrate API for sending PN token and deviceOS to backend
-     * user_id should come from the JWT injected into the APIs
-     */
-    return dispatch => dispatch({
+const sendDeviceToken = (token) => {
+    return dispatch => Promise.resolve(dispatch({
         type: Actions.SEND_DEVICE_TOKEN,
-        token,
-        deviceOS,
-    });
+        token
+    }));
 };
 
 
