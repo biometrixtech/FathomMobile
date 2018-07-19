@@ -14,6 +14,7 @@ import { store } from '@store';
 import { AppAPI, AppUtil } from '@lib';
 
 // import third-party libraries
+import _ from 'lodash';
 import moment from 'moment';
 
 /**
@@ -73,11 +74,21 @@ const postReadinessSurvey = dailyReadinessObj => {
   * Post Session Survey Data
   */
 const postSessionSurvey = postSessionObj => {
+    // we need to clear our exercises as they will be updated
+    let currentState = store.getState();
+    let newPlan = _.cloneDeep(currentState.plan.dailyPlan[0]);
+    newPlan.recovery_am = null;
+    newPlan.recovery_pm = null;
+    // call api
     return dispatch => AppAPI.post_session_survey.post(false, postSessionObj)
         .then(myPlanData => {
             dispatch({
                 type: Actions.POST_SESSION_SURVEY,
                 data: postSessionObj,
+            });
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: newPlan,
             });
             console.log('myPlanData',myPlanData);
             return myPlanData;

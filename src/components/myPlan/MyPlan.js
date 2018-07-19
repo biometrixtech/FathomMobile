@@ -314,9 +314,9 @@ class MyPlan extends Component {
         let hourOfDay = moment().get('hour');
         let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && this.props.plan.dailyPlan[0].daily_readiness_survey_completed ? true : false;
         let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
-        let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && hourOfDay >= 12 ?
+        let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.recovery_pm && hourOfDay >= 12 ?
             dailyPlanObj.recovery_pm
-            : isDailyReadinessSurveyCompleted && dailyPlanObj && hourOfDay < 12 ?
+            : isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.recovery_am && hourOfDay < 12 ?
                 dailyPlanObj.recovery_am
                 :
                 false;
