@@ -76,9 +76,12 @@ const postReadinessSurvey = dailyReadinessObj => {
 const postSessionSurvey = postSessionObj => {
     // we need to clear our exercises as they will be updated
     let currentState = store.getState();
-    let newPlan = _.cloneDeep(currentState.plan.dailyPlan[0]);
-    newPlan.recovery_am = null;
-    newPlan.recovery_pm = null;
+    let newPlan = {};
+    newPlan.daily_plans = [];
+    let newCurrentPlan = _.cloneDeep(currentState.plan.dailyPlan[0]);
+    newCurrentPlan.recovery_am = null;
+    newCurrentPlan.recovery_pm = null;
+    newPlan.daily_plans.push(newCurrentPlan);
     // call api
     return dispatch => AppAPI.post_session_survey.post(false, postSessionObj)
         .then(myPlanData => {

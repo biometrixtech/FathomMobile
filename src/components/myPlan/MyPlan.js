@@ -262,6 +262,12 @@ class MyPlan extends Component {
         });
     }
 
+    _togglePostSessionSurvey = () => {
+        this.setState({
+            isPostSessionSurveyModalOpen: !this.state.isPostSessionSurveyModalOpen
+        });
+    }
+
     _togglePostSessionSurveyModal = () => {
         if(!this.state.isPostSessionSurveyModalOpen) {
             this.props.getSoreBodyParts()
@@ -414,6 +420,7 @@ class MyPlan extends Component {
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handlePostSessionFormChange}
                         handleFormSubmit={this._handlePostSessionSurveySubmit}
+                        handleTogglePostSessionSurvey={this._togglePostSessionSurvey}
                         postSession={this.state.postSession}
                         soreBodyParts={this.props.plan.soreBodyParts}
                     />

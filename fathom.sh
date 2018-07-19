@@ -333,14 +333,14 @@ codepushPromote() {
     echo
     case "$REPLY" in
         1)
-            code-push promote FathomAI-Android Staging Production -t '*'
+            code-push promote vir/FathomAI-Android Staging Production -t '*'
             ;;
         2)
-            code-push promote FathomAI-iOS Staging Production -t '*'
+            code-push promote vir/FathomAI-iOS Staging Production -t '*'
             ;;
         3)
-            code-push promote FathomAI-Android Staging Production -t '*'
-            code-push promote FathomAI-iOS Staging Production -t '*'
+            code-push promote vir/FathomAI-Android Staging Production -t '*'
+            code-push promote vir/FathomAI-iOS Staging Production -t '*'
             ;;
         *)
             echo "${red}Invalid selection${normal}"
