@@ -129,10 +129,12 @@ initialize() {
             # sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
 
             # extra android patches
+            sed -i '' 's/23/27/g' ./node_modules/react-native-push-notification/android/build.gradle
             sed -i '' 's/provided/compileOnly/g' ./node_modules/react-native-linear-gradient/android/build.gradle
             sed -i '' 's/Compile /Implementation /g' ./node_modules/react-native-splash-screen/android/build.gradle
             sed -i '' 's/Compile /Implementation /g' ./node_modules/react-native-push-notification/android/build.gradle
             sed -i '' 's/babel\-jest/\<rootDir\>\/node_modules\/react-native\/jest\/preprocessor.js/' ./node_modules/react-native/jest-preset.json
+            yes | cp ./custom/android/RNPushNotificationHelper.java ./node_modules/react-native-push-notification/android/src/main/java/com/dieam/reactnativepushnotification/modules/RNPushNotificationHelper.java
 
             # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
             android_nvm_location=`find ~/ -name '.nvm' -type d -print -quit`
