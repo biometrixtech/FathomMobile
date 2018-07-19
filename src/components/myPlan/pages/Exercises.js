@@ -39,6 +39,8 @@ const Exercises = ({
                         colors={[AppColors.primary.yellow.hundredPercent]}
                         onRefresh={handleExerciseListRefresh}
                         refreshing={isExerciseListRefreshing}
+                        title={'Loading...'}
+                        titleColor={AppColors.primary.yellow.hundredPercent}
                         tintColor={AppColors.primary.yellow.hundredPercent}
                     />
                 }

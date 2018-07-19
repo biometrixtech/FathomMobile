@@ -31,6 +31,10 @@ export default function initReducer(state = initialState, action) {
         return Object.assign({}, state, {
             notification: true,
         });
+    case Actions.NOTIFICATION_ADDRESSED:
+        return Object.assign({}, state, {
+            notification: false,
+        });
     case Actions.REGISTER_DEVICE:
         return Object.assign({}, state, {
             certificate: action.certificate,
