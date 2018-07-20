@@ -347,12 +347,11 @@ class MyPlan extends Component {
         this.setState({
             completedExercises:          newCompletedExercises,
             isSelectedExerciseModalOpen: false,
-            selectedExercise:            {},
         });
     }
 
     _toggleSelectedExercise = (exerciseObj) => {
-        console.log('exerciseObj',exerciseObj);
+        console.log(exerciseObj);
         this.setState({
             isSelectedExerciseModalOpen: !this.state.isSelectedExerciseModalOpen,
             selectedExercise:            exerciseObj ? exerciseObj : {},
@@ -511,41 +510,58 @@ class MyPlan extends Component {
                     </LinearGradient>
                 </Modal>
                 <Modal
-                    backdropPressToClose={false}
-                    coverScreen={true}
+                    backdropOpacity={0.75}
+                    backdropPressToClose={true}
+                    coverScreen={false}
                     isOpen={this.state.isSelectedExerciseModalOpen}
-                    swipeToClose={false}
+                    onClosed={() => this._toggleSelectedExercise}
+                    style={[AppStyles.containerCentered, {
+                        height:  AppSizes.screen.heightTwoThirds,
+                        padding: AppSizes.padding,
+                        width:   AppSizes.screen.width * 0.9,
+                    }]}
+                    swipeToClose={true}
                 >
-                    <YouTube
-                        apiKey={'AIzaSyATavF4OIsJBDFx4bi3bBmwlArbStH3chs'}
-                        fullscreen={false}
-                        loop={false}
-                        play={false}
-                        videoId={this.state.selectedExercise.youtube_id && this.state.selectedExercise.youtube_id.length > 0 ? this.state.selectedExercise.youtube_id : 'uK0hqaxWnBo'}
-                        style={{ alignSelf: 'stretch', height: 300 }}
-                        onError={e => console.log('youtube error', e)}
-                    />
+                    { this.state.selectedExercise.library_id ?
+                        <View>
+                            { MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId ?
+                                <YouTube
+                                    apiKey={'AIzaSyATavF4OIsJBDFx4bi3bBmwlArbStH3chs'}
+                                    fullscreen={false}
+                                    loop={false}
+                                    onError={e => console.log('youtube error', e)}
+                                    play={false}
+                                    showFullscreenButton={true}
+                                    style={{height: 300, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding * 2)}}
+                                    videoId={MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId}
+                                />
+                                :
+                                null
+                            }
+                            <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, AppStyles.h2]}>
+                                {MyPlanConstants.cleanExercise(this.state.selectedExercise).displayName}
+                            </Text>
+                            <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, {color: AppColors.secondary.blue.hundredPercent}]}>
+                                {MyPlanConstants.cleanExercise(this.state.selectedExercise).dosage}
+                            </Text>
+                            <TabIcon
+                                containerStyle={[{alignSelf: 'center'}]}
+                                icon={'check'}
+                                iconStyle={[{color: AppColors.primary.yellow.hundredPercent}]}
+                                onPress={() => this._handleCompleteExercise(this.state.selectedExercise.library_id)}
+                                reverse={false}
+                                size={34}
+                                type={'material-community'}
+                            />
+                        </View>
+                        :
+                        null
+                    }
                 </Modal>
             </View>
         );
     }
 }
-
-/* this.state.isSelectedExerciseModalOpen && Platform.OS === 'ios' ?
-    YouTubeStandaloneIOS.playVideo('uK0hqaxWnBo')
-        .then(() => console.log('Standalone Player Exited'))
-        .catch(errorMessage => console.error(errorMessage))
-    : this.state.isSelectedExerciseModalOpen && Platform.OS === 'android' ?
-        YouTubeStandaloneAndroid.playVideo({
-            apiKey:   'AIzaSyATavF4OIsJBDFx4bi3bBmwlArbStH3chs',
-            videoId:  'uK0hqaxWnBo',
-            autoplay: true,
-        })
-            .then(() => console.log('Standalone Player Exited'))
-            .catch(errorMessage => console.error(errorMessage))
-        :
-        null
-*/
 
 /* Export Component ==================================================================== */
 export default MyPlan;

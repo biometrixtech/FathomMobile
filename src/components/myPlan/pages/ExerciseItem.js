@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles } from '@constants';
+import { AppColors, AppSizes, AppStyles, MyPlan } from '@constants';
 import { Checkbox, Text } from '@custom';
 
 /* Component ==================================================================== */
@@ -48,12 +48,12 @@ const ExerciseItem = ({
                         textDecorationLine: 'none',
                     }}
                 >
-                    {`${exercise.display_name.length > 0 ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`}
+                    {MyPlan.cleanExercise(exercise).displayName}
                 </Text>
             </View>
             <View style={{justifyContent: 'center', flex: 0.2, paddingRight: 10,}}>
                 <Text style={[AppStyles.textRightAligned, {color: completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.secondary.blue.hundredPercent, fontWeight: 'bold'}]}>
-                    {`${exercise.sets_assigned}x ${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : ''}`}
+                    {MyPlan.cleanExercise(exercise).dosage}
                 </Text>
             </View>
         </View>
