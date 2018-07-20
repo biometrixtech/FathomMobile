@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import {
     ActivityIndicator,
     Image,
+    Platform,
     RefreshControl,
     ScrollView,
     StyleSheet,
@@ -17,6 +18,7 @@ import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modalbox';
 import SplashScreen from 'react-native-splash-screen';
+import YouTube, { YouTubeStandaloneAndroid, YouTubeStandaloneIOS} from 'react-native-youtube';
 import moment from 'moment';
 
 // Consts, Libs, and Utils
@@ -64,12 +66,14 @@ class MyPlan extends Component {
             },
             isCompletedAMPMRecoveryModalOpen: false,
             isExerciseListRefreshing:         false,
-            isReadinessSurveyModalOpen:       false,
             isPostSessionSurveyModalOpen:     false,
+            isReadinessSurveyModalOpen:       false,
+            isSelectedExerciseModalOpen:      false,
             postSession:                      {
                 RPE:      0,
                 soreness: []
             },
+            selectedExercise: {},
         };
     }
 
@@ -340,7 +344,19 @@ class MyPlan extends Component {
         } else {
             newCompletedExercises.push(exerciseId);
         }
-        this.setState({ completedExercises: newCompletedExercises });
+        this.setState({
+            completedExercises:          newCompletedExercises,
+            isSelectedExerciseModalOpen: false,
+            selectedExercise:            {},
+        });
+    }
+
+    _toggleSelectedExercise = (exerciseObj) => {
+        console.log('exerciseObj',exerciseObj);
+        this.setState({
+            isSelectedExerciseModalOpen: !this.state.isSelectedExerciseModalOpen,
+            selectedExercise:            exerciseObj ? exerciseObj : {},
+        });
     }
 
     render = () => {
@@ -430,6 +446,7 @@ class MyPlan extends Component {
                             handleExerciseListRefresh={this._handleExerciseListRefresh}
                             isExerciseListRefreshing={this.state.isExerciseListRefreshing}
                             toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
+                            toggleSelectedExercise={this._toggleSelectedExercise}
                         />
                     }
                 </View>
@@ -493,10 +510,42 @@ class MyPlan extends Component {
                         />
                     </LinearGradient>
                 </Modal>
+                <Modal
+                    backdropPressToClose={false}
+                    coverScreen={true}
+                    isOpen={this.state.isSelectedExerciseModalOpen}
+                    swipeToClose={false}
+                >
+                    <YouTube
+                        apiKey={'AIzaSyATavF4OIsJBDFx4bi3bBmwlArbStH3chs'}
+                        fullscreen={false}
+                        loop={false}
+                        play={false}
+                        videoId={this.state.selectedExercise.youtube_id && this.state.selectedExercise.youtube_id.length > 0 ? this.state.selectedExercise.youtube_id : 'uK0hqaxWnBo'}
+                        style={{ alignSelf: 'stretch', height: 300 }}
+                        onError={e => console.log('youtube error', e)}
+                    />
+                </Modal>
             </View>
         );
     }
 }
+
+/* this.state.isSelectedExerciseModalOpen && Platform.OS === 'ios' ?
+    YouTubeStandaloneIOS.playVideo('uK0hqaxWnBo')
+        .then(() => console.log('Standalone Player Exited'))
+        .catch(errorMessage => console.error(errorMessage))
+    : this.state.isSelectedExerciseModalOpen && Platform.OS === 'android' ?
+        YouTubeStandaloneAndroid.playVideo({
+            apiKey:   'AIzaSyATavF4OIsJBDFx4bi3bBmwlArbStH3chs',
+            videoId:  'uK0hqaxWnBo',
+            autoplay: true,
+        })
+            .then(() => console.log('Standalone Player Exited'))
+            .catch(errorMessage => console.error(errorMessage))
+        :
+        null
+*/
 
 /* Export Component ==================================================================== */
 export default MyPlan;

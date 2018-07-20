@@ -6,6 +6,7 @@
         exercise={exercise}
         handleCompleteExercise={handleCompleteExercise}
         isLastItem={i + 1 === exerciseList.length}
+        toggleSelectedExercise={toggleSelectedExercise}
     />
  *
  */
@@ -23,6 +24,7 @@ const ExerciseItem = ({
     exercise,
     handleCompleteExercise,
     isLastItem,
+    toggleSelectedExercise,
 }) => (
     <View style={[AppStyles.paddingTopSml]}>
         <View style={[AppStyles.paddingVerticalSml, {flex: 1, flexDirection: 'row', justifyContent: 'space-between',}]}>
@@ -37,8 +39,16 @@ const ExerciseItem = ({
                 />
             </View>
             <View style={{justifyContent: 'center', flex: 0.7,}}>
-                <Text style={{color: completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black, flexWrap: 'wrap', fontWeight: 'bold',}}>
-                    {`${exercise.name.toUpperCase()}`}
+                <Text
+                    onPress={() => toggleSelectedExercise(exercise)}
+                    style={{
+                        color:              completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black,
+                        flexWrap:           'wrap',
+                        fontWeight:         'bold',
+                        textDecorationLine: 'none',
+                    }}
+                >
+                    {`${exercise.display_name.length > 0 ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`}
                 </Text>
             </View>
             <View style={{justifyContent: 'center', flex: 0.2, paddingRight: 10,}}>
@@ -58,6 +68,7 @@ ExerciseItem.propTypes = {
     exercise:               PropTypes.object.isRequired,
     handleCompleteExercise: PropTypes.func.isRequired,
     isLastItem:             PropTypes.bool.isRequired,
+    toggleSelectedExercise: PropTypes.func.isRequired,
 };
 ExerciseItem.defaultProps = {};
 ExerciseItem.componentName = 'ExerciseItem';
