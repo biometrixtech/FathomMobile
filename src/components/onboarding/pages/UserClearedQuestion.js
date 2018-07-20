@@ -21,8 +21,8 @@ import PropTypes from 'prop-types';
 import { TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles } from '../../../constants';
-import { TabIcon, Text } from '../../custom';
+import { AppColors, AppSizes, AppStyles } from '@constants';
+import { TabIcon, Text } from '@custom';
 
 // import third-party libraries
 import { CheckBox } from 'react-native-elements';

@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:32:47
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-13 10:32:57
+ * @Last Modified time: 2018-07-17 00:24:11
  */
 
 /**
@@ -30,11 +30,11 @@ import Modal from 'react-native-modalbox';
 import SplashScreen from 'react-native-splash-screen';
 
 // Consts and Libs
-import { AppAPI } from '../../lib/';
-import { APIConfig, AppColors, AppStyles, AppSizes } from '../../constants';
+import { AppAPI } from '@lib/';
+import { APIConfig, AppColors, AppStyles, AppSizes } from '@constants';
 
 // Components
-import { Spacer, Button, Card, Alerts, Text, ListItem } from '../custom/';
+import { Spacer, Button, Card, Alerts, Text, ListItem } from '@custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -236,7 +236,7 @@ class Login extends Component {
                     setps={'TTT'}
                     onCatch={() => this.setState({ isModalVisible: true })}
                 >
-                    <Image source={require('../../constants/assets/images/fathom-white.png')} resizeMode={'contain'} style={styles.mainLogo} />
+                    <Image source={require('@images/fathom-white.png')} resizeMode={'contain'} style={styles.mainLogo} />
                 </Egg>
 
                 <Card dividerStyle={{ height: 0, width: 0 }} titleStyle={{ marginBottom: 0 }}>
@@ -285,11 +285,12 @@ class Login extends Component {
                                 {
                                     Object.entries(APIConfig.APIs).map(([key, value]) => (
                                         <ListItem
-                                            key={key}
-                                            title={`${key}: ${value}`}
-                                            hideChevron
                                             containerStyle={{ backgroundColor: key === this.props.environment ? AppColors.primary.grey.fiftyPercent : AppColors.white }}
+                                            hideChevron
+                                            key={key}
                                             onPress={() => { this.setState({ isModalVisible: false }); return this.props.setEnvironment(key);  }}
+                                            title={`${key}: ${value}`}
+                                            titleStyle={{ color: key === this.props.environment ? AppColors.white : AppColors.primary.grey.fiftyPercent }}
                                         />
                                     ))
                                 }

@@ -50,7 +50,7 @@ const sleepQuality = [
     'Terribly- I’m a zombie',
     'Poorly- Hard to staying awake',
     'Not Well- trouble focusing',
-    'Descently',
+    'Decently',
     'Enough to operate normally',
     'Good- feeling rested!',
     'Well- focused and energetic!',
@@ -85,7 +85,7 @@ const exerciseListOrder = [
 
 function cleanExerciseList(recoveryObj) {
     let cleanedExerciseList = [];
-    exerciseListOrder.map(list => {
+    _.map(exerciseListOrder, list => {
         cleanedExerciseList = cleanedExerciseList.concat(recoveryObj[list]);
     });
     return _.orderBy(cleanedExerciseList, ['position_order'], ['asc']);
@@ -113,8 +113,17 @@ const postSessionFeel = [
     'Maximum, carry me off the field',
 ];
 
+function cleanExercise(exercise) {
+    let cleanedExercise = {};
+    cleanedExercise.displayName = `${exercise.display_name.length > 0 ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
+    cleanedExercise.dosage = `${exercise.sets_assigned}x ${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : ''}`;
+    cleanedExercise.youtubeId = exercise.youtube_id && exercise.youtube_id.length > 0 ? exercise.youtube_id : false;
+    return cleanedExercise;
+}
+
 export default {
     bodyPartMapping,
+    cleanExercise,
     cleanExerciseList,
     jointLevels,
     muscleLevels,

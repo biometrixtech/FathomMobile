@@ -1,8 +1,8 @@
 /*
  * @Author: Mazen Chami
  * @Date: 2018-07-12 13:30:00
- * @Last Modified by: Mazen Chami
- * @Last Modified time: 2018-07-12 14:05:00
+ * @Last Modified by: Vir Desai
+ * @Last Modified time: 2018-07-16 18:50:15
  */
 
 /**
@@ -21,7 +21,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Slider } from 'react-native-elements';
 
-import { AppColors } from '../../constants/';
+import { AppColors } from '@constants';
 
 /* Component ==================================================================== */
 const FathomSlider = ({

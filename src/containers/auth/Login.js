@@ -2,13 +2,13 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-30 13:23:45 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-10 01:01:35
+ * @Last Modified time: 2018-07-16 18:43:40
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { init } from '../../actions/';
+import { init } from '@actions';
 
 const Login = ({
     Layout,

@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:16:44
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-10 01:40:48
+ * @Last Modified time: 2018-07-16 18:44:08
  */
 
 /**
@@ -13,8 +13,8 @@
 // Consts and Libs
 import Fabric from 'react-native-fabric';
 import JWT from './jwt';
-import { AppConfig, ErrorMessages, APIConfig } from '../constants/';
-import { store } from '../store/';
+import { AppConfig, ErrorMessages, APIConfig } from '@constants';
+import { store } from '@store';
 
 const { Answers } = Fabric;
 

@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:30:20
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-23 16:56:50
+ * @Last Modified time: 2018-07-16 18:51:18
  */
 
 /**
@@ -19,7 +19,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Icon } from 'react-native-elements';
 
-import { AppColors } from '../../constants/';
+import { AppColors } from '@constants';
 
 /* Component ==================================================================== */
 const TabIcon = ({

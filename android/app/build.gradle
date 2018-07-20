@@ -113,8 +113,8 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "1.3"
+        versionCode 7
+        versionName "2.0.0-beta.3"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -170,6 +170,8 @@ repositories {
 }
 
 dependencies {
+    compile project(':react-native-youtube')
+     implementation project(':react-native-push-notification')
      implementation project(':react-native-linear-gradient')
      implementation project(':react-native-splash-screen')
      implementation project(':react-native-code-push')
