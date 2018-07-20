@@ -364,73 +364,75 @@ class MyPlan extends Component {
             :
             'Loading...';
         let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj);
-        return (
-            <View style={[styles.background]}>
-                <LinearGradient
-                    colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
-                    style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
-                >
-                    <Image
-                        source={require('@images/coach-avatar.png')}
-                        style={{resizeMode: 'contain', width: 40, height: 40}}
-                    />
-                    { !isDailyReadinessSurveyCompleted ?
-                        <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, AppStyles.textCenterAligned, {color: AppColors.white}]}>{`GOOD ${partOfDay}, ${this.props.user.personal_data.first_name.toUpperCase()}!`}</Text>
-                        :
-                        <View>
-                            <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, AppStyles.h1, {color: AppColors.white}]}>{timeOfDay} {'RECOVERY'}</Text>
-                            { exerciseList.length > 0 ?
-                                <View>
-                                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Check the box to indicate completed exercises.'}</Text>
-                                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Or click the plus sign below to log a practice & update your recovery!'}</Text>
-                                </View>
-                                :
-                                <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Click the plus sign below to log a practice & update your recovery!'}</Text>
-                            }
-                            <TabIcon
-                                containerStyle={[{alignSelf: 'flex-end'}]}
-                                icon={'plus-circle-outline'}
-                                iconStyle={[{color: AppColors.white}]}
-                                onPress={this._togglePostSessionSurveyModal}
-                                reverse={false}
-                                size={34}
-                                type={'material-community'}
-                            />
-                        </View>
-                    }
-                </LinearGradient>
-                { !recoveryObj ?
-                    <View style={{flex: 1}}>
-                        <ScrollView
-                            contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
-                            refreshControl={
-                                <RefreshControl
-                                    colors={[AppColors.primary.yellow.hundredPercent]}
-                                    onRefresh={this._handleExerciseListRefresh}
-                                    refreshing={this.state.isExerciseListRefreshing}
-                                    title={'Loading...'}
-                                    titleColor={AppColors.primary.yellow.hundredPercent}
-                                    tintColor={AppColors.primary.yellow.hundredPercent}
+        return(
+            <View style={{flex: 1,}}>
+                <View style={[styles.background]}>
+                    <LinearGradient
+                        colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
+                        style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
+                    >
+                        <Image
+                            source={require('@images/coach-avatar.png')}
+                            style={{resizeMode: 'contain', width: 40, height: 40}}
+                        />
+                        { !isDailyReadinessSurveyCompleted ?
+                            <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, AppStyles.textCenterAligned, {color: AppColors.white}]}>{`GOOD ${partOfDay}, ${this.props.user.personal_data.first_name.toUpperCase()}!`}</Text>
+                            :
+                            <View>
+                                <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, AppStyles.h1, {color: AppColors.white}]}>{timeOfDay} {'RECOVERY'}</Text>
+                                { exerciseList.length > 0 ?
+                                    <View>
+                                        <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Check the box to indicate completed exercises.'}</Text>
+                                        <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Or click the plus sign below to log a practice & update your recovery!'}</Text>
+                                    </View>
+                                    :
+                                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Click the plus sign below to log a practice & update your recovery!'}</Text>
+                                }
+                                <TabIcon
+                                    containerStyle={[{alignSelf: 'flex-end'}]}
+                                    icon={'plus-circle-outline'}
+                                    iconStyle={[{color: AppColors.white}]}
+                                    onPress={this._togglePostSessionSurveyModal}
+                                    reverse={false}
+                                    size={34}
+                                    type={'material-community'}
                                 />
-                            }
-                        >
-                            <ActivityIndicator
-                                color={AppColors.primary.yellow.hundredPercent}
-                                size={'large'}
-                            />
-                            <Text style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
-                        </ScrollView>
-                    </View>
-                    :
-                    <Exercises
-                        completedExercises={this.state.completedExercises}
-                        exerciseList={exerciseList}
-                        handleCompleteExercise={this._handleCompleteExercise}
-                        handleExerciseListRefresh={this._handleExerciseListRefresh}
-                        isExerciseListRefreshing={this.state.isExerciseListRefreshing}
-                        toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
-                    />
-                }
+                            </View>
+                        }
+                    </LinearGradient>
+                    { !recoveryObj ?
+                        <View style={{flex: 1}}>
+                            <ScrollView
+                                contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
+                                refreshControl={
+                                    <RefreshControl
+                                        colors={[AppColors.primary.yellow.hundredPercent]}
+                                        onRefresh={this._handleExerciseListRefresh}
+                                        refreshing={this.state.isExerciseListRefreshing}
+                                        title={'Loading...'}
+                                        titleColor={AppColors.primary.yellow.hundredPercent}
+                                        tintColor={AppColors.primary.yellow.hundredPercent}
+                                    />
+                                }
+                            >
+                                <ActivityIndicator
+                                    color={AppColors.primary.yellow.hundredPercent}
+                                    size={'large'}
+                                />
+                                <Text style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
+                            </ScrollView>
+                        </View>
+                        :
+                        <Exercises
+                            completedExercises={this.state.completedExercises}
+                            exerciseList={exerciseList}
+                            handleCompleteExercise={this._handleCompleteExercise}
+                            handleExerciseListRefresh={this._handleExerciseListRefresh}
+                            isExerciseListRefreshing={this.state.isExerciseListRefreshing}
+                            toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
+                        />
+                    }
+                </View>
                 <Modal
                     backdropPressToClose={false}
                     coverScreen={true}

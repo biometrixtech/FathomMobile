@@ -36,7 +36,7 @@ const Exercises = ({
 }) => (
     <View style={{flex: 1}}>
         <ScrollView
-            contentContainerStyle={exerciseList.length > 0 ? {flexGrow: 1, justifyContent: 'center'} : {}}
+            contentContainerStyle={exerciseList.length > 0 ? {} : {flexGrow: 1, justifyContent: 'center'}}
             refreshControl={
                 <RefreshControl
                     colors={[AppColors.primary.yellow.hundredPercent]}

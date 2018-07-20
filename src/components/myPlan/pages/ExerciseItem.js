@@ -24,7 +24,7 @@ const ExerciseItem = ({
     handleCompleteExercise,
     isLastItem,
 }) => (
-    <View style={[AppStyles.paddingVerticalSml]}>
+    <View style={[AppStyles.paddingTopSml]}>
         <View style={[AppStyles.paddingVerticalSml, {flex: 1, flexDirection: 'row', justifyContent: 'space-between',}]}>
             <View style={{justifyContent: 'center', flex: 0.1,}}>
                 <Checkbox
