@@ -56,7 +56,8 @@ class MyPlan extends Component {
         super(props);
 
         this.state = {
-            dailyReadiness: {
+            completedExercises: [],
+            dailyReadiness:     {
                 readiness:     0,
                 sleep_quality: 0,
                 soreness:      [],
@@ -222,7 +223,22 @@ class MyPlan extends Component {
         let newSorenessFields = _.cloneDeep(stateObject.soreness);
         if(_.findIndex(stateObject.soreness, o => o.body_part === areaClicked.index) > -1) {
             // body part already exists
-            newSorenessFields = newSorenessFields.filter(o => o.body_part !== areaClicked.index);
+            if(areaClicked.bilateral) {
+                // add other side
+                let currentSelectedSide = _.filter(newSorenessFields, o => o.body_part === areaClicked.index);
+                if(currentSelectedSide.length === 1) {
+                    currentSelectedSide = currentSelectedSide[0].side;
+                    let newMissingSideSorenessPart = {};
+                    newMissingSideSorenessPart.body_part = areaClicked.index;
+                    newMissingSideSorenessPart.severity = 0;
+                    newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
+                    newSorenessFields.push(newMissingSideSorenessPart);
+                } else {
+                    newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
+                }
+            } else {
+                newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
+            }
         } else {
             // doesn't exist, create new object
             if(areaClicked.bilateral) {
@@ -258,6 +274,7 @@ class MyPlan extends Component {
 
     _toggleCompletedAMPMRecoveryModal = () => {
         this.setState({
+            completedExercises:               [],
             isCompletedAMPMRecoveryModalOpen: !this.state.isCompletedAMPMRecoveryModalOpen
         });
     }
@@ -316,6 +333,16 @@ class MyPlan extends Component {
             });
     }
 
+    _handleCompleteExercise = (exerciseId) => {
+        let newCompletedExercises = _.cloneDeep(this.state.completedExercises);
+        if(newCompletedExercises && newCompletedExercises.indexOf(exerciseId) > -1) {
+            newCompletedExercises.splice(newCompletedExercises.indexOf(exerciseId), 1)
+        } else {
+            newCompletedExercises.push(exerciseId);
+        }
+        this.setState({ completedExercises: newCompletedExercises });
+    }
+
     render = () => {
         let hourOfDay = moment().get('hour');
         let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && this.props.plan.dailyPlan[0].daily_readiness_survey_completed ? true : false;
@@ -336,6 +363,7 @@ class MyPlan extends Component {
             'Creating/updating your plan...'
             :
             'Loading...';
+        let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj);
         return (
             <View style={[styles.background]}>
                 <LinearGradient
@@ -351,15 +379,21 @@ class MyPlan extends Component {
                         :
                         <View>
                             <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, AppStyles.h1, {color: AppColors.white}]}>{timeOfDay} {'RECOVERY'}</Text>
-                            <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Check the box to indicate completed exercises.'}</Text>
-                            <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Or click the plus sign below to log a practice & update your recovery!'}</Text>
+                            { exerciseList.length > 0 ?
+                                <View>
+                                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Check the box to indicate completed exercises.'}</Text>
+                                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Or click the plus sign below to log a practice & update your recovery!'}</Text>
+                                </View>
+                                :
+                                <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Click the plus sign below to log a practice & update your recovery!'}</Text>
+                            }
                             <TabIcon
                                 containerStyle={[{alignSelf: 'flex-end'}]}
                                 icon={'plus-circle-outline'}
                                 iconStyle={[{color: AppColors.white}]}
                                 onPress={this._togglePostSessionSurveyModal}
                                 reverse={false}
-                                size={30}
+                                size={34}
                                 type={'material-community'}
                             />
                         </View>
@@ -389,9 +423,11 @@ class MyPlan extends Component {
                     </View>
                     :
                     <Exercises
+                        completedExercises={this.state.completedExercises}
+                        exerciseList={exerciseList}
+                        handleCompleteExercise={this._handleCompleteExercise}
                         handleExerciseListRefresh={this._handleExerciseListRefresh}
                         isExerciseListRefreshing={this.state.isExerciseListRefreshing}
-                        recoveryObj={recoveryObj}
                         toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
                     />
                 }

@@ -32,14 +32,10 @@ const AreasOfSoreness = ({
     soreBodyPartsState,
     surveyObject,
 }) => {
-    let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, (u, i) => {
-        return _.findIndex(soreBodyParts, o => o.body_part === i) === -1;
-    });
-    let newBodyPartMap = _.filter(filteredBodyPartMap, o => o.order);
+    let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, (u, i) => _.findIndex(soreBodyParts, o => o.body_part === i) === -1);
+    let newBodyPartMap = _.filter(filteredBodyPartMap, o => o.order && _.findIndex(soreBodyParts.body_parts, u => u.body_part === o.index && u.side === 0) === -1);
     newBodyPartMap = _.orderBy(newBodyPartMap, ['order'], ['asc']);
-    let areaOfSorenessClicked = _.filter(soreBodyPartsState, bodyPartState => {
-        return _.findIndex(soreBodyParts.body_parts, bodyPartProp => bodyPartProp.body_part === bodyPartState.body_part) === -1;
-    });
+    let areaOfSorenessClicked = _.filter(soreBodyPartsState, bodyPartState => _.findIndex(soreBodyParts.body_parts, bodyPartProp => bodyPartProp.body_part === bodyPartState.body_part && bodyPartProp.side === bodyPartState.side) === -1);
     return(
         <View>
             <View style={[AppStyles.row, AppStyles.containerCentered, {flexWrap: 'wrap'}]}>
@@ -50,6 +46,12 @@ const AreasOfSoreness = ({
                             isSelected = true;
                         }
                     });
+                    let bodyImage = body.image[0] || body.image[2];
+                    let bodyIndexInState = _.findIndex(soreBodyParts.body_parts, a => a.body_part === body.index);
+                    if(body.bilateral && bodyIndexInState > -1) {
+                        let newBodyImageIndex = soreBodyParts.body_parts[bodyIndexInState].side === 1 ? 2 : 1;
+                        bodyImage = body.image[newBodyImageIndex];
+                    }
                     return(
                         <TouchableOpacity
                             activeOpacity={0.5}
@@ -58,7 +60,7 @@ const AreasOfSoreness = ({
                             style={[AppStyles.paddingSml]}
                         >
                             <SVGImage
-                                image={body.image[0] || body.image[2]}
+                                image={bodyImage}
                                 selected={isSelected}
                                 style={{width: 100, height: 100}}
                             />
