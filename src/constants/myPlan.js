@@ -85,7 +85,7 @@ const exerciseListOrder = [
 
 function cleanExerciseList(recoveryObj) {
     let cleanedExerciseList = [];
-    exerciseListOrder.map(list => {
+    _.map(exerciseListOrder, list => {
         cleanedExerciseList = cleanedExerciseList.concat(recoveryObj[list]);
     });
     return _.orderBy(cleanedExerciseList, ['position_order'], ['asc']);
