@@ -350,10 +350,9 @@ class MyPlan extends Component {
         });
     }
 
-    _toggleSelectedExercise = (exerciseObj) => {
-        console.log(exerciseObj);
+    _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
         this.setState({
-            isSelectedExerciseModalOpen: !this.state.isSelectedExerciseModalOpen,
+            isSelectedExerciseModalOpen: isModalOpen,
             selectedExercise:            exerciseObj ? exerciseObj : {},
         });
     }
@@ -514,7 +513,7 @@ class MyPlan extends Component {
                     backdropPressToClose={true}
                     coverScreen={false}
                     isOpen={this.state.isSelectedExerciseModalOpen}
-                    onClosed={() => this._toggleSelectedExercise}
+                    onClosed={() => this._toggleSelectedExercise(false, false)}
                     style={[AppStyles.containerCentered, {
                         height:  AppSizes.screen.heightTwoThirds,
                         padding: AppSizes.padding,

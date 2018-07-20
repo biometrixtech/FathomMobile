@@ -40,7 +40,7 @@ const ExerciseItem = ({
             </View>
             <View style={{justifyContent: 'center', flex: 0.7,}}>
                 <Text
-                    onPress={() => toggleSelectedExercise(exercise)}
+                    onPress={() => toggleSelectedExercise(exercise, true)}
                     style={{
                         color:              completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black,
                         flexWrap:           'wrap',
