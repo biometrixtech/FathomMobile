@@ -6,6 +6,7 @@
         exercise={exercise}
         handleCompleteExercise={handleCompleteExercise}
         isLastItem={i + 1 === exerciseList.length}
+        toggleSelectedExercise={toggleSelectedExercise}
     />
  *
  */
@@ -14,7 +15,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles } from '@constants';
+import { AppColors, AppSizes, AppStyles, MyPlan } from '@constants';
 import { Checkbox, Text } from '@custom';
 
 /* Component ==================================================================== */
@@ -23,6 +24,7 @@ const ExerciseItem = ({
     exercise,
     handleCompleteExercise,
     isLastItem,
+    toggleSelectedExercise,
 }) => (
     <View style={[AppStyles.paddingTopSml]}>
         <View style={[AppStyles.paddingVerticalSml, {flex: 1, flexDirection: 'row', justifyContent: 'space-between',}]}>
@@ -37,13 +39,21 @@ const ExerciseItem = ({
                 />
             </View>
             <View style={{justifyContent: 'center', flex: 0.7,}}>
-                <Text style={{color: completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black, flexWrap: 'wrap', fontWeight: 'bold',}}>
-                    {`${exercise.name.toUpperCase()}`}
+                <Text
+                    onPress={() => toggleSelectedExercise(exercise, true)}
+                    style={{
+                        color:              completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black,
+                        flexWrap:           'wrap',
+                        fontWeight:         'bold',
+                        textDecorationLine: 'none',
+                    }}
+                >
+                    {MyPlan.cleanExercise(exercise).displayName}
                 </Text>
             </View>
             <View style={{justifyContent: 'center', flex: 0.2, paddingRight: 10,}}>
                 <Text style={[AppStyles.textRightAligned, {color: completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.secondary.blue.hundredPercent, fontWeight: 'bold'}]}>
-                    {`${exercise.sets_assigned}x ${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : ''}`}
+                    {MyPlan.cleanExercise(exercise).dosage}
                 </Text>
             </View>
         </View>
@@ -58,6 +68,7 @@ ExerciseItem.propTypes = {
     exercise:               PropTypes.object.isRequired,
     handleCompleteExercise: PropTypes.func.isRequired,
     isLastItem:             PropTypes.bool.isRequired,
+    toggleSelectedExercise: PropTypes.func.isRequired,
 };
 ExerciseItem.defaultProps = {};
 ExerciseItem.componentName = 'ExerciseItem';

@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import {
     ActivityIndicator,
     Image,
+    Platform,
     RefreshControl,
     ScrollView,
     StyleSheet,
@@ -17,6 +18,7 @@ import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modalbox';
 import SplashScreen from 'react-native-splash-screen';
+import YouTube, { YouTubeStandaloneAndroid, YouTubeStandaloneIOS} from 'react-native-youtube';
 import moment from 'moment';
 
 // Consts, Libs, and Utils
@@ -64,12 +66,14 @@ class MyPlan extends Component {
             },
             isCompletedAMPMRecoveryModalOpen: false,
             isExerciseListRefreshing:         false,
-            isReadinessSurveyModalOpen:       false,
             isPostSessionSurveyModalOpen:     false,
+            isReadinessSurveyModalOpen:       false,
+            isSelectedExerciseModalOpen:      false,
             postSession:                      {
                 RPE:      0,
                 soreness: []
             },
+            selectedExercise: {},
         };
     }
 
@@ -340,7 +344,17 @@ class MyPlan extends Component {
         } else {
             newCompletedExercises.push(exerciseId);
         }
-        this.setState({ completedExercises: newCompletedExercises });
+        this.setState({
+            completedExercises:          newCompletedExercises,
+            isSelectedExerciseModalOpen: false,
+        });
+    }
+
+    _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
+        this.setState({
+            isSelectedExerciseModalOpen: isModalOpen,
+            selectedExercise:            exerciseObj ? exerciseObj : {},
+        });
     }
 
     render = () => {
@@ -430,6 +444,7 @@ class MyPlan extends Component {
                             handleExerciseListRefresh={this._handleExerciseListRefresh}
                             isExerciseListRefreshing={this.state.isExerciseListRefreshing}
                             toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
+                            toggleSelectedExercise={this._toggleSelectedExercise}
                         />
                     }
                 </View>
@@ -492,6 +507,55 @@ class MyPlan extends Component {
                             title={`Do ${timeOfDay} Recovery again`}
                         />
                     </LinearGradient>
+                </Modal>
+                <Modal
+                    backdropOpacity={0.75}
+                    backdropPressToClose={true}
+                    coverScreen={false}
+                    isOpen={this.state.isSelectedExerciseModalOpen}
+                    onClosed={() => this._toggleSelectedExercise(false, false)}
+                    style={[AppStyles.containerCentered, {
+                        height:  AppSizes.screen.heightTwoThirds,
+                        padding: AppSizes.padding,
+                        width:   AppSizes.screen.width * 0.9,
+                    }]}
+                    swipeToClose={true}
+                >
+                    { this.state.selectedExercise.library_id ?
+                        <View>
+                            { MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId ?
+                                <YouTube
+                                    apiKey={'AIzaSyATavF4OIsJBDFx4bi3bBmwlArbStH3chs'}
+                                    fullscreen={false}
+                                    loop={false}
+                                    onError={e => console.log('youtube error', e)}
+                                    play={false}
+                                    showFullscreenButton={true}
+                                    style={{height: 300, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding * 2)}}
+                                    videoId={MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId}
+                                />
+                                :
+                                null
+                            }
+                            <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, AppStyles.h2]}>
+                                {MyPlanConstants.cleanExercise(this.state.selectedExercise).displayName}
+                            </Text>
+                            <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, {color: AppColors.secondary.blue.hundredPercent}]}>
+                                {MyPlanConstants.cleanExercise(this.state.selectedExercise).dosage}
+                            </Text>
+                            <TabIcon
+                                containerStyle={[{alignSelf: 'center'}]}
+                                icon={'check'}
+                                iconStyle={[{color: AppColors.primary.yellow.hundredPercent}]}
+                                onPress={() => this._handleCompleteExercise(this.state.selectedExercise.library_id)}
+                                reverse={false}
+                                size={34}
+                                type={'material-community'}
+                            />
+                        </View>
+                        :
+                        null
+                    }
                 </Modal>
             </View>
         );

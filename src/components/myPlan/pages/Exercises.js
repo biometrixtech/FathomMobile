@@ -8,6 +8,7 @@
         handleExerciseListRefresh={this._handleExerciseListRefresh}
         isExerciseListRefreshing={this.state.isExerciseListRefreshing}
         toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
+        toggleSelectedExercise={this._toggleSelectedExercise}
     />
  *
  */
@@ -33,6 +34,7 @@ const Exercises = ({
     handleExerciseListRefresh,
     isExerciseListRefreshing,
     toggleCompletedAMPMRecoveryModal,
+    toggleSelectedExercise,
 }) => (
     <View style={{flex: 1}}>
         <ScrollView
@@ -57,6 +59,7 @@ const Exercises = ({
                             handleCompleteExercise={handleCompleteExercise}
                             isLastItem={i + 1 === exerciseList.length}
                             key={exercise.library_id+i}
+                            toggleSelectedExercise={toggleSelectedExercise}
                         />
                     )}
                     { completedExercises.length > 0 ?
@@ -88,6 +91,7 @@ Exercises.propTypes = {
     handleExerciseListRefresh:        PropTypes.func.isRequired,
     isExerciseListRefreshing:         PropTypes.bool.isRequired,
     toggleCompletedAMPMRecoveryModal: PropTypes.func.isRequired,
+    toggleSelectedExercise:           PropTypes.func.isRequired,
 };
 Exercises.defaultProps = {};
 Exercises.componentName = 'Exercises';
