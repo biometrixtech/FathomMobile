@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-07-12 18:48:09
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-17 00:24:48
+ * @Last Modified time: 2018-07-20 05:59:20
  */
 
 /**
@@ -17,10 +17,11 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppSizes } from '@constants';
+import data_uri from '@images/body/data_uri';
 
 // import third-party libraries
 import Image from 'react-native-remote-svg';
@@ -41,7 +42,8 @@ class SVGImage extends Component {
         // Defaults
         const { image } = this.props;
         /* eslint-disable indent */
-        let imageName = image === 'Abs.svg' ?
+        let imageName = Platform.OS === 'ios' ?
+        image === 'Abs.svg' ?
             require('@images/body/Abs.svg')
           : image === 'Hip.svg' ?
             require('@images/body/Hip.svg')
@@ -118,7 +120,86 @@ class SVGImage extends Component {
           : image === 'R_Achilles.svg' ?
             require('@images/body/R_Achilles.svg')
           :
-            require('@images/body/Abs.svg');
+            require('@images/body/Abs.svg')
+        :
+        image === 'Abs.svg' ?
+            data_uri.Abs
+          : image === 'Hip.svg' ?
+            data_uri.Hip
+          : image === 'L_Hip.svg' ?
+            data_uri.L_Hip
+          : image === 'R_Hip.svg' ?
+            data_uri.R_Hip
+          : image === 'Groin.svg' ?
+            data_uri.Groin
+          : image === 'L_Groin.svg' ?
+            data_uri.L_Groin
+          : image === 'R_Groin.svg' ?
+            data_uri.R_Groin
+          : image === 'Quad.svg' ?
+            data_uri.Quad
+          : image === 'L_Quad.svg' ?
+            data_uri.L_Quad
+          : image === 'R_Quad.svg' ?
+            data_uri.R_Quad
+          : image === 'Knee.svg' ?
+            data_uri.Knee
+          : image === 'L_Knee.svg' ?
+            data_uri.L_Knee
+          : image === 'R_Knee.svg' ?
+            data_uri.R_Knee
+          : image === 'Shin.svg' ?
+            data_uri.Shin
+          : image === 'L_Shin.svg' ?
+            data_uri.L_Shin
+          : image === 'R_Shin.svg' ?
+            data_uri.R_Shin
+          : image === 'Ankle.svg' ?
+            data_uri.Ankle
+          : image === 'L_Ankle.svg' ?
+            data_uri.L_Ankle
+          : image === 'R_Ankle.svg' ?
+            data_uri.R_Ankle
+          : image === 'Foot.svg' ?
+            data_uri.Foot
+          : image === 'L_Foot.svg' ?
+            data_uri.L_Foot
+          : image === 'R_Foot.svg' ?
+            data_uri.R_Foot
+          : image === 'ITBand.svg' ?
+            data_uri.ITBand
+          : image === 'L_ITBand.svg' ?
+            data_uri.L_ITBand
+          : image === 'R_ITBand.svg' ?
+            data_uri.R_ITBand
+          : image === 'LowBack.svg' ?
+            data_uri.LowBack
+          : image === 'Glute.svg' ?
+            data_uri.Glute
+          : image === 'L_Glute.svg' ?
+            data_uri.L_Glute
+          : image === 'R_Glute.svg' ?
+            data_uri.R_Glute
+          : image === 'Hamstring.svg' ?
+            data_uri.Hamstring
+          : image === 'L_Hamstring.svg' ?
+            data_uri.L_Hamstring
+          : image === 'R_Hamstring.svg' ?
+            data_uri.R_Hamstring
+          : image === 'Calf.svg' ?
+            data_uri.Calf
+          : image === 'L_Calf.svg' ?
+            data_uri.L_Calf
+          : image === 'R_Calf.svg' ?
+            data_uri.R_Calf
+          : image === 'Achilles.svg' ?
+            data_uri.Achilles
+          : image === 'L_Achilles.svg' ?
+            data_uri.L_Achilles
+          : image === 'R_Achilles.svg' ?
+            data_uri.R_Achilles
+          :
+            data_uri.Abs;
         return imageName;
     }
 
@@ -127,15 +208,17 @@ class SVGImage extends Component {
             height:         AppSizes.screen.widthQuarter + 5,
             width:          AppSizes.screen.widthQuarter + 5,
             borderRadius:   AppSizes.screen.widthQuarter + 5,
-            borderWidth:    10,
+            borderWidth:    3,
             borderColor:    this.props.selected ? AppColors.secondary.blue.hundredPercent : AppColors.white,
             justifyContent: 'center',
-            alignItems:     'center'
+            alignItems:     'center',
+            overflow:       'hidden'
         }}>
-            <Image
-                source={this.imageString()}
-                style={this.props.style}
-            />
+          <Image
+            source={ Platform.OS ==='ios' ? this.imageString(): { uri: this.imageString() } }
+            style={this.props.style}
+            resizeMode={'contain'}
+          />
         </View>
     );
 }
