@@ -5,6 +5,7 @@
         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handlePostSessionSurveySubmit}
+        handleTogglePostSessionSurvey={this._handleTogglePostSessionSurvey}
         postSession={this.state.postSession}
         soreBodyParts={this.state.soreBodyParts}
     />
@@ -15,17 +16,21 @@ import PropTypes from 'prop-types';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
-import { FathomSlider, Text } from '../../custom';
+import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants } from '@constants';
+import { FathomSlider, TabIcon, Text } from '@custom';
 
 // Components
 import { AreasOfSoreness, SoreBodyPart } from './';
+
+// import third-party libraries
+import _ from 'lodash';
 
 /* Component ==================================================================== */
 const PostSessionSurvey = ({
     handleAreaOfSorenessClick,
     handleFormChange,
     handleFormSubmit,
+    handleTogglePostSessionSurvey,
     postSession,
     soreBodyParts,
 }) => {
@@ -37,7 +42,18 @@ const PostSessionSurvey = ({
         <View style={{flex: 1}}>
             <ScrollView>
                 <View style={{backgroundColor: AppColors.primary.grey.twentyPercent}}>
-                    <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, {color: AppColors.black}]}>{'HOW WAS YOUR WORKOUT?'}</Text>
+                    <View style={{}}>
+                        <TabIcon
+                            containerStyle={[{alignSelf: 'flex-end'}]}
+                            icon={'close'}
+                            iconStyle={[{color: AppColors.black, marginRight: 10, marginTop: 10}]}
+                            onPress={handleTogglePostSessionSurvey}
+                            reverse={false}
+                            size={30}
+                            type={'material-community'}
+                        />
+                    </View>
+                    <Text style={[AppStyles.h1, AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {color: AppColors.black}]}>{'HOW WAS YOUR WORKOUT?'}</Text>
                 </View>
                 <View>
                     <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
@@ -57,7 +73,7 @@ const PostSessionSurvey = ({
                         value={postSession.RPE}
                     />
                 </View>
-                { soreBodyParts.body_parts.map((bodyPart, i) =>
+                { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
                     <SoreBodyPart
                         bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
                         bodyPartSide={bodyPart.side}
@@ -94,11 +110,12 @@ const PostSessionSurvey = ({
 };
 
 PostSessionSurvey.propTypes = {
-    handleAreaOfSorenessClick: PropTypes.func.isRequired,
-    handleFormChange:          PropTypes.func.isRequired,
-    handleFormSubmit:          PropTypes.func.isRequired,
-    postSession:               PropTypes.object.isRequired,
-    soreBodyParts:             PropTypes.object.isRequired,
+    handleAreaOfSorenessClick:     PropTypes.func.isRequired,
+    handleFormChange:              PropTypes.func.isRequired,
+    handleFormSubmit:              PropTypes.func.isRequired,
+    handleTogglePostSessionSurvey: PropTypes.func.isRequired,
+    postSession:                   PropTypes.object.isRequired,
+    soreBodyParts:                 PropTypes.object.isRequired,
 };
 PostSessionSurvey.defaultProps = {};
 PostSessionSurvey.componentName = 'PostSessionSurvey';

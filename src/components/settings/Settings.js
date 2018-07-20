@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-04-23 16:40:29
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-22 02:19:10
+ * @Last Modified time: 2018-07-16 18:43:33
  */
 
 /**
@@ -14,11 +14,11 @@ import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
-import { AppColors } from '../../constants/';
+import { AppColors } from '@constants';
 
 // Components
 import { View, Platform, BackHandler } from 'react-native';
-import { ListItem } from '../custom/';
+import { ListItem } from '@custom';
 
 
 /* Component ==================================================================== */

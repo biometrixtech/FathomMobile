@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import {
     ActivityIndicator,
     Image,
+    RefreshControl,
     ScrollView,
     StyleSheet,
     View,
@@ -19,10 +20,10 @@ import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
 
 // Consts, Libs, and Utils
-import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../../constants';
+import { Actions, AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '@constants';
 
 // Components
-import { Button, TabIcon, Text, } from '../custom/';
+import { Button, TabIcon, Text, } from '@custom';
 import { Exercises, PostSessionSurvey, ReadinessSurvey } from './pages';
 
 /* Styles ==================================================================== */
@@ -42,6 +43,7 @@ class MyPlan extends Component {
     static propTypes = {
         getMyPlan:           PropTypes.func.isRequired,
         getSoreBodyParts:    PropTypes.func.isRequired,
+        notification:        PropTypes.bool.isRequired,
         plan:                PropTypes.object.isRequired,
         postReadinessSurvey: PropTypes.func.isRequired,
         postSessionSurvey:   PropTypes.func.isRequired,
@@ -114,6 +116,12 @@ class MyPlan extends Component {
             });
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.notification !== this.props.notification) {
+            this._handleExerciseListRefresh(true);
+        }
+    }
+
     _handleDailyReadinessFormChange = (name, value, bodyPart, side) => {
         let newFormFields;
         if(name === 'soreness' && bodyPart) {
@@ -167,7 +175,7 @@ class MyPlan extends Component {
     _handleReadinessSurveySubmit = () => {
         let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
         newDailyReadiness.user_id = this.props.user.id;
-        newDailyReadiness.date_time = `${moment().toISOString().split('.')[0]}Z`;
+        newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
         newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality + 1;
         newDailyReadiness.readiness = newDailyReadiness.readiness + 1;
         newDailyReadiness.soreness.map(bodyPart => {
@@ -188,15 +196,15 @@ class MyPlan extends Component {
         let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
         newPostSessionSurvey.RPE = newPostSessionSurvey.RPE + 1;
         newPostSessionSurvey.soreness.map(bodyPart => {
-            newPostSessionSurvey.soreness = newPostSessionSurvey.soreness.filter(u => { return !!u.severity && u.severity > 0; });
+            newPostSessionSurvey.soreness = _.filter(newPostSessionSurvey.soreness, u => { return !!u.severity && u.severity > 0; });
         });
-        let session_type = Object.keys(MyPlanConstants.sessionTypes).find(sessionType => this.props.plan.dailyPlan[0][sessionType].length);
+        let session_type = _.find(MyPlanConstants.sessionTypes, (sessionType, index) => this.props.plan.dailyPlan[0][index] && this.props.plan.dailyPlan[0][index].length);
         let postSession = {
-            user_id:      this.props.user.id,
-            event_date:   moment().format('YYYY-MM-DD'),
+            event_date:   `${moment().toISOString(true).split('.')[0]}Z`,
             session_id:   session_type ? this.props.plan.dailyPlan[0][session_type].session_id : '',
             session_type: session_type ? MyPlanConstants.sessionTypes[session_type] : 0,
             survey:       newPostSessionSurvey,
+            user_id:      this.props.user.id,
         };
         this.props.postSessionSurvey(postSession)
             .then(response => {
@@ -254,6 +262,12 @@ class MyPlan extends Component {
         });
     }
 
+    _togglePostSessionSurvey = () => {
+        this.setState({
+            isPostSessionSurveyModalOpen: !this.state.isPostSessionSurveyModalOpen
+        });
+    }
+
     _togglePostSessionSurveyModal = () => {
         if(!this.state.isPostSessionSurveyModalOpen) {
             this.props.getSoreBodyParts()
@@ -282,12 +296,12 @@ class MyPlan extends Component {
         }
     }
 
-    _handleExerciseListRefresh = () => {
+    _handleExerciseListRefresh = (updateNotificationFlag) => {
         this.setState({
             isExerciseListRefreshing: true
         });
         let userId = this.props.user.id;
-        this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
+        this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'), false, updateNotificationFlag)
             .then(response => {
                 // console.log('response', response);
                 this.setState({
@@ -306,9 +320,9 @@ class MyPlan extends Component {
         let hourOfDay = moment().get('hour');
         let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && this.props.plan.dailyPlan[0].daily_readiness_survey_completed ? true : false;
         let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
-        let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && hourOfDay >= 12 ?
+        let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.recovery_pm && hourOfDay >= 12 ?
             dailyPlanObj.recovery_pm
-            : isDailyReadinessSurveyCompleted && dailyPlanObj && hourOfDay < 12 ?
+            : isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.recovery_am && hourOfDay < 12 ?
                 dailyPlanObj.recovery_am
                 :
                 false;
@@ -318,6 +332,10 @@ class MyPlan extends Component {
             'Log a training session to update your next Recovery, else we\'ll see you tomorrow. Rest well!'
             :
             'Comeback this afternoon or log a training session to update your PM Recovery.';
+        let loadingText = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ?
+            'Creating/updating your plan...'
+            :
+            'Loading...';
         return (
             <View style={[styles.background]}>
                 <LinearGradient
@@ -325,7 +343,7 @@ class MyPlan extends Component {
                     style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
                 >
                     <Image
-                        source={require('../../constants/assets/images/coach-avatar.png')}
+                        source={require('@images/coach-avatar.png')}
                         style={{resizeMode: 'contain', width: 40, height: 40}}
                     />
                     { !isDailyReadinessSurveyCompleted ?
@@ -348,11 +366,26 @@ class MyPlan extends Component {
                     }
                 </LinearGradient>
                 { !recoveryObj ?
-                    <View style={[AppStyles.containerCentered, {flex: 1}]}>
-                        <ActivityIndicator
-                            color={AppColors.primary.yellow.hundredPercent}
-                            size={'large'}
-                        />
+                    <View style={{flex: 1}}>
+                        <ScrollView
+                            contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
+                            refreshControl={
+                                <RefreshControl
+                                    colors={[AppColors.primary.yellow.hundredPercent]}
+                                    onRefresh={this._handleExerciseListRefresh}
+                                    refreshing={this.state.isExerciseListRefreshing}
+                                    title={'Loading...'}
+                                    titleColor={AppColors.primary.yellow.hundredPercent}
+                                    tintColor={AppColors.primary.yellow.hundredPercent}
+                                />
+                            }
+                        >
+                            <ActivityIndicator
+                                color={AppColors.primary.yellow.hundredPercent}
+                                size={'large'}
+                            />
+                            <Text style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
+                        </ScrollView>
                     </View>
                     :
                     <Exercises
@@ -387,6 +420,7 @@ class MyPlan extends Component {
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handlePostSessionFormChange}
                         handleFormSubmit={this._handlePostSessionSurveySubmit}
+                        handleTogglePostSessionSurvey={this._togglePostSessionSurvey}
                         postSession={this.state.postSession}
                         soreBodyParts={this.props.plan.soreBodyParts}
                     />

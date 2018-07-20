@@ -16,8 +16,8 @@ import PropTypes from 'prop-types';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
-import { FathomSlider, Text } from '../../custom';
+import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '@constants';
+import { FathomSlider, Text } from '@custom';
 
 // Components
 import { AreasOfSoreness, SoreBodyPart } from './';
@@ -83,7 +83,7 @@ const ReadinessSurvey = ({
                         value={dailyReadiness.sleep_quality}
                     />
                 </View>
-                { soreBodyParts.body_parts.map((bodyPart, i) =>
+                { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
                     <SoreBodyPart
                         bodyPart={bodyPart}
                         bodyPartSide={bodyPart.side}

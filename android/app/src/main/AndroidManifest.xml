@@ -11,12 +11,48 @@
     <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/>
     <uses-permission android:name="android.permission.VIBRATE"/> -->
 
+    <!-- START: react-native-push-notification -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <permission
+        android:name="5bcc5a1891d3385c.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="5bcc5a1891d3385c.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- END: react-native-push-notification -->
+
     <application
       android:name=".MainApplication"
       android:allowBackup="true"
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:theme="@style/AppTheme">
+
+        <!-- START: react-native-push-notification -->
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="5bcc5a1891d3385c" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
+        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
+        <service
+            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <!-- END: react-native-push-notification -->
 
         <activity
             android:name=".SplashActivity"

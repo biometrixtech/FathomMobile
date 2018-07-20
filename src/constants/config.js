@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-30 13:24:08 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-29 19:17:28
+ * @Last Modified time: 2018-07-17 12:00:22
  */
 
 import DeviceInfo from 'react-native-device-info';

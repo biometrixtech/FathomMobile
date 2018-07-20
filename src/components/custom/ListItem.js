@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:29:29 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 16:46:59
+ * @Last Modified time: 2018-07-16 18:50:47
  */
 
 /**
@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import { ListItem } from 'react-native-elements';
 
 // Consts and Libs
-import { AppColors, AppStyles } from '../../constants';
+import { AppColors, AppStyles } from '@constants';
 
 /* Component ==================================================================== */
 class CustomListItem extends Component {

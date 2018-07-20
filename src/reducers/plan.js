@@ -2,16 +2,16 @@
  * @Author: Vir Desai 
  * @Date: 2018-07-13 02:44:48 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-14 13:31:34
+ * @Last Modified time: 2018-07-16 18:44:28
  */
 
 /**
  * MyPlan Reducer
  */
 
-import { Actions } from '../constants/';
+import { Actions } from '@constants';
 
-import Store from '../store/plan';
+import Store from '@store/plan';
 
 const initialState = Store;
 

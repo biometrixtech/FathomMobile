@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:16:35
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-29 01:17:53
+ * @Last Modified time: 2018-07-16 18:44:11
  */
 
 /**
@@ -12,7 +12,7 @@ import jwtDecode from 'jwt-decode';
 
 // Consts and Libs
 import { AppAPI } from './';
-import { APIConfig } from '../constants/';
+import { APIConfig } from '@constants';
 
 export default class JWT {
     apiCredentials = {};

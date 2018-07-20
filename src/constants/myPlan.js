@@ -50,7 +50,7 @@ const sleepQuality = [
     'Terribly- I’m a zombie',
     'Poorly- Hard to staying awake',
     'Not Well- trouble focusing',
-    'Descently',
+    'Decently',
     'Enough to operate normally',
     'Good- feeling rested!',
     'Well- focused and energetic!',

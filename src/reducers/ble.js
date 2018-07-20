@@ -2,16 +2,16 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:21:27 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 11:26:12
+ * @Last Modified time: 2018-07-16 18:44:21
  */
 
 /**
  * Bluetooth Reducer
  */
 
-import { Actions } from '../constants/';
+import { Actions } from '@constants';
 
-import Store from '../store/ble';
+import Store from '@store/ble';
 
 const initialState = Store;
 

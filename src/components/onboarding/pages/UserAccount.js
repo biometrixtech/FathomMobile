@@ -14,9 +14,9 @@ import PropTypes from 'prop-types';
 import { Alert, Image, StyleSheet, View } from 'react-native';
 
 // Consts, Libs, and Utils
-import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
-import { onboardingUtils } from '../../../constants/utils';
-import { Coach, TabIcon, Text } from '../../custom';
+import { AppColors, AppFonts, AppSizes, AppStyles } from '@constants';
+import { onboardingUtils } from '@constants/utils';
+import { Coach, TabIcon, Text } from '@custom';
 
 // import components
 import { UserAccountAbout, UserAccountInfo, UserSports } from './';

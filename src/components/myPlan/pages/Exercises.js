@@ -14,11 +14,14 @@ import PropTypes from 'prop-types';
 import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
-import { Text } from '../../custom';
+import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '@constants';
+import { Text } from '@custom';
 
 // Components
 import { ExerciseItem } from './';
+
+// import third-party libraries
+import _ from 'lodash';
 
 /* Component ==================================================================== */
 const Exercises = ({
@@ -36,27 +39,35 @@ const Exercises = ({
                         colors={[AppColors.primary.yellow.hundredPercent]}
                         onRefresh={handleExerciseListRefresh}
                         refreshing={isExerciseListRefreshing}
+                        title={'Loading...'}
+                        titleColor={AppColors.primary.yellow.hundredPercent}
                         tintColor={AppColors.primary.yellow.hundredPercent}
                     />
                 }
             >
-                {exerciseList.map((exercise, i) =>
-                    <ExerciseItem
-                        exercise={exercise}
-                        isLastItem={i + 1 === exerciseList.length}
-                        key={exercise.library_id+i}
-                    />
-                )}
-                <View style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.hundredPercent}]}>
-                    <Text style={[AppStyles.nextButtonText]}>{'complete the exercises to log'}</Text>
-                </View>
-                {/* // TODO: when it comes time to mark exercises as completd, this button should show up if one item is marked as completed
-                <TouchableOpacity
-                    onPress={toggleCompletedAMPMRecoveryModal}
-                    style={[AppStyles.nextButtonWrapper]}
-                >
-                    <Text style={[AppStyles.nextButtonText]}>{'Finish'}</Text>
-                </TouchableOpacity>*/}
+                { exerciseList.length > 0 ?
+                    <View>
+                        {_.map(exerciseList, (exercise, i) =>
+                            <ExerciseItem
+                                exercise={exercise}
+                                isLastItem={i + 1 === exerciseList.length}
+                                key={exercise.library_id+i}
+                            />
+                        )}
+                        <View style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.hundredPercent}]}>
+                            <Text style={[AppStyles.nextButtonText]}>{'complete the exercises to log'}</Text>
+                        </View>
+                        {/* // TODO: when it comes time to mark exercises as completd, this button should show up if one item is marked as completed
+                          <TouchableOpacity
+                          onPress={toggleCompletedAMPMRecoveryModal}
+                          style={[AppStyles.nextButtonWrapper]}
+                          >
+                          <Text style={[AppStyles.nextButtonText]}>{'Finish'}</Text>
+                          </TouchableOpacity>*/}
+                    </View>
+                    :
+                    <View></View>
+                }
             </ScrollView>
         </View>
     )
