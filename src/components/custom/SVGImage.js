@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-07-12 18:48:09
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 05:41:09
+ * @Last Modified time: 2018-07-20 05:59:20
  */
 
 /**
@@ -214,19 +214,11 @@ class SVGImage extends Component {
             alignItems:     'center',
             overflow:       'hidden'
         }}>
-            { Platform.OS ==='ios' ? 
-              <Image
-                source={this.imageString()}
-                style={this.props.style}
-                resizeMode={'contain'}
-              />
-              :
-              <Image
-                source={{ uri: this.imageString() }}
-                style={this.props.style}
-                resizeMode={'contain'}
-              />
-            }
+          <Image
+            source={ Platform.OS ==='ios' ? this.imageString(): { uri: this.imageString() } }
+            style={this.props.style}
+            resizeMode={'contain'}
+          />
         </View>
     );
 }
