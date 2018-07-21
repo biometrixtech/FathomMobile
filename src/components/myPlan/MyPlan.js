@@ -297,8 +297,9 @@ class MyPlan extends Component {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
                     newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
                     this.setState({
-                        isPostSessionSurveyModalOpen: true,
-                        postSession:                  newDailyReadiness,
+                        isCompletedAMPMRecoveryModalOpen: false,
+                        isPostSessionSurveyModalOpen:     true,
+                        postSession:                      newDailyReadiness,
                     });
                 })
                 .catch(err => {
@@ -306,13 +307,15 @@ class MyPlan extends Component {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
                     newDailyReadiness.soreness = [];
                     this.setState({
-                        isPostSessionSurveyModalOpen: true,
-                        postSession:                  newDailyReadiness,
+                        isCompletedAMPMRecoveryModalOpen: false,
+                        isPostSessionSurveyModalOpen:     true,
+                        postSession:                      newDailyReadiness,
                     });
                 });
         } else {
             this.setState({
-                isPostSessionSurveyModalOpen: false
+                isCompletedAMPMRecoveryModalOpen: false,
+                isPostSessionSurveyModalOpen:     false
             });
         }
     }
