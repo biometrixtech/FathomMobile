@@ -2,10 +2,13 @@
  * ReadinessSurvey
  *
     <Exercises
+        completedExercises={this.state.completedExercises}
+        exerciseList={exerciseList}
+        handleCompleteExercise={this._handleCompleteExercise}
         handleExerciseListRefresh={this._handleExerciseListRefresh}
         isExerciseListRefreshing={this.state.isExerciseListRefreshing}
-        recoveryObj={recoveryObj}
         toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
+        toggleSelectedExercise={this._toggleSelectedExercise}
     />
  *
  */
@@ -14,7 +17,7 @@ import PropTypes from 'prop-types';
 import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
+import { AppColors, AppStyles, } from '../../../constants';
 import { Text } from '../../custom';
 
 // Components
@@ -25,59 +28,70 @@ import _ from 'lodash';
 
 /* Component ==================================================================== */
 const Exercises = ({
+    completedExercises,
+    exerciseList,
+    handleCompleteExercise,
     handleExerciseListRefresh,
     isExerciseListRefreshing,
-    recoveryObj,
     toggleCompletedAMPMRecoveryModal,
-}) => {
-    let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj);
-    return(
-        <View style={{flex: 1}}>
-            <ScrollView
-                refreshControl={
-                    <RefreshControl
-                        colors={[AppColors.primary.yellow.hundredPercent]}
-                        onRefresh={handleExerciseListRefresh}
-                        refreshing={isExerciseListRefreshing}
-                        title={'Loading...'}
-                        titleColor={AppColors.primary.yellow.hundredPercent}
-                        tintColor={AppColors.primary.yellow.hundredPercent}
-                    />
-                }
-            >
-                { exerciseList.length > 0 ?
-                    <View>
-                        {_.map(exerciseList, (exercise, i) =>
-                            <ExerciseItem
-                                exercise={exercise}
-                                isLastItem={i + 1 === exerciseList.length}
-                                key={exercise.library_id+i}
-                            />
-                        )}
+    toggleSelectedExercise,
+}) => (
+    <View style={{flex: 1}}>
+        <ScrollView
+            contentContainerStyle={exerciseList.length > 0 ? {} : {flexGrow: 1, justifyContent: 'center'}}
+            refreshControl={
+                <RefreshControl
+                    colors={[AppColors.primary.yellow.hundredPercent]}
+                    onRefresh={handleExerciseListRefresh}
+                    refreshing={isExerciseListRefreshing}
+                    title={'Loading...'}
+                    titleColor={AppColors.primary.yellow.hundredPercent}
+                    tintColor={AppColors.primary.yellow.hundredPercent}
+                />
+            }
+        >
+            { exerciseList.length > 0 ?
+                <View>
+                    {_.map(exerciseList, (exercise, i) =>
+                        <ExerciseItem
+                            completedExercises={completedExercises}
+                            exercise={exercise}
+                            handleCompleteExercise={handleCompleteExercise}
+                            isLastItem={i + 1 === exerciseList.length}
+                            key={exercise.library_id+i}
+                            toggleSelectedExercise={toggleSelectedExercise}
+                        />
+                    )}
+                    { completedExercises.length > 0 ?
+                        <TouchableOpacity
+                            onPress={toggleCompletedAMPMRecoveryModal}
+                            style={[AppStyles.nextButtonWrapper]}
+                        >
+                            <Text style={[AppStyles.nextButtonText]}>{'Finish'}</Text>
+                        </TouchableOpacity>
+                        :
                         <View style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.hundredPercent}]}>
                             <Text style={[AppStyles.nextButtonText]}>{'complete the exercises to log'}</Text>
                         </View>
-                        {/* // TODO: when it comes time to mark exercises as completd, this button should show up if one item is marked as completed
-                          <TouchableOpacity
-                          onPress={toggleCompletedAMPMRecoveryModal}
-                          style={[AppStyles.nextButtonWrapper]}
-                          >
-                          <Text style={[AppStyles.nextButtonText]}>{'Finish'}</Text>
-                          </TouchableOpacity>*/}
-                    </View>
-                    :
-                    <View></View>
-                }
-            </ScrollView>
-        </View>
-    )
-};
+                    }
+                </View>
+                :
+                <View style={[AppStyles.paddingHorizontal]}>
+                    <Text style={[AppStyles.textCenterAligned, AppStyles.h3]}>{'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing. If you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.'}</Text>
+                </View>
+            }
+        </ScrollView>
+    </View>
+);
 
 Exercises.propTypes = {
+    completedExercises:               PropTypes.array.isRequired,
+    exerciseList:                     PropTypes.array.isRequired,
+    handleCompleteExercise:           PropTypes.func.isRequired,
     handleExerciseListRefresh:        PropTypes.func.isRequired,
     isExerciseListRefreshing:         PropTypes.bool.isRequired,
-    recoveryObj:                      PropTypes.object.isRequired,
     toggleCompletedAMPMRecoveryModal: PropTypes.func.isRequired,
+    toggleSelectedExercise:           PropTypes.func.isRequired,
 };
 Exercises.defaultProps = {};
 Exercises.componentName = 'Exercises';

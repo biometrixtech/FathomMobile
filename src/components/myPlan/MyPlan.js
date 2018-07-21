@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import {
     ActivityIndicator,
     Image,
+    Platform,
     RefreshControl,
     ScrollView,
     StyleSheet,
@@ -17,6 +18,7 @@ import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modalbox';
 import SplashScreen from 'react-native-splash-screen';
+import YouTube, { YouTubeStandaloneAndroid, YouTubeStandaloneIOS} from 'react-native-youtube';
 import moment from 'moment';
 
 // Consts, Libs, and Utils
@@ -56,19 +58,22 @@ class MyPlan extends Component {
         super(props);
 
         this.state = {
-            dailyReadiness: {
+            completedExercises: [],
+            dailyReadiness:     {
                 readiness:     0,
                 sleep_quality: 0,
                 soreness:      [],
             },
             isCompletedAMPMRecoveryModalOpen: false,
             isExerciseListRefreshing:         false,
-            isReadinessSurveyModalOpen:       false,
             isPostSessionSurveyModalOpen:     false,
+            isReadinessSurveyModalOpen:       false,
+            isSelectedExerciseModalOpen:      false,
             postSession:                      {
                 RPE:      0,
                 soreness: []
             },
+            selectedExercise: {},
         };
     }
 
@@ -222,7 +227,22 @@ class MyPlan extends Component {
         let newSorenessFields = _.cloneDeep(stateObject.soreness);
         if(_.findIndex(stateObject.soreness, o => o.body_part === areaClicked.index) > -1) {
             // body part already exists
-            newSorenessFields = newSorenessFields.filter(o => o.body_part !== areaClicked.index);
+            if(areaClicked.bilateral) {
+                // add other side
+                let currentSelectedSide = _.filter(newSorenessFields, o => o.body_part === areaClicked.index);
+                if(currentSelectedSide.length === 1) {
+                    currentSelectedSide = currentSelectedSide[0].side;
+                    let newMissingSideSorenessPart = {};
+                    newMissingSideSorenessPart.body_part = areaClicked.index;
+                    newMissingSideSorenessPart.severity = 0;
+                    newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
+                    newSorenessFields.push(newMissingSideSorenessPart);
+                } else {
+                    newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
+                }
+            } else {
+                newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
+            }
         } else {
             // doesn't exist, create new object
             if(areaClicked.bilateral) {
@@ -258,6 +278,7 @@ class MyPlan extends Component {
 
     _toggleCompletedAMPMRecoveryModal = () => {
         this.setState({
+            completedExercises:               [],
             isCompletedAMPMRecoveryModalOpen: !this.state.isCompletedAMPMRecoveryModalOpen
         });
     }
@@ -316,6 +337,26 @@ class MyPlan extends Component {
             });
     }
 
+    _handleCompleteExercise = (exerciseId) => {
+        let newCompletedExercises = _.cloneDeep(this.state.completedExercises);
+        if(newCompletedExercises && newCompletedExercises.indexOf(exerciseId) > -1) {
+            newCompletedExercises.splice(newCompletedExercises.indexOf(exerciseId), 1)
+        } else {
+            newCompletedExercises.push(exerciseId);
+        }
+        this.setState({
+            completedExercises:          newCompletedExercises,
+            isSelectedExerciseModalOpen: false,
+        });
+    }
+
+    _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
+        this.setState({
+            isSelectedExerciseModalOpen: isModalOpen,
+            selectedExercise:            exerciseObj ? exerciseObj : {},
+        });
+    }
+
     render = () => {
         let hourOfDay = moment().get('hour');
         let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && this.props.plan.dailyPlan[0].daily_readiness_survey_completed ? true : false;
@@ -336,65 +377,77 @@ class MyPlan extends Component {
             'Creating/updating your plan...'
             :
             'Loading...';
-        return (
-            <View style={[styles.background]}>
-                <LinearGradient
-                    colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
-                    style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
-                >
-                    <Image
-                        source={require('../../../assets/images/standard/coach-avatar.png')}
-                        style={{resizeMode: 'contain', width: 40, height: 40}}
-                    />
-                    { !isDailyReadinessSurveyCompleted ?
-                        <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, AppStyles.textCenterAligned, {color: AppColors.white}]}>{`GOOD ${partOfDay}, ${this.props.user.personal_data.first_name.toUpperCase()}!`}</Text>
-                        :
-                        <View>
-                            <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, AppStyles.h1, {color: AppColors.white}]}>{timeOfDay} {'RECOVERY'}</Text>
-                            <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Check the box to indicate completed exercises.'}</Text>
-                            <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Or click the plus sign below to log a practice & update your recovery!'}</Text>
-                            <TabIcon
-                                containerStyle={[{alignSelf: 'flex-end'}]}
-                                icon={'plus-circle-outline'}
-                                iconStyle={[{color: AppColors.white}]}
-                                onPress={this._togglePostSessionSurveyModal}
-                                reverse={false}
-                                size={30}
-                                type={'material-community'}
-                            />
-                        </View>
-                    }
-                </LinearGradient>
-                { !recoveryObj ?
-                    <View style={{flex: 1}}>
-                        <ScrollView
-                            contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
-                            refreshControl={
-                                <RefreshControl
-                                    colors={[AppColors.primary.yellow.hundredPercent]}
-                                    onRefresh={this._handleExerciseListRefresh}
-                                    refreshing={this.state.isExerciseListRefreshing}
-                                    title={'Loading...'}
-                                    titleColor={AppColors.primary.yellow.hundredPercent}
-                                    tintColor={AppColors.primary.yellow.hundredPercent}
+        let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj);
+        return(
+            <View style={{flex: 1,}}>
+                <View style={[styles.background]}>
+                    <LinearGradient
+                        colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
+                        style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
+                    >
+                        <Image
+                            source={require('../../../assets/images/standard/coach-avatar.png')}
+                            style={{resizeMode: 'contain', width: 40, height: 40}}
+                        />
+                        { !isDailyReadinessSurveyCompleted ?
+                            <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, AppStyles.textCenterAligned, {color: AppColors.white}]}>{`GOOD ${partOfDay}, ${this.props.user.personal_data.first_name.toUpperCase()}!`}</Text>
+                            :
+                            <View>
+                                <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, AppStyles.h1, {color: AppColors.white}]}>{timeOfDay} {'RECOVERY'}</Text>
+                                { exerciseList.length > 0 ?
+                                    <View>
+                                        <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Check the box to indicate completed exercises.'}</Text>
+                                        <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Or click the plus sign below to log a practice & update your recovery!'}</Text>
+                                    </View>
+                                    :
+                                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Click the plus sign below to log a practice & update your recovery!'}</Text>
+                                }
+                                <TabIcon
+                                    containerStyle={[{alignSelf: 'flex-end'}]}
+                                    icon={'plus-circle-outline'}
+                                    iconStyle={[{color: AppColors.white}]}
+                                    onPress={this._togglePostSessionSurveyModal}
+                                    reverse={false}
+                                    size={34}
+                                    type={'material-community'}
                                 />
-                            }
-                        >
-                            <ActivityIndicator
-                                color={AppColors.primary.yellow.hundredPercent}
-                                size={'large'}
-                            />
-                            <Text style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
-                        </ScrollView>
-                    </View>
-                    :
-                    <Exercises
-                        handleExerciseListRefresh={this._handleExerciseListRefresh}
-                        isExerciseListRefreshing={this.state.isExerciseListRefreshing}
-                        recoveryObj={recoveryObj}
-                        toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
-                    />
-                }
+                            </View>
+                        }
+                    </LinearGradient>
+                    { !recoveryObj ?
+                        <View style={{flex: 1}}>
+                            <ScrollView
+                                contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
+                                refreshControl={
+                                    <RefreshControl
+                                        colors={[AppColors.primary.yellow.hundredPercent]}
+                                        onRefresh={this._handleExerciseListRefresh}
+                                        refreshing={this.state.isExerciseListRefreshing}
+                                        title={'Loading...'}
+                                        titleColor={AppColors.primary.yellow.hundredPercent}
+                                        tintColor={AppColors.primary.yellow.hundredPercent}
+                                    />
+                                }
+                            >
+                                <ActivityIndicator
+                                    color={AppColors.primary.yellow.hundredPercent}
+                                    size={'large'}
+                                />
+                                <Text style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
+                            </ScrollView>
+                        </View>
+                        :
+                        <Exercises
+                            completedExercises={this.state.completedExercises}
+                            exerciseList={exerciseList}
+                            handleCompleteExercise={this._handleCompleteExercise}
+                            handleExerciseListRefresh={this._handleExerciseListRefresh}
+                            isExerciseListRefreshing={this.state.isExerciseListRefreshing}
+                            toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
+                            toggleSelectedExercise={this._toggleSelectedExercise}
+                        />
+                    }
+                </View>
                 <Modal
                     backdropPressToClose={false}
                     coverScreen={true}
@@ -454,6 +507,55 @@ class MyPlan extends Component {
                             title={`Do ${timeOfDay} Recovery again`}
                         />
                     </LinearGradient>
+                </Modal>
+                <Modal
+                    backdropOpacity={0.75}
+                    backdropPressToClose={true}
+                    coverScreen={false}
+                    isOpen={this.state.isSelectedExerciseModalOpen}
+                    onClosed={() => this._toggleSelectedExercise(false, false)}
+                    style={[AppStyles.containerCentered, {
+                        height:  AppSizes.screen.heightTwoThirds,
+                        padding: AppSizes.padding,
+                        width:   AppSizes.screen.width * 0.9,
+                    }]}
+                    swipeToClose={true}
+                >
+                    { this.state.selectedExercise.library_id ?
+                        <View>
+                            { MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId ?
+                                <YouTube
+                                    apiKey={'AIzaSyATavF4OIsJBDFx4bi3bBmwlArbStH3chs'}
+                                    fullscreen={false}
+                                    loop={false}
+                                    onError={e => console.log('youtube error', e)}
+                                    play={false}
+                                    showFullscreenButton={true}
+                                    style={{height: 300, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding * 2)}}
+                                    videoId={MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId}
+                                />
+                                :
+                                null
+                            }
+                            <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, AppStyles.h2]}>
+                                {MyPlanConstants.cleanExercise(this.state.selectedExercise).displayName}
+                            </Text>
+                            <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, {color: AppColors.secondary.blue.hundredPercent}]}>
+                                {MyPlanConstants.cleanExercise(this.state.selectedExercise).dosage}
+                            </Text>
+                            <TabIcon
+                                containerStyle={[{alignSelf: 'center'}]}
+                                icon={'check'}
+                                iconStyle={[{color: AppColors.primary.yellow.hundredPercent}]}
+                                onPress={() => this._handleCompleteExercise(this.state.selectedExercise.library_id)}
+                                reverse={false}
+                                size={34}
+                                type={'material-community'}
+                            />
+                        </View>
+                        :
+                        null
+                    }
                 </Modal>
             </View>
         );

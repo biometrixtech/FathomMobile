@@ -125,8 +125,8 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5
-        versionName "2.0-beta.1"
+        versionCode 7
+        versionName "2.0.0-beta.3"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -189,24 +189,25 @@ repositories {
 }
 
 dependencies {
-     implementation project(':react-native-push-notification')
-     implementation project(':react-native-linear-gradient')
-     implementation project(':react-native-splash-screen')
-     implementation project(':react-native-code-push')
-     implementation project(':react-native-fabric')
-     implementation project(':react-native-vector-icons')
-     implementation project(':react-native-ble-manager')
-     implementation project(':react-native-device-info')
-     implementation project(':react-native-android-location-services-dialog-box')
-     implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation project(':react-native-youtube')
+    implementation project(':react-native-push-notification')
+    implementation project(':react-native-linear-gradient')
+    implementation project(':react-native-splash-screen')
+    implementation project(':react-native-code-push')
+    implementation project(':react-native-fabric')
+    implementation project(':react-native-vector-icons')
+    implementation project(':react-native-ble-manager')
+    implementation project(':react-native-device-info')
+    implementation project(':react-native-android-location-services-dialog-box')
+    implementation fileTree(dir: "libs", include: ["*.jar"])
     //  implementation 'io.intercom.android:intercom-sdk-base:5.+'
     //  implementation 'io.intercom.android:intercom-sdk-fcm:5.+'
     //  implementation 'com.google.firebase:firebase-messaging:11.+'
-     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-     implementation 'com.facebook.react:react-native:+' // From node_modules
-     implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
-         transitive = true;
-     }
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation 'com.facebook.react:react-native:+' // From node_modules
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
+        transitive = true;
+    }
 }
 
 
