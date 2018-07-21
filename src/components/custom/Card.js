@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import { Card } from 'react-native-elements';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles } from '@constants';
+import { AppColors, AppSizes, AppStyles } from '../../constants';
 
 /* Component ==================================================================== */
 class CustomCard extends Component {

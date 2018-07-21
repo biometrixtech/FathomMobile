@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:33 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 16:49:40
+ * @Last Modified time: 2018-07-20 18:34:32
  */
 
 /**
@@ -254,7 +254,7 @@ class BluetoothConnectView extends Component {
                 <View style={[AppStyles.containerCentered, { flex: 1 }]}>
                     <View style={{ flex: 1 }} />
                     <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                        <Image style={{resizeMode: 'contain', width: 400, height: 400}} source={require('../../constants/assets/images/kit-activation.png')}/>
+                        <Image style={{resizeMode: 'contain', width: 400, height: 400}} source={require('../../../assets/images/standard/kit-activation.png')}/>
                     </View>
                     <View style={{ flex: 1 }}>
                         <FormLabel labelStyle={[AppStyles.h4]} >

@@ -21,6 +21,12 @@ if test -t 1; then
     fi
 fi
 
+ME=`whoami`
+CODEPUSH="vir/"
+if [ "$ME" == "virdesai" ]; then
+    CODEPUSH=""
+fi
+
 # install_java() {
 #     current_location=`pwd`
 #     cd ~/Downloads
@@ -114,6 +120,7 @@ initialize() {
             sed -i '' 's/"26.0.3"/"27.0.3"/' ./node_modules/react-native-splash-screen/android/build.gradle
             sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-linear-gradient/android/build.gradle
             sed -i '' 's/23.0.1/27.0.3/g' ./node_modules/react-native-push-notification/android/build.gradle
+            sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-youtube/android/build.gradle
 
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-code-push/android/app/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-fabric/android/build.gradle
@@ -124,11 +131,14 @@ initialize() {
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-vector-icons/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-splash-screen/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-push-notification/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-youtube/android/build.gradle
 
             sed -i '' 's/compile(/implementation(/g' ./node_modules/react-native-fabric/android/build.gradle
             # sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
 
             # extra android patches
+            sed -i '' 's/23/27/' ./node_modules/react-native-youtube/android/build.gradle
+            sed -i '' 's/22/27/' ./node_modules/react-native-youtube/android/build.gradle
             sed -i '' 's/25/27/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
             sed -i '' 's/23/27/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
             sed -i '' 's/26/27/g' ./node_modules/react-native-vector-icons/android/build.gradle
@@ -194,6 +204,10 @@ initialize() {
 
 start() {
     watchman watch-del-all
+    rm -rf $TMPDIR/react-*
+    rm -rf ./android/app/build/intermediates
+    rm -rf ./android/app/src/main/res/drawable-*
+    rm ./android/app/src/main/assets/index.android.bundle
     lsof -i tcp:8081 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
     npm run start -- --reset-cache
 }
@@ -248,6 +262,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
+                yarn bundle-android
                 cd android
                 ./gradlew clean assembleRelease
                 cd ..
@@ -262,6 +277,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
+                yarn bundle-android
                 cd android
                 ./gradlew clean assembleReleaseStaging
                 cd ..
@@ -345,14 +361,14 @@ codepushPromote() {
     echo
     case "$REPLY" in
         1)
-            code-push promote vir/FathomAI-Android Staging Production -t '*'
+            code-push promote ${CODEPUSH}FathomAI-Android Staging Production -t '*'
             ;;
         2)
-            code-push promote vir/FathomAI-iOS Staging Production -t '*'
+            code-push promote ${CODEPUSH}FathomAI-iOS Staging Production -t '*'
             ;;
         3)
-            code-push promote vir/FathomAI-Android Staging Production -t '*'
-            code-push promote vir/FathomAI-iOS Staging Production -t '*'
+            code-push promote ${CODEPUSH}FathomAI-Android Staging Production -t '*'
+            code-push promote ${CODEPUSH}FathomAI-iOS Staging Production -t '*'
             ;;
         *)
             echo "${red}Invalid selection${normal}"

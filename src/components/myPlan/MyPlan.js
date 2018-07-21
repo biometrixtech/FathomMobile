@@ -22,10 +22,10 @@ import YouTube, { YouTubeStandaloneAndroid, YouTubeStandaloneIOS} from 'react-na
 import moment from 'moment';
 
 // Consts, Libs, and Utils
-import { Actions, AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '@constants';
+import { Actions, AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../../constants';
 
 // Components
-import { Button, TabIcon, Text, } from '@custom';
+import { Button, TabIcon, Text, } from '../custom';
 import { Exercises, PostSessionSurvey, ReadinessSurvey } from './pages';
 
 /* Styles ==================================================================== */
@@ -389,7 +389,7 @@ class MyPlan extends Component {
                         style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
                     >
                         <Image
-                            source={require('@images/coach-avatar.png')}
+                            source={require('../../../assets/images/standard/coach-avatar.png')}
                             style={{resizeMode: 'contain', width: 40, height: 40}}
                         />
                         { !isDailyReadinessSurveyCompleted ?

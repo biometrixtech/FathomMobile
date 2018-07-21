@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import LinearGradient from 'react-native-linear-gradient';
 
 // Consts
-import { AppColors, AppStyles } from '@constants';
+import { AppColors, AppStyles } from '../../constants';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -47,7 +47,7 @@ const Coach = ({ text }) => (
         style={[AppStyles.containerCentered, styles.coachWrapper]}
     >
         <Image
-            source={require('@images/coach-avatar.png')}
+            source={require('../../../assets/images/standard/coach-avatar.png')}
             style={[styles.imageStyle]}
         />
         <Text style={[styles.coachText]}>{text}</Text>

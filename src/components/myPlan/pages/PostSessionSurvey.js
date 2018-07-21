@@ -16,8 +16,8 @@ import PropTypes from 'prop-types';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants } from '@constants';
-import { FathomSlider, TabIcon, Text } from '@custom';
+import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
+import { FathomSlider, TabIcon, Text } from '../../custom';
 
 // Components
 import { AreasOfSoreness, SoreBodyPart } from './';

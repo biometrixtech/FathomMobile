@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles } from '@constants';
+import { AppColors, AppStyles } from '../../constants';
 import { FormLabel, Text } from './';
 
 /* Styles ==================================================================== */

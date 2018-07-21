@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-23 14:06:10 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-24 01:21:42
+ * @Last Modified time: 2018-07-20 18:13:44
  */
 
 /**
@@ -13,7 +13,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import init from '@actions/init';
+import { init } from '../../actions';
 
 const Settings = ({
     Layout,

@@ -2,16 +2,16 @@
  * @Author: Mazen Chami
  * @Date: 2018-07-12 11:06:00
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-17 00:18:03
+ * @Last Modified time: 2018-07-20 18:11:52
  */
 
 /**
  * MyPlan Actions
  */
 
-import { Actions } from '@constants';
-import { store } from '@store';
-import { AppAPI, AppUtil } from '@lib';
+import { Actions } from '../constants';
+import { store } from '../store';
+import { AppAPI, AppUtil } from '../lib';
 
 // import third-party libraries
 import _ from 'lodash';
