@@ -14,8 +14,8 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 // Consts and Libs
-import { AppStyles, UserAccount as UserAccountConstants } from '@constants';
-import { RadioButton } from '@custom';
+import { AppStyles, UserAccount as UserAccountConstants } from '../../../constants';
+import { RadioButton } from '../../custom';
 
 /* Component ==================================================================== */
 const UserWorkoutQuestion = ({ componentStep, currentStep, handleFormChange, user }) => (

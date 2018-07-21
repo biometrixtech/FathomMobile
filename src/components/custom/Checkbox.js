@@ -20,7 +20,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { CheckBox } from 'react-native-elements';
 
-import { AppColors } from '@constants';
+import { AppColors } from '../../constants';
 
 /* Component ==================================================================== */
 const Checkbox = ({

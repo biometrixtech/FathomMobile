@@ -12,8 +12,8 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles } from '@constants';
-import { Checkbox, Text } from '@custom';
+import { AppColors, AppSizes, AppStyles } from '../../../constants';
+import { Checkbox, Text } from '../../custom';
 
 /* Component ==================================================================== */
 const ExerciseItem = ({

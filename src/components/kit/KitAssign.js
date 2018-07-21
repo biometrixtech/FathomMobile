@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:13 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-23 16:48:51
+ * @Last Modified time: 2018-07-20 18:21:23
  */
 
 /**
@@ -97,7 +97,7 @@ class KitAssignView extends Component {
         return (
             <Wrapper>
                 <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', height: AppSizes.screen.heightOneThird }}>
-                    <Image source={require('../../constants/assets/images/kit-diagram.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthTwoThirds, height: AppSizes.screen.widthTwoThirds * 268/509 }}/>
+                    <Image source={require('../../../assets/images/standard/kit-diagram.png')} resizeMode={'contain'} style={{ width: AppSizes.screen.widthTwoThirds, height: AppSizes.screen.widthTwoThirds * 268/509 }}/>
                     <Spacer size={5}/>
                     <Text>{accessory.name || ''}</Text>
                     <Text style={{ fontSize: font10 }}>{accessory.wifiMacAddress || ''}</Text>

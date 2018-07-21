@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:20:59
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-18 17:09:23
+ * @Last Modified time: 2018-07-20 18:11:43
  */
 
 /**
@@ -10,9 +10,9 @@
  */
 
 import jwtDecode from 'jwt-decode';
-import { Actions, ErrorMessages } from '@constants';
-import { AppAPI } from '@lib';
-import { store } from '@store';
+import { Actions, ErrorMessages } from '../constants';
+import { AppAPI } from '../lib';
+import { store } from '../store';
 
 // Components
 import { Platform } from 'react-native';

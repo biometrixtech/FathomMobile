@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { init } from '@actions';
+import { init } from '../../actions';
 
 const Login = ({
     Layout,

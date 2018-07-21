@@ -17,11 +17,11 @@ import FormValidation from 'tcomb-form-native';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
-import { AppAPI } from '@lib';
-import { AppStyles } from '@constants';
+import { AppAPI } from '../../lib';
+import { AppStyles } from '../../constants';
 
 // Components
-import { Alerts, Card, Button } from '@custom';
+import { Alerts, Card, Button } from '../custom';
 
 /* Component ==================================================================== */
 class SignUp extends Component {

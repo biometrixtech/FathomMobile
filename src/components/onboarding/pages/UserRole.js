@@ -19,8 +19,8 @@ import {
 } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles } from '@constants';
-import { Text } from '@custom';
+import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
+import { Text } from '../../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -45,7 +45,7 @@ const UserRole = ({ componentStep, currentStep, handleFormChange, user }) => (
         </View>
         <TouchableOpacity onPress={() => handleFormChange('role', 'athlete')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
             <ImageBackground
-                source={require('@images/athlete.jpg')}
+                source={require('../../../../assets/images/standard/athlete.jpg')}
                 style={[AppStyles.containerCentered, AppStyles.fullHeightWeight]}
             >
                 <Text style={[AppFonts.h2, AppStyles.bold, {color: AppColors.white}]}>{'ATHLETE'}</Text>
@@ -53,7 +53,7 @@ const UserRole = ({ componentStep, currentStep, handleFormChange, user }) => (
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleFormChange('role', 'manager')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
             <ImageBackground
-                source={require('@images/parent.jpg')}
+                source={require('../../../../assets/images/standard/parent.jpg')}
                 style={[AppStyles.containerCentered, AppStyles.fullHeightWeight]}
             >
                 <Text style={[AppFonts.h2, AppStyles.bold, {color: AppColors.white}]}>{'ATHLETE\'S PARENT'}</Text>
