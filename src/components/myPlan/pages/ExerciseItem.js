@@ -28,7 +28,7 @@ const ExerciseItem = ({
 }) => (
     <View style={[AppStyles.paddingTopSml]}>
         <View style={[AppStyles.paddingVerticalSml, {flex: 1, flexDirection: 'row', justifyContent: 'space-between',}]}>
-            <View style={{justifyContent: 'center', flex: 0.1,}}>
+            <View style={{justifyContent: 'center', flex: 1,}}>
                 <Checkbox
                     checked={completedExercises.includes(exercise.library_id)}
                     checkedColor={AppColors.primary.yellow.hundredPercent}
@@ -38,7 +38,7 @@ const ExerciseItem = ({
                     size={26}
                 />
             </View>
-            <View style={{justifyContent: 'center', flex: 0.7,}}>
+            <View style={{justifyContent: 'center', flex: 7,}}>
                 <Text
                     onPress={() => toggleSelectedExercise(exercise, true)}
                     style={{
@@ -51,7 +51,7 @@ const ExerciseItem = ({
                     {MyPlan.cleanExercise(exercise).displayName}
                 </Text>
             </View>
-            <View style={{justifyContent: 'center', flex: 0.2, paddingRight: 10,}}>
+            <View style={{justifyContent: 'center', flex: 2, paddingRight: 10,}}>
                 <Text style={[AppStyles.textRightAligned, {color: completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.secondary.blue.hundredPercent, fontWeight: 'bold'}]}>
                     {MyPlan.cleanExercise(exercise).dosage}
                 </Text>
