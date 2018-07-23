@@ -120,7 +120,6 @@ initialize() {
             sed -i '' 's/"26.0.3"/"27.0.3"/' ./node_modules/react-native-splash-screen/android/build.gradle
             sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-linear-gradient/android/build.gradle
             sed -i '' 's/23.0.1/27.0.3/g' ./node_modules/react-native-push-notification/android/build.gradle
-            sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-youtube/android/build.gradle
 
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-code-push/android/app/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-fabric/android/build.gradle
@@ -131,14 +130,11 @@ initialize() {
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-vector-icons/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-splash-screen/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-push-notification/android/build.gradle
-            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-youtube/android/build.gradle
 
             sed -i '' 's/compile(/implementation(/g' ./node_modules/react-native-fabric/android/build.gradle
             # sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
 
             # extra android patches
-            sed -i '' 's/23/27/' ./node_modules/react-native-youtube/android/build.gradle
-            sed -i '' 's/22/27/' ./node_modules/react-native-youtube/android/build.gradle
             sed -i '' 's/25/27/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
             sed -i '' 's/23/27/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
             sed -i '' 's/26/27/g' ./node_modules/react-native-vector-icons/android/build.gradle

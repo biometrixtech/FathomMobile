@@ -18,7 +18,6 @@ import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modalbox';
 import SplashScreen from 'react-native-splash-screen';
-// import YouTube, { YouTubeStandaloneAndroid, YouTubeStandaloneIOS} from 'react-native-youtube';
 import moment from 'moment';
 
 // Consts, Libs, and Utils
@@ -586,24 +585,15 @@ class MyPlan extends Component {
                             swipeToClose={true}
                         >
                             { this.state.selectedExercise.library_id ?
-                                <View>
+                                <View style={{ flex: 1 }}>
                                     {/* AppState.currentState check is so the Google app store does not reject it for background running */}
                                     { AppState.currentState === 'active' && MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId ?
                                         <WebView
+                                            allowsInlineMediaPlayback={true}
                                             onError={e => console.log('youtube error', e)}
-                                            style={{height: this.state.height, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding * 2)}}
-                                            url={`https://www.youtube.com/embed/${MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId}?rel=0&autoplay=0&showinfo=0&fs=1`}
+                                            style={{width: (AppSizes.screen.width * 0.9) - (AppSizes.padding)}}
+                                            url={`https://www.youtube.com/embed/${MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId}?rel=0&autoplay=0&showinfo=0&playsinline=1`}
                                         />
-                                        // <YouTube
-                                        //     apiKey={AppConfig.youtubeKey}
-                                        //     fullscreen={false}
-                                        //     loop={false}
-                                        //     onError={e => console.log('youtube error', e)}
-                                        //     play={false}
-                                        //     showFullscreenButton={true}
-                                        //     style={{height: this.state.height, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding * 2)}}
-                                        //     videoId={MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId}
-                                        // />
                                         :
                                         null
                                     }
