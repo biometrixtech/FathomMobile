@@ -4,9 +4,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
+    AppState,
     ActivityIndicator,
     Image,
-    Platform,
     RefreshControl,
     ScrollView,
     StyleSheet,
@@ -18,14 +18,15 @@ import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modalbox';
 import SplashScreen from 'react-native-splash-screen';
-import YouTube, { YouTubeStandaloneAndroid, YouTubeStandaloneIOS} from 'react-native-youtube';
+// import YouTube, { YouTubeStandaloneAndroid, YouTubeStandaloneIOS} from 'react-native-youtube';
 import moment from 'moment';
 
 // Consts, Libs, and Utils
-import { Actions, AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../../constants';
+import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../../constants';
 
 // Components
 import { Button, TabIcon, Text, } from '../custom';
+import { WebView } from '../general';
 import { Exercises, PostSessionSurvey, ReadinessSurvey } from './pages';
 
 /* Styles ==================================================================== */
@@ -213,9 +214,12 @@ class MyPlan extends Component {
         };
         this.props.postSessionSurvey(postSession)
             .then(response => {
-                this.setState({
-                    isPostSessionSurveyModalOpen: false,
-                });
+                // wait for some processes to clear first so a no-op doesn't stop the state from being set and hiding the modal
+                setTimeout(() => {
+                    this.setState({
+                        isPostSessionSurveyModalOpen: false,
+                    });
+                }, 100);
             })
             .catch(error => {
                 console.log('error',error);
@@ -290,7 +294,8 @@ class MyPlan extends Component {
     }
 
     _togglePostSessionSurveyModal = () => {
-        if(!this.state.isPostSessionSurveyModalOpen) {
+        this.setState({ loading: true });
+        if (!this.state.isPostSessionSurveyModalOpen) {
             this.props.getSoreBodyParts()
                 .then(soreBodyParts => {
                     // console.log('soreBodyParts',soreBodyParts);
@@ -299,6 +304,7 @@ class MyPlan extends Component {
                     this.setState({
                         isCompletedAMPMRecoveryModalOpen: false,
                         isPostSessionSurveyModalOpen:     true,
+                        loading:                          false,
                         postSession:                      newDailyReadiness,
                     });
                 })
@@ -309,13 +315,15 @@ class MyPlan extends Component {
                     this.setState({
                         isCompletedAMPMRecoveryModalOpen: false,
                         isPostSessionSurveyModalOpen:     true,
+                        loading:                          false,
                         postSession:                      newDailyReadiness,
                     });
                 });
         } else {
             this.setState({
                 isCompletedAMPMRecoveryModalOpen: false,
-                isPostSessionSurveyModalOpen:     false
+                isPostSessionSurveyModalOpen:     false,
+                loading:                          false,
             });
         }
     }
@@ -386,7 +394,7 @@ class MyPlan extends Component {
                 <View style={[styles.background]}>
                     <LinearGradient
                         colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
-                        style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
+                        style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal, { paddingBottom: 0 }]}
                     >
                         <Image
                             source={require('../../../assets/images/standard/coach-avatar.png')}
@@ -403,10 +411,10 @@ class MyPlan extends Component {
                                         <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Or click the plus sign below to log a practice & update your recovery!'}</Text>
                                     </View>
                                     :
-                                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Click the plus sign below to log a practice & update your recovery!'}</Text>
+                                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white, paddingBottom: 0}]}>{'Click the plus sign below to log a practice & update your recovery!'}</Text>
                                 }
                                 <TabIcon
-                                    containerStyle={[{alignSelf: 'flex-end'}]}
+                                    containerStyle={[{alignSelf: 'flex-end'}, AppStyles.padding]}
                                     icon={'plus-circle-outline'}
                                     iconStyle={[{color: AppColors.white}]}
                                     onPress={this._togglePostSessionSurveyModal}
@@ -449,6 +457,13 @@ class MyPlan extends Component {
                             toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
                             toggleSelectedExercise={this._toggleSelectedExercise}
                         />
+                    }
+                    { this.state.loading ? 
+                        <ActivityIndicator
+                            color={AppColors.primary.yellow.hundredPercent}
+                            size={'large'}
+                            style={[AppStyles.activityIndicator]}
+                        /> : null
                     }
                 </View>
                 <Modal
@@ -526,17 +541,23 @@ class MyPlan extends Component {
                 >
                     { this.state.selectedExercise.library_id ?
                         <View>
-                            { MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId ?
-                                <YouTube
-                                    apiKey={'AIzaSyATavF4OIsJBDFx4bi3bBmwlArbStH3chs'}
-                                    fullscreen={false}
-                                    loop={false}
+                            {/* AppState.currentState check is so the Google app store does not reject it for background running */}
+                            { AppState.currentState === 'active' && MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId ?
+                                <WebView
                                     onError={e => console.log('youtube error', e)}
-                                    play={false}
-                                    showFullscreenButton={true}
-                                    style={{height: 300, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding * 2)}}
-                                    videoId={MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId}
+                                    style={{height: this.state.height, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding * 2)}}
+                                    url={`https://www.youtube.com/embed/${MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId}?rel=0&autoplay=0&showinfo=0&fs=1`}
                                 />
+                                // <YouTube
+                                //     apiKey={AppConfig.youtubeKey}
+                                //     fullscreen={false}
+                                //     loop={false}
+                                //     onError={e => console.log('youtube error', e)}
+                                //     play={false}
+                                //     showFullscreenButton={true}
+                                //     style={{height: this.state.height, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding * 2)}}
+                                //     videoId={MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId}
+                                // />
                                 :
                                 null
                             }

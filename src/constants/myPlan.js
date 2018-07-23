@@ -2,7 +2,7 @@
  * @Author: Mazen Chami
  * @Date: 2018-07-12 12:28:00
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-14 14:33:27
+ * @Last Modified time: 2018-07-21 19:58:16
  */
 
 import _ from 'lodash';
@@ -115,9 +115,9 @@ const postSessionFeel = [
 
 function cleanExercise(exercise) {
     let cleanedExercise = {};
-    cleanedExercise.displayName = `${exercise.display_name.length > 0 ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
+    cleanedExercise.displayName = `${exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
     cleanedExercise.dosage = `${exercise.sets_assigned}x ${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : ''}`;
-    cleanedExercise.youtubeId = exercise.youtube_id && exercise.youtube_id.length > 0 ? exercise.youtube_id : false;
+    cleanedExercise.youtubeId = exercise.youtube_id && exercise.youtube_id.length ? exercise.youtube_id : false;
     return cleanedExercise;
 }
 
