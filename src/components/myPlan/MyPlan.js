@@ -199,9 +199,7 @@ class MyPlan extends Component {
     }
 
     _handlePostSessionSurveySubmit = () => {
-        this.setState({
-            loading: true,
-        })
+        this.setState({ loading: true });
         let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
         newPostSessionSurvey.RPE = newPostSessionSurvey.RPE + 1;
         newPostSessionSurvey.soreness.map(bodyPart => {
@@ -377,8 +375,8 @@ class MyPlan extends Component {
 
     render = () => {
         let hourOfDay = moment().get('hour');
-        let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && this.props.plan.dailyPlan[0].daily_readiness_survey_completed ? true : false;
         let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
+        let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
         let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.recovery_pm && hourOfDay >= 12 ?
             dailyPlanObj.recovery_pm
             : isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.recovery_am && hourOfDay < 12 ?
@@ -539,6 +537,13 @@ class MyPlan extends Component {
                             title={`Do ${timeOfDay} Recovery again`}
                         />
                     </LinearGradient>
+                    { this.state.loading ? 
+                        <ActivityIndicator
+                            color={AppColors.primary.yellow.hundredPercent}
+                            size={'large'}
+                            style={[AppStyles.activityIndicator]}
+                        /> : null
+                    }
                 </Modal>
                 <Modal
                     backdropOpacity={0.75}
