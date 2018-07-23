@@ -199,6 +199,9 @@ class MyPlan extends Component {
     }
 
     _handlePostSessionSurveySubmit = () => {
+        this.setState({
+            loading: true,
+        })
         let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
         newPostSessionSurvey.RPE = newPostSessionSurvey.RPE + 1;
         newPostSessionSurvey.soreness.map(bodyPart => {
@@ -217,11 +220,15 @@ class MyPlan extends Component {
                 // wait for some processes to clear first so a no-op doesn't stop the state from being set and hiding the modal
                 setTimeout(() => {
                     this.setState({
+                        loading:                      false,
                         isPostSessionSurveyModalOpen: false,
                     });
                 }, 100);
             })
             .catch(error => {
+                this.setState({
+                    loading: false,
+                });
                 console.log('error',error);
             });
     }
@@ -495,6 +502,13 @@ class MyPlan extends Component {
                         postSession={this.state.postSession}
                         soreBodyParts={this.props.plan.soreBodyParts}
                     />
+                    { this.state.loading ? 
+                        <ActivityIndicator
+                            color={AppColors.primary.yellow.hundredPercent}
+                            size={'large'}
+                            style={[AppStyles.activityIndicator]}
+                        /> : null
+                    }
                 </Modal>
                 <Modal
                     backdropPressToClose={false}
