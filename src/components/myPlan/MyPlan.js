@@ -15,6 +15,7 @@ import {
 
 // import third-party libraries
 import _ from 'lodash';
+import { Actions } from 'react-native-router-flux';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modalbox';
 import SplashScreen from 'react-native-splash-screen';
@@ -22,7 +23,7 @@ import YouTube, { YouTubeStandaloneAndroid, YouTubeStandaloneIOS} from 'react-na
 import moment from 'moment';
 
 // Consts, Libs, and Utils
-import { Actions, AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '@constants';
+import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '@constants';
 
 // Components
 import { Button, TabIcon, Text, } from '@custom';
@@ -385,10 +386,26 @@ class MyPlan extends Component {
                         colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
                         style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
                     >
-                        <Image
-                            source={require('@images/coach-avatar.png')}
-                            style={{resizeMode: 'contain', width: 40, height: 40}}
-                        />
+                        <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'space-between',}}>
+                            <View style={{justifyContent: 'center', flex: 1,}}></View>
+                            <View style={{alignItems: 'center', justifyContent: 'center', flex: 8,}}>
+                                <Image
+                                    source={require('@images/coach-avatar.png')}
+                                    style={{resizeMode: 'contain', width: 40, height: 40}}
+                                />
+                            </View>
+                            <View style={{justifyContent: 'center', flex: 1,}}>
+                                <TabIcon
+                                    containerStyle={[{alignSelf: 'flex-end'}]}
+                                    icon={'settings'}
+                                    iconStyle={[{color: AppColors.white}]}
+                                    onPress={() => Actions.settings()}
+                                    reverse={false}
+                                    size={34}
+                                    type={'material-community'}
+                                />
+                            </View>
+                        </View>
                         { !isDailyReadinessSurveyCompleted ?
                             <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, AppStyles.textCenterAligned, {color: AppColors.white}]}>{`GOOD ${partOfDay}, ${this.props.user.personal_data.first_name.toUpperCase()}!`}</Text>
                             :

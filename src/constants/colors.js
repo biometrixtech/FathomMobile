@@ -81,7 +81,7 @@ const sliders = {
 }
 
 const borders = {
-    border: brand.primary.grey.hundredPercent,
+    border: '#E3E3E3',
 };
 
 const tabbar = {

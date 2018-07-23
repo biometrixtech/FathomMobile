@@ -6,8 +6,15 @@
  */
 
 import React from 'react';
-import { Scene, Stack, Router } from 'react-native-router-flux';
 
+// import third-party libraries
+import { Actions, Router, Scene, Stack } from 'react-native-router-flux';
+
+// Consts, Libs, and Utils
+import { AppColors, AppSizes, AppStyles, } from '@constants';
+import { TabIcon, } from '@custom';
+
+// import components
 import LoginContainer from '@containers/auth/Login';
 import LoginComponent from '@components/auth/Login';
 
@@ -40,19 +47,19 @@ import MyPlanComponent from '@components/myPlan/MyPlan';
 
 const Index = (
     <Router>
-        <Stack hideNavBar key='root'>
+        <Stack hideNavBar key='root' titleStyle={{ alignSelf: 'center' }}>
             <Scene
                 Layout={LoginComponent}
                 component={LoginContainer}
                 hideNavBar
                 key='login'
             />
-            <Scene
+            {/*<Scene
                 Layout={SignUpComponent}
                 component={SignUpContainer}
                 hideNavBar
                 key='signUp'
-            />
+            />*/}
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
@@ -60,30 +67,37 @@ const Index = (
                 key='forgotPassword'
             />
             <Scene
-                Layout={SettingsComponent}
-                component={SettingsContainer}
-                hideNavBar
-                key='settings'
-            />
-            <Scene
                 Layout={MyPlanComponent}
                 component={MyPlanContainer}
                 hideNavBar
                 key='myPlan'
             />
-            <Stack>
+            <Scene
+                Layout={SettingsComponent}
+                component={SettingsContainer}
+                hideNavBar={false}
+                navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0}}
+                onLeft={() => Actions.pop()}
+                onRight={() => null}
+                key='settings'
+                rightTitle=' '
+                title='SETTINGS'
+                titleStyle={{flex: 1, textAlign: 'center',}}
+            />
+            <Scene
+                Layout={KitManagementComponent}
+                component={KitManagementContainer}
+                hideNavBar
+                key='kitManagement'
+                // title='Kit Management'
+                // {...DefaultProps.navbarProps}
+            />
+            {/*<Stack>
                 <Scene
                     Layout={SettingsComponent}
                     component={SettingsContainer}
                     hideNavBar
                     key='settings'
-                />
-                <Scene
-                    key='kitManagement'
-                    title='Kit Management'
-                    component={KitManagementContainer}
-                    Layout={KitManagementComponent}
-                    // {...DefaultProps.navbarProps}
                 />
                 <Scene
                     key='bluetoothConnect'
@@ -106,7 +120,7 @@ const Index = (
                     Layout={KitAssignComponent}
                     // {...DefaultProps.navbarProps}
                 />
-            </Stack>
+            </Stack>*/}
         </Stack>
     </Router>
 );

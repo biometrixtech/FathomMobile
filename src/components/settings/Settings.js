@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
-import { AppColors } from '@constants';
+import { AppColors, AppSizes, AppStyles } from '@constants';
 
 // Components
 import { View, Platform, BackHandler } from 'react-native';
@@ -50,16 +50,22 @@ class Settings extends Component {
 
     render = () => {
         return (
-            <View style={{ backgroundColor: AppColors.white }} >
+            <View style={{backgroundColor: AppColors.white, flex: 1}}>
                 <ListItem
-                    leftIcon={{ name: 'bluetooth', color: AppColors.primary.grey.hundredPercent }}
+                    chevronColor={AppColors.black}
+                    containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
+                    leftIcon={{color: AppColors.black, name: 'bluetooth', size: 24}}
                     onPress={() => Actions.kitManagement()}
-                    title='Kit Management'
+                    title='PAIR WITH A NEW SENSOR'
+                    titleStyle={{color: AppColors.black}}
                 />
                 <ListItem
-                    leftIcon={{ name: 'power-settings-new', color: AppColors.primary.grey.hundredPercent }}
+                    chevronColor={AppColors.black}
+                    containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
+                    leftIcon={{color: AppColors.black, name: 'power-settings-new', size: 24}}
                     onPress={() => Promise.resolve(this.props.logout()).then(() => Actions.login())}
-                    title='Logout'
+                    title='LOGOUT'
+                    titleStyle={{color: AppColors.black}}
                 />
             </View>
         );
