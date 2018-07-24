@@ -5,6 +5,10 @@
  * @Last Modified time: 2018-06-28 11:41:51
  */
 
+// import third-party libraries
+import DeviceInfo from 'react-native-device-info';
+import uuidByString from 'uuid-by-string';
+
 /**
  * Global Util Functions
  */
@@ -29,6 +33,18 @@ const MS_IN_DAY = 1000 * 60 * 60 * 24;
 // }
 
 const UTIL = {
+    getDeviceUUID: () => {
+        // mobile uuid
+        let uniqueId = DeviceInfo.getUniqueID();
+        let uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if(!uuidRegex.test(uniqueId)) {
+            // not a uuid, lets unparse it
+            uniqueId = uuidByString(uniqueId);
+        }
+        uniqueId = uniqueId.toLowerCase();
+        return uniqueId;
+    },
+
     /**
       * Test if Obj is empty
       */

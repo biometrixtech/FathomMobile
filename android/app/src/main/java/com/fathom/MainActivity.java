@@ -27,4 +27,11 @@ public class MainActivity extends ReactActivity {
         Fabric.with(this, new Crashlytics());
         FLog.setLoggingDelegate(ReactNativeFabricLogger.getInstance());
     }
+
+    // my new code here
+    @Override
+    protected void onPause() {
+        SplashScreen.hide(this);
+        super.onPause();
+    }
 }

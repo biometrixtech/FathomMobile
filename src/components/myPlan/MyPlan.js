@@ -4,9 +4,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
+    AppState,
     ActivityIndicator,
     Image,
-    Platform,
     RefreshControl,
     ScrollView,
     StyleSheet,
@@ -15,17 +15,18 @@ import {
 
 // import third-party libraries
 import _ from 'lodash';
+import { Actions } from 'react-native-router-flux';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modalbox';
 import SplashScreen from 'react-native-splash-screen';
-import YouTube, { YouTubeStandaloneAndroid, YouTubeStandaloneIOS} from 'react-native-youtube';
 import moment from 'moment';
 
 // Consts, Libs, and Utils
-import { Actions, AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '@constants';
+import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../../constants';
 
 // Components
-import { Button, TabIcon, Text, } from '@custom';
+import { Button, TabIcon, Text, } from '../custom';
+import { WebView } from '../general';
 import { Exercises, PostSessionSurvey, ReadinessSurvey } from './pages';
 
 /* Styles ==================================================================== */
@@ -178,6 +179,7 @@ class MyPlan extends Component {
     }
 
     _handleReadinessSurveySubmit = () => {
+        this.setState({ loading: true });
         let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
         newDailyReadiness.user_id = this.props.user.id;
         newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
@@ -190,14 +192,19 @@ class MyPlan extends Component {
             .then(response => {
                 this.setState({
                     isReadinessSurveyModalOpen: false,
+                    loading:                    false,
                 });
             })
             .catch(error => {
                 console.log('error',error);
+                this.setState({
+                    loading: false,
+                });
             });
     }
 
     _handlePostSessionSurveySubmit = () => {
+        this.setState({ loading: true });
         let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
         newPostSessionSurvey.RPE = newPostSessionSurvey.RPE + 1;
         newPostSessionSurvey.soreness.map(bodyPart => {
@@ -214,10 +221,14 @@ class MyPlan extends Component {
         this.props.postSessionSurvey(postSession)
             .then(response => {
                 this.setState({
+                    loading:                      false,
                     isPostSessionSurveyModalOpen: false,
                 });
             })
             .catch(error => {
+                this.setState({
+                    loading: false,
+                });
                 console.log('error',error);
             });
     }
@@ -290,16 +301,17 @@ class MyPlan extends Component {
     }
 
     _togglePostSessionSurveyModal = () => {
-        if(!this.state.isPostSessionSurveyModalOpen) {
+        this.setState({ loading: true });
+        if (!this.state.isPostSessionSurveyModalOpen) {
             this.props.getSoreBodyParts()
                 .then(soreBodyParts => {
                     // console.log('soreBodyParts',soreBodyParts);
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
                     newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
                     this.setState({
-                        isCompletedAMPMRecoveryModalOpen: false,
-                        isPostSessionSurveyModalOpen:     true,
-                        postSession:                      newDailyReadiness,
+                        isPostSessionSurveyModalOpen: true,
+                        loading:                      false,
+                        postSession:                  newDailyReadiness,
                     });
                 })
                 .catch(err => {
@@ -307,15 +319,15 @@ class MyPlan extends Component {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
                     newDailyReadiness.soreness = [];
                     this.setState({
-                        isCompletedAMPMRecoveryModalOpen: false,
-                        isPostSessionSurveyModalOpen:     true,
-                        postSession:                      newDailyReadiness,
+                        isPostSessionSurveyModalOpen: true,
+                        loading:                      false,
+                        postSession:                  newDailyReadiness,
                     });
                 });
         } else {
             this.setState({
-                isCompletedAMPMRecoveryModalOpen: false,
-                isPostSessionSurveyModalOpen:     false
+                isPostSessionSurveyModalOpen: false,
+                loading:                      false,
             });
         }
     }
@@ -362,8 +374,8 @@ class MyPlan extends Component {
 
     render = () => {
         let hourOfDay = moment().get('hour');
-        let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && this.props.plan.dailyPlan[0].daily_readiness_survey_completed ? true : false;
         let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
+        let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
         let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.recovery_pm && hourOfDay >= 12 ?
             dailyPlanObj.recovery_pm
             : isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.recovery_am && hourOfDay < 12 ?
@@ -386,12 +398,28 @@ class MyPlan extends Component {
                 <View style={[styles.background]}>
                     <LinearGradient
                         colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
-                        style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
+                        style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal, { paddingBottom: 0 }]}
                     >
-                        <Image
-                            source={require('@images/coach-avatar.png')}
-                            style={{resizeMode: 'contain', width: 40, height: 40}}
-                        />
+                        <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'space-between',}}>
+                            <View style={{justifyContent: 'center', flex: 1,}}></View>
+                            <View style={{alignItems: 'center', justifyContent: 'center', flex: 8,}}>
+                                <Image
+                                    source={require('../../../assets/images/standard/coach-avatar.png')}
+                                    style={{resizeMode: 'contain', width: 40, height: 40}}
+                                />
+                            </View>
+                            <View style={{justifyContent: 'center', flex: 1,}}>
+                                <TabIcon
+                                    containerStyle={[{alignSelf: 'flex-end'}]}
+                                    icon={'settings'}
+                                    iconStyle={[{color: AppColors.white}]}
+                                    onPress={() => Actions.settings()}
+                                    reverse={false}
+                                    size={34}
+                                    type={'material-community'}
+                                />
+                            </View>
+                        </View>
                         { !isDailyReadinessSurveyCompleted ?
                             <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, AppStyles.textCenterAligned, {color: AppColors.white}]}>{`GOOD ${partOfDay}, ${this.props.user.personal_data.first_name.toUpperCase()}!`}</Text>
                             :
@@ -403,10 +431,10 @@ class MyPlan extends Component {
                                         <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Or click the plus sign below to log a practice & update your recovery!'}</Text>
                                     </View>
                                     :
-                                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white}]}>{'Click the plus sign below to log a practice & update your recovery!'}</Text>
+                                    <Text style={[AppStyles.paddingVerticalSml, AppStyles.textCenterAligned, {color: AppColors.white, paddingBottom: 0}]}>{'Click the plus sign below to log a practice & update your recovery!'}</Text>
                                 }
                                 <TabIcon
-                                    containerStyle={[{alignSelf: 'flex-end'}]}
+                                    containerStyle={[{alignSelf: 'flex-end'}, AppStyles.padding]}
                                     icon={'plus-circle-outline'}
                                     iconStyle={[{color: AppColors.white}]}
                                     onPress={this._togglePostSessionSurveyModal}
@@ -450,116 +478,165 @@ class MyPlan extends Component {
                             toggleSelectedExercise={this._toggleSelectedExercise}
                         />
                     }
+                    { this.state.loading ?
+                        <ActivityIndicator
+                            color={AppColors.primary.yellow.hundredPercent}
+                            size={'large'}
+                            style={[AppStyles.activityIndicator]}
+                        /> : null
+                    }
                 </View>
-                <Modal
-                    backdropPressToClose={false}
-                    coverScreen={true}
-                    isOpen={this.state.isReadinessSurveyModalOpen}
-                    swipeToClose={false}
-                >
-                    <ReadinessSurvey
-                        dailyReadiness={this.state.dailyReadiness}
-                        handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
-                        handleFormChange={this._handleDailyReadinessFormChange}
-                        handleFormSubmit={this._handleReadinessSurveySubmit}
-                        soreBodyParts={this.props.plan.soreBodyParts}
-                        user={this.props.user}
-                    />
-                </Modal>
-                <Modal
-                    backdropPressToClose={false}
-                    coverScreen={true}
-                    isOpen={this.state.isPostSessionSurveyModalOpen}
-                    swipeToClose={false}
-                >
-                    <PostSessionSurvey
-                        handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
-                        handleFormChange={this._handlePostSessionFormChange}
-                        handleFormSubmit={this._handlePostSessionSurveySubmit}
-                        handleTogglePostSessionSurvey={this._togglePostSessionSurvey}
-                        postSession={this.state.postSession}
-                        soreBodyParts={this.props.plan.soreBodyParts}
-                    />
-                </Modal>
-                <Modal
-                    backdropPressToClose={false}
-                    coverScreen={true}
-                    isOpen={this.state.isCompletedAMPMRecoveryModalOpen}
-                    swipeToClose={false}
-                >
-                    <LinearGradient
-                        colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
-                        style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal, {flex: 1}]}
-                    >
-                        <Text style={[AppStyles. paddingVertical, AppStyles.h1, AppStyles.textCenterAligned, {color: AppColors.white, fontWeight: 'bold'}]}>{`You've completed your ${timeOfDay} Recovery!`}</Text>
-                        <Text style={[AppStyles. paddingVertical, AppStyles.h3, AppStyles.textCenterAligned, {color: AppColors.white}]}>{completedAMPMRecoverMessage}</Text>
-                        <Button
-                            backgroundColor={AppColors.primary.yellow.hundredPercent}
-                            buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
-                            containerViewStyle={{marginVertical: AppSizes.paddingMed}}
-                            onPress={this._togglePostSessionSurveyModal}
-                            textColor={AppColors.white}
-                            title={'Log a session to customize recovery'}
-                        />
-                        <Button
-                            backgroundColor={AppColors.white}
-                            buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
-                            containerViewStyle={{marginVertical: AppSizes.paddingMed}}
-                            onPress={this._toggleCompletedAMPMRecoveryModal}
-                            textColor={AppColors.primary.yellow.hundredPercent}
-                            title={`Do ${timeOfDay} Recovery again`}
-                        />
-                    </LinearGradient>
-                </Modal>
-                <Modal
-                    backdropOpacity={0.75}
-                    backdropPressToClose={true}
-                    coverScreen={false}
-                    isOpen={this.state.isSelectedExerciseModalOpen}
-                    onClosed={() => this._toggleSelectedExercise(false, false)}
-                    style={[AppStyles.containerCentered, {
-                        height:  AppSizes.screen.heightTwoThirds,
-                        padding: AppSizes.padding,
-                        width:   AppSizes.screen.width * 0.9,
-                    }]}
-                    swipeToClose={true}
-                >
-                    { this.state.selectedExercise.library_id ?
-                        <View>
-                            { MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId ?
-                                <YouTube
-                                    apiKey={'AIzaSyATavF4OIsJBDFx4bi3bBmwlArbStH3chs'}
-                                    fullscreen={false}
-                                    loop={false}
-                                    onError={e => console.log('youtube error', e)}
-                                    play={false}
-                                    showFullscreenButton={true}
-                                    style={{height: 300, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding * 2)}}
-                                    videoId={MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId}
+                {
+                    this.state.isReadinessSurveyModalOpen
+                        ?
+                        <Modal
+                            backdropPressToClose={false}
+                            coverScreen={true}
+                            isOpen={this.state.isReadinessSurveyModalOpen}
+                            swipeToClose={false}
+                        >
+                            <ReadinessSurvey
+                                dailyReadiness={this.state.dailyReadiness}
+                                handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+                                handleFormChange={this._handleDailyReadinessFormChange}
+                                handleFormSubmit={this._handleReadinessSurveySubmit}
+                                soreBodyParts={this.props.plan.soreBodyParts}
+                                user={this.props.user}
+                            />
+                            { this.state.loading ?
+                                <ActivityIndicator
+                                    color={AppColors.primary.yellow.hundredPercent}
+                                    size={'large'}
+                                    style={[AppStyles.activityIndicator]}
+                                /> : null
+                            }
+                        </Modal>
+                        :
+                        null
+                }
+                {
+                    this.state.isPostSessionSurveyModalOpen
+                        ?
+                        <Modal
+                            backdropPressToClose={false}
+                            coverScreen={true}
+                            isOpen={this.state.isPostSessionSurveyModalOpen}
+                            swipeToClose={false}
+                        >
+                            <PostSessionSurvey
+                                handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+                                handleFormChange={this._handlePostSessionFormChange}
+                                handleFormSubmit={this._handlePostSessionSurveySubmit}
+                                handleTogglePostSessionSurvey={this._togglePostSessionSurvey}
+                                postSession={this.state.postSession}
+                                soreBodyParts={this.props.plan.soreBodyParts}
+                            />
+                            { this.state.loading ?
+                                <ActivityIndicator
+                                    color={AppColors.primary.yellow.hundredPercent}
+                                    size={'large'}
+                                    style={[AppStyles.activityIndicator]}
+                                /> : null
+                            }
+                        </Modal>
+                        :
+                        null
+                }
+                {
+                    this.state.isCompletedAMPMRecoveryModalOpen
+                        ?
+                        <Modal
+                            backdropPressToClose={false}
+                            coverScreen={true}
+                            isOpen={this.state.isCompletedAMPMRecoveryModalOpen}
+                            swipeToClose={false}
+                        >
+                            <LinearGradient
+                                colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
+                                style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal, {flex: 1}]}
+                            >
+                                <Text style={[AppStyles. paddingVertical, AppStyles.h1, AppStyles.textCenterAligned, {color: AppColors.white, fontWeight: 'bold'}]}>{`You've completed your ${timeOfDay} Recovery!`}</Text>
+                                <Text style={[AppStyles. paddingVertical, AppStyles.h3, AppStyles.textCenterAligned, {color: AppColors.white}]}>{completedAMPMRecoverMessage}</Text>
+                                <Button
+                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                    buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
+                                    containerViewStyle={{marginVertical: AppSizes.paddingMed}}
+                                    onPress={() => Promise.resolve(this._toggleCompletedAMPMRecoveryModal()).then(() => this._togglePostSessionSurveyModal())}
+                                    textColor={AppColors.white}
+                                    title={'Log a session to customize recovery'}
                                 />
+                                <Button
+                                    backgroundColor={AppColors.white}
+                                    buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal]}
+                                    containerViewStyle={{marginVertical: AppSizes.paddingMed}}
+                                    onPress={this._toggleCompletedAMPMRecoveryModal}
+                                    textColor={AppColors.primary.yellow.hundredPercent}
+                                    title={`Do ${timeOfDay} Recovery again`}
+                                />
+                            </LinearGradient>
+                            { this.state.loading ?
+                                <ActivityIndicator
+                                    color={AppColors.primary.yellow.hundredPercent}
+                                    size={'large'}
+                                    style={[AppStyles.activityIndicator]}
+                                /> : null
+                            }
+                        </Modal>
+                        :
+                        null
+                }
+                {
+                    this.state.isSelectedExerciseModalOpen
+                        ?
+                        <Modal
+                            backdropOpacity={0.75}
+                            backdropPressToClose={true}
+                            coverScreen={false}
+                            isOpen={this.state.isSelectedExerciseModalOpen}
+                            onClosed={() => this._toggleSelectedExercise(false, false)}
+                            style={[AppStyles.containerCentered, {
+                                height:  AppSizes.screen.heightTwoThirds,
+                                padding: AppSizes.padding,
+                                width:   AppSizes.screen.width * 0.9,
+                            }]}
+                            swipeToClose={true}
+                        >
+                            { this.state.selectedExercise.library_id ?
+                                <View style={{ flex: 1 }}>
+                                    {/* AppState.currentState check is so the Google app store does not reject it for background running */}
+                                    { AppState.currentState === 'active' && MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId ?
+                                        <WebView
+                                            allowsInlineMediaPlayback={true}
+                                            onError={e => console.log('youtube error', e)}
+                                            style={{width: (AppSizes.screen.width * 0.9) - (AppSizes.padding)}}
+                                            url={`https://www.youtube.com/embed/${MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId}?rel=0&autoplay=0&showinfo=0&playsinline=1`}
+                                        />
+                                        :
+                                        null
+                                    }
+                                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, AppStyles.h2]}>
+                                        {MyPlanConstants.cleanExercise(this.state.selectedExercise).displayName}
+                                    </Text>
+                                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, {color: AppColors.secondary.blue.hundredPercent}]}>
+                                        {MyPlanConstants.cleanExercise(this.state.selectedExercise).dosage}
+                                    </Text>
+                                    <TabIcon
+                                        containerStyle={[{alignSelf: 'center'}]}
+                                        icon={'check'}
+                                        iconStyle={[{color: AppColors.primary.yellow.hundredPercent}]}
+                                        onPress={() => this._handleCompleteExercise(this.state.selectedExercise.library_id)}
+                                        reverse={false}
+                                        size={34}
+                                        type={'material-community'}
+                                    />
+                                </View>
                                 :
                                 null
                             }
-                            <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, AppStyles.h2]}>
-                                {MyPlanConstants.cleanExercise(this.state.selectedExercise).displayName}
-                            </Text>
-                            <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, {color: AppColors.secondary.blue.hundredPercent}]}>
-                                {MyPlanConstants.cleanExercise(this.state.selectedExercise).dosage}
-                            </Text>
-                            <TabIcon
-                                containerStyle={[{alignSelf: 'center'}]}
-                                icon={'check'}
-                                iconStyle={[{color: AppColors.primary.yellow.hundredPercent}]}
-                                onPress={() => this._handleCompleteExercise(this.state.selectedExercise.library_id)}
-                                reverse={false}
-                                size={34}
-                                type={'material-community'}
-                            />
-                        </View>
+                        </Modal>
                         :
                         null
-                    }
-                </Modal>
+                }
             </View>
         );
     }

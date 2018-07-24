@@ -1,8 +1,8 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:21:33 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:21:33
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-16 18:41:01
+ * @Last Modified time: 2018-07-20 18:11:31
  */
 
 /**
@@ -10,14 +10,16 @@
  */
 import Fabric from 'react-native-fabric';
 import BleManager from 'react-native-ble-manager';
-import { Actions, AppConfig, BLEConfig } from '@constants';
-import { AppAPI } from '@lib';
+import { Actions, AppConfig, BLEConfig } from '../constants';
+import { AppAPI, AppUtil } from '../lib';
+import { store } from '../store';
+
+// import third-party libraries
 
 const { Answers } = Fabric;
 
 const commands = BLEConfig.commands;
 const state = BLEConfig.state;
-
 
 const read = (id) => {
     return BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID)
@@ -180,27 +182,128 @@ const stopConnect = () => {
 };
 
 const connectToAccessory = (data) => {
+    const addToListArray = [commands.ADD_TO_TRUSTED_LIST, convertHex('0x00')];
+    const getSetupModeArray = [commands.IS_SINGLE_SENSOR_IN_SETUP_MODE, convertHex('0x00')];
     return dispatch => BleManager.disconnect(data.id)
-        .catch(err => {
-            console.log(err);
-            return BleManager.disconnect(data.id);
-        })
+        .catch(err => BleManager.disconnect(data.id))
         .then(() => BleManager.connect(data.id))
-        .catch(err => {
-            console.log(err);
-            return BleManager.connect(data.id);
-        })
+        .catch(err => BleManager.connect(data.id))
         .then(() => BleManager.retrieveServices(data.id))
-        .catch(err => {
-            console.log(err);
-            return BleManager.retrieveServices(data.id);
-        })
-        .then(services => {
-            return dispatch({
+        .catch(err => BleManager.retrieveServices(data.id))
+        .then(peripheralInfo => write(peripheralInfo.id, addToListArray)) // add to trusted list - 0x72
+        .then(() => write(data.id, getSetupModeArray)) // get setup mode - 0x74
+        .then(response => Promise.resolve(
+            dispatch({
                 type: Actions.CONNECT_TO_ACCESSORY,
                 data
+            })
+        ))
+        .catch(err => Promise.reject(err));
+};
+
+const getUserSensorData = (userId) => {
+    return dispatch => new Promise((resolve, reject) => {
+        return AppAPI.sensor_mobile_pair.get({ userId })
+            .then(result => {
+                let cleanedResult = {};
+                cleanedResult.sensor_uid = result.sensor_uid;
+                cleanedResult.mobile_uid = result.mobile_uid;
+                dispatch({
+                    type: Actions.CONNECT_TO_ACCESSORY,
+                    data: cleanedResult,
+                });
+                return resolve(result);
+            })
+            .catch(err => {
+                dispatch({
+                    type: Actions.CONNECT_TO_ACCESSORY,
+                });
+                return reject(err);
             });
+    });
+};
+
+const postUserSensorData = () => {
+    return dispatch => new Promise((resolve, reject) => {
+        let currentState = store.getState();
+        // get user id
+        let userId = currentState.user.id;
+        // mobile uuid
+        const uniqueId = AppUtil.getDeviceUUID();
+        // build object to submit
+        let dataObj = {};
+        dataObj.sensor_uid = currentState.ble.accessoryData.id;
+        dataObj.mobile_uid = uniqueId;
+        return AppAPI.sensor_mobile_pair.post({ userId }, dataObj)
+            .then(result => {
+                let cleanedResult = {};
+                cleanedResult.sensor_uid = result.sensor_uid;
+                cleanedResult.mobile_uid = result.mobile_uid;
+                dispatch({
+                    type: Actions.CONNECT_TO_ACCESSORY,
+                    data: cleanedResult,
+                });
+                return resolve(result);
+            })
+            .catch(err => {
+                dispatch({
+                    type: Actions.CONNECT_TO_ACCESSORY,
+                });
+                return reject(err);
+            });
+    });
+};
+
+const deleteUserSensorData = () => {
+    return dispatch => new Promise((resolve, reject) => {
+        let currentState = store.getState();
+        // get user id
+        let userId = currentState.user.id;
+        return AppAPI.sensor_mobile_pair.delete({ userId })
+            .then(result => {
+                dispatch({
+                    type: Actions.BLUETOOTH_DISCONNECT
+                });
+                return resolve(result);
+            })
+            .catch(err => {
+                dispatch({
+                    type: Actions.BLUETOOTH_DISCONNECT
+                });
+                return reject(err);
+            });
+    });
+};
+
+const disconnectFromSingleSensor = (sensor_id) => {
+    let dataArray = [commands.WIPE_SINGLE_SENSOR_DATA, convertHex('0x00')];
+    let currentState = store.getState();
+    let sensorId = sensor_id || currentState.ble.accessoryData.sensor_uid;
+    return dispatch => BleManager.start({ showAlert: true })
+        .then(() => BleManager.connect(sensorId))
+        .then(() => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => {
+            console.log('peripheralInfo',peripheralInfo);
+            return write(peripheralInfo.id, dataArray); // wipe single sensor data - 0x7B
         })
+        .then(() => BleManager.disconnect(sensorId))
+        .then(() => Promise.resolve())
+        .catch(err => Promise.reject(err));
+};
+
+const getSingleSensorSavedPractices = (sensor_id) => {
+    let currentState = store.getState();
+    let sensorId = sensor_id || currentState.ble.accessoryData.sensor_uid;
+    const dataArray = [commands.GET_SINGLE_SENSOR_LIST, convertHex('0x01'), convertHex('0x00')];
+    return dispatch => BleManager.start({ showAlert: true })
+        .then(() => BleManager.connect(sensorId))
+        .then(() => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => {
+            console.log('peripheralInfo',peripheralInfo);
+            return write(peripheralInfo.id, dataArray); // get single sensor practices - 0x75
+        })
+        .then(() => BleManager.disconnect(sensorId))
+        .then(response => Promise.resolve(response))
         .catch(err => Promise.reject(err));
 };
 
@@ -489,7 +592,9 @@ const handleDisconnect = (id) => {
 
 const setKitTime = (id) => {
     let dataArray = [commands.SET_TIME, convertHex('0x04')];
-    return dispatch => write(id, dataArray.concat(convertToUnsigned32BitIntByteArray(Math.round((new Date()).getTime() / 1000)))) // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
+    dataArray = dataArray.concat(convertToUnsigned32BitIntByteArray(Math.round((new Date()).getTime() / 1000))); // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
+    console.log(id, dataArray);
+    return dispatch => write(id, dataArray)
         .then(result => {
             return dispatch({
                 type: Actions.SET_KIT_TIME
@@ -629,41 +734,46 @@ const getAccessoryKey = (id, user) => {
 }
 
 export default {
-    assignType,
-    checkState,
-    changeState,
-    enableBluetooth,
-    startBluetooth,
-    startScan,
-    stopScan,
-    deviceFound,
-    startConnect,
-    stopConnect,
-    connectToAccessory,
-    loginToAccessory,
-    setWiFiSSID,
-    setWiFiPassword,
-    connectWiFi,
-    getOwnerFlag,
-    getKitName,
-    resetAccessory,
-    systemReset,
-    readSSID,
-    scanWiFi,
-    assignKitName,
-    setOwnerFlag,
     assignKitIndividual,
-    assignKitTeam,
+    assignKitName,
     assignKitOrganization,
+    assignKitTeam,
+    assignType,
+    changeState,
+    checkState,
+    connectToAccessory,
+    connectWiFi,
+    deleteUserSensorData,
+    deviceFound,
     disconnect,
-    handleDisconnect,
-    setKitTime,
-    setKitState,
-    storeParams,
+    disconnectFromSingleSensor,
+    enableBluetooth,
+    getAccessoryKey,
+    getKitName,
+    getOwnerFlag,
+    getSingleSensorSavedPractices,
+    getUserSensorData,
     getWifiMacAddress,
-    setIdentity,
+    handleDisconnect,
+    loginToAccessory,
+    postUserSensorData,
+    readSSID,
+    resetAccessory,
+    scanWiFi,
     setAnonymousIdentity,
     setEAPType,
     setGyroCalibration,
-    getAccessoryKey,
+    setIdentity,
+    setKitState,
+    setKitTime,
+    setOwnerFlag,
+    setWiFiPassword,
+    setWiFiSSID,
+    startBluetooth,
+    startConnect,
+    startScan,
+    stopConnect,
+    stopScan,
+    storeParams,
+    systemReset,
 };

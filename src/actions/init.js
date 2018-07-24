@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:20:59
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-18 17:09:23
+ * @Last Modified time: 2018-07-20 18:11:43
  */
 
 /**
@@ -10,16 +10,14 @@
  */
 
 import jwtDecode from 'jwt-decode';
-import { Actions, ErrorMessages } from '@constants';
-import { AppAPI } from '@lib';
-import { store } from '@store';
+import { Actions, ErrorMessages } from '../constants';
+import { AppAPI, AppUtil } from '../lib';
+import { store } from '../store';
 
 // Components
 import { Platform } from 'react-native';
 
 // import third-party libraries
-import DeviceInfo from 'react-native-device-info';
-import uuidByString from 'uuid-by-string';
 
 /**
   * Authorize User
@@ -58,14 +56,7 @@ const authorizeUser = (authorization, user, userCreds) => {
   */
 const registerDevice = () => {
     return dispatch => new Promise((resolve, reject) => {
-        // register the device
-        let uniqueId = DeviceInfo.getUniqueID();
-        let uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-        if(!uuidRegex.test(uniqueId)) {
-            // not a uuid, lets unparse it
-            uniqueId = uuidByString(uniqueId);
-        }
-        uniqueId = uniqueId.toLowerCase();
+        let uniqueId = AppUtil.getDeviceUUID();
         let device_type = Platform.OS;
         let currentState = store.getState();
         let push_notifications = currentState.init.token ? {

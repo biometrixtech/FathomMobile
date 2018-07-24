@@ -3,13 +3,10 @@ package com.fathom;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.inprogress.reactnativeyoutube.ReactNativeYouTube;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
-// import com.robinpowered.react.Intercom.IntercomPackage;
-// import io.intercom.android.sdk.Intercom;
 import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
 import com.smixx.fabric.FabricPackage;
 import com.microsoft.codepush.react.CodePush;
@@ -41,12 +38,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new ReactNativeYouTube(),
           new ReactNativePushNotificationPackage(),
           new LinearGradientPackage(),
           new SplashScreenReactPackage(),
           new RNDeviceInfo(),
-          // new IntercomPackage(),
           new LocationServicesDialogBoxPackage(),
           new FabricPackage(),
           new CodePush(BuildConfig.CODEPUSH_KEY, getApplicationContext(), BuildConfig.DEBUG),
@@ -69,7 +64,6 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
-    // Intercom.initialize(this, "android_sdk-3bf3c98054638477d0d14d764c7c55f9893a52a1", "oxawi3kv");
     SoLoader.init(this, /* native exopackage */ false);
   }
 }

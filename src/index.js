@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-04-30 13:21:21
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-18 19:29:33
+ * @Last Modified time: 2018-07-20 18:06:59
  */
 
 import React, { Component } from 'react';
@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import { Router, Stack } from 'react-native-router-flux';
 import { PersistGate } from 'redux-persist/es/integration/react';
-import { Actions } from '@constants';
+import { Actions } from './constants';
 import { Platform, PushNotificationIOS } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 

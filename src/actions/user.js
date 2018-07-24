@@ -9,8 +9,8 @@
  * User Actions
  */
 
-import { Actions } from '@constants';
-import { AppAPI, AppUtil } from '@lib';
+import { Actions } from '../constants';
+import { AppAPI, AppUtil } from '../lib';
 
 /**
   * Get My User Data

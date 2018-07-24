@@ -14,8 +14,8 @@ import PropTypes from 'prop-types';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, UserAccount as UserAccountConstants } from '@constants';
-import { Button, FormInput, FormLabel, Text } from '@custom';
+import { AppColors, AppStyles, UserAccount as UserAccountConstants } from '../../../constants';
+import { Button, FormInput, FormLabel, Text } from '../../custom';
 
 // import third-party libraries
 import DatePicker from 'react-native-datepicker';

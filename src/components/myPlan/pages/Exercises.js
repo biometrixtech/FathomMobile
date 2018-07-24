@@ -17,8 +17,8 @@ import PropTypes from 'prop-types';
 import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, } from '@constants';
-import { Text } from '@custom';
+import { AppColors, AppStyles, } from '../../../constants';
+import { Text } from '../../custom';
 
 // Components
 import { ExerciseItem } from './';

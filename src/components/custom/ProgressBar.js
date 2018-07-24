@@ -2,7 +2,7 @@
  * @Author: Mazen Chami
  * @Date: 2018-06-29 11:28:39
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-16 18:50:54
+ * @Last Modified time: 2018-07-20 18:25:47
  */
 
 /**
@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes } from '@constants';
+import { AppColors, AppSizes } from '../../constants';
 
 /* Component ==================================================================== */
 const ProgressBar = ({ currentStep, totalSteps }) => (

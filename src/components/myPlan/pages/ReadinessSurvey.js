@@ -16,8 +16,8 @@ import PropTypes from 'prop-types';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '@constants';
-import { FathomSlider, Text } from '@custom';
+import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
+import { FathomSlider, Text } from '../../custom';
 
 // Components
 import { AreasOfSoreness, SoreBodyPart } from './';
@@ -52,7 +52,7 @@ const ReadinessSurvey = ({
                         {'1'}
                     </Text>
                     <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
-                        {'How ready do you feel to attack the day?'}
+                        {'How mentally ready do you feel for today?'}
                     </Text>
                     <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.secondary.blue.hundredPercent}]}>
                         {`${dailyReadiness.readiness + 1} - ${MyPlanConstants.overallReadiness[dailyReadiness.readiness].toUpperCase()}`}
@@ -70,7 +70,7 @@ const ReadinessSurvey = ({
                         {'2'}
                     </Text>
                     <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
-                        {'How well did you sleep last nights?'}
+                        {'How well did you sleep last night?'}
                     </Text>
                     <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.secondary.blue.hundredPercent}]}>
                         {`${dailyReadiness.sleep_quality + 1} - ${MyPlanConstants.sleepQuality[dailyReadiness.sleep_quality].toUpperCase()}`}

@@ -21,6 +21,12 @@ if test -t 1; then
     fi
 fi
 
+ME=`whoami`
+CODEPUSH="vir/"
+if [ "$ME" == "virdesai" ]; then
+    CODEPUSH=""
+fi
+
 # install_java() {
 #     current_location=`pwd`
 #     cd ~/Downloads
@@ -194,6 +200,10 @@ initialize() {
 
 start() {
     watchman watch-del-all
+    rm -rf $TMPDIR/react-*
+    rm -rf ./android/app/build/intermediates
+    rm -rf ./android/app/src/main/res/drawable-*
+    rm ./android/app/src/main/assets/index.android.bundle
     lsof -i tcp:8081 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
     npm run start -- --reset-cache
 }
@@ -248,6 +258,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
+                yarn bundle-android
                 cd android
                 ./gradlew clean assembleRelease
                 cd ..
@@ -262,6 +273,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
+                yarn bundle-android
                 cd android
                 ./gradlew clean assembleReleaseStaging
                 cd ..
@@ -345,14 +357,14 @@ codepushPromote() {
     echo
     case "$REPLY" in
         1)
-            code-push promote vir/FathomAI-Android Staging Production -t '*'
+            code-push promote ${CODEPUSH}FathomAI-Android Staging Production -t '*'
             ;;
         2)
-            code-push promote vir/FathomAI-iOS Staging Production -t '*'
+            code-push promote ${CODEPUSH}FathomAI-iOS Staging Production -t '*'
             ;;
         3)
-            code-push promote vir/FathomAI-Android Staging Production -t '*'
-            code-push promote vir/FathomAI-iOS Staging Production -t '*'
+            code-push promote ${CODEPUSH}FathomAI-Android Staging Production -t '*'
+            code-push promote ${CODEPUSH}FathomAI-iOS Staging Production -t '*'
             ;;
         *)
             echo "${red}Invalid selection${normal}"

@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:28:39
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-16 18:49:44
+ * @Last Modified time: 2018-07-20 18:24:21
  */
 
 /**
@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import { Button } from 'react-native-elements';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes } from '@constants';
+import { AppColors, AppFonts, AppSizes } from '../../constants';
 
 /* Component ==================================================================== */
 class CustomButton extends Component {
@@ -29,6 +29,7 @@ class CustomButton extends Component {
         icon:            PropTypes.shape({
             name: PropTypes.string,
         }),
+        raised: PropTypes.bool,
     }
 
     static defaultProps = {
@@ -37,6 +38,7 @@ class CustomButton extends Component {
         outlined:        false,
         icon:            {},
         backgroundColor: null,
+        raised:          true,
     }
 
     buttonProps = () => {
@@ -50,7 +52,7 @@ class CustomButton extends Component {
             fontSize:           AppFonts.base.size,
             borderRadius:       AppSizes.borderRadius,
             containerViewStyle: { borderRadius: AppSizes.borderRadius },
-            raised:             true,
+            raised:             this.props.raised,
             buttonStyle:        {
                 padding:     AppFonts.scaleFont(12),
                 marginLeft:  0,

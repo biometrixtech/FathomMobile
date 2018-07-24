@@ -24,8 +24,8 @@ import {
     AppSizes,
     AppStyles,
     UserAccount as UserAccountConstants,
-} from '@constants';
-import { FormInput, FormLabel, RadioButton, Text } from '@custom';
+} from '../../../constants';
+import { FormInput, FormLabel, RadioButton, Text } from '../../custom';
 
 // import third-party libraries
 import DatePicker from 'react-native-datepicker';

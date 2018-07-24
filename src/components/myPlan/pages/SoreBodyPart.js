@@ -15,8 +15,8 @@ import PropTypes from 'prop-types';
 import { ScrollView, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '@constants';
-import { FathomSlider, SVGImage, Text } from '@custom';
+import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
+import { FathomSlider, SVGImage, Text } from '../../custom';
 
 // import third-party libraries
 import _ from 'lodash';

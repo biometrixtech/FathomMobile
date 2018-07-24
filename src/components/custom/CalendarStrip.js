@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { AppColors } from '@constants';
+import { AppColors } from '../../constants';
 
 // import third-party libraries
 import CalendarStrip from 'react-native-calendar-strip';

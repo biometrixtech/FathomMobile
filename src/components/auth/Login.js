@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:32:47
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-17 00:24:11
+ * @Last Modified time: 2018-07-20 18:23:22
  */
 
 /**
@@ -30,11 +30,11 @@ import Modal from 'react-native-modalbox';
 import SplashScreen from 'react-native-splash-screen';
 
 // Consts and Libs
-import { AppAPI } from '@lib/';
-import { APIConfig, AppColors, AppStyles, AppSizes } from '@constants';
+import { AppAPI } from '../../lib';
+import { APIConfig, AppColors, AppStyles, AppSizes } from '../../constants';
 
 // Components
-import { Spacer, Button, Card, Alerts, Text, ListItem } from '@custom';
+import { Spacer, Button, Card, Alerts, Text, ListItem } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -74,14 +74,15 @@ class Login extends Component {
     static componentName = 'Login';
 
     static propTypes = {
-        onFormSubmit:   PropTypes.func,
-        registerDevice: PropTypes.func.isRequired,
-        finalizeLogin:  PropTypes.func.isRequired,
-        authorizeUser:  PropTypes.func.isRequired,
-        setEnvironment: PropTypes.func,
-        environment:    PropTypes.string,
-        email:          PropTypes.string,
-        password:       PropTypes.string,
+        authorizeUser:     PropTypes.func.isRequired,
+        environment:       PropTypes.string,
+        email:             PropTypes.string,
+        finalizeLogin:     PropTypes.func.isRequired,
+        getUserSensorData: PropTypes.func.isRequired,
+        onFormSubmit:      PropTypes.func,
+        password:          PropTypes.string,
+        registerDevice:    PropTypes.func.isRequired,
+        setEnvironment:    PropTypes.func,
     }
 
     static defaultProps = {
@@ -205,6 +206,10 @@ class Login extends Component {
                     );
                 })
                     .then(response => {
+                        this.props.getUserSensorData(response.user.id);
+                        return Promise.resolve(response);
+                    })
+                    .then(response => {
                         console.log('response #2', response);
                         let { authorization, user } = response;
                         return (
@@ -236,7 +241,7 @@ class Login extends Component {
                     setps={'TTT'}
                     onCatch={() => this.setState({ isModalVisible: true })}
                 >
-                    <Image source={require('@images/fathom-white.png')} resizeMode={'contain'} style={styles.mainLogo} />
+                    <Image source={require('../../../assets/images/standard/fathom-white.png')} resizeMode={'contain'} style={styles.mainLogo} />
                 </Egg>
 
                 <Card dividerStyle={{ height: 0, width: 0 }} titleStyle={{ marginBottom: 0 }}>

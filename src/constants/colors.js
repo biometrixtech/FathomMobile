@@ -65,6 +65,10 @@ const brand = {
         blue: {
             gradientStart: '#05425e',
             gradientEnd:   '#0f6187',
+        },
+        light_blue: {
+            gradientStart: '#97b3c0',
+            gradientEnd:   '#FFFFFF',
         }
     }
 };
@@ -81,7 +85,7 @@ const sliders = {
 }
 
 const borders = {
-    border: brand.primary.grey.hundredPercent,
+    border: '#E3E3E3',
 };
 
 const tabbar = {

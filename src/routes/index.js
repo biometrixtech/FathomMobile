@@ -2,94 +2,110 @@
  * @Author: Vir Desai
  * @Date: 2018-04-30 13:21:35
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-16 18:26:42
+ * @Last Modified time: 2018-07-24 11:30:51
  */
 
 import React from 'react';
-import { Scene, Stack, Router } from 'react-native-router-flux';
 
-import LoginContainer from '@containers/auth/Login';
-import LoginComponent from '@components/auth/Login';
+// import third-party libraries
+import { Actions, Router, Scene, Stack } from 'react-native-router-flux';
 
-import SignUpContainer from '@containers/auth/SignUp';
-import SignUpComponent from '@components/auth/SignUp';
+// Consts, Libs, and Utils
+import { AppColors, AppSizes, AppStyles, } from '../constants';
+import { TabIcon, } from '../components/custom';
 
-import ForgotPasswordContainer from '@containers/auth/ForgotPassword';
-import ForgotPasswordComponent from '@components/auth/ForgotPassword';
+// import components
+import LoginContainer from '../containers/auth/Login';
+import LoginComponent from '../components/auth/Login';
 
-import StartContainer from '@containers/auth/Start';
-import StartComponent from '@components/auth/Start';
+import SignUpContainer from '../containers/auth/SignUp';
+import SignUpComponent from '../components/auth/SignUp';
 
-import SettingsContainer from '@containers/settings/Settings';
-import SettingsComponent from '@components/settings/Settings';
+import ForgotPasswordContainer from '../containers/auth/ForgotPassword';
+import ForgotPasswordComponent from '../components/auth/ForgotPassword';
 
-import KitManagementContainer from '@containers/kit/KitManagement';
-import KitManagementComponent from '@components/kit/KitManagement';
+import StartContainer from '../containers/auth/Start';
+import StartComponent from '../components/auth/Start';
 
-import KitOwnerContainer from '@containers/kit/KitOwner';
-import KitOwnerComponent from '@components/kit/KitOwner';
+import SettingsContainer from '../containers/settings/Settings';
+import SettingsComponent from '../components/settings/Settings';
 
-import KitAssignContainer from '@containers/kit/KitAssign';
-import KitAssignComponent from '@components/kit/KitAssign';
+import KitManagementContainer from '../containers/kit/KitManagement';
+import KitManagementComponent from '../components/kit/KitManagement';
 
-import BluetoothConnectContainer from '@containers/kit/BluetoothConnect';
-import BluetoothConnectComponent from '@components/kit/BluetoothConnect';
+import KitOwnerContainer from '../containers/kit/KitOwner';
+import KitOwnerComponent from '../components/kit/KitOwner';
 
-import MyPlanContainer from '@containers/myPlan/MyPlan';
-import MyPlanComponent from '@components/myPlan/MyPlan';
+import KitAssignContainer from '../containers/kit/KitAssign';
+import KitAssignComponent from '../components/kit/KitAssign';
+
+import BluetoothConnectContainer from '../containers/kit/BluetoothConnect';
+import BluetoothConnectComponent from '../components/kit/BluetoothConnect';
+
+import MyPlanContainer from '../containers/myPlan/MyPlan';
+import MyPlanComponent from '../components/myPlan/MyPlan';
 
 const Index = (
     <Router>
-        <Stack hideNavBar key='root'>
+        <Stack hideNavBar key='root' titleStyle={{ alignSelf: 'center' }}>
             <Scene
                 Layout={LoginComponent}
                 component={LoginContainer}
                 hideNavBar
                 key='login'
+                panHandlers={null}
             />
-            <Scene
+            {/*<Scene
                 Layout={SignUpComponent}
                 component={SignUpContainer}
                 hideNavBar
                 key='signUp'
-            />
+                panHandlers={null}
+            />*/}
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
                 hideNavBar
                 key='forgotPassword'
-            />
-            <Scene
-                Layout={SettingsComponent}
-                component={SettingsContainer}
-                hideNavBar
-                key='settings'
+                panHandlers={null}
             />
             <Scene
                 Layout={MyPlanComponent}
                 component={MyPlanContainer}
                 hideNavBar
                 key='myPlan'
+                panHandlers={null}
             />
-            <Stack>
+            <Scene
+                Layout={SettingsComponent}
+                component={SettingsContainer}
+                hideNavBar={false}
+                navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0}}
+                onLeft={() => Actions.pop()}
+                onRight={() => null}
+                key='settings'
+                panHandlers={null}
+                rightTitle=' '
+                title='SETTINGS'
+                titleStyle={{flex: 1, textAlign: 'center',}}
+            />
+            <Scene
+                Layout={BluetoothConnectComponent}
+                component={BluetoothConnectContainer}
+                hideNavBar
+                key='bluetoothConnect'
+                panHandlers={null}
+                // title='Bluetooth Connect'
+                // {...DefaultProps.navbarProps}
+            />
+            {/*<Stack>
                 <Scene
-                    Layout={SettingsComponent}
-                    component={SettingsContainer}
-                    hideNavBar
-                    key='settings'
-                />
-                <Scene
-                    key='kitManagement'
-                    title='Kit Management'
-                    component={KitManagementContainer}
                     Layout={KitManagementComponent}
-                    // {...DefaultProps.navbarProps}
-                />
-                <Scene
-                    key='bluetoothConnect'
-                    title='Bluetooth Connect'
-                    component={BluetoothConnectContainer}
-                    Layout={BluetoothConnectComponent}
+                    component={KitManagementContainer}
+                    hideNavBar
+                    key='kitManagement'
+                    panHandlers={null}
+                    // title='Kit Management'
                     // {...DefaultProps.navbarProps}
                 />
                 <Scene
@@ -98,6 +114,7 @@ const Index = (
                     component={KitOwnerContainer}
                     Layout={KitOwnerComponent}
                     // {...DefaultProps.navbarProps}
+                    panHandlers={null}
                 />
                 <Scene
                     key='kitAssign'
@@ -105,8 +122,9 @@ const Index = (
                     component={KitAssignContainer}
                     Layout={KitAssignComponent}
                     // {...DefaultProps.navbarProps}
+                    panHandlers={null}
                 />
-            </Stack>
+            </Stack>*/}
         </Stack>
     </Router>
 );

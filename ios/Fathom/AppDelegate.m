@@ -13,7 +13,6 @@
 #import <React/RCTLog.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-// #import "Intercom/intercom.h"
 #if RCT_DEV
 #import <React/RCTDevLoadingView.h>
 #endif
@@ -66,8 +65,6 @@
 //  launchScreenView.contentMode = UIViewContentModeScaleAspectFill;
 //  rootView.loadingView = launchScreenView;
 
-  // [Intercom setApiKey:@"ios_sdk-ebf51a128738d061651930aff903b341e18b99a2" forAppId:@"oxawi3kv"]
-  // [Intercom registerUnidentifiedUser]
   [RNSplashScreen show];
   return YES;
 }
