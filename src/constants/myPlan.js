@@ -34,23 +34,23 @@ const bodyPartMapping = [
 
 const overallReadiness = [
     'Not At All',
-    'Not ready',
-    'Mostly not read',
-    'Somewhat ready',
+    'Not Ready',
+    'Mostly Not Ready',
+    'Somewhat Ready',
     'Ready',
     'Totally Ready',
-    'Very ready',
+    'Very Ready',
     'Bringing my A-Game',
-    'Top of my game',
+    'Top of my Game',
     'Max Readiness',
 ];
 
 const sleepQuality = [
-    'None',
+    'I did\'t sleep',
     'Terribly- I’m a zombie',
-    'Poorly- Hard to staying awake',
-    'Not Well- trouble focusing',
-    'Decently',
+    'Poorly- feeling exhausted',
+    'Not Well- feeling tired',
+    'OK',
     'Enough to operate normally',
     'Good- feeling rested!',
     'Well- focused and energetic!',
@@ -60,8 +60,8 @@ const sleepQuality = [
 
 const muscleLevels = [
     '',
-    'A little tight/sore',
-    'Sore, can move ok',
+    'A little tight or sore',
+    'Sore, can move OK',
     'Limits movement',
     'Struggling to move',
     'Painful to move',
@@ -69,11 +69,11 @@ const muscleLevels = [
 
 const jointLevels = [
     '',
-    'discomfort ',
-    'dull ache',
-    'severe ache',
-    'sharp pain',
-    'inability to move',
+    'Some Discomfort ',
+    'A Dull Ache',
+    'Severe Ache',
+    'Sharp Pain',
+    'Unable to Move',
 ];
 
 const exerciseListOrder = [
@@ -104,12 +104,12 @@ const postSessionFeel = [
     'Resting, like nothing',
     'Very Easy, I could do that all day!',
     'Light, I could do that for a few hours!',
-    'Moderate, Broke a sweat, but feeling good!',
-    'Considerable, harder... but could hold a conversation.',
-    'Challenging, Breathing hard...not in my comfort zone anymore.',
-    'Hard,  That was straight-up uncomfortable.',
-    'Very Hard, Talking was not an option!',
-    'Extremely Hard, I could only hold that intensity for a minute more.',
+    'Moderate, but notable',
+    'Considerable, but could still hold a conversation',
+    'Hard, Breathing heavily',
+    'Challenging, could only speak a sentence at a time',
+    'Vigorous, borderline uncomfortable',
+    'Very Hard, could only say a word at a time',
     'Maximum, carry me off the field',
 ];
 
