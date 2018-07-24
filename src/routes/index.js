@@ -74,6 +74,7 @@ const Index = (
                 component={MyPlanContainer}
                 hideNavBar
                 key='myPlan'
+                panHandlers={null}
             />
             <Scene
                 Layout={SettingsComponent}
@@ -89,15 +90,6 @@ const Index = (
                 titleStyle={{flex: 1, textAlign: 'center',}}
             />
             <Scene
-                Layout={KitManagementComponent}
-                component={KitManagementContainer}
-                hideNavBar
-                key='kitManagement'
-                panHandlers={null}
-                // title='Kit Management'
-                // {...DefaultProps.navbarProps}
-            />
-            <Scene
                 Layout={BluetoothConnectComponent}
                 component={BluetoothConnectContainer}
                 hideNavBar
@@ -108,11 +100,21 @@ const Index = (
             />
             {/*<Stack>
                 <Scene
+                    Layout={KitManagementComponent}
+                    component={KitManagementContainer}
+                    hideNavBar
+                    key='kitManagement'
+                    panHandlers={null}
+                    // title='Kit Management'
+                    // {...DefaultProps.navbarProps}
+                />
+                <Scene
                     key='kitOwner'
                     title='Kit Owner'
                     component={KitOwnerContainer}
                     Layout={KitOwnerComponent}
                     // {...DefaultProps.navbarProps}
+                    panHandlers={null}
                 />
                 <Scene
                     key='kitAssign'
@@ -120,6 +122,7 @@ const Index = (
                     component={KitAssignContainer}
                     Layout={KitAssignComponent}
                     // {...DefaultProps.navbarProps}
+                    panHandlers={null}
                 />
             </Stack>*/}
         </Stack>
