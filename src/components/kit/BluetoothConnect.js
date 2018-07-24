@@ -33,10 +33,10 @@ import Modal from 'react-native-modalbox';
 import Toast, { DURATION } from 'react-native-easy-toast';
 
 // Consts and Libs
-import { Roles, BLEConfig, AppColors, AppStyles, AppSizes } from '@constants';
+import { Roles, BLEConfig, AppColors, AppStyles, AppSizes } from '../../constants';
 
 // Components
-import { Button, Coach, FormLabel, ListItem, Pages, Spacer, TabIcon, Text, } from '@custom';
+import { Button, Coach, FormLabel, ListItem, Pages, Spacer, TabIcon, Text, } from '../../custom';
 
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
@@ -300,7 +300,7 @@ class BluetoothConnectView extends Component {
                     <View style={[AppStyles.containerCentered, AppStyles.padding, {flex: 6,}]}>
                         <Image
                             resizeMode={'contain'}
-                            source={require('@images/kit-activation-1-sensor.png')}
+                            source={require('../../../assets/images/standard/kit-activation-1-sensor.png')}
                             style={{flex: 1}}
                         />
                         <FormLabel labelStyle={[AppStyles.h3, AppStyles.textCenterAligned, {fontWeight: 'bold'}]}>{accessoryDiscoverabilityInstruction}</FormLabel>

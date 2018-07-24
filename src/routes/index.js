@@ -11,8 +11,8 @@ import React from 'react';
 import { Actions, Router, Scene, Stack } from 'react-native-router-flux';
 
 // Consts, Libs, and Utils
-import { AppColors, AppSizes, AppStyles, } from '@constants';
-import { TabIcon, } from '@custom';
+import { AppColors, AppSizes, AppStyles, } from '../constants';
+import { TabIcon, } from '../components/custom';
 
 // import components
 import LoginContainer from '../containers/auth/Login';

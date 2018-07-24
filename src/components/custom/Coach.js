@@ -48,7 +48,7 @@ const Coach = ({ text }) => (
         <Image
             maintainAspectRatio={true}
             resizeMode={'contain'}
-            source={require('@images/coach-avatar.png')}
+            source={require('../../../assets/images/standard/coach-avatar.png')}
             style={[styles.imageStyle]}
         />
         <Text p style={[styles.coachText]}>{text}</Text>

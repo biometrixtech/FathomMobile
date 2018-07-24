@@ -22,7 +22,7 @@ import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
 
 // Consts, Libs, and Utils
-import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '@constants';
+import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../../constants';
 
 // Components
 import { Button, TabIcon, Text, } from '../custom';
@@ -404,7 +404,7 @@ class MyPlan extends Component {
                             <View style={{justifyContent: 'center', flex: 1,}}></View>
                             <View style={{alignItems: 'center', justifyContent: 'center', flex: 8,}}>
                                 <Image
-                                    source={require('@images/coach-avatar.png')}
+                                    source={require('../../../assets/images/standard/coach-avatar.png')}
                                     style={{resizeMode: 'contain', width: 40, height: 40}}
                                 />
                             </View>

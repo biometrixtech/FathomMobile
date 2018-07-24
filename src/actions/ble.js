@@ -10,9 +10,9 @@
  */
 import Fabric from 'react-native-fabric';
 import BleManager from 'react-native-ble-manager';
-import { Actions, AppConfig, BLEConfig } from '@constants';
-import { AppAPI, AppUtil } from '@lib';
-import { store } from '@store';
+import { Actions, AppConfig, BLEConfig } from '../constants';
+import { AppAPI, AppUtil } from '../lib';
+import { store } from '../store';
 
 // import third-party libraries
 

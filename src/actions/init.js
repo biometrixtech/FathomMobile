@@ -10,9 +10,9 @@
  */
 
 import jwtDecode from 'jwt-decode';
-import { Actions, ErrorMessages } from '@constants';
-import { AppAPI, AppUtil } from '@lib';
-import { store } from '@store';
+import { Actions, ErrorMessages } from '../constants';
+import { AppAPI, AppUtil } from '../lib';
+import { store } from '../store';
 
 // Components
 import { Platform } from 'react-native';
