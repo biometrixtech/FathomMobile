@@ -59,7 +59,7 @@ class Settings extends Component {
         if(uniqueId === this.props.accessoryData.mobile_uid) {
             Alert.alert(
                 'Warning!',
-                'Are you sure you want to UNPAIR your sensor? This action cannot be reverted.',
+                'Are you sure you want to UNPAIR your sensor? You will need to pair it with a mobile device before your next session.',
                 [
                     {
                         text:  'Cancel',

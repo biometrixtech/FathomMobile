@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-04-23 15:00:26 
+ * @Author: Vir Desai
+ * @Date: 2018-04-23 15:00:26
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-06-28 16:47:15
  */
@@ -17,32 +17,32 @@ const styles = StyleSheet.create({
             rotate: '180deg',
         }],
     },
-  
+
     container: {
         flex: 1,
     },
-  
+
     bottom: {
         position: 'absolute',
         right:    0,
         bottom:   0,
         left:     0,
     },
-  
+
     top: {
         position: 'absolute',
         top:      0,
         right:    0,
         left:     0,
     },
-  
+
     left: {
         position: 'absolute',
         top:      0,
         bottom:   0,
         left:     0,
     },
-  
+
     right: {
         position: 'absolute',
         top:      0,
