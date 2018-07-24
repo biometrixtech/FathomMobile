@@ -1,8 +1,8 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:16:44 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:16:44
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-30 13:03:45
+ * @Last Modified time: 2018-07-20 18:11:10
  */
 
 /**
@@ -13,8 +13,8 @@
 // Consts and Libs
 import Fabric from 'react-native-fabric';
 import JWT from './jwt';
-import { AppConfig, ErrorMessages, APIConfig } from '../constants/';
-import { store } from '../store/';
+import { AppConfig, ErrorMessages, APIConfig } from '../constants';
+import { store } from '../store';
 
 const { Answers } = Fabric;
 
@@ -227,27 +227,31 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
             .then(res => {
                 debug(res, `API Response #${requestNum} from ${thisUrl}`);
 
-                // Don't send plaintext password to Answers logs
-                if (endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
-                    let answerBody = Object.assign({}, req.body);
-                    delete answerBody.password;
-                    Answers.logLogin('Mobile App Login', true, {
-                        body:          JSON.stringify(answerBody),
-                        headers:       JSON.stringify(req.headers),
-                        method:        req.method,
-                        response:      JSON.stringify(res),
-                        requestNumber: requestNum,
-                        url:           thisUrl,
-                    });
-                } else {
-                    Answers.logCustom('API Response success', {
-                        body:          JSON.stringify(req.body),
-                        headers:       JSON.stringify(req.headers),
-                        method:        req.method,
-                        response:      JSON.stringify(res),
-                        requestNumber: requestNum,
-                        url:           thisUrl,
-                    });
+                try {
+                    // Don't send plaintext password to Answers logs
+                    if (endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
+                        let answerBody = Object.assign({}, body);
+                        delete answerBody.password;
+                        Answers.logLogin('Mobile App Login', true, {
+                            body:          JSON.stringify(answerBody),
+                            headers:       JSON.stringify(req.headers),
+                            method:        req.method,
+                            response:      JSON.stringify(res),
+                            requestNumber: requestNum,
+                            url:           thisUrl,
+                        });
+                    } else {
+                        Answers.logCustom('API Response success', {
+                            body:          JSON.stringify(body),
+                            headers:       JSON.stringify(req.headers),
+                            method:        req.method,
+                            response:      JSON.stringify(res),
+                            requestNumber: requestNum,
+                            url:           thisUrl,
+                        });
+                    }
+                } catch (error) {
+                    console.log(handleError(error));
                 }
                 return resolve(res);
             })
@@ -256,27 +260,31 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                 clearTimeout(apiTimedOut);
                 debug(err, thisUrl);
 
-                // Don't send plaintext password to Answers logs
-                if (endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
-                    let answerBody = Object.assign({}, req.body);
-                    delete answerBody.password;
-                    Answers.logLogin('Mobile App Login', false, {
-                        body:          JSON.stringify(answerBody),
-                        headers:       JSON.stringify(req.headers),
-                        method:        req.method,
-                        response:      JSON.stringify(err),
-                        requestNumber: requestNum,
-                        url:           thisUrl,
-                    });
-                } else {
-                    Answers.logCustom('API Response failed', {
-                        body:          JSON.stringify(req.body),
-                        headers:       JSON.stringify(req.headers),
-                        method:        req.method,
-                        response:      JSON.stringify(err),
-                        requestNumber: requestNum,
-                        url:           thisUrl,
-                    });
+                try {
+                    // Don't send plaintext password to Answers logs
+                    if (endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
+                        let answerBody = Object.assign({}, body);
+                        delete answerBody.password;
+                        Answers.logLogin('Mobile App Login', false, {
+                            body:          JSON.stringify(answerBody),
+                            headers:       JSON.stringify(req.headers),
+                            method:        req.method,
+                            response:      JSON.stringify(err),
+                            requestNumber: requestNum,
+                            url:           thisUrl,
+                        });
+                    } else {
+                        Answers.logCustom('API Response failed', {
+                            body:          JSON.stringify(req.body),
+                            headers:       JSON.stringify(req.headers),
+                            method:        req.method,
+                            response:      JSON.stringify(err),
+                            requestNumber: requestNum,
+                            url:           thisUrl,
+                        });
+                    }
+                } catch (error) {
+                    console.log(handleError(error));
                 }
                 return reject(err);
             });

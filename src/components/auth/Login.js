@@ -1,8 +1,8 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:32:47 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:32:47
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-29 01:20:06
+ * @Last Modified time: 2018-07-20 18:23:22
  */
 
 /**
@@ -27,13 +27,14 @@ import { Actions } from 'react-native-router-flux';
 import Egg from 'react-native-egg';
 import FormValidation from 'tcomb-form-native';
 import Modal from 'react-native-modalbox';
+import SplashScreen from 'react-native-splash-screen';
 
 // Consts and Libs
-import { AppAPI } from '../../lib/';
+import { AppAPI } from '../../lib';
 import { APIConfig, AppColors, AppStyles, AppSizes } from '../../constants';
 
 // Components
-import { Spacer, Button, Card, Alerts, Text, ListItem } from '../custom/';
+import { Spacer, Button, Card, Alerts, Text, ListItem } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -155,7 +156,11 @@ class Login extends Component {
                         Password: this.props.password,
                     },
                 });
-                this.login();
+                Promise.resolve(this.login())
+                    .then(() => SplashScreen.hide())
+                    .catch(() => SplashScreen.hide());
+            } else {
+                SplashScreen.hide();
             }
         }, 10);
     }
@@ -189,6 +194,7 @@ class Login extends Component {
                     email:    credentials.Email,
                     password: credentials.Password,
                 }, false).then(response => {
+                    console.log('response #1', response);
                     let { authorization, user } = response;
                     return (
                         authorization && authorization.expires && moment(authorization.expires) > moment.utc()
@@ -199,6 +205,7 @@ class Login extends Component {
                     );
                 })
                     .then(response => {
+                        console.log('response #2', response);
                         let { authorization, user } = response;
                         return (
                             this.props.certificate && this.props.certificate.id
@@ -210,12 +217,12 @@ class Login extends Component {
                     .then(() => this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
-                        Actions.settings();
+                        Actions.myPlan();
                     })).catch((err) => {
-                        console.log(err);
+                        console.log('err',err);
                         const error = AppAPI.handleError(err);
                         return this.setState({ resultMsg: { error } });
-                    })
+                    });
             });
         }
     }
@@ -229,7 +236,7 @@ class Login extends Component {
                     setps={'TTT'}
                     onCatch={() => this.setState({ isModalVisible: true })}
                 >
-                    <Image source={require('../../constants/assets/images/fathom-white.png')} resizeMode={'contain'} style={styles.mainLogo} />
+                    <Image source={require('../../../assets/images/standard/fathom-white.png')} resizeMode={'contain'} style={styles.mainLogo} />
                 </Egg>
 
                 <Card dividerStyle={{ height: 0, width: 0 }} titleStyle={{ marginBottom: 0 }}>
@@ -278,11 +285,12 @@ class Login extends Component {
                                 {
                                     Object.entries(APIConfig.APIs).map(([key, value]) => (
                                         <ListItem
-                                            key={key}
-                                            title={`${key}: ${value}`}
-                                            hideChevron
                                             containerStyle={{ backgroundColor: key === this.props.environment ? AppColors.primary.grey.fiftyPercent : AppColors.white }}
+                                            hideChevron
+                                            key={key}
                                             onPress={() => { this.setState({ isModalVisible: false }); return this.props.setEnvironment(key);  }}
+                                            title={`${key}: ${value}`}
+                                            titleStyle={{ color: key === this.props.environment ? AppColors.white : AppColors.primary.grey.fiftyPercent }}
                                         />
                                     ))
                                 }

@@ -21,6 +21,12 @@ if test -t 1; then
     fi
 fi
 
+ME=`whoami`
+CODEPUSH="vir/"
+if [ "$ME" == "virdesai" ]; then
+    CODEPUSH=""
+fi
+
 # install_java() {
 #     current_location=`pwd`
 #     cd ~/Downloads
@@ -62,7 +68,7 @@ initialize() {
         then
             brew=$(which brew)
             [ ${#brew} == 0 ] && { echo "Homebrew does not exist, installing"; /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"; } || continue
-            
+
             yarn=$(which yarn)
             [ ${#yarn} == 0 ] && { echo "yarn does not exist, installing"; brew install yarn --without-node; } || continue
             # [ ${#yarn} == 0 ] && { echo "yarn does not exist, installing"; curl -o- -L https://yarnpkg.com/install.sh | bash; } || continue
@@ -103,29 +109,50 @@ initialize() {
             lsof -i tcp:3000 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
             rm -rf node_modules/ yarn.lock
             yarn
-            sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-code-push/android/app/build.gradle
+            # android build tools and gradle patches
+            # sed -i '' 's/26.0.3/27.0.3/' ./node_modules/react-native-code-push/android/app/build.gradle
             sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-fabric/android/build.gradle
-            sed -i '' 's/24.0.2/27.0.3/' ./node_modules/react-native-ble-manager/android/build.gradle
+            sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-ble-manager/android/build.gradle
             sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
             # sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-svg/android/build.gradle
             sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-device-info/android/build.gradle
             sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-vector-icons/android/build.gradle
+            sed -i '' 's/"26.0.3"/"27.0.3"/' ./node_modules/react-native-splash-screen/android/build.gradle
+            sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-linear-gradient/android/build.gradle
+            sed -i '' 's/23.0.1/27.0.3/g' ./node_modules/react-native-push-notification/android/build.gradle
 
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-code-push/android/app/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-fabric/android/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-ble-manager/android/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-code-push/android/app/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-fabric/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-ble-manager/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
             # sed -i '' 's/compile /implementation /' ./node_modules/react-native-svg/android/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-device-info/android/build.gradle
-            sed -i '' 's/compile /implementation /' ./node_modules/react-native-vector-icons/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-device-info/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-vector-icons/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-splash-screen/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-push-notification/android/build.gradle
 
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-code-push/android/app/build.gradle
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-fabric/android/build.gradle
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-ble-manager/android/build.gradle
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+            sed -i '' 's/compile(/implementation(/g' ./node_modules/react-native-fabric/android/build.gradle
             # sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-device-info/android/build.gradle
-            sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-vector-icons/android/build.gradle
+
+            # extra android patches
+            sed -i '' 's/25/27/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+            sed -i '' 's/23/27/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+            sed -i '' 's/26/27/g' ./node_modules/react-native-vector-icons/android/build.gradle
+            sed -i '' 's/ 26/ 27/' ./node_modules/react-native-splash-screen/android/build.gradle
+            sed -i '' 's/26/27/g' ./node_modules/react-native-linear-gradient/android/build.gradle
+            sed -i '' 's/23/27/' ./node_modules/react-native-fabric/android/build.gradle
+            sed -i '' 's/22/27/' ./node_modules/react-native-fabric/android/build.gradle
+            sed -i '' 's/23/27/' ./node_modules/react-native-device-info/android/build.gradle
+            sed -i '' 's/22/27/' ./node_modules/react-native-device-info/android/build.gradle
+            sed -i '' 's/26/27/' ./node_modules/react-native-ble-manager/android/build.gradle
+            sed -i '' 's/26/27/g' ./node_modules/react-native-code-push/android/app/build.gradle
+            sed -i '' 's/23/27/g' ./node_modules/react-native-push-notification/android/build.gradle
+            sed -i '' 's/provided/compileOnly/g' ./node_modules/react-native-linear-gradient/android/build.gradle
+            sed -i '' 's/Compile /Implementation /g' ./node_modules/react-native-splash-screen/android/build.gradle
+            sed -i '' 's/Compile /Implementation /g' ./node_modules/react-native-push-notification/android/build.gradle
+            sed -i '' 's/babel\-jest/\<rootDir\>\/node_modules\/react-native\/jest\/preprocessor.js/' ./node_modules/react-native/jest-preset.json
+            yes | cp ./custom/android/RNPushNotificationHelper.java ./node_modules/react-native-push-notification/android/src/main/java/com/dieam/reactnativepushnotification/modules/RNPushNotificationHelper.java
+            yes | cp ./custom/javascript/SvgImage.js ./node_modules/react-native-remote-svg/SvgImage.js # handles the iOS patch too
 
             # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
             android_nvm_location=`find ~/ -name '.nvm' -type d -print -quit`
@@ -135,11 +162,14 @@ initialize() {
             old_user=`awk -v FS="(Users\/|\/.nvm)" '{if ($2) print $2;}' ./android/app/build.gradle`
             sed -i "" "s/\/Users\/$old_user\//$android_nvm_location/" ./android/app/build.gradle
 
+            # iOS patches
+            # sed -i '' 's/<WebView/<WebView originWhitelist={["*"]}/' ./node_modules/react-native-remote-svg/SvgImage.js
+            sed -i '' 's/\[SplashScreen/[RNSplashScreen/' ./node_modules/react-native-splash-screen/ios/RNSplashScreen.m
             sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
             # sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
             [ -d "./node_modules/react-native/third-party" ] && {
                 cd node_modules/react-native/third-party/glog-0.3.4
-                ../../scripts/ios-configure-glog.sh                 
+                ../../scripts/ios-configure-glog.sh
                 cd ../../../../
             } || continue
 
@@ -151,7 +181,7 @@ initialize() {
             else
                 echo "${red}IP Replacement failed because file IP or current IP not found.${normal}"
             fi
-            
+
             echo "Everything checked, installed, and prepared.\nPackager ready to be started.\nRunning unit tests.."
             yarn test
             testValue=$?
@@ -170,6 +200,10 @@ initialize() {
 
 start() {
     watchman watch-del-all
+    rm -rf $TMPDIR/react-*
+    rm -rf ./android/app/build/intermediates
+    rm -rf ./android/app/src/main/res/drawable-*
+    rm ./android/app/src/main/assets/index.android.bundle
     lsof -i tcp:8081 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
     npm run start -- --reset-cache
 }
@@ -224,6 +258,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
+                yarn bundle-android
                 cd android
                 ./gradlew clean assembleRelease
                 cd ..
@@ -238,6 +273,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
+                yarn bundle-android
                 cd android
                 ./gradlew clean assembleReleaseStaging
                 cd ..
@@ -284,7 +320,7 @@ codepushRelease() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                code-push release-react FathomAI-Android android
+                code-push release-react vir/FathomAI-Android android
             fi
             ;;
         2)
@@ -294,7 +330,7 @@ codepushRelease() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                code-push release-react FathomAI-iOS ios
+                code-push release-react vir/FathomAI-iOS ios
             fi
             ;;
         3)
@@ -304,8 +340,8 @@ codepushRelease() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                code-push release-react FathomAI-Android android
-                code-push release-react FathomAI-iOS ios
+                code-push release-react vir/FathomAI-Android android
+                code-push release-react vir/FathomAI-iOS ios
             fi
             ;;
         *)
@@ -321,14 +357,14 @@ codepushPromote() {
     echo
     case "$REPLY" in
         1)
-            code-push promote FathomAI-Android Staging Production -t '*'
+            code-push promote ${CODEPUSH}FathomAI-Android Staging Production -t '*'
             ;;
         2)
-            code-push promote FathomAI-iOS Staging Production -t '*'
+            code-push promote ${CODEPUSH}FathomAI-iOS Staging Production -t '*'
             ;;
         3)
-            code-push promote FathomAI-Android Staging Production -t '*'
-            code-push promote FathomAI-iOS Staging Production -t '*'
+            code-push promote ${CODEPUSH}FathomAI-Android Staging Production -t '*'
+            code-push promote ${CODEPUSH}FathomAI-iOS Staging Production -t '*'
             ;;
         *)
             echo "${red}Invalid selection${normal}"

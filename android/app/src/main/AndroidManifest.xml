@@ -7,9 +7,16 @@
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/>
-    <uses-permission android:name="android.permission.VIBRATE"/> -->
+
+    <!-- START: react-native-push-notification -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <permission
+        android:name="5bcc5a1891d3385c.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="5bcc5a1891d3385c.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- END: react-native-push-notification -->
 
     <application
       android:name=".MainApplication"
@@ -17,27 +24,54 @@
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:theme="@style/AppTheme">
-      <activity
-        android:name=".MainActivity"
-        android:label="@string/app_name"
-        android:screenOrientation="portrait"
-        android:windowSoftInputMode="adjustResize"
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-      </activity>
-       <meta-data
+
+        <!-- START: react-native-push-notification -->
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="5bcc5a1891d3385c" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
+        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
+        <service
+            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <!-- END: react-native-push-notification -->
+
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/SplashTheme"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:exported="true"
+        />
+        <meta-data
             android:name="io.fabric.ApiKey"
             android:value="efa01f44b93f35c71f612e0ee7075015e52868cf"
         />
-      <!-- <service android:name="com.robinpowered.react.Intercom.IntercomIntentService" android:exported="false">
-          <intent-filter android:priority="999">
-              <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-          </intent-filter>
-      </service>
-      <receiver android:name="io.intercom.android.sdk.push.IntercomPushBroadcastReceiver" tools:replace="android:exported" android:exported="true" /> -->
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
     </application>
 

@@ -1,8 +1,8 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:20:59 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:20:59
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-29 01:24:48
+ * @Last Modified time: 2018-07-20 18:11:43
  */
 
 /**
@@ -10,8 +10,9 @@
  */
 
 import jwtDecode from 'jwt-decode';
-import { Actions } from '../constants/';
-import { AppAPI } from '../lib/';
+import { Actions, ErrorMessages } from '../constants';
+import { AppAPI } from '../lib';
+import { store } from '../store';
 
 // Components
 import { Platform } from 'react-native';
@@ -19,8 +20,6 @@ import { Platform } from 'react-native';
 // import third-party libraries
 import DeviceInfo from 'react-native-device-info';
 import uuidByString from 'uuid-by-string';
-
-import { ErrorMessages } from '../constants/';
 
 /**
   * Authorize User
@@ -61,19 +60,28 @@ const registerDevice = () => {
     return dispatch => new Promise((resolve, reject) => {
         // register the device
         let uniqueId = DeviceInfo.getUniqueID();
-        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        let uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
         if(!uuidRegex.test(uniqueId)) {
             // not a uuid, lets unparse it
             uniqueId = uuidByString(uniqueId);
         }
         uniqueId = uniqueId.toLowerCase();
-        const device_type = Platform.OS;
-
-        return AppAPI.register_device.post({ device_uuid: uniqueId }, { device_type })
+        let device_type = Platform.OS;
+        let currentState = store.getState();
+        let push_notifications = currentState.init.token ? {
+            token:   currentState.init.token,
+            enabled: true,
+        } : null;
+        let bodyObj = { device_type };
+        if (push_notifications) {
+            bodyObj.push_notifications = push_notifications;
+        }
+        return AppAPI.register_device.post({ device_uuid: uniqueId }, bodyObj)
             .then(response => {
                 dispatch({
                     type:        Actions.REGISTER_DEVICE,
                     certificate: response.certificate,
+                    device:      response.device,
                 });
 
                 return resolve(response);
@@ -174,14 +182,14 @@ const logout = () => {
   */
 const forgotPassword = (email) => {
     return dispatch => AppAPI.forgotPassword.post(email)
-        .then((result) => {
+        .then(result => {
             dispatch({
                 type: Actions.FORGOT_PASSWORD_SUCCESS,
                 data: result,
             });
             return result;
         })
-        .catch((err) => {
+        .catch(err => {
             dispatch({
                 type: Actions.FORGOT_PASSWORD_FAILED,
             });
@@ -194,14 +202,14 @@ const forgotPassword = (email) => {
   */
 const signUp = (credentials) => {
     return dispatch => AppAPI.user.post(credentials)
-        .then((result) => {
+        .then(result => {
             dispatch({
                 type: Actions.SIGN_UP_SUCCESS,
                 data: result,
             });
             return result;
         })
-        .catch((err) => {
+        .catch(err => {
             dispatch({
                 type: Actions.SIGN_UP_FAILED,
             });
@@ -214,10 +222,21 @@ const signUp = (credentials) => {
  * @param {new environment to be used} environment
  */
 const setEnvironment = (environment) => {
-    return dispatch => dispatch({
+    return dispatch => Promise.resolve(dispatch({
         type: Actions.SET_ENVIRONMENT,
         environment
-    });
+    }));
+};
+
+/**
+ *
+ * @param {push notification token for device} token
+ */
+const sendDeviceToken = (token) => {
+    return dispatch => Promise.resolve(dispatch({
+        type: Actions.SEND_DEVICE_TOKEN,
+        token
+    }));
 };
 
 
@@ -228,6 +247,7 @@ export default {
     startLogin,
     finalizeLogin,
     logout,
+    sendDeviceToken,
     setEnvironment,
     signUp,
 };

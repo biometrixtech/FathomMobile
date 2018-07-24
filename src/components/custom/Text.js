@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:30:36 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 16:48:09
+ * @Last Modified time: 2018-07-20 18:26:08
  */
 
 /**
@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import { Text } from 'react-native';
 
 // Consts and Libs
-import { AppStyles } from '../../constants/';
+import { AppStyles } from '../../constants';
 
 /* Component ==================================================================== */
 class CustomText extends Component {

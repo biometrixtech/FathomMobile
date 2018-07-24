@@ -1,8 +1,8 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:20:06 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:20:06
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-23 16:46:33
+ * @Last Modified time: 2018-07-12 19:00:40
  */
 
 /**
@@ -24,13 +24,14 @@ const brand = {
         grey: {
             hundredPercent: '#505050',
             fiftyPercent:   '#757575',
-            thirtyPercent:  '#D5D5D5'
+            thirtyPercent:  '#D5D5D5',
+            twentyPercent:  '#F5F5F5',
         },
         // Medal Gold
         yellow: {
-            hundredPercent: '#E0AF12',
-            seventyPercent: '#E9C766',
-            fiftyPercent:   '#EFD792',
+            hundredPercent: '#EBBA2D',
+            seventyPercent: '#FFED60',
+            fiftyPercent:   '#FFFFAC',
         },
         // Finish Line White
         white: {
@@ -41,6 +42,7 @@ const brand = {
         // Blood Sweet & Tears
         red: {
             hundredPercent: '#972C2F',
+            eightyPercent:  '#A44648',
             seventyPercent: '#B66B6D',
             fiftyPercent:   '#CB9597',
         },
@@ -53,12 +55,30 @@ const brand = {
         // Fathom Blue
         blue: {
             hundredPercent: '#0B587C',
+            eightyPercent:  '#17678B',
             seventyPercent: '#548AA3',
             fiftyPercent:   '#85ACBE',
             thirtyPercent:  '#B6CDD8',
+        },
+    },
+    gradient: {
+        blue: {
+            gradientStart: '#05425e',
+            gradientEnd:   '#0f6187',
         }
     }
 };
+
+const sliders = {
+    slider: [
+        brand.primary.yellow.hundredPercent, // 0
+        brand.secondary.blue.fiftyPercent, // 1
+        brand.secondary.blue.seventyPercent, // 2
+        brand.secondary.blue.eightyPercent, // 3
+        brand.secondary.red.seventyPercent, // 4
+        brand.secondary.red.eightyPercent, // 5
+    ]
+}
 
 const borders = {
     border: brand.primary.grey.hundredPercent,
@@ -74,7 +94,8 @@ const tabbar = {
 
 export default {
     ...app,
-    ...brand,
     ...borders,
+    ...brand,
+    ...sliders,
     ...tabbar,
 };

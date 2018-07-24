@@ -2,13 +2,13 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-30 13:23:45 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 16:32:58
+ * @Last Modified time: 2018-07-16 18:43:40
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { init } from '../../actions/';
+import { init } from '../../actions';
 
 const Login = ({
     Layout,
@@ -17,7 +17,6 @@ const Login = ({
     email,
     environment,
     finalizeLogin,
-    loading,
     onFormSubmit,
     password,
     registerDevice,
@@ -29,7 +28,6 @@ const Login = ({
         email={email}
         environment={environment}
         finalizeLogin={finalizeLogin}
-        loading={loading}
         onFormSubmit={onFormSubmit}
         password={password}
         registerDevice={registerDevice}
@@ -44,7 +42,6 @@ Login.propTypes = {
     email:          PropTypes.string,
     environment:    PropTypes.string,
     finalizeLogin:  PropTypes.func.isRequired,
-    loading:        PropTypes.bool,
     onFormSubmit:   PropTypes.func.isRequired,
     password:       PropTypes.string,
     registerDevice: PropTypes.func.isRequired,
@@ -56,14 +53,12 @@ Login.defaultProps = {
     environment: 'PROD',
     email:       null,
     password:    null,
-    loading:     false,
 };
 
 const mapStateToProps = state => ({
     certificate: state.init.certificate || null,
     environment: state.init.environment || 'PROD',
     email:       state.init.email || null,
-    loading:     state.user.loading || false,
     password:    state.init.password || null,
 });
 

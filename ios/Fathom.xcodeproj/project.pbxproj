@@ -12,6 +12,8 @@
 		00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
+		04BDC053766E4DB9B73CC309 /* LibreFranklin-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2BDC254FD57849519613EAEF /* LibreFranklin-Light.ttf */; };
+		0B2908852C2545898C59ECEF /* LibreFranklin-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3050BEDDCF464C68B410A928 /* LibreFranklin-ExtraBoldItalic.ttf */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
@@ -19,53 +21,55 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
-		15BF771D13AF46429D51BF05 /* LibreFranklin-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 44A8F0CB3E2D4CEAAE813E85 /* LibreFranklin-SemiBold.ttf */; };
-		23A361A42A93445EB8D3B6AE /* LibreFranklin-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 296A382930D3402E91737900 /* LibreFranklin-ExtraBold.ttf */; };
-		25A1E2F2BFAD4AEDBB321654 /* LibreFranklin-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 69416F51922F43DBAFD402CA /* LibreFranklin-Italic.ttf */; };
-		29DBFE890F6444FCB0C0F183 /* LibreFranklin-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E08D30DD17EF4A3B8E0CB3D9 /* LibreFranklin-ExtraLightItalic.ttf */; };
+		182CB87107A54ADB95D74C3E /* LibreFranklin-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C9C939413BF40F0B8EE5881 /* LibreFranklin-Thin.ttf */; };
 		2AFBECAF1B4E4623BBE432F8 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ADFDC7BE083F410FA938884C /* SimpleLineIcons.ttf */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* FathomTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* FathomTests.m */; };
+		2E4669ECBA074CA4A4D1D54F /* LibreFranklin-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4F7E04929A974CD7881E3335 /* LibreFranklin-SemiBoldItalic.ttf */; };
 		34AD7DA8B67F4DDE9FF31B6A /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FE710E9387E94BA1BF4AAB21 /* FontAwesome.ttf */; };
 		377865A391264332817AE3C3 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 037F13963D23404DBB23BC3F /* Ionicons.ttf */; };
-		4AABE35EBC1B4592B7D32605 /* LibreFranklin-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AEA5C7A4AA9F46CCBEE20D04 /* LibreFranklin-BoldItalic.ttf */; };
-		4EA4898671D247F1A5D5BED0 /* LibreFranklin-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7A0026EFE9B04E43A55B2DE3 /* LibreFranklin-LightItalic.ttf */; };
-		4F2E609885E64166A3E823C7 /* LibreFranklin-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1929DAB8FE564B04A2CD1F67 /* LibreFranklin-Bold.ttf */; };
+		39B513ADDDEA4F00BFFC5745 /* LibreFranklin-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE2321C12C747A3BA66453F /* LibreFranklin-ExtraLightItalic.ttf */; };
+		3B24F88A24BB4B07AD787268 /* YTPlayerView-iframe-player.html in Resources */ = {isa = PBXBuildFile; fileRef = 53C6A1D79C804128B18958FD /* YTPlayerView-iframe-player.html */; };
+		4950BB1C0EA048208219B5EB /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DBD1B8216835426E989059EE /* Feather.ttf */; };
+		4A52B7266C98415784DA77F6 /* LibreFranklin-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 547660CC76114151997E2D7D /* LibreFranklin-Black.ttf */; };
 		50BAB68A1EB84DA69372E99D /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BA2A2B45BE844319B549C2DD /* Octicons.ttf */; };
+		52F0CE71095D4FB1AF23620E /* LibreFranklin-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 399B79C228994003BE6242FE /* LibreFranklin-BoldItalic.ttf */; };
+		5B75C0DA30CE4C12B24AA86B /* LibreFranklin-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 66DA96481139474D96B740D8 /* LibreFranklin-Italic.ttf */; };
+		5C47FD2B8B584E079ED3F237 /* LibreFranklin-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1B2B87F18BF642C68E39BEE3 /* LibreFranklin-SemiBold.ttf */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
-		601014F1C0474E54948A9CB1 /* LibreFranklin-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C2478FC45A90476F9F796216 /* LibreFranklin-Thin.ttf */; };
-		67FAD5B20AAC49A3A897295B /* LibreFranklin-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B771DF3BF9C74ADE9D2F3C9F /* LibreFranklin-ThinItalic.ttf */; };
+		5FF3B3D5CA934418970DD739 /* LibreFranklin-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5D72708184747A19E1DCB07 /* LibreFranklin-Bold.ttf */; };
+		624983F76C3E4D2DB78204E8 /* LibreFranklin-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A098309670EF499E89640222 /* LibreFranklin-ThinItalic.ttf */; };
+		6A129950597B4F9380E4422F /* LibreFranklin-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ABB2889611834C2A84515886 /* LibreFranklin-LightItalic.ttf */; };
+		749CEEA45FEA4A4FB4B55565 /* LibreFranklin-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E368C7AE6847416AB4C3A9E8 /* LibreFranklin-Regular.ttf */; };
 		7C3C0AF41E9B3B04008B335E /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C3C0AD51E9B3AE6008B335E /* libART.a */; };
 		7C8F52081E8C8D440065704A /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8F52061E8C8D440065704A /* Fabric.framework */; };
 		7C8F52091E8C8D440065704A /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8F52071E8C8D440065704A /* Crashlytics.framework */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		8AEB737E5E7844BEAE2D94AF /* LibreFranklin-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 94BBEAAA588F460E8E0470D4 /* LibreFranklin-MediumItalic.ttf */; };
 		96ED47E43A1F470884442922 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 76BC50C5ED02443CB1D32E96 /* Foundation.ttf */; };
+		9A499B68A54E42128C677B6C /* LibreFranklin-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BF92BB0951DE40A1AD8B5248 /* LibreFranklin-BlackItalic.ttf */; };
 		9FE70E0599D44E42AD68E716 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 62A8EA882B184930825FDE66 /* Zocial.ttf */; };
-		A38265E4A168496290940883 /* LibreFranklin-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D1D793AEC1D4184AB0B8D42 /* LibreFranklin-BlackItalic.ttf */; };
-		A46FC5B73EF84AA8A244395F /* LibreFranklin-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B206ED43D2FA478F98175404 /* LibreFranklin-Regular.ttf */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		B6339E5913CB4051BAF6A59F /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2860D02B5F80404290871BF1 /* Entypo.ttf */; };
-		B6C43499B1B7498A8954E99D /* LibreFranklin-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8C408AC632D248AA9A348142 /* LibreFranklin-ExtraBoldItalic.ttf */; };
-		C97D70921E2375C300C3C793 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C97D70901E2375C300C3C793 /* LaunchScreen.storyboard */; };
+		BD88D1C46A8E4EDD8004D384 /* LibreFranklin-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FDD40E482954C49ABDAC7C8 /* LibreFranklin-ExtraBold.ttf */; };
 		C97D70A31E23777B00C3C793 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97D70A21E23777B00C3C793 /* CoreData.framework */; };
 		C97D70C11E23779800C3C793 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97D70C01E23779800C3C793 /* SystemConfiguration.framework */; };
 		C97D70C31E2377A300C3C793 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C97D70C21E2377A300C3C793 /* libz.tbd */; };
 		C97D70C51E2377B200C3C793 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C97D70C41E2377B200C3C793 /* libsqlite3.0.tbd */; };
-		D54583967FD64334B6C3A4F2 /* LibreFranklin-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 30AB21F34D0649E6A0E69547 /* LibreFranklin-ExtraLight.ttf */; };
-		D902100889CA433E842A68D7 /* LibreFranklin-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A807B9DC064E4416A473084B /* LibreFranklin-Light.ttf */; };
 		DA02D5C4FF46466CBCDD993A /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 30EEF37A5E2B48A1A490E9DD /* EvilIcons.ttf */; };
 		DA1ECDE8A0534165A084946E /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECDE6F1FEC3D4E42B38084FF /* MaterialIcons.ttf */; };
-		DB30A36A93474173AF33BD2F /* LibreFranklin-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 18B01B60862F415BAC9D9843 /* LibreFranklin-MediumItalic.ttf */; };
-		EDC10B4509A94D1294F09758 /* LibreFranklin-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B499CF0287D9447C867FC1A2 /* LibreFranklin-Black.ttf */; };
 		F2D5C432FE4244A1889B6DEA /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 621FED576505468EB9CFE175 /* MaterialCommunityIcons.ttf */; };
-		F503AC9CEC0E4F7E8B6B8EB6 /* LibreFranklin-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0ADD0E0F5D454449BBE95998 /* LibreFranklin-Medium.ttf */; };
+		F4774D75C5984017B6F6FB0F /* LibreFranklin-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7397BC7F537B4FA88CD81AB2 /* LibreFranklin-ExtraLight.ttf */; };
 		F507A64C1F96F19000248C44 /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F507A5B51F96C9DC00248C44 /* libCodePush.a */; };
 		F543BC7C1F2999240096364F /* libBleManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F520840C1F0C345800752BE0 /* libBleManager.a */; };
 		F57A2C851F7DE3A5008C3E8A /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C97D708F1E23756B00C3C793 /* libRNVectorIcons.a */; };
+		F59A84C320FD41F100505DE2 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F59A84A120FD41A800505DE2 /* libRCTPushNotification.a */; };
 		F59B1ACE20E6EC6400196E25 /* libSMXCrashlytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CCEC7161E8CB7C20054E113 /* libSMXCrashlytics.a */; };
 		F59B1AFC20E6EC7100196E25 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F58C2E4B20E588E9002A661E /* libRNDeviceInfo.a */; };
-		FBB98E6D3D5B4932BE8FB7EE /* LibreFranklin-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73E0EE3E0A994B4F858FD5B9 /* LibreFranklin-SemiBoldItalic.ttf */; };
+		F59B556B20F44D3E00D23D70 /* libSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F59B552720F41A5F00D23D70 /* libSplashScreen.a */; };
+		F59B579420F5AA0300D23D70 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F59B55C720F482DC00D23D70 /* libBVLinearGradient.a */; };
+		FCD00DF0F1A84C9AA3D8FB3C /* LibreFranklin-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 771BD07A23AF4D2B94624A93 /* LibreFranklin-Medium.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -384,6 +388,41 @@
 			remoteGlobalIDString = E72EC1401F7ABB5A0001BC90;
 			remoteInfo = "RNDeviceInfo-tvOS";
 		};
+		F59A84A020FD41A800505DE2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F59A848820FD41A700505DE2 /* RCTPushNotification.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RCTPushNotification;
+		};
+		F59A84A220FD41A800505DE2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F59A848820FD41A700505DE2 /* RCTPushNotification.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3D05745F1DE6004600184BB4;
+			remoteInfo = "RCTPushNotification-tvOS";
+		};
+		F59B552620F41A5F00D23D70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 99DBCCBAD2F74FA89DDB5C61 /* SplashScreen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3D7682761D8E76B80014119E;
+			remoteInfo = SplashScreen;
+		};
+		F59B55C620F482DC00D23D70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0D43719A897C4574A3A07F68 /* BVLinearGradient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = BVLinearGradient;
+		};
+		F59B55C820F482DC00D23D70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0D43719A897C4574A3A07F68 /* BVLinearGradient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 64AA15081EF7F30100718508;
+			remoteInfo = "BVLinearGradient-tvOS";
+		};
 		F5CCACCA2073107100C550A0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */;
@@ -431,8 +470,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* FathomTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FathomTests.m; sourceTree = "<group>"; };
 		037F13963D23404DBB23BC3F /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
-		0ADD0E0F5D454449BBE95998 /* LibreFranklin-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Medium.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-Medium.ttf"; sourceTree = "<group>"; };
-		0E6D6FFE93AE4ADCA9B0F055 /* LibreFranklin-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-SemiBoldItalic.ttf"; path = "../src/assets/fonts/LibreFranklin-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
+		0D43719A897C4574A3A07F68 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Fathom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fathom.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -443,66 +481,53 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Fathom/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Fathom/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
-		18B01B60862F415BAC9D9843 /* LibreFranklin-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-MediumItalic.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-MediumItalic.ttf"; sourceTree = "<group>"; };
-		1929DAB8FE564B04A2CD1F67 /* LibreFranklin-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Bold.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-Bold.ttf"; sourceTree = "<group>"; };
-		1D1D793AEC1D4184AB0B8D42 /* LibreFranklin-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-BlackItalic.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-BlackItalic.ttf"; sourceTree = "<group>"; };
+		1B2B87F18BF642C68E39BEE3 /* LibreFranklin-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-SemiBold.ttf"; path = "../assets/fonts/LibreFranklin-SemiBold.ttf"; sourceTree = "<group>"; };
+		1FDD40E482954C49ABDAC7C8 /* LibreFranklin-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ExtraBold.ttf"; path = "../assets/fonts/LibreFranklin-ExtraBold.ttf"; sourceTree = "<group>"; };
 		2860D02B5F80404290871BF1 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
-		296A382930D3402E91737900 /* LibreFranklin-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ExtraBold.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-ExtraBold.ttf"; sourceTree = "<group>"; };
-		30AB21F34D0649E6A0E69547 /* LibreFranklin-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ExtraLight.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-ExtraLight.ttf"; sourceTree = "<group>"; };
+		2BDC254FD57849519613EAEF /* LibreFranklin-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Light.ttf"; path = "../assets/fonts/LibreFranklin-Light.ttf"; sourceTree = "<group>"; };
+		2DE2321C12C747A3BA66453F /* LibreFranklin-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ExtraLightItalic.ttf"; path = "../assets/fonts/LibreFranklin-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
+		3050BEDDCF464C68B410A928 /* LibreFranklin-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ExtraBoldItalic.ttf"; path = "../assets/fonts/LibreFranklin-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		30EEF37A5E2B48A1A490E9DD /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		32E25198B4A840A6AEF7935F /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/ios/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
 		38E1B48013E04C56AB26705D /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
-		44A8F0CB3E2D4CEAAE813E85 /* LibreFranklin-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-SemiBold.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-SemiBold.ttf"; sourceTree = "<group>"; };
-		592F512201E8476C8F27417C /* LibreFranklin-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-BlackItalic.ttf"; path = "../src/assets/fonts/LibreFranklin-BlackItalic.ttf"; sourceTree = "<group>"; };
+		399B79C228994003BE6242FE /* LibreFranklin-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-BoldItalic.ttf"; path = "../assets/fonts/LibreFranklin-BoldItalic.ttf"; sourceTree = "<group>"; };
+		4F7E04929A974CD7881E3335 /* LibreFranklin-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-SemiBoldItalic.ttf"; path = "../assets/fonts/LibreFranklin-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
+		547660CC76114151997E2D7D /* LibreFranklin-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Black.ttf"; path = "../assets/fonts/LibreFranklin-Black.ttf"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		621FED576505468EB9CFE175 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		62A8EA882B184930825FDE66 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
-		69416F51922F43DBAFD402CA /* LibreFranklin-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Italic.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-Italic.ttf"; sourceTree = "<group>"; };
-		6A1E5AE708764D69ACEEC242 /* LibreFranklin-ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ThinItalic.ttf"; path = "../src/assets/fonts/LibreFranklin-ThinItalic.ttf"; sourceTree = "<group>"; };
-		6F416951A4A04D9CAC1AC87F /* LibreFranklin-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-BoldItalic.ttf"; path = "../src/assets/fonts/LibreFranklin-BoldItalic.ttf"; sourceTree = "<group>"; };
-		718B0E96A2A84C3CB29DE3C9 /* LibreFranklin-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Black.ttf"; path = "../src/assets/fonts/LibreFranklin-Black.ttf"; sourceTree = "<group>"; };
-		73E0EE3E0A994B4F858FD5B9 /* LibreFranklin-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-SemiBoldItalic.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
+		66DA96481139474D96B740D8 /* LibreFranklin-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Italic.ttf"; path = "../assets/fonts/LibreFranklin-Italic.ttf"; sourceTree = "<group>"; };
+		7397BC7F537B4FA88CD81AB2 /* LibreFranklin-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ExtraLight.ttf"; path = "../assets/fonts/LibreFranklin-ExtraLight.ttf"; sourceTree = "<group>"; };
 		76BC50C5ED02443CB1D32E96 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
+		771BD07A23AF4D2B94624A93 /* LibreFranklin-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Medium.ttf"; path = "../assets/fonts/LibreFranklin-Medium.ttf"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
-		798EA72BB7CE48ADBAF221C1 /* LibreFranklin-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Thin.ttf"; path = "../src/assets/fonts/LibreFranklin-Thin.ttf"; sourceTree = "<group>"; };
-		7A0026EFE9B04E43A55B2DE3 /* LibreFranklin-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-LightItalic.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-LightItalic.ttf"; sourceTree = "<group>"; };
-		7B7F58D4BCBC4AA782BA4613 /* LibreFranklin-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ExtraBold.ttf"; path = "../src/assets/fonts/LibreFranklin-ExtraBold.ttf"; sourceTree = "<group>"; };
 		7C3C0AD01E9B3AE6008B335E /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
 		7C559C7A1E8E2841000C7EF7 /* Fathom-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Fathom-Bridging-Header.h"; sourceTree = "<group>"; };
 		7C8F52061E8C8D440065704A /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		7C8F52071E8C8D440065704A /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
+		7C9C939413BF40F0B8EE5881 /* LibreFranklin-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Thin.ttf"; path = "../assets/fonts/LibreFranklin-Thin.ttf"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
-		8C408AC632D248AA9A348142 /* LibreFranklin-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ExtraBoldItalic.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
-		9F768C58A8C042E5B63F614D /* LibreFranklin-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Light.ttf"; path = "../src/assets/fonts/LibreFranklin-Light.ttf"; sourceTree = "<group>"; };
-		A807B9DC064E4416A473084B /* LibreFranklin-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Light.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-Light.ttf"; sourceTree = "<group>"; };
-		AB48F766E3B0456590E73609 /* LibreFranklin-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Italic.ttf"; path = "../src/assets/fonts/LibreFranklin-Italic.ttf"; sourceTree = "<group>"; };
+		94BBEAAA588F460E8E0470D4 /* LibreFranklin-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-MediumItalic.ttf"; path = "../assets/fonts/LibreFranklin-MediumItalic.ttf"; sourceTree = "<group>"; };
+		99DBCCBAD2F74FA89DDB5C61 /* SplashScreen.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SplashScreen.xcodeproj; path = "../node_modules/react-native-splash-screen/ios/SplashScreen.xcodeproj"; sourceTree = "<group>"; };
+		A098309670EF499E89640222 /* LibreFranklin-ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ThinItalic.ttf"; path = "../assets/fonts/LibreFranklin-ThinItalic.ttf"; sourceTree = "<group>"; };
+		A5D72708184747A19E1DCB07 /* LibreFranklin-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Bold.ttf"; path = "../assets/fonts/LibreFranklin-Bold.ttf"; sourceTree = "<group>"; };
+		ABB2889611834C2A84515886 /* LibreFranklin-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-LightItalic.ttf"; path = "../assets/fonts/LibreFranklin-LightItalic.ttf"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		ADFDC7BE083F410FA938884C /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
-		AEA5C7A4AA9F46CCBEE20D04 /* LibreFranklin-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-BoldItalic.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-BoldItalic.ttf"; sourceTree = "<group>"; };
-		B206ED43D2FA478F98175404 /* LibreFranklin-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Regular.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-Regular.ttf"; sourceTree = "<group>"; };
-		B4966D2BEF6D451490723129 /* LibreFranklin-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-LightItalic.ttf"; path = "../src/assets/fonts/LibreFranklin-LightItalic.ttf"; sourceTree = "<group>"; };
-		B499CF0287D9447C867FC1A2 /* LibreFranklin-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Black.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-Black.ttf"; sourceTree = "<group>"; };
-		B771DF3BF9C74ADE9D2F3C9F /* LibreFranklin-ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ThinItalic.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-ThinItalic.ttf"; sourceTree = "<group>"; };
 		BA2A2B45BE844319B549C2DD /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
-		BDA1D5763D334368B70FB39C /* LibreFranklin-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Medium.ttf"; path = "../src/assets/fonts/LibreFranklin-Medium.ttf"; sourceTree = "<group>"; };
-		C1066B23AB4049869DDABE8D /* LibreFranklin-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Regular.ttf"; path = "../src/assets/fonts/LibreFranklin-Regular.ttf"; sourceTree = "<group>"; };
-		C1AD767D8C814A2691E64F5F /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = "<group>"; };
-		C23F93AB00DB4861A1F958CC /* LibreFranklin-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ExtraLight.ttf"; path = "../src/assets/fonts/LibreFranklin-ExtraLight.ttf"; sourceTree = "<group>"; };
+		BF92BB0951DE40A1AD8B5248 /* LibreFranklin-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-BlackItalic.ttf"; path = "../assets/fonts/LibreFranklin-BlackItalic.ttf"; sourceTree = "<group>"; };
 		C2478FC45A90476F9F796216 /* LibreFranklin-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Thin.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-Thin.ttf"; sourceTree = "<group>"; };
-		C4E3B1EC9BF24BC0B17C851A /* LibreFranklin-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-MediumItalic.ttf"; path = "../src/assets/fonts/LibreFranklin-MediumItalic.ttf"; sourceTree = "<group>"; };
-		C6387030DDBB4CA7809F2EC6 /* LibreFranklin-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ExtraLightItalic.ttf"; path = "../src/assets/fonts/LibreFranklin-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
-		C97D70911E2375C300C3C793 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Fathom/Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C97D70A21E23777B00C3C793 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		C97D70C01E23779800C3C793 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		C97D70C21E2377A300C3C793 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		C97D70C41E2377B200C3C793 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		CAD7B79DF2644058B9910022 /* SMXCrashlytics.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SMXCrashlytics.xcodeproj; path = "../node_modules/react-native-fabric/ios/SMXCrashlytics.xcodeproj"; sourceTree = "<group>"; };
-		DD3E673C256B4C278E81214A /* LibreFranklin-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Bold.ttf"; path = "../src/assets/fonts/LibreFranklin-Bold.ttf"; sourceTree = "<group>"; };
-		E08D30DD17EF4A3B8E0CB3D9 /* LibreFranklin-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ExtraLightItalic.ttf"; path = "../src/constants/assets/fonts/LibreFranklin-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
+		DBD1B8216835426E989059EE /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		E368C7AE6847416AB4C3A9E8 /* LibreFranklin-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-Regular.ttf"; path = "../assets/fonts/LibreFranklin-Regular.ttf"; sourceTree = "<group>"; };
 		ECDE6F1FEC3D4E42B38084FF /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
-		ED745380F37943148BF1CA9C /* LibreFranklin-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-SemiBold.ttf"; path = "../src/assets/fonts/LibreFranklin-SemiBold.ttf"; sourceTree = "<group>"; };
-		F15F3A1CC06F43C68DC9EF00 /* LibreFranklin-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LibreFranklin-ExtraBoldItalic.ttf"; path = "../src/assets/fonts/LibreFranklin-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		F507A5AD1F96C9DB00248C44 /* CodePush.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CodePush.xcodeproj; path = "../node_modules/react-native-code-push/ios/CodePush.xcodeproj"; sourceTree = "<group>"; };
+		F59A848820FD41A700505DE2 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
+		F59A84C420FD42A600505DE2 /* Fathom.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Fathom.entitlements; path = Fathom/Fathom.entitlements; sourceTree = "<group>"; };
 		FE710E9387E94BA1BF4AAB21 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		FFC94F28D95C4DCDB50C1B35 /* BleManager.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = BleManager.xcodeproj; path = "../node_modules/react-native-ble-manager/ios/BleManager.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -520,6 +545,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F59A84C320FD41F100505DE2 /* libRCTPushNotification.a in Frameworks */,
+				F59B579420F5AA0300D23D70 /* libBVLinearGradient.a in Frameworks */,
+				F59B556B20F44D3E00D23D70 /* libSplashScreen.a in Frameworks */,
 				F59B1AFC20E6EC7100196E25 /* libRNDeviceInfo.a in Frameworks */,
 				F59B1ACE20E6EC6400196E25 /* libSMXCrashlytics.a in Frameworks */,
 				F57A2C851F7DE3A5008C3E8A /* libRNVectorIcons.a in Frameworks */,
@@ -632,7 +660,7 @@
 		13B07FAE1A68108700A75B9A /* Fathom */ = {
 			isa = PBXGroup;
 			children = (
-				C97D70901E2375C300C3C793 /* LaunchScreen.storyboard */,
+				F59A84C420FD42A600505DE2 /* Fathom.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -680,24 +708,6 @@
 				ADFDC7BE083F410FA938884C /* SimpleLineIcons.ttf */,
 				62A8EA882B184930825FDE66 /* Zocial.ttf */,
 				621FED576505468EB9CFE175 /* MaterialCommunityIcons.ttf */,
-				718B0E96A2A84C3CB29DE3C9 /* LibreFranklin-Black.ttf */,
-				592F512201E8476C8F27417C /* LibreFranklin-BlackItalic.ttf */,
-				DD3E673C256B4C278E81214A /* LibreFranklin-Bold.ttf */,
-				6F416951A4A04D9CAC1AC87F /* LibreFranklin-BoldItalic.ttf */,
-				7B7F58D4BCBC4AA782BA4613 /* LibreFranklin-ExtraBold.ttf */,
-				F15F3A1CC06F43C68DC9EF00 /* LibreFranklin-ExtraBoldItalic.ttf */,
-				C23F93AB00DB4861A1F958CC /* LibreFranklin-ExtraLight.ttf */,
-				C6387030DDBB4CA7809F2EC6 /* LibreFranklin-ExtraLightItalic.ttf */,
-				AB48F766E3B0456590E73609 /* LibreFranklin-Italic.ttf */,
-				9F768C58A8C042E5B63F614D /* LibreFranklin-Light.ttf */,
-				B4966D2BEF6D451490723129 /* LibreFranklin-LightItalic.ttf */,
-				BDA1D5763D334368B70FB39C /* LibreFranklin-Medium.ttf */,
-				C4E3B1EC9BF24BC0B17C851A /* LibreFranklin-MediumItalic.ttf */,
-				C1066B23AB4049869DDABE8D /* LibreFranklin-Regular.ttf */,
-				ED745380F37943148BF1CA9C /* LibreFranklin-SemiBold.ttf */,
-				0E6D6FFE93AE4ADCA9B0F055 /* LibreFranklin-SemiBoldItalic.ttf */,
-				798EA72BB7CE48ADBAF221C1 /* LibreFranklin-Thin.ttf */,
-				6A1E5AE708764D69ACEEC242 /* LibreFranklin-ThinItalic.ttf */,
 				B499CF0287D9447C867FC1A2 /* LibreFranklin-Black.ttf */,
 				1D1D793AEC1D4184AB0B8D42 /* LibreFranklin-BlackItalic.ttf */,
 				1929DAB8FE564B04A2CD1F67 /* LibreFranklin-Bold.ttf */,
@@ -716,6 +726,26 @@
 				73E0EE3E0A994B4F858FD5B9 /* LibreFranklin-SemiBoldItalic.ttf */,
 				C2478FC45A90476F9F796216 /* LibreFranklin-Thin.ttf */,
 				B771DF3BF9C74ADE9D2F3C9F /* LibreFranklin-ThinItalic.ttf */,
+				DBD1B8216835426E989059EE /* Feather.ttf */,
+				547660CC76114151997E2D7D /* LibreFranklin-Black.ttf */,
+				BF92BB0951DE40A1AD8B5248 /* LibreFranklin-BlackItalic.ttf */,
+				A5D72708184747A19E1DCB07 /* LibreFranklin-Bold.ttf */,
+				399B79C228994003BE6242FE /* LibreFranklin-BoldItalic.ttf */,
+				1FDD40E482954C49ABDAC7C8 /* LibreFranklin-ExtraBold.ttf */,
+				3050BEDDCF464C68B410A928 /* LibreFranklin-ExtraBoldItalic.ttf */,
+				7397BC7F537B4FA88CD81AB2 /* LibreFranklin-ExtraLight.ttf */,
+				2DE2321C12C747A3BA66453F /* LibreFranklin-ExtraLightItalic.ttf */,
+				66DA96481139474D96B740D8 /* LibreFranklin-Italic.ttf */,
+				2BDC254FD57849519613EAEF /* LibreFranklin-Light.ttf */,
+				ABB2889611834C2A84515886 /* LibreFranklin-LightItalic.ttf */,
+				771BD07A23AF4D2B94624A93 /* LibreFranklin-Medium.ttf */,
+				94BBEAAA588F460E8E0470D4 /* LibreFranklin-MediumItalic.ttf */,
+				E368C7AE6847416AB4C3A9E8 /* LibreFranklin-Regular.ttf */,
+				1B2B87F18BF642C68E39BEE3 /* LibreFranklin-SemiBold.ttf */,
+				4F7E04929A974CD7881E3335 /* LibreFranklin-SemiBoldItalic.ttf */,
+				7C9C939413BF40F0B8EE5881 /* LibreFranklin-Thin.ttf */,
+				A098309670EF499E89640222 /* LibreFranklin-ThinItalic.ttf */,
+				53C6A1D79C804128B18958FD /* YTPlayerView-iframe-player.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -759,6 +789,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				F59A848820FD41A700505DE2 /* RCTPushNotification.xcodeproj */,
 				F507A5AD1F96C9DB00248C44 /* CodePush.xcodeproj */,
 				7C3C0AD01E9B3AE6008B335E /* ART.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
@@ -777,6 +808,8 @@
 				CAD7B79DF2644058B9910022 /* SMXCrashlytics.xcodeproj */,
 				FFC94F28D95C4DCDB50C1B35 /* BleManager.xcodeproj */,
 				32E25198B4A840A6AEF7935F /* RNDeviceInfo.xcodeproj */,
+				99DBCCBAD2F74FA89DDB5C61 /* SplashScreen.xcodeproj */,
+				0D43719A897C4574A3A07F68 /* BVLinearGradient.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -802,7 +835,6 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				5AF35C8DD5E04D5D8A9EB48D /* Resources */,
 				C97D70A11E23777B00C3C793 /* Frameworks */,
-				F52660311F950A69006259C1 /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -863,19 +895,37 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F52660311F950A69006259C1 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				C1AD767D8C814A2691E64F5F /* libRNDeviceInfo.a */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		F58C2E4620E588E9002A661E /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				F58C2E4B20E588E9002A661E /* libRNDeviceInfo.a */,
 				F58C2E4D20E588E9002A661E /* libRNDeviceInfo-tvOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F59A848920FD41A700505DE2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F59A84A120FD41A800505DE2 /* libRCTPushNotification.a */,
+				F59A84A320FD41A800505DE2 /* libRCTPushNotification-tvOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F59B552320F41A5F00D23D70 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F59B552720F41A5F00D23D70 /* libSplashScreen.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F59B55C220F482DC00D23D70 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F59B55C720F482DC00D23D70 /* libBVLinearGradient.a */,
+				F59B55C920F482DC00D23D70 /* libBVLinearGradient.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -937,6 +987,14 @@
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = FFKN7TF2BB;
 						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -959,6 +1017,10 @@
 				{
 					ProductGroup = F52084041F0C345800752BE0 /* Products */;
 					ProjectRef = FFC94F28D95C4DCDB50C1B35 /* BleManager.xcodeproj */;
+				},
+				{
+					ProductGroup = F59B55C220F482DC00D23D70 /* Products */;
+					ProjectRef = 0D43719A897C4574A3A07F68 /* BVLinearGradient.xcodeproj */;
 				},
 				{
 					ProductGroup = F507A5AE1F96C9DB00248C44 /* Products */;
@@ -993,6 +1055,10 @@
 					ProjectRef = 00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */;
 				},
 				{
+					ProductGroup = F59A848920FD41A700505DE2 /* Products */;
+					ProjectRef = F59A848820FD41A700505DE2 /* RCTPushNotification.xcodeproj */;
+				},
+				{
 					ProductGroup = 139105B71AF99BAD00B5F7CC /* Products */;
 					ProjectRef = 139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */;
 				},
@@ -1023,6 +1089,10 @@
 				{
 					ProductGroup = 7CCEC6F71E8CB7C20054E113 /* Products */;
 					ProjectRef = CAD7B79DF2644058B9910022 /* SMXCrashlytics.xcodeproj */;
+				},
+				{
+					ProductGroup = F59B552320F41A5F00D23D70 /* Products */;
+					ProjectRef = 99DBCCBAD2F74FA89DDB5C61 /* SplashScreen.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1342,6 +1412,41 @@
 			remoteRef = F58C2E4C20E588E9002A661E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		F59A84A120FD41A800505DE2 /* libRCTPushNotification.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTPushNotification.a;
+			remoteRef = F59A84A020FD41A800505DE2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F59A84A320FD41A800505DE2 /* libRCTPushNotification-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libRCTPushNotification-tvOS.a";
+			remoteRef = F59A84A220FD41A800505DE2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F59B552720F41A5F00D23D70 /* libSplashScreen.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSplashScreen.a;
+			remoteRef = F59B552620F41A5F00D23D70 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F59B55C720F482DC00D23D70 /* libBVLinearGradient.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBVLinearGradient.a;
+			remoteRef = F59B55C620F482DC00D23D70 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F59B55C920F482DC00D23D70 /* libBVLinearGradient.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBVLinearGradient.a;
+			remoteRef = F59B55C820F482DC00D23D70 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F5CCACCB2073107100C550A0 /* libfishhook-tvOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1386,28 +1491,29 @@
 				377865A391264332817AE3C3 /* Ionicons.ttf in Resources */,
 				DA1ECDE8A0534165A084946E /* MaterialIcons.ttf in Resources */,
 				50BAB68A1EB84DA69372E99D /* Octicons.ttf in Resources */,
-				C97D70921E2375C300C3C793 /* LaunchScreen.storyboard in Resources */,
 				2AFBECAF1B4E4623BBE432F8 /* SimpleLineIcons.ttf in Resources */,
 				9FE70E0599D44E42AD68E716 /* Zocial.ttf in Resources */,
 				F2D5C432FE4244A1889B6DEA /* MaterialCommunityIcons.ttf in Resources */,
-				EDC10B4509A94D1294F09758 /* LibreFranklin-Black.ttf in Resources */,
-				A38265E4A168496290940883 /* LibreFranklin-BlackItalic.ttf in Resources */,
-				4F2E609885E64166A3E823C7 /* LibreFranklin-Bold.ttf in Resources */,
-				4AABE35EBC1B4592B7D32605 /* LibreFranklin-BoldItalic.ttf in Resources */,
-				23A361A42A93445EB8D3B6AE /* LibreFranklin-ExtraBold.ttf in Resources */,
-				B6C43499B1B7498A8954E99D /* LibreFranklin-ExtraBoldItalic.ttf in Resources */,
-				D54583967FD64334B6C3A4F2 /* LibreFranklin-ExtraLight.ttf in Resources */,
-				29DBFE890F6444FCB0C0F183 /* LibreFranklin-ExtraLightItalic.ttf in Resources */,
-				25A1E2F2BFAD4AEDBB321654 /* LibreFranklin-Italic.ttf in Resources */,
-				D902100889CA433E842A68D7 /* LibreFranklin-Light.ttf in Resources */,
-				4EA4898671D247F1A5D5BED0 /* LibreFranklin-LightItalic.ttf in Resources */,
-				F503AC9CEC0E4F7E8B6B8EB6 /* LibreFranklin-Medium.ttf in Resources */,
-				DB30A36A93474173AF33BD2F /* LibreFranklin-MediumItalic.ttf in Resources */,
-				A46FC5B73EF84AA8A244395F /* LibreFranklin-Regular.ttf in Resources */,
-				15BF771D13AF46429D51BF05 /* LibreFranklin-SemiBold.ttf in Resources */,
-				FBB98E6D3D5B4932BE8FB7EE /* LibreFranklin-SemiBoldItalic.ttf in Resources */,
-				601014F1C0474E54948A9CB1 /* LibreFranklin-Thin.ttf in Resources */,
-				67FAD5B20AAC49A3A897295B /* LibreFranklin-ThinItalic.ttf in Resources */,
+				4950BB1C0EA048208219B5EB /* Feather.ttf in Resources */,
+				4A52B7266C98415784DA77F6 /* LibreFranklin-Black.ttf in Resources */,
+				9A499B68A54E42128C677B6C /* LibreFranklin-BlackItalic.ttf in Resources */,
+				5FF3B3D5CA934418970DD739 /* LibreFranklin-Bold.ttf in Resources */,
+				52F0CE71095D4FB1AF23620E /* LibreFranklin-BoldItalic.ttf in Resources */,
+				BD88D1C46A8E4EDD8004D384 /* LibreFranklin-ExtraBold.ttf in Resources */,
+				0B2908852C2545898C59ECEF /* LibreFranklin-ExtraBoldItalic.ttf in Resources */,
+				F4774D75C5984017B6F6FB0F /* LibreFranklin-ExtraLight.ttf in Resources */,
+				39B513ADDDEA4F00BFFC5745 /* LibreFranklin-ExtraLightItalic.ttf in Resources */,
+				5B75C0DA30CE4C12B24AA86B /* LibreFranklin-Italic.ttf in Resources */,
+				04BDC053766E4DB9B73CC309 /* LibreFranklin-Light.ttf in Resources */,
+				6A129950597B4F9380E4422F /* LibreFranklin-LightItalic.ttf in Resources */,
+				FCD00DF0F1A84C9AA3D8FB3C /* LibreFranklin-Medium.ttf in Resources */,
+				8AEB737E5E7844BEAE2D94AF /* LibreFranklin-MediumItalic.ttf in Resources */,
+				749CEEA45FEA4A4FB4B55565 /* LibreFranklin-Regular.ttf in Resources */,
+				5C47FD2B8B584E079ED3F237 /* LibreFranklin-SemiBold.ttf in Resources */,
+				2E4669ECBA074CA4A4D1D54F /* LibreFranklin-SemiBoldItalic.ttf in Resources */,
+				182CB87107A54ADB95D74C3E /* LibreFranklin-Thin.ttf in Resources */,
+				624983F76C3E4D2DB78204E8 /* LibreFranklin-ThinItalic.ttf in Resources */,
+				3B24F88A24BB4B07AD787268 /* YTPlayerView-iframe-player.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1481,14 +1587,6 @@
 			path = Fathom;
 			sourceTree = "<group>";
 		};
-		C97D70901E2375C300C3C793 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				C97D70911E2375C300C3C793 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -1500,8 +1598,8 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = FathomTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				INFOPLIST_FILE = fathomTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1518,8 +1616,8 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = FathomTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				INFOPLIST_FILE = fathomTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1536,6 +1634,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Fathom/Fathom.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1552,6 +1652,8 @@
 					"$(SRCROOT)/../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/**",
 					"$(SRCROOT)/../node_modules/react-native-ble-manager/ios",
 					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
+					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1564,7 +1666,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fathom.fathomai;
 				PRODUCT_NAME = Fathom;
-				PROVISIONING_PROFILE = "b1a13e9e-70d3-402e-a0f5-4b387474bf57";
+				PROVISIONING_PROFILE = "9ff616cb-6991-4405-97c3-cebf9f039ae3";
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom Dev Provisioning Profile";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1575,6 +1677,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Fathom/Fathom.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1590,6 +1694,8 @@
 					"$(SRCROOT)/../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/**",
 					"$(SRCROOT)/../node_modules/react-native-ble-manager/ios",
 					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
+					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1605,7 +1711,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fathom.fathomai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "e29709c2-399b-4659-8c9b-18b19add6268";
+				PROVISIONING_PROFILE = "72f40b08-bff6-4768-b2c3-e6a8c876faf7";
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom App Store Provisioning Profile";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -1653,7 +1759,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1692,7 +1798,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -1744,6 +1850,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Fathom/Fathom.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)";
@@ -1760,6 +1868,8 @@
 					"$(SRCROOT)/../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/**",
 					"$(SRCROOT)/../node_modules/react-native-ble-manager/ios",
 					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
+					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1772,7 +1882,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fathom.fathomai;
 				PRODUCT_NAME = Fathom;
-				PROVISIONING_PROFILE = "1653c152-9c6d-4e27-aacc-860f9341ddea";
+				PROVISIONING_PROFILE = "3e7427bb-3ac7-45b2-adc9-f350830e62fc";
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom Ad Hoc Provisioning Profile";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

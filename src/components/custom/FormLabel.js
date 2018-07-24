@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:29:10 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 16:46:05
+ * @Last Modified time: 2018-07-20 18:25:13
  */
 
 /**
@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import { FormLabel } from 'react-native-elements';
 
 // Consts and Libs
-import { AppColors, AppFonts } from '../../constants/';
+import { AppColors, AppFonts } from '../../constants';
 
 /* Component ==================================================================== */
 class CustomFormLabel extends Component {

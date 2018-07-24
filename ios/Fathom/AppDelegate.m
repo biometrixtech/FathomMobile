@@ -13,10 +13,11 @@
 #import <React/RCTLog.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-// #import "Intercom/intercom.h"
 #if RCT_DEV
 #import <React/RCTDevLoadingView.h>
 #endif
+#import "RNSplashScreen.h"
+#import <React/RCTPushNotificationManager.h>
 
 @implementation AppDelegate
 
@@ -30,8 +31,9 @@
 
 
 #ifdef DEBUG
-    jsCodeLocation = [NSURL URLWithString:@"http://192.168.1.9:8081/index.bundle?platform=ios&dev=true"];
-//     jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  jsCodeLocation = [NSURL URLWithString:@"http://192.168.1.9:8081/index.bundle?platform=ios&dev=true"];
+//  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+
 #else
     jsCodeLocation = [CodePush bundleURL];
 #endif
@@ -57,19 +59,43 @@
    * Custom
    * Get launch image - saves annoying white flash
    */
-  UIImageView *launchScreenView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Launch"]]; // Image named "Launch"
-  launchScreenView.frame = self.window.bounds;
-  launchScreenView.contentMode = UIViewContentModeScaleAspectFill;
-  rootView.loadingView = launchScreenView;
+//  UIImageView *launchScreenView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LaunchScreen"]]; // Image named "LaunchScreen"
+//  launchScreenView.frame = self.window.bounds;
+//  
+//  launchScreenView.contentMode = UIViewContentModeScaleAspectFill;
+//  rootView.loadingView = launchScreenView;
 
-  // [Intercom setApiKey:@"ios_sdk-ebf51a128738d061651930aff903b341e18b99a2" forAppId:@"oxawi3kv"]
-  // [Intercom registerUnidentifiedUser]
+  [RNSplashScreen show];
   return YES;
 }
 
-// - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(nonnull NSData *)deviceToken {
-//   [Intercom setDeviceToken:deviceToken];
-// }
+// Required to register for notifications
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+{
+  [RCTPushNotificationManager didRegisterUserNotificationSettings:notificationSettings];
+}
+// Required for the register event.
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+  [RCTPushNotificationManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+}
+// Required for the notification event. You must call the completion handler after handling the remote notification.
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+{
+  [RCTPushNotificationManager didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
+}
+// Required for the registrationError event.
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+{
+  [RCTPushNotificationManager didFailToRegisterForRemoteNotificationsWithError:error];
+}
+// Required for the localNotification event.
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
+{
+  [RCTPushNotificationManager didReceiveLocalNotification:notification];
+}
+
 RCTLogFunction CrashlyticsReactLogFunction = ^(
                                                RCTLogLevel level,
                                                __unused RCTLogSource source,

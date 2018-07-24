@@ -1,8 +1,8 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:30:58 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:30:58
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 14:56:16
+ * @Last Modified time: 2018-07-13 10:09:59
  */
 
 /**
@@ -16,8 +16,8 @@ export default {
         PROD: 'https://apis.production.fathomai.com'
     },
     // The URL we're connecting to
-    hostname: 'https://apis.production.fathomai.com', // deployment
-    // hostname: 'https://apis.dev.fathomai.com', // testing
+    // hostname: 'https://apis.production.fathomai.com', // deployment
+    hostname: 'https://apis.dev.fathomai.com', // testing
 
     // Map shortnames to the actual endpoints, so that we can
     // use them like so: AppAPI.ENDPOINT_NAME.METHOD()
@@ -31,7 +31,13 @@ export default {
         ['authorize',       '/users/user/{userId}/authorize'],
         ['forgot_password', '/users/user/forgot_password'],
         ['login',           '/users/user/sign_in'], // If you change the key, update the reference below
-        ['register_device', '/users/device/{device_uuid}']
+        ['register_device', '/users/device/{device_uuid}'],
+        // My Plan specific routes
+        ['get_my_plan',           '/plans/daily_plan'], // POST
+        ['get_sore_body_parts',   '/plans/daily_readiness/previous'], // GET
+        ['post_readiness_survey', '/plans/daily_readiness'], // POST
+        ['post_daily_plan',       '/plans/athlete/{user_id}/daily_plan'], // POST
+        ['post_session_survey',   '/plans/post_session_survey'], // POST
     ]),
 
     // Which 'endpoint' key deals with our tokens?

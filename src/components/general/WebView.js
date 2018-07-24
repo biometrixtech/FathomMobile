@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:27:57 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 16:49:20
+ * @Last Modified time: 2018-07-20 18:22:49
  */
 
 /**
@@ -20,7 +20,7 @@ import {
 } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles } from '../../constants/';
+import { AppColors, AppStyles } from '../../constants';
 
 // Components
 import { Error, Loading } from './';

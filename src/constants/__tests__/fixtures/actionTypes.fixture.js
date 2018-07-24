@@ -1,8 +1,8 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:20:41 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:20:41
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 14:55:55
+ * @Last Modified time: 2018-07-18 18:20:02
  */
 
 export default {
@@ -11,6 +11,8 @@ export default {
     FORGOT_PASSWORD_SUCCESS: 'FORGOT_PASSWORD_SUCCESS',
     LOGIN:                   'LOGIN',
     LOGOUT:                  'LOGOUT',
+    NOTIFICATION_RECEIVED:   'NOTIFICATION_RECEIVED',
+    NOTIFICATION_ADDRESSED:  'NOTIFICATION_ADDRESSED',
     REGISTER_DEVICE:         'REGISTER_DEVICE',
     SET_ENVIRONMENT:         'SET_ENVIRONMENT',
     SIGN_UP_FAILED:          'SIGN_UP_FAILED',

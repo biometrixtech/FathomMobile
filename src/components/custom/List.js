@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:29:24 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 16:46:43
+ * @Last Modified time: 2018-07-20 18:25:29
  */
 
 /**
@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import { List } from 'react-native-elements';
 
 // Consts and Libs
-import { AppColors } from '../../constants/';
+import { AppColors } from '../../constants';
 
 /* Component ==================================================================== */
 class CustomList extends Component {

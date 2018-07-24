@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2018-04-23 13:47:12 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 16:33:17
+ * @Last Modified time: 2018-07-20 18:12:48
  */
 
 /**
@@ -12,7 +12,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { init } from '../../actions/';
+import { init } from '../../actions';
 
 const ForgotPassword = ({
     Layout,
