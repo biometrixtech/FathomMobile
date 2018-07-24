@@ -189,7 +189,6 @@ repositories {
 }
 
 dependencies {
-    implementation project(':react-native-youtube')
     implementation project(':react-native-push-notification')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-splash-screen')
@@ -200,9 +199,6 @@ dependencies {
     implementation project(':react-native-device-info')
     implementation project(':react-native-android-location-services-dialog-box')
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    //  implementation 'io.intercom.android:intercom-sdk-base:5.+'
-    //  implementation 'io.intercom.android:intercom-sdk-fcm:5.+'
-    //  implementation 'com.google.firebase:firebase-messaging:11.+'
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation 'com.facebook.react:react-native:+' // From node_modules
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {

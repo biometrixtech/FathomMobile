@@ -42,18 +42,16 @@ const PostSessionSurvey = ({
         <View style={{flex: 1}}>
             <ScrollView>
                 <View style={{backgroundColor: AppColors.primary.grey.twentyPercent}}>
-                    <View style={{}}>
-                        <TabIcon
-                            containerStyle={[{alignSelf: 'flex-end'}]}
-                            icon={'close'}
-                            iconStyle={[{color: AppColors.black, marginRight: 10, marginTop: 10}]}
-                            onPress={handleTogglePostSessionSurvey}
-                            reverse={false}
-                            size={30}
-                            type={'material-community'}
-                        />
-                    </View>
-                    <Text style={[AppStyles.h1, AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {color: AppColors.black}]}>{'HOW WAS YOUR WORKOUT?'}</Text>
+                    <TabIcon
+                        containerStyle={[{alignSelf: 'flex-end'}, AppStyles.padding]}
+                        icon={'close'}
+                        iconStyle={[{color: AppColors.black}]}
+                        onPress={handleTogglePostSessionSurvey}
+                        reverse={false}
+                        size={30}
+                        type={'material-community'}
+                    />
+                    <Text style={[AppStyles.h1, AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {color: AppColors.black, paddingTop: 0}]}>{'HOW WAS YOUR WORKOUT?'}</Text>
                 </View>
                 <View>
                     <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
