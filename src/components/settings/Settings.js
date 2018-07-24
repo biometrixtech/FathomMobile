@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
+import Toast, { DURATION } from 'react-native-easy-toast';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles } from '@constants';
@@ -72,7 +73,9 @@ class Settings extends Component {
                                 .then(() => this.props.getSingleSensorSavedPractices(this.props.accessoryData.sensor_uid))
                                 .catch(err => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
                                 .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
+                                .then(() => this.refs.toast.show('Successfully UNPAIRED from sensor', DURATION.LENGTH_LONG))
                                 .catch(err => {
+                                    this.refs.toast.show('Failed to UNPAIR from sensor', DURATION.LENGTH_LONG);
                                     console.log('error while disconnecting from single sensor',err);
                                 });
                         }
@@ -113,6 +116,10 @@ class Settings extends Component {
                     onPress={() => Promise.resolve(this.props.logout()).then(() => Actions.login())}
                     title={'LOGOUT'}
                     titleStyle={{color: AppColors.black}}
+                />
+                <Toast
+                    position={'top'}
+                    ref={'toast'}
                 />
             </View>
         );

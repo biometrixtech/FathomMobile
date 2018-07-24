@@ -205,14 +205,6 @@ class BluetoothConnectView extends Component {
         return this.props.changeState(data.state);
     }
 
-    convertHex = (value) => {
-        return parseInt(value, 16);
-    }
-
-    convertToUnsigned32BitIntByteArray = (value) => {
-        return value.toString(16).match(/.{1,2}/g).map(val => this.convertHex(val));
-    }
-
     connect = (data) => {
         return this.props.stopScan()
             .then(() => this.props.connectToAccessory(data))
@@ -248,7 +240,7 @@ class BluetoothConnectView extends Component {
     _toggleAlertNotification() {
         Alert.alert(
             '',
-            'Is your sensor\'s light now blinking green?',
+            'Did your sensor\'s light blink green?',
             [
                 {
                     text:    'No',
@@ -270,6 +262,19 @@ class BluetoothConnectView extends Component {
             ],
             { cancelable: false }
         )
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(
+            this.state.index === 2 &&
+            !nextProps.bluetooth.scanning &&
+            !this.props.bluetooth.scanning &&
+            this.props.bluetooth.devicesFound.length === 0 &&
+            this.props.bluetooth.accessoryData.sensor_uid
+        ) {
+            // on BLE list page, trigger search
+            this.toggleScanning(true);
+        }
     }
 
     render = () => (
@@ -316,10 +321,11 @@ class BluetoothConnectView extends Component {
                 </LinearGradient>
 
                 <View style={[AppStyles.containerCentered, { flex: 1 }]}>
+                    <Text p style={[AppStyles.paddingHorizontal, {color: AppColors.primary.grey.hundredPercent}]}>{'START BLUETOOTH SCAN'}</Text>
                     <TabIcon
-                        containerStyle={[{ alignSelf: 'center' }]}
+                        containerStyle={[{ alignSelf: 'center', backgroundColor: AppColors.primary.yellow.hundredPercent }]}
                         icon={'bluetooth'}
-                        iconStyle={[{color: AppColors.secondary.blue.hundredPercent}]}
+                        iconStyle={[{color: AppColors.white}]}
                         onPress={() => this.startBluetooth().then(() => this.toggleScanning(!this.props.bluetooth.scanning))}
                         raised
                         reverse
@@ -342,17 +348,33 @@ class BluetoothConnectView extends Component {
                         <Text h3 style={[AppStyles.textCenterAligned, {fontWeight: 'bold'}]}>{sensorListTitle}</Text>
                         <Text p style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml]}>{sensorListSubtitle}</Text>
                     </View>
-                    <View style={{flex: 7, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border,}}>
+                    <View style={{flex: 7,}}>
                         <Toast
                             position={'top'}
                             ref={'toast'}
                         />
+                        <View style={[AppStyles.paddingSml, {flexDirection: 'row'}]}>
+                            <View style={{justifyContent: 'center'}}>
+                                <Text p style={[AppStyles.paddingHorizontalSml, {color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold'}]}>{'AVAILABLE DEVICES'}</Text>
+                            </View>
+                            <View style={{justifyContent: 'center'}}>
+                                { this.props.bluetooth.scanning ?
+                                    <ActivityIndicator
+                                        animating={true}
+                                        color={AppColors.primary.yellow.hundredPercent}
+                                        size={'small'}
+                                    />
+                                    :
+                                    null
+                                }
+                            </View>
+                        </View>
                         <ScrollView
-                            contentContainerStyle={{flex: 1}}
+                            contentContainerStyle={{flex: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border,}}
                             refreshControl={
                                 <RefreshControl
                                     colors={[AppColors.primary.yellow.hundredPercent]}
-                                    onRefresh={() => this.toggleScanning(true)}
+                                    onRefresh={() => this.startBluetooth().then(() => this.toggleScanning(true))}
                                     refreshing={false}
                                     title={'Refreshing...'}
                                     titleColor={AppColors.primary.yellow.hundredPercent}
@@ -378,14 +400,14 @@ class BluetoothConnectView extends Component {
                                 </View>
                                 :
                                 <View style={this.props.bluetooth.devicesFound.length > 0 ? {} : [AppStyles.containerCentered, {flex: 1}]}>
-                                    <Button
+                                    {/*<Button
                                         buttonStyle={{ backgroundColor: `${this.props.bluetooth.scanning ? AppColors.secondary.red.hundredPercent : AppColors.secondary.blue.hundredPercent}` }}
                                         icon={{ name: `${this.props.bluetooth.scanning ? 'stop' : 'play-arrow'}` }}
-                                        onPress={() => this.toggleScanning(true)}
+                                        onPress={() => this.startBluetooth().then(() => this.toggleScanning(true))}
                                         raised
                                         small
                                         title={this.props.bluetooth.scanning ? 'Stop Scan' : 'Start Scan'}
-                                    />
+                                    />*/}
                                 </View>
                             }
                         </ScrollView>
