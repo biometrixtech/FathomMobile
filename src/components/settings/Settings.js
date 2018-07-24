@@ -11,21 +11,27 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+
+// import third-party libraries
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles } from '@constants';
+import { ListItem } from '@custom';
+import { AppUtil } from '@lib';
 
 // Components
-import { View, Platform, BackHandler } from 'react-native';
-import { ListItem } from '@custom';
+import { Alert, BackHandler, Platform, View, } from 'react-native';
 
 
 /* Component ==================================================================== */
 class Settings extends Component {
     static componentName = 'SettingsView';
     static propTypes = {
-        logout: PropTypes.func.isRequired,
+        accessoryData:              PropTypes.object.isRequired,
+        deleteUserSensorData:       PropTypes.func.isRequired,
+        disconnectFromSingleSensor: PropTypes.func.isRequired,
+        logout:                     PropTypes.func.isRequired,
     }
 
     static defaultProps = {}
@@ -48,6 +54,47 @@ class Settings extends Component {
         }
     }
 
+    _disconnectFromSingleSensor = () => {
+        const uniqueId = AppUtil.getDeviceUUID();
+        if(uniqueId === this.props.accessoryData.mobile_uid) {
+            Alert.alert(
+                'Warning!',
+                'Are you sure you want to UNPAIR your sensor? This action cannot be reverted.',
+                [
+                    {
+                        text:  'Cancel',
+                        style: 'cancel'
+                    },
+                    {
+                        text:    'Unpair',
+                        onPress: () => {
+                            this.props.disconnectFromSingleSensor(this.props.accessoryData.sensor_uid)
+                                .then(() => this.props.getSingleSensorSavedPractices(this.props.accessoryData.sensor_uid))
+                                .catch(err => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
+                                .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
+                                .catch(err => {
+                                    console.log('error while disconnecting from single sensor',err);
+                                });
+                        }
+                    },
+                ],
+                { cancelable: true }
+            )
+        } else {
+            Alert.alert(
+                'Warning!',
+                'This isn\'t the device that you initially paired with your sensor. Please UNPAIR the sensor using your original device.',
+                [
+                    {
+                        text:  'OK',
+                        style: 'cancel'
+                    },
+                ],
+                { cancelable: true }
+            )
+        }
+    }
+
     render = () => {
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
@@ -55,8 +102,8 @@ class Settings extends Component {
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{color: AppColors.black, name: 'bluetooth', size: 24}}
-                    onPress={() => Actions.kitManagement()}
-                    title='PAIR WITH A NEW SENSOR'
+                    onPress={() => this.props.accessoryData.sensor_uid ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()}
+                    title={this.props.accessoryData.sensor_uid ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
                     titleStyle={{color: AppColors.black}}
                 />
                 <ListItem
@@ -64,7 +111,7 @@ class Settings extends Component {
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{color: AppColors.black, name: 'power-settings-new', size: 24}}
                     onPress={() => Promise.resolve(this.props.logout()).then(() => Actions.login())}
-                    title='LOGOUT'
+                    title={'LOGOUT'}
                     titleStyle={{color: AppColors.black}}
                 />
             </View>

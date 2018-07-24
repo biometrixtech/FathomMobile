@@ -92,20 +92,15 @@ const Index = (
                 // title='Kit Management'
                 // {...DefaultProps.navbarProps}
             />
+            <Scene
+                Layout={BluetoothConnectComponent}
+                component={BluetoothConnectContainer}
+                hideNavBar
+                key='bluetoothConnect'
+                // title='Bluetooth Connect'
+                // {...DefaultProps.navbarProps}
+            />
             {/*<Stack>
-                <Scene
-                    Layout={SettingsComponent}
-                    component={SettingsContainer}
-                    hideNavBar
-                    key='settings'
-                />
-                <Scene
-                    key='bluetoothConnect'
-                    title='Bluetooth Connect'
-                    component={BluetoothConnectContainer}
-                    Layout={BluetoothConnectComponent}
-                    // {...DefaultProps.navbarProps}
-                />
                 <Scene
                     key='kitOwner'
                     title='Kit Owner'
