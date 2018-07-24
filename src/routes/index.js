@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-04-30 13:21:35
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:10:25
+ * @Last Modified time: 2018-07-24 11:30:51
  */
 
 import React from 'react';
@@ -46,30 +46,35 @@ const Index = (
                 component={LoginContainer}
                 hideNavBar
                 key='login'
+                panHandlers={null}
             />
             <Scene
                 Layout={SignUpComponent}
                 component={SignUpContainer}
                 hideNavBar
                 key='signUp'
+                panHandlers={null}
             />
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
                 hideNavBar
                 key='forgotPassword'
+                panHandlers={null}
             />
             <Scene
                 Layout={SettingsComponent}
                 component={SettingsContainer}
                 hideNavBar
                 key='settings'
+                panHandlers={null}
             />
             <Scene
                 Layout={MyPlanComponent}
                 component={MyPlanContainer}
                 hideNavBar
                 key='myPlan'
+                panHandlers={null}
             />
             <Stack>
                 <Scene
