@@ -36,7 +36,7 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 import { Roles, BLEConfig, AppColors, AppStyles, AppSizes } from '../../constants';
 
 // Components
-import { Button, Coach, FormLabel, ListItem, Pages, Spacer, TabIcon, Text, } from '../../custom';
+import { Button, Coach, FormLabel, ListItem, Pages, Spacer, TabIcon, Text, } from '../custom';
 
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);

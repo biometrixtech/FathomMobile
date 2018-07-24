@@ -18,12 +18,11 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles } from '../../constants';
-import { ListItem } from '../../custom';
+import { ListItem } from '../custom';
 import { AppUtil } from '../../lib';
 
 // Components
 import { Alert, BackHandler, Platform, View, } from 'react-native';
-
 
 /* Component ==================================================================== */
 class Settings extends Component {
