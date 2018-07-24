@@ -74,14 +74,15 @@ class Login extends Component {
     static componentName = 'Login';
 
     static propTypes = {
-        onFormSubmit:   PropTypes.func,
-        registerDevice: PropTypes.func.isRequired,
-        finalizeLogin:  PropTypes.func.isRequired,
-        authorizeUser:  PropTypes.func.isRequired,
-        setEnvironment: PropTypes.func,
-        environment:    PropTypes.string,
-        email:          PropTypes.string,
-        password:       PropTypes.string,
+        authorizeUser:     PropTypes.func.isRequired,
+        environment:       PropTypes.string,
+        email:             PropTypes.string,
+        finalizeLogin:     PropTypes.func.isRequired,
+        getUserSensorData: PropTypes.func.isRequired,
+        onFormSubmit:      PropTypes.func,
+        password:          PropTypes.string,
+        registerDevice:    PropTypes.func.isRequired,
+        setEnvironment:    PropTypes.func,
     }
 
     static defaultProps = {
@@ -204,6 +205,10 @@ class Login extends Component {
                                 : Promise.reject('Unexpected response authorization')
                     );
                 })
+                    .then(response => {
+                        this.props.getUserSensorData(response.user.id);
+                        return Promise.resolve(response);
+                    })
                     .then(response => {
                         console.log('response #2', response);
                         let { authorization, user } = response;

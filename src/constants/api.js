@@ -36,8 +36,9 @@ export default {
         ['get_my_plan',           '/plans/daily_plan'], // POST
         ['get_sore_body_parts',   '/plans/daily_readiness/previous'], // GET
         ['post_readiness_survey', '/plans/daily_readiness'], // POST
-        ['post_daily_plan',       '/plans/athlete/{user_id}/daily_plan'], // POST
         ['post_session_survey',   '/plans/post_session_survey'], // POST
+        // sensor specific routes
+        ['sensor_mobile_pair', '/users/user/{userId}/sensor_mobile_pair'], // CRUD
     ]),
 
     // Which 'endpoint' key deals with our tokens?

@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:35:00 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:35:00
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-04-24 23:04:39
  */
@@ -139,11 +139,11 @@ class KitManagementView extends Component {
 
     render = () => (
         <View style={[AppStyles.container, { backgroundColor: AppColors.secondary.light_blue.seventyPercent }]} >
-            <Toast 
+            <Toast
                 ref={'toast'}
                 position={'top'}
             />
-            <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>SETTINGS</Text>
+            <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>{'SETTINGS'}</Text>
             <ListItem
                 title={`${this.props.bluetooth.accessoryData.id ? 'Disconnect' : 'Connect Kit'}`}
                 rightTitle={this.props.bluetooth.accessoryData.name ? this.props.bluetooth.accessoryData.name : null}
@@ -160,7 +160,7 @@ class KitManagementView extends Component {
             />
             <Text style={{ paddingLeft: 20, fontSize: font10 }}>{`${this.props.bluetooth.accessoryData.id ? 'Disconnect from' : 'Connect to'} your Fathom Kit`}</Text>
             <Spacer />
-            <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>MANAGE KIT</Text>
+            <Text style={{ padding: 10, paddingLeft: 20, fontSize: font18 }}>{'MANAGE KIT'}</Text>
             {
                 this.props.bluetooth.accessoryData.id ?
                     <ListItem
@@ -210,14 +210,14 @@ class KitManagementView extends Component {
                         onPress={() => this.setState({ isResetModalVisible: true })}
                     />
             }
-            <Text style={{ paddingLeft: AppSizes.padding, fontSize: !this.props.bluetooth.accessoryData.id ? font14 : font10, fontWeight: !this.props.bluetooth.accessoryData.id ? 'bold' : 'normal' }}>Step 1: Connect to kit</Text>
-            <Text style={{ paddingLeft: AppSizes.padding, fontSize: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.ownerFlag ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.ownerFlag ? 'bold' : 'normal' }}>Step 2: Assign an owner to the kit</Text>
-            <Text style={{ paddingLeft: AppSizes.padding, fontSize: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.ownerFlag ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.ownerFlag ? 'bold' : 'normal' }}>Step 3: Assign a wifi network to the kit</Text>
+            <Text style={{ paddingLeft: AppSizes.padding, fontSize: !this.props.bluetooth.accessoryData.id ? font14 : font10, fontWeight: !this.props.bluetooth.accessoryData.id ? 'bold' : 'normal' }}>{'Step 1: Connect to kit'}</Text>
+            <Text style={{ paddingLeft: AppSizes.padding, fontSize: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.ownerFlag ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && !this.props.bluetooth.accessoryData.ownerFlag ? 'bold' : 'normal' }}>{'Step 2: Assign an owner to the kit'}</Text>
+            <Text style={{ paddingLeft: AppSizes.padding, fontSize: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.ownerFlag ? font14 : font10, fontWeight: this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.ownerFlag ? 'bold' : 'normal' }}>{'Step 3: Assign a wifi network to the kit'}</Text>
             <Egg
                 setps={'TTT'}
                 onCatch={() => this.props.bluetooth.accessoryData.id && this.props.bluetooth.accessoryData.ownerFlag ? this.setState({ isModal3Visible: true }) : null }
             >
-                <Text style={{ paddingLeft: AppSizes.padding, fontSize: font10 }}>Step 4: Make sure WiFi light is solid green, then disconnect from kit</Text>
+                <Text style={{ paddingLeft: AppSizes.padding, fontSize: font10 }}>{'Step 4: Make sure WiFi light is solid green, then disconnect from kit'}</Text>
             </Egg>
             <Modal
                 position={'center'}
@@ -298,7 +298,7 @@ class KitManagementView extends Component {
                             />
 
                             <Spacer />
-                            <Text style={{ paddingLeft: 15, paddingRight: 15 }} onPress={() => this.setState({ isCollapsed: !this.state.isCollapsed })}>Advanced options</Text>
+                            <Text style={{ paddingLeft: 15, paddingRight: 15 }} onPress={() => this.setState({ isCollapsed: !this.state.isCollapsed })}>{'Advanced options'}</Text>
                             <Collapsible collapsed={this.state.isCollapsed} >
                                 <FormLabel labelStyle={[AppStyles.h4, { fontWeight: 'bold', color: '#000000', marginBottom: 0 }]} >Identity</FormLabel>
                                 <FormInput

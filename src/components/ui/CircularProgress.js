@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-16 14:59:35 
+ * @Author: Vir Desai
+ * @Date: 2017-10-16 14:59:35
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-04-10 18:23:02
  */
@@ -17,10 +17,10 @@ import { View } from 'react-native';
 import Svg, { Path, Circle } from 'react-native-svg';
 
 // Consts and Libs
-import { AppColors, AppStyles, AppSizes } from '@theme/';
+import { AppColors, AppStyles, AppSizes } from '../../constants/';
 
 // Components
-import { Spacer, Text } from '@ui/';
+import { Spacer, Text } from '../custom';
 
 
 /* Component ==================================================================== */
@@ -97,13 +97,13 @@ class CircularProgress extends Component {
                     <View style={[AppStyles.flex2, AppStyles.containerCentered]}>
                         <Svg width={this.state.graphHeight || width} height={this.state.graphHeight || height}>
                             <Circle cx={circleWidth} cy={circleHeight} r={circleHeight} fill={blankColor}/>
-                            <Path 
+                            <Path
                                 d={`M${circleWidth} ${circleHeight} L${circleHeight} 0 ${this.generateArc(percentageToDate !== 0 && percentageToDate < percentageOverall ? percentageOverall : percentageToDate, circleHeight)} Z`}
                                 strokeLinecap={'round'}
                                 strokeLinejoin={'round'}
                                 fill={percentageToDate < percentageOverall ? progressColor.fiftyPercent : previousWeekColor}
                             />
-                            <Path 
+                            <Path
                                 d={`M${circleWidth} ${circleHeight} L${circleHeight} 0 ${this.generateArc(percentageToDate !== 0 && percentageToDate < percentageOverall ? percentageToDate : percentageOverall, circleHeight)} Z`}
                                 strokeLinecap={'round'}
                                 strokeLinejoin={'round'}

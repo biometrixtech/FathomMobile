@@ -15,6 +15,7 @@ import {
 
 // import third-party libraries
 import _ from 'lodash';
+import { Actions } from 'react-native-router-flux';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modalbox';
 import SplashScreen from 'react-native-splash-screen';
@@ -399,10 +400,26 @@ class MyPlan extends Component {
                         colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
                         style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal, { paddingBottom: 0 }]}
                     >
-                        <Image
-                            source={require('../../../assets/images/standard/coach-avatar.png')}
-                            style={{resizeMode: 'contain', width: 40, height: 40}}
-                        />
+                        <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'space-between',}}>
+                            <View style={{justifyContent: 'center', flex: 1,}}></View>
+                            <View style={{alignItems: 'center', justifyContent: 'center', flex: 8,}}>
+                                <Image
+                                    source={require('../../../assets/images/standard/coach-avatar.png')}
+                                    style={{resizeMode: 'contain', width: 40, height: 40}}
+                                />
+                            </View>
+                            <View style={{justifyContent: 'center', flex: 1,}}>
+                                <TabIcon
+                                    containerStyle={[{alignSelf: 'flex-end'}]}
+                                    icon={'settings'}
+                                    iconStyle={[{color: AppColors.white}]}
+                                    onPress={() => Actions.settings()}
+                                    reverse={false}
+                                    size={34}
+                                    type={'material-community'}
+                                />
+                            </View>
+                        </View>
                         { !isDailyReadinessSurveyCompleted ?
                             <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, AppStyles.textCenterAligned, {color: AppColors.white}]}>{`GOOD ${partOfDay}, ${this.props.user.personal_data.first_name.toUpperCase()}!`}</Text>
                             :
@@ -461,7 +478,7 @@ class MyPlan extends Component {
                             toggleSelectedExercise={this._toggleSelectedExercise}
                         />
                     }
-                    { this.state.loading ? 
+                    { this.state.loading ?
                         <ActivityIndicator
                             color={AppColors.primary.yellow.hundredPercent}
                             size={'large'}
@@ -486,7 +503,7 @@ class MyPlan extends Component {
                                 soreBodyParts={this.props.plan.soreBodyParts}
                                 user={this.props.user}
                             />
-                            { this.state.loading ? 
+                            { this.state.loading ?
                                 <ActivityIndicator
                                     color={AppColors.primary.yellow.hundredPercent}
                                     size={'large'}
@@ -514,7 +531,7 @@ class MyPlan extends Component {
                                 postSession={this.state.postSession}
                                 soreBodyParts={this.props.plan.soreBodyParts}
                             />
-                            { this.state.loading ? 
+                            { this.state.loading ?
                                 <ActivityIndicator
                                     color={AppColors.primary.yellow.hundredPercent}
                                     size={'large'}
@@ -557,7 +574,7 @@ class MyPlan extends Component {
                                     title={`Do ${timeOfDay} Recovery again`}
                                 />
                             </LinearGradient>
-                            { this.state.loading ? 
+                            { this.state.loading ?
                                 <ActivityIndicator
                                     color={AppColors.primary.yellow.hundredPercent}
                                     size={'large'}

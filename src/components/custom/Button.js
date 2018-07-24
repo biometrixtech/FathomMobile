@@ -29,6 +29,7 @@ class CustomButton extends Component {
         icon:            PropTypes.shape({
             name: PropTypes.string,
         }),
+        raised: PropTypes.bool,
     }
 
     static defaultProps = {
@@ -37,6 +38,7 @@ class CustomButton extends Component {
         outlined:        false,
         icon:            {},
         backgroundColor: null,
+        raised:          true,
     }
 
     buttonProps = () => {
@@ -50,7 +52,7 @@ class CustomButton extends Component {
             fontSize:           AppFonts.base.size,
             borderRadius:       AppSizes.borderRadius,
             containerViewStyle: { borderRadius: AppSizes.borderRadius },
-            raised:             true,
+            raised:             this.props.raised,
             buttonStyle:        {
                 padding:     AppFonts.scaleFont(12),
                 marginLeft:  0,

@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-04-30 13:23:45 
+ * @Author: Vir Desai
+ * @Date: 2018-04-30 13:23:45
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-16 18:43:40
  */
@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { init } from '../../actions';
+import { ble, init } from '../../actions';
 
 const Login = ({
     Layout,
@@ -17,6 +17,7 @@ const Login = ({
     email,
     environment,
     finalizeLogin,
+    getUserSensorData,
     onFormSubmit,
     password,
     registerDevice,
@@ -28,6 +29,7 @@ const Login = ({
         email={email}
         environment={environment}
         finalizeLogin={finalizeLogin}
+        getUserSensorData={getUserSensorData}
         onFormSubmit={onFormSubmit}
         password={password}
         registerDevice={registerDevice}
@@ -36,16 +38,17 @@ const Login = ({
 );
 
 Login.propTypes = {
-    Layout:         PropTypes.func.isRequired,
-    authorizeUser:  PropTypes.func.isRequired,
-    certificate:    PropTypes.object,
-    email:          PropTypes.string,
-    environment:    PropTypes.string,
-    finalizeLogin:  PropTypes.func.isRequired,
-    onFormSubmit:   PropTypes.func.isRequired,
-    password:       PropTypes.string,
-    registerDevice: PropTypes.func.isRequired,
-    setEnvironment: PropTypes.func.isRequired,
+    Layout:            PropTypes.func.isRequired,
+    authorizeUser:     PropTypes.func.isRequired,
+    certificate:       PropTypes.object,
+    email:             PropTypes.string,
+    environment:       PropTypes.string,
+    finalizeLogin:     PropTypes.func.isRequired,
+    getUserSensorData: PropTypes.func.isRequired,
+    onFormSubmit:      PropTypes.func.isRequired,
+    password:          PropTypes.string,
+    registerDevice:    PropTypes.func.isRequired,
+    setEnvironment:    PropTypes.func.isRequired,
 };
 
 Login.defaultProps = {
@@ -63,11 +66,12 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    authorizeUser:  init.authorizeUser,
-    finalizeLogin:  init.finalizeLogin,
-    onFormSubmit:   init.startLogin,
-    registerDevice: init.registerDevice,
-    setEnvironment: init.setEnvironment,
+    authorizeUser:     init.authorizeUser,
+    finalizeLogin:     init.finalizeLogin,
+    getUserSensorData: ble.getUserSensorData,
+    onFormSubmit:      init.startLogin,
+    registerDevice:    init.registerDevice,
+    setEnvironment:    init.setEnvironment,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

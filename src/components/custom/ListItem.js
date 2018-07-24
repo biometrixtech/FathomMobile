@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:29:29 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:29:29
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-20 18:25:36
  */
@@ -21,6 +21,7 @@ import { AppColors, AppStyles } from '../../constants';
 /* Component ==================================================================== */
 class CustomListItem extends Component {
     static propTypes = {
+        chevronColor:   PropTypes.string,
         containerStyle: PropTypes.oneOfType([
             PropTypes.array,
             PropTypes.shape({}),
@@ -36,6 +37,7 @@ class CustomListItem extends Component {
     }
 
     static defaultProps = {
+        chevronColor:   AppColors.secondary.blue.hundredPercent,
         containerStyle: [],
         titleStyle:     [],
         subtitleStyle:  [],
@@ -45,7 +47,7 @@ class CustomListItem extends Component {
         // Defaults
         const props = {
             title:          'Coming Soon...',
-            chevronColor:   AppColors.secondary.blue.hundredPercent,
+            chevronColor:   this.props.chevronColor,
             underlayColor:  AppColors.border,
             ...this.props,
             containerStyle: [{

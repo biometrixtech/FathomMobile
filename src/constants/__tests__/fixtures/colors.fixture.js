@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:20:06 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:20:06
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-12 19:01:34
  */
@@ -60,6 +60,16 @@ const brand = {
             fiftyPercent:   '#85ACBE',
             thirtyPercent:  '#B6CDD8',
         }
+    },
+    gradient: {
+        blue: {
+            gradientStart: '#05425e',
+            gradientEnd:   '#0f6187',
+        },
+        light_blue: {
+            gradientStart: '#97b3c0',
+            gradientEnd:   '#FFFFFF',
+        }
     }
 };
 
@@ -75,7 +85,7 @@ const sliders = {
 }
 
 const borders = {
-    border: brand.primary.grey.hundredPercent,
+    border: '#E3E3E3',
 };
 
 const tabbar = {

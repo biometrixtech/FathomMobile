@@ -31,9 +31,8 @@ const styles = StyleSheet.create({
         padding:         20,
     },
     imageStyle: {
-        height:      70,
         marginRight: 10,
-        width:       40,
+        width:       20,
     }
 });
 
@@ -47,10 +46,12 @@ const Coach = ({ text }) => (
         style={[AppStyles.containerCentered, styles.coachWrapper]}
     >
         <Image
+            maintainAspectRatio={true}
+            resizeMode={'contain'}
             source={require('../../../assets/images/standard/coach-avatar.png')}
             style={[styles.imageStyle]}
         />
-        <Text style={[styles.coachText]}>{text}</Text>
+        <Text p style={[styles.coachText]}>{text}</Text>
     </LinearGradient>
 );
 
