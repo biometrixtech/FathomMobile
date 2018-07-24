@@ -16,10 +16,10 @@ import PropTypes from 'prop-types';
 import { View, ActivityIndicator } from 'react-native';
 
 // Consts and Libs
-import { AppStyles } from '@constants';
+import { AppStyles } from '../../constants';
 
 // Components
-import { Spacer, Text } from '@custom';
+import { Spacer, Text } from '../custom';
 
 /* Component ==================================================================== */
 const Loading = ({ text, transparent }) => (

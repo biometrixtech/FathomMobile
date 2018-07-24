@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-04-30 13:21:35
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-16 18:26:42
+ * @Last Modified time: 2018-07-24 11:30:51
  */
 
 import React from 'react';
@@ -15,35 +15,35 @@ import { AppColors, AppSizes, AppStyles, } from '@constants';
 import { TabIcon, } from '@custom';
 
 // import components
-import LoginContainer from '@containers/auth/Login';
-import LoginComponent from '@components/auth/Login';
+import LoginContainer from '../containers/auth/Login';
+import LoginComponent from '../components/auth/Login';
 
-import SignUpContainer from '@containers/auth/SignUp';
-import SignUpComponent from '@components/auth/SignUp';
+import SignUpContainer from '../containers/auth/SignUp';
+import SignUpComponent from '../components/auth/SignUp';
 
-import ForgotPasswordContainer from '@containers/auth/ForgotPassword';
-import ForgotPasswordComponent from '@components/auth/ForgotPassword';
+import ForgotPasswordContainer from '../containers/auth/ForgotPassword';
+import ForgotPasswordComponent from '../components/auth/ForgotPassword';
 
-import StartContainer from '@containers/auth/Start';
-import StartComponent from '@components/auth/Start';
+import StartContainer from '../containers/auth/Start';
+import StartComponent from '../components/auth/Start';
 
-import SettingsContainer from '@containers/settings/Settings';
-import SettingsComponent from '@components/settings/Settings';
+import SettingsContainer from '../containers/settings/Settings';
+import SettingsComponent from '../components/settings/Settings';
 
-import KitManagementContainer from '@containers/kit/KitManagement';
-import KitManagementComponent from '@components/kit/KitManagement';
+import KitManagementContainer from '../containers/kit/KitManagement';
+import KitManagementComponent from '../components/kit/KitManagement';
 
-import KitOwnerContainer from '@containers/kit/KitOwner';
-import KitOwnerComponent from '@components/kit/KitOwner';
+import KitOwnerContainer from '../containers/kit/KitOwner';
+import KitOwnerComponent from '../components/kit/KitOwner';
 
-import KitAssignContainer from '@containers/kit/KitAssign';
-import KitAssignComponent from '@components/kit/KitAssign';
+import KitAssignContainer from '../containers/kit/KitAssign';
+import KitAssignComponent from '../components/kit/KitAssign';
 
-import BluetoothConnectContainer from '@containers/kit/BluetoothConnect';
-import BluetoothConnectComponent from '@components/kit/BluetoothConnect';
+import BluetoothConnectContainer from '../containers/kit/BluetoothConnect';
+import BluetoothConnectComponent from '../components/kit/BluetoothConnect';
 
-import MyPlanContainer from '@containers/myPlan/MyPlan';
-import MyPlanComponent from '@components/myPlan/MyPlan';
+import MyPlanContainer from '../containers/myPlan/MyPlan';
+import MyPlanComponent from '../components/myPlan/MyPlan';
 
 const Index = (
     <Router>
@@ -53,18 +53,21 @@ const Index = (
                 component={LoginContainer}
                 hideNavBar
                 key='login'
+                panHandlers={null}
             />
             {/*<Scene
                 Layout={SignUpComponent}
                 component={SignUpContainer}
                 hideNavBar
                 key='signUp'
+                panHandlers={null}
             />*/}
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
                 hideNavBar
                 key='forgotPassword'
+                panHandlers={null}
             />
             <Scene
                 Layout={MyPlanComponent}
@@ -80,6 +83,7 @@ const Index = (
                 onLeft={() => Actions.pop()}
                 onRight={() => null}
                 key='settings'
+                panHandlers={null}
                 rightTitle=' '
                 title='SETTINGS'
                 titleStyle={{flex: 1, textAlign: 'center',}}
@@ -89,6 +93,7 @@ const Index = (
                 component={KitManagementContainer}
                 hideNavBar
                 key='kitManagement'
+                panHandlers={null}
                 // title='Kit Management'
                 // {...DefaultProps.navbarProps}
             />
@@ -97,6 +102,7 @@ const Index = (
                 component={BluetoothConnectContainer}
                 hideNavBar
                 key='bluetoothConnect'
+                panHandlers={null}
                 // title='Bluetooth Connect'
                 // {...DefaultProps.navbarProps}
             />

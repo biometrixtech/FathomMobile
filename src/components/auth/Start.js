@@ -13,11 +13,11 @@ import moment from 'moment';
 import SplashScreen from 'react-native-splash-screen';
 
 // Consts and Libs
-import { AppAPI } from '@lib';
-import { AppColors, AppSizes } from '@constants';
+import { AppAPI } from '../../lib';
+import { AppColors, AppSizes } from '../../constants';
 
 // Components
-import { Button, Spacer, Text } from '@custom';
+import { Button, Spacer, Text } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({

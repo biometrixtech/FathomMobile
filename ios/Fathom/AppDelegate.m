@@ -13,7 +13,6 @@
 #import <React/RCTLog.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-// #import "Intercom/intercom.h"
 #if RCT_DEV
 #import <React/RCTDevLoadingView.h>
 #endif
@@ -32,7 +31,7 @@
 
 
 #ifdef DEBUG
-  jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.122:8081/index.bundle?platform=ios&dev=true"];
+  jsCodeLocation = [NSURL URLWithString:@"http://192.168.1.9:8081/index.bundle?platform=ios&dev=true"];
 //  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 
 #else
@@ -66,8 +65,6 @@
 //  launchScreenView.contentMode = UIViewContentModeScaleAspectFill;
 //  rootView.loadingView = launchScreenView;
 
-  // [Intercom setApiKey:@"ios_sdk-ebf51a128738d061651930aff903b341e18b99a2" forAppId:@"oxawi3kv"]
-  // [Intercom registerUnidentifiedUser]
   [RNSplashScreen show];
   return YES;
 }

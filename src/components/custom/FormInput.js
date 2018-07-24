@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:28:53 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-16 18:50:20
+ * @Last Modified time: 2018-07-20 18:25:08
  */
 
 /**
@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import { FormInput } from 'react-native-elements';
 
 // Consts and Libs
-import { AppColors, AppFonts } from '@constants';
+import { AppColors, AppFonts } from '../../constants';
 
 /* Component ==================================================================== */
 class CustomFormInput extends Component {

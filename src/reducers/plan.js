@@ -9,9 +9,9 @@
  * MyPlan Reducer
  */
 
-import { Actions } from '@constants';
+import { Actions } from '../constants';
 
-import Store from '@store/plan';
+import Store from '../store/plan';
 
 const initialState = Store;
 
