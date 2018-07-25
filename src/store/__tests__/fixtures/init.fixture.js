@@ -7,8 +7,8 @@
 
 /* eslint-disable no-process-env */
 export default {
-    device:       null,
     certificate:  null,
+    device:       null,
     email:        null,
     environment:  'PROD', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
     jwt:          null,
