@@ -125,8 +125,8 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 8
-        versionName "2.0.0-beta.4"
+        versionCode 9
+        versionName "2.0.0-beta.5"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -204,6 +204,8 @@ dependencies {
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
         transitive = true;
     }
+    // For animated GIF support
+    implementation 'com.facebook.fresco:animated-gif:1.9.0'
 }
 
 

@@ -54,7 +54,7 @@ const authorizeUser = (authorization, user, userCreds) => {
   * Regsiter DeviceInfo
   * - IoT certificate check and save
   */
-const registerDevice = () => {
+const registerDevice = (certificate, device) => {
     return dispatch => new Promise((resolve, reject) => {
         let uniqueId = AppUtil.getDeviceUUID();
         let device_type = Platform.OS;
@@ -67,6 +67,22 @@ const registerDevice = () => {
         if (push_notifications) {
             bodyObj.push_notifications = push_notifications;
         }
+        if(certificate && certificate.id && device) {
+            return AppAPI.register_device.patch({ device_uuid: uniqueId }, bodyObj)
+                .then(response => {
+                    return resolve(response);
+                })
+                .catch(err => {
+                    if (err && err.message && err.message === ErrorMessages.deviceRegistered) {
+                        return resolve();
+                    }
+                    console.log('err',err);
+                    dispatch({
+                        type: Actions.STOP_REQUEST
+                    })
+                    return reject(err);
+                });
+        }
         return AppAPI.register_device.post({ device_uuid: uniqueId }, bodyObj)
             .then(response => {
                 dispatch({
@@ -74,7 +90,6 @@ const registerDevice = () => {
                     certificate: response.certificate,
                     device:      response.device,
                 });
-
                 return resolve(response);
             })
             .catch(err => {

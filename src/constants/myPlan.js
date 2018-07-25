@@ -46,7 +46,7 @@ const overallReadiness = [
 ];
 
 const sleepQuality = [
-    'I did\'t sleep',
+    'I didn\'t sleep',
     'Terribly- I’m a zombie',
     'Poorly- feeling exhausted',
     'Not Well- feeling tired',

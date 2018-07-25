@@ -14,6 +14,7 @@ const Login = ({
     Layout,
     authorizeUser,
     certificate,
+    device,
     email,
     environment,
     finalizeLogin,
@@ -22,10 +23,12 @@ const Login = ({
     password,
     registerDevice,
     setEnvironment,
+    token,
 }) => (
     <Layout
         authorizeUser={authorizeUser}
         certificate={certificate}
+        device={device}
         email={email}
         environment={environment}
         finalizeLogin={finalizeLogin}
@@ -34,6 +37,7 @@ const Login = ({
         password={password}
         registerDevice={registerDevice}
         setEnvironment={setEnvironment}
+        token={token}
     />
 );
 
@@ -41,6 +45,7 @@ Login.propTypes = {
     Layout:            PropTypes.func.isRequired,
     authorizeUser:     PropTypes.func.isRequired,
     certificate:       PropTypes.object,
+    device:            PropTypes.object,
     email:             PropTypes.string,
     environment:       PropTypes.string,
     finalizeLogin:     PropTypes.func.isRequired,
@@ -49,20 +54,25 @@ Login.propTypes = {
     password:          PropTypes.string,
     registerDevice:    PropTypes.func.isRequired,
     setEnvironment:    PropTypes.func.isRequired,
+    token:             PropTypes.string,
 };
 
 Login.defaultProps = {
     certificate: null,
+    device:      null,
     environment: 'PROD',
     email:       null,
     password:    null,
+    token:       null,
 };
 
 const mapStateToProps = state => ({
     certificate: state.init.certificate || null,
+    device:      state.init.device || null,
     environment: state.init.environment || 'PROD',
     email:       state.init.email || null,
     password:    state.init.password || null,
+    token:       state.init.token || null,
 });
 
 const mapDispatchToProps = {
