@@ -79,6 +79,7 @@ class MyPlan extends Component {
     }
 
     componentDidMount = () => {
+        // when we arrive, load MyPlan
         let userId = this.props.user.id;
         // this.props.getMyPlan('morning_practice_2', moment('2018-07-11', 'YYYY-MM-DD').format('YYYY-MM-DD'))
         this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
@@ -123,7 +124,7 @@ class MyPlan extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(nextProps.notification !== this.props.notification) {
+        if(nextProps.notification && nextProps.notification !== this.props.notification) {
             this._handleExerciseListRefresh(true);
         }
     }
@@ -221,8 +222,12 @@ class MyPlan extends Component {
         this.props.postSessionSurvey(postSession)
             .then(response => {
                 this.setState({
-                    loading:                      false,
                     isPostSessionSurveyModalOpen: false,
+                    loading:                      false,
+                    postSession:                  {
+                        RPE:      0,
+                        soreness: []
+                    },
                 });
             })
             .catch(error => {

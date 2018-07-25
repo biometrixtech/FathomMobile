@@ -66,16 +66,24 @@ class Root extends Component {
         /**
          * Unsure if this logic below will work for redux in active and inactive
          */
-        return notification.foreground
-            ? Promise.resolve(this.props.store.dispatch({
-                type: Actions.NOTIFICATION_RECEIVED
-            }))
-                // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
-                .then(() => Platform.OS === 'ios'
-                    ? notification.finish(PushNotificationIOS.FetchResult.NoData)
-                    : notification.finish()
-                )
-            : null;
+        // return notification.foreground
+        //     ? Promise.resolve(this.props.store.dispatch({
+        //         type: Actions.NOTIFICATION_RECEIVED
+        //     }))
+        //         // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
+        //         .then(() => Platform.OS === 'ios'
+        //             ? notification.finish(PushNotificationIOS.FetchResult.NoData)
+        //             : notification.finish()
+        //         )
+        //     : null;
+        // if we ever get a notification, we need to address it regardless or any boolean
+        this.props.store.dispatch({
+            type: Actions.NOTIFICATION_RECEIVED
+        });
+        return Platform.OS === 'ios' ?
+            notification.finish(PushNotificationIOS.FetchResult.NoData)
+            :
+            notification.finish();
     }
 
     _onRegisterForPushNotifications = (registration) => {

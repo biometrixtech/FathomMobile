@@ -75,20 +75,28 @@ class Login extends Component {
 
     static propTypes = {
         authorizeUser:     PropTypes.func.isRequired,
-        environment:       PropTypes.string,
+        certificate:       PropTypes.object,
+        device:            PropTypes.object,
         email:             PropTypes.string,
+        environment:       PropTypes.string,
         finalizeLogin:     PropTypes.func.isRequired,
         getUserSensorData: PropTypes.func.isRequired,
         onFormSubmit:      PropTypes.func,
         password:          PropTypes.string,
         registerDevice:    PropTypes.func.isRequired,
         setEnvironment:    PropTypes.func,
+        token:             PropTypes.string,
     }
 
     static defaultProps = {
-        environment: 'PROD',
-        email:       null,
-        password:    null,
+        certificate:    null,
+        device:         null,
+        email:          null,
+        environment:    'PROD',
+        onFormSubmit:   null,
+        password:       null,
+        setEnvironment: null,
+        token:          null,
     }
 
     constructor(props) {
@@ -212,11 +220,7 @@ class Login extends Component {
                     .then(response => {
                         console.log('response #2', response);
                         let { authorization, user } = response;
-                        return (
-                            this.props.certificate && this.props.certificate.id
-                                ? Promise.resolve()
-                                : this.props.registerDevice()
-                        )
+                        return this.props.registerDevice(this.props.certificate, this.props.device)
                             .then(() => this.props.finalizeLogin(user, credentials, authorization.jwt));
                     })
                     .then(() => this.setState({
@@ -259,17 +263,16 @@ class Login extends Component {
                     />
 
                     <Button
-                        title={'Login'}
+                        disabled={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? true : false}
+                        title={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? 'Logging in...' : 'Login'}
                         onPress={this.login}
                     />
 
                     <Spacer size={10} />
 
-                    <TouchableOpacity onPress={Actions.forgotPassword}>
+                    <TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ?  null : Actions.forgotPassword}>
                         <View>
-                            <Text p style={[AppStyles.textCenterAligned, AppStyles.link]}>
-                            Forgot Password
-                            </Text>
+                            <Text p style={[AppStyles.textCenterAligned, AppStyles.link]}>Forgot Password</Text>
                         </View>
                     </TouchableOpacity>
 
