@@ -204,6 +204,8 @@ dependencies {
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
         transitive = true;
     }
+    // For animated GIF support
+    implementation 'com.facebook.fresco:animated-gif:1.9.0'
 }
 
 
