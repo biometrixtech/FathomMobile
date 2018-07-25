@@ -10,7 +10,7 @@ export default {
     certificate:  null,
     device:       null,
     email:        null,
-    environment:  'PROD', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
+    environment:  'DEV', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
     jwt:          null,
     notification: false,
     password:     null,
