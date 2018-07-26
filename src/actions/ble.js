@@ -8,41 +8,25 @@
 /**
  * Bluetooth Actions
  */
-import Fabric from 'react-native-fabric';
-import BleManager from 'react-native-ble-manager';
+// constants, libs, store, ...
 import { Actions, AppConfig, BLEConfig } from '../constants';
 import { AppAPI, AppUtil } from '../lib';
 import { store } from '../store';
 
 // import third-party libraries
+import BleManager from 'react-native-ble-manager';
+import Fabric from 'react-native-fabric';
 
+// Fabric specific
 const { Answers } = Fabric;
 
+// constants
 const commands = BLEConfig.commands;
 const state = BLEConfig.state;
 
-const read = (id) => {
-    return BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID)
-        .then(data => {
-            Answers.logCustom('BLE read', {
-                data,
-                deviceInfo: AppConfig.deviceInfo,
-                id,
-            });
-            return data;
-        });
-};
-
-const write = (id, data) => {
-    Answers.logCustom('BLE write', {
-        data,
-        deviceInfo: AppConfig.deviceInfo,
-        id,
-    });
-    return BleManager.write(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID, data)
-        .then(() => read(id));
-};
-
+/**
+  * UTILITY FUNCTIONS
+  */
 /**
   * Convert string to byte array
   * eg.
@@ -75,112 +59,32 @@ const convertToUnsigned32BitIntByteArray = (value) => {
     return value.toString(16).match(/.{1,2}/g).map(val => convertHex(val));
 }
 
-// Creating a promise wrapper for setTimeout
-// const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay));
-
-const getOwnerFlag = (id) => {
-    let dataArray = [commands.GET_OWNER_FLAG, convertHex('0x00')];
-    return dispatch => write(id, dataArray)
-        .then(response => {
-            return dispatch({
-                type: Actions.GET_OWNER_FLAG,
-                data: response[3] === 0 && response[4] === 1
+const read = (id) => {
+    return BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID)
+        .then(data => {
+            Answers.logCustom('BLE read', {
+                data,
+                deviceInfo: AppConfig.deviceInfo,
+                id,
             });
+            return data;
         });
 };
 
-const getKitName = (id) => {
-    let dataArray = [commands.GET_KIT_NAME, convertHex('0x00')];
-    return dispatch => write(id, dataArray)
-        .then(response => {
-            return convertByteArrayToString(response.slice(4,20));
-        })
-        .then(name => {
-            return dispatch({
-                type: Actions.GET_KIT_NAME,
-                data: name
-            });
-        })
-}
-
-const assignType = (type) => {
-    return dispatch => dispatch({
-        type: Actions.ASSIGN_TYPE,
-        data: type
+const write = (id, data) => {
+    Answers.logCustom('BLE write', {
+        data,
+        deviceInfo: AppConfig.deviceInfo,
+        id,
     });
+    return BleManager.write(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID, data)
+        .then(() => read(id));
 };
 
-const checkState = () => {
-    return dispatch => new Promise(resolve => resolve(BleManager.checkState()))
-        .then(() => dispatch({
-            type: Actions.CHECK_STATE
-        }));
-};
-
-const changeState = (kitState) => {
-    return dispatch => dispatch({
-        type: Actions.CHANGE_STATE,
-        data: kitState
-    });
-};
-
-const enableBluetooth = () => {
-    return dispatch => BleManager.enableBluetooth()
-        .then(() => dispatch({
-            type: Actions.ENABLE_BLUETOOTH
-        }))
-        .catch(err => { console.log(err); return Promise.reject(err); });
-};
-
-const startBluetooth = () => {
-    return dispatch => BleManager.start({ showAlert: true })
-        .then(() => dispatch({
-            type: Actions.START_BLUETOOTH
-        }))
-        .catch(err => { console.log(err); return Promise.reject(err); });
-};
-
-const startScan = () => {
-    return dispatch => BleManager.scan([], 30, false, { scanMode: 2 })
-        .then(() => dispatch({
-            type: Actions.START_SCAN
-        }))
-        .catch(err => { console.log(err); return Promise.reject(err); });
-};
-
-const stopScan = () => {
-    return dispatch => BleManager.stopScan()
-        .then(() => dispatch({
-            type: Actions.STOP_SCAN
-        }))
-        .catch(err => { console.log(err); return Promise.reject(err); });
-};
-
-const deviceFound = (data) => {
-    return dispatch => dispatch({
-        type: Actions.DEVICE_FOUND,
-        data
-    });
-};
-
-const startConnect = () => {
-    return dispatch => Promise.resolve(
-        dispatch({
-            type: Actions.START_CONNECT
-        })
-    )
-        .catch(err => Promise.reject(err));
-};
-
-const stopConnect = () => {
-    return dispatch => Promise.resolve(
-        dispatch({
-            type: Actions.STOP_CONNECT
-        })
-    )
-        .catch(err => Promise.reject(err));
-};
-
+/**
+  * NEW FUNCTIONS
+  * - 1 Sensor System
+  */
 const connectToAccessory = (data) => {
     const addToListArray = [commands.ADD_TO_TRUSTED_LIST, convertHex('0x00')];
     const getSetupModeArray = [commands.IS_SINGLE_SENSOR_IN_SETUP_MODE, convertHex('0x00')];
@@ -304,6 +208,129 @@ const getSingleSensorSavedPractices = (sensor_id) => {
         })
         .then(() => BleManager.disconnect(sensorId))
         .then(response => Promise.resolve(response))
+        .catch(err => Promise.reject(err));
+};
+
+const setKitTime = (id) => {
+    let dataArray = [commands.SET_TIME, convertHex('0x04')];
+    dataArray = dataArray.concat(convertToUnsigned32BitIntByteArray(Math.round((new Date()).getTime() / 1000))); // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
+    console.log(id, dataArray);
+    return dispatch => write(id, dataArray)
+        .then(result => {
+            return dispatch({
+                type: Actions.SET_KIT_TIME
+            });
+        });
+};
+
+/**
+  * OLD FUNCTIONS
+  * - 3 Sensor System
+  */
+
+// Creating a promise wrapper for setTimeout
+// const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay));
+
+const getOwnerFlag = (id) => {
+    let dataArray = [commands.GET_OWNER_FLAG, convertHex('0x00')];
+    return dispatch => write(id, dataArray)
+        .then(response => {
+            return dispatch({
+                type: Actions.GET_OWNER_FLAG,
+                data: response[3] === 0 && response[4] === 1
+            });
+        });
+};
+
+const getKitName = (id) => {
+    let dataArray = [commands.GET_KIT_NAME, convertHex('0x00')];
+    return dispatch => write(id, dataArray)
+        .then(response => {
+            return convertByteArrayToString(response.slice(4,20));
+        })
+        .then(name => {
+            return dispatch({
+                type: Actions.GET_KIT_NAME,
+                data: name
+            });
+        })
+}
+
+const assignType = (type) => {
+    return dispatch => dispatch({
+        type: Actions.ASSIGN_TYPE,
+        data: type
+    });
+};
+
+const checkState = () => {
+    return dispatch => new Promise(resolve => resolve(BleManager.checkState()))
+        .then(() => dispatch({
+            type: Actions.CHECK_STATE
+        }));
+};
+
+const changeState = (kitState) => {
+    return dispatch => dispatch({
+        type: Actions.CHANGE_STATE,
+        data: kitState
+    });
+};
+
+const enableBluetooth = () => {
+    return dispatch => BleManager.enableBluetooth()
+        .then(() => dispatch({
+            type: Actions.ENABLE_BLUETOOTH
+        }))
+        .catch(err => { console.log(err); return Promise.reject(err); });
+};
+
+const startBluetooth = () => {
+    return dispatch => BleManager.start({ showAlert: true })
+        .then(() => dispatch({
+            type: Actions.START_BLUETOOTH
+        }))
+        .catch(err => { console.log(err); return Promise.reject(err); });
+};
+
+const startScan = () => {
+    return dispatch => BleManager.scan([], 30, false, { scanMode: 2 })
+        .then(() => dispatch({
+            type: Actions.START_SCAN
+        }))
+        .catch(err => { console.log(err); return Promise.reject(err); });
+};
+
+const stopScan = () => {
+    return dispatch => BleManager.stopScan()
+        .then(() => dispatch({
+            type: Actions.STOP_SCAN
+        }))
+        .catch(err => { console.log(err); return Promise.reject(err); });
+};
+
+const deviceFound = (data) => {
+    return dispatch => dispatch({
+        type: Actions.DEVICE_FOUND,
+        data
+    });
+};
+
+const startConnect = () => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.START_CONNECT
+        })
+    )
+        .catch(err => Promise.reject(err));
+};
+
+const stopConnect = () => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.STOP_CONNECT
+        })
+    )
         .catch(err => Promise.reject(err));
 };
 
@@ -588,18 +615,6 @@ const handleDisconnect = (id) => {
         .then(services => dispatch({
             type: Actions.HANDLE_DISCONNECT
         }));
-};
-
-const setKitTime = (id) => {
-    let dataArray = [commands.SET_TIME, convertHex('0x04')];
-    dataArray = dataArray.concat(convertToUnsigned32BitIntByteArray(Math.round((new Date()).getTime() / 1000))); // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
-    console.log(id, dataArray);
-    return dispatch => write(id, dataArray)
-        .then(result => {
-            return dispatch({
-                type: Actions.SET_KIT_TIME
-            });
-        });
 };
 
 const getWifiMacAddress = (id) => {
