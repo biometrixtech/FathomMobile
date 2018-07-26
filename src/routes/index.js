@@ -79,6 +79,7 @@ const Index = (
             <Scene
                 Layout={SettingsComponent}
                 component={SettingsContainer}
+                headerTintColor={AppColors.black}
                 hideNavBar={false}
                 navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0}}
                 onLeft={() => Actions.pop()}

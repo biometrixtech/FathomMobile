@@ -100,14 +100,14 @@ class Settings extends Component {
     render = () => {
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
-                {/*<ListItem
+                <ListItem
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{color: AppColors.black, name: 'bluetooth', size: 24}}
                     onPress={() => this.props.accessoryData.sensor_uid ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()}
                     title={this.props.accessoryData.sensor_uid ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
                     titleStyle={{color: AppColors.black}}
-                />*/}
+                />
                 <ListItem
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
