@@ -54,7 +54,7 @@ const authorizeUser = (authorization, user, userCreds) => {
   * Regsiter DeviceInfo
   * - IoT certificate check and save
   */
-const registerDevice = (certificate, device) => {
+const registerDevice = (certificate, device, user) => {
     return dispatch => new Promise((resolve, reject) => {
         let uniqueId = AppUtil.getDeviceUUID();
         let device_type = Platform.OS;
@@ -67,6 +67,7 @@ const registerDevice = (certificate, device) => {
         if (push_notifications) {
             bodyObj.push_notifications = push_notifications;
         }
+        bodyObj.owner_id = user.id;
         if(certificate && certificate.id && device) {
             return AppAPI.register_device.patch({ device_uuid: uniqueId }, bodyObj)
                 .then(response => {

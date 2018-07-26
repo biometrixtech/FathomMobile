@@ -220,7 +220,7 @@ class Login extends Component {
                     .then(response => {
                         console.log('response #2', response);
                         let { authorization, user } = response;
-                        return this.props.registerDevice(this.props.certificate, this.props.device)
+                        return this.props.registerDevice(this.props.certificate, this.props.device, user)
                             .then(() => this.props.finalizeLogin(user, credentials, authorization.jwt));
                     })
                     .then(() => this.setState({

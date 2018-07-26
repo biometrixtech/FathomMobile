@@ -96,11 +96,7 @@ class Start extends Component {
         })
             .then(response => {
                 let { authorization, user } = response;
-                return (
-                    this.props.certificate && this.props.certificate.id
-                        ? Promise.resolve()
-                        : this.props.registerDevice()
-                )
+                return this.props.registerDevice(this.props.certificate, this.props.device, user)
                     .then(() => this.props.finalizeLogin(user, credentials, authorization.jwt));
             })
             .then(() => {
