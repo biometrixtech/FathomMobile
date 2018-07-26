@@ -270,11 +270,11 @@ class Login extends Component {
 
                     <Spacer size={10} />
 
-                    <TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
+                    {/*<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
                         <View>
                             <Text p style={[AppStyles.textCenterAligned, AppStyles.link]}>Forgot Password</Text>
                         </View>
-                    </TouchableOpacity>
+                    </TouchableOpacity>*/}
 
                 </Card>
                 <Modal
