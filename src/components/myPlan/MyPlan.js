@@ -406,16 +406,9 @@ class MyPlan extends Component {
                         style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal, { paddingBottom: 0 }]}
                     >
                         <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'space-between',}}>
-                            <View style={{justifyContent: 'center', flex: 1,}}></View>
-                            <View style={{alignItems: 'center', justifyContent: 'center', flex: 8,}}>
-                                <Image
-                                    source={require('../../../assets/images/standard/coach-avatar.png')}
-                                    style={{resizeMode: 'contain', width: 40, height: 40}}
-                                />
-                            </View>
                             <View style={{justifyContent: 'center', flex: 1,}}>
                                 <TabIcon
-                                    containerStyle={[{alignSelf: 'flex-end'}]}
+                                    containerStyle={[{alignSelf: 'flex-start'}]}
                                     icon={'settings'}
                                     iconStyle={[{color: AppColors.white}]}
                                     onPress={() => Actions.settings()}
@@ -424,6 +417,13 @@ class MyPlan extends Component {
                                     type={'material-community'}
                                 />
                             </View>
+                            <View style={{alignItems: 'center', justifyContent: 'center', flex: 8,}}>
+                                <Image
+                                    source={require('../../../assets/images/standard/coach-avatar.png')}
+                                    style={{resizeMode: 'contain', width: 40, height: 40}}
+                                />
+                            </View>
+                            <View style={{justifyContent: 'center', flex: 1,}}></View>
                         </View>
                         { !isDailyReadinessSurveyCompleted ?
                             <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, AppStyles.textCenterAligned, {color: AppColors.white}]}>{`GOOD ${partOfDay}, ${this.props.user.personal_data.first_name.toUpperCase()}!`}</Text>

@@ -59,6 +59,77 @@ const convertToUnsigned32BitIntByteArray = (value) => {
     return value.toString(16).match(/.{1,2}/g).map(val => convertHex(val));
 }
 
+const checkState = () => {
+    return dispatch => new Promise(resolve => resolve(BleManager.checkState()))
+        .then(() => dispatch({
+            type: Actions.CHECK_STATE
+        }));
+};
+
+const changeState = (kitState) => {
+    return dispatch => dispatch({
+        type: Actions.CHANGE_STATE,
+        data: kitState
+    });
+};
+
+const enableBluetooth = () => {
+    return dispatch => BleManager.enableBluetooth()
+        .then(() => dispatch({
+            type: Actions.ENABLE_BLUETOOTH
+        }))
+        .catch(err => { console.log(err); return Promise.reject(err); });
+};
+
+const startBluetooth = () => {
+    return dispatch => BleManager.start({ showAlert: true })
+        .then(() => dispatch({
+            type: Actions.START_BLUETOOTH
+        }))
+        .catch(err => { console.log(err); return Promise.reject(err); });
+};
+
+const startScan = () => {
+    return dispatch => BleManager.scan([], 30, false, { scanMode: 2 })
+        .then(() => dispatch({
+            type: Actions.START_SCAN
+        }))
+        .catch(err => { console.log(err); return Promise.reject(err); });
+};
+
+const stopScan = () => {
+    return dispatch => BleManager.stopScan()
+        .then(() => dispatch({
+            type: Actions.STOP_SCAN
+        }))
+        .catch(err => { console.log(err); return Promise.reject(err); });
+};
+
+const deviceFound = (data) => {
+    return dispatch => dispatch({
+        type: Actions.DEVICE_FOUND,
+        data
+    });
+};
+
+const startConnect = () => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.START_CONNECT
+        })
+    )
+        .catch(err => Promise.reject(err));
+};
+
+const stopConnect = () => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.STOP_CONNECT
+        })
+    )
+        .catch(err => Promise.reject(err));
+};
+
 const read = (id) => {
     return BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID)
         .then(data => {
@@ -261,77 +332,6 @@ const assignType = (type) => {
         type: Actions.ASSIGN_TYPE,
         data: type
     });
-};
-
-const checkState = () => {
-    return dispatch => new Promise(resolve => resolve(BleManager.checkState()))
-        .then(() => dispatch({
-            type: Actions.CHECK_STATE
-        }));
-};
-
-const changeState = (kitState) => {
-    return dispatch => dispatch({
-        type: Actions.CHANGE_STATE,
-        data: kitState
-    });
-};
-
-const enableBluetooth = () => {
-    return dispatch => BleManager.enableBluetooth()
-        .then(() => dispatch({
-            type: Actions.ENABLE_BLUETOOTH
-        }))
-        .catch(err => { console.log(err); return Promise.reject(err); });
-};
-
-const startBluetooth = () => {
-    return dispatch => BleManager.start({ showAlert: true })
-        .then(() => dispatch({
-            type: Actions.START_BLUETOOTH
-        }))
-        .catch(err => { console.log(err); return Promise.reject(err); });
-};
-
-const startScan = () => {
-    return dispatch => BleManager.scan([], 30, false, { scanMode: 2 })
-        .then(() => dispatch({
-            type: Actions.START_SCAN
-        }))
-        .catch(err => { console.log(err); return Promise.reject(err); });
-};
-
-const stopScan = () => {
-    return dispatch => BleManager.stopScan()
-        .then(() => dispatch({
-            type: Actions.STOP_SCAN
-        }))
-        .catch(err => { console.log(err); return Promise.reject(err); });
-};
-
-const deviceFound = (data) => {
-    return dispatch => dispatch({
-        type: Actions.DEVICE_FOUND,
-        data
-    });
-};
-
-const startConnect = () => {
-    return dispatch => Promise.resolve(
-        dispatch({
-            type: Actions.START_CONNECT
-        })
-    )
-        .catch(err => Promise.reject(err));
-};
-
-const stopConnect = () => {
-    return dispatch => Promise.resolve(
-        dispatch({
-            type: Actions.STOP_CONNECT
-        })
-    )
-        .catch(err => Promise.reject(err));
 };
 
 const loginToAccessory = (accessoryData) => {
