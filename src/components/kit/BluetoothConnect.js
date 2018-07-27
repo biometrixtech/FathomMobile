@@ -184,8 +184,8 @@ class BluetoothConnectView extends Component {
         if (data.advertising && data.advertising.kCBAdvDataLocalName) {
             data.name = data.advertising.kCBAdvDataLocalName;
         }
-        // return data.name && /Fathom_kit_/i.test(data.name) ? this.props.deviceFound(data) : null;
-        return data.name && /fathomSensor/i.test(data.name) ? this.props.deviceFound(data) : null; // single sensor solution
+        // return data.name && /fathomK_/i.test(data.name) ? this.props.deviceFound(data) : null; // 3 sensor solution
+        return data.name && /fathomS_/i.test(data.name) ? this.props.deviceFound(data) : null; // single sensor solution
     }
 
     handleBleStateChange = (data) => {
@@ -212,24 +212,36 @@ class BluetoothConnectView extends Component {
                 console.log('err in BluetoothConnect #1',err);
                 return this.props.connectToAccessory(data);
             })
-            .catch(err => this.props.stopConnect())
+            .catch(err => {
+                console.log('err in BluetoothConnect #2',err);
+                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_uid) {
+                    this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
+                }
+                return this.props.stopConnect();
+            })
             .then(() => this.props.setKitTime(this.props.bluetooth.accessoryData.id))
             .then(() => this.props.postUserSensorData())
             .then(() => {
                 this._toggleAlertNotification();
-                if (Object.keys(this.props.bluetooth.accessoryData).length === 0 && this.props.bluetooth.accessoryData.constructor === Object) {
+                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_uid) {
                     this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
                 }
                 return this.props.stopConnect();
             })
             .catch(err => {
-                console.log('err in BluetoothConnect #2',err);
-                if (Object.keys(this.props.bluetooth.accessoryData).length === 0 && this.props.bluetooth.accessoryData.constructor === Object) {
+                console.log('err in BluetoothConnect #3',err);
+                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_uid) {
                     this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
                 }
                 return this.props.stopConnect();
             })
-            .catch(err => this.props.stopConnect());
+            .catch(err => {
+                console.log('err in BluetoothConnect #4',err);
+                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_uid) {
+                    this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
+                }
+                return this.props.stopConnect();
+            });
     }
 
     _onLayoutDidChange = (e) => {
@@ -397,7 +409,7 @@ class BluetoothConnectView extends Component {
                                                 this.toggleScanning(false);
                                                 return this.props.startConnect(device).then(() => this.connect(device))
                                             }}
-                                            title={device.id}
+                                            title={device.name.replace('fathomS_', '')}
                                             titleStyle={{color: AppColors.black}}
                                         />
                                     })}
