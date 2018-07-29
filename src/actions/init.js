@@ -69,6 +69,7 @@ const registerDevice = (certificate, device, user) => {
         }
         bodyObj.owner_id = user.id;
         if(certificate && certificate.id && device) {
+            bodyObj.owner_id = user.id;
             return AppAPI.register_device.patch({ device_uuid: uniqueId }, bodyObj)
                 .then(response => {
                     return resolve(response);

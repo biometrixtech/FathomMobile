@@ -324,7 +324,9 @@ class BluetoothConnectView extends Component {
                             onPress={() => {
                                 this.setState({ index: 1 });
                                 this.pages.progress = 1;
-                                return this.props.checkState();
+                                return this.props.checkState()
+                                    .then(() => this.startBluetooth())
+                                    .then(() => this.toggleScanning(true));
                             }}
                             raised={false}
                             title={'Next Step'}
@@ -369,21 +371,17 @@ class BluetoothConnectView extends Component {
                             position={'top'}
                             ref={'toast'}
                         />
-                        <View style={[AppStyles.paddingSml, {flexDirection: 'row',}]}>
-                            <View style={{justifyContent: 'center',}}>
-                                <Text p style={[AppStyles.paddingHorizontalSml, {color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold', textAlignVertical: 'center',}]}>{'AVAILABLE DEVICES'}</Text>
-                            </View>
-                            <View style={{justifyContent: 'center',}}>
-                                { this.props.bluetooth.scanning ?
-                                    <ActivityIndicator
-                                        animating={true}
-                                        color={AppColors.primary.yellow.hundredPercent}
-                                        size={'small'}
-                                    />
-                                    :
-                                    null
-                                }
-                            </View>
+                        <View style={[AppStyles.paddingSml, {alignItems: 'center', flexDirection: 'row',}]}>
+                            <Text p style={[AppStyles.paddingHorizontalSml, {color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold', textAlignVertical: 'center',}]}>{'AVAILABLE DEVICES'}</Text>
+                            { this.props.bluetooth.scanning ?
+                                <ActivityIndicator
+                                    animating={true}
+                                    color={AppColors.primary.yellow.hundredPercent}
+                                    size={'small'}
+                                />
+                                :
+                                null
+                            }
                         </View>
                         <ScrollView
                             contentContainerStyle={{flex: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border,}}
