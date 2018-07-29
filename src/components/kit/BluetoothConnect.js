@@ -184,8 +184,8 @@ class BluetoothConnectView extends Component {
         if (data.advertising && data.advertising.kCBAdvDataLocalName) {
             data.name = data.advertising.kCBAdvDataLocalName;
         }
-        // return data.name && /Fathom_kit_/i.test(data.name) ? this.props.deviceFound(data) : null;
-        return data.name && /fathomSensor/i.test(data.name) ? this.props.deviceFound(data) : null; // single sensor solution
+        // return data.name && /Fathom_kit_/i.test(data.name) ? this.props.deviceFound(data) : null; // 3 sensor solution
+        return data.name && /fathomS_/i.test(data.name) ? this.props.deviceFound(data) : null; // single sensor solution
     }
 
     handleBleStateChange = (data) => {
@@ -195,7 +195,7 @@ class BluetoothConnectView extends Component {
                 this.pages.progress = 1;
             } else if (!this.pages) {
                 return Promise.resolve(this.props.changeState(data.state))
-                    .then(() => Actions.kitManagement());
+                    .then(() => Actions.settings());
             }
         } else if (data.state === 'on' && this.pages && this.pages.progress === 1) {
             this.startBluetooth();
@@ -212,24 +212,36 @@ class BluetoothConnectView extends Component {
                 console.log('err in BluetoothConnect #1',err);
                 return this.props.connectToAccessory(data);
             })
-            .catch(err => this.props.stopConnect())
+            .catch(err => {
+                console.log('err in BluetoothConnect #2',err);
+                if (this.props.bluetooth.accessoryData && this.props.bluetooth.accessoryData.sensor_uid) {
+                    this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
+                }
+                return this.props.stopConnect();
+            })
             .then(() => this.props.setKitTime(this.props.bluetooth.accessoryData.id))
             .then(() => this.props.postUserSensorData())
             .then(() => {
                 this._toggleAlertNotification();
-                if (Object.keys(this.props.bluetooth.accessoryData).length === 0 && this.props.bluetooth.accessoryData.constructor === Object) {
+                if (this.props.bluetooth.accessoryData && this.props.bluetooth.accessoryData.sensor_uid) {
                     this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
                 }
                 return this.props.stopConnect();
             })
             .catch(err => {
-                console.log('err in BluetoothConnect #2',err);
-                if (Object.keys(this.props.bluetooth.accessoryData).length === 0 && this.props.bluetooth.accessoryData.constructor === Object) {
+                console.log('err in BluetoothConnect #3',err);
+                if (this.props.bluetooth.accessoryData && this.props.bluetooth.accessoryData.sensor_uid) {
                     this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
                 }
                 return this.props.stopConnect();
             })
-            .catch(err => this.props.stopConnect());
+            .catch(err => {
+                console.log('err in BluetoothConnect #4',err);
+                if (this.props.bluetooth.accessoryData && this.props.bluetooth.accessoryData.sensor_uid) {
+                    this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
+                }
+                return this.props.stopConnect();
+            });
     }
 
     _onLayoutDidChange = (e) => {
@@ -301,18 +313,20 @@ class BluetoothConnectView extends Component {
                         <Image
                             resizeMode={'contain'}
                             source={require('../../../assets/images/standard/kit-activation-1-sensor.png')}
-                            style={{flex: 1}}
+                            style={{flex: 1, width: AppSizes.screen.widthFourFifths}}
                         />
                         <FormLabel labelStyle={[AppStyles.h3, AppStyles.textCenterAligned, {fontWeight: 'bold'}]}>{accessoryDiscoverabilityInstruction}</FormLabel>
                     </View>
                     <View style={{flex: 1,}}>
                         <Button
                             backgroundColor={AppColors.primary.yellow.hundredPercent}
-                            buttonStyle={{borderRadius: 0, flex: 1, width: AppSizes.screen.width}}
+                            buttonStyle={{borderRadius: 0, height: '100%', width: AppSizes.screen.width}}
                             onPress={() => {
                                 this.setState({ index: 1 });
                                 this.pages.progress = 1;
-                                return this.props.checkState();
+                                return this.props.checkState()
+                                    .then(() => this.startBluetooth())
+                                    .then(() => this.toggleScanning(true));
                             }}
                             raised={false}
                             title={'Next Step'}
@@ -326,7 +340,11 @@ class BluetoothConnectView extends Component {
                         containerStyle={[{ alignSelf: 'center', backgroundColor: AppColors.primary.yellow.hundredPercent }]}
                         icon={'bluetooth'}
                         iconStyle={[{color: AppColors.white}]}
-                        onPress={() => this.startBluetooth().then(() => this.toggleScanning(!this.props.bluetooth.scanning))}
+                        onPress={() => {
+                            this.startBluetooth().then(() => this.toggleScanning(true));
+                            this.setState({ index: 2 });
+                            this.pages.progress = 2;
+                        }}
                         raised
                         reverse
                         size={30}
@@ -348,26 +366,22 @@ class BluetoothConnectView extends Component {
                         <Text h3 style={[AppStyles.textCenterAligned, {fontWeight: 'bold'}]}>{sensorListTitle}</Text>
                         <Text p style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml]}>{sensorListSubtitle}</Text>
                     </View>
-                    <View style={{flex: 7,}}>
+                    <View style={[AppStyles.paddingTopSml, {flex: 7,}]}>
                         <Toast
                             position={'top'}
                             ref={'toast'}
                         />
-                        <View style={[AppStyles.paddingSml, {flexDirection: 'row'}]}>
-                            <View style={{justifyContent: 'center'}}>
-                                <Text p style={[AppStyles.paddingHorizontalSml, {color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold'}]}>{'AVAILABLE DEVICES'}</Text>
-                            </View>
-                            <View style={{justifyContent: 'center'}}>
-                                { this.props.bluetooth.scanning ?
-                                    <ActivityIndicator
-                                        animating={true}
-                                        color={AppColors.primary.yellow.hundredPercent}
-                                        size={'small'}
-                                    />
-                                    :
-                                    null
-                                }
-                            </View>
+                        <View style={[AppStyles.paddingSml, {alignItems: 'center', flexDirection: 'row',}]}>
+                            <Text p style={[AppStyles.paddingHorizontalSml, {color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold', textAlignVertical: 'center',}]}>{'AVAILABLE DEVICES'}</Text>
+                            { this.props.bluetooth.scanning ?
+                                <ActivityIndicator
+                                    animating={true}
+                                    color={AppColors.primary.yellow.hundredPercent}
+                                    size={'small'}
+                                />
+                                :
+                                null
+                            }
                         </View>
                         <ScrollView
                             contentContainerStyle={{flex: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border,}}
@@ -393,22 +407,13 @@ class BluetoothConnectView extends Component {
                                                 this.toggleScanning(false);
                                                 return this.props.startConnect(device).then(() => this.connect(device))
                                             }}
-                                            title={device.id}
+                                            title={device.name.replace('fathomS_','')}
                                             titleStyle={{color: AppColors.black}}
                                         />
                                     })}
                                 </View>
                                 :
-                                <View style={this.props.bluetooth.devicesFound.length > 0 ? {} : [AppStyles.containerCentered, {flex: 1}]}>
-                                    {/*<Button
-                                        buttonStyle={{ backgroundColor: `${this.props.bluetooth.scanning ? AppColors.secondary.red.hundredPercent : AppColors.secondary.blue.hundredPercent}` }}
-                                        icon={{ name: `${this.props.bluetooth.scanning ? 'stop' : 'play-arrow'}` }}
-                                        onPress={() => this.startBluetooth().then(() => this.toggleScanning(true))}
-                                        raised
-                                        small
-                                        title={this.props.bluetooth.scanning ? 'Stop Scan' : 'Start Scan'}
-                                    />*/}
-                                </View>
+                                null
                             }
                         </ScrollView>
                     </View>

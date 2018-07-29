@@ -69,7 +69,6 @@ class Settings extends Component {
                         text:    'Unpair',
                         onPress: () => {
                             this.props.disconnectFromSingleSensor(this.props.accessoryData.sensor_uid)
-                                .then(() => this.props.getSingleSensorSavedPractices(this.props.accessoryData.sensor_uid))
                                 .catch(err => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
                                 .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
                                 .then(() => this.refs.toast.show('Successfully UNPAIRED from sensor', DURATION.LENGTH_LONG))
@@ -100,14 +99,14 @@ class Settings extends Component {
     render = () => {
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
-                {/*<ListItem
+                <ListItem
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{color: AppColors.black, name: 'bluetooth', size: 24}}
                     onPress={() => this.props.accessoryData.sensor_uid ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()}
                     title={this.props.accessoryData.sensor_uid ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
                     titleStyle={{color: AppColors.black}}
-                />*/}
+                />
                 <ListItem
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
