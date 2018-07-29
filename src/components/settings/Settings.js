@@ -69,7 +69,7 @@ class Settings extends Component {
                         text:    'Unpair',
                         onPress: () => {
                             this.props.disconnectFromSingleSensor(this.props.accessoryData.sensor_uid)
-                                .then(() => this.props.getSingleSensorSavedPractices(this.props.accessoryData.sensor_uid))
+                                // .then(() => this.props.getSingleSensorSavedPractices(this.props.accessoryData.sensor_uid))
                                 .catch(err => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
                                 .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
                                 .then(() => this.refs.toast.show('Successfully UNPAIRED from sensor', DURATION.LENGTH_LONG))

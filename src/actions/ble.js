@@ -152,6 +152,18 @@ const write = (id, data) => {
         .then(() => read(id));
 };
 
+const setKitTime = (id) => {
+    let dataArray = [commands.SET_TIME, convertHex('0x04')];
+    dataArray = dataArray.concat(convertToUnsigned32BitIntByteArray(Math.round((new Date()).getTime() / 1000))); // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
+    console.log(id, dataArray);
+    return dispatch => write(id, dataArray)
+        .then(result => {
+            return dispatch({
+                type: Actions.SET_KIT_TIME
+            });
+        });
+};
+
 /**
   * NEW FUNCTIONS
   * - 1 Sensor System
@@ -266,32 +278,57 @@ const disconnectFromSingleSensor = (sensor_id) => {
         .catch(err => Promise.reject(err));
 };
 
-const getSingleSensorSavedPractices = (sensor_id) => {
-    let currentState = store.getState();
-    let sensorId = sensor_id || currentState.ble.accessoryData.sensor_uid;
-    const dataArray = [commands.GET_SINGLE_SENSOR_LIST, convertHex('0x01'), convertHex('0x00')];
-    return dispatch => BleManager.start({ showAlert: true })
+const getSingleSensorSavedPractices = (sensorId, operation_id = '0x00') => {
+    // let currentState = store.getState();
+    // let sensorId = sensor_id || currentState.ble.accessoryData.sensor_uid;
+    // const dataArray = [commands.GET_SINGLE_SENSOR_LIST, convertHex('0x01'), convertHex(operation_id)];
+    // return dispatch => BleManager.start({ showAlert: true })
+    //     .then(() => BleManager.connect(sensorId))
+    //     .then(() => BleManager.retrieveServices(sensorId))
+    //     .then(peripheralInfo => {
+    //         console.log('peripheralInfo',peripheralInfo);
+    //         return write(peripheralInfo.id, dataArray); // get single sensor practices - 0x75
+    //     })
+    //     .then(() => BleManager.disconnect(sensorId))
+    //     .then(response => Promise.resolve(response))
+    //     .catch(err => Promise.reject(err));
+
+    const dataArray = [commands.GET_SINGLE_SENSOR_LIST, convertHex('0x01'), convertHex(operation_id)];
+    let isSensorConnected = false;
+    // BleManager.disconnect(sensorId)
+    //     .catch(err => BleManager.disconnect(sensorId))
+    //     .then(() => BleManager.connect(sensorId))
+    //     .catch(err => BleManager.connect(sensorId))
+    //     .then(() => BleManager.retrieveServices(sensorId))
+    //     .catch(err => BleManager.retrieveServices(sensorId))
+    //     .then(peripheralInfo => write(peripheralInfo.id, addToListArray)) // add to trusted list - 0x72
+
+    BleManager.start({ showAlert: true })
         .then(() => BleManager.connect(sensorId))
         .then(() => BleManager.retrieveServices(sensorId))
+        .catch(err => BleManager.retrieveServices(sensorId))
+
+    // BleManager.retrieveServices(sensorId)
+    //     .catch(err => BleManager.retrieveServices(sensorId))
+
         .then(peripheralInfo => {
-            console.log('peripheralInfo',peripheralInfo);
+            console.log('++++++++peripheralInfo',peripheralInfo);
             return write(peripheralInfo.id, dataArray); // get single sensor practices - 0x75
         })
-        .then(() => BleManager.disconnect(sensorId))
-        .then(response => Promise.resolve(response))
-        .catch(err => Promise.reject(err));
-};
-
-const setKitTime = (id) => {
-    let dataArray = [commands.SET_TIME, convertHex('0x04')];
-    dataArray = dataArray.concat(convertToUnsigned32BitIntByteArray(Math.round((new Date()).getTime() / 1000))); // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
-    console.log(id, dataArray);
-    return dispatch => write(id, dataArray)
-        .then(result => {
-            return dispatch({
-                type: Actions.SET_KIT_TIME
-            });
+        .then(response => {
+            console.log('++++++++response',response);
+            isSensorConnected = true;
+            // return Promise.resolve(response);
+        })
+        .catch(err => {
+            console.log('++++++++err',err);
+            isSensorConnected = false;
+            // return Promise.reject(err)
         });
+
+    return {
+        isSensorConnected,
+    }
 };
 
 /**

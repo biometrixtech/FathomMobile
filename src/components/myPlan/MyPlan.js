@@ -4,8 +4,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-    AppState,
     ActivityIndicator,
+    Animated,
+    AppState,
+    Easing,
     Image,
     RefreshControl,
     ScrollView,
@@ -28,6 +30,7 @@ import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../..
 import { Button, TabIcon, Text, } from '../custom';
 import { WebView } from '../general';
 import { Exercises, PostSessionSurvey, ReadinessSurvey } from './pages';
+import { bleUtils } from '../../constants/utils';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -44,6 +47,7 @@ class MyPlan extends Component {
     static componentName = 'MyPlan';
 
     static propTypes = {
+        ble:                 PropTypes.object.isRequired,
         getMyPlan:           PropTypes.func.isRequired,
         getSoreBodyParts:    PropTypes.func.isRequired,
         notification:        PropTypes.bool.isRequired,
@@ -398,6 +402,25 @@ class MyPlan extends Component {
             :
             'Loading...';
         let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj);
+        // set animated values
+        const spinValue = new Animated.Value(0);
+        // First set up animation
+        Animated.loop(
+            Animated.timing(
+                spinValue,
+                {
+                    duration:        3000,
+                    easing:          Easing.linear,
+                    toValue:         1,
+                    useNativeDriver: true,
+                }
+            )
+        ).start();
+        // Second interpolate beginning and end values (in this case 0 and 1)
+        const spin = spinValue.interpolate({
+            inputRange:  [0, 1],
+            outputRange: ['0deg', '360deg'],
+        });
         return(
             <View style={{flex: 1,}}>
                 <View style={[styles.background]}>
@@ -423,7 +446,23 @@ class MyPlan extends Component {
                                     style={{resizeMode: 'contain', width: 40, height: 40}}
                                 />
                             </View>
-                            <View style={{justifyContent: 'center', flex: 1,}}></View>
+                            <View style={{justifyContent: 'center', flex: 1,}}>
+                                { bleUtils.handleBLESteps(this.props.ble).bleImage && bleUtils.handleBLESteps(this.props.ble).animated ?
+                                    <Animated.Image
+                                        resizeMode={'contain'}
+                                        source={bleUtils.handleBLESteps(this.props.ble).bleImage}
+                                        style={{transform: [{rotate: spin}], width: 34,}}
+                                    />
+                                    : bleUtils.handleBLESteps(this.props.ble).bleImage && !bleUtils.handleBLESteps(this.props.ble).animated ?
+                                        <Image
+                                            resizeMode={'contain'}
+                                            source={bleUtils.handleBLESteps(this.props.ble).bleImage}
+                                            style={{width: 34,}}
+                                        />
+                                        :
+                                        null
+                                }
+                            </View>
                         </View>
                         { !isDailyReadinessSurveyCompleted ?
                             <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, AppStyles.textCenterAligned, {color: AppColors.white}]}>{`GOOD ${partOfDay}, ${this.props.user.personal_data.first_name.toUpperCase()}!`}</Text>

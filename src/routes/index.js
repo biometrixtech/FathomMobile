@@ -82,7 +82,7 @@ const Index = (
                 headerTintColor={AppColors.black}
                 hideNavBar={false}
                 navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0}}
-                onLeft={() => Actions.pop()}
+                onLeft={() => Actions.myPlan()}
                 onRight={() => null}
                 key='settings'
                 panHandlers={null}
