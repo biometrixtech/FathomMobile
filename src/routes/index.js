@@ -45,35 +45,52 @@ import BluetoothConnectComponent from '../components/kit/BluetoothConnect';
 import MyPlanContainer from '../containers/myPlan/MyPlan';
 import MyPlanComponent from '../components/myPlan/MyPlan';
 
+import OnboardingContainer from '../containers/onboarding/Onboarding';
+import OnboardingComponent from '../components/onboarding/Onboarding';
+
 const Index = (
     <Router>
         <Stack hideNavBar key='root' titleStyle={{ alignSelf: 'center' }}>
             <Scene
+                Layout={StartComponent}
+                component={StartContainer}
+                hideNavBar
+                key={'start'}
+                panHandlers={null}
+            />
+            <Scene
+                Layout={OnboardingComponent}
+                component={OnboardingContainer}
+                hideNavBar
+                key={'onboarding'}
+                panHandlers={null}
+            />
+            <Scene
                 Layout={LoginComponent}
                 component={LoginContainer}
                 hideNavBar
-                key='login'
+                key={'login'}
                 panHandlers={null}
             />
             {/*<Scene
                 Layout={SignUpComponent}
                 component={SignUpContainer}
                 hideNavBar
-                key='signUp'
+                key={'signUp'}
                 panHandlers={null}
-            />*/}
+            />
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
                 hideNavBar
-                key='forgotPassword'
+                key={'forgotPassword'}
                 panHandlers={null}
-            />
+            />*/}
             <Scene
                 Layout={MyPlanComponent}
                 component={MyPlanContainer}
                 hideNavBar
-                key='myPlan'
+                key={'myPlan'}
                 panHandlers={null}
             />
             <Scene
@@ -83,7 +100,7 @@ const Index = (
                 navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0}}
                 onLeft={() => Actions.pop()}
                 onRight={() => null}
-                key='settings'
+                key={'settings'}
                 panHandlers={null}
                 rightTitle=' '
                 title='SETTINGS'
@@ -93,7 +110,7 @@ const Index = (
                 Layout={BluetoothConnectComponent}
                 component={BluetoothConnectContainer}
                 hideNavBar
-                key='bluetoothConnect'
+                key={'bluetoothConnect'}
                 panHandlers={null}
                 // title='Bluetooth Connect'
                 // {...DefaultProps.navbarProps}
@@ -103,13 +120,13 @@ const Index = (
                     Layout={KitManagementComponent}
                     component={KitManagementContainer}
                     hideNavBar
-                    key='kitManagement'
+                    key={'kitManagement'}
                     panHandlers={null}
                     // title='Kit Management'
                     // {...DefaultProps.navbarProps}
                 />
                 <Scene
-                    key='kitOwner'
+                    key={'kitOwner'}
                     title='Kit Owner'
                     component={KitOwnerContainer}
                     Layout={KitOwnerComponent}
@@ -117,7 +134,7 @@ const Index = (
                     panHandlers={null}
                 />
                 <Scene
-                    key='kitAssign'
+                    key={'kitAssign'}
                     title='Kit Assign'
                     component={KitAssignContainer}
                     Layout={KitAssignComponent}

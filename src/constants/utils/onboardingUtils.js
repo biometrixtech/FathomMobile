@@ -48,7 +48,7 @@ const onboardingUtils = {
             errorsArray.push(newError);
             isValid = false;
         } else if( !emailRegex.test(user.email) ) {
-            const newError = 'Your Email must be a valid email format';
+            const newError = 'Your email must be a valid email format';
             errorsArray.push(newError);
             isValid = false;
         } else {

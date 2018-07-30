@@ -266,6 +266,9 @@ export default {
     paddingTopSml: {
         paddingTop: Sizes.paddingSml,
     },
+    paddingTopXLrg: {
+        paddingTop: Sizes.paddingXLrg,
+    },
     paddingBottomSml: {
         paddingBottom: Sizes.paddingSml,
     },
