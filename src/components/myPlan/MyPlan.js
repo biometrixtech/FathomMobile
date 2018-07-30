@@ -12,6 +12,7 @@ import {
     RefreshControl,
     ScrollView,
     StyleSheet,
+    TouchableOpacity,
     View,
 } from 'react-native';
 
@@ -63,6 +64,7 @@ class MyPlan extends Component {
         super(props);
 
         this.state = {
+            BLEData:            {},
             completedExercises: [],
             dailyReadiness:     {
                 readiness:     0,
@@ -125,12 +127,19 @@ class MyPlan extends Component {
                 SplashScreen.hide();
                 // console.log('error',error);
             });
+        // trigger BLE Steps function
+        this._handleBLESteps();
     }
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.notification && nextProps.notification !== this.props.notification) {
             this._handleExerciseListRefresh(true);
         }
+    }
+
+    _handleBLESteps = () => {
+        const BLEData = bleUtils.handleBLESteps(this.props.ble);
+        this.setState({ BLEData });
     }
 
     _handleDailyReadinessFormChange = (name, value, bodyPart, side) => {
@@ -446,23 +455,26 @@ class MyPlan extends Component {
                                     style={{resizeMode: 'contain', width: 40, height: 40}}
                                 />
                             </View>
-                            <View style={{justifyContent: 'center', flex: 1,}}>
-                                { bleUtils.handleBLESteps(this.props.ble).bleImage && bleUtils.handleBLESteps(this.props.ble).animated ?
+                            <TouchableOpacity
+                                onPress={() => this.state.BLEData.bleImage ? this._handleBLESteps() : null}
+                                style={{justifyContent: 'center', flex: 1,}}
+                            >
+                                { this.state.BLEData.bleImage && this.state.BLEData.animated ?
                                     <Animated.Image
                                         resizeMode={'contain'}
-                                        source={bleUtils.handleBLESteps(this.props.ble).bleImage}
+                                        source={this.state.BLEData.bleImage}
                                         style={{transform: [{rotate: spin}], width: 34,}}
                                     />
-                                    : bleUtils.handleBLESteps(this.props.ble).bleImage && !bleUtils.handleBLESteps(this.props.ble).animated ?
+                                    : this.state.BLEData.bleImage && !this.state.BLEData.animated ?
                                         <Image
                                             resizeMode={'contain'}
-                                            source={bleUtils.handleBLESteps(this.props.ble).bleImage}
+                                            source={this.state.BLEData.bleImage}
                                             style={{width: 34,}}
                                         />
                                         :
                                         null
                                 }
-                            </View>
+                            </TouchableOpacity>
                         </View>
                         { !isDailyReadinessSurveyCompleted ?
                             <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, AppStyles.textCenterAligned, {color: AppColors.white}]}>{`GOOD ${partOfDay}, ${this.props.user.personal_data.first_name.toUpperCase()}!`}</Text>

@@ -155,7 +155,6 @@ const write = (id, data) => {
 const setKitTime = (id) => {
     let dataArray = [commands.SET_TIME, convertHex('0x04')];
     dataArray = dataArray.concat(convertToUnsigned32BitIntByteArray(Math.round((new Date()).getTime() / 1000))); // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
-    console.log(id, dataArray);
     return dispatch => write(id, dataArray)
         .then(result => {
             return dispatch({
@@ -169,6 +168,16 @@ const setKitTime = (id) => {
   * - 1 Sensor System
   */
 const connectToAccessory = (data) => {
+    /* STEP 1
+     * - pair a mobile device - save as trusted connection
+     * - TYPE: 0x72
+     * - length: 0x00
+     *
+     * STEP 2
+     * - get setup mode - to flash sensor led green
+     * - TYPE: 0x74
+     * - length: 0x00
+     */
     const addToListArray = [commands.ADD_TO_TRUSTED_LIST, convertHex('0x00')];
     const getSetupModeArray = [commands.IS_SINGLE_SENSOR_IN_SETUP_MODE, convertHex('0x00')];
     return dispatch => BleManager.disconnect(data.id)
@@ -263,6 +272,10 @@ const deleteUserSensorData = () => {
 };
 
 const disconnectFromSingleSensor = (sensor_id) => {
+    /* wipe single sensor data - will also wipe the saved trusted device address
+     * TYPE: 0x7B
+     * length: 0x00
+     */
     let dataArray = [commands.WIPE_SINGLE_SENSOR_DATA, convertHex('0x00')];
     let currentState = store.getState();
     let sensorId = sensor_id || currentState.ble.accessoryData.sensor_uid;
@@ -279,56 +292,69 @@ const disconnectFromSingleSensor = (sensor_id) => {
 };
 
 const getSingleSensorSavedPractices = (sensorId, operation_id = '0x00') => {
-    // let currentState = store.getState();
-    // let sensorId = sensor_id || currentState.ble.accessoryData.sensor_uid;
-    // const dataArray = [commands.GET_SINGLE_SENSOR_LIST, convertHex('0x01'), convertHex(operation_id)];
-    // return dispatch => BleManager.start({ showAlert: true })
-    //     .then(() => BleManager.connect(sensorId))
-    //     .then(() => BleManager.retrieveServices(sensorId))
-    //     .then(peripheralInfo => {
-    //         console.log('peripheralInfo',peripheralInfo);
-    //         return write(peripheralInfo.id, dataArray); // get single sensor practices - 0x75
-    //     })
-    //     .then(() => BleManager.disconnect(sensorId))
-    //     .then(response => Promise.resolve(response))
-    //     .catch(err => Promise.reject(err));
-
+    /* get single sensor practices
+     * TYPE: 0x75
+     * length: 0x01
+     * operation_id
+     *  (a) 0x00 - count of currently saved practices
+     *  (b) 0x01 - timestamps of practices 1 - 4
+     *  (c) 0x02 - timestamps of practices 5 - 8
+     *  (d) 0x03 - timestamps of practices 9 - 10
+     */
     const dataArray = [commands.GET_SINGLE_SENSOR_LIST, convertHex('0x01'), convertHex(operation_id)];
     let isSensorConnected = false;
-    // BleManager.disconnect(sensorId)
-    //     .catch(err => BleManager.disconnect(sensorId))
-    //     .then(() => BleManager.connect(sensorId))
-    //     .catch(err => BleManager.connect(sensorId))
-    //     .then(() => BleManager.retrieveServices(sensorId))
-    //     .catch(err => BleManager.retrieveServices(sensorId))
-    //     .then(peripheralInfo => write(peripheralInfo.id, addToListArray)) // add to trusted list - 0x72
-
     BleManager.start({ showAlert: true })
         .then(() => BleManager.connect(sensorId))
         .then(() => BleManager.retrieveServices(sensorId))
-        .catch(err => BleManager.retrieveServices(sensorId))
-
-    // BleManager.retrieveServices(sensorId)
-    //     .catch(err => BleManager.retrieveServices(sensorId))
-
-        .then(peripheralInfo => {
-            console.log('++++++++peripheralInfo',peripheralInfo);
-            return write(peripheralInfo.id, dataArray); // get single sensor practices - 0x75
-        })
+        .then(peripheralInfo => write(peripheralInfo.id, dataArray))
         .then(response => {
-            console.log('++++++++response',response);
+            console.log('response',response);
+            const cleanedReponse = convertByteArrayToString(response);
+            console.log('cleanedReponse',cleanedReponse);
             isSensorConnected = true;
-            // return Promise.resolve(response);
         })
         .catch(err => {
-            console.log('++++++++err',err);
+            console.log('err',err);
             isSensorConnected = false;
-            // return Promise.reject(err)
         });
 
     return {
         isSensorConnected,
     }
+};
+
+const getSingleSensorSinglePracticesTimestamps = (sensorId) => {
+    /* get single sensor practices timestamps
+     * TYPE: 0x76
+     * length: 0x01
+     * index of desired practice - frist practice is 0
+     */
+    // commands.GET_PRACTICE_TIMESTAMPS, convertHex('0x01')
+};
+const getSingleSensorSinglePracticesAccelerations = (sensorId) => {
+    /* get single sensor practices accelerations
+     * TYPE: 0x77
+     * length: 0x01
+     * index of desired practice - frist practice is 0
+     */
+    // commands.GET_PRACTICE_ACCELERATIONSS, convertHex('0x01')
+};
+const getSingleSensorSinglePracticesDuration = (sensorId) => {
+    /* get single sensor practices window duration
+     * TYPE: 0x78
+     * length: 0x01
+     * index of desired practice - frist practice is 0
+     */
+    // commands.GET_PRACTICE_DURATIONS, convertHex('0x01')
+};
+
+const deleteSingleSensorSinglePractice = (sensorId) => {
+    /* delete single sensor practices data
+     * TYPE: 0x79
+     * length: 0x01
+     * index of desired practice - frist practice is 0
+     */
+    // commands.DELETE_SINGLE_PRACTICES, convertHex('0x01')
 };
 
 /**
@@ -795,6 +821,7 @@ export default {
     checkState,
     connectToAccessory,
     connectWiFi,
+    deleteSingleSensorSinglePractice,
     deleteUserSensorData,
     deviceFound,
     disconnect,
@@ -804,6 +831,9 @@ export default {
     getKitName,
     getOwnerFlag,
     getSingleSensorSavedPractices,
+    getSingleSensorSinglePracticesAccelerations,
+    getSingleSensorSinglePracticesDuration,
+    getSingleSensorSinglePracticesTimestamps,
     getUserSensorData,
     getWifiMacAddress,
     handleDisconnect,
