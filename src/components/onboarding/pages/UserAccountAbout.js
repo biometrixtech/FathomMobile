@@ -4,6 +4,7 @@
     <UserAccountAbout
         handleFormChange={handleFormChange}
         heightPressed={heightPressed}
+        setAccordionSection={this._setAccordionSection}
         user={user}
     />
  *
@@ -33,9 +34,16 @@ import RNPickerSelect from 'react-native-picker-select';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    androidViewContainer: {
+        borderBottomWidth: 1,
+        borderBottomColor: AppColors.border,
+        height:            40,
+        justifyContent:    'center',
+        marginRight:       20,
+        paddingLeft:       10,
+    },
     background: {
-        height: AppSizes.screen.height,
-        width:  AppSizes.screen.width,
+        width: AppSizes.screen.width,
     },
     pickerSelectAndroid: {},
     pickerSelectIOS:     {
@@ -45,7 +53,7 @@ const styles = StyleSheet.create({
     reusableCustomSpacing: {
         alignItems:        'flex-start',
         borderBottomWidth: 1,
-        borderColor:       AppColors.primary.grey.thirtyPercent,
+        borderColor:       AppColors.border,
         borderLeftWidth:   0,
         borderRightWidth:  0,
         borderTopWidth:    0,
@@ -56,42 +64,34 @@ const styles = StyleSheet.create({
 
 const Wrapper = props => Platform.OS === 'ios' ?
     (
-        <KeyboardAvoidingView behavior={'padding'} style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
+        <KeyboardAvoidingView behavior={'padding'} style={[styles.background, {borderTopWidth: 1, borderTopColor: AppColors.border,}]}>
             {props.children}
         </KeyboardAvoidingView>
     ) :
     (
-        <View style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
+        <View style={[styles.background, {borderTopWidth: 1, borderTopColor: AppColors.border,}]}>
             {props.children}
         </View>
     );
 
 /* Component ==================================================================== */
-const UserAccountAbout = ({ handleFormChange, heightPressed, user }) => (
+const UserAccountAbout = ({ handleFormChange, heightPressed, setAccordionSection, user }) => (
     <Wrapper>
-        <FormLabel>{'Date of Birth'}</FormLabel>
+        <FormLabel labelStyle={{color: AppColors.border}}>{'Date of Birth'}</FormLabel>
         <DatePicker
             cancelBtnText={'Cancel'}
             confirmBtnText={'Confirm'}
             customStyles={{dateInput: styles.reusableCustomSpacing}}
-            date={user.personal_data.birth_date ? user.personal_data.birth_date : ''}
+            date={user.personal_data.birth_date || ''}
             format={'MM/DD/YYYY'}
             maxDate={new Date()}
             mode={'date'}
             onDateChange={(date) => handleFormChange('personal_data.birth_date', date)}
+            placeholder={' '}
             showIcon={false}
             style={{width: '100%'}}
         />
-        <FormLabel>{'Phone Number'}</FormLabel>
-        <FormInput
-            containerStyle={{marginLeft: 0, paddingLeft: 20}}
-            keyboardType={'numeric'}
-            maxLength={5}
-            onChangeText={(text) => handleFormChange('personal_data.phone_number', text)}
-            returnKeyType={'next'}
-            value={user.personal_data.phone_number}
-        />
-        <FormLabel>{'Gender'}</FormLabel>
+        <FormLabel labelStyle={{color: AppColors.border}}>{'Gender'}</FormLabel>
         <RNPickerSelect
             hideIcon={true}
             items={UserAccountConstants.possibleGenders}
@@ -100,14 +100,14 @@ const UserAccountAbout = ({ handleFormChange, heightPressed, user }) => (
                 label: 'Select a Gender...',
                 value: null,
             }}
-            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
+            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS], viewContainer: [styles.androidViewContainer] , inputAndroid: [styles.pickerSelectAndroid]}}
             value={user.biometric_data.gender}
         />
-        <FormLabel>{'Height'}</FormLabel>
+        <FormLabel labelStyle={{color: AppColors.border}}>{'Height'}</FormLabel>
         <TouchableOpacity onPress={heightPressed} style={[styles.reusableCustomSpacing, {height: 40, justifyContent: 'center'}]}>
             <Text>{Math.floor(user.biometric_data.height.in / 12) + '\'' + user.biometric_data.height.in % 12 + '"'}</Text>
         </TouchableOpacity>
-        <FormLabel>{'Weight (lbs)'}</FormLabel>
+        <FormLabel labelStyle={{color: AppColors.border}}>{'Weight (lbs)'}</FormLabel>
         <FormInput
             containerStyle={{marginLeft: 0, paddingLeft: 20}}
             keyboardType={'numeric'}
@@ -115,7 +115,7 @@ const UserAccountAbout = ({ handleFormChange, heightPressed, user }) => (
             returnKeyType={'next'}
             value={user.biometric_data.mass.lb}
         />
-        <FormLabel>{'Injury Status'}</FormLabel>
+        <FormLabel labelStyle={{color: AppColors.border}}>{'Injury Status'}</FormLabel>
         <RNPickerSelect
             hideIcon={true}
             items={UserAccountConstants.possibleInjuryStatuses}
@@ -124,11 +124,12 @@ const UserAccountAbout = ({ handleFormChange, heightPressed, user }) => (
                 label: 'Select an Injury Status...',
                 value: null,
             }}
-            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
+            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS], viewContainer: [styles.androidViewContainer] , inputAndroid: [styles.pickerSelectAndroid]}}
             value={user.injury_status}
         />
-        <FormLabel>{'System Type'}</FormLabel>
+        <FormLabel labelStyle={{color: AppColors.border}}>{'System Type'}</FormLabel>
         <RNPickerSelect
+            disabled={true}
             hideIcon={true}
             items={UserAccountConstants.possibleSystemTypes}
             onValueChange={(value) => handleFormChange('system_type', value)}
@@ -136,16 +137,21 @@ const UserAccountAbout = ({ handleFormChange, heightPressed, user }) => (
                 label: 'Select a System Type...',
                 value: null,
             }}
-            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS]}}
+            style={{inputIOS: [styles.reusableCustomSpacing, styles.pickerSelectIOS], viewContainer: [styles.androidViewContainer] , inputAndroid: [styles.pickerSelectAndroid]}}
             value={user.system_type}
         />
+        <Text
+            onPress={() => setAccordionSection(1, 2)}
+            style={[AppStyles.paddingVertical, AppStyles.continueButton]}
+        >{'CONTINUE'}</Text>
     </Wrapper>
 );
 
 UserAccountAbout.propTypes = {
-    handleFormChange: PropTypes.func.isRequired,
-    heightPressed:    PropTypes.func.isRequired,
-    user:             PropTypes.object.isRequired,
+    handleFormChange:    PropTypes.func.isRequired,
+    heightPressed:       PropTypes.func.isRequired,
+    setAccordionSection: PropTypes.func.isRequired,
+    user:                PropTypes.object.isRequired,
 };
 UserAccountAbout.defaultProps = {};
 UserAccountAbout.componentName = 'UserAccountAbout';

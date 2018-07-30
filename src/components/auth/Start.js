@@ -121,6 +121,7 @@ class Start extends Component {
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
                 console.log('response',response);
+                // TODO: if onboarding_status length is 0 and doesn't include certain fields, route to onboarding else myPlan
                 this._routeToMyPlan();
                 SplashScreen.hide();
             })).catch((err) => {

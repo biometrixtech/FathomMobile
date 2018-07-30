@@ -55,15 +55,19 @@ const Index = (
                 Layout={StartComponent}
                 component={StartContainer}
                 hideNavBar
+                initial={true}
                 key={'start'}
                 panHandlers={null}
             />
             <Scene
                 Layout={OnboardingComponent}
                 component={OnboardingContainer}
-                hideNavBar
+                hideNavBar={false}
                 key={'onboarding'}
                 panHandlers={null}
+                renderLeftButton={null}
+                title='GET STARTED'
+                titleStyle={{flex: 1, textAlign: 'center',}}
             />
             <Scene
                 Layout={LoginComponent}
@@ -102,7 +106,7 @@ const Index = (
                 onRight={() => null}
                 key={'settings'}
                 panHandlers={null}
-                rightTitle=' '
+                rightTitle={' '}
                 title='SETTINGS'
                 titleStyle={{flex: 1, textAlign: 'center',}}
             />

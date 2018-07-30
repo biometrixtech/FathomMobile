@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import {
     Alert,
     Platform,
-    ScrollView,
     StyleSheet,
     TouchableOpacity,
     View,
@@ -20,14 +19,14 @@ import Carousel from 'react-native-snap-carousel';
 import Modal from 'react-native-modalbox';
 
 // Consts, Libs, and Utils
-import { AppAPI } from '../../lib';
+import { AppAPI } from '../../lib/';
 import {
     APIConfig,
     AppColors,
     AppStyles,
     AppSizes,
     UserAccount as UserAccountConstants,
-} from '../../constants/';
+} from '../../constants';
 import { onboardingUtils } from '../../constants/utils';
 
 // Components
@@ -36,7 +35,7 @@ import {
     ProgressBar,
     Text,
     WebViewPage,
-} from '../custom';
+} from '../custom/';
 import {
     UserAccount,
     UserActivities,
@@ -44,7 +43,7 @@ import {
     UserRole,
     UserSportSchedule,
     UserWorkoutQuestion,
-} from './pages';
+} from './pages/';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -58,14 +57,14 @@ const styles = StyleSheet.create({
         height:            AppSizes.navbarHeight,
         paddingTop:        20,
         borderBottomWidth: 1,
-        borderBottomColor: '#000',
+        borderBottomColor: AppColors.border,
     },
     carouselCustomStyles: {
         alignItems:     'center',
         justifyContent: 'center',
     },
     carouselTick: {
-        borderLeftColor: '#000',
+        borderLeftColor: AppColors.border,
         borderLeftWidth: 1,
         width:           '20%',
     },
@@ -95,13 +94,13 @@ class Onboarding extends Component {
         this.state = {
             form_fields: {
                 user: {
-                    agreed_terms_of_use:   null,
-                    agreed_privacy_policy: null,
-                    cleared_to_play:       null,
-                    onboarding_status:     '', // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    email:                 '',
-                    password:              '',
-                    biometric_data:        {
+                    // agreed_terms_of_use:   null,
+                    // agreed_privacy_policy: null,
+                    cleared_to_play:   null,
+                    onboarding_status: [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
+                    email:             '',
+                    password:          '',
+                    biometric_data:    {
                         gender: '',
                         height: {
                             in: 71
@@ -115,8 +114,8 @@ class Onboarding extends Component {
                         first_name:     '',
                         last_name:      '',
                         phone_number:   '',
-                        account_type:   'free', // "paid", "free"
-                        account_status: 'active', // "active", "pending", "past_due", "expired"
+                        account_type:   'free', // 'paid', 'free'
+                        account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                     },
                     role:                           '',
                     system_type:                    '1-sensor',
@@ -134,27 +133,28 @@ class Onboarding extends Component {
                     workout_outside_practice: null,
                 }
             },
-            isFormValid:       false,
-            isHeightModalOpen: false,
-            isPPOpen:          false,
-            isTOUOpen:         false,
-            modalStyle:        {},
-            resultMsg:         {
+            isFormValid:         false,
+            isHeightModalOpen:   false,
+            isPrivacyPolicyOpen: false,
+            isTermsOpen:         false,
+            modalStyle:          {},
+            resultMsg:           {
                 error:   [],
                 status:  '',
                 success: '',
             },
-            step:       5, // TODO: UPDATE THIS VALUE BACK TO '1'
-            totalSteps: 8, // TODO: UPDATE THIS VALUE WHEN DONE
+            step:                2, // TODO: UPDATE THIS VALUE BACK TO '1'
+            totalSteps:          1,
+            heightsCarouselData: [],
         };
     }
 
-    _toggleTOUWebView = () => {
-        this.setState({ isTOUOpen: !this.state.isTOUOpen })
+    _toggleTermsWebView = () => {
+        this.setState({ isTermsOpen: !this.state.isTermsOpen })
     }
 
-    _togglePPWebView = () => {
-        this.setState({ isPPOpen: !this.state.isPPOpen })
+    _togglePrivacyPolicyWebView = () => {
+        this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen })
     }
 
     _handleUserFormChange = (name, value) => {
@@ -173,7 +173,8 @@ class Onboarding extends Component {
     }
 
     _handleUserHeightFormChange = (index) => {
-        const f = UserAccountConstants.heights[index].title;
+        // set height in inches
+        const f = this.state.heightsCarouselData[index].title;
         const rex = /^(\d+)'(\d+)(?:''|")$/;
         let match = rex.exec(f);
         let feet, inches, feetToInches, totalInches;
@@ -184,6 +185,28 @@ class Onboarding extends Component {
         feetToInches = feet * 12;
         totalInches = feetToInches + inches;
         this._handleUserFormChange('biometric_data.height.in', totalInches.toString());
+        // update carousel data
+        this._handleHeightsArray(f);
+    }
+
+    _handleHeightsArray = (title, index = 47) => {
+        const wholeHeightsArray = UserAccountConstants.heights;
+        index = title ? _.findIndex(wholeHeightsArray, {title: title}) : index;
+        let newHeightsArray = _.cloneDeep(wholeHeightsArray);
+        if(title && index > 47) {
+            let newIndexLength = ((index + 4) - 47) + 1;
+            let objToAddToEnd = newHeightsArray.splice(47, newIndexLength);
+            newHeightsArray = _.unionBy(this.state.heightsCarouselData, objToAddToEnd, 'title');
+        } else if(title && index < 47) {
+            let newIndex = (index - 4);
+            let objToAddToFront = newHeightsArray.splice(newIndex, 1);
+            newHeightsArray = _.unionBy(objToAddToFront, this.state.heightsCarouselData, 'title');
+        } else if(!title) {
+            newHeightsArray = newHeightsArray.splice(index - 4, 9);
+        }
+        this.setState({
+            heightsCarouselData: newHeightsArray
+        });
     }
 
     _validateForm = () => {
@@ -240,7 +263,7 @@ class Onboarding extends Component {
         const { form_fields, step } = this.state;
         // validation
         let errorsArray = this._validateForm();
-        let newStep;
+        /*let newStep;
         if (
             step === 4
             && !form_fields.user.workout_outside_practice
@@ -254,15 +277,25 @@ class Onboarding extends Component {
             }
         } else {
             newStep = step + 1;
-        }
+        }*/
+        let newStep = step + 1;
         this.setState({
             ['resultMsg.error']: errorsArray,
-            isFormValid:         false,
-            step:                newStep,
+            // isFormValid:         false,
+            // step:                newStep,
         });
+        // save or update, if no errors
+        if(errorsArray.length === 0) {
+            this._handleUpdateForm();
+        }
+    }
+
+    _handleUpdateForm = () => {
+
     }
 
     _heightPressed = () => {
+        this._handleHeightsArray();
         this.setState({ isHeightModalOpen: !this.state.isHeightModalOpen });
     }
 
@@ -270,7 +303,7 @@ class Onboarding extends Component {
         return (
             <View style={[styles.carouselCustomStyles, {height: AppSizes.screen.height / 3}]}>
                 <View style={[styles.carouselCustomStyles, {height: '50%', width: '100%'}]}>
-                    <Text style={{fontSize: 35, lineHeight: 35}}>{ item.title }</Text>
+                    <Text style={[AppStyles.h1]}>{ item.title }</Text>
                 </View>
                 <View style={[styles.carouselCustomStyles, {flexDirection: 'row', height: '50%', width: '100%', margin: 'auto'}]}>
                     <View style={[styles.carouselTick, {height: '50%'}]} />
@@ -298,20 +331,35 @@ class Onboarding extends Component {
     render = () => {
         const {
             form_fields,
+            heightsCarouselData,
             isFormValid,
             isHeightModalOpen,
-            isPPOpen,
-            isTOUOpen,
+            isPrivacyPolicyOpen,
+            isTermsOpen,
             resultMsg,
             step,
             totalSteps,
         } = this.state;
         console.log(form_fields.user);
+        /* TODO: BRING BACK PROGRESSBAR BELOW AS NEEDED:
+         <ProgressBar
+            currentStep={step}
+            totalSteps={totalSteps}
+         />
+         ALSO TouchableOpacity BUTTON
+         { isFormValid && step > 1 && step !== 7 ?
+             <TouchableOpacity onPress={this._nextStep} style={[AppStyles.nextButtonWrapper]}>
+                 <Text style={[AppStyles.nextButtonText]}>{step === totalSteps ? 'Done' : 'Next Step'}</Text>
+             </TouchableOpacity>
+             :
+             null
+         }
+         */
         return (
             <View style={[styles.background]}>
                 <ProgressBar
-                    currentStep={step}
-                    totalSteps={totalSteps}
+                    currentStep={onboardingUtils.getCurrentStep(form_fields.user)}
+                    totalSteps={onboardingUtils.getTotalSteps(form_fields.user)}
                 />
                 { resultMsg.error && resultMsg.error.length === 0 ?
                     <View style={styles.errorWrapper}>
@@ -322,59 +370,49 @@ class Onboarding extends Component {
                     :
                     null
                 }
-                <ScrollView>
-                    <UserRole
-                        componentStep={1}
-                        currentStep={step}
-                        handleFormChange={this._handleUserFormChange}
-                        user={form_fields.user}
-                    />
-                    <UserAccount
-                        componentStep={2}
-                        currentStep={step}
-                        handleFormChange={this._handleUserFormChange}
-                        heightPressed={this._heightPressed}
-                        user={form_fields.user}
-                    />
-                    <UserSportSchedule
-                        componentStep={3}
-                        currentStep={step}
-                        handleFormChange={this._handleUserFormChange}
-                        user={form_fields.user}
-                    />
-                    <UserWorkoutQuestion
-                        componentStep={4}
-                        currentStep={step}
-                        handleFormChange={this._handleUserFormChange}
-                        user={form_fields.user}
-                    />
-                    <UserActivities
-                        componentStep={5}
-                        currentStep={step}
-                        handleFormChange={this._handleUserFormChange}
-                        user={form_fields.user}
-                    />
-                </ScrollView>
+                {/*<UserRole
+                    componentStep={1}
+                    currentStep={step}
+                    handleFormChange={this._handleUserFormChange}
+                    user={form_fields.user}
+                />*/}
+                <UserAccount
+                    componentStep={2}
+                    currentStep={step}
+                    handleFormChange={this._handleUserFormChange}
+                    heightPressed={this._heightPressed}
+                    user={form_fields.user}
+                />
+                {/*<UserSportSchedule
+                    componentStep={3}
+                    currentStep={step}
+                    handleFormChange={this._handleUserFormChange}
+                    user={form_fields.user}
+                />
+                <UserWorkoutQuestion
+                    componentStep={4}
+                    currentStep={step}
+                    handleFormChange={this._handleUserFormChange}
+                    user={form_fields.user}
+                />
+                <UserActivities
+                    componentStep={5}
+                    currentStep={step}
+                    handleFormChange={this._handleUserFormChange}
+                    user={form_fields.user}
                 <UserClearedQuestion
-                    componentStep={7}
+                    componentStep={4}
                     currentStep={step}
                     handleFormChange={this._handleUserFormChange}
                     isFormValid={isFormValid}
-                    isPPOpen={isPPOpen}
-                    isTOUOpen={isTOUOpen}
+                    isPrivacyPolicyOpen={isPrivacyPolicyOpen}
+                    isTermsOpen={isTermsOpen}
                     nextStep={this._nextStep}
                     notClearedBtnPressed={this._notClearedBtnPressed}
-                    togglePPWebView={this._togglePPWebView}
-                    toggleTOUWebView={this._toggleTOUWebView}
+                    togglePrivacyPolicyWebView={this._togglePrivacyPolicyWebView}
+                    toggleTermsWebView={this._toggleTermsWebView}
                     user={form_fields.user}
-                />
-                { isFormValid && step > 1 && step !== 7 ?
-                    <TouchableOpacity onPress={this._nextStep} style={[AppStyles.nextButtonWrapper]}>
-                        <Text style={[AppStyles.nextButtonText]}>{step === totalSteps ? 'Done' : 'Next Step'}</Text>
-                    </TouchableOpacity>
-                    :
-                    null
-                }
+                />*/}
                 <Modal
                     backdropPressToClose={false}
                     coverScreen={true}
@@ -382,13 +420,13 @@ class Onboarding extends Component {
                     swipeToClose={false}
                 >
                     <View style={[styles.carouselCustomStyles, styles.carouselBanner]}>
-                        <Text style={[AppStyles.textBold]}>{'Height'}</Text>
+                        <Text style={[AppStyles.textBold, AppStyles.h2]}>{'HEIGHT'}</Text>
                     </View>
                     <Carousel
                         activeSlideAlignment={'center'}
                         contentContainerCustomStyle={[styles.carouselCustomStyles]}
-                        data={UserAccountConstants.heights}
-                        firstItem={form_fields.user.biometric_data.height.in ? parseFloat(form_fields.user.biometric_data.height.in) : 47}
+                        data={heightsCarouselData}
+                        firstItem={4}
                         inactiveSlideOpacity={0.7}
                         inactiveSlideScale={0.9}
                         itemWidth={AppSizes.screen.width / 3}
@@ -404,26 +442,26 @@ class Onboarding extends Component {
                 <Modal
                     backdropPressToClose={false}
                     coverScreen={true}
-                    isOpen={isTOUOpen}
+                    isOpen={isTermsOpen}
                     swipeToClose={false}
                 >
                     <WebViewPage
                         source={'https://www.fathomai.com/'}
                     />
-                    <TouchableOpacity onPress={this._toggleTOUWebView} style={[AppStyles.nextButtonWrapper]}>
+                    <TouchableOpacity onPress={this._toggleTermsWebView} style={[AppStyles.nextButtonWrapper]}>
                         <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
                     </TouchableOpacity>
                 </Modal>
                 <Modal
                     backdropPressToClose={false}
                     coverScreen={true}
-                    isOpen={isPPOpen}
+                    isOpen={isPrivacyPolicyOpen}
                     swipeToClose={false}
                 >
                     <WebViewPage
                         source={'https://www.fathomai.com/'}
                     />
-                    <TouchableOpacity onPress={this._togglePPWebView} style={[AppStyles.nextButtonWrapper]}>
+                    <TouchableOpacity onPress={this._togglePrivacyPolicyWebView} style={[AppStyles.nextButtonWrapper]}>
                         <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
                     </TouchableOpacity>
                 </Modal>

@@ -405,7 +405,13 @@ export default {
         alignItems:     'center',
         justifyContent: 'center'
     },
-
+    continueButton: {
+        backgroundColor:    Colors.transparent,
+        color:              Colors.primary.yellow.hundredPercent,
+        fontWeight:         'bold',
+        paddingLeft:        20,
+        textDecorationLine: 'none',
+    },
     nextButtonText: {
         color:         Colors.white,
         fontWeight:    'bold',
