@@ -71,7 +71,6 @@ class Settings extends Component {
                             this.props.disconnectFromSingleSensor(this.props.accessoryData.sensor_uid)
                                 .catch(err => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
                                 .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
-                            // this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid)
                                 .then(() => this.refs.toast.show('Successfully UNPAIRED from sensor', DURATION.LENGTH_LONG))
                                 .catch(err => {
                                     this.refs.toast.show('Failed to UNPAIR from sensor', DURATION.LENGTH_LONG);
