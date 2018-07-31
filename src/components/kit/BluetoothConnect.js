@@ -185,7 +185,7 @@ class BluetoothConnectView extends Component {
             data.name = data.advertising.kCBAdvDataLocalName;
         }
         // return data.name && /Fathom_kit_/i.test(data.name) ? this.props.deviceFound(data) : null; // 3 sensor solution
-        return data.name && /fathomS_/i.test(data.name) ? this.props.deviceFound(data) : null; // single sensor solution
+        return data.name && /fathomS[*]_/i.test(data.name) ? this.props.deviceFound(data) : null; // single sensor solution
     }
 
     handleBleStateChange = (data) => {
@@ -208,36 +208,15 @@ class BluetoothConnectView extends Component {
     connect = (data) => {
         return this.props.stopScan()
             .then(() => this.props.connectToAccessory(data))
-            .catch(err => {
-                console.log('err in BluetoothConnect #1',err);
-                return this.props.connectToAccessory(data);
-            })
-            .catch(err => {
-                console.log('err in BluetoothConnect #2',err);
-                if (this.props.bluetooth.accessoryData && this.props.bluetooth.accessoryData.sensor_uid) {
-                    this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
-                }
-                return this.props.stopConnect();
-            })
-            .then(() => this.props.setKitTime(this.props.bluetooth.accessoryData.id))
-            .then(() => this.props.postUserSensorData())
+            .catch(err => this.props.connectToAccessory(data))
+            .catch(err => this.props.stopConnect())
             .then(() => {
                 this._toggleAlertNotification();
-                if (this.props.bluetooth.accessoryData && this.props.bluetooth.accessoryData.sensor_uid) {
-                    this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
-                }
-                return this.props.stopConnect();
-            })
-            .catch(err => {
-                console.log('err in BluetoothConnect #3',err);
-                if (this.props.bluetooth.accessoryData && this.props.bluetooth.accessoryData.sensor_uid) {
-                    this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
-                }
                 return this.props.stopConnect();
             })
             .catch(err => {
                 console.log('err in BluetoothConnect #4',err);
-                if (this.props.bluetooth.accessoryData && this.props.bluetooth.accessoryData.sensor_uid) {
+                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_uid) {
                     this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
                 }
                 return this.props.stopConnect();
@@ -266,9 +245,15 @@ class BluetoothConnectView extends Component {
                 {
                     text:    'Yes',
                     onPress: () => {
-                        this.setState({ index: 3 });
-                        this.pages.progress = 3;
-                        return this.props.checkState();
+                        return this.props.postUserSensorData()
+                            .then(() => {
+                                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_uid) {
+                                    this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
+                                }
+                                this.setState({ index: 3 });
+                                this.pages.progress = 3;
+                                return this.props.checkState();
+                            });
                     }
                 },
             ],
@@ -407,7 +392,7 @@ class BluetoothConnectView extends Component {
                                                 this.toggleScanning(false);
                                                 return this.props.startConnect(device).then(() => this.connect(device))
                                             }}
-                                            title={device.name.replace('fathomS_','')}
+                                            title={device.name.replace('fathomS*_','')}
                                             titleStyle={{color: AppColors.black}}
                                         />
                                     })}

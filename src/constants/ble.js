@@ -128,7 +128,6 @@ export default {
         SET_EAP_TYPE:                   parseInt('0x5E', 16),
         SET_GYRO_CALIBRATION:           parseInt('0x60', 16),
         // SINGLE SENSOR COMMANDS
-        ADD_TO_TRUSTED_LIST:            parseInt('0x72', 16),
         IS_SINGLE_SENSOR_IN_SETUP_MODE: parseInt('0x74', 16),
         GET_SINGLE_SENSOR_LIST:         parseInt('0x75', 16),
         WIPE_SINGLE_SENSOR_DATA:        parseInt('0x7B', 16),
