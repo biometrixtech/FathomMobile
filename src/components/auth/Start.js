@@ -29,13 +29,14 @@ class Start extends Component {
     static componentName = 'Start';
 
     static propTypes = {
-        onFormSubmit:   PropTypes.func,
-        registerDevice: PropTypes.func.isRequired,
-        finalizeLogin:  PropTypes.func.isRequired,
         authorizeUser:  PropTypes.func.isRequired,
         email:          PropTypes.string,
         environment:    PropTypes.string,
+        finalizeLogin:  PropTypes.func.isRequired,
+        onFormSubmit:   PropTypes.func,
         password:       PropTypes.string,
+        registerDevice: PropTypes.func.isRequired,
+        user:           PropTypes.object.isRequired,
     }
 
     static defaultProps = {
@@ -121,8 +122,11 @@ class Start extends Component {
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
                 console.log('response',response);
-                // TODO: if onboarding_status length is 0 and doesn't include certain fields, route to onboarding else myPlan
-                this._routeToMyPlan();
+                if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                    this._routeToMyPlan();
+                } else {
+                    this._routeToOnboarding();
+                }
                 SplashScreen.hide();
             })).catch((err) => {
                 SplashScreen.hide();

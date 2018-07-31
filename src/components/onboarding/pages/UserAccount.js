@@ -5,6 +5,7 @@
         componentStep={1}
         currentStep={step}
         handleFormChange={this._handleUserFormChange}
+        handleFormSubmit={this._handleFormSubmit}
         user={form_fields.user}
     />
  *
@@ -210,6 +211,7 @@ class UserAccount extends Component {
             componentStep,
             currentStep,
             handleFormChange,
+            handleFormSubmit,
             heightPressed,
             user,
         } = this.props;
@@ -231,10 +233,10 @@ class UserAccount extends Component {
                 content: <UserAccountAbout
                     handleFormChange={handleFormChange}
                     heightPressed={heightPressed}
-                    setAccordionSection={this._setAccordionSection}
+                    setAccordionSection={handleFormSubmit}
                     user={user}
                 />,
-                header:   'TELL US ABOUT YOU',
+                header:   'ABOUT YOU',
                 index:    2,
                 subtitle: 'Now, let\'s understand how you train and how we can help you to get better!',
             },
@@ -275,10 +277,10 @@ class UserAccount extends Component {
                     </ScrollView>
                 </View>
                 <TouchableOpacity
-                    onPress={() => this.state.accordionSection === 0 ? this._setAccordionSection(0, 1) : this._setAccordionSection(1, 2)}
+                    onPress={() => onboardingUtils.getCurrentStep(user) === onboardingUtils.getTotalSteps(user) ? handleFormSubmit() : this._setAccordionSection(0, 1)}
                     style={[AppStyles.nextButtonWrapper]}
                 >
-                    <Text style={[AppStyles.nextButtonText]}>{onboardingUtils.getCurrentStep(this.props.user) === onboardingUtils.getTotalSteps(this.props.user) ? 'Create Account' : 'Next Step'}</Text>
+                    <Text style={[AppStyles.nextButtonText]}>{onboardingUtils.getCurrentStep(user) === onboardingUtils.getTotalSteps(user) ? 'Create Account' : 'Next Step'}</Text>
                 </TouchableOpacity>
             </View>
         );

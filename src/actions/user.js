@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:20:59 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:20:59
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-16 18:28:08
  */
@@ -31,15 +31,19 @@ const getUser = () => {
   * Update My User Data
   * - Receives complete user data in return
   */
-const updateUser = (payload) => {
-    return dispatch => AppAPI.user.patch(payload)
-        .then((userData) => {
-            dispatch({
-                type: Actions.USER_REPLACE,
-                data: userData,
-            });
+const updateUser = (payload, userId) => {
+    return dispatch => AppAPI.update_user.put({userId}, payload)
+        .then((userData) => userData);
+};
 
-            return userData;
+/**
+  * Create User
+  */
+const createUser = (payload) => {
+    return dispatch => AppAPI.create_user.post(false, payload)
+        .then(userData => userData)
+        .catch(err => {
+            console.log('err',err);
         });
 };
 
@@ -278,23 +282,24 @@ const selectGraph = (selectedGraphIndex) => {
 };
 
 export default {
-    getUser,
-    updateUser,
-    getTrainingGroups,
     createTrainingGroup,
+    createUser,
+    getAccessories,
+    getTeams,
+    getTeamStats,
+    getTrainingGroups,
+    getUser,
     patchTrainingGroup,
     removeTrainingGroup,
-    teamSelect,
-    userSelect,
-    selectTrainingGroup,
     removeUser,
-    startSession,
-    stopSession,
-    getTeams,
-    getAccessories,
-    getTeamStats,
+    selectGraph,
+    selectTrainingGroup,
     setStatsCategory,
     startRequest,
+    startSession,
     stopRequest,
-    selectGraph,
+    stopSession,
+    teamSelect,
+    updateUser,
+    userSelect,
 };

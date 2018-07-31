@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
+    ActivityIndicator,
     Alert,
     Platform,
     StyleSheet,
@@ -17,6 +18,7 @@ import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import Carousel from 'react-native-snap-carousel';
 import Modal from 'react-native-modalbox';
+import moment from 'moment';
 
 // Consts, Libs, and Utils
 import { AppAPI } from '../../lib/';
@@ -74,7 +76,16 @@ const styles = StyleSheet.create({
 class Onboarding extends Component {
     static componentName = 'Onboarding';
 
-    static propTypes = {}
+    static propTypes = {
+        authorizeUser:     PropTypes.func.isRequired,
+        createUser:        PropTypes.func.isRequired,
+        finalizeLogin:     PropTypes.func.isRequired,
+        getUserSensorData: PropTypes.func.isRequired,
+        onFormSubmit:      PropTypes.func.isRequired,
+        registerDevice:    PropTypes.func.isRequired,
+        updateUser:        PropTypes.func.isRequired,
+        user:              PropTypes.object.isRequired,
+    }
 
     static defaultProps = {}
 
@@ -90,37 +101,47 @@ class Onboarding extends Component {
             season_start_month: '',
             start_date:         '',
         };
-
+        const user = _.cloneDeep(this.props.user);
         this.state = {
             form_fields: {
                 user: {
                     // agreed_terms_of_use:   null,
                     // agreed_privacy_policy: null,
                     cleared_to_play:   null,
-                    onboarding_status: [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    email:             '',
+                    onboarding_status: user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
+                    email:             user.personal_data && user.personal_data.email ? user.personal_data.email : '',
                     password:          '',
                     biometric_data:    {
-                        gender: '',
                         height: {
-                            in: ''
+                            in: user.biometric_data && user.biometric_data.height.ft_in ?
+                                ((user.biometric_data.height.ft_in[0] * 12) + user.biometric_data.height.ft_in[1]).toString()
+                                : user.biometric_data && user.biometric_data.height.m ?
+                                    onboardingUtils.metersToInches(user.biometric_data.height.m).toString()
+                                    :
+                                    ''
                         },
                         mass: {
-                            lb: ''
-                        }
+                            lb: user.biometric_data && user.biometric_data.mass.lb ?
+                                user.biometric_data.mass.lb.toString()
+                                : user.biometric_data && user.biometric_data.mass.kg ?
+                                    onboardingUtils.kgsToLbs(user.biometric_data.mass.kg).toString()
+                                    :
+                                    ''
+                        },
+                        sex: user.biometric_data && user.biometric_data.sex ? user.biometric_data.sex : '',
                     },
                     personal_data: {
                         account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                         account_type:   'free', // 'paid', 'free'
-                        birth_date:     '',
-                        first_name:     '',
-                        last_name:      '',
-                        phone_number:   '',
-                        zip_code:       '',
+                        birth_date:     user.personal_data && user.personal_data.birth_date ? user.personal_data.birth_date : '',
+                        first_name:     user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
+                        last_name:      user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
+                        phone_number:   user.personal_data && user.personal_data.phone_number ? user.personal_data.phone_number : '',
+                        zip_code:       user.personal_data && user.personal_data.zip_code ? user.personal_data.zip_code : '',
                     },
-                    role:                           '',
+                    role:                           'athlete',
                     system_type:                    '1-sensor',
-                    injury_status:                  '',
+                    injury_status:                  user.injury_status? user.injury_status : '',
                     injuries:                       {}, // COMING SOON
                     training_groups:                [], // COMING SOON
                     training_schedule:              {},
@@ -147,6 +168,7 @@ class Onboarding extends Component {
             step:                2, // TODO: UPDATE THIS VALUE BACK TO '1'
             totalSteps:          1,
             heightsCarouselData: [],
+            loading:             false,
         };
     }
 
@@ -218,7 +240,7 @@ class Onboarding extends Component {
         } else if(step === 2) { // enter user information
             errorsArray = errorsArray.concat(onboardingUtils.isUserAccountInformationValid(form_fields.user).errorsArray);
             errorsArray = errorsArray.concat(onboardingUtils.isUserAboutValid(form_fields.user).errorsArray);
-            errorsArray = errorsArray.concat(onboardingUtils.areSportsValid(form_fields.user.sports).errorsArray);
+            // errorsArray = errorsArray.concat(onboardingUtils.areSportsValid(form_fields.user.sports).errorsArray);
         } else if(step === 3) { // sport(s) schedule
             errorsArray = errorsArray.concat(onboardingUtils.areTrainingSchedulesValid(form_fields.user.training_schedule).errorsArray);
         } else if(step === 4) { // workout outside of practice?
@@ -291,10 +313,6 @@ class Onboarding extends Component {
         }
     }
 
-    _handleUpdateForm = () => {
-
-    }
-
     _heightPressed = () => {
         this._handleHeightsArray();
         this.setState({ isHeightModalOpen: !this.state.isHeightModalOpen });
@@ -329,6 +347,89 @@ class Onboarding extends Component {
         )
     }
 
+    _handleFormSubmit = () => {
+        let newUser = _.cloneDeep(this.state.form_fields.user);
+        // validation
+        let errorsArray = this._validateForm();
+        this.setState({
+            ['resultMsg.error']: errorsArray,
+            loading:             true,
+        });
+        // only submit required fields
+        let userObj = {};
+        userObj.email = newUser.email;
+        userObj.password = newUser.password;
+        userObj.role = newUser.role;
+        userObj.system_type = newUser.system_type;
+        userObj.injury_status = newUser.injury_status;
+        userObj.onboarding_status = ['account_setup'];
+        userObj.biometric_data = {};
+        userObj.biometric_data.height = {};
+        userObj.biometric_data.height.m = +(onboardingUtils.inchesToMeters(parseFloat(newUser.biometric_data.height.in))) + 0.1;
+        userObj.biometric_data.height.in = +(parseFloat(newUser.biometric_data.height.in).toFixed(2)) + 0.1;
+        userObj.biometric_data.mass = {};
+        userObj.biometric_data.mass.kg = +(onboardingUtils.lbsToKgs(parseFloat(newUser.biometric_data.mass.lb))) + 0.1;
+        userObj.biometric_data.mass.lb = +(parseFloat(newUser.biometric_data.mass.lb).toFixed(2)) + 0.1;
+        userObj.personal_data = {};
+        userObj.personal_data.birth_date = newUser.personal_data.birth_date;
+        userObj.personal_data.first_name = newUser.personal_data.first_name;
+        userObj.personal_data.last_name = newUser.personal_data.last_name;
+        userObj.personal_data.phone_number = newUser.personal_data.phone_number;
+        userObj.personal_data.account_type = newUser.personal_data.account_type;
+        userObj.personal_data.account_status = newUser.personal_data.account_status;
+        userObj.personal_data.zip_code = newUser.personal_data.zip_code;
+        // create or update, if no errors
+        if(errorsArray.length === 0) {
+            if(this.props.user.id) {
+                this.props.updateUser(userObj, this.props.user.id)
+                    .then(response => this._handleLoginFinalize(userObj));
+            } else {
+                this.props.createUser(userObj)
+                    .then(response => this._handleLoginFinalize(userObj));
+            }
+        }
+    }
+
+    _handleLoginFinalize = (userObj) => {
+        return this.props.onFormSubmit({
+            email:    userObj.email,
+            password: userObj.password,
+        }, false).then(response => {
+            let { authorization, user } = response;
+            return (
+                authorization && authorization.expires && moment(authorization.expires) > moment.utc()
+                    ? Promise.resolve(response)
+                    : authorization && authorization.session_token
+                        ? this.props.authorizeUser(authorization, user)
+                        : Promise.reject('Unexpected response authorization')
+            );
+        })
+            // .then(response => {
+            //     this.props.getUserSensorData(response.user.id);
+            //     return Promise.resolve(response);
+            // }) // TODO: BRING BACK THIS FUNCTION LATER ON
+            .then(response => {
+                console.log('response #2', response);
+                let { authorization, user } = response;
+                return this.props.registerDevice(this.props.certificate, this.props.device, user)
+                    .then(() => this.props.finalizeLogin(user, {Email: userObj.email, Password: userObj.password}, authorization.jwt));
+            })
+            .then(() => this.setState({
+                resultMsg: { success: 'Success, now loading your data!' },
+            }, () => {
+                this.setState({ loading: false });
+                Actions.myPlan();
+            })).catch((err) => {
+                console.log('err',err);
+                const error = AppAPI.handleError(err);
+                return this.setState({ resultMsg: { error }, loading: false });
+            });
+    }
+
+    _handleUpdateForm = () => {
+
+    }
+
     render = () => {
         const {
             form_fields,
@@ -341,7 +442,6 @@ class Onboarding extends Component {
             step,
             totalSteps,
         } = this.state;
-        console.log(form_fields.user);
         /* TODO: BRING BACK PROGRESSBAR BELOW AS NEEDED:
          <ProgressBar
             currentStep={step}
@@ -381,6 +481,7 @@ class Onboarding extends Component {
                     componentStep={2}
                     currentStep={step}
                     handleFormChange={this._handleUserFormChange}
+                    handleFormSubmit={this._handleFormSubmit}
                     heightPressed={this._heightPressed}
                     user={form_fields.user}
                 />
@@ -413,7 +514,7 @@ class Onboarding extends Component {
                     togglePrivacyPolicyWebView={this._togglePrivacyPolicyWebView}
                     toggleTermsWebView={this._toggleTermsWebView}
                     user={form_fields.user}
-                />*/}
+                />
                 <Modal
                     backdropPressToClose={false}
                     coverScreen={true}
@@ -440,7 +541,7 @@ class Onboarding extends Component {
                         <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
                     </TouchableOpacity>
                 </Modal>
-                {/*<Modal
+                <Modal
                     backdropPressToClose={false}
                     coverScreen={true}
                     isOpen={isTermsOpen}
@@ -466,6 +567,13 @@ class Onboarding extends Component {
                         <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
                     </TouchableOpacity>
                 </Modal>*/}
+                { this.state.loading ?
+                    <ActivityIndicator
+                        color={AppColors.primary.yellow.hundredPercent}
+                        size={'large'}
+                        style={[AppStyles.activityIndicator]}
+                    /> : null
+                }
             </View>
         );
     }

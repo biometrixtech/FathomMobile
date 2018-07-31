@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { ble, init } from '../../actions';
+import { ble, init, } from '../../actions';
 
 const Login = ({
     Layout,
@@ -24,6 +24,7 @@ const Login = ({
     registerDevice,
     setEnvironment,
     token,
+    user,
 }) => (
     <Layout
         authorizeUser={authorizeUser}
@@ -38,6 +39,7 @@ const Login = ({
         registerDevice={registerDevice}
         setEnvironment={setEnvironment}
         token={token}
+        user={user}
     />
 );
 
@@ -55,6 +57,7 @@ Login.propTypes = {
     registerDevice:    PropTypes.func.isRequired,
     setEnvironment:    PropTypes.func.isRequired,
     token:             PropTypes.string,
+    user:              PropTypes.object.isRequired,
 };
 
 Login.defaultProps = {
@@ -73,6 +76,7 @@ const mapStateToProps = state => ({
     email:       state.init.email || null,
     password:    state.init.password || null,
     token:       state.init.token || null,
+    user:        state.user,
 });
 
 const mapDispatchToProps = {

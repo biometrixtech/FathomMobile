@@ -138,14 +138,11 @@ class UserAccountAbout extends Component {
                 />
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.zip_code.length > 0 ? 'Zip Code' : ' '}</FormLabel>
                 <FormInput
-                    blurOnSubmit={ false }
+                    blurOnSubmit={ true }
                     containerStyle={{marginLeft: 0, paddingLeft: 10}}
                     keyboardType={'numeric'}
                     maxLength={5}
                     onChangeText={text => handleFormChange('personal_data.zip_code', text)}
-                    onSubmitEditing={() => {
-                        heightPressed();
-                    }}
                     placeholder={'Zip Code'}
                     placeholderTextColor={AppColors.border}
                     returnKeyType={'next'}
@@ -154,14 +151,30 @@ class UserAccountAbout extends Component {
                     }}
                     value={user.personal_data.zip_code}
                 />
-                <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.height.in.length > 0 ? 'Height' : ' '}</FormLabel>
-                <TouchableOpacity onPress={heightPressed} style={[styles.reusableCustomSpacing, {height: 40, justifyContent: 'center'}]}>
+                <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.height.in ? 'Height' : ' '}</FormLabel>
+                <RNPickerSelect
+                    hideIcon={true}
+                    items={UserAccountConstants.heights}
+                    onValueChange={value => handleFormChange('biometric_data.height.in', value)}
+                    placeholder={{
+                        label: 'Height',
+                        value: null,
+                    }}
+                    style={{
+                        inputAndroid:     [styles.pickerSelectAndroid],
+                        inputIOS:         [styles.reusableCustomSpacing, styles.pickerSelectIOS],
+                        placeholderColor: AppColors.border,
+                        viewContainer:    [styles.androidViewContainer],
+                    }}
+                    value={user.biometric_data.height.in || null}
+                />
+                {/*<TouchableOpacity onPress={heightPressed} style={[styles.reusableCustomSpacing, {height: 40, justifyContent: 'center'}]}>
                     { user.biometric_data.height.in > 0 ?
                         <Text>{Math.floor(user.biometric_data.height.in / 12) + '\'' + user.biometric_data.height.in % 12 + '"'}</Text>
                         :
                         <Text style={{color: AppColors.border}}>{'Height'}</Text>
                     }
-                </TouchableOpacity>
+                </TouchableOpacity>*/}
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.mass.lb.length > 0 ? 'Weight (lbs)' : ' '}</FormLabel>
                 <FormInput
                     blurOnSubmit={ true }
@@ -176,11 +189,11 @@ class UserAccountAbout extends Component {
                     }}
                     value={user.biometric_data.mass.lb}
                 />
-                <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.gender.length > 0 ? 'Sex' : ' '}</FormLabel>
+                <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.sex.length > 0 ? 'Sex' : ' '}</FormLabel>
                 <RNPickerSelect
                     hideIcon={true}
                     items={UserAccountConstants.possibleGenders}
-                    onValueChange={value => handleFormChange('biometric_data.gender', value)}
+                    onValueChange={value => handleFormChange('biometric_data.sex', value)}
                     placeholder={{
                         label: 'Sex',
                         value: null,
@@ -191,7 +204,7 @@ class UserAccountAbout extends Component {
                         placeholderColor: AppColors.border,
                         viewContainer:    [styles.androidViewContainer],
                     }}
-                    value={user.biometric_data.gender}
+                    value={user.biometric_data.sex}
                 />
                 {/*<FormLabel labelStyle={{color: AppColors.black}}>{user.system_type.length > 0 ? 'System Type' : ' '}</FormLabel>
                 <RNPickerSelect
@@ -212,7 +225,7 @@ class UserAccountAbout extends Component {
                     value={user.system_type}
                 />*/}
                 <Text
-                    onPress={() => setAccordionSection(1, 2)}
+                    onPress={() => setAccordionSection()}
                     style={[AppStyles.paddingVertical, AppStyles.continueButton]}
                 >{'CONTINUE'}</Text>
             </Wrapper>

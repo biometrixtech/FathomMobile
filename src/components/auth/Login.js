@@ -107,6 +107,7 @@ class Login extends Component {
         registerDevice:    PropTypes.func.isRequired,
         setEnvironment:    PropTypes.func,
         token:             PropTypes.string,
+        user:              PropTypes.object.isRequired,
     }
 
     static defaultProps = {
@@ -247,7 +248,11 @@ class Login extends Component {
                     .then(() => this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
-                        Actions.myPlan();
+                        if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                            Actions.myPlan();
+                        } else {
+                            Actions.onboarding();
+                        }
                     })).catch((err) => {
                         console.log('err',err);
                         const error = AppAPI.handleError(err);

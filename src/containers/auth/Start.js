@@ -14,6 +14,7 @@ const Start = ({
     onFormSubmit,
     password,
     registerDevice,
+    user,
 }) => (
     <Layout
         authorizeUser={authorizeUser}
@@ -24,6 +25,7 @@ const Start = ({
         onFormSubmit={onFormSubmit}
         password={password}
         registerDevice={registerDevice}
+        user={user}
     />
 );
 
@@ -37,6 +39,7 @@ Start.propTypes = {
     onFormSubmit:   PropTypes.func.isRequired,
     password:       PropTypes.string,
     registerDevice: PropTypes.func.isRequired,
+    user:           PropTypes.object.isRequired,
 };
 
 Start.defaultProps = {
@@ -51,6 +54,7 @@ const mapStateToProps = state => ({
     environment: state.init.environment || 'PROD',
     email:       state.init.email || null,
     password:    state.init.password || null,
+    user:        state.user,
 });
 
 const mapDispatchToProps = {

@@ -6,11 +6,11 @@ const getHeights = () => {
     let heightList = [];
     for (let feet = 2; feet < 9; feet += 1) {
         if (feet === 8) {
-            heightList.push({ title: `${feet}'0"` });
+            heightList.push({ label: `${feet}'0"`, value: feet * 12 });
             break;
         }
         for (let inches = 0; inches < 12; inches += 1) {
-            heightList.push({ title: `${feet}'${inches}"` });
+            heightList.push({ label: `${feet}'${inches}"`, value: ((feet * 12) + inches) });
         }
     }
     return heightList;

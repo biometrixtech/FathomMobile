@@ -75,11 +75,11 @@ const onboardingUtils = {
             user.personal_data.birth_date.length > 0
             // && user.personal_data.phone_number.length === 10
             && user.personal_data.zip_code.length > 0
-            && user.biometric_data.height.in.length > 0
-            && user.biometric_data.mass.lb.length > 0
+            && (user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0)
+            && (user.biometric_data.mass.lb.length > 0 || user.biometric_data.mass.lb > 0)
             && possibleInjuryStatuses.includes(user.injury_status)
             && possibleSystemTypes.includes(user.system_type)
-            && possibleGenders.includes(user.biometric_data.gender)
+            && possibleGenders.includes(user.biometric_data.sex)
         ) {
             errorsArray = [];
             isValid = true;
@@ -269,6 +269,22 @@ const onboardingUtils = {
         return this.generateWords(remainder, words);
     },
 
+    inchesToMeters(inches) {
+        return (parseFloat(inches) * 0.0254).toFixed(2);
+    },
+
+    lbsToKgs(lbs) {
+        return (parseFloat(lbs) / 2.20462).toFixed(2);
+    },
+
+    metersToInches(meters) {
+        return (parseFloat(meters) * 39.3701).toFixed(2);
+    },
+
+    kgsToLbs(kgs) {
+        return (parseFloat(kgs) * 2.20462).toFixed(2);
+    },
+
     getCurrentStep(user) {
         // all the different RegEx and arrays needed
         const numbersRegex = /[0-9]/g;
@@ -293,11 +309,11 @@ const onboardingUtils = {
         if( emailRegex.test(user.email) ) { count = count + 1; }
         if(user.personal_data.zip_code.length > 0) { count = count + 1; }
         if(user.personal_data.birth_date.length > 0) { count = count + 1; }
-        if(user.biometric_data.height.in.length > 0) { count = count + 1; }
-        if(user.biometric_data.mass.lb.length > 0) { count = count + 1; }
+        if(user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) { count = count + 1; }
+        if(user.biometric_data.mass.lb.length > 0 || user.biometric_data.mass.lb > 0) { count = count + 1; }
         if(possibleInjuryStatuses.includes(user.injury_status)) { count = count + 1; }
         if(possibleSystemTypes.includes(user.system_type)) { count = count + 1; }
-        if(possibleGenders.includes(user.biometric_data.gender)) { count = count + 1; }
+        if(possibleGenders.includes(user.biometric_data.sex)) { count = count + 1; }
         // return count
         return count;
     },
