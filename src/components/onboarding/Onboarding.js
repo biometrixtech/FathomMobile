@@ -103,19 +103,20 @@ class Onboarding extends Component {
                     biometric_data:    {
                         gender: '',
                         height: {
-                            in: 71
+                            in: ''
                         },
                         mass: {
                             lb: ''
                         }
                     },
                     personal_data: {
+                        account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
+                        account_type:   'free', // 'paid', 'free'
                         birth_date:     '',
                         first_name:     '',
                         last_name:      '',
                         phone_number:   '',
-                        account_type:   'free', // 'paid', 'free'
-                        account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
+                        zip_code:       '',
                     },
                     role:                           '',
                     system_type:                    '1-sensor',
@@ -439,7 +440,7 @@ class Onboarding extends Component {
                         <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
                     </TouchableOpacity>
                 </Modal>
-                <Modal
+                {/*<Modal
                     backdropPressToClose={false}
                     coverScreen={true}
                     isOpen={isTermsOpen}
@@ -464,7 +465,7 @@ class Onboarding extends Component {
                     <TouchableOpacity onPress={this._togglePrivacyPolicyWebView} style={[AppStyles.nextButtonWrapper]}>
                         <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
                     </TouchableOpacity>
-                </Modal>
+                </Modal>*/}
             </View>
         );
     }

@@ -67,7 +67,11 @@ class UserAccountInfo extends Component {
 
     render = () => {
         const {
-            handleFormChange, isPasswordSecure, setAccordionSection, toggleShowPassword, user
+            handleFormChange,
+            isPasswordSecure,
+            setAccordionSection,
+            toggleShowPassword,
+            user,
         } = this.props;
         return(
             <Wrapper>
@@ -109,7 +113,7 @@ class UserAccountInfo extends Component {
                         />
                     </View>
                 </View>
-                <FormLabel labelStyle={{color: AppColors.black}}>{user.email.length > 0 ? 'Email' : ' '}</FormLabel>
+                <FormLabel labelStyle={{color: AppColors.black}}>{user.email.length > 0 ? 'E-mail Address' : ' '}</FormLabel>
                 <FormInput
                     autoCapitalize={'none'}
                     blurOnSubmit={ false }

@@ -74,8 +74,9 @@ const onboardingUtils = {
         if(
             user.personal_data.birth_date.length > 0
             // && user.personal_data.phone_number.length === 10
-            && user.biometric_data.height.in > 0
-            && parseInt(user.biometric_data.mass.lb || 0, 10) > 0
+            && user.personal_data.zip_code.length > 0
+            && user.biometric_data.height.in.length > 0
+            && user.biometric_data.mass.lb.length > 0
             && possibleInjuryStatuses.includes(user.injury_status)
             && possibleSystemTypes.includes(user.system_type)
             && possibleGenders.includes(user.biometric_data.gender)
@@ -282,15 +283,15 @@ const onboardingUtils = {
         // count each valid REQUIRED field
         if(user.personal_data.first_name.length > 0) { count = count + 1; }
         if(user.personal_data.last_name.length > 0) { count = count + 1; }
-        if(user.personal_data.last_name.length > 0) { count = count + 1; }
         if(
             user.password.length >= 8
-            || user.password.length <= 16
-            || numbersRegex.test(user.password)
-            || upperCaseLettersRegex.test(user.password)
-            || lowerCaseLettersRegex.test(user.password)
+            && user.password.length <= 16
+            && numbersRegex.test(user.password)
+            && upperCaseLettersRegex.test(user.password)
+            && lowerCaseLettersRegex.test(user.password)
         ) { count = count + 1; }
         if( emailRegex.test(user.email) ) { count = count + 1; }
+        if(user.personal_data.zip_code.length > 0) { count = count + 1; }
         if(user.personal_data.birth_date.length > 0) { count = count + 1; }
         if(user.biometric_data.height.in.length > 0) { count = count + 1; }
         if(user.biometric_data.mass.lb.length > 0) { count = count + 1; }
