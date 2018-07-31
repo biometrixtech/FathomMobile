@@ -77,6 +77,10 @@ class Start extends Component {
         Actions.myPlan();
     }
 
+    _routeToHome = () => {
+        Actions.home();
+    }
+
     login = () => {
         let credentials = {
             Email:    this.props.email,
@@ -123,8 +127,7 @@ class Start extends Component {
             }, (response) => {
                 console.log('response',response);
                 if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
-                    // this._routeToMyPlan();
-                    Actions.home();
+                    this._routeToHome();
                 } else {
                     this._routeToOnboarding();
                 }
