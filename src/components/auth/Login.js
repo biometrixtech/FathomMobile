@@ -225,7 +225,6 @@ class Login extends Component {
                     email:    credentials.Email,
                     password: credentials.Password,
                 }, false).then(response => {
-                    console.log('response #1', response);
                     let { authorization, user } = response;
                     return (
                         authorization && authorization.expires && moment(authorization.expires) > moment.utc()
@@ -240,7 +239,6 @@ class Login extends Component {
                     //     return Promise.resolve(response);
                     // }) // TODO: BRING BACK THIS FUNCTION LATER ON
                     .then(response => {
-                        console.log('response #2', response);
                         let { authorization, user } = response;
                         return this.props.registerDevice(this.props.certificate, this.props.device, user)
                             .then(() => this.props.finalizeLogin(user, credentials, authorization.jwt));

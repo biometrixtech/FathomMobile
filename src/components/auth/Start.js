@@ -102,7 +102,6 @@ class Start extends Component {
             email:    credentials.Email,
             password: credentials.Password,
         }, false).then(response => {
-            console.log('response #1', response);
             let { authorization, user } = response;
             return (
                 authorization && authorization.expires && moment(authorization.expires) > moment.utc()
@@ -117,7 +116,6 @@ class Start extends Component {
             //     return Promise.resolve(response);
             // }) // TODO: BRING BACK THIS FUNCTION LATER ON
             .then(response => {
-                console.log('response #2', response);
                 let { authorization, user } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
                     .then(() => this.props.finalizeLogin(user, credentials, authorization.jwt));
@@ -125,7 +123,6 @@ class Start extends Component {
             .then(() => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
-                console.log('response',response);
                 if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                     this._routeToHome();
                 } else {

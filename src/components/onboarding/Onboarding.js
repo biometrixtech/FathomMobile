@@ -409,7 +409,6 @@ class Onboarding extends Component {
             //     return Promise.resolve(response);
             // }) // TODO: BRING BACK THIS FUNCTION LATER ON
             .then(response => {
-                console.log('response #2', response);
                 let { authorization, user } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
                     .then(() => this.props.finalizeLogin(user, {Email: userObj.email, Password: userObj.password}, authorization.jwt));
