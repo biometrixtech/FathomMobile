@@ -1100,8 +1100,8 @@ art-build-configurator@*:
     webpack-stylish "^0.1.8"
 
 art-class-system@*:
-  version "1.10.18"
-  resolved "https://registry.yarnpkg.com/art-class-system/-/art-class-system-1.10.18.tgz#fbd52b65923bb6bdb34ece0b19e15daabd35b6d5"
+  version "1.10.20"
+  resolved "https://registry.yarnpkg.com/art-class-system/-/art-class-system-1.10.20.tgz#9ee3e68dcabb40455f8921b585472f1d105356c0"
   dependencies:
     art-build-configurator "*"
 
@@ -1146,8 +1146,8 @@ art-rest-client@*:
     xhr2 "^0.1.4"
 
 art-standard-lib@*:
-  version "1.43.1"
-  resolved "https://registry.yarnpkg.com/art-standard-lib/-/art-standard-lib-1.43.1.tgz#e65f774fc42099bbc4d347a43f15b0a7a6815066"
+  version "1.44.0"
+  resolved "https://registry.yarnpkg.com/art-standard-lib/-/art-standard-lib-1.44.0.tgz#4a66b718b3cbb3e020e1c6e14282afdddbf2d08e"
   dependencies:
     art-build-configurator "*"
 
@@ -2218,8 +2218,8 @@ buffer-crc32@~0.2.3:
   resolved "https://registry.yarnpkg.com/buffer-crc32/-/buffer-crc32-0.2.13.tgz#0d333e3f00eac50aa1454abd30ef8c2a5d9a7242"
 
 buffer-from@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.0.tgz#87fcaa3a298358e0ade6e442cfce840740d1ad04"
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.1.tgz#32713bc028f75c02fdb710d7c7bcec1f2c6070ef"
 
 buffer-indexof@^1.0.0:
   version "1.1.1"
@@ -4608,8 +4608,8 @@ ignore-walk@^3.0.1:
     minimatch "^3.0.4"
 
 ignore@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.2.tgz#0a8dd228947ec78c2d7f736b1642a9f7317c1905"
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.3.tgz#e2d58c9654d75b542529fa28d80ac95b29e4f467"
 
 image-size@^0.6.0:
   version "0.6.3"
@@ -9218,8 +9218,8 @@ time-stamp@^1.0.0:
   resolved "https://registry.yarnpkg.com/time-stamp/-/time-stamp-1.1.0.tgz#764a5a11af50561921b133f3b44e618687e0f5c3"
 
 time-stamp@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/time-stamp/-/time-stamp-2.0.0.tgz#95c6a44530e15ba8d6f4a3ecb8c3a3fac46da357"
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/time-stamp/-/time-stamp-2.0.1.tgz#708a89359c1fc50bd5e7b1c8aa750d08c9172232"
 
 timed-out@^4.0.0:
   version "4.0.1"
