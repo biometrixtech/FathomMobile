@@ -25,8 +25,6 @@ const onboardingUtils = {
     isUserAccountInformationValid(user) {
         let errorsArray = [];
         let isValid;
-        // Email Validation
-        const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         // Password Validation
         // - 8-16 characters
         // - Must include uppercase letter, lowercase letter, and a number
@@ -40,7 +38,7 @@ const onboardingUtils = {
             const newError = 'Your First and Last Name are required';
             errorsArray.push(newError);
             isValid = false;
-        } else if( !emailRegex.test(user.email) ) {
+        } else if( !this.isEmailValid(user.email) ) {
             const newError = 'Your Email must be a valid email format';
             errorsArray.push(newError);
             isValid = false;
@@ -290,7 +288,6 @@ const onboardingUtils = {
         const numbersRegex = /[0-9]/g;
         const upperCaseLettersRegex = /[A-Z]/g;
         const lowerCaseLettersRegex = /[a-z]/g;
-        const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         const possibleSystemTypes =  UserAccount.possibleSystemTypes.map(systemTypes => systemTypes.value);
         const possibleInjuryStatuses = UserAccount.possibleInjuryStatuses.map(injuryStatus => injuryStatus.value);
         const possibleGenders = UserAccount.possibleGenders.map(gender => gender.value);
@@ -306,7 +303,7 @@ const onboardingUtils = {
             && upperCaseLettersRegex.test(user.password)
             && lowerCaseLettersRegex.test(user.password)
         ) { count = count + 1; }
-        if( emailRegex.test(user.email) ) { count = count + 1; }
+        if( this.isEmailValid(user.email) ) { count = count + 1; }
         if(user.personal_data.zip_code.length > 0) { count = count + 1; }
         if(user.personal_data.birth_date.length > 0) { count = count + 1; }
         if(user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) { count = count + 1; }
@@ -320,6 +317,11 @@ const onboardingUtils = {
 
     getTotalSteps(user) {
         return 12;
+    },
+
+    isEmailValid(email) {
+        const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return emailRegex.test(email);
     },
 
 }

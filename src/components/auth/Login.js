@@ -34,6 +34,7 @@ import SplashScreen from 'react-native-splash-screen';
 // Consts and Libs
 import { AppAPI } from '../../lib';
 import { AppColors, APIConfig, AppSizes, AppStyles } from '../../constants';
+import { onboardingUtils } from '../../constants/utils';
 
 // Components
 import { Alerts, Button, Card, ListItem, Spacer, Text } from '../custom';
@@ -127,8 +128,7 @@ class Login extends Component {
         // Email Validation
         const validEmail = FormValidation.refinement(
             FormValidation.String, (email) => {
-                const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                if(!emailRegex.test(email)) { return false; }
+                if(!onboardingUtils.isEmailValid(email)) { return false; }
                 return true;
             },
         );
