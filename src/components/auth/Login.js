@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:32:47
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:23:22
+ * @Last Modified time: 2018-07-30 21:02:37
  */
 
 /**
@@ -249,7 +249,7 @@ class Login extends Component {
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
                         if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
-                            Actions.myPlan();
+                            Actions.home();
                         } else {
                             Actions.onboarding();
                         }

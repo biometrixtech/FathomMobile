@@ -123,7 +123,8 @@ class Start extends Component {
             }, (response) => {
                 console.log('response',response);
                 if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
-                    this._routeToMyPlan();
+                    // this._routeToMyPlan();
+                    Actions.home();
                 } else {
                     this._routeToOnboarding();
                 }

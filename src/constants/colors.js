@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:20:06
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-12 19:00:40
+ * @Last Modified time: 2018-07-30 04:09:53
  */
 
 /**
@@ -89,12 +89,19 @@ const borders = {
 };
 
 const tabbar = {
-    tabbar: {
+    activeTabText:   '#2B2B2B',
+    inactiveTabText: '#2B2B2B4D', // 30% opacity
+    tabbar:          {
         background:   app.white,
         iconDefault:  '#BABDC2',
         iconSelected: brand.secondary.blue.hundredPercent,
     },
 };
+
+const zeplin = {
+    blueBackground: '#183C4D',
+    greyText:       '#B2B2B2',
+}
 
 export default {
     ...app,
@@ -102,4 +109,5 @@ export default {
     ...brand,
     ...sliders,
     ...tabbar,
+    zeplin,
 };

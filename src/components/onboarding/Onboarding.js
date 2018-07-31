@@ -418,7 +418,8 @@ class Onboarding extends Component {
                 resultMsg: { success: 'Success, now loading your data!' },
             }, () => {
                 this.setState({ loading: false });
-                Actions.myPlan();
+                // Actions.myPlan();
+                Actions.home();
             })).catch((err) => {
                 console.log('err',err);
                 const error = AppAPI.handleError(err);

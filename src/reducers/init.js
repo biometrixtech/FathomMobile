@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-04-23 03:55:41
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:10:48
+ * @Last Modified time: 2018-07-28 18:48:10
  */
 
 /**
@@ -17,6 +17,10 @@ const initialState = Store;
 
 export default function initReducer(state = initialState, action) {
     switch (action.type) {
+    case Actions.APP_LOADED:
+        return Object.assign({}, state, {
+            lastOpened: (new Date()).toLocaleDateString(),
+        });
     case Actions.LOGIN:
         return Object.assign({}, state, {
             email:    action.email,

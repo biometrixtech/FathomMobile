@@ -2,16 +2,17 @@
  * @Author: Vir Desai
  * @Date: 2018-04-30 13:21:35
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-24 11:30:51
+ * @Last Modified time: 2018-07-30 20:42:35
  */
 
 import React from 'react';
+import { Image } from 'react-native';
 
 // import third-party libraries
 import { Actions, Router, Scene, Stack } from 'react-native-router-flux';
 
 // Consts, Libs, and Utils
-import { AppColors, AppSizes, AppStyles, } from '../constants';
+import { AppColors, AppStyles, } from '../constants';
 import { TabIcon, } from '../components/custom';
 
 // import components
@@ -48,9 +49,12 @@ import MyPlanComponent from '../components/myPlan/MyPlan';
 import OnboardingContainer from '../containers/onboarding/Onboarding';
 import OnboardingComponent from '../components/onboarding/Onboarding';
 
+import HomeContainer from '../containers/home/Home';
+import HomeComponent from '../components/home/Home';
+
 const Index = (
     <Router>
-        <Stack hideNavBar key='root' titleStyle={{ alignSelf: 'center' }}>
+        <Stack hideNavBar key='root'>
             <Scene
                 Layout={StartComponent}
                 component={StartContainer}
@@ -90,6 +94,17 @@ const Index = (
                 key={'forgotPassword'}
                 panHandlers={null}
             />*/}
+            <Scene
+                Layout={HomeComponent}
+                component={HomeContainer}
+                hideNavBar={false}
+                navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0 }}
+                navigationBarTitleImage={require('../../assets/images/standard/fathom-gold-and-grey.png')}
+                navigationBarTitleImageStyle={[AppStyles.navbarImageTitle]}
+                key='home'
+                panHandlers={null}
+                type={'replace'}
+            />
             <Scene
                 Layout={MyPlanComponent}
                 component={MyPlanContainer}

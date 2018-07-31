@@ -181,17 +181,32 @@ const stopConnect = () => {
         .catch(err => Promise.reject(err));
 };
 
+const setKitTime = (id) => {
+    let dataArray = [commands.SET_TIME, convertHex('0x04')];
+    dataArray = dataArray.concat(convertToUnsigned32BitIntByteArray(Math.round((new Date()).getTime() / 1000))); // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
+    console.log(id, dataArray);
+    return dispatch => write(id, dataArray)
+        .then(result => {
+            return dispatch({
+                type: Actions.SET_KIT_TIME
+            });
+        });
+};
+
 const connectToAccessory = (data) => {
-    const addToListArray = [commands.ADD_TO_TRUSTED_LIST, convertHex('0x00')];
     const getSetupModeArray = [commands.IS_SINGLE_SENSOR_IN_SETUP_MODE, convertHex('0x00')];
+    let setKitTimeArray = [commands.SET_TIME, convertHex('0x04')];
+    setKitTimeArray = setKitTimeArray.concat(convertToUnsigned32BitIntByteArray(Math.round((new Date()).getTime() / 1000))); // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
     return dispatch => BleManager.disconnect(data.id)
         .catch(err => BleManager.disconnect(data.id))
         .then(() => BleManager.connect(data.id))
         .catch(err => BleManager.connect(data.id))
         .then(() => BleManager.retrieveServices(data.id))
         .catch(err => BleManager.retrieveServices(data.id))
-        .then(peripheralInfo => write(peripheralInfo.id, addToListArray)) // add to trusted list - 0x72
-        .then(() => write(data.id, getSetupModeArray)) // get setup mode - 0x74
+        .then(peripheralInfo => {
+            return write(peripheralInfo.id, setKitTimeArray) // set kit time - 0x35
+                .then(() => write(peripheralInfo.id, getSetupModeArray)); // get setup mode - 0x74
+        })
         .then(response => Promise.resolve(
             dispatch({
                 type: Actions.CONNECT_TO_ACCESSORY,
@@ -282,10 +297,7 @@ const disconnectFromSingleSensor = (sensor_id) => {
     return dispatch => BleManager.start({ showAlert: true })
         .then(() => BleManager.connect(sensorId))
         .then(() => BleManager.retrieveServices(sensorId))
-        .then(peripheralInfo => {
-            console.log('peripheralInfo',peripheralInfo);
-            return write(peripheralInfo.id, dataArray); // wipe single sensor data - 0x7B
-        })
+        .then(peripheralInfo => write(peripheralInfo.id, dataArray)) // wipe single sensor data - 0x7B
         .then(() => BleManager.disconnect(sensorId))
         .then(() => Promise.resolve())
         .catch(err => Promise.reject(err));
@@ -588,18 +600,6 @@ const handleDisconnect = (id) => {
         .then(services => dispatch({
             type: Actions.HANDLE_DISCONNECT
         }));
-};
-
-const setKitTime = (id) => {
-    let dataArray = [commands.SET_TIME, convertHex('0x04')];
-    dataArray = dataArray.concat(convertToUnsigned32BitIntByteArray(Math.round((new Date()).getTime() / 1000))); // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
-    console.log(id, dataArray);
-    return dispatch => write(id, dataArray)
-        .then(result => {
-            return dispatch({
-                type: Actions.SET_KIT_TIME
-            });
-        });
 };
 
 const getWifiMacAddress = (id) => {

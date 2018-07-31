@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:20:41
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-18 18:19:50
+ * @Last Modified time: 2018-07-28 18:42:31
  */
 
 export default {
@@ -55,4 +55,6 @@ export default {
     UPSERT_ACCESSORY:        'UPSERT_ACCESSORY',
     WIFI_SCAN:               'WIFI_SCAN',
     WIFI:                    'WIFI',
+    // OTHER
+    APP_LOADED:              'APP_LOADED',
 };

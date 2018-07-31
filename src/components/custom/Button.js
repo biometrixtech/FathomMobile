@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:28:39
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:24:21
+ * @Last Modified time: 2018-07-30 01:08:18
  */
 
 /**
@@ -98,13 +98,13 @@ class CustomButton extends Component {
         if (this.props.outlined) {
             props.raised = false;
             props.backgroundColor = this.props.backgroundColor || 'transparent';
-            props.color = AppColors.secondary.blue.hundredPercent;
+            props.color = this.props.color || AppColors.secondary.blue.hundredPercent;
             props.buttonStyle.borderWidth = 1;
-            props.buttonStyle.borderColor = AppColors.secondary.blue.hundredPercent;
+            props.buttonStyle.borderColor = this.props.color || AppColors.secondary.blue.hundredPercent;
 
             if (props.icon && props.icon.name) {
                 props.icon = {
-                    color: AppColors.secondary.blue.hundredPercent,
+                    color: this.props.color || AppColors.secondary.blue.hundredPercent,
                     ...props.icon,
                 };
             }
