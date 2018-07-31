@@ -4,12 +4,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-    AppState,
     ActivityIndicator,
+    Animated,
+    AppState,
+    Easing,
     Image,
     RefreshControl,
     ScrollView,
     StyleSheet,
+    TouchableOpacity,
     View,
 } from 'react-native';
 
@@ -28,6 +31,7 @@ import { AppColors, AppStyles, AppSizes, MyPlan as MyPlanConstants } from '../..
 import { Button, TabIcon, Text, } from '../custom';
 import { WebView } from '../general';
 import { Exercises, PostSessionSurvey, ReadinessSurvey } from './pages';
+import { bleUtils } from '../../constants/utils';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -44,6 +48,7 @@ class MyPlan extends Component {
     static componentName = 'MyPlan';
 
     static propTypes = {
+        ble:                 PropTypes.object.isRequired,
         getMyPlan:           PropTypes.func.isRequired,
         getSoreBodyParts:    PropTypes.func.isRequired,
         notification:        PropTypes.bool.isRequired,
@@ -59,6 +64,7 @@ class MyPlan extends Component {
         super(props);
 
         this.state = {
+            BLEData:            {},
             completedExercises: [],
             dailyReadiness:     {
                 readiness:     0,
@@ -121,12 +127,19 @@ class MyPlan extends Component {
                 SplashScreen.hide();
                 // console.log('error',error);
             });
+        // trigger BLE Steps function
+        this._handleBLESteps();
     }
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.notification && nextProps.notification !== this.props.notification) {
             this._handleExerciseListRefresh(true);
         }
+    }
+
+    _handleBLESteps = () => {
+        const BLEData = bleUtils.handleBLESteps(this.props.ble);
+        this.setState({ BLEData });
     }
 
     _handleDailyReadinessFormChange = (name, value, bodyPart, side) => {
@@ -398,6 +411,25 @@ class MyPlan extends Component {
             :
             'Loading...';
         let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj);
+        // set animated values
+        const spinValue = new Animated.Value(0);
+        // First set up animation
+        Animated.loop(
+            Animated.timing(
+                spinValue,
+                {
+                    duration:        3000,
+                    easing:          Easing.linear,
+                    toValue:         1,
+                    useNativeDriver: true,
+                }
+            )
+        ).start();
+        // Second interpolate beginning and end values (in this case 0 and 1)
+        const spin = spinValue.interpolate({
+            inputRange:  [0, 1],
+            outputRange: ['0deg', '360deg'],
+        });
         return(
             <View style={{flex: 1,}}>
                 <View style={[styles.background]}>
@@ -406,16 +438,9 @@ class MyPlan extends Component {
                         style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal, { paddingBottom: 0 }]}
                     >
                         <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'space-between',}}>
-                            <View style={{justifyContent: 'center', flex: 1,}}></View>
-                            <View style={{alignItems: 'center', justifyContent: 'center', flex: 8,}}>
-                                <Image
-                                    source={require('../../../assets/images/standard/coach-avatar.png')}
-                                    style={{resizeMode: 'contain', width: 40, height: 40}}
-                                />
-                            </View>
                             <View style={{justifyContent: 'center', flex: 1,}}>
                                 <TabIcon
-                                    containerStyle={[{alignSelf: 'flex-end'}]}
+                                    containerStyle={[{alignSelf: 'flex-start'}]}
                                     icon={'settings'}
                                     iconStyle={[{color: AppColors.white}]}
                                     onPress={() => Actions.settings()}
@@ -424,6 +449,32 @@ class MyPlan extends Component {
                                     type={'material-community'}
                                 />
                             </View>
+                            <View style={{alignItems: 'center', justifyContent: 'center', flex: 8,}}>
+                                <Image
+                                    source={require('../../../assets/images/standard/coach-avatar.png')}
+                                    style={{resizeMode: 'contain', width: 40, height: 40}}
+                                />
+                            </View>
+                            <TouchableOpacity
+                                onPress={() => this.state.BLEData.bleImage ? this._handleBLESteps() : null}
+                                style={{justifyContent: 'center', flex: 1,}}
+                            >
+                                { this.state.BLEData.bleImage && this.state.BLEData.animated ?
+                                    <Animated.Image
+                                        resizeMode={'contain'}
+                                        source={this.state.BLEData.bleImage}
+                                        style={{transform: [{rotate: spin}], width: 34,}}
+                                    />
+                                    : this.state.BLEData.bleImage && !this.state.BLEData.animated ?
+                                        <Image
+                                            resizeMode={'contain'}
+                                            source={this.state.BLEData.bleImage}
+                                            style={{width: 34,}}
+                                        />
+                                        :
+                                        null
+                                }
+                            </TouchableOpacity>
                         </View>
                         { !isDailyReadinessSurveyCompleted ?
                             <Text style={[AppStyles.h1, AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalLrg, AppStyles.textCenterAligned, {color: AppColors.white}]}>{`GOOD ${partOfDay}, ${this.props.user.personal_data.first_name.toUpperCase()}!`}</Text>

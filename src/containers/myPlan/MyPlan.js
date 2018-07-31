@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { plan as PlanActions, } from '../../actions';
+import { ble as BLEActions, plan as PlanActions, } from '../../actions';
 
 const MyPlan = ({
     Layout,
+    ble,
     getMyPlan,
     getSoreBodyParts,
     notification,
@@ -15,6 +16,7 @@ const MyPlan = ({
     user,
 }) => (
     <Layout
+        ble={ble}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
         notification={notification}
@@ -27,6 +29,7 @@ const MyPlan = ({
 
 MyPlan.propTypes = {
     Layout:              PropTypes.func.isRequired,
+    ble:                 PropTypes.object.isRequired,
     getMyPlan:           PropTypes.func.isRequired,
     getSoreBodyParts:    PropTypes.func.isRequired,
     notification:        PropTypes.bool.isRequired,
@@ -40,6 +43,7 @@ MyPlan.defaultProps = {
 };
 
 const mapStateToProps = state => ({
+    ble:          state.ble,
     notification: state.init.notification,
     plan:         state.plan,
     user:         state.user,

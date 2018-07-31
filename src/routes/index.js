@@ -117,7 +117,7 @@ const Index = (
                 component={SettingsContainer}
                 hideNavBar={false}
                 navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0}}
-                onLeft={() => Actions.pop()}
+                onLeft={() => Actions.home()}
                 onRight={() => null}
                 key={'settings'}
                 panHandlers={null}
