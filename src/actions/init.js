@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:20:59
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:11:43
+ * @Last Modified time: 2018-07-28 18:41:57
  */
 
 /**
@@ -245,8 +245,15 @@ const sendDeviceToken = (token) => {
     }));
 };
 
+const appLoaded = () => {
+    return dispatch => Promise.resolve(dispatch({
+        type: Actions.APP_LOADED,
+    }));
+};
+
 
 export default {
+    appLoaded,
     forgotPassword,
     registerDevice,
     authorizeUser,

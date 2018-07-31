@@ -2,7 +2,7 @@
  * @Author: Mazen Chami
  * @Date: 2018-07-12 11:06:00
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:11:52
+ * @Last Modified time: 2018-07-30 17:30:55
  */
 
 /**
@@ -29,6 +29,7 @@ const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
     if(endDate) {
         myPlanObj.end_date = endDate;
     }
+    myPlanObj.event_date = `${(new Date()).toISOString().split('.')[0]}Z`;
     console.log('myPlanObj',myPlanObj);
     return dispatch => AppAPI.get_my_plan.post(false, myPlanObj)
         .then(myPlanData => {
@@ -79,8 +80,8 @@ const postSessionSurvey = postSessionObj => {
     let newPlan = {};
     newPlan.daily_plans = [];
     let newCurrentPlan = _.cloneDeep(currentState.plan.dailyPlan[0]);
-    newCurrentPlan.recovery_am = null;
-    newCurrentPlan.recovery_pm = null;
+    newCurrentPlan.pre_recovery = null;
+    newCurrentPlan.post_recovery = null;
     newPlan.daily_plans.push(newCurrentPlan);
     // call api
     return dispatch => AppAPI.post_session_survey.post(false, postSessionObj)

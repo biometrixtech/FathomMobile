@@ -35,7 +35,7 @@ const ExerciseItem = ({
                     checkedIcon={'check-square'}
                     containerStyle={{backgroundColor: AppColors.white, borderWidth: 0, margin: 0, padding: 0, width: 30, }}
                     onPress={() => handleCompleteExercise(exercise.library_id)}
-                    size={26}
+                    size={11}
                 />
             </View>
             <View style={{justifyContent: 'center', flex: 7,}}>
@@ -57,7 +57,7 @@ const ExerciseItem = ({
                 </Text>
             </View>
         </View>
-        <View style={[isLastItem ? {} : {borderLeftWidth: 1, borderLeftColor: AppColors.primary.grey.thirtyPercent}, {marginLeft: 20}]}>
+        <View style={[isLastItem ? {} : {borderLeftWidth: 1, borderLeftColor: AppColors.primary.grey.thirtyPercent}, {marginLeft: 14}]}>
             <Text style={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontal, {color: AppColors.primary.grey.thirtyPercent}]}>{''}</Text>
         </View>
     </View>
