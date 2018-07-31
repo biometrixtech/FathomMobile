@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:19:55
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-08 16:01:26
+ * @Last Modified time: 2018-07-30 16:41:39
  */
 
 /**
@@ -24,9 +24,9 @@ function lineHeight(fontSize) {
 }
 
 const base = {
-    size:       scaleFont(16),
-    lineHeight: lineHeight(scaleFont(Platform.OS === 'ios' ? 13 : 14)),
-    family:     'Libre Franklin',
+    size:       scaleFont(Platform.OS === 'ios' ? 20 : 18),
+    lineHeight: lineHeight(scaleFont(Platform.OS === 'ios' ? 18 : 16)),
+    family:     'Oswald',
     fontWeight: '400',
 };
 

@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:32:47
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:23:22
+ * @Last Modified time: 2018-07-30 21:02:37
  */
 
 /**
@@ -226,7 +226,7 @@ class Login extends Component {
                     .then(() => this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
-                        Actions.myPlan();
+                        Actions.home();
                     })).catch((err) => {
                         console.log('err',err);
                         const error = AppAPI.handleError(err);

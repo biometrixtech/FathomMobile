@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:20:06
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-12 19:01:34
+ * @Last Modified time: 2018-07-30 04:11:39
  */
 
 /**
@@ -96,10 +96,16 @@ const tabbar = {
     },
 };
 
+const zeplin = {
+    blueBackground: '#183C4D',
+    greyText:       '#B2B2B2',
+}
+
 export default {
     ...app,
     ...borders,
     ...brand,
     ...sliders,
     ...tabbar,
+    zeplin,
 };

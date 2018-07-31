@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:19:33
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-12 19:05:28
+ * @Last Modified time: 2018-07-30 20:55:31
  */
 
 /**
@@ -47,7 +47,7 @@ export default {
         fontFamily: Fonts.base.family,
         fontSize:   Fonts.base.size,
         lineHeight: Fonts.base.lineHeight,
-        fontWeight: '400',
+        fontWeight: '500',
         fontStyle:  'normal'
     },
     baseText: {
@@ -340,10 +340,10 @@ export default {
         tintColor: Colors.white,
     },
     navbarImageTitle: {
-        height:      Sizes.navbarHeight/(Platform.OS === 'ios' ? 1.8 : 1.5),
-        resizeMode:  'contain',
-        bottom:      Platform.OS === 'ios' ? 10 : 6,
-        marginRight: 10,
+        height:       Sizes.navbarHeight/(Platform.OS === 'ios' ? 1.8 : 1.5),
+        resizeMode:   'contain',
+        flex:         1,
+        marginBottom: Platform.OS === 'ios' ? 6 : 0
     },
 
     // TabBar
@@ -356,6 +356,7 @@ export default {
     leftTabBar: {
         height:         Sizes.tabbarHeight,
         width:          Sizes.screen.widthThreeQuarters,
+        paddingRight:   Sizes.padding * 3,
         alignItems:     'flex-end',
         justifyContent: 'center',
     },
@@ -364,13 +365,14 @@ export default {
         width:          Sizes.screen.widthHalf,
         alignItems:     'center',
         justifyContent: 'center',
+        paddingLeft:    Sizes.padding * 0.1,
     },
     rightTabBar: {
         height:         Sizes.tabbarHeight,
         width:          Sizes.screen.widthThreeQuarters,
         alignItems:     'flex-start',
         justifyContent: 'center',
-        paddingLeft:    Sizes.padding * 1.75,
+        paddingLeft:    Sizes.padding * 2.8,
     },
 
     // Radial Menu

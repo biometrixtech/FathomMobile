@@ -104,9 +104,8 @@ initialize() {
             echo "🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊"
 
             watchman watch-del-all
-            # lsof -P | grep ':8081' | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
             lsof -i tcp:8081 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
-            lsof -i tcp:3000 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
+            # lsof -i tcp:3000 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
             rm -rf node_modules/ yarn.lock
             yarn
             # android build tools and gradle patches
@@ -132,6 +131,7 @@ initialize() {
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-push-notification/android/build.gradle
 
             sed -i '' 's/compile(/implementation(/g' ./node_modules/react-native-fabric/android/build.gradle
+            sed -i '' 's/, }/ }/g' ./node_modules/react-native-scrollable-tab-view/SceneComponent.js
             # sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
 
             # extra android patches
@@ -142,7 +142,7 @@ initialize() {
             sed -i '' 's/26/27/g' ./node_modules/react-native-linear-gradient/android/build.gradle
             sed -i '' 's/23/27/' ./node_modules/react-native-fabric/android/build.gradle
             sed -i '' 's/22/27/' ./node_modules/react-native-fabric/android/build.gradle
-            sed -i '' 's/23/27/' ./node_modules/react-native-device-info/android/build.gradle
+            sed -i '' 's/24/27/' ./node_modules/react-native-device-info/android/build.gradle
             sed -i '' 's/22/27/' ./node_modules/react-native-device-info/android/build.gradle
             sed -i '' 's/26/27/' ./node_modules/react-native-ble-manager/android/build.gradle
             sed -i '' 's/26/27/g' ./node_modules/react-native-code-push/android/app/build.gradle
@@ -210,7 +210,7 @@ start() {
 
 iosBuild() {
     echo
-    read -p "${grey}Choose which build type:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Staging`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose which build type:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Staging`echo $'\n '`[3]: Dev`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
     echo
     case "$REPLY" in
         1)
@@ -239,6 +239,19 @@ iosBuild() {
                 cd ..
             fi
             ;;
+        3)
+            yarn test
+            testValue=$?
+            if [ $testValue -ne 0 ]; then
+                echo "${red}Unit testing failed, not proceeding.${normal}"
+            else
+                echo "Unit testing passed, proceeding.."
+                cd ios
+                xcodebuild clean -project Fathom.xcodeproj -scheme Fathom -configuration Debug
+                xcodebuild archive -project Fathom.xcodeproj -scheme Fathom -configuration Debug
+                cd ..
+            fi
+            ;;
         *)
             echo "${red}Invalid selection${normal}"
             iosBuild
@@ -248,7 +261,7 @@ iosBuild() {
 
 androidBuild() {
     echo
-    read -p "${grey}Choose which build type:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Staging`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose which build type:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Staging`echo $'\n '`[3]: Dev`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
     echo
     case "$REPLY" in
         1)
@@ -278,6 +291,21 @@ androidBuild() {
                 ./gradlew clean assembleReleaseStaging
                 cd ..
                 echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-releaseStaging#.apk${normal}"
+                open android/app/build/outputs/apk/
+            fi
+            ;;
+        3)
+            yarn test
+            testValue=$?
+            if [ $testValue -ne 0 ]; then
+                echo "${red}Unit testing failed, not proceeding.${normal}"
+            else
+                echo "Unit testing passed, proceeding.."
+                yarn bundle-android
+                cd android
+                ./gradlew clean assembleDebug
+                cd ..
+                echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-debug#.apk${normal}"
                 open android/app/build/outputs/apk/
             fi
             ;;
@@ -320,7 +348,7 @@ codepushRelease() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                code-push release-react vir/FathomAI-Android android
+                code-push release-react ${CODEPUSH}FathomAI-Android android
             fi
             ;;
         2)
@@ -330,7 +358,7 @@ codepushRelease() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                code-push release-react vir/FathomAI-iOS ios
+                code-push release-react ${CODEPUSH}FathomAI-iOS ios
             fi
             ;;
         3)
@@ -340,8 +368,8 @@ codepushRelease() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                code-push release-react vir/FathomAI-Android android
-                code-push release-react vir/FathomAI-iOS ios
+                code-push release-react ${CODEPUSH}FathomAI-Android android
+                code-push release-react ${CODEPUSH}FathomAI-iOS ios
             fi
             ;;
         *)
