@@ -111,7 +111,7 @@ class Settings extends Component {
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{color: AppColors.black, name: 'power-settings-new', size: 24}}
-                    onPress={() => Promise.resolve(this.props.logout()).then(() => Actions.login())}
+                    onPress={() => Promise.resolve(this.props.logout()).then(() => Actions.start())}
                     title={'LOGOUT'}
                     titleStyle={{color: AppColors.black}}
                 />

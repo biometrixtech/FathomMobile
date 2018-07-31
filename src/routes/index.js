@@ -46,6 +46,9 @@ import BluetoothConnectComponent from '../components/kit/BluetoothConnect';
 import MyPlanContainer from '../containers/myPlan/MyPlan';
 import MyPlanComponent from '../components/myPlan/MyPlan';
 
+import OnboardingContainer from '../containers/onboarding/Onboarding';
+import OnboardingComponent from '../components/onboarding/Onboarding';
+
 import HomeContainer from '../containers/home/Home';
 import HomeComponent from '../components/home/Home';
 
@@ -53,26 +56,44 @@ const Index = (
     <Router>
         <Stack hideNavBar key='root'>
             <Scene
+                Layout={StartComponent}
+                component={StartContainer}
+                hideNavBar
+                initial={true}
+                key={'start'}
+                panHandlers={null}
+            />
+            <Scene
+                Layout={OnboardingComponent}
+                component={OnboardingContainer}
+                hideNavBar={false}
+                key={'onboarding'}
+                panHandlers={null}
+                renderLeftButton={null}
+                title='GET STARTED'
+                titleStyle={{flex: 1, textAlign: 'center',}}
+            />
+            <Scene
                 Layout={LoginComponent}
                 component={LoginContainer}
                 hideNavBar
-                key='login'
+                key={'login'}
                 panHandlers={null}
             />
             {/*<Scene
                 Layout={SignUpComponent}
                 component={SignUpContainer}
                 hideNavBar
-                key='signUp'
+                key={'signUp'}
                 panHandlers={null}
-            />*/}
+            />
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
                 hideNavBar
-                key='forgotPassword'
+                key={'forgotPassword'}
                 panHandlers={null}
-            />
+            />*/}
             <Scene
                 Layout={HomeComponent}
                 component={HomeContainer}
@@ -88,7 +109,7 @@ const Index = (
                 Layout={MyPlanComponent}
                 component={MyPlanContainer}
                 hideNavBar
-                key='myPlan'
+                key={'myPlan'}
                 panHandlers={null}
             />
             <Scene
@@ -98,9 +119,9 @@ const Index = (
                 navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0}}
                 onLeft={() => Actions.pop()}
                 onRight={() => null}
-                key='settings'
+                key={'settings'}
                 panHandlers={null}
-                rightTitle=' '
+                rightTitle={' '}
                 title='SETTINGS'
                 titleStyle={{flex: 1, textAlign: 'center',}}
             />
@@ -108,7 +129,7 @@ const Index = (
                 Layout={BluetoothConnectComponent}
                 component={BluetoothConnectContainer}
                 hideNavBar
-                key='bluetoothConnect'
+                key={'bluetoothConnect'}
                 panHandlers={null}
                 // title='Bluetooth Connect'
                 // {...DefaultProps.navbarProps}
@@ -118,13 +139,13 @@ const Index = (
                     Layout={KitManagementComponent}
                     component={KitManagementContainer}
                     hideNavBar
-                    key='kitManagement'
+                    key={'kitManagement'}
                     panHandlers={null}
                     // title='Kit Management'
                     // {...DefaultProps.navbarProps}
                 />
                 <Scene
-                    key='kitOwner'
+                    key={'kitOwner'}
                     title='Kit Owner'
                     component={KitOwnerContainer}
                     Layout={KitOwnerComponent}
@@ -132,7 +153,7 @@ const Index = (
                     panHandlers={null}
                 />
                 <Scene
-                    key='kitAssign'
+                    key={'kitAssign'}
                     title='Kit Assign'
                     component={KitAssignContainer}
                     Layout={KitAssignComponent}

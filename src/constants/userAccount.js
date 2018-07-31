@@ -6,11 +6,11 @@ const getHeights = () => {
     let heightList = [];
     for (let feet = 2; feet < 9; feet += 1) {
         if (feet === 8) {
-            heightList.push({ title: `${feet}'0"` });
+            heightList.push({ label: `${feet}'0"`, value: feet * 12 });
             break;
         }
         for (let inches = 0; inches < 12; inches += 1) {
-            heightList.push({ title: `${feet}'${inches}"` });
+            heightList.push({ label: `${feet}'${inches}"`, value: ((feet * 12) + inches) });
         }
     }
     return heightList;
@@ -44,30 +44,30 @@ const SPORTS_POSITIONS = {
         { label: 'Weightlifting', value: 'weightlifting', },
     ],
     positions: {
-        ['basketball']: [
+        basketball: [
             { label: 'Center', value: 'center', },
             { label: 'Forward', value: 'forward', },
             { label: 'Guard', value: 'guard', },
         ],
-        ['baseball_softball']: [
+        baseball_softball: [
             { label: 'Catcher', value: 'catcher', },
             { label: 'Infielder', value: 'infielder', },
             { label: 'Outfielder', value: 'outfielder', },
             { label: 'Pitcher', value: 'pitcher', },
         ],
-        ['cross_country']: [
+        cross_country: [
             { label: 'Distance Runner', value: 'distance_runner', }
         ],
-        ['cycling']: [
+        cycling: [
             { label: 'Cyclist', value: 'cyclist', },
         ],
-        ['field_hockey']: [
+        field_hockey: [
             { label: 'Forward', value: 'forward', },
             { label: 'Fullback', value: 'fullback', },
             { label: 'Goalie', value: 'goalie', },
             { label: 'Midfielder', value: 'midfielder', },
         ],
-        ['football']: [
+        football: [
             { label: 'Defensive Back', value: 'defensive_back', },
             { label: 'Kicker', value: 'kicker', },
             { label: 'Linebacker', value: 'linebacker', },
@@ -76,64 +76,64 @@ const SPORTS_POSITIONS = {
             { label: 'Quarterback', value: 'quarterback', },
             { label: 'Receiver', value: 'receiver', },
         ],
-        ['general_fitness']: [
+        general_fitness: [
             { label: 'Athlete', value: 'athlete', },
         ],
-        ['golf']: [
+        golf: [
             { label: 'Golfer', value: 'golfer', },
         ],
-        ['gymnastics']: [
+        gymnastics: [
             { label: 'Gymnast', value: 'gymnast', },
         ],
-        ['ice_hockey']: [
+        ice_hockey: [
             { label: 'Center', value: 'center', },
             { label: 'Defensemen', value: 'defensemen', },
             { label: 'Goalie', value: 'goalie', },
             { label: 'Wing', value: 'wing', },
         ],
-        ['lacrosse']: [
+        lacrosse: [
             { label: 'Attackers', value: 'attackers', },
             { label: 'Defender', value: 'defender', },
             { label: 'Goalie', value: 'goalie', },
             { label: 'Midfielder', value: 'midfielder', },
         ],
-        ['rowing']: [
+        rowing: [
             { label: 'Rower', value: 'rower', },
         ],
-        ['rugby']: [
+        rugby: [
             { label: 'Back', value: 'back', },
             { label: 'Forward', value: 'forward', },
         ],
-        ['soccer']: [
+        soccer: [
             { label: 'Defender', value: 'defender', },
             { label: 'Forward', value: 'forward', },
             { label: 'Goalkeeper', value: 'goalkeeper', },
             { label: 'Midfielder', value: 'midfielder', },
         ],
-        ['swimming_diving']: [
+        swimming_diving: [
             { label: 'Distance', value: 'distance', },
             { label: 'Diver', value: 'diver', },
             { label: 'Sprint', value: 'sprint', },
         ],
-        ['tennis']: [
+        tennis: [
             { label: 'Athlete', value: 'athlete', },
         ],
-        ['track_field']: [
+        track_field: [
             { label: 'Jumping', value: 'jumping', },
             { label: 'Long Distance', value: 'long_distance', },
             { label: 'Sprint', value: 'sprint', },
             { label: 'Throwing', value: 'throwing', },
         ],
-        ['volleyball']: [
+        volleyball: [
             { label: 'Blocker', value: 'blocker', },
             { label: 'Hitter', value: 'hitter', },
             { label: 'Libero', value: 'libero', },
             { label: 'Setter', value: 'setter', },
         ],
-        ['wrestling']: [
+        wrestling: [
             { label: 'Wrestler', value: 'wrestler', },
         ],
-        ['weightlifting']: [
+        weightlifting: [
             { label: 'Athlete', value: 'athlete', },
         ],
     },
@@ -176,6 +176,10 @@ const possibleInjuryStatuses = [
         label: 'Returning from Injury',
         value: 'returning_from_injury',
     },
+    {
+        label: 'Returning from Acute Injury',
+        value: 'returning_from_acute_injury',
+    },
 ];
 
 const possibleGenders = [
@@ -188,8 +192,8 @@ const possibleGenders = [
         value: 'female',
     },
     {
-        label: 'Other',
-        value: 'other',
+        label: 'Intersex',
+        value: 'intersex',
     },
 ];
 

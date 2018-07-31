@@ -28,6 +28,8 @@ export default {
     //    - AppAPI.favorites.patch()
     //    - AppAPI.blog.delete()
     endpoints: new Map([
+        ['create_user',     '/users/user'],
+        ['update_user',     '/users/user/{userId}'],
         ['authorize',       '/users/user/{userId}/authorize'],
         ['forgot_password', '/users/user/forgot_password'],
         ['login',           '/users/user/sign_in'], // If you change the key, update the reference below

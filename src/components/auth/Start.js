@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
@@ -13,21 +13,15 @@ import moment from 'moment';
 import SplashScreen from 'react-native-splash-screen';
 
 // Consts and Libs
-import { AppAPI } from '../../lib';
-import { AppColors, AppSizes } from '../../constants';
+import { AppAPI } from '../../lib/';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 
 // Components
-import { Button, Spacer, Text } from '../custom';
+import { Button, Spacer, Text } from '../custom/';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    cardBackground: {
-        alignItems:      'center',
-        backgroundColor: AppColors.primary.grey.fiftyPercent,
-        height:          AppSizes.screen.heightHalf,
-        justifyContent:  'center',
-        width:           AppSizes.screen.width,
-    },
+
 });
 
 /* Component ==================================================================== */
@@ -35,18 +29,19 @@ class Start extends Component {
     static componentName = 'Start';
 
     static propTypes = {
-        onFormSubmit:   PropTypes.func,
-        registerDevice: PropTypes.func.isRequired,
-        finalizeLogin:  PropTypes.func.isRequired,
         authorizeUser:  PropTypes.func.isRequired,
-        environment:    PropTypes.string,
         email:          PropTypes.string,
+        environment:    PropTypes.string,
+        finalizeLogin:  PropTypes.func.isRequired,
+        onFormSubmit:   PropTypes.func,
         password:       PropTypes.string,
+        registerDevice: PropTypes.func.isRequired,
+        user:           PropTypes.object.isRequired,
     }
 
     static defaultProps = {
-        environment: 'PROD',
         email:       null,
+        environment: 'PROD',
         password:    null,
     }
 
@@ -55,7 +50,19 @@ class Start extends Component {
     }
 
     componentDidMount = () => {
-        this.login();
+        setTimeout(() => {
+            if (this.props.email !== null && this.props.password !== null) {
+                this.setState({
+                    form_values: {
+                        Email:    this.props.email,
+                        Password: this.props.password,
+                    },
+                });
+                Promise.resolve(this.login());
+            } else {
+                SplashScreen.hide();
+            }
+        }, 10);
     }
 
     _routeToLogin = () => {
@@ -66,6 +73,14 @@ class Start extends Component {
         Actions.onboarding();
     }
 
+    _routeToMyPlan = () => {
+        Actions.myPlan();
+    }
+
+    _routeToHome = () => {
+        Actions.home();
+    }
+
     login = () => {
         let credentials = {
             Email:    this.props.email,
@@ -74,12 +89,14 @@ class Start extends Component {
 
         /**
           * - if jwt valid
-          *   - registerDevice (user, userCreds, token, resolve, reject)
-          *     - finalizeLogin (user, userCreds, token, resolve, reject)
-          * - else if jwt not valid
-          *   - authorizeUser (authorization, user, userCreds, resolve, reject)
+          *   - getUserSensorData(user.id)
           *     - registerDevice (user, userCreds, token, resolve, reject)
           *       - finalizeLogin (user, userCreds, token, resolve, reject)
+          * - else if jwt not valid
+          *   - authorizeUser (authorization, user, userCreds, resolve, reject)
+          *     - getUserSensorData(user.id)
+          *       - registerDevice (user, userCreds, token, resolve, reject)
+          *         - finalizeLogin (user, userCreds, token, resolve, reject)
           */
         return this.props.onFormSubmit({
             email:    credentials.Email,
@@ -94,60 +111,54 @@ class Start extends Component {
                         : Promise.reject('Unexpected response authorization')
             );
         })
+            // .then(response => {
+            //     this.props.getUserSensorData(response.user.id);
+            //     return Promise.resolve(response);
+            // }) // TODO: BRING BACK THIS FUNCTION LATER ON
             .then(response => {
                 let { authorization, user } = response;
-                return (
-                    this.props.certificate && this.props.certificate.id
-                        ? Promise.resolve()
-                        : this.props.registerDevice()
-                )
+                return this.props.registerDevice(this.props.certificate, this.props.device, user)
                     .then(() => this.props.finalizeLogin(user, credentials, authorization.jwt));
             })
-            .then(() => {
-                Actions.settings();
+            .then(() => this.setState({
+                resultMsg: { success: 'Success, now loading your data!' },
+            }, (response) => {
+                if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                    this._routeToHome();
+                } else {
+                    this._routeToOnboarding();
+                }
                 SplashScreen.hide();
-            })
-            .catch((err) => {
-                console.log(AppAPI.handleError(err));
+            })).catch((err) => {
                 SplashScreen.hide();
+                const error = AppAPI.handleError(err);
+                console.log('err',error);
             });
     }
 
     render = () => {
         return (
             <View>
-                <View style={[styles.cardBackground]}>
-                    <Text style={{
-                        color:         '#000',
-                        fontSize:      30,
-                        fontWeight:    'bold',
-                        lineHeight:    30,
-                        paddingBottom: 10,
-                    }}>{'Join the FathomAI Team'}</Text>
-                    <Text style={{
-                        color:         AppColors.primary.grey.thirtyPercent,
-                        paddingBottom: 10,
-                    }}>{'Create your account within minutes.'}</Text>
+                <ImageBackground
+                    source={require('../../../assets/images/standard/start.png')}
+                    style={[AppStyles.containerCentered, {height: AppSizes.screen.heightTwoThirds, width: AppSizes.screen.width,}]}
+                >
+                    <Text h1 style={[AppStyles.paddingVertical, {color: AppColors.white,}]}>{'JOIN FATHOM'}</Text>
+                    <Text p style={[AppStyles.paddingBottom, {color: AppColors.white,}]}>{'Create your account'}</Text>
                     <Button
-                        backgroundColor={'#fff'}
-                        large
+                        backgroundColor={AppColors.white}
+                        buttonStyle={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontalLrg]}
                         onPress={this._routeToOnboarding}
-                        textColor={'#000'}
-                        title={'Get Started'}
+                        textColor={AppColors.primary.yellow.hundredPercent}
+                        title={'Create Account'}
                     />
-                </View>
-                <Spacer size={5} />
-                <TouchableOpacity onPress={this._routeToLogin} style={[styles.cardBackground]}>
-                    <Text style={{
-                        color:         '#000',
-                        fontSize:      20,
-                        fontWeight:    'bold',
-                        lineHeight:    30,
-                        paddingBottom: 10,
-                    }}>{'Already a memeber?'}</Text>
-                    <Text style={{
-                        color: AppColors.primary.grey.thirtyPercent,
-                    }}>{'Let\'s login now.'}</Text>
+                </ImageBackground>
+                <TouchableOpacity
+                    onPress={this._routeToLogin}
+                    style={[AppStyles.containerCentered, {height: AppSizes.screen.heightOneThird, width: AppSizes.screen.width,}]}
+                >
+                    <Text h2 style={[AppStyles.paddingBottom, {color: AppColors.black,}]}>{'ALREADY A MEMEBER?'}</Text>
+                    <Text p style={{color: AppColors.primary.yellow.hundredPercent,}}>{'Let\'s login now.'}</Text>
                 </TouchableOpacity>
             </View>
         );
