@@ -2,12 +2,13 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:drawable="@color/blueHundred"/>
+        android:drawable="@drawable/background_gradient"/>
 
     <item
         android:width="200dp"
         android:height="200dp"
         android:drawable="@mipmap/icon"
-        android:gravity="center" />
+        android:top="50dp"
+        android:gravity="center_horizontal" />
 
 </layer-list>
