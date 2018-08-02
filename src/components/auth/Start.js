@@ -50,9 +50,6 @@ class Start extends Component {
     }
 
     componentDidMount = () => {
-        if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', () => true);
-        }
         setTimeout(() => {
             if (this.props.email !== null && this.props.password !== null) {
                 Promise.resolve(this.login());
@@ -120,11 +117,11 @@ class Start extends Component {
             .then(() => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
-                if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                     this._routeToHome();
-                } else {
-                    this._routeToOnboarding();
-                }
+                // } else {
+                //     this._routeToOnboarding();
+                // }
                 SplashScreen.hide();
             })).catch((err) => {
                 SplashScreen.hide();

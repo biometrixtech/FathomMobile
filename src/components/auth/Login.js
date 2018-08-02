@@ -255,11 +255,11 @@ class Login extends Component {
                     .then(() => this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
-                        if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                        // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                             Actions.home();
-                        } else {
-                            Actions.onboarding();
-                        }
+                        // } else {
+                        //     Actions.onboarding();
+                        // }
                     })).catch((err) => {
                         console.log('err',err);
                         const error = AppAPI.handleError(err);

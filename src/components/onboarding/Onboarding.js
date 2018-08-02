@@ -179,6 +179,12 @@ class Onboarding extends Component {
         }
     }
 
+    componentWillUnmount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.removeEventListener('hardwareBackPress');
+        }
+    }
+
     _toggleTermsWebView = () => {
         this.setState({ isTermsOpen: !this.state.isTermsOpen })
     }
