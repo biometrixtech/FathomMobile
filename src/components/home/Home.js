@@ -173,7 +173,15 @@ class Home extends Component {
             this._handleExerciseListRefresh(true);
         }
         if(nextProps.plan.dailyPlan[0] && this.props.plan && nextProps.plan.dailyPlan[0].landing_screen !== this.props.plan.landing_screen) {
-            let page = !nextProps.plan.dailyPlan[0].nav_bar_indicator ?
+            let { recover, train } = this.state;
+            let { plan } = this.props;
+            let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+            let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery && !dailyPlanObj.post_recovery.completed ? dailyPlanObj.post_recovery : false;
+            let disabled = recoveryObj ?
+                train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted) || (recover.isActiveRecoveryCollapsed && recover.finished) || recoveryObj.completed
+                :
+                true;
+            let page = nextProps.plan.dailyPlan[0].nav_bar_indicator === null && disabled ?
                 1
                 :
                 nextProps.plan.dailyPlan[0].landing_screen;
@@ -246,6 +254,7 @@ class Home extends Component {
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
                 this.setState({
+                    completedExercises:         [],
                     isReadinessSurveyModalOpen: false,
                     loading:                    false,
                 });
@@ -403,8 +412,15 @@ class Home extends Component {
         this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'), false, updateNotificationFlag)
             .then(response => {
                 const dailyPlanObj = response.daily_plans && response.daily_plans[0] ? response.daily_plans[0] : false;
+                let newRecover = _.cloneDeep(this.state.recover);
+                newRecover.isActiveRecoveryCollapsed = false;
+                newRecover.finished = false;
+                let newPrepare = _.cloneDeep(this.state.prepare);
+                newPrepare.isActiveRecoveryCollapsed = false;
                 this.setState({
                     isExerciseListRefreshing: false,
+                    prepare:                  newPrepare,
+                    recover:                  newRecover,
                     tabPage:                  dailyPlanObj && dailyPlanObj.landing_screen ? dailyPlanObj.landing_screen : 0,
                 });
             })
@@ -841,6 +857,9 @@ class Home extends Component {
             !isDailyReadinessSurveyCompleted || train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted) || (recover.isActiveRecoveryCollapsed && recover.finished) || recoveryObj.completed
             :
             true;
+        console.log(!isDailyReadinessSurveyCompleted, train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted), (recover.isActiveRecoveryCollapsed && recover.finished), recoveryObj.completed);
+        console.log(recover.isActiveRecoveryCollapsed, recover.finished);
+        console.log(!isDailyReadinessSurveyCompleted || train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted) || (recover.isActiveRecoveryCollapsed && recover.finished) || recoveryObj.completed);
         return (
             <View style={{ flex: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer />
