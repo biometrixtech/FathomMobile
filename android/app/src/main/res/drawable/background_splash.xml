@@ -5,10 +5,10 @@
         android:drawable="@drawable/background_gradient"/>
 
     <item
-        android:width="200dp"
-        android:height="200dp"
+        android:width="100dp"
+        android:height="100dp"
         android:drawable="@mipmap/icon"
-        android:top="50dp"
-        android:gravity="center_horizontal" />
+        android:bottom="100dp"
+        android:gravity="center"/>
 
 </layer-list>
