@@ -54,7 +54,7 @@ import HomeComponent from '../components/home/Home';
 
 const Index = (
     <Router>
-        <Stack hideNavBar key='root'>
+        <Stack hideNavBar key={'root'}>
             <Scene
                 Layout={StartComponent}
                 component={StartContainer}
@@ -70,7 +70,7 @@ const Index = (
                 key={'onboarding'}
                 panHandlers={null}
                 renderLeftButton={null}
-                title='GET STARTED'
+                title={'GET STARTED'}
                 titleStyle={{flex: 1, textAlign: 'center',}}
             />
             <Scene
@@ -98,11 +98,26 @@ const Index = (
                 Layout={HomeComponent}
                 component={HomeContainer}
                 hideNavBar={false}
+                key={'home'}
+                leftButtonStyle={[AppStyles.navbarImageTitle]}
                 navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0 }}
                 navigationBarTitleImage={require('../../assets/images/standard/fathom-gold-and-grey.png')}
                 navigationBarTitleImageStyle={[AppStyles.navbarImageTitle]}
-                key='home'
+                onLeft={() => Actions.settings()}
+                onRight={() => null}
                 panHandlers={null}
+                renderLeftButton={
+                    <TabIcon
+                        containerStyle={[AppStyles.paddingLeftSml]}
+                        icon={'settings'}
+                        iconStyle={[{color: AppColors.black}]}
+                        onPress={() => Actions.settings()}
+                        reverse={false}
+                        size={26}
+                        type={'material-community'}
+                    />
+                }
+                rightTitle={' '}
                 type={'replace'}
             />
             <Scene
@@ -122,7 +137,7 @@ const Index = (
                 key={'settings'}
                 panHandlers={null}
                 rightTitle={' '}
-                title='SETTINGS'
+                title={'SETTINGS'}
                 titleStyle={{flex: 1, textAlign: 'center',}}
             />
             <Scene
@@ -131,7 +146,7 @@ const Index = (
                 hideNavBar
                 key={'bluetoothConnect'}
                 panHandlers={null}
-                // title='Bluetooth Connect'
+                // title={'Bluetooth Connect'}
                 // {...DefaultProps.navbarProps}
             />
             {/*<Stack>
@@ -141,12 +156,12 @@ const Index = (
                     hideNavBar
                     key={'kitManagement'}
                     panHandlers={null}
-                    // title='Kit Management'
+                    // title={'Kit Management'}
                     // {...DefaultProps.navbarProps}
                 />
                 <Scene
                     key={'kitOwner'}
-                    title='Kit Owner'
+                    title={'Kit Owner'}
                     component={KitOwnerContainer}
                     Layout={KitOwnerComponent}
                     // {...DefaultProps.navbarProps}
@@ -154,7 +169,7 @@ const Index = (
                 />
                 <Scene
                     key={'kitAssign'}
-                    title='Kit Assign'
+                    title={'Kit Assign'}
                     component={KitAssignContainer}
                     Layout={KitAssignComponent}
                     // {...DefaultProps.navbarProps}

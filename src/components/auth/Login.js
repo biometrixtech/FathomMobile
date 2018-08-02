@@ -14,6 +14,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import {
+    BackHandler,
     Image,
     ImageBackground,
     KeyboardAvoidingView,
@@ -142,8 +143,9 @@ class Login extends Component {
         );
 
         this.state = {
-            modalStyle: {},
-            resultMsg:  {
+            isModalVisible: false,
+            modalStyle:     {},
+            resultMsg:      {
                 error:   '',
                 status:  '',
                 success: '',
@@ -190,6 +192,13 @@ class Login extends Component {
         };
     }
 
+    componentWillMount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', () => true);
+        }
+    }
+
+
     _focusNextField = (id) => {
         this.form.refs.input.refs[id].refs.input.focus();
     }
@@ -234,10 +243,10 @@ class Login extends Component {
                                 : Promise.reject('Unexpected response authorization')
                     );
                 })
-                    // .then(response => {
-                    //     this.props.getUserSensorData(response.user.id);
-                    //     return Promise.resolve(response);
-                    // }) // TODO: BRING BACK THIS FUNCTION LATER ON
+                    .then(response => {
+                        this.props.getUserSensorData(response.user.id);
+                        return Promise.resolve(response);
+                    })
                     .then(response => {
                         let { authorization, user } = response;
                         return this.props.registerDevice(this.props.certificate, this.props.device, user)
@@ -246,11 +255,11 @@ class Login extends Component {
                     .then(() => this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
-                        if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                        // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                             Actions.home();
-                        } else {
-                            Actions.onboarding();
-                        }
+                        // } else {
+                        //     Actions.onboarding();
+                        // }
                     })).catch((err) => {
                         console.log('err',err);
                         const error = AppAPI.handleError(err);
@@ -268,8 +277,8 @@ class Login extends Component {
 
                 <View>
                     <Egg
-                        setps={'TTT'}
                         onCatch={() => this.setState({ isModalVisible: true })}
+                        setps={'TTT'}
                     >
                         <Image
                             resizeMode={'contain'}

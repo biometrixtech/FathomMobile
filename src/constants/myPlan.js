@@ -77,18 +77,37 @@ const jointLevels = [
 ];
 
 const exerciseListOrder = [
-    'inhibit_exercises',
-    'lengthen_exercises',
-    'activate_exercises',
-    'integrate_exercises',
+    {
+        index: 'inhibit_exercises',
+        title: 'INHIBIT',
+    },
+    {
+        index: 'lengthen_exercises',
+        title: 'LENGTHEN',
+    },
+    {
+        index: 'activate_exercises',
+        title: 'ACTIVATE',
+    },
+    {
+        index: 'integrate_exercises',
+        title: 'INTEGRATE',
+    },
 ];
 
 function cleanExerciseList(recoveryObj) {
-    let cleanedExerciseList = [];
+    let totalLength = 0;
+    let cleanedExerciseList = {};
     _.map(exerciseListOrder, list => {
-        cleanedExerciseList = cleanedExerciseList.concat(recoveryObj[list]);
+        let exerciseArray = _.orderBy(recoveryObj[list.index], ['position_order'], ['asc']);
+        totalLength += exerciseArray.length;
+        cleanedExerciseList[list.title] = [];
+        cleanedExerciseList[list.title].push(exerciseArray);
     });
-    return _.orderBy(cleanedExerciseList, ['position_order'], ['asc']);
+    return {
+        cleanedExerciseList,
+        totalLength,
+    };
 }
 
 const sessionTypes = {
@@ -115,8 +134,10 @@ const postSessionFeel = [
 
 function cleanExercise(exercise) {
     let cleanedExercise = {};
+    cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
     cleanedExercise.dosage = `${exercise.sets_assigned}x ${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : ''}`;
+    cleanedExercise.imageUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.gif`;
     cleanedExercise.youtubeId = exercise.youtube_id && exercise.youtube_id.length ? exercise.youtube_id : false;
     return cleanedExercise;
 }

@@ -6,6 +6,7 @@
         currentStep={step}
         handleFormChange={this._handleUserFormChange}
         handleFormSubmit={this._handleFormSubmit}
+        isUpdatingUser={this.props.user.id ? true : false}
         user={form_fields.user}
     />
  *
@@ -49,10 +50,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     wrapper: {
-        marginBottom: 20,
-        paddingTop:   10,
-        paddingRight: 10,
-        paddingLeft:  10,
+        paddingHorizontal: 10,
+        paddingVertical:   10,
     },
 });
 
@@ -213,6 +212,7 @@ class UserAccount extends Component {
             handleFormChange,
             handleFormSubmit,
             heightPressed,
+            isUpdatingUser,
             user,
         } = this.props;
         // Accordion sections
@@ -221,6 +221,7 @@ class UserAccount extends Component {
                 content: <UserAccountInfo
                     handleFormChange={handleFormChange}
                     isPasswordSecure={this.state.isPasswordSecure}
+                    isUpdatingUser={isUpdatingUser}
                     setAccordionSection={this._setAccordionSection}
                     toggleShowPassword={this._toggleShowPassword}
                     user={user}
@@ -276,12 +277,12 @@ class UserAccount extends Component {
                         />
                     </ScrollView>
                 </View>
-                <TouchableOpacity
+                {/*<TouchableOpacity
                     onPress={() => onboardingUtils.getCurrentStep(user) === onboardingUtils.getTotalSteps(user) ? handleFormSubmit() : this._setAccordionSection(0, 1)}
                     style={[AppStyles.nextButtonWrapper]}
                 >
                     <Text style={[AppStyles.nextButtonText]}>{onboardingUtils.getCurrentStep(user) === onboardingUtils.getTotalSteps(user) ? 'Create Account' : 'Next Step'}</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>*/}
             </View>
         );
     }
@@ -292,6 +293,7 @@ UserAccount.propTypes = {
     currentStep:      PropTypes.number.isRequired,
     handleFormChange: PropTypes.func.isRequired,
     heightPressed:    PropTypes.func.isRequired,
+    isUpdatingUser:   PropTypes.bool.isRequired,
     user:             PropTypes.object.isRequired,
 };
 UserAccount.defaultProps = {};

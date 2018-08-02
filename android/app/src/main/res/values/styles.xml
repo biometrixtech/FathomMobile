@@ -14,8 +14,8 @@
         <item name="android:statusBarColor">@color/blueHundred</item>
     </style>
 
-    <style name="WhiteAccent" parent="ThemeOverlay.AppCompat.Light">
-        <item name="colorAccent">#FFFFFF</item>
+    <style name="GoldAccent" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorAccent">#EBBA2D</item>
     </style>
 
 </resources>

@@ -30,7 +30,6 @@ const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
         myPlanObj.end_date = endDate;
     }
     myPlanObj.event_date = `${(new Date()).toISOString().split('.')[0]}Z`;
-    console.log('myPlanObj',myPlanObj);
     return dispatch => AppAPI.get_my_plan.post(false, myPlanObj)
         .then(myPlanData => {
             dispatch({
@@ -42,10 +41,8 @@ const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
                     type: Actions.NOTIFICATION_ADDRESSED
                 });
             }
-            console.log('myPlanData',myPlanData);
             return Promise.resolve(myPlanData);
         }).catch(err => {
-            console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });
@@ -123,9 +120,31 @@ const getSoreBodyParts = user_id => {
         });
 };
 
+/**
+  * Patch Active Recovery
+  */
+const patchActiveRecovery = (user_id, recovery_type) => {
+    let bodyObj = {};
+    bodyObj.user_id = user_id;
+    bodyObj.event_date = moment().format('YYYY-MM-DD');
+    bodyObj.recovery_type = recovery_type;
+    return dispatch => AppAPI.active_recovery.patch(false, bodyObj)
+        .then(myPlanData => {
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: myPlanData,
+            });
+            return Promise.resolve(myPlanData);
+        }).catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+};
+
 export default {
     getMyPlan,
     getSoreBodyParts,
+    patchActiveRecovery,
     postReadinessSurvey,
     postSessionSurvey,
 };

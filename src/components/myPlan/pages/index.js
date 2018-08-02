@@ -7,6 +7,7 @@ import ExerciseItem from './ExerciseItem';
 import Exercises from './Exercises';
 import PostSessionSurvey from './PostSessionSurvey';
 import ReadinessSurvey from './ReadinessSurvey';
+import SingleExerciseItem from './SingleExerciseItem';
 import SoreBodyPart from './SoreBodyPart';
 
 export {
@@ -15,5 +16,6 @@ export {
     Exercises,
     PostSessionSurvey,
     ReadinessSurvey,
+    SingleExerciseItem,
     SoreBodyPart,
 };

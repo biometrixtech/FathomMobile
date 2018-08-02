@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-07-27 21:51:46 
+ * @Author: Vir Desai
+ * @Date: 2018-07-27 21:51:46
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-30 02:50:06
  */
@@ -18,6 +18,7 @@ const Home = ({
     getSoreBodyParts,
     lastOpened,
     notification,
+    patchActiveRecovery,
     plan,
     postReadinessSurvey,
     postSessionSurvey,
@@ -29,6 +30,7 @@ const Home = ({
         getSoreBodyParts={getSoreBodyParts}
         lastOpened={lastOpened}
         notification={notification}
+        patchActiveRecovery={patchActiveRecovery}
         plan={plan}
         postReadinessSurvey={postReadinessSurvey}
         postSessionSurvey={postSessionSurvey}
@@ -43,6 +45,7 @@ Home.propTypes = {
     getSoreBodyParts:    PropTypes.func.isRequired,
     lastOpened:          PropTypes.string, // cannot make it required as null would not be a valid value for an isRequired check which is a bug in the prop-types packages that is being discussed
     notification:        PropTypes.bool.isRequired,
+    patchActiveRecovery: PropTypes.func.isRequired,
     plan:                PropTypes.object.isRequired,
     postReadinessSurvey: PropTypes.func.isRequired,
     postSessionSurvey:   PropTypes.func.isRequired,
@@ -64,6 +67,7 @@ const mapDispatchToProps = {
     appLoaded:           InitActions.appLoaded,
     getMyPlan:           PlanActions.getMyPlan,
     getSoreBodyParts:    PlanActions.getSoreBodyParts,
+    patchActiveRecovery: PlanActions.patchActiveRecovery,
     postReadinessSurvey: PlanActions.postReadinessSurvey,
     postSessionSurvey:   PlanActions.postSessionSurvey,
 };

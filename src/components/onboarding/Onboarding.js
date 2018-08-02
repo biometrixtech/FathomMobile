@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import {
     ActivityIndicator,
     Alert,
+    BackHandler,
     Platform,
     StyleSheet,
     TouchableOpacity,
@@ -170,6 +171,18 @@ class Onboarding extends Component {
             heightsCarouselData: [],
             loading:             false,
         };
+    }
+
+    componentWillMount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', () => true);
+        }
+    }
+
+    componentWillUnmount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.removeEventListener('hardwareBackPress');
+        }
     }
 
     _toggleTermsWebView = () => {
@@ -353,7 +366,25 @@ class Onboarding extends Component {
         let errorsArray = this._validateForm();
         this.setState({
             ['resultMsg.error']: errorsArray,
-            loading:             true,
+        });
+        if(newUser.injury_status === 'returning_from_injury' || newUser.injury_status === 'returning_from_acute_injury') {
+            Alert.alert(
+                '',
+                'You must be cleared for running by a doctor before using the Fathom system',
+                [
+                    {text: 'Cleared', onPress: () => this._handleOnboardingFieldSetup(newUser, 'cleared', errorsArray)},
+                    {text: 'Not Cleared', onPress: () => this._handleOnboardingFieldSetup(newUser, 'not_cleared', errorsArray)},
+                ],
+            );
+        } else {
+            this._handleOnboardingFieldSetup(newUser, false, errorsArray);
+        }
+    }
+
+    _handleOnboardingFieldSetup = (newUser, clearedToPlay, errorsArray) => {
+        // set loading state
+        this.setState({
+            loading: true,
         });
         // only submit required fields
         let userObj = {};
@@ -362,11 +393,12 @@ class Onboarding extends Component {
         userObj.role = newUser.role;
         userObj.system_type = newUser.system_type;
         userObj.injury_status = newUser.injury_status;
+        userObj.cleared_to_play = clearedToPlay;
         userObj.onboarding_status = ['account_setup'];
         userObj.biometric_data = {};
         userObj.biometric_data.height = {};
         userObj.biometric_data.height.m = +(onboardingUtils.inchesToMeters(parseFloat(newUser.biometric_data.height.in))) + 0.1;
-        userObj.biometric_data.height.in = +(parseFloat(newUser.biometric_data.height.in).toFixed(2)) + 0.1;
+        userObj.biometric_data.height.ft_in = [Math.floor(newUser.biometric_data.height.in / 12), newUser.biometric_data.height.in % 12];
         userObj.biometric_data.mass = {};
         userObj.biometric_data.mass.kg = +(onboardingUtils.lbsToKgs(parseFloat(newUser.biometric_data.mass.lb))) + 0.1;
         userObj.biometric_data.mass.lb = +(parseFloat(newUser.biometric_data.mass.lb).toFixed(2)) + 0.1;
@@ -404,10 +436,10 @@ class Onboarding extends Component {
                         : Promise.reject('Unexpected response authorization')
             );
         })
-            // .then(response => {
-            //     this.props.getUserSensorData(response.user.id);
-            //     return Promise.resolve(response);
-            // }) // TODO: BRING BACK THIS FUNCTION LATER ON
+            .then(response => {
+                this.props.getUserSensorData(response.user.id);
+                return Promise.resolve(response);
+            })
             .then(response => {
                 let { authorization, user } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
@@ -482,6 +514,7 @@ class Onboarding extends Component {
                     handleFormChange={this._handleUserFormChange}
                     handleFormSubmit={this._handleFormSubmit}
                     heightPressed={this._heightPressed}
+                    isUpdatingUser={this.props.user.id ? true : false}
                     user={form_fields.user}
                 />
                 {/*<UserSportSchedule

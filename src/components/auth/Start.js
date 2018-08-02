@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { BackHandler, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
@@ -52,12 +52,6 @@ class Start extends Component {
     componentDidMount = () => {
         setTimeout(() => {
             if (this.props.email !== null && this.props.password !== null) {
-                this.setState({
-                    form_values: {
-                        Email:    this.props.email,
-                        Password: this.props.password,
-                    },
-                });
                 Promise.resolve(this.login());
             } else {
                 SplashScreen.hide();
@@ -111,10 +105,10 @@ class Start extends Component {
                         : Promise.reject('Unexpected response authorization')
             );
         })
-            // .then(response => {
-            //     this.props.getUserSensorData(response.user.id);
-            //     return Promise.resolve(response);
-            // }) // TODO: BRING BACK THIS FUNCTION LATER ON
+            .then(response => {
+                this.props.getUserSensorData(response.user.id);
+                return Promise.resolve(response);
+            })
             .then(response => {
                 let { authorization, user } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
@@ -123,11 +117,11 @@ class Start extends Component {
             .then(() => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
-                if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                     this._routeToHome();
-                } else {
-                    this._routeToOnboarding();
-                }
+                // } else {
+                //     this._routeToOnboarding();
+                // }
                 SplashScreen.hide();
             })).catch((err) => {
                 SplashScreen.hide();

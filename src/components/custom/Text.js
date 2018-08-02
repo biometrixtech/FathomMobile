@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:30:36 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:30:36
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-20 18:26:08
  */
@@ -13,10 +13,10 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 // Consts and Libs
-import { AppStyles } from '../../constants';
+import { AppColors, AppStyles } from '../../constants';
 
 /* Component ==================================================================== */
 class CustomText extends Component {
@@ -36,6 +36,7 @@ class CustomText extends Component {
             PropTypes.shape({}),
         ]),
         children: PropTypes.node,
+        truncate: PropTypes.number,
     }
 
     static defaultProps = {
@@ -51,6 +52,20 @@ class CustomText extends Component {
         onPress:  null,
         style:    null,
         children: null,
+        truncate: null,
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            isTextExpanded: false,
+        }
+    }
+
+    _toggleTruncatedText = () => {
+        this.setState({
+            isTextExpanded: !this.state.isTextExpanded
+        });
     }
 
     textProps = () => {
@@ -78,7 +93,31 @@ class CustomText extends Component {
         return props;
     }
 
-    render = () => <Text {...this.textProps()}>{this.props.children}</Text>;
+
+    render = () => {
+        if(this.props.truncate) {
+            const maxLength = this.props.truncate;
+            const ending = '... ';
+            let truncatedText = this.props.children.length > maxLength && !this.state.isTextExpanded ?
+                (this.props.children.substring(0, maxLength - ending.length) + ending)
+                :
+                this.props.children + ' ';
+            return(
+                <View>
+                    <Text {...this.textProps()}>
+                        {truncatedText}
+                        <Text
+                            onPress={this._toggleTruncatedText}
+                            style={{color: AppColors.primary.yellow.hundredPercent, textDecorationLine: 'underline'}}
+                        >
+                            {this.state.isTextExpanded ? 'see less' : 'see more'}
+                        </Text>
+                    </Text>
+                </View>
+            );
+        }
+        return(<Text {...this.textProps()}>{this.props.children}</Text>);
+    };
 }
 
 /* Export Component ==================================================================== */
