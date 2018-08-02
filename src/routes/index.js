@@ -113,7 +113,7 @@ const Index = (
                         iconStyle={[{color: AppColors.black}]}
                         onPress={() => Actions.settings()}
                         reverse={false}
-                        size={34}
+                        size={26}
                         type={'material-community'}
                     />
                 }

@@ -12,12 +12,15 @@
 export default {
     APIs: {
         DEV:  'https://apis.dev.fathomai.com',
+        TEST: 'https://apis.test.fathomai.com',
         QA:   'https://apis.qa.fathomai.com',
         PROD: 'https://apis.production.fathomai.com'
     },
     // The URL we're connecting to
     // hostname: 'https://apis.production.fathomai.com', // deployment
-    hostname: 'https://apis.dev.fathomai.com', // testing
+    // hostname: 'https://apis.qa.fathomai.com', // qa
+    // hostname: 'https://apis.test.fathomai.com', // test
+    hostname: 'https://apis.dev.fathomai.com', // development
 
     // Map shortnames to the actual endpoints, so that we can
     // use them like so: AppAPI.ENDPOINT_NAME.METHOD()

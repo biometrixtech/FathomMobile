@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import {
     ActivityIndicator,
     Alert,
+    BackHandler,
     Platform,
     StyleSheet,
     TouchableOpacity,
@@ -170,6 +171,12 @@ class Onboarding extends Component {
             heightsCarouselData: [],
             loading:             false,
         };
+    }
+
+    componentWillMount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', () => true);
+        }
     }
 
     _toggleTermsWebView = () => {
@@ -404,10 +411,10 @@ class Onboarding extends Component {
                         : Promise.reject('Unexpected response authorization')
             );
         })
-            // .then(response => {
-            //     this.props.getUserSensorData(response.user.id);
-            //     return Promise.resolve(response);
-            // }) // TODO: BRING BACK THIS FUNCTION LATER ON
+            .then(response => {
+                this.props.getUserSensorData(response.user.id);
+                return Promise.resolve(response);
+            })
             .then(response => {
                 let { authorization, user } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)

@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { BackHandler, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
@@ -50,21 +50,22 @@ class Start extends Component {
     }
 
     componentDidMount = () => {
-        // TODO: FIX ME
-        Promise.resolve(this.login());
-        // setTimeout(() => {
-        //     if (this.props.email !== null && this.props.password !== null) {
-        //         this.setState({
-        //             form_values: {
-        //                 Email:    this.props.email,
-        //                 Password: this.props.password,
-        //             },
-        //         });
-        //         Promise.resolve(this.login());
-        //     } else {
-        //         SplashScreen.hide();
-        //     }
-        // }, 10);
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', () => true);
+        }
+        setTimeout(() => {
+            if (this.props.email !== null && this.props.password !== null) {
+                this.setState({
+                    form_values: {
+                        Email:    this.props.email,
+                        Password: this.props.password,
+                    },
+                });
+                Promise.resolve(this.login());
+            } else {
+                SplashScreen.hide();
+            }
+        }, 10);
     }
 
     _routeToLogin = () => {
@@ -84,10 +85,9 @@ class Start extends Component {
     }
 
     login = () => {
-        // TODO: FIX ME
         let credentials = {
-            Email:    'mazen+mvp@fathomai.com',// this.props.email,
-            Password: 'Fathom123!',// this.props.password,
+            Email:    this.props.email,
+            Password: this.props.password,
         };
 
         /**
@@ -114,10 +114,10 @@ class Start extends Component {
                         : Promise.reject('Unexpected response authorization')
             );
         })
-            // .then(response => {
-            //     this.props.getUserSensorData(response.user.id);
-            //     return Promise.resolve(response);
-            // }) // TODO: BRING BACK THIS FUNCTION LATER ON
+            .then(response => {
+                this.props.getUserSensorData(response.user.id);
+                return Promise.resolve(response);
+            })
             .then(response => {
                 let { authorization, user } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
