@@ -50,19 +50,21 @@ class Start extends Component {
     }
 
     componentDidMount = () => {
-        setTimeout(() => {
-            if (this.props.email !== null && this.props.password !== null) {
-                this.setState({
-                    form_values: {
-                        Email:    this.props.email,
-                        Password: this.props.password,
-                    },
-                });
-                Promise.resolve(this.login());
-            } else {
-                SplashScreen.hide();
-            }
-        }, 10);
+        // TODO: FIX ME
+        Promise.resolve(this.login());
+        // setTimeout(() => {
+        //     if (this.props.email !== null && this.props.password !== null) {
+        //         this.setState({
+        //             form_values: {
+        //                 Email:    this.props.email,
+        //                 Password: this.props.password,
+        //             },
+        //         });
+        //         Promise.resolve(this.login());
+        //     } else {
+        //         SplashScreen.hide();
+        //     }
+        // }, 10);
     }
 
     _routeToLogin = () => {
@@ -82,9 +84,10 @@ class Start extends Component {
     }
 
     login = () => {
+        // TODO: FIX ME
         let credentials = {
-            Email:    this.props.email,
-            Password: this.props.password,
+            Email:    'mazen+mvp@fathomai.com',// this.props.email,
+            Password: 'Fathom123!',// this.props.password,
         };
 
         /**

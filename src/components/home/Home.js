@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-07-27 21:44:36 
+ * @Author: Vir Desai
+ * @Date: 2018-07-27 21:44:36
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-30 20:49:37
  */
@@ -26,7 +26,7 @@ import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants } from '../..
 // Components
 import { Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
 import { WebView } from '../general';
-import { Exercises, PostSessionSurvey, ReadinessSurvey } from '../myPlan/pages';
+import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } from '../myPlan/pages';
 
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
@@ -42,18 +42,19 @@ const subtextColor = `${AppColors.white}33`; // 20%
 /* Component ==================================================================== */
 class Home extends Component {
     static componentName = 'HomeView';
-    
+
     static propTypes = {
         appLoaded:           PropTypes.func.isRequired,
         getSoreBodyParts:    PropTypes.func.isRequired,
+        lastOpened:          PropTypes.string,
         notification:        PropTypes.bool.isRequired,
+        patchActiveRecovery: PropTypes.func.isRequired,
+        plan:                PropTypes.object.isRequired,
         postReadinessSurvey: PropTypes.func.isRequired,
         postSessionSurvey:   PropTypes.func.isRequired,
-        lastOpened:          PropTypes.string,
-        plan:                PropTypes.object.isRequired,
         user:                PropTypes.object.isRequired,
     }
-    
+
     static defaultProps = {}
 
     constructor(props) {
@@ -89,7 +90,7 @@ class Home extends Component {
                 isActiveRecoveryCollapsed: true,
             },
             selectedExercise: {},
-            tabPage:          0,
+            tabPage:          props.plan && props.plan.landing_screen ? Math.floor(props.plan.landing_screen) : 0,
             train:            {
                 completedPostPracticeSurvey: false,
                 flag:                        false,
@@ -118,6 +119,15 @@ class Home extends Component {
                         prepare: Object.assign({}, this.state.prepare, {
                             isActiveRecoveryCollapsed:  false,
                             isReadinessSurveyCollapsed: true,
+                        }),
+                        recover: Object.assign({}, this.state.recover, {
+                            isActiveRecoveryCollapsed: response.daily_plans[0].post_recovery && !response.daily_plans[0].pre_recovery ? false : true,
+                        }),
+                        train: Object.assign({}, this.state.train, {
+                            postPracticeSurveys: [{
+                                isPostPracticeSurveyCollapsed: false,
+                                isPostPracticeSurveyCompleted: response.daily_plans[0].post_recovery && !response.daily_plans[0].pre_recovery ? true : false,
+                            }]
                         })
                     });
                     SplashScreen.hide();
@@ -143,6 +153,9 @@ class Home extends Component {
                             SplashScreen.hide();
                         });
                 }
+                this.setState({
+                    tabPage: response.daily_plans[0] && response.daily_plans[0].landing_screen ? Math.floor(response.daily_plans[0].landing_screen) : 0,
+                });
             })
             .catch(error => {
                 SplashScreen.hide();
@@ -256,7 +269,7 @@ class Home extends Component {
                 let newTrainObject = Object.assign({}, this.state.train, {
                     completedPostPracticeSurvey: true
                 });
-                newTrainObject[newTrainObject.postPracticeSurveys.length - 1].isPostPracticeSurveyCompleted = true;
+                newTrainObject.postPracticeSurveys[newTrainObject.postPracticeSurveys.length - 1].isPostPracticeSurveyCompleted = true;
                 this.setState({
                     train:                        newTrainObject,
                     isPostSessionSurveyModalOpen: false,
@@ -382,13 +395,14 @@ class Home extends Component {
             .then(response => {
                 // console.log('response', response);
                 this.setState({
-                    isExerciseListRefreshing: false
+                    isExerciseListRefreshing: false,
+                    tabPage:                  response.daily_plans[0].landing_screen || 0,
                 });
             })
             .catch(error => {
                 // console.log('error',error);
                 this.setState({
-                    isExerciseListRefreshing: false
+                    isExerciseListRefreshing: false,
                 });
             });
     }
@@ -438,7 +452,7 @@ class Home extends Component {
         }
         return this.state.recover.flag;
     }
-    
+
     renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) {
         const textStyle = AppStyles.tabHeaders;
         const fontWeight = isTabActive ? '500' : 'normal';
@@ -467,7 +481,7 @@ class Home extends Component {
                 this.isTrainFlaged(dailyPlanObj, isDailyReadinessSurveyCompleted, prepareRecoveryObj)
                 :
                 this.isRecoverFlaged(dailyPlanObj, isDailyReadinessSurveyCompleted, prepareRecoveryObj, recoverRecoveryObj);
-        
+
         return <TouchableWithoutFeedback
             key={`${name}_${page}`}
             accessible={true}
@@ -478,7 +492,7 @@ class Home extends Component {
         >
             <View>
                 <View style={[page === 0 ? AppStyles.leftTabBar : page === 1 ? AppStyles.centerTabBar : AppStyles.rightTabBar]}>
-                    <Text 
+                    <Text
                         onLayout={event =>
                             this.setState({
                                 page0: page === 0 ? event.nativeEvent.layout : page0,
@@ -540,13 +554,16 @@ class Home extends Component {
         let activeRecoveryBackgroundColor = !isDailyReadinessSurveyCompleted ? disabledBackgroundColor : enabledBackgroundColor;
         let activeRecoveryDescriptionColor = !isDailyReadinessSurveyCompleted ? disabledDescriptionColor : enabledDescriptionColor;
         let activeRecoveryHeaderColor = !isDailyReadinessSurveyCompleted ? disabledHeaderColor : enabledHeaderColor;
+
+        let isPreRecoveryCompleted = dailyPlanObj && !dailyPlanObj.pre_recovery && dailyPlanObj.post_recovery ? true : false;
+        let disabled = isPreRecoveryCompleted || (!isDailyReadinessSurveyCompleted || (prepare.isActiveRecoveryCollapsed === true && prepare.finishedRecovery))
         return (
             <View style={{ flex: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer />
                 <ListItem
                     containerStyle={{ borderBottomWidth: 0 }}
                     hideChevron={!isDailyReadinessSurveyCompleted || (prepare.isActiveRecoveryCollapsed === true && completedExercises.length > 0)}
-                    leftIcon={{ name: isDailyReadinessSurveyCompleted ? 'check-box' : 'fiber-manual-record', size: 11, color: AppColors.black }}
+                    leftIcon={{ name: isDailyReadinessSurveyCompleted ? 'check-box' : 'fiber-manual-record', size: 14, color: AppColors.black }}
                     rightIcon={!isDailyReadinessSurveyCompleted ? null : { name: `expand-${prepare.isReadinessSurveyCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
                     onPress={() => !isDailyReadinessSurveyCompleted ? null : this.setState({ prepare: Object.assign({}, prepare, { isReadinessSurveyCollapsed: !prepare.isReadinessSurveyCollapsed }) }) }
                     title={'READINESS SURVEY'}
@@ -603,9 +620,9 @@ class Home extends Component {
                 { prepare.isReadinessSurveyCollapsed ? this.renderDefaultListGap() : null }
                 <ListItem
                     containerStyle={{ borderBottomWidth: 0 }}
-                    disabled={!isDailyReadinessSurveyCompleted || (prepare.isActiveRecoveryCollapsed === true && prepare.finished)}
-                    hideChevron={!isDailyReadinessSurveyCompleted || (prepare.isActiveRecoveryCollapsed === true && prepare.finished)}
-                    leftIcon={{ name: prepare.isActiveRecoveryCollapsed && prepare.finished ? 'check-box' : !isDailyReadinessSurveyCompleted ? 'lock' : 'fiber-manual-record', size: 11, color: AppColors.black }}
+                    disabled={disabled}
+                    hideChevron={disabled}
+                    leftIcon={{ name: prepare.isActiveRecoveryCollapsed && prepare.finishedRecovery ? 'check-box' : disabled ? 'lock' : 'fiber-manual-record', size: 14, color: AppColors.black }}
                     rightIcon={!isDailyReadinessSurveyCompleted ? null : { name: `expand-${prepare.isActiveRecoveryCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
                     onPress={() => !isDailyReadinessSurveyCompleted ? null : this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed }) }) }
                     title={'ACTIVE RECOVERY'}
@@ -614,7 +631,7 @@ class Home extends Component {
                 {
                     prepare.isActiveRecoveryCollapsed
                         ?
-                        prepare.finished
+                        prepare.finishedRecovery
                             ?
                             <View>
                                 <Text style={{ paddingHorizontal: 30, color: AppColors.zeplin.greyText }}>{recoveryMessage}</Text>
@@ -667,43 +684,49 @@ class Home extends Component {
                             </View>
                         :
                         <View style={{ flex: 1 }}>
-                            { !recoveryObj ?
-                                <ScrollView
-                                    contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
-                                    refreshControl={
-                                        <RefreshControl
-                                            colors={[AppColors.primary.yellow.hundredPercent]}
-                                            onRefresh={this._handleExerciseListRefresh}
-                                            refreshing={this.state.isExerciseListRefreshing}
-                                            title={'Loading...'}
-                                            titleColor={AppColors.primary.yellow.hundredPercent}
-                                            tintColor={AppColors.primary.yellow.hundredPercent}
-                                        />
-                                    }
-                                >
-                                    <ActivityIndicator
-                                        color={AppColors.primary.yellow.hundredPercent}
-                                        size={'large'}
-                                    />
-                                    <Text style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
-                                </ScrollView>
+                            { disabled
+                                ?
+                                null
                                 :
-                                <Exercises
-                                    completedExercises={completedExercises}
-                                    exerciseList={exerciseList}
-                                    handleCompleteExercise={this._handleCompleteExercise}
-                                    handleExerciseListRefresh={this._handleExerciseListRefresh}
-                                    isExerciseListRefreshing={this.state.isExerciseListRefreshing}
-                                    toggleCompletedAMPMRecoveryModal={() =>
-                                        this.setState({
-                                            prepare: Object.assign({}, this.state.prepare, {
-                                                finishedRecovery:          true,
-                                                isActiveRecoveryCollapsed: true,
-                                            })
-                                        })
-                                    }
-                                    toggleSelectedExercise={this._toggleSelectedExercise}
-                                />
+                                !recoveryObj ?
+                                    <ScrollView
+                                        contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
+                                        refreshControl={
+                                            <RefreshControl
+                                                colors={[AppColors.primary.yellow.hundredPercent]}
+                                                onRefresh={this._handleExerciseListRefresh}
+                                                refreshing={this.state.isExerciseListRefreshing}
+                                                title={'Loading...'}
+                                                titleColor={AppColors.primary.yellow.hundredPercent}
+                                                tintColor={AppColors.primary.yellow.hundredPercent}
+                                            />
+                                        }
+                                    >
+                                        <ActivityIndicator
+                                            color={AppColors.primary.yellow.hundredPercent}
+                                            size={'large'}
+                                        />
+                                        <Text style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
+                                    </ScrollView>
+                                    :
+                                    <Exercises
+                                        completedExercises={completedExercises}
+                                        exerciseList={exerciseList}
+                                        handleCompleteExercise={this._handleCompleteExercise}
+                                        handleExerciseListRefresh={this._handleExerciseListRefresh}
+                                        isExerciseListRefreshing={this.state.isExerciseListRefreshing}
+                                        toggleCompletedAMPMRecoveryModal={() =>
+                                            this.props.patchActiveRecovery(this.props.user.id, 'pre').then(() =>
+                                                this.setState({
+                                                    prepare: Object.assign({}, this.state.prepare, {
+                                                        finishedRecovery:          true,
+                                                        isActiveRecoveryCollapsed: true,
+                                                    })
+                                                })
+                                            )
+                                        }
+                                        toggleSelectedExercise={this._toggleSelectedExercise}
+                                    />
                             }
                             { this.state.loading ?
                                 <ActivityIndicator
@@ -762,45 +785,24 @@ class Home extends Component {
                         <Modal
                             backdropOpacity={0.75}
                             backdropPressToClose={true}
-                            coverScreen={false}
+                            coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
+                            position={'center'}
                             style={[AppStyles.containerCentered, {
-                                height:  AppSizes.screen.heightTwoThirds,
-                                padding: AppSizes.padding,
-                                width:   AppSizes.screen.width * 0.9,
+                                borderRadius: 4,
+                                height:       AppSizes.screen.heightThreeQuarters,
+                                padding:      AppSizes.paddingSml,
+                                width:        AppSizes.screen.width * 0.9,
                             }]}
                             swipeToClose={true}
                         >
                             { this.state.selectedExercise.library_id ?
-                                <View style={{ flex: 1 }}>
-                                    {/* AppState.currentState check is so the Google app store does not reject it for background running */}
-                                    { AppState.currentState === 'active' && MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId ?
-                                        <WebView
-                                            allowsInlineMediaPlayback={true}
-                                            onError={e => console.log('youtube error', e)}
-                                            style={{width: (AppSizes.screen.width * 0.9) - (AppSizes.padding)}}
-                                            url={`https://www.youtube.com/embed/${MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId}?rel=0&autoplay=0&showinfo=0&playsinline=1`}
-                                        />
-                                        :
-                                        null
-                                    }
-                                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, AppStyles.h2]}>
-                                        {MyPlanConstants.cleanExercise(this.state.selectedExercise).displayName}
-                                    </Text>
-                                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, {color: AppColors.secondary.blue.hundredPercent}]}>
-                                        {MyPlanConstants.cleanExercise(this.state.selectedExercise).dosage}
-                                    </Text>
-                                    <TabIcon
-                                        containerStyle={[{alignSelf: 'center'}]}
-                                        icon={'check'}
-                                        iconStyle={[{color: AppColors.primary.yellow.hundredPercent}]}
-                                        onPress={() => this._handleCompleteExercise(this.state.selectedExercise.library_id)}
-                                        reverse={false}
-                                        size={34}
-                                        type={'material-community'}
-                                    />
-                                </View>
+                                <SingleExerciseItem
+                                    exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
+                                    handleCompleteExercise={this._handleCompleteExercise}
+                                    selectedExercise={this.state.selectedExercise.library_id}
+                                />
                                 :
                                 null
                             }
@@ -837,7 +839,7 @@ class Home extends Component {
                     containerStyle={{ borderBottomWidth: 0 }}
                     disabled={disabled}
                     hideChevron={disabled}
-                    leftIcon={{ name: recover.isActiveRecoveryCollapsed && recover.finished ? 'check-box' : disabled ? 'lock' : 'fiber-manual-record', size: 11, color: AppColors.black }}
+                    leftIcon={{ name: recover.isActiveRecoveryCollapsed && recover.finished ? 'check-box' : disabled ? 'lock' : 'fiber-manual-record', size: 14, color: AppColors.black }}
                     rightIcon={!isDailyReadinessSurveyCompleted ? null : { name: `expand-${recover.isActiveRecoveryCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
                     onPress={() => disabled ? null : this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) }) }
                     title={'ACTIVE RECOVERY'}
@@ -929,12 +931,13 @@ class Home extends Component {
                                     handleExerciseListRefresh={this._handleExerciseListRefresh}
                                     isExerciseListRefreshing={this.state.isExerciseListRefreshing}
                                     toggleCompletedAMPMRecoveryModal={() =>
-                                        this.setState({
-                                            recover: Object.assign({}, this.state.recover, {
-                                                finished:                  !!completedExercises.length,
-                                                isActiveRecoveryCollapsed: true,
-                                            })
-                                        })
+                                        // this.setState({
+                                        //     recover: Object.assign({}, this.state.recover, {
+                                        //         finished:                  !!completedExercises.length,
+                                        //         isActiveRecoveryCollapsed: true,
+                                        //     })
+                                        // })
+                                        this.props.patchActiveRecovery(this.props.user.id, 'post')
                                     }
                                     toggleSelectedExercise={this._toggleSelectedExercise}
                                 />
@@ -957,45 +960,24 @@ class Home extends Component {
                         <Modal
                             backdropOpacity={0.75}
                             backdropPressToClose={true}
-                            coverScreen={false}
+                            coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
+                            position={'center'}
                             style={[AppStyles.containerCentered, {
-                                height:  AppSizes.screen.heightTwoThirds,
-                                padding: AppSizes.padding,
-                                width:   AppSizes.screen.width * 0.9,
+                                borderRadius: 4,
+                                height:       AppSizes.screen.heightThreeQuarters,
+                                padding:      AppSizes.paddingSml,
+                                width:        AppSizes.screen.width * 0.9,
                             }]}
                             swipeToClose={true}
                         >
                             { this.state.selectedExercise.library_id ?
-                                <View style={{ flex: 1 }}>
-                                    {/* AppState.currentState check is so the Google app store does not reject it for background running */}
-                                    { AppState.currentState === 'active' && MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId ?
-                                        <WebView
-                                            allowsInlineMediaPlayback={true}
-                                            onError={e => console.log('youtube error', e)}
-                                            style={{width: (AppSizes.screen.width * 0.9) - (AppSizes.padding)}}
-                                            url={`https://www.youtube.com/embed/${MyPlanConstants.cleanExercise(this.state.selectedExercise).youtubeId}?rel=0&autoplay=0&showinfo=0&playsinline=1`}
-                                        />
-                                        :
-                                        null
-                                    }
-                                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, AppStyles.h2]}>
-                                        {MyPlanConstants.cleanExercise(this.state.selectedExercise).displayName}
-                                    </Text>
-                                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, AppStyles.textBold, {color: AppColors.secondary.blue.hundredPercent}]}>
-                                        {MyPlanConstants.cleanExercise(this.state.selectedExercise).dosage}
-                                    </Text>
-                                    <TabIcon
-                                        containerStyle={[{alignSelf: 'center'}]}
-                                        icon={'check'}
-                                        iconStyle={[{color: AppColors.primary.yellow.hundredPercent}]}
-                                        onPress={() => this._handleCompleteExercise(this.state.selectedExercise.library_id)}
-                                        reverse={false}
-                                        size={34}
-                                        type={'material-community'}
-                                    />
-                                </View>
+                                <SingleExerciseItem
+                                    exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
+                                    handleCompleteExercise={this._handleCompleteExercise}
+                                    selectedExercise={this.state.selectedExercise.library_id}
+                                />
                                 :
                                 null
                             }
@@ -1051,7 +1033,7 @@ class Home extends Component {
                         <View key={`postPracticeSurveys${i}`}>
                             <ListItem
                                 containerStyle={{ borderBottomWidth: 0 }}
-                                leftIcon={{ name: postPracticeSurvey.isPostPracticeSurveyCompleted ? 'check-box' : 'fiber-manual-record', size: 11, color: AppColors.black }}
+                                leftIcon={{ name: postPracticeSurvey.isPostPracticeSurveyCompleted ? 'check-box' : 'fiber-manual-record', size: 14, color: AppColors.black }}
                                 rightIcon={{ name: `expand-${postPracticeSurvey.isPostPracticeSurveyCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
                                 onPress={() => {
                                     let newTrainObject = Object.assign({}, train);
@@ -1208,9 +1190,12 @@ class Home extends Component {
     };
 
     render() {
+        let { plan } = this.props;
+        let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+        let initialSelectedPage = dailyPlanObj && dailyPlanObj.landing_screen ? Math.floor(dailyPlanObj.landing_screen) : 0;
         return (
             <ScrollableTabView
-                initialPage={0}
+                initialPage={initialSelectedPage}
                 onChangeTab={tab => this.setState({ tabPage: tab.i })}
                 page={this.state.tabPage}
                 tabBarUnderlineStyle={{ height: 0 }}

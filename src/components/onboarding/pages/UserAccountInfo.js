@@ -176,8 +176,13 @@ class UserAccountInfo extends Component {
                     />
                 </View>
                 <Text
-                    onPress={() => setAccordionSection(0, 1)}
-                    style={[AppStyles.paddingVertical, AppStyles.continueButton]}
+                    onPress={() => onboardingUtils.isUserAccountInformationValid(user).isValid ? setAccordionSection(0, 1) : null}
+                    style={[AppStyles.paddingVertical, AppStyles.continueButton,
+                        onboardingUtils.isUserAccountInformationValid(user).isValid ?
+                            {}
+                            :
+                            {color: AppColors.border}
+                    ]}
                 >{'CONTINUE'}</Text>
             </Wrapper>
         )

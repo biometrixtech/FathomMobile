@@ -28,6 +28,7 @@ import {
     UserAccount as UserAccountConstants,
 } from '../../../constants';
 import { FormInput, FormLabel, RadioButton, Text } from '../../custom';
+import { onboardingUtils } from '../../../constants/utils';
 
 // import third-party libraries
 import DatePicker from 'react-native-datepicker';
@@ -225,8 +226,13 @@ class UserAccountAbout extends Component {
                     value={user.system_type}
                 />*/}
                 <Text
-                    onPress={() => setAccordionSection()}
-                    style={[AppStyles.paddingVertical, AppStyles.continueButton]}
+                    onPress={() => onboardingUtils.isUserAboutValid(user).isValid ? setAccordionSection() : null}
+                    style={[AppStyles.paddingVertical, AppStyles.continueButton,
+                        onboardingUtils.isUserAboutValid(user).isValid ?
+                            {}
+                            :
+                            {color: AppColors.border}
+                    ]}
                 >{'CONTINUE'}</Text>
             </Wrapper>
         )

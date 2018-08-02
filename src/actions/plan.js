@@ -123,9 +123,31 @@ const getSoreBodyParts = user_id => {
         });
 };
 
+/**
+  * Patch Active Recovery
+  */
+const patchActiveRecovery = (user_id, recovery_type) => {
+    let bodyObj = {};
+    bodyObj.user_id = user_id;
+    bodyObj.event_date = moment().format('YYYY-MM-DD');
+    bodyObj.recovery_type = recovery_type;
+    return dispatch => AppAPI.active_recovery.patch(false, bodyObj)
+        .then(myPlanData => {
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: myPlanData,
+            });
+            return Promise.resolve(myPlanData);
+        }).catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+};
+
 export default {
     getMyPlan,
     getSoreBodyParts,
+    patchActiveRecovery,
     postReadinessSurvey,
     postSessionSurvey,
 };

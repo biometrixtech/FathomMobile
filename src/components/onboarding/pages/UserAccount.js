@@ -49,10 +49,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     wrapper: {
-        marginBottom: 20,
-        paddingTop:   10,
-        paddingRight: 10,
-        paddingLeft:  10,
+        paddingHorizontal: 10,
+        paddingVertical:   10,
     },
 });
 
@@ -276,12 +274,12 @@ class UserAccount extends Component {
                         />
                     </ScrollView>
                 </View>
-                <TouchableOpacity
+                {/*<TouchableOpacity
                     onPress={() => onboardingUtils.getCurrentStep(user) === onboardingUtils.getTotalSteps(user) ? handleFormSubmit() : this._setAccordionSection(0, 1)}
                     style={[AppStyles.nextButtonWrapper]}
                 >
                     <Text style={[AppStyles.nextButtonText]}>{onboardingUtils.getCurrentStep(user) === onboardingUtils.getTotalSteps(user) ? 'Create Account' : 'Next Step'}</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>*/}
             </View>
         );
     }
