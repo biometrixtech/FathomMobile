@@ -369,6 +369,7 @@ class Home extends Component {
 
     _togglePostSessionSurvey = () => {
         this.setState({
+            completedExercises:           [],
             isPostSessionSurveyModalOpen: !this.state.isPostSessionSurveyModalOpen
         });
     }
