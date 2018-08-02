@@ -12,12 +12,15 @@
 export default {
     APIs: {
         DEV:  'https://apis.dev.fathomai.com',
+        TEST: 'https://apis.test.fathomai.com',
         QA:   'https://apis.qa.fathomai.com',
         PROD: 'https://apis.production.fathomai.com'
     },
     // The URL we're connecting to
-    hostname: 'https://apis.production.fathomai.com', // deployment
-    // hostname: 'https://apis.dev.fathomai.com', // testing
+    // hostname: 'https://apis.production.fathomai.com', // deployment
+    // hostname: 'https://apis.qa.fathomai.com', // qa
+    // hostname: 'https://apis.test.fathomai.com', // test
+    hostname: 'https://apis.dev.fathomai.com', // development
 
     // Map shortnames to the actual endpoints, so that we can
     // use them like so: AppAPI.ENDPOINT_NAME.METHOD()
@@ -28,6 +31,8 @@ export default {
     //    - AppAPI.favorites.patch()
     //    - AppAPI.blog.delete()
     endpoints: new Map([
+        ['create_user',     '/users/user'],
+        ['update_user',     '/users/user/{userId}'],
         ['authorize',       '/users/user/{userId}/authorize'],
         ['forgot_password', '/users/user/forgot_password'],
         ['login',           '/users/user/sign_in'], // If you change the key, update the reference below
@@ -37,6 +42,7 @@ export default {
         ['get_sore_body_parts',   '/plans/daily_readiness/previous'], // GET
         ['post_readiness_survey', '/plans/daily_readiness'], // POST
         ['post_session_survey',   '/plans/post_session_survey'], // POST
+        ['active_recovery',       '/plans/active_recovery'], // PATCH
         // sensor specific routes
         ['sensor_mobile_pair', '/users/user/{userId}/sensor_mobile_pair'], // CRUD
     ]),

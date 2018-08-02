@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { init } from '../../actions';
+import { ble, init, } from '../../actions';
 
 const Start = ({
     Layout,
@@ -11,9 +11,11 @@ const Start = ({
     email,
     environment,
     finalizeLogin,
+    getUserSensorData,
     onFormSubmit,
     password,
     registerDevice,
+    user,
 }) => (
     <Layout
         authorizeUser={authorizeUser}
@@ -21,22 +23,26 @@ const Start = ({
         email={email}
         environment={environment}
         finalizeLogin={finalizeLogin}
+        getUserSensorData={getUserSensorData}
         onFormSubmit={onFormSubmit}
         password={password}
         registerDevice={registerDevice}
+        user={user}
     />
 );
 
 Start.propTypes = {
-    Layout:         PropTypes.func.isRequired,
-    authorizeUser:  PropTypes.func.isRequired,
-    certificate:    PropTypes.object,
-    email:          PropTypes.string,
-    environment:    PropTypes.string,
-    finalizeLogin:  PropTypes.func.isRequired,
-    onFormSubmit:   PropTypes.func.isRequired,
-    password:       PropTypes.string,
-    registerDevice: PropTypes.func.isRequired,
+    Layout:            PropTypes.func.isRequired,
+    authorizeUser:     PropTypes.func.isRequired,
+    certificate:       PropTypes.object,
+    email:             PropTypes.string,
+    environment:       PropTypes.string,
+    finalizeLogin:     PropTypes.func.isRequired,
+    getUserSensorData: PropTypes.func.isRequired,
+    onFormSubmit:      PropTypes.func.isRequired,
+    password:          PropTypes.string,
+    registerDevice:    PropTypes.func.isRequired,
+    user:              PropTypes.object.isRequired,
 };
 
 Start.defaultProps = {
@@ -51,13 +57,15 @@ const mapStateToProps = state => ({
     environment: state.init.environment || 'PROD',
     email:       state.init.email || null,
     password:    state.init.password || null,
+    user:        state.user,
 });
 
 const mapDispatchToProps = {
-    authorizeUser:  init.authorizeUser,
-    finalizeLogin:  init.finalizeLogin,
-    onFormSubmit:   init.startLogin,
-    registerDevice: init.registerDevice,
+    authorizeUser:     init.authorizeUser,
+    finalizeLogin:     init.finalizeLogin,
+    getUserSensorData: ble.getUserSensorData,
+    onFormSubmit:      init.startLogin,
+    registerDevice:    init.registerDevice,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Start);

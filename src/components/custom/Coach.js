@@ -56,7 +56,10 @@ const Coach = ({ text }) => (
 );
 
 Coach.propTypes = {
-    text: PropTypes.string.isRequired,
+    text: PropTypes.oneOfType([
+        PropTypes.array,
+        PropTypes.string,
+    ]).isRequired,
 };
 Coach.defaultProps = {};
 

@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:20:59
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:11:43
+ * @Last Modified time: 2018-07-28 18:41:57
  */
 
 /**
@@ -54,7 +54,7 @@ const authorizeUser = (authorization, user, userCreds) => {
   * Regsiter DeviceInfo
   * - IoT certificate check and save
   */
-const registerDevice = (certificate, device) => {
+const registerDevice = (certificate, device, user) => {
     return dispatch => new Promise((resolve, reject) => {
         let uniqueId = AppUtil.getDeviceUUID();
         let device_type = Platform.OS;
@@ -68,6 +68,7 @@ const registerDevice = (certificate, device) => {
             bodyObj.push_notifications = push_notifications;
         }
         if(certificate && certificate.id && device) {
+            bodyObj.owner_id = user.id;
             return AppAPI.register_device.patch({ device_uuid: uniqueId }, bodyObj)
                 .then(response => {
                     return resolve(response);
@@ -245,8 +246,15 @@ const sendDeviceToken = (token) => {
     }));
 };
 
+const appLoaded = () => {
+    return dispatch => Promise.resolve(dispatch({
+        type: Actions.APP_LOADED,
+    }));
+};
+
 
 export default {
+    appLoaded,
     forgotPassword,
     registerDevice,
     authorizeUser,

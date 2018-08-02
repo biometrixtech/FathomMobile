@@ -2,7 +2,7 @@
  * @Author: Mazen Chami
  * @Date: 2018-07-12 11:06:00
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:11:52
+ * @Last Modified time: 2018-07-30 17:30:55
  */
 
 /**
@@ -29,7 +29,7 @@ const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
     if(endDate) {
         myPlanObj.end_date = endDate;
     }
-    console.log('myPlanObj',myPlanObj);
+    myPlanObj.event_date = `${(new Date()).toISOString().split('.')[0]}Z`;
     return dispatch => AppAPI.get_my_plan.post(false, myPlanObj)
         .then(myPlanData => {
             dispatch({
@@ -41,10 +41,8 @@ const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
                     type: Actions.NOTIFICATION_ADDRESSED
                 });
             }
-            console.log('myPlanData',myPlanData);
             return Promise.resolve(myPlanData);
         }).catch(err => {
-            console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });
@@ -79,8 +77,8 @@ const postSessionSurvey = postSessionObj => {
     let newPlan = {};
     newPlan.daily_plans = [];
     let newCurrentPlan = _.cloneDeep(currentState.plan.dailyPlan[0]);
-    newCurrentPlan.recovery_am = null;
-    newCurrentPlan.recovery_pm = null;
+    newCurrentPlan.pre_recovery = null;
+    newCurrentPlan.post_recovery = null;
     newPlan.daily_plans.push(newCurrentPlan);
     // call api
     return dispatch => AppAPI.post_session_survey.post(false, postSessionObj)
@@ -122,9 +120,31 @@ const getSoreBodyParts = user_id => {
         });
 };
 
+/**
+  * Patch Active Recovery
+  */
+const patchActiveRecovery = (user_id, recovery_type) => {
+    let bodyObj = {};
+    bodyObj.user_id = user_id;
+    bodyObj.event_date = moment().format('YYYY-MM-DD');
+    bodyObj.recovery_type = recovery_type;
+    return dispatch => AppAPI.active_recovery.patch(false, bodyObj)
+        .then(myPlanData => {
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: myPlanData,
+            });
+            return Promise.resolve(myPlanData);
+        }).catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+};
+
 export default {
     getMyPlan,
     getSoreBodyParts,
+    patchActiveRecovery,
     postReadinessSurvey,
     postSessionSurvey,
 };

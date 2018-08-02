@@ -2,16 +2,17 @@
  * @Author: Vir Desai
  * @Date: 2018-04-30 13:21:35
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-24 11:30:51
+ * @Last Modified time: 2018-07-30 20:42:35
  */
 
 import React from 'react';
+import { Image } from 'react-native';
 
 // import third-party libraries
 import { Actions, Router, Scene, Stack } from 'react-native-router-flux';
 
 // Consts, Libs, and Utils
-import { AppColors, AppSizes, AppStyles, } from '../constants';
+import { AppColors, AppStyles, } from '../constants';
 import { TabIcon, } from '../components/custom';
 
 // import components
@@ -45,35 +46,85 @@ import BluetoothConnectComponent from '../components/kit/BluetoothConnect';
 import MyPlanContainer from '../containers/myPlan/MyPlan';
 import MyPlanComponent from '../components/myPlan/MyPlan';
 
+import OnboardingContainer from '../containers/onboarding/Onboarding';
+import OnboardingComponent from '../components/onboarding/Onboarding';
+
+import HomeContainer from '../containers/home/Home';
+import HomeComponent from '../components/home/Home';
+
 const Index = (
     <Router>
-        <Stack hideNavBar key='root' titleStyle={{ alignSelf: 'center' }}>
+        <Stack hideNavBar key={'root'}>
+            <Scene
+                Layout={StartComponent}
+                component={StartContainer}
+                hideNavBar
+                initial={true}
+                key={'start'}
+                panHandlers={null}
+            />
+            <Scene
+                Layout={OnboardingComponent}
+                component={OnboardingContainer}
+                hideNavBar={false}
+                key={'onboarding'}
+                panHandlers={null}
+                renderLeftButton={null}
+                title={'GET STARTED'}
+                titleStyle={{flex: 1, textAlign: 'center',}}
+            />
             <Scene
                 Layout={LoginComponent}
                 component={LoginContainer}
                 hideNavBar
-                key='login'
+                key={'login'}
                 panHandlers={null}
             />
             {/*<Scene
                 Layout={SignUpComponent}
                 component={SignUpContainer}
                 hideNavBar
-                key='signUp'
+                key={'signUp'}
                 panHandlers={null}
-            />*/}
+            />
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
                 hideNavBar
-                key='forgotPassword'
+                key={'forgotPassword'}
                 panHandlers={null}
+            />*/}
+            <Scene
+                Layout={HomeComponent}
+                component={HomeContainer}
+                hideNavBar={false}
+                key={'home'}
+                leftButtonStyle={[AppStyles.navbarImageTitle]}
+                navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0 }}
+                navigationBarTitleImage={require('../../assets/images/standard/fathom-gold-and-grey.png')}
+                navigationBarTitleImageStyle={[AppStyles.navbarImageTitle]}
+                onLeft={() => Actions.settings()}
+                onRight={() => null}
+                panHandlers={null}
+                renderLeftButton={
+                    <TabIcon
+                        containerStyle={[AppStyles.paddingLeftSml]}
+                        icon={'settings'}
+                        iconStyle={[{color: AppColors.black}]}
+                        onPress={() => Actions.settings()}
+                        reverse={false}
+                        size={26}
+                        type={'material-community'}
+                    />
+                }
+                rightTitle={' '}
+                type={'replace'}
             />
             <Scene
                 Layout={MyPlanComponent}
                 component={MyPlanContainer}
                 hideNavBar
-                key='myPlan'
+                key={'myPlan'}
                 panHandlers={null}
             />
             <Scene
@@ -81,21 +132,21 @@ const Index = (
                 component={SettingsContainer}
                 hideNavBar={false}
                 navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0}}
-                onLeft={() => Actions.pop()}
+                onLeft={() => Actions.home()}
                 onRight={() => null}
-                key='settings'
+                key={'settings'}
                 panHandlers={null}
-                rightTitle=' '
-                title='SETTINGS'
+                rightTitle={' '}
+                title={'SETTINGS'}
                 titleStyle={{flex: 1, textAlign: 'center',}}
             />
             <Scene
                 Layout={BluetoothConnectComponent}
                 component={BluetoothConnectContainer}
                 hideNavBar
-                key='bluetoothConnect'
+                key={'bluetoothConnect'}
                 panHandlers={null}
-                // title='Bluetooth Connect'
+                // title={'Bluetooth Connect'}
                 // {...DefaultProps.navbarProps}
             />
             {/*<Stack>
@@ -103,22 +154,22 @@ const Index = (
                     Layout={KitManagementComponent}
                     component={KitManagementContainer}
                     hideNavBar
-                    key='kitManagement'
+                    key={'kitManagement'}
                     panHandlers={null}
-                    // title='Kit Management'
+                    // title={'Kit Management'}
                     // {...DefaultProps.navbarProps}
                 />
                 <Scene
-                    key='kitOwner'
-                    title='Kit Owner'
+                    key={'kitOwner'}
+                    title={'Kit Owner'}
                     component={KitOwnerContainer}
                     Layout={KitOwnerComponent}
                     // {...DefaultProps.navbarProps}
                     panHandlers={null}
                 />
                 <Scene
-                    key='kitAssign'
-                    title='Kit Assign'
+                    key={'kitAssign'}
+                    title={'Kit Assign'}
                     component={KitAssignContainer}
                     Layout={KitAssignComponent}
                     // {...DefaultProps.navbarProps}

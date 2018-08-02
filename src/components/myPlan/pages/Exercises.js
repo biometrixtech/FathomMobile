@@ -38,7 +38,7 @@ const Exercises = ({
 }) => (
     <View style={{flex: 1}}>
         <ScrollView
-            contentContainerStyle={exerciseList.length > 0 ? {} : {flexGrow: 1, justifyContent: 'center'}}
+            contentContainerStyle={exerciseList.totalLength > 0 ? {} : {flexGrow: 1, justifyContent: 'center'}}
             refreshControl={
                 <RefreshControl
                     colors={[AppColors.primary.yellow.hundredPercent]}
@@ -50,27 +50,36 @@ const Exercises = ({
                 />
             }
         >
-            { exerciseList.length > 0 ?
+            { exerciseList.totalLength > 0 ?
                 <View>
-                    {_.map(exerciseList, (exercise, i) =>
-                        <ExerciseItem
-                            completedExercises={completedExercises}
-                            exercise={exercise}
-                            handleCompleteExercise={handleCompleteExercise}
-                            isLastItem={i + 1 === exerciseList.length}
-                            key={exercise.library_id+i}
-                            toggleSelectedExercise={toggleSelectedExercise}
-                        />
+                    {_.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) =>
+                        exerciseIndex[0].length > 0 ?
+                            <View key={index}>
+                                <Text style={[AppStyles.paddingVerticalSml, {marginLeft: 14}]}>{index}</Text>
+                                <View style={{borderLeftWidth: 1, borderLeftColor: AppColors.primary.grey.thirtyPercent, marginLeft: 18, height: 10}} />
+                                {_.map(exerciseIndex[0], (exercise, i) =>
+                                    <ExerciseItem
+                                        completedExercises={completedExercises}
+                                        exercise={exercise}
+                                        handleCompleteExercise={handleCompleteExercise}
+                                        isLastItem={i + 1 === exerciseList.totalLength}
+                                        key={exercise.library_id+i}
+                                        toggleSelectedExercise={toggleSelectedExercise}
+                                    />
+                                )}
+                            </View>
+                            :
+                            null
                     )}
                     { completedExercises.length > 0 ?
                         <TouchableOpacity
                             onPress={toggleCompletedAMPMRecoveryModal}
                             style={[AppStyles.nextButtonWrapper]}
                         >
-                            <Text style={[AppStyles.nextButtonText]}>{'Finish'}</Text>
+                            <Text style={[AppStyles.nextButtonText]}>{'Recovery Complete'}</Text>
                         </TouchableOpacity>
                         :
-                        <View style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.hundredPercent}]}>
+                        <View style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.fiftyPercent}]}>
                             <Text style={[AppStyles.nextButtonText]}>{'complete the exercises to log'}</Text>
                         </View>
                     }
@@ -86,7 +95,7 @@ const Exercises = ({
 
 Exercises.propTypes = {
     completedExercises:               PropTypes.array.isRequired,
-    exerciseList:                     PropTypes.array.isRequired,
+    exerciseList:                     PropTypes.object.isRequired,
     handleCompleteExercise:           PropTypes.func.isRequired,
     handleExerciseListRefresh:        PropTypes.func.isRequired,
     isExerciseListRefreshing:         PropTypes.bool.isRequired,

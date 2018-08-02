@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:30:20
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:26:15
+ * @Last Modified time: 2018-07-28 18:17:17
  */
 
 /**
@@ -23,6 +23,7 @@ import { AppColors } from '../../constants';
 
 /* Component ==================================================================== */
 const TabIcon = ({
+    color,
     containerStyle,
     icon,
     iconStyle,
@@ -34,7 +35,7 @@ const TabIcon = ({
     type,
 }) => (
     <Icon
-        color={selected ? AppColors.tabbar.iconSelected : AppColors.tabbar.iconDefault}
+        color={color ? color : selected ? AppColors.tabbar.iconSelected : AppColors.tabbar.iconDefault}
         containerStyle={containerStyle ? containerStyle : {}}
         iconStyle={iconStyle ? iconStyle : {}}
         name={icon}
@@ -47,6 +48,7 @@ const TabIcon = ({
 );
 
 TabIcon.propTypes = {
+    color:          PropTypes.string,
     containerStyle: PropTypes.array,
     icon:           PropTypes.string.isRequired,
     iconStyle:      PropTypes.array,
@@ -58,6 +60,7 @@ TabIcon.propTypes = {
     type:           PropTypes.string,
 };
 TabIcon.defaultProps = {
+    color:          null,
     containerStyle: null,
     icon:           'search',
     iconStyle:      null,
