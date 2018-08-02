@@ -260,6 +260,9 @@ export default {
     paddingVerticalSml: {
         paddingVertical: Sizes.paddingSml,
     },
+    paddingVerticalXSml: {
+        paddingVertical: Sizes.paddingXSml,
+    },
     paddingVerticalMed: {
         paddingVertical: Sizes.paddingMed,
     },

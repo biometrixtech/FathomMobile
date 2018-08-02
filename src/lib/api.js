@@ -214,14 +214,14 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                 try {
                     jsonRes = await rawRes.json();
                 } catch (error) {
-                    if (rawRes.status !== 200) {
+                    if (rawRes.status !== 200 || rawRes.status !== 201 || rawRes.status !== 202) {
                         const err = { message: ErrorMessages.invalidJson };
                         throw err;
                     }
                 }
 
                 // Only continue if the header is successful
-                if (rawRes && /20[01]/.test(`${rawRes.status}`)) { return jsonRes; }
+                if (rawRes && /20[012]/.test(`${rawRes.status}`)) { return jsonRes; }
                 throw jsonRes;
             })
             .then(res => {

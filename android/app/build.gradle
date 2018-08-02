@@ -86,7 +86,7 @@ import com.android.build.OutputFile
         // where to put drawable resources / React Native assets, e.g. the ones you use via
         // require('./image.png')), in release mode
         resourcesDirRelease: "$buildDir/intermediates/res/merged/release",
-        nodeExecutableAndArgs: ["/Users/virdesai/.nvm/versions/node/v10.4.1/bin/node"],
+        nodeExecutableAndArgs: ["/Users/mazenchami/.nvm/versions/node/v10.4.1/bin/node"],
         entryFile: "index.js"
  ]
 
@@ -125,8 +125,8 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 9
-        versionName "2.0.0-beta.5"
+        versionCode 10
+        versionName "2.1.0-beta.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }

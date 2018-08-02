@@ -47,6 +47,7 @@ export default {
     paddingLrg:  30,
     paddingXLrg: 50,
     paddingSml:  10,
+    paddingXSml: 5,
     paddingMed:  15,
     tickSize:    5,
 
