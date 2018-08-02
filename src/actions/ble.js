@@ -231,8 +231,8 @@ const getUserSensorData = (userId) => {
         return AppAPI.sensor_mobile_pair.get({ userId })
             .then(result => {
                 let cleanedResult = {};
-                cleanedResult.sensor_uid = result.sensor_uid;
-                cleanedResult.mobile_uid = result.mobile_uid;
+                cleanedResult.sensor_pid = result.sensor_pid;
+                cleanedResult.mobile_udid = result.mobile_udid;
                 dispatch({
                     type: Actions.CONNECT_TO_ACCESSORY,
                     data: cleanedResult,
@@ -257,13 +257,13 @@ const postUserSensorData = () => {
         const uniqueId = AppUtil.getDeviceUUID();
         // build object to submit
         let dataObj = {};
-        dataObj.sensor_uid = currentState.ble.accessoryData.id;
-        dataObj.mobile_uid = uniqueId;
+        dataObj.sensor_pid = currentState.ble.accessoryData.id;
+        dataObj.mobile_udid = uniqueId;
         return AppAPI.sensor_mobile_pair.post({ userId }, dataObj)
             .then(result => {
                 let cleanedResult = {};
-                cleanedResult.sensor_uid = result.sensor_uid;
-                cleanedResult.mobile_uid = result.mobile_uid;
+                cleanedResult.sensor_pid = result.sensor_pid;
+                cleanedResult.mobile_udid = result.mobile_udid;
                 dispatch({
                     type: Actions.CONNECT_TO_ACCESSORY,
                     data: cleanedResult,
@@ -303,7 +303,7 @@ const deleteUserSensorData = () => {
 const disconnectFromSingleSensor = (sensor_id) => {
     let dataArray = [commands.WIPE_SINGLE_SENSOR_DATA, convertHex('0x00')];
     let currentState = store.getState();
-    let sensorId = sensor_id || currentState.ble.accessoryData.sensor_uid;
+    let sensorId = sensor_id || currentState.ble.accessoryData.sensor_pid;
     return dispatch => BleManager.start({ showAlert: true })
         .then(() => BleManager.connect(sensorId))
         .then(() => BleManager.retrieveServices(sensorId))
@@ -315,7 +315,7 @@ const disconnectFromSingleSensor = (sensor_id) => {
 
 const getSingleSensorSavedPractices = (sensorId, operation_id = '0x00') => {
     // let currentState = store.getState();
-    // let sensorId = sensor_id || currentState.ble.accessoryData.sensor_uid;
+    // let sensorId = sensor_id || currentState.ble.accessoryData.sensor_pid;
     // const dataArray = [commands.GET_SINGLE_SENSOR_LIST, convertHex('0x01'), convertHex(operation_id)];
     // return dispatch => BleManager.start({ showAlert: true })
     //     .then(() => BleManager.connect(sensorId))

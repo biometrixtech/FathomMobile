@@ -9,7 +9,19 @@
  * Home View
  */
 import React, { Component } from 'react';
-import { ActivityIndicator, AppState, BackHandler, Platform, RefreshControl, ScrollView, TouchableWithoutFeedback, View } from 'react-native';
+import {
+    ActivityIndicator,
+    Animated,
+    AppState,
+    BackHandler,
+    Easing,
+    Image,
+    Platform,
+    RefreshControl,
+    ScrollView,
+    TouchableWithoutFeedback,
+    View,
+} from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -27,6 +39,7 @@ import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants } from '../..
 import { Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
 import { WebView } from '../general';
 import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } from '../myPlan/pages';
+import { bleUtils } from '../../constants/utils';
 
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
@@ -45,6 +58,7 @@ class Home extends Component {
 
     static propTypes = {
         appLoaded:           PropTypes.func.isRequired,
+        ble:                 PropTypes.object.isRequired,
         getSoreBodyParts:    PropTypes.func.isRequired,
         lastOpened:          PropTypes.string,
         notification:        PropTypes.bool.isRequired,
@@ -60,6 +74,7 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            BLEData:            {},
             completedExercises: [],
             dailyReadiness:     {
                 readiness:     0,
@@ -160,6 +175,8 @@ class Home extends Component {
             .catch(error => {
                 SplashScreen.hide();
             });
+        // trigger BLE Steps function
+        this._handleBLESteps();
     }
 
     componentWillUnmount = () => {
@@ -189,6 +206,11 @@ class Home extends Component {
                 tabPage: page,
             })
         }
+    }
+
+    _handleBLESteps = () => {
+        const BLEData = bleUtils.handleBLESteps(this.props.ble);
+        this.setState({ BLEData });
     }
 
     _handleDailyReadinessFormChange = (name, value, bodyPart, side) => {

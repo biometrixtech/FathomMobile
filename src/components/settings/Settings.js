@@ -56,7 +56,7 @@ class Settings extends Component {
 
     _disconnectFromSingleSensor = () => {
         const uniqueId = AppUtil.getDeviceUUID();
-        if(uniqueId === this.props.accessoryData.mobile_uid) {
+        if(uniqueId === this.props.accessoryData.mobile_udid) {
             Alert.alert(
                 'Warning!',
                 'Are you sure you want to UNPAIR your sensor? You will need to pair it with a mobile device before your next session.',
@@ -68,9 +68,9 @@ class Settings extends Component {
                     {
                         text:    'Unpair',
                         onPress: () => {
-                            this.props.disconnectFromSingleSensor(this.props.accessoryData.sensor_uid)
-                                .catch(err => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
-                                .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
+                            this.props.disconnectFromSingleSensor(this.props.accessoryData.sensor_pid)
+                                .catch(err => this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid))
+                                .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid))
                                 .then(() => this.refs.toast.show('Successfully UNPAIRED from sensor', DURATION.LENGTH_LONG))
                                 .catch(err => {
                                     this.refs.toast.show('Failed to UNPAIR from sensor', DURATION.LENGTH_LONG);
@@ -103,8 +103,8 @@ class Settings extends Component {
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{color: AppColors.black, name: 'bluetooth', size: 24}}
-                    onPress={() => this.props.accessoryData.sensor_uid ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()}
-                    title={this.props.accessoryData.sensor_uid ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
+                    onPress={() => this.props.accessoryData.sensor_pid ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()}
+                    title={this.props.accessoryData.sensor_pid ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
                     titleStyle={{color: AppColors.black}}
                 />
                 <ListItem

@@ -14,6 +14,7 @@ import { plan as PlanActions, init as InitActions } from '../../actions';
 const Home = ({
     Layout,
     appLoaded,
+    ble,
     getMyPlan,
     getSoreBodyParts,
     lastOpened,
@@ -26,6 +27,7 @@ const Home = ({
 }) => (
     <Layout
         appLoaded={appLoaded}
+        ble={ble}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
         lastOpened={lastOpened}
@@ -41,6 +43,7 @@ const Home = ({
 Home.propTypes = {
     Layout:              PropTypes.func.isRequired,
     appLoaded:           PropTypes.func.isRequired,
+    ble:                 PropTypes.object.isRequired,
     getMyPlan:           PropTypes.func.isRequired,
     getSoreBodyParts:    PropTypes.func.isRequired,
     lastOpened:          PropTypes.string, // cannot make it required as null would not be a valid value for an isRequired check which is a bug in the prop-types packages that is being discussed
@@ -57,6 +60,7 @@ Home.defaultProps = {
 };
 
 const mapStateToProps = state => ({
+    ble:          state.ble,
     lastOpened:   state.init.lastOpened,
     notification: state.init.notification,
     plan:         state.plan,

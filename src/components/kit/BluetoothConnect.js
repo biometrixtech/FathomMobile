@@ -216,7 +216,7 @@ class BluetoothConnectView extends Component {
             })
             .catch(err => {
                 console.log('err in BluetoothConnect #4',err);
-                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_uid) {
+                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
                     this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
                 }
                 return this.props.stopConnect();
@@ -247,7 +247,7 @@ class BluetoothConnectView extends Component {
                     onPress: () => {
                         return this.props.postUserSensorData()
                             .then(() => {
-                                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_uid) {
+                                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
                                     this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
                                 }
                                 this.setState({ index: 3 });
@@ -267,7 +267,7 @@ class BluetoothConnectView extends Component {
             !nextProps.bluetooth.scanning &&
             !this.props.bluetooth.scanning &&
             this.props.bluetooth.devicesFound.length === 0 &&
-            this.props.bluetooth.accessoryData.sensor_uid
+            this.props.bluetooth.accessoryData.sensor_pid
         ) {
             // on BLE list page, trigger search
             this.toggleScanning(true);

@@ -15,8 +15,8 @@ const bleUtils = {
         let animated = false;
         let bleImage = null;
         // make sure we have a sensor paired
-        if(ble.accessoryData && ble.accessoryData.sensor_uid && ble.accessoryData.mobile_uid === AppUtil.getDeviceUUID()) {
-            const sensorData = BLEActions.getSingleSensorSavedPractices(ble.accessoryData.sensor_uid);
+        if(ble.accessoryData && ble.accessoryData.sensor_pid && ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID()) {
+            const sensorData = BLEActions.getSingleSensorSavedPractices(ble.accessoryData.sensor_pid);
             console.log('sensorData',sensorData);
             // if(!ble.bluetoothOn) {
             //     // bluetooth off => iconSensorStatusBtOff.png
