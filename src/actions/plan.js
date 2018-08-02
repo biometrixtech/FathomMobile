@@ -30,7 +30,6 @@ const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
         myPlanObj.end_date = endDate;
     }
     myPlanObj.event_date = `${(new Date()).toISOString().split('.')[0]}Z`;
-    console.log('myPlanObj',myPlanObj);
     return dispatch => AppAPI.get_my_plan.post(false, myPlanObj)
         .then(myPlanData => {
             dispatch({
@@ -42,10 +41,8 @@ const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
                     type: Actions.NOTIFICATION_ADDRESSED
                 });
             }
-            console.log('myPlanData',myPlanData);
             return Promise.resolve(myPlanData);
         }).catch(err => {
-            console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });

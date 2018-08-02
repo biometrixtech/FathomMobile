@@ -79,7 +79,7 @@ class Home extends Component {
                 soreness: []
             },
             prepare: {
-                finishedRecovery:           false,
+                finishedRecovery:           props.plan && props.plan.pre_recovery_completed ? true : false,
                 flag:                       (new Date()).toLocaleDateString() !== props.lastOpened,
                 isActiveRecoveryCollapsed:  true,
                 isReadinessSurveyCollapsed: true,
@@ -171,6 +171,15 @@ class Home extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.notification && nextProps.notification !== this.props.notification) {
             this._handleExerciseListRefresh(true);
+        }
+        if(nextProps.plan.dailyPlan[0] && this.props.plan && nextProps.plan.dailyPlan[0].landing_screen !== this.props.plan.landing_screen) {
+            let page = !nextProps.plan.dailyPlan[0].nav_bar_indicator ?
+                1
+                :
+                nextProps.plan.dailyPlan[0].landing_screen;
+            this.setState({
+                tabPage: page,
+            })
         }
     }
 
@@ -393,10 +402,10 @@ class Home extends Component {
         let userId = this.props.user.id;
         this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'), false, updateNotificationFlag)
             .then(response => {
-                // console.log('response', response);
+                const dailyPlanObj = response.daily_plans && response.daily_plans[0] ? response.daily_plans[0] : false;
                 this.setState({
                     isExerciseListRefreshing: false,
-                    tabPage:                  response.daily_plans[0].landing_screen || 0,
+                    tabPage:                  dailyPlanObj && dailyPlanObj.landing_screen ? dailyPlanObj.landing_screen : 0,
                 });
             })
             .catch(error => {
@@ -454,6 +463,8 @@ class Home extends Component {
     }
 
     renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) {
+        let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
+        isTabActive = isTabActive;
         const textStyle = AppStyles.tabHeaders;
         const fontWeight = isTabActive ? '500' : 'normal';
         const fontSize = isTabActive ? AppStyles.h5.fontSize : AppStyles.h6.fontSize;
@@ -461,7 +472,6 @@ class Home extends Component {
         let yPosition = page === 0 ? page0.y : page === 1 ? page1.y : page2.y;
         let xPosition = page === 0 ? page0.x + page0.width : page === 1 ? page1.x + page1.width : page2.x + page2.width;
 
-        let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
         let prepareRecoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.pre_recovery ?
             dailyPlanObj.pre_recovery
@@ -472,15 +482,7 @@ class Home extends Component {
             :
             false;
 
-        let flag = page === 0
-            ?
-            this.isPrepareFlaged(dailyPlanObj, isDailyReadinessSurveyCompleted, prepareRecoveryObj)
-            :
-            page === 1
-                ?
-                this.isTrainFlaged(dailyPlanObj, isDailyReadinessSurveyCompleted, prepareRecoveryObj)
-                :
-                this.isRecoverFlaged(dailyPlanObj, isDailyReadinessSurveyCompleted, prepareRecoveryObj, recoverRecoveryObj);
+        let flag = dailyPlanObj && page === dailyPlanObj.nav_bar_indicator ? true : false;
 
         return <TouchableWithoutFeedback
             key={`${name}_${page}`}
@@ -528,7 +530,7 @@ class Home extends Component {
     renderDefaultListGap = (size = 10) => {
         return (
             <View style={{ flexDirection: 'row' }}>
-                <View style={{ paddingLeft: 15, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
+                <View style={{ paddingLeft: 18, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
                 <Spacer size={size}/>
             </View>
         );
@@ -541,7 +543,7 @@ class Home extends Component {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
         // assuming AM/PM is switching to something for prepared vs recover
-        let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
+        let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.pre_recovery && !dailyPlanObj.pre_recovery_completed ? dailyPlanObj.pre_recovery : false;
         let loadingText = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ?
             'Creating/updating your plan...'
             :
@@ -556,14 +558,18 @@ class Home extends Component {
         let activeRecoveryHeaderColor = !isDailyReadinessSurveyCompleted ? disabledHeaderColor : enabledHeaderColor;
 
         let isPreRecoveryCompleted = dailyPlanObj && !dailyPlanObj.pre_recovery && dailyPlanObj.post_recovery ? true : false;
-        let disabled = isPreRecoveryCompleted || (!isDailyReadinessSurveyCompleted || (prepare.isActiveRecoveryCollapsed === true && prepare.finishedRecovery))
+        let disabled = dailyPlanObj ?
+            isPreRecoveryCompleted || (!isDailyReadinessSurveyCompleted || (prepare.isActiveRecoveryCollapsed === true && prepare.finishedRecovery)) || dailyPlanObj.pre_recovery_completed
+            :
+            true;
+
         return (
             <View style={{ flex: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer />
                 <ListItem
                     containerStyle={{ borderBottomWidth: 0 }}
                     hideChevron={!isDailyReadinessSurveyCompleted || (prepare.isActiveRecoveryCollapsed === true && completedExercises.length > 0)}
-                    leftIcon={{ name: isDailyReadinessSurveyCompleted ? 'check-box' : 'fiber-manual-record', size: 14, color: AppColors.black }}
+                    leftIcon={{ name: isDailyReadinessSurveyCompleted ? 'check-box' : 'fiber-manual-record', size: 20, color: AppColors.black }}
                     rightIcon={!isDailyReadinessSurveyCompleted ? null : { name: `expand-${prepare.isReadinessSurveyCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
                     onPress={() => !isDailyReadinessSurveyCompleted ? null : this.setState({ prepare: Object.assign({}, prepare, { isReadinessSurveyCollapsed: !prepare.isReadinessSurveyCollapsed }) }) }
                     title={'READINESS SURVEY'}
@@ -622,7 +628,7 @@ class Home extends Component {
                     containerStyle={{ borderBottomWidth: 0 }}
                     disabled={disabled}
                     hideChevron={disabled}
-                    leftIcon={{ name: prepare.isActiveRecoveryCollapsed && prepare.finishedRecovery ? 'check-box' : disabled ? 'lock' : 'fiber-manual-record', size: 14, color: AppColors.black }}
+                    leftIcon={{ name: prepare.isActiveRecoveryCollapsed && prepare.finishedRecovery ? 'check-box' : disabled ? 'lock' : 'fiber-manual-record', size: 20, color: AppColors.black }}
                     rightIcon={!isDailyReadinessSurveyCompleted ? null : { name: `expand-${prepare.isActiveRecoveryCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
                     onPress={() => !isDailyReadinessSurveyCompleted ? null : this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed }) }) }
                     title={'ACTIVE RECOVERY'}
@@ -660,7 +666,7 @@ class Home extends Component {
                                                 <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: activeRecoveryBackgroundColor }}>
                                                     <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'IMPACT SCORE'}</Text>
                                                     <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                                        <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{`${parseFloat(recoveryObj.impact_score) || '#'} `}</Text>
+                                                        <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{`${parseFloat(recoveryObj.impact_score).toFixed(1) || '#'} `}</Text>
                                                         <Text h7 style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'/5'}</Text>
                                                     </View>
                                                 </View>
@@ -820,7 +826,7 @@ class Home extends Component {
 
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
-        let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.post_recovery ? dailyPlanObj.post_recovery : false;
+        let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.post_recovery && !dailyPlanObj.post_recovery.completed ? dailyPlanObj.post_recovery : false;
         let loadingText = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ?
             'Creating/updating your plan...'
             :
@@ -831,7 +837,10 @@ class Home extends Component {
         let activeRecoveryDescriptionColor = !isDailyReadinessSurveyCompleted ? disabledDescriptionColor : enabledDescriptionColor;
         let activeRecoveryHeaderColor = !isDailyReadinessSurveyCompleted ? disabledHeaderColor : enabledHeaderColor;
 
-        let disabled = !isDailyReadinessSurveyCompleted || train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted) || (recover.isActiveRecoveryCollapsed && recover.finished);
+        let disabled = recoveryObj ?
+            !isDailyReadinessSurveyCompleted || train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted) || (recover.isActiveRecoveryCollapsed && recover.finished) || recoveryObj.completed
+            :
+            true;
         return (
             <View style={{ flex: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer />
@@ -839,7 +848,7 @@ class Home extends Component {
                     containerStyle={{ borderBottomWidth: 0 }}
                     disabled={disabled}
                     hideChevron={disabled}
-                    leftIcon={{ name: recover.isActiveRecoveryCollapsed && recover.finished ? 'check-box' : disabled ? 'lock' : 'fiber-manual-record', size: 14, color: AppColors.black }}
+                    leftIcon={{ name: recover.isActiveRecoveryCollapsed && recover.finished ? 'check-box' : disabled ? 'lock' : 'fiber-manual-record', size: 20, color: AppColors.black }}
                     rightIcon={!isDailyReadinessSurveyCompleted ? null : { name: `expand-${recover.isActiveRecoveryCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
                     onPress={() => disabled ? null : this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) }) }
                     title={'ACTIVE RECOVERY'}
@@ -881,14 +890,14 @@ class Home extends Component {
                                         <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: activeRecoveryBackgroundColor }}>
                                             <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'ACTIVE TIME'}</Text>
                                             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                                <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{'14 '}</Text>
+                                                <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{`${recoveryObj && recoveryObj.minutes_duration ? parseFloat(recoveryObj.minutes_duration).toFixed(1) : ''} `}</Text>
                                                 <Text h7 style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'MIN'}</Text>
                                             </View>
                                         </View>
                                         <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: activeRecoveryBackgroundColor }}>
                                             <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'IMPACT SCORE'}</Text>
                                             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                                <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{'# '}</Text>
+                                                <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{`${recoveryObj && recoveryObj.impact_score ? parseFloat(recoveryObj.impact_score).toFixed(1) : ''} `}</Text>
                                                 <Text h7 style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'/5'}</Text>
                                             </View>
                                         </View>
@@ -931,13 +940,14 @@ class Home extends Component {
                                     handleExerciseListRefresh={this._handleExerciseListRefresh}
                                     isExerciseListRefreshing={this.state.isExerciseListRefreshing}
                                     toggleCompletedAMPMRecoveryModal={() =>
-                                        // this.setState({
-                                        //     recover: Object.assign({}, this.state.recover, {
-                                        //         finished:                  !!completedExercises.length,
-                                        //         isActiveRecoveryCollapsed: true,
-                                        //     })
-                                        // })
-                                        this.props.patchActiveRecovery(this.props.user.id, 'post')
+                                        this.props.patchActiveRecovery(this.props.user.id, 'post').then(() =>
+                                            this.setState({
+                                                recover: Object.assign({}, this.state.recover, {
+                                                    finished:                  !!completedExercises.length,
+                                                    isActiveRecoveryCollapsed: true,
+                                                })
+                                            })
+                                        )
                                     }
                                     toggleSelectedExercise={this._toggleSelectedExercise}
                                 />
@@ -1033,7 +1043,7 @@ class Home extends Component {
                         <View key={`postPracticeSurveys${i}`}>
                             <ListItem
                                 containerStyle={{ borderBottomWidth: 0 }}
-                                leftIcon={{ name: postPracticeSurvey.isPostPracticeSurveyCompleted ? 'check-box' : 'fiber-manual-record', size: 14, color: AppColors.black }}
+                                leftIcon={{ name: postPracticeSurvey.isPostPracticeSurveyCompleted ? 'check-box' : 'fiber-manual-record', size: 20, color: AppColors.black }}
                                 rightIcon={{ name: `expand-${postPracticeSurvey.isPostPracticeSurveyCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
                                 onPress={() => {
                                     let newTrainObject = Object.assign({}, train);

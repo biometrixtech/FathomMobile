@@ -6,6 +6,7 @@
         currentStep={step}
         handleFormChange={this._handleUserFormChange}
         handleFormSubmit={this._handleFormSubmit}
+        isUpdatingUser={this.props.user.id ? true : false}
         user={form_fields.user}
     />
  *
@@ -211,6 +212,7 @@ class UserAccount extends Component {
             handleFormChange,
             handleFormSubmit,
             heightPressed,
+            isUpdatingUser,
             user,
         } = this.props;
         // Accordion sections
@@ -219,6 +221,7 @@ class UserAccount extends Component {
                 content: <UserAccountInfo
                     handleFormChange={handleFormChange}
                     isPasswordSecure={this.state.isPasswordSecure}
+                    isUpdatingUser={isUpdatingUser}
                     setAccordionSection={this._setAccordionSection}
                     toggleShowPassword={this._toggleShowPassword}
                     user={user}
@@ -290,6 +293,7 @@ UserAccount.propTypes = {
     currentStep:      PropTypes.number.isRequired,
     handleFormChange: PropTypes.func.isRequired,
     heightPressed:    PropTypes.func.isRequired,
+    isUpdatingUser:   PropTypes.bool.isRequired,
     user:             PropTypes.object.isRequired,
 };
 UserAccount.defaultProps = {};

@@ -167,7 +167,7 @@ class UserAccountAbout extends Component {
                         placeholderColor: AppColors.border,
                         viewContainer:    [styles.androidViewContainer],
                     }}
-                    value={user.biometric_data.height.in || null}
+                    value={parseInt(user.biometric_data.height.in, 10) || null}
                 />
                 {/*<TouchableOpacity onPress={heightPressed} style={[styles.reusableCustomSpacing, {height: 40, justifyContent: 'center'}]}>
                     { user.biometric_data.height.in > 0 ?

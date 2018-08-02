@@ -56,7 +56,7 @@ const Exercises = ({
                         exerciseIndex[0].length > 0 ?
                             <View key={index}>
                                 <Text style={[AppStyles.paddingVerticalSml, {marginLeft: 14}]}>{index}</Text>
-                                <View style={{borderLeftWidth: 1, borderLeftColor: AppColors.primary.grey.thirtyPercent, marginLeft: 14, height: 10}} />
+                                <View style={{borderLeftWidth: 1, borderLeftColor: AppColors.primary.grey.thirtyPercent, marginLeft: 18, height: 10}} />
                                 {_.map(exerciseIndex[0], (exercise, i) =>
                                     <ExerciseItem
                                         completedExercises={completedExercises}

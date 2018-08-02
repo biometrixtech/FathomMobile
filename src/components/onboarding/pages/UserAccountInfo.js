@@ -4,6 +4,7 @@
     <UserAccountInfo
         handleClick={this._handleUserFormChange}
         isPasswordSecure={this.state.isPasswordSecure}
+        isUpdatingUser={isUpdatingUser}
         setAccordionSection={this._setAccordionSection}
         toggleShowPassword={this._toggleShowPassword}
         user={form_fields.user}
@@ -69,6 +70,7 @@ class UserAccountInfo extends Component {
         const {
             handleFormChange,
             isPasswordSecure,
+            isUpdatingUser,
             setAccordionSection,
             toggleShowPassword,
             user,
@@ -100,9 +102,12 @@ class UserAccountInfo extends Component {
                             blurOnSubmit={ false }
                             containerStyle={{marginLeft: 0, paddingLeft: 10}}
                             onChangeText={(text) => handleFormChange('personal_data.last_name', text)}
-                            onSubmitEditing={() => {
-                                this.focusNextField('email');
-                            }}
+                            onSubmitEditing={() =>
+                                isUpdatingUser ?
+                                    this.focusNextField('phone_number')
+                                    :
+                                    this.focusNextField('email')
+                            }
                             placeholder={'Last Name'}
                             placeholderTextColor={AppColors.border}
                             returnKeyType={'next'}
@@ -118,6 +123,7 @@ class UserAccountInfo extends Component {
                     autoCapitalize={'none'}
                     blurOnSubmit={ false }
                     containerStyle={{marginLeft: 0, paddingLeft: 10}}
+                    editable={!isUpdatingUser}
                     onChangeText={(text) => handleFormChange('email', text)}
                     onSubmitEditing={() => {
                         this.focusNextField('phone_number');
@@ -192,6 +198,7 @@ class UserAccountInfo extends Component {
 UserAccountInfo.propTypes = {
     handleFormChange:    PropTypes.func.isRequired,
     isPasswordSecure:    PropTypes.bool.isRequired,
+    isUpdatingUser:      PropTypes.bool.isRequired,
     setAccordionSection: PropTypes.func.isRequired,
     toggleShowPassword:  PropTypes.func.isRequired,
     user:                PropTypes.object.isRequired,
