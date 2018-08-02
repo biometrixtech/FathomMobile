@@ -55,12 +55,6 @@ class Start extends Component {
         }
         setTimeout(() => {
             if (this.props.email !== null && this.props.password !== null) {
-                this.setState({
-                    form_values: {
-                        Email:    this.props.email,
-                        Password: this.props.password,
-                    },
-                });
                 Promise.resolve(this.login());
             } else {
                 SplashScreen.hide();
