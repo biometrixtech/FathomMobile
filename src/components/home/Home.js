@@ -858,9 +858,6 @@ class Home extends Component {
             !isDailyReadinessSurveyCompleted || train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted) || (recover.isActiveRecoveryCollapsed && recover.finished) || recoveryObj.completed
             :
             true;
-        console.log(!isDailyReadinessSurveyCompleted, train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted), (recover.isActiveRecoveryCollapsed && recover.finished), recoveryObj.completed);
-        console.log(recover.isActiveRecoveryCollapsed, recover.finished);
-        console.log(!isDailyReadinessSurveyCompleted || train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted) || (recover.isActiveRecoveryCollapsed && recover.finished) || recoveryObj.completed);
         return (
             <View style={{ flex: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer />
