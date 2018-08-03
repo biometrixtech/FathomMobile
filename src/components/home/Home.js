@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-07-27 21:44:36
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-30 20:49:37
+ * @Last Modified time: 2018-08-03 01:42:53
  */
 
 /**
@@ -83,6 +83,7 @@ class Home extends Component {
                 flag:                       (new Date()).toLocaleDateString() !== props.lastOpened,
                 isActiveRecoveryCollapsed:  true,
                 isReadinessSurveyCollapsed: true,
+                isReadinessSurveyCompleted: false,
             },
             recover: {
                 finished:                  false,
@@ -253,10 +254,14 @@ class Home extends Component {
         });
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
+                let newPrepareObject = Object.assign({}, this.state.prepare, {
+                    isReadinessSurveyCompleted: true,
+                });
                 this.setState({
                     completedExercises:         [],
                     isReadinessSurveyModalOpen: false,
                     loading:                    false,
+                    prepare:                    newPrepareObject,
                 });
             })
             .catch(error => {
@@ -558,7 +563,7 @@ class Home extends Component {
         let { plan } = this.props;
 
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+        let isDailyReadinessSurveyCompleted = dailyPlanObj && (dailyPlanObj.daily_readiness_survey_completed || prepare.isReadinessSurveyCompleted) ? true : false;
         // assuming AM/PM is switching to something for prepared vs recover
         let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.pre_recovery && !dailyPlanObj.pre_recovery_completed ? dailyPlanObj.pre_recovery : false;
         let loadingText = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ?
