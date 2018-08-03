@@ -10,6 +10,7 @@ import { AppUtil } from '../../lib';
 const bleUtils = {
 
     handleBLESteps(ble) {
+        console.log('ble',ble);
         // setup variables
         const imagePrefix = '../../../assets/images/sensor/';
         let animated = false;
