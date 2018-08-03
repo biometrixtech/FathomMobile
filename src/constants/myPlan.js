@@ -2,7 +2,7 @@
  * @Author: Mazen Chami
  * @Date: 2018-07-12 12:28:00
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-21 19:58:16
+ * @Last Modified time: 2018-08-03 04:40:43
  */
 
 import _ from 'lodash';
@@ -101,8 +101,7 @@ function cleanExerciseList(recoveryObj) {
     _.map(exerciseListOrder, list => {
         let exerciseArray = _.orderBy(recoveryObj[list.index], ['position_order'], ['asc']);
         totalLength += exerciseArray.length;
-        cleanedExerciseList[list.title] = [];
-        cleanedExerciseList[list.title].push(exerciseArray);
+        cleanedExerciseList[list.title] = exerciseArray;
     });
     return {
         cleanedExerciseList,
