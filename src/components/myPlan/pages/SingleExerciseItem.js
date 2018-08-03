@@ -14,7 +14,7 @@ import { Image, View } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles } from '../../../constants';
-import { TabIcon, Text } from '../../custom';
+import { TabIcon, Text, WebViewPage, } from '../../custom';
 
 /* Component ==================================================================== */
 const SingleExerciseItem = ({
@@ -28,6 +28,12 @@ const SingleExerciseItem = ({
             source={{uri: exercise.imageUrl}}
             style={{flex: 1,}}
         />
+        {/*<WebViewPage
+            backgroundColor={AppColors.white}
+            scrollEnabled={false}
+            source={exercise.imageUrl}
+            width={AppSizes.screen.width * 0.9 - AppSizes.paddingSml}
+        />*/}
         <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, AppStyles.textBold, AppStyles.h2]}>
             {exercise.displayName}
         </Text>

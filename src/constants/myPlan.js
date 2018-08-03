@@ -5,6 +5,10 @@
  * @Last Modified time: 2018-08-03 04:40:43
  */
 
+// import RN components
+import { Image } from 'react-native';
+
+// import third-party libraries
 import _ from 'lodash';
 
 /**
@@ -141,6 +145,36 @@ function cleanExercise(exercise) {
     return cleanedExercise;
 }
 
+function scrollableTabViewPage(dailyPlanObj, disabled, index) {
+    if(index) { return index; }
+    let page = 0;
+    if(disabled) {
+        page = dailyPlanObj && dailyPlanObj.nav_bar_indicator === null && disabled ?
+            1
+            : dailyPlanObj ?
+                Math.floor(dailyPlanObj.landing_screen)
+                :
+                0;
+    } else {
+        page = dailyPlanObj && dailyPlanObj.nav_bar_indicator === null ?
+            1
+            : dailyPlanObj ?
+                Math.floor(dailyPlanObj.landing_screen)
+                :
+                0;
+    }
+    return page;
+}
+
+function prefetchGifs(exerciseList) {
+    // _.map(exerciseList.cleanedExerciseList, exerciseIndex => {
+    //     _.map(exerciseIndex, exercise => {
+    //         Image.prefech(this.cleanExercise(exercise).imageUrl);
+    //     })
+    // });
+    // Image.prefech(url);
+}
+
 export default {
     bodyPartMapping,
     cleanExercise,
@@ -149,6 +183,8 @@ export default {
     muscleLevels,
     overallReadiness,
     postSessionFeel,
+    prefetchGifs,
+    scrollableTabViewPage,
     sessionTypes,
     sleepQuality,
 };
