@@ -53,11 +53,11 @@ const Exercises = ({
             { exerciseList.totalLength > 0 ?
                 <View>
                     {_.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) =>
-                        exerciseIndex[0].length > 0 ?
+                        exerciseIndex.length > 0 ?
                             <View key={index}>
                                 <Text style={[AppStyles.paddingVerticalSml, {marginLeft: 14}]}>{index}</Text>
                                 <View style={{borderLeftWidth: 1, borderLeftColor: AppColors.primary.grey.thirtyPercent, marginLeft: 18, height: 10}} />
-                                {_.map(exerciseIndex[0], (exercise, i) =>
+                                {_.map(exerciseIndex, (exercise, i) =>
                                     <ExerciseItem
                                         completedExercises={completedExercises}
                                         exercise={exercise}
