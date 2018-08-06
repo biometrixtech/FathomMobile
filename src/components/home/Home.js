@@ -312,6 +312,7 @@ class Home extends Component {
                 });
                 newTrainObject.postPracticeSurveys[newTrainObject.postPracticeSurveys.length - 1].isPostPracticeSurveyCompleted = true;
                 this.setState({
+                    completedExercises:           [],
                     train:                        newTrainObject,
                     isPostSessionSurveyModalOpen: false,
                     loading:                      false,
@@ -443,6 +444,7 @@ class Home extends Component {
                 newPrepare.isActiveRecoveryCollapsed = false;
                 this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
                 this.setState({
+                    completedExercises:       [],
                     isExerciseListRefreshing: false,
                     prepare:                  newPrepare,
                     recover:                  newRecover,
@@ -753,7 +755,8 @@ class Home extends Component {
                                         toggleCompletedAMPMRecoveryModal={() =>
                                             this.props.patchActiveRecovery(this.props.user.id, 'pre').then(() =>
                                                 this.setState({
-                                                    prepare: Object.assign({}, this.state.prepare, {
+                                                    completedExercises: [],
+                                                    prepare:            Object.assign({}, this.state.prepare, {
                                                         finishedRecovery:          true,
                                                         isActiveRecoveryCollapsed: true,
                                                     }),
@@ -972,7 +975,8 @@ class Home extends Component {
                                     toggleCompletedAMPMRecoveryModal={() =>
                                         this.props.patchActiveRecovery(this.props.user.id, 'post').then(() =>
                                             this.setState({
-                                                recover: Object.assign({}, this.state.recover, {
+                                                completedExercises: [],
+                                                recover:            Object.assign({}, this.state.recover, {
                                                     finished:                  !!completedExercises.length,
                                                     isActiveRecoveryCollapsed: true,
                                                 })

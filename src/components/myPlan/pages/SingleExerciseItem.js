@@ -24,19 +24,18 @@ const SingleExerciseItem = ({
     selectedExercise,
 }) => (
     <View style={{ flex: 1 }}>
-        <Image
-            resizeMode={'contain'}
-            source={{uri: exercise.imageUrl}}
-            style={{flex: 1,}}
-        />
-        {/*<WebView
-            allowsInlineMediaPlayback={true}
-            javaScriptEnabled={true}
-            onError={e => console.log('youtube error', e)}
-            scrollEnabled={false}
-            style={{flex: 1, width: (AppSizes.screen.width * 0.9) - (AppSizes.paddingSml)}}
-            url={'https://www.youtube.com/embed/PvxunuFzt6k?version=3&playlist=PvxunuFzt6k&rel=0&autoplay=1&showinfo=0&playsinline=1&loop=1&controls=0'}
-        />*/}
+        { exercise.youtubeId ?
+            <WebView
+                allowsInlineMediaPlayback={true}
+                javaScriptEnabled={true}
+                onError={e => console.log('youtube error', e)}
+                scrollEnabled={false}
+                style={{flex: 1, width: (AppSizes.screen.width * 0.9) - (AppSizes.paddingSml)}}
+                url={exercise.youtubeId}
+            />
+            :
+            null
+        }
         <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, AppStyles.textBold, AppStyles.h2]}>
             {exercise.displayName}
         </Text>
