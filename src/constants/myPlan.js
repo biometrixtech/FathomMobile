@@ -8,6 +8,9 @@
 // import RN components
 import { Image } from 'react-native';
 
+// const & libs
+import { Actions } from './';
+
 // import third-party libraries
 import _ from 'lodash';
 
@@ -137,6 +140,7 @@ const postSessionFeel = [
 
 function cleanExercise(exercise) {
     let cleanedExercise = {};
+    cleanedExercise.library_id = exercise.library_id;
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
     cleanedExercise.dosage = `${exercise.sets_assigned}x ${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : ''}`;
@@ -167,12 +171,36 @@ function scrollableTabViewPage(dailyPlanObj, disabled, index) {
 }
 
 function prefetchGifs(exerciseList) {
-    // _.map(exerciseList.cleanedExerciseList, exerciseIndex => {
-    //     _.map(exerciseIndex, exercise => {
-    //         Image.prefech(this.cleanExercise(exercise).imageUrl);
-    //     })
-    // });
-    // Image.prefech(url);
+    let preFetchedImages = [];
+    _.map(exerciseList.cleanedExerciseList, exerciseIndex => {
+        _.map(exerciseIndex, exercise => {
+            let imageObj = {};
+            imageObj.exerciseId = this.cleanExercise(exercise).library_id;
+            imageObj.imageUrl = Image.prefetch(this.cleanExercise(exercise).imageUrl);
+            preFetchedImages.push(imageObj);
+        })
+    });
+    // Promise.all(preFetchedImages)
+    //     .then(results => {
+    //         let downloadedAll = true;
+    //         results.forEach(result => {
+    //             if(!result) {
+    //                 // error occurred downloading a pic
+    //                 downloadedAll = false;
+    //             }
+    //         });
+    //         if (results.length === 0) { downloadedAll = false; }
+    //         console.log('downloadedAll',downloadedAll);
+    //         if(downloadedAll) {
+    //             console.log('helppppp', this.props);
+    //             // Actions.someScene({ downloadedPics: urlOfImages})
+    //             return dispatch => dispatch({
+    //                 type: Actions.STORE_GIFS,
+    //                 data: preFetchedImages
+    //             });
+    //             // Actions.STORE_GIFS({ data: preFetchedImages });
+    //         }
+    //     });
 }
 
 export default {

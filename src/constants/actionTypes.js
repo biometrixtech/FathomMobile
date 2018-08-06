@@ -57,4 +57,5 @@ export default {
     WIFI:                    'WIFI',
     // OTHER
     APP_LOADED:              'APP_LOADED',
+    STORE_GIFS:              'STORE_GIFS',
 };
