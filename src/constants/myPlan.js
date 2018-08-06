@@ -10,6 +10,7 @@ import { Image } from 'react-native';
 
 // const & libs
 import { Actions } from './';
+import { store } from '../store';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -102,20 +103,6 @@ const exerciseListOrder = [
     },
 ];
 
-function cleanExerciseList(recoveryObj) {
-    let totalLength = 0;
-    let cleanedExerciseList = {};
-    _.map(exerciseListOrder, list => {
-        let exerciseArray = _.orderBy(recoveryObj[list.index], ['position_order'], ['asc']);
-        totalLength += exerciseArray.length;
-        cleanedExerciseList[list.title] = exerciseArray;
-    });
-    return {
-        cleanedExerciseList,
-        totalLength,
-    };
-}
-
 const sessionTypes = {
     practice_sessions:              0,
     strength_conditioning_sessions: 1,
@@ -138,13 +125,28 @@ const postSessionFeel = [
     'Maximum, carry me off the field',
 ];
 
+function cleanExerciseList(recoveryObj) {
+    let totalLength = 0;
+    let cleanedExerciseList = {};
+    _.map(exerciseListOrder, list => {
+        let exerciseArray = _.orderBy(recoveryObj[list.index], ['position_order'], ['asc']);
+        totalLength += exerciseArray.length;
+        cleanedExerciseList[list.title] = exerciseArray;
+    });
+    return {
+        cleanedExerciseList,
+        totalLength,
+    };
+}
+
 function cleanExercise(exercise) {
-    let cleanedExercise = {};
+    let cleanedExercise = _.cloneDeep(exercise);
     cleanedExercise.library_id = exercise.library_id;
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
     cleanedExercise.dosage = `${exercise.sets_assigned}x ${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : ''}`;
     cleanedExercise.imageUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.gif`;
+    cleanedExercise.localImageUrl = exercise.localImageUrl;
     cleanedExercise.youtubeId = exercise.youtube_id && exercise.youtube_id.length ? exercise.youtube_id : false;
     return cleanedExercise;
 }
@@ -170,39 +172,6 @@ function scrollableTabViewPage(dailyPlanObj, disabled, index) {
     return page;
 }
 
-function prefetchGifs(exerciseList) {
-    let preFetchedImages = [];
-    _.map(exerciseList.cleanedExerciseList, exerciseIndex => {
-        _.map(exerciseIndex, exercise => {
-            let imageObj = {};
-            imageObj.exerciseId = this.cleanExercise(exercise).library_id;
-            imageObj.imageUrl = Image.prefetch(this.cleanExercise(exercise).imageUrl);
-            preFetchedImages.push(imageObj);
-        })
-    });
-    // Promise.all(preFetchedImages)
-    //     .then(results => {
-    //         let downloadedAll = true;
-    //         results.forEach(result => {
-    //             if(!result) {
-    //                 // error occurred downloading a pic
-    //                 downloadedAll = false;
-    //             }
-    //         });
-    //         if (results.length === 0) { downloadedAll = false; }
-    //         console.log('downloadedAll',downloadedAll);
-    //         if(downloadedAll) {
-    //             console.log('helppppp', this.props);
-    //             // Actions.someScene({ downloadedPics: urlOfImages})
-    //             return dispatch => dispatch({
-    //                 type: Actions.STORE_GIFS,
-    //                 data: preFetchedImages
-    //             });
-    //             // Actions.STORE_GIFS({ data: preFetchedImages });
-    //         }
-    //     });
-}
-
 export default {
     bodyPartMapping,
     cleanExercise,
@@ -211,7 +180,6 @@ export default {
     muscleLevels,
     overallReadiness,
     postSessionFeel,
-    prefetchGifs,
     scrollableTabViewPage,
     sessionTypes,
     sleepQuality,

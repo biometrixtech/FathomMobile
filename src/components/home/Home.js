@@ -579,7 +579,6 @@ class Home extends Component {
             :
             'Loading...';
         let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj);
-        MyPlanConstants.prefetchGifs(exerciseList);
 
         let readinessSurveyBackgroundColor = isDailyReadinessSurveyCompleted ? disabledBackgroundColor : enabledBackgroundColor;
         let readinessSurveyDescriptionColor = isDailyReadinessSurveyCompleted ? disabledDescriptionColor : enabledDescriptionColor;
@@ -863,7 +862,7 @@ class Home extends Component {
             :
             'Loading...';
         let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj);
-        MyPlanConstants.prefetchGifs(exerciseList);
+
         let activeRecoveryBackgroundColor = !isDailyReadinessSurveyCompleted ? disabledBackgroundColor : enabledBackgroundColor;
         let activeRecoveryDescriptionColor = !isDailyReadinessSurveyCompleted ? disabledDescriptionColor : enabledDescriptionColor;
         let activeRecoveryHeaderColor = !isDailyReadinessSurveyCompleted ? disabledHeaderColor : enabledHeaderColor;

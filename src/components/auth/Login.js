@@ -17,6 +17,7 @@ import {
     BackHandler,
     Image,
     ImageBackground,
+    Keyboard,
     KeyboardAvoidingView,
     Platform,
     StyleSheet,
@@ -213,6 +214,9 @@ class Login extends Component {
     login = () => {
         // Get new credentials and update
         const credentials = this.form.getValue();
+
+        // close keyboard
+        Keyboard.dismiss();
 
         // Form is valid
         if (credentials) {

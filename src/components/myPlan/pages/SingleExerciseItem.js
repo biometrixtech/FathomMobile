@@ -10,11 +10,12 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, View } from 'react-native';
+import { Image, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles } from '../../../constants';
-import { TabIcon, Text, WebViewPage, } from '../../custom';
+import { TabIcon, Text, } from '../../custom';
+import { WebView } from '../../general';
 
 /* Component ==================================================================== */
 const SingleExerciseItem = ({
@@ -28,11 +29,13 @@ const SingleExerciseItem = ({
             source={{uri: exercise.imageUrl}}
             style={{flex: 1,}}
         />
-        {/*<WebViewPage
-            backgroundColor={AppColors.white}
+        {/*<WebView
+            allowsInlineMediaPlayback={true}
+            javaScriptEnabled={true}
+            onError={e => console.log('youtube error', e)}
             scrollEnabled={false}
-            source={exercise.imageUrl}
-            width={AppSizes.screen.width * 0.9 - AppSizes.paddingSml}
+            style={{flex: 1, width: (AppSizes.screen.width * 0.9) - (AppSizes.paddingSml)}}
+            url={'https://www.youtube.com/embed/PvxunuFzt6k?version=3&playlist=PvxunuFzt6k&rel=0&autoplay=1&showinfo=0&playsinline=1&loop=1&controls=0'}
         />*/}
         <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, AppStyles.textBold, AppStyles.h2]}>
             {exercise.displayName}

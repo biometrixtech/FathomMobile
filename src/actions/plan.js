@@ -25,13 +25,11 @@ const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
     let myPlanObj = {};
     // Defaulting user id to whatever is in the store if nothing is sent for Push Notifications
     myPlanObj.user_id = userId || currentState.user.id;
-    // TODO: FIX THIS!
-    myPlanObj.start_date = '2018-08-06';//startDate ? startDate : moment().format('YYYY-MM-DD');
+    myPlanObj.start_date = startDate ? startDate : moment().format('YYYY-MM-DD');
     if(endDate) {
         myPlanObj.end_date = endDate;
     }
-    myPlanObj.event_date = `${(new Date()).toISOString().split('.')[0]}Z`;
-    console.log('myPlanObj',myPlanObj);
+    myPlanObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.get_my_plan.post(false, myPlanObj)
         .then(myPlanData => {
             dispatch({

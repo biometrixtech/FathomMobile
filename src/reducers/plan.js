@@ -29,10 +29,6 @@ export default function planReducer(state = initialState, action) {
         return Object.assign({}, state, {});
     case Actions.POST_SESSION_SURVEY:
         return Object.assign({}, state, {});
-    case Actions.STORE_GIFS:
-        return Object.assign({}, state, {
-            localGifs: action.data.localGifs,
-        });
     default:
         return state;
     }
