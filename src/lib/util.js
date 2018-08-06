@@ -5,6 +5,9 @@
  * @Last Modified time: 2018-06-28 11:41:51
  */
 
+// Consts and Libss
+import { store } from '../store';
+
 // import third-party libraries
 import DeviceInfo from 'react-native-device-info';
 import uuidByString from 'uuid-by-string';
@@ -34,8 +37,12 @@ const MS_IN_DAY = 1000 * 60 * 60 * 24;
 
 const UTIL = {
     getDeviceUUID: () => {
+        // setup enviroment string
+        let currentState = store.getState();
+        let environment = currentState.init.environment;
+        let env = environment === 'PROD' ? 'production' : environment.toLowerCase();
         // mobile uuid
-        let uniqueId = DeviceInfo.getUniqueID();
+        let uniqueId = `${env}_${DeviceInfo.getUniqueID()}`;
         let uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
         if(!uuidRegex.test(uniqueId)) {
             // not a uuid, lets unparse it
