@@ -189,6 +189,7 @@ repositories {
 }
 
 dependencies {
+    implementation project(':react-native-video')
     implementation project(':react-native-push-notification')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-splash-screen')
