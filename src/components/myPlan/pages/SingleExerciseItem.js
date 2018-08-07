@@ -12,6 +12,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Image, Platform, View, WebView } from 'react-native';
 
+// import third-party libraries
+import Video from 'react-native-video';
+
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles } from '../../../constants';
 import { TabIcon, Text, } from '../../custom';
@@ -24,22 +27,13 @@ const SingleExerciseItem = ({
     selectedExercise,
 }) => (
     <View style={{ flex: 1, justifyContent: 'center' }}>
-        { exercise.youtubeId ?
-            <View style={{ height: 200 }}>
-                <WebView
-                    allowsInlineMediaPlayback={true}
-                    automaticallyAdjustContentInsets={false}
-                    domStorageEnabled={true}
-                    javaScriptEnabled={true}
-                    mediaPlaybackRequiresUserAction={false}
-                    originWhitelist={['*']}
-                    scalesPageToFit={true}
-                    scrollEnabled={false}
-                    source={{ uri: exercise.youtubeId }}
-                    startInLoadingState={true}
-                    style={{flex: 1,}}
-                />
-            </View>
+        { exercise.videoUrl.length > 0 ?
+            <Video
+                paused={false}
+                repeat={true}
+                source={{uri: exercise.videoUrl}}
+                style={{flex: 1, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding)}}
+            />
             :
             <Error type={'URL not defined.'} />
         }
@@ -63,6 +57,25 @@ const SingleExerciseItem = ({
         />
     </View>
 );
+
+/*
+<View style={{ height: 200 }}>
+    <WebView
+        allowsInlineMediaPlayback={true}
+        automaticallyAdjustContentInsets={false}
+        domStorageEnabled={true}
+        javaScriptEnabled={true}
+        mediaPlaybackRequiresUserAction={false}
+        originWhitelist={['*']}
+        scalesPageToFit={true}
+        scrollEnabled={false}
+        source={{ uri: exercise.youtubeId }}
+        startInLoadingState={true}
+        style={{flex: 1,}}
+    />
+</View>
+
+*/
 
 SingleExerciseItem.propTypes = {
     exercise:               PropTypes.object.isRequired,
