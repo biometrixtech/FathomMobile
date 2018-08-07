@@ -48,12 +48,19 @@ const styles = StyleSheet.create({
         width: AppSizes.screen.width,
     },
     pickerSelectAndroid: {
-        color: AppColors.primary.grey.hundredPercent,
+        color:      AppColors.primary.grey.hundredPercent,
+        fontFamily: AppFonts.base.family,
+        fontSize:   AppFonts.base.size,
+        fontWeight: AppFonts.base.fontWeight,
     },
     pickerSelectIOS: {
         color:          AppColors.primary.grey.hundredPercent,
+        fontFamily:     AppFonts.base.family,
+        fontSize:       AppFonts.base.size,
+        fontWeight:     AppFonts.base.fontWeight,
         height:         40,
         justifyContent: 'center',
+        paddingLeft:    10,
     },
     reusableCustomSpacing: {
         alignItems:        'flex-start',
@@ -106,7 +113,8 @@ class UserAccountAbout extends Component {
                     confirmBtnText={'Confirm'}
                     customStyles={{
                         dateInput:       styles.reusableCustomSpacing,
-                        placeholderText: {color: AppColors.border, fontSize: AppFonts.base.size},
+                        placeholderText: {color: AppColors.border, fontFamily: AppFonts.base.family, fontSize: AppFonts.base.size, fontWeight: AppFonts.base.fontWeight,},
+                        btnTextConfirm:  {color: AppColors.primary.yellow.hundredPercent},
                     }}
                     date={user.personal_data.birth_date || ''}
                     format={'MM/DD/YYYY'}
@@ -131,7 +139,7 @@ class UserAccountAbout extends Component {
                     }}
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
-                        inputIOS:         [styles.reusableCustomSpacing, styles.pickerSelectIOS],
+                        inputIOS:         [styles.pickerSelectIOS],
                         placeholderColor: AppColors.border,
                         viewContainer:    [styles.androidViewContainer],
                     }}
@@ -163,7 +171,7 @@ class UserAccountAbout extends Component {
                     }}
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
-                        inputIOS:         [styles.reusableCustomSpacing, styles.pickerSelectIOS],
+                        inputIOS:         [styles.pickerSelectIOS],
                         placeholderColor: AppColors.border,
                         viewContainer:    [styles.androidViewContainer],
                     }}
@@ -201,7 +209,7 @@ class UserAccountAbout extends Component {
                     }}
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
-                        inputIOS:         [styles.reusableCustomSpacing, styles.pickerSelectIOS],
+                        inputIOS:         [styles.pickerSelectIOS],
                         placeholderColor: AppColors.border,
                         viewContainer:    [styles.androidViewContainer],
                     }}
