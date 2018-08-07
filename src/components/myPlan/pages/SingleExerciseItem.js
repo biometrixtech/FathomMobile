@@ -10,12 +10,12 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, View, } from 'react-native';
+import { Image, Platform, View, WebView } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles } from '../../../constants';
 import { TabIcon, Text, } from '../../custom';
-import { WebView } from '../../general';
+import { Error } from '../../general';
 
 /* Component ==================================================================== */
 const SingleExerciseItem = ({
@@ -23,18 +23,25 @@ const SingleExerciseItem = ({
     handleCompleteExercise,
     selectedExercise,
 }) => (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, justifyContent: 'center' }}>
         { exercise.youtubeId ?
-            <WebView
-                allowsInlineMediaPlayback={true}
-                javaScriptEnabled={true}
-                onError={e => console.log('youtube error', e)}
-                scrollEnabled={false}
-                style={{flex: 1, width: (AppSizes.screen.width * 0.9) - (AppSizes.paddingSml)}}
-                url={exercise.youtubeId}
-            />
+            <View style={{ height: 200 }}>
+                <WebView
+                    allowsInlineMediaPlayback={true}
+                    automaticallyAdjustContentInsets={false}
+                    domStorageEnabled={true}
+                    javaScriptEnabled={true}
+                    mediaPlaybackRequiresUserAction={false}
+                    originWhitelist={['*']}
+                    scalesPageToFit={true}
+                    scrollEnabled={false}
+                    source={{ uri: exercise.youtubeId }}
+                    startInLoadingState={true}
+                    style={{flex: 1,}}
+                />
+            </View>
             :
-            null
+            <Error type={'URL not defined.'} />
         }
         <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, AppStyles.textBold, AppStyles.h2]}>
             {exercise.displayName}
