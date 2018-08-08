@@ -53,12 +53,12 @@ import HomeContainer from '../containers/home/Home';
 import HomeComponent from '../components/home/Home';
 
 const Index = (
-    <Router>
-        <Stack hideNavBar key={'root'}>
+    <Router hideNavBar={true}>
+        <Stack hideNavBar={true} key={'root'} titleStyle={{ alignSelf: 'center' }}>
             <Scene
                 Layout={StartComponent}
                 component={StartContainer}
-                hideNavBar
+                hideNavBar={true}
                 initial={true}
                 key={'start'}
                 panHandlers={null}
@@ -76,21 +76,21 @@ const Index = (
             <Scene
                 Layout={LoginComponent}
                 component={LoginContainer}
-                hideNavBar
+                hideNavBar={true}
                 key={'login'}
                 panHandlers={null}
             />
             {/*<Scene
                 Layout={SignUpComponent}
                 component={SignUpContainer}
-                hideNavBar
+                hideNavBar={true}
                 key={'signUp'}
                 panHandlers={null}
             />
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
-                hideNavBar
+                hideNavBar={true}
                 key={'forgotPassword'}
                 panHandlers={null}
             />*/}
@@ -123,7 +123,7 @@ const Index = (
             <Scene
                 Layout={MyPlanComponent}
                 component={MyPlanContainer}
-                hideNavBar
+                hideNavBar={true}
                 key={'myPlan'}
                 panHandlers={null}
             />
@@ -143,7 +143,7 @@ const Index = (
             <Scene
                 Layout={BluetoothConnectComponent}
                 component={BluetoothConnectContainer}
-                hideNavBar
+                hideNavBar={true}
                 key={'bluetoothConnect'}
                 panHandlers={null}
                 // title={'Bluetooth Connect'}
@@ -153,7 +153,7 @@ const Index = (
                 <Scene
                     Layout={KitManagementComponent}
                     component={KitManagementContainer}
-                    hideNavBar
+                    hideNavBar={true}
                     key={'kitManagement'}
                     panHandlers={null}
                     // title={'Kit Management'}

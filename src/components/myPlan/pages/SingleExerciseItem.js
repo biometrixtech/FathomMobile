@@ -28,12 +28,13 @@ const SingleExerciseItem = ({
 }) => (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
         { exercise.videoUrl.length > 0 ?
-            <View style={Platform.OS === 'ios' ? {flex: 1,} : {flex: 1, paddingLeft: AppSizes.paddingXLrg}}>
+            <View style={Platform.OS === 'ios' ? {flex: 1,} : {flex: 1, paddingLeft: AppSizes.paddingMed}}>
                 <Video
                     paused={false}
                     repeat={true}
+                    resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
                     source={{uri: exercise.videoUrl}}
-                    style={{flex: 1, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding)}}
+                    style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {flex: 1, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding),}]}
                 />
             </View>
             :
