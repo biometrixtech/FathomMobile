@@ -120,7 +120,7 @@ class Start extends Component {
                 // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                     this._routeToHome();
                 // } else {
-                //     this._routeToOnboarding();
+                    // this._routeToOnboarding();
                 // }
                 SplashScreen.hide();
             })).catch((err) => {

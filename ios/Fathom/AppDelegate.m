@@ -6,6 +6,7 @@
  */
 
 #import "AppDelegate.h"
+#import <AVFoundation/AVFoundation.h>
 #import <CodePush/CodePush.h>
 #import <Fabric/Fabric.h>
 #import <Crashlytics/Crashlytics.h>
@@ -31,7 +32,7 @@
 
 
 #ifdef DEBUG
-  jsCodeLocation = [NSURL URLWithString:@"http://192.168.1.15:8081/index.bundle?platform=ios&dev=true"];
+  jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.101:8081/index.bundle?platform=ios&dev=true"];
 //  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 
 #else
@@ -44,6 +45,7 @@
 #if RCT_DEV
   [bridge moduleForClass:[RCTDevLoadingView class]];
 #endif
+  [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                       moduleName:@"Fathom"
                                                initialProperties:nil];

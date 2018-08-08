@@ -10,11 +10,15 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, View } from 'react-native';
+import { View, } from 'react-native';
+
+// import third-party libraries
+import Video from 'react-native-video';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles } from '../../../constants';
-import { TabIcon, Text } from '../../custom';
+import { TabIcon, Text, } from '../../custom';
+import { Error } from '../../general';
 
 /* Component ==================================================================== */
 const SingleExerciseItem = ({
@@ -22,12 +26,17 @@ const SingleExerciseItem = ({
     handleCompleteExercise,
     selectedExercise,
 }) => (
-    <View style={{ flex: 1 }}>
-        <Image
-            resizeMode={'contain'}
-            source={{uri: exercise.imageUrl}}
-            style={{flex: 1,}}
-        />
+    <View style={{ flex: 1, justifyContent: 'center' }}>
+        { exercise.videoUrl.length > 0 ?
+            <Video
+                paused={false}
+                repeat={true}
+                source={{uri: exercise.videoUrl}}
+                style={{flex: 1, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding)}}
+            />
+            :
+            <Error type={'URL not defined.'} />
+        }
         <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, AppStyles.textBold, AppStyles.h2]}>
             {exercise.displayName}
         </Text>
