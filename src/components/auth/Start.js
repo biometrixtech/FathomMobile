@@ -9,8 +9,8 @@ import { BackHandler, ImageBackground, Platform, StyleSheet, TouchableOpacity, V
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
-import moment from 'moment';
 import SplashScreen from 'react-native-splash-screen';
+import moment from 'moment';
 
 // Consts and Libs
 import { AppAPI } from '../../lib/';
