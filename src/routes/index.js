@@ -100,7 +100,7 @@ const Index = (
                 hideNavBar={false}
                 key={'home'}
                 leftButtonStyle={[AppStyles.navbarImageTitle]}
-                navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 1, elevation: 0 }}
+                navigationBarStyle={{borderBottomWidth: 0, elevation: 0}}
                 navigationBarTitleImage={require('../../assets/images/standard/fathom-gold-and-grey.png')}
                 navigationBarTitleImageStyle={[AppStyles.navbarImageTitle]}
                 onLeft={() => Actions.settings()}

@@ -169,7 +169,7 @@ class Login extends Component {
                         error:                'Your email must be a valid email format',
                         keyboardType:         'email-address',
                         label:                ' ',
-                        placeholder:          'username',
+                        placeholder:          'e-mail address',
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
                         onSubmitEditing:      () => this._focusNextField('Password'),
                         returnKeyType:        'next',
