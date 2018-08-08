@@ -151,7 +151,6 @@ class Start extends Component {
                     style={[AppStyles.containerCentered, {height: AppSizes.screen.heightTwoThirds, width: AppSizes.screen.width,}]}
                 >
                     <Text h1 style={[AppStyles.paddingVertical, {color: AppColors.white,}]}>{'JOIN FATHOM'}</Text>
-                    <Text p style={[AppStyles.paddingBottom, {color: AppColors.white,}]}>{'Create your account'}</Text>
                     <Button
                         backgroundColor={AppColors.white}
                         buttonStyle={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontalLrg]}
@@ -164,7 +163,7 @@ class Start extends Component {
                     onPress={this._routeToLogin}
                     style={[AppStyles.containerCentered, {height: AppSizes.screen.heightOneThird, width: AppSizes.screen.width,}]}
                 >
-                    <Text h2 style={[AppStyles.paddingBottom, {color: AppColors.black,}]}>{'ALREADY A MEMEBER?'}</Text>
+                    <Text h5 style={[AppStyles.paddingBottom, {color: AppColors.black,}]}>{'ALREADY A MEMEBER?'}</Text>
                     <Text p style={{color: AppColors.primary.yellow.hundredPercent,}}>{'Let\'s login now.'}</Text>
                 </TouchableOpacity>
             </View>
