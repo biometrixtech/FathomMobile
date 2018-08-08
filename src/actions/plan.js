@@ -29,7 +29,7 @@ const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
     if(endDate) {
         myPlanObj.end_date = endDate;
     }
-    myPlanObj.event_date = `${(new Date()).toISOString().split('.')[0]}Z`;
+    myPlanObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.get_my_plan.post(false, myPlanObj)
         .then(myPlanData => {
             dispatch({

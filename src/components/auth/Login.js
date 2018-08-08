@@ -17,6 +17,7 @@ import {
     BackHandler,
     Image,
     ImageBackground,
+    Keyboard,
     KeyboardAvoidingView,
     Platform,
     StyleSheet,
@@ -214,6 +215,9 @@ class Login extends Component {
         // Get new credentials and update
         const credentials = this.form.getValue();
 
+        // close keyboard
+        Keyboard.dismiss();
+
         // Form is valid
         if (credentials) {
             this.setState({ form_values: credentials }, () => {
@@ -258,7 +262,7 @@ class Login extends Component {
                         // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                             Actions.home();
                         // } else {
-                        //     Actions.onboarding();
+                            // Actions.onboarding();
                         // }
                     })).catch((err) => {
                         console.log('err',err);

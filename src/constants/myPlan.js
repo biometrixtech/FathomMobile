@@ -2,9 +2,17 @@
  * @Author: Mazen Chami
  * @Date: 2018-07-12 12:28:00
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-21 19:58:16
+ * @Last Modified time: 2018-08-03 04:40:43
  */
 
+// import RN components
+import { Image } from 'react-native';
+
+// const & libs
+import { Actions } from './';
+import { store } from '../store';
+
+// import third-party libraries
 import _ from 'lodash';
 
 /**
@@ -95,21 +103,6 @@ const exerciseListOrder = [
     },
 ];
 
-function cleanExerciseList(recoveryObj) {
-    let totalLength = 0;
-    let cleanedExerciseList = {};
-    _.map(exerciseListOrder, list => {
-        let exerciseArray = _.orderBy(recoveryObj[list.index], ['position_order'], ['asc']);
-        totalLength += exerciseArray.length;
-        cleanedExerciseList[list.title] = [];
-        cleanedExerciseList[list.title].push(exerciseArray);
-    });
-    return {
-        cleanedExerciseList,
-        totalLength,
-    };
-}
-
 const sessionTypes = {
     practice_sessions:              0,
     strength_conditioning_sessions: 1,
@@ -132,14 +125,53 @@ const postSessionFeel = [
     'Maximum, carry me off the field',
 ];
 
+function cleanExerciseList(recoveryObj) {
+    let totalLength = 0;
+    let cleanedExerciseList = {};
+    _.map(exerciseListOrder, list => {
+        let exerciseArray = _.orderBy(recoveryObj[list.index], ['position_order'], ['asc']);
+        totalLength += exerciseArray.length;
+        cleanedExerciseList[list.title] = exerciseArray;
+    });
+    return {
+        cleanedExerciseList,
+        totalLength,
+    };
+}
+
 function cleanExercise(exercise) {
-    let cleanedExercise = {};
+    let cleanedExercise = _.cloneDeep(exercise);
+    cleanedExercise.library_id = exercise.library_id;
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
     cleanedExercise.dosage = `${exercise.sets_assigned}x ${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : ''}`;
     cleanedExercise.imageUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.gif`;
-    cleanedExercise.youtubeId = exercise.youtube_id && exercise.youtube_id.length ? exercise.youtube_id : false;
+    cleanedExercise.thumbnailUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.png`;
+    cleanedExercise.videoUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.mp4`;
+    cleanedExercise.localImageUrl = exercise.localImageUrl;
+    cleanedExercise.youtubeId = exercise.youtube_id && exercise.youtube_id.length > 0 ? `https://www.youtube.com/embed/${exercise.youtube_id}?version=3&playlist=${exercise.youtube_id}&rel=0&autoplay=1&showinfo=0&playsinline=1&loop=1&controls=0&modestbranding=1` : false;
     return cleanedExercise;
+}
+
+function scrollableTabViewPage(dailyPlanObj, disabled, index) {
+    if(index) { return index; }
+    let page = 0;
+    if(disabled) {
+        page = dailyPlanObj && dailyPlanObj.nav_bar_indicator === null && disabled ?
+            1
+            : dailyPlanObj ?
+                Math.floor(dailyPlanObj.landing_screen)
+                :
+                0;
+    } else {
+        page = dailyPlanObj && dailyPlanObj.nav_bar_indicator === null ?
+            1
+            : dailyPlanObj ?
+                Math.floor(dailyPlanObj.landing_screen)
+                :
+                0;
+    }
+    return page;
 }
 
 export default {
@@ -150,6 +182,7 @@ export default {
     muscleLevels,
     overallReadiness,
     postSessionFeel,
+    scrollableTabViewPage,
     sessionTypes,
     sleepQuality,
 };

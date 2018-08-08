@@ -10,8 +10,9 @@ export default {
     certificate:  null,
     device:       null,
     email:        null,
-    environment:  'DEV', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
+    environment:  'PROD', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
     jwt:          null,
+    lastOpened:   null, // for user entering the app for the first time in a day to track the last day the app was opened
     notification: false,
     password:     null,
     token:        null, // push notification token

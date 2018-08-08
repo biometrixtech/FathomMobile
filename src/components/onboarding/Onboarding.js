@@ -106,9 +106,9 @@ class Onboarding extends Component {
         this.state = {
             form_fields: {
                 user: {
-                    // agreed_terms_of_use:   null,
-                    // agreed_privacy_policy: null,
-                    cleared_to_play:   null,
+                    // agreed_terms_of_use:   false, // boolean
+                    // agreed_privacy_policy: false, // boolean
+                    cleared_to_play:   false, // boolean
                     onboarding_status: user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
                     email:             user.personal_data && user.personal_data.email ? user.personal_data.email : '',
                     password:          '',
@@ -372,8 +372,8 @@ class Onboarding extends Component {
                 '',
                 'You must be cleared for running by a doctor before using the Fathom system',
                 [
-                    {text: 'Cleared', onPress: () => this._handleOnboardingFieldSetup(newUser, 'cleared', errorsArray)},
-                    {text: 'Not Cleared', onPress: () => this._handleOnboardingFieldSetup(newUser, 'not_cleared', errorsArray)},
+                    {text: 'Cleared', onPress: () => this._handleOnboardingFieldSetup(newUser, true, errorsArray)},
+                    {text: 'Not Cleared', onPress: () => this._handleOnboardingFieldSetup(newUser, false, errorsArray)},
                 ],
             );
         } else {

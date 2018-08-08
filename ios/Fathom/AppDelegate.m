@@ -6,6 +6,7 @@
  */
 
 #import "AppDelegate.h"
+#import <AVFoundation/AVFoundation.h>
 #import <CodePush/CodePush.h>
 #import <Fabric/Fabric.h>
 #import <Crashlytics/Crashlytics.h>
@@ -44,6 +45,7 @@
 #if RCT_DEV
   [bridge moduleForClass:[RCTDevLoadingView class]];
 #endif
+  [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                       moduleName:@"Fathom"
                                                initialProperties:nil];

@@ -10,11 +10,15 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, View } from 'react-native';
+import { Platform, View, } from 'react-native';
+
+// import third-party libraries
+import Video from 'react-native-video';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles } from '../../../constants';
-import { TabIcon, Text } from '../../custom';
+import { TabIcon, Text, } from '../../custom';
+import { Error } from '../../general';
 
 /* Component ==================================================================== */
 const SingleExerciseItem = ({
@@ -22,12 +26,20 @@ const SingleExerciseItem = ({
     handleCompleteExercise,
     selectedExercise,
 }) => (
-    <View style={{ flex: 1 }}>
-        <Image
-            resizeMode={'contain'}
-            source={{uri: exercise.imageUrl}}
-            style={{flex: 1,}}
-        />
+    <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+        { exercise.videoUrl.length > 0 ?
+            <View style={Platform.OS === 'ios' ? {flex: 1,} : {flex: 1, paddingLeft: AppSizes.paddingMed}}>
+                <Video
+                    paused={false}
+                    repeat={true}
+                    resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
+                    source={{uri: exercise.videoUrl}}
+                    style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {flex: 1, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding),}]}
+                />
+            </View>
+            :
+            <Error type={'URL not defined.'} />
+        }
         <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, AppStyles.textBold, AppStyles.h2]}>
             {exercise.displayName}
         </Text>

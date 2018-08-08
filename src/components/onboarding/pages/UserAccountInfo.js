@@ -141,7 +141,7 @@ class UserAccountInfo extends Component {
                 <FormInput
                     blurOnSubmit={ false }
                     containerStyle={{marginLeft: 0, paddingLeft: 10}}
-                    keyboardType={'numeric'}
+                    keyboardType={'number-pad'}
                     maxLength={10}
                     onChangeText={(text) => handleFormChange('personal_data.phone_number', text)}
                     onSubmitEditing={() => {

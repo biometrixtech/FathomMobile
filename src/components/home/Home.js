@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-07-27 21:44:36
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-30 20:49:37
+ * @Last Modified time: 2018-08-03 04:41:10
  */
 
 /**
@@ -79,10 +79,11 @@ class Home extends Component {
                 soreness: []
             },
             prepare: {
-                finishedRecovery:           props.plan && props.plan.pre_recovery_completed ? true : false,
+                finishedRecovery:           props.plan && props.plan.dailyPlan[0] && props.plan.dailyPlan[0].pre_recovery_completed ? true : false,
                 flag:                       (new Date()).toLocaleDateString() !== props.lastOpened,
                 isActiveRecoveryCollapsed:  true,
                 isReadinessSurveyCollapsed: true,
+                isReadinessSurveyCompleted: false,
             },
             recover: {
                 finished:                  false,
@@ -90,7 +91,6 @@ class Home extends Component {
                 isActiveRecoveryCollapsed: true,
             },
             selectedExercise: {},
-            tabPage:          props.plan && props.plan.landing_screen ? Math.floor(props.plan.landing_screen) : 0,
             train:            {
                 completedPostPracticeSurvey: false,
                 flag:                        false,
@@ -101,6 +101,7 @@ class Home extends Component {
                     }
                 ],
             },
+            update: false,
         };
         this.renderTab = this.renderTab.bind(this);
     }
@@ -115,20 +116,29 @@ class Home extends Component {
             .then(() => this.props.getMyPlan(userId, moment().format('YYYY-MM-DD')))
             .then(response => {
                 if(response.daily_plans[0].daily_readiness_survey_completed) {
+                    let postPracticeSurveys = response.daily_plans[0].practice_sessions.map(session => session.post_session_survey
+                        ? {
+                            isPostPracticeSurveyCollapsed: true,
+                            isPostPracticeSurveyCompleted: true,
+                        } : {
+                            isPostPracticeSurveyCollapsed: false,
+                            isPostPracticeSurveyCompleted: false,
+                        }
+                    );
+                    this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(response.daily_plans[0]));
                     this.setState({
                         prepare: Object.assign({}, this.state.prepare, {
-                            isActiveRecoveryCollapsed:  false,
+                            finishedRecovery:           response.daily_plans[0].pre_recovery_completed || this.state.prepare.finishedRecovery,
+                            isActiveRecoveryCollapsed:  response.daily_plans[0].pre_recovery_completed || this.state.prepare.isActiveRecoveryCollapsed,
                             isReadinessSurveyCollapsed: true,
                         }),
                         recover: Object.assign({}, this.state.recover, {
                             isActiveRecoveryCollapsed: response.daily_plans[0].post_recovery && !response.daily_plans[0].pre_recovery ? false : true,
                         }),
                         train: Object.assign({}, this.state.train, {
-                            postPracticeSurveys: [{
-                                isPostPracticeSurveyCollapsed: false,
-                                isPostPracticeSurveyCompleted: response.daily_plans[0].post_recovery && !response.daily_plans[0].pre_recovery ? true : false,
-                            }]
-                        })
+                            completedPostPracticeSurvey: postPracticeSurveys[0].isPostPracticeSurveyCompleted,
+                            postPracticeSurveys
+                        }),
                     });
                     SplashScreen.hide();
                 } else {
@@ -153,9 +163,6 @@ class Home extends Component {
                             SplashScreen.hide();
                         });
                 }
-                this.setState({
-                    tabPage: response.daily_plans[0] && response.daily_plans[0].landing_screen ? Math.floor(response.daily_plans[0].landing_screen) : 0,
-                });
             })
             .catch(error => {
                 SplashScreen.hide();
@@ -172,7 +179,17 @@ class Home extends Component {
         if (nextProps.notification && nextProps.notification !== this.props.notification) {
             this._handleExerciseListRefresh(true);
         }
-        if(nextProps.plan.dailyPlan[0] && this.props.plan && nextProps.plan.dailyPlan[0].landing_screen !== this.props.plan.landing_screen) {
+        const areObjectsDifferent = _.isEqual(nextProps.plan.dailyPlan, this.props.plan.dailyPlan);
+        if(
+            !areObjectsDifferent &&
+            this.props.plan.dailyPlan[0] &&
+            nextProps.plan.dailyPlan[0].landing_screen !== this.props.plan.dailyPlan[0].landing_screen &&
+            (
+                this.state.update ||
+                nextProps.plan.dailyPlan[0].post_recovery_completed ||
+                nextProps.plan.dailyPlan[0].pre_recovery_completed
+            )
+        ) {
             let { recover, train } = this.state;
             let { plan } = this.props;
             let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
@@ -181,12 +198,9 @@ class Home extends Component {
                 train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted) || (recover.isActiveRecoveryCollapsed && recover.finished) || recoveryObj.completed
                 :
                 true;
-            let page = nextProps.plan.dailyPlan[0].nav_bar_indicator === null && disabled ?
-                1
-                :
-                nextProps.plan.dailyPlan[0].landing_screen;
+            this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(nextProps.plan.dailyPlan[0], disabled));
             this.setState({
-                tabPage: page,
+                update: false,
             })
         }
     }
@@ -253,10 +267,14 @@ class Home extends Component {
         });
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
+                let newPrepareObject = Object.assign({}, this.state.prepare, {
+                    isReadinessSurveyCompleted: true,
+                });
                 this.setState({
                     completedExercises:         [],
                     isReadinessSurveyModalOpen: false,
                     loading:                    false,
+                    prepare:                    newPrepareObject,
                 });
             })
             .catch(error => {
@@ -268,7 +286,12 @@ class Home extends Component {
     }
 
     _handlePostSessionSurveySubmit = () => {
-        this.setState({ loading: true });
+        /*
+         * update for the componentWillReceiveProps call will only
+         * result in a tabPage auto change if a postPracticeSurvey
+         * has not already been completed
+         */
+        this.setState({ loading: true, update: !this.state.train.completedPostPracticeSurvey, });
         let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
         newPostSessionSurvey.RPE = newPostSessionSurvey.RPE + 1;
         newPostSessionSurvey.soreness.map(bodyPart => {
@@ -289,6 +312,7 @@ class Home extends Component {
                 });
                 newTrainObject.postPracticeSurveys[newTrainObject.postPracticeSurveys.length - 1].isPostPracticeSurveyCompleted = true;
                 this.setState({
+                    completedExercises:           [],
                     train:                        newTrainObject,
                     isPostSessionSurveyModalOpen: false,
                     loading:                      false,
@@ -418,11 +442,12 @@ class Home extends Component {
                 newRecover.finished = false;
                 let newPrepare = _.cloneDeep(this.state.prepare);
                 newPrepare.isActiveRecoveryCollapsed = false;
+                this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
                 this.setState({
+                    completedExercises:       [],
                     isExerciseListRefreshing: false,
                     prepare:                  newPrepare,
                     recover:                  newRecover,
-                    tabPage:                  dailyPlanObj && dailyPlanObj.landing_screen ? dailyPlanObj.landing_screen : 0,
                 });
             })
             .catch(error => {
@@ -489,16 +514,6 @@ class Home extends Component {
         let yPosition = page === 0 ? page0.y : page === 1 ? page1.y : page2.y;
         let xPosition = page === 0 ? page0.x + page0.width : page === 1 ? page1.x + page1.width : page2.x + page2.width;
 
-        let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
-        let prepareRecoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.pre_recovery ?
-            dailyPlanObj.pre_recovery
-            :
-            false;
-        let recoverRecoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.post_recovery ?
-            dailyPlanObj.post_recovery
-            :
-            false;
-
         let flag = dailyPlanObj && page === dailyPlanObj.nav_bar_indicator ? true : false;
 
         return <TouchableWithoutFeedback
@@ -558,7 +573,7 @@ class Home extends Component {
         let { plan } = this.props;
 
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+        let isDailyReadinessSurveyCompleted = dailyPlanObj && (dailyPlanObj.daily_readiness_survey_completed || prepare.isReadinessSurveyCompleted) ? true : false;
         // assuming AM/PM is switching to something for prepared vs recover
         let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.pre_recovery && !dailyPlanObj.pre_recovery_completed ? dailyPlanObj.pre_recovery : false;
         let loadingText = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ?
@@ -574,12 +589,11 @@ class Home extends Component {
         let activeRecoveryDescriptionColor = !isDailyReadinessSurveyCompleted ? disabledDescriptionColor : enabledDescriptionColor;
         let activeRecoveryHeaderColor = !isDailyReadinessSurveyCompleted ? disabledHeaderColor : enabledHeaderColor;
 
-        let isPreRecoveryCompleted = dailyPlanObj && !dailyPlanObj.pre_recovery && dailyPlanObj.post_recovery ? true : false;
-        let disabled = dailyPlanObj ?
+        let isPreRecoveryCompleted = dailyPlanObj && dailyPlanObj.pre_recovery_completed ? true : false;
+        let disabled = dailyPlanObj && dailyPlanObj.pre_recovery ?
             isPreRecoveryCompleted || (!isDailyReadinessSurveyCompleted || (prepare.isActiveRecoveryCollapsed === true && prepare.finishedRecovery)) || dailyPlanObj.pre_recovery_completed
             :
             true;
-
         return (
             <View style={{ flex: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer />
@@ -645,7 +659,7 @@ class Home extends Component {
                     containerStyle={{ borderBottomWidth: 0 }}
                     disabled={disabled}
                     hideChevron={disabled}
-                    leftIcon={{ name: prepare.isActiveRecoveryCollapsed && prepare.finishedRecovery ? 'check-box' : disabled ? 'lock' : 'fiber-manual-record', size: 20, color: AppColors.black }}
+                    leftIcon={{ name: (prepare.isActiveRecoveryCollapsed && prepare.finishedRecovery) || (dailyPlanObj && dailyPlanObj.pre_recovery_completed) ? 'check-box' : disabled ? 'lock' : 'fiber-manual-record', size: 20, color: AppColors.black }}
                     rightIcon={!isDailyReadinessSurveyCompleted ? null : { name: `expand-${prepare.isActiveRecoveryCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
                     onPress={() => !isDailyReadinessSurveyCompleted ? null : this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed }) }) }
                     title={'ACTIVE RECOVERY'}
@@ -741,10 +755,12 @@ class Home extends Component {
                                         toggleCompletedAMPMRecoveryModal={() =>
                                             this.props.patchActiveRecovery(this.props.user.id, 'pre').then(() =>
                                                 this.setState({
-                                                    prepare: Object.assign({}, this.state.prepare, {
+                                                    completedExercises: [],
+                                                    prepare:            Object.assign({}, this.state.prepare, {
                                                         finishedRecovery:          true,
                                                         isActiveRecoveryCollapsed: true,
-                                                    })
+                                                    }),
+                                                    update: true,
                                                 })
                                             )
                                         }
@@ -767,7 +783,7 @@ class Home extends Component {
                             backgroundColor={AppColors.primary.yellow.hundredPercent}
                             color={AppColors.white}
                             containerViewStyle={[AppStyles.nextButtonWrapper, { width: AppSizes.screen.width - 60, position: 'absolute', bottom: 15, left: 15, right: 15 }]}
-                            onPress={() => this.setState({ tabPage: index+1 })}
+                            onPress={() => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(false, false, index+1))}
                             raised={false}
                             title={'Go to Train'}
                         />
@@ -959,7 +975,8 @@ class Home extends Component {
                                     toggleCompletedAMPMRecoveryModal={() =>
                                         this.props.patchActiveRecovery(this.props.user.id, 'post').then(() =>
                                             this.setState({
-                                                recover: Object.assign({}, this.state.recover, {
+                                                completedExercises: [],
+                                                recover:            Object.assign({}, this.state.recover, {
                                                     finished:                  !!completedExercises.length,
                                                     isActiveRecoveryCollapsed: true,
                                                 })
@@ -1018,6 +1035,9 @@ class Home extends Component {
 
     renderTrain = (index) => {
         let train = this.state.train;
+        let { plan } = this.props;
+        let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+        let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
 
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
@@ -1125,7 +1145,7 @@ class Home extends Component {
                                                             </View>
                                                         </View>
                                                         {
-                                                            !i && !postPracticeSurvey.isPostPracticeSurveyCompleted
+                                                            !postPracticeSurvey.isPostPracticeSurveyCompleted && isDailyReadinessSurveyCompleted
                                                                 ?
                                                                 <View>
                                                                     <Spacer size={60} />
@@ -1159,7 +1179,7 @@ class Home extends Component {
                                 color={AppColors.white}
                                 containerViewStyle={{ flex: 1 }}
                                 fontSize={AppStyles.h6.fontSize}
-                                onPress={() => this.setState({ tabPage: index+1 })}
+                                onPress={() => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(false, false, index+1))}
                                 raised={false}
                                 title={'Go to Recovery'}
                             />
@@ -1216,18 +1236,19 @@ class Home extends Component {
         );
     };
 
+    _goToScrollviewPage = (pageIndex) => {
+        if(this.tabView) {
+            this.tabView.goToPage(pageIndex);
+        }
+    }
+
     render() {
-        let { plan } = this.props;
-        let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let initialSelectedPage = dailyPlanObj && dailyPlanObj.landing_screen ? Math.floor(dailyPlanObj.landing_screen) : 0;
-        return (
+        return(
             <ScrollableTabView
-                initialPage={initialSelectedPage}
-                onChangeTab={tab => this.setState({ tabPage: tab.i })}
-                page={this.state.tabPage}
-                tabBarUnderlineStyle={{ height: 0 }}
                 tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
                 tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
+                tabBarUnderlineStyle={{ height: 0 }}
+                ref={tabView => { this.tabView = tabView; }}
                 renderTabBar={() => <ScrollableTabBar renderTab={this.renderTab} />}
             >
                 {this.renderPrepare(0)}

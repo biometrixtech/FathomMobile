@@ -9,8 +9,8 @@ import { BackHandler, ImageBackground, Platform, StyleSheet, TouchableOpacity, V
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
-import moment from 'moment';
 import SplashScreen from 'react-native-splash-screen';
+import moment from 'moment';
 
 // Consts and Libs
 import { AppAPI } from '../../lib/';
@@ -120,7 +120,7 @@ class Start extends Component {
                 // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                     this._routeToHome();
                 // } else {
-                //     this._routeToOnboarding();
+                    // this._routeToOnboarding();
                 // }
                 SplashScreen.hide();
             })).catch((err) => {
