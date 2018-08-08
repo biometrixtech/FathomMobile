@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>Fathom</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -19,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2.1.0-beta.3</string>
+	<string>2.1.0</string>
 	<key>CodePushDeploymentKey</key>
 	<string>$(CODEPUSH_KEY)</string>
 	<key>Fabric</key>
@@ -69,7 +71,7 @@
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>This app requires Bluetooth to connect to our hardware.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>NSMainNibFile</key>
 	<string>LaunchScreen</string>
 	<key>UIAppFonts</key>
