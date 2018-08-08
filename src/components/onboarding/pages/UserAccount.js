@@ -60,7 +60,7 @@ class UserAccount extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            accordionSection: 1,
+            accordionSection: 0,
             coachContent:     '',
             isPasswordSecure: true,
         };
