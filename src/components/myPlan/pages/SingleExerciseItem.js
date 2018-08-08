@@ -10,7 +10,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, } from 'react-native';
+import { Platform, View, } from 'react-native';
 
 // import third-party libraries
 import Video from 'react-native-video';
@@ -26,14 +26,16 @@ const SingleExerciseItem = ({
     handleCompleteExercise,
     selectedExercise,
 }) => (
-    <View style={{ flex: 1, justifyContent: 'center' }}>
+    <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
         { exercise.videoUrl.length > 0 ?
-            <Video
-                paused={false}
-                repeat={true}
-                source={{uri: exercise.videoUrl}}
-                style={{flex: 1, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding)}}
-            />
+            <View style={Platform.OS === 'ios' ? {flex: 1,} : {flex: 1, paddingLeft: AppSizes.paddingXLrg}}>
+                <Video
+                    paused={false}
+                    repeat={true}
+                    source={{uri: exercise.videoUrl}}
+                    style={{flex: 1, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding)}}
+                />
+            </View>
             :
             <Error type={'URL not defined.'} />
         }
