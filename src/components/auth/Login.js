@@ -248,8 +248,9 @@ class Login extends Component {
                     );
                 })
                     .then(response => {
-                        this.props.getUserSensorData(response.user.id);
-                        return Promise.resolve(response);
+                        return this.props.getUserSensorData(response.user.id)
+                            .then(res => Promise.resolve(response))
+                            .catch(err => Promise.reject(err));
                     })
                     .then(response => {
                         let { authorization, user } = response;
@@ -259,11 +260,11 @@ class Login extends Component {
                     .then(() => this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
-                        // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                        if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                             Actions.home();
-                        // } else {
-                            // Actions.onboarding();
-                        // }
+                        } else {
+                            Actions.onboarding();
+                        }
                     })).catch((err) => {
                         console.log('err',err);
                         const error = AppAPI.handleError(err);

@@ -7829,8 +7829,8 @@ react-native-remote-svg@^1.2.0:
   resolved "https://registry.yarnpkg.com/react-native-remote-svg/-/react-native-remote-svg-1.2.0.tgz#0382d522913e01dc19025efe8e0f8b1a55692a55"
 
 react-native-router-flux@^4.0.0-beta.31:
-  version "4.0.0-beta.40"
-  resolved "https://registry.yarnpkg.com/react-native-router-flux/-/react-native-router-flux-4.0.0-beta.40.tgz#1bb8cf137836e62666d73948015a5ac656aa545f"
+  version "4.0.0-beta.41"
+  resolved "https://registry.yarnpkg.com/react-native-router-flux/-/react-native-router-flux-4.0.0-beta.41.tgz#0d829ce06e532e989bece4e46c768793260e24c2"
   dependencies:
     lodash.isequal "^4.5.0"
     opencollective "^1.0.3"

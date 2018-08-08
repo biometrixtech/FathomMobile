@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-04-30 13:20:48 
+ * @Author: Vir Desai
+ * @Date: 2018-04-30 13:20:48
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-20 18:09:28
  */
@@ -18,7 +18,7 @@ let store;
 const config = {
     key:       'root',
     storage,
-    whitelist: ['init'],
+    whitelist: ['init', 'user', 'ble'],
 };
 
 const reducer = persistCombineReducers(config, reducers);
