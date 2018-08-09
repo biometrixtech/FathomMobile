@@ -33,6 +33,7 @@ class Start extends Component {
         email:          PropTypes.string,
         environment:    PropTypes.string,
         finalizeLogin:  PropTypes.func.isRequired,
+        jwt:            PropTypes.string,
         onFormSubmit:   PropTypes.func,
         password:       PropTypes.string,
         registerDevice: PropTypes.func.isRequired,
@@ -51,7 +52,7 @@ class Start extends Component {
 
     componentDidMount = () => {
         setTimeout(() => {
-            if (this.props.email !== null && this.props.password !== null) {
+            if (this.props.email !== null && this.props.password !== null && this.props.user.id && this.props.jwt) {
                 Promise.resolve(this.login());
             } else {
                 SplashScreen.hide();
@@ -82,7 +83,7 @@ class Start extends Component {
         };
 
         /**
-          * - if jwt valid
+          * - if jwt valid & user object
           *   - getUserSensorData(user.id)
           *     - registerDevice (user, userCreds, token, resolve, reject)
           *       - finalizeLogin (user, userCreds, token, resolve, reject)
@@ -91,8 +92,17 @@ class Start extends Component {
           *     - getUserSensorData(user.id)
           *       - registerDevice (user, userCreds, token, resolve, reject)
           *         - finalizeLogin (user, userCreds, token, resolve, reject)
+
+
+
+          * NOTE: we only come here if the user email, password, id, and jwt token exists
+          * - registerDevice
+          *   - finalizeLogin
+          *     - successful - go to onboarding or home
+          *     - unsuccessful - go to login
           */
-        return this.props.onFormSubmit({
+
+        /*return this.props.onFormSubmit({
             email:    credentials.Email,
             password: credentials.Password,
         }, false).then(response => {
@@ -106,27 +116,30 @@ class Start extends Component {
             );
         })
             .then(response => {
-                this.props.getUserSensorData(response.user.id);
-                return Promise.resolve(response);
+                return this.props.getUserSensorData(response.user.id)
+                    .then(res => Promise.resolve(response))
+                    .catch(err => Promise.reject(err));
             })
             .then(response => {
-                let { authorization, user } = response;
-                return this.props.registerDevice(this.props.certificate, this.props.device, user)
-                    .then(() => this.props.finalizeLogin(user, credentials, authorization.jwt));
-            })
+                return this.props.registerDevice(this.props.certificate, this.props.device, this.props.user)
+                    .then(() => this.props.finalizeLogin(this.props.user, credentials, this.props.jwt));
+            })*/
+        return this.props.registerDevice(this.props.certificate, this.props.device, this.props.user)
+            .then(() => this.props.finalizeLogin(this.props.user, credentials, this.props.jwt))
             .then(() => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
-                // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                     this._routeToHome();
-                // } else {
-                    // this._routeToOnboarding();
-                // }
+                } else {
+                    this._routeToOnboarding();
+                }
                 SplashScreen.hide();
             })).catch((err) => {
                 SplashScreen.hide();
                 const error = AppAPI.handleError(err);
                 console.log('err',error);
+                this._routeToLogin();
             });
     }
 
@@ -138,7 +151,6 @@ class Start extends Component {
                     style={[AppStyles.containerCentered, {height: AppSizes.screen.heightTwoThirds, width: AppSizes.screen.width,}]}
                 >
                     <Text h1 style={[AppStyles.paddingVertical, {color: AppColors.white,}]}>{'JOIN FATHOM'}</Text>
-                    <Text p style={[AppStyles.paddingBottom, {color: AppColors.white,}]}>{'Create your account'}</Text>
                     <Button
                         backgroundColor={AppColors.white}
                         buttonStyle={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontalLrg]}
@@ -151,7 +163,7 @@ class Start extends Component {
                     onPress={this._routeToLogin}
                     style={[AppStyles.containerCentered, {height: AppSizes.screen.heightOneThird, width: AppSizes.screen.width,}]}
                 >
-                    <Text h2 style={[AppStyles.paddingBottom, {color: AppColors.black,}]}>{'ALREADY A MEMEBER?'}</Text>
+                    <Text h5 style={[AppStyles.paddingBottom, {color: AppColors.black,}]}>{'ALREADY A MEMEBER?'}</Text>
                     <Text p style={{color: AppColors.primary.yellow.hundredPercent,}}>{'Let\'s login now.'}</Text>
                 </TouchableOpacity>
             </View>

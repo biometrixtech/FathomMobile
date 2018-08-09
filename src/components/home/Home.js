@@ -31,12 +31,33 @@ import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } fro
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
 const recoveryMessage = 'Great work! Keep taking care of your body. Target 2-4 Active Recovery sessions after each hard training session.';
-const enabledDescriptionColor = AppColors.primary.yellow.hundredPercent;
-const enabledBackgroundColor = AppColors.zeplin.blueBackground;
+
+// const enabledDescriptionColor = AppColors.primary.yellow.hundredPercent;
+// const enabledBackgroundColor = AppColors.zeplin.blueBackground;
+// const enabledHeaderColor = AppColors.white;
+
+// const disabledDescriptionColor = `${AppColors.primary.yellow.hundredPercent}CC`; // 80%
+// const disabledBackgroundColor = `${AppColors.zeplin.blueBackground}CC`; // 80%
+// const disabledHeaderColor = `${AppColors.white}CC`; // 80%
+
+const whenEnabledBackgroundColor = AppColors.white;
+const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
+const whenEnabledBorderColor = AppColors.zeplin.lightGrey;
+const whenEnabledDescriptionColor = AppColors.zeplin.darkGrey;
+const whenDisabledBackgroundColor = AppColors.white;
+const whenDisabledHeaderColor = AppColors.zeplin.blueBackground;
+const whenDisabledBorderColor = AppColors.zeplin.blueBackground;
+const whenDisabledDescriptionColor = AppColors.zeplin.blueBackground;
+
+const disabledBackgroundColor = AppColors.white;
+const disabledHeaderColor = AppColors.zeplin.blueBackground;
+const disabledBorderColor = AppColors.zeplin.blueBackground;
+const disabledDescriptionColor = AppColors.zeplin.blueBackground;
+const enabledBackgroundColor = AppColors.zeplin.darkBlue;
 const enabledHeaderColor = AppColors.white;
-const disabledDescriptionColor = `${AppColors.primary.yellow.hundredPercent}CC`; // 80%
-const disabledBackgroundColor = `${AppColors.zeplin.blueBackground}CC`; // 80%
-const disabledHeaderColor = `${AppColors.white}CC`; // 80%
+const enabledBorderColor = AppColors.zeplin.darkBlue;
+const enabledDescriptionColor = AppColors.primary.yellow.hundredPercent;
+
 const subtextColor = `${AppColors.white}33`; // 20%
 
 /* Component ==================================================================== */
@@ -516,6 +537,14 @@ class Home extends Component {
 
         let flag = dailyPlanObj && page === dailyPlanObj.nav_bar_indicator ? true : false;
 
+        let currentPage = this.tabView ? this.tabView.state.currentPage : 0;
+        let page0Width = AppSizes.screen.widthThreeQuarters;
+        let page1Width = currentPage === 0 || currentPage === 2 ? AppSizes.screen.widthQuarter : AppSizes.screen.widthHalf;
+        let page2Width = AppSizes.screen.widthThreeQuarters;
+        let page0Styles = [AppStyles.leftTabBar, {width: page0Width}];
+        let page1Styles = [AppStyles.centerTabBar, {width: page1Width}];
+        let page2Styles = [AppStyles.rightTabBar, {width: page2Width}];
+
         return <TouchableWithoutFeedback
             key={`${name}_${page}`}
             accessible={true}
@@ -525,7 +554,7 @@ class Home extends Component {
             onLayout={onLayoutHandler}
         >
             <View>
-                <View style={[page === 0 ? AppStyles.leftTabBar : page === 1 ? AppStyles.centerTabBar : AppStyles.rightTabBar]}>
+                <View style={[page === 0 ? page0Styles : page === 1 ? page1Styles : page2Styles]}>
                     <Text
                         onLayout={event =>
                             this.setState({
@@ -582,27 +611,50 @@ class Home extends Component {
             'Loading...';
         let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj);
 
-        let readinessSurveyBackgroundColor = isDailyReadinessSurveyCompleted ? disabledBackgroundColor : enabledBackgroundColor;
-        let readinessSurveyDescriptionColor = isDailyReadinessSurveyCompleted ? disabledDescriptionColor : enabledDescriptionColor;
-        let readinessSurveyHeaderColor = isDailyReadinessSurveyCompleted ? disabledHeaderColor : enabledHeaderColor;
-        let activeRecoveryBackgroundColor = !isDailyReadinessSurveyCompleted ? disabledBackgroundColor : enabledBackgroundColor;
-        let activeRecoveryDescriptionColor = !isDailyReadinessSurveyCompleted ? disabledDescriptionColor : enabledDescriptionColor;
-        let activeRecoveryHeaderColor = !isDailyReadinessSurveyCompleted ? disabledHeaderColor : enabledHeaderColor;
-
         let isPreRecoveryCompleted = dailyPlanObj && dailyPlanObj.pre_recovery_completed ? true : false;
         let disabled = dailyPlanObj && dailyPlanObj.pre_recovery ?
             isPreRecoveryCompleted || (!isDailyReadinessSurveyCompleted || (prepare.isActiveRecoveryCollapsed === true && prepare.finishedRecovery)) || dailyPlanObj.pre_recovery_completed
             :
             true;
+
+        let readinessSurveyBackgroundColor = isDailyReadinessSurveyCompleted ? disabledBackgroundColor : enabledBackgroundColor;
+        let readinessSurveyDescriptionColor = isDailyReadinessSurveyCompleted ? disabledDescriptionColor : enabledDescriptionColor;
+        let readinessSurveyHeaderColor = isDailyReadinessSurveyCompleted ? disabledHeaderColor : enabledHeaderColor;
+        let readinessSurveyBorderColor = isDailyReadinessSurveyCompleted ? disabledBorderColor : enabledBorderColor;
+        let activeRecoveryBackgroundColor = disabled ? disabledBackgroundColor : enabledBackgroundColor;
+        let activeRecoveryDescriptionColor = disabled ? disabledDescriptionColor : enabledDescriptionColor;
+        let activeRecoveryHeaderColor = disabled ? disabledHeaderColor : enabledHeaderColor;
+        let activeRecoveryBorderColor = disabled ? disabledBorderColor : enabledBorderColor;
+        let activeRecoveryActiveTimeBackgroundColor = disabled ? AppColors.white : activeRecoveryBackgroundColor;
+        let activeRecoveryActiveTimeDescriptionColor = disabled ? AppColors.zeplin.darkBlue : activeRecoveryDescriptionColor;
+        let activeRecoveryActiveTimeHeaderColor = disabled ? AppColors.zeplin.lightGrey : activeRecoveryHeaderColor;
+        let activeRecoveryActiveTimeBorderColor = disabled ? AppColors.zeplin.lightGrey : activeRecoveryBorderColor;
+        let activeRecoveryActiveTimeSubtextColor = disabled ? AppColors.zeplin.darkBlue : subtextColor;
+        let activeRecoveryWhenBackgroundColor = disabled ? whenDisabledBackgroundColor : whenEnabledBackgroundColor;
+        let activeRecoveryWhenDescriptionColor = disabled ? whenDisabledDescriptionColor : whenEnabledDescriptionColor;
+        let activeRecoveryWhenHeaderColor = disabled ? whenDisabledHeaderColor : whenEnabledHeaderColor;
+        let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : whenEnabledBorderColor;
+
         return (
-            <View style={{ flex: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
+            <ScrollView
+                contentContainerStyle={{flexGrow: 1, backgroundColor: AppColors.white}}
+                refreshControl={
+                    <RefreshControl
+                        colors={[AppColors.primary.yellow.hundredPercent]}
+                        onRefresh={this._handleExerciseListRefresh}
+                        refreshing={this.state.isExerciseListRefreshing}
+                        title={'Loading...'}
+                        titleColor={AppColors.primary.yellow.hundredPercent}
+                        tintColor={AppColors.primary.yellow.hundredPercent}
+                    />
+                }
+                tabLabel={tabs[index]}
+            >
                 <Spacer />
                 <ListItem
                     containerStyle={{ borderBottomWidth: 0 }}
-                    hideChevron={!isDailyReadinessSurveyCompleted || (prepare.isActiveRecoveryCollapsed === true && completedExercises.length > 0)}
-                    leftIcon={{ name: isDailyReadinessSurveyCompleted ? 'check-box' : 'fiber-manual-record', size: 20, color: AppColors.black }}
-                    rightIcon={!isDailyReadinessSurveyCompleted ? null : { name: `expand-${prepare.isReadinessSurveyCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
-                    onPress={() => !isDailyReadinessSurveyCompleted ? null : this.setState({ prepare: Object.assign({}, prepare, { isReadinessSurveyCollapsed: !prepare.isReadinessSurveyCollapsed }) }) }
+                    hideChevron={true}
+                    leftIcon={{ name: isDailyReadinessSurveyCompleted ? 'check-circle' : 'fiber-manual-record', size: 20, color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black }}
                     title={'READINESS SURVEY'}
                     titleStyle={[AppStyles.h3, { fontWeight: 'bold', color: AppColors.activeTabText }]}
                 />
@@ -615,23 +667,22 @@ class Home extends Component {
                             <View style={{ paddingLeft: 15, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
                             <View style={{ flex: 1, paddingLeft: 10 }}>
                                 <View style={{ flexDirection: 'row' }}>
-                                    <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: readinessSurveyBackgroundColor }}>
-                                        <Text h7 style={{ color: readinessSurveyHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN'}</Text>
-                                        <Text style={{ color: readinessSurveyDescriptionColor, fontWeight: 'bold' }}>{'EARLY IN'}</Text>
-                                        <Text style={{ color: readinessSurveyDescriptionColor, fontWeight: 'bold' }}>{'THE DAY'}</Text>
+                                    <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                        <Text h7 style={{ color: whenEnabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN'}</Text>
+                                        <Text style={{ color: whenEnabledDescriptionColor, fontWeight: 'bold' }}>{'EARLY IN'}</Text>
+                                        <Text style={{ color: whenEnabledDescriptionColor, fontWeight: 'bold' }}>{'THE DAY'}</Text>
                                     </View>
-                                    <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: readinessSurveyBackgroundColor }}>
+                                    {/*<View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: readinessSurveyBackgroundColor }}>
                                         <Text h7 style={{ color: readinessSurveyHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'ACTIVE TIME'}</Text>
                                         <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
                                             <Text h1 style={{ color: readinessSurveyDescriptionColor }}>{'1 '}</Text>
                                             <Text h7 style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'MIN'}</Text>
                                         </View>
-                                    </View>
-                                    <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: readinessSurveyBackgroundColor }}>
+                                    </View>*/}
+                                    <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: readinessSurveyBackgroundColor, borderColor: readinessSurveyBorderColor, borderWidth: 1, borderRadius: 5 }}>
                                         <Text h7 style={{ color: readinessSurveyHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHY'}</Text>
-                                        <Text h6 style={{ color: readinessSurveyDescriptionColor, fontWeight: 'bold' }}>{'PERSONALIZE'}</Text>
-                                        <Text h6 style={{ color: readinessSurveyDescriptionColor, fontWeight: 'bold' }}>{'PREPARATION'}</Text>
-                                        <Text h6 style={{ color: readinessSurveyDescriptionColor, fontWeight: 'bold' }}>{'& RECOVERY'}</Text>
+                                        <Text style={{ color: readinessSurveyDescriptionColor, fontWeight: 'bold' }}>{'PERSONALIZE'}</Text>
+                                        <Text style={{ color: readinessSurveyDescriptionColor, fontWeight: 'bold' }}>{'YOUR PLAN'}</Text>
                                     </View>
                                 </View>
                                 {
@@ -640,8 +691,8 @@ class Home extends Component {
                                         <View>
                                             <Spacer size={60}/>
                                             <Button
-                                                backgroundColor={AppColors.white}
-                                                color={AppColors.primary.yellow.hundredPercent}
+                                                backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                                color={AppColors.white}
                                                 containerViewStyle={{ position: 'absolute', left: 10, bottom: 0, right: 25 }}
                                                 outlined
                                                 onPress={() => this.setState({ isReadinessSurveyModalOpen: true })}
@@ -659,7 +710,7 @@ class Home extends Component {
                     containerStyle={{ borderBottomWidth: 0 }}
                     disabled={disabled}
                     hideChevron={disabled}
-                    leftIcon={{ name: (prepare.isActiveRecoveryCollapsed && prepare.finishedRecovery) || (dailyPlanObj && dailyPlanObj.pre_recovery_completed) ? 'check-box' : disabled ? 'lock' : 'fiber-manual-record', size: 20, color: AppColors.black }}
+                    leftIcon={{ name: (prepare.isActiveRecoveryCollapsed && prepare.finishedRecovery) || (dailyPlanObj && dailyPlanObj.pre_recovery_completed) ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record', size: 20, color: (prepare.isActiveRecoveryCollapsed && prepare.finishedRecovery) || (dailyPlanObj && dailyPlanObj.pre_recovery_completed) ? AppColors.primary.yellow.hundredPercent : AppColors.black }}
                     rightIcon={!isDailyReadinessSurveyCompleted ? null : { name: `expand-${prepare.isActiveRecoveryCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
                     onPress={() => !isDailyReadinessSurveyCompleted ? null : this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed }) }) }
                     title={'ACTIVE RECOVERY'}
@@ -675,44 +726,55 @@ class Home extends Component {
                             </View>
                             :
                             <View style={{ flexDirection: 'row' }}>
-                                <View style={{ paddingLeft: 15, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
+                                <View style={{ paddingLeft: 15 }}/>{/*, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent standard padding of 10 and 5 for half the default size of icons */}
                                 <View style={{ flex: 1, paddingLeft: 10 }}>
                                     {
                                         recoveryObj
                                             ?
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: activeRecoveryBackgroundColor }}>
-                                                    <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN'}</Text>
-                                                    <Text h6 style={{ color: activeRecoveryDescriptionColor, fontWeight: 'bold' }}>{'ANYTIME'}</Text>
-                                                    <Text h6 style={{ color: activeRecoveryDescriptionColor, fontWeight: 'bold' }}>{'BEFORE'}</Text>
-                                                    <Text h6 style={{ color: activeRecoveryDescriptionColor, fontWeight: 'bold' }}>{'TRAINING'}</Text>
-                                                </View>
-                                                <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: activeRecoveryBackgroundColor }}>
-                                                    <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'ACTIVE TIME'}</Text>
-                                                    <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                                        <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{`${Math.ceil(parseFloat(recoveryObj.minutes_duration))} `}</Text>
-                                                        <Text h7 style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'MIN'}</Text>
+                                            <View>
+                                                <View style={{ flexDirection: 'row' }}>
+                                                    <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: activeRecoveryWhenBackgroundColor, borderColor: activeRecoveryWhenBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                                        <Text h7 style={{ color: activeRecoveryWhenHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN'}</Text>
+                                                        <Text h6 style={{ color: activeRecoveryWhenDescriptionColor, fontWeight: 'bold' }}>{'ANYTIME'}</Text>
+                                                        <Text h6 style={{ color: activeRecoveryWhenDescriptionColor, fontWeight: 'bold' }}>{'BEFORE'}</Text>
+                                                        <Text h6 style={{ color: activeRecoveryWhenDescriptionColor, fontWeight: 'bold' }}>{'TRAINING'}</Text>
+                                                    </View>
+                                                    <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: activeRecoveryActiveTimeBackgroundColor, borderColor: activeRecoveryActiveTimeBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                                        <Text h7 style={{ color: activeRecoveryActiveTimeHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'ACTIVE TIME'}</Text>
+                                                        <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                                                            <Text h1 style={{ color: activeRecoveryActiveTimeDescriptionColor }}>{`${Math.ceil(parseFloat(recoveryObj.minutes_duration))} `}</Text>
+                                                            <Text h7 style={{ color: activeRecoveryActiveTimeSubtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'MIN'}</Text>
+                                                        </View>
+                                                    </View>
+                                                    <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: activeRecoveryBackgroundColor, borderColor: activeRecoveryBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                                        <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'IMPACT SCORE'}</Text>
+                                                        <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                                                            <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{`${parseFloat(recoveryObj.impact_score).toFixed(1) || '#'} `}</Text>
+                                                            <Text h7 style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'/5'}</Text>
+                                                        </View>
                                                     </View>
                                                 </View>
-                                                <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: activeRecoveryBackgroundColor }}>
-                                                    <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'IMPACT SCORE'}</Text>
-                                                    <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                                        <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{`${parseFloat(recoveryObj.impact_score).toFixed(1) || '#'} `}</Text>
-                                                        <Text h7 style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'/5'}</Text>
-                                                    </View>
-                                                </View>
+                                                <Spacer size={60}/>
+                                                <Button
+                                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                                    color={AppColors.white}
+                                                    containerViewStyle={{ position: 'absolute', left: 10, bottom: 0, right: 25 }}
+                                                    outlined
+                                                    onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed })}) }
+                                                    title={'Start'}
+                                                />
                                             </View>
                                             :
                                             <View style={{ flexDirection: 'row' }}>
-                                                <View style={{ flex: 2, marginRight: 5, padding: 8, backgroundColor: activeRecoveryBackgroundColor }}>
-                                                    <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN'}</Text>
-                                                    <Text style={{ color: activeRecoveryDescriptionColor, fontWeight: 'bold' }}>{'ANYTIME BEFORE TRAINING'}</Text>
+                                                <View style={{ flex: 2, marginRight: 5, padding: 8, backgroundColor: activeRecoveryWhenBackgroundColor, borderColor: activeRecoveryWhenBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                                    <Text h7 style={{ color: activeRecoveryWhenHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN'}</Text>
+                                                    <Text style={{ color: activeRecoveryWhenDescriptionColor, fontWeight: 'bold' }}>{'ANYTIME BEFORE TRAINING'}</Text>
                                                 </View>
-                                                <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: activeRecoveryBackgroundColor }}>
-                                                    <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'TYPICAL ACTIVE TIME'}</Text>
+                                                <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: activeRecoveryBackgroundColor, borderColor: activeRecoveryBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                                    <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'TYP. ACTIVE TIME'}</Text>
                                                     <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                                        <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{'15 '}</Text>
-                                                        <Text h7 style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'MIN'}</Text>
+                                                        <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{'5-15 '}</Text>
+                                                        <Text h7 style={{ color: activeRecoveryDescriptionColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'MIN'}</Text>
                                                     </View>
                                                 </View>
                                             </View>
@@ -726,25 +788,13 @@ class Home extends Component {
                                 null
                                 :
                                 !recoveryObj ?
-                                    <ScrollView
-                                        contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
-                                        refreshControl={
-                                            <RefreshControl
-                                                colors={[AppColors.primary.yellow.hundredPercent]}
-                                                onRefresh={this._handleExerciseListRefresh}
-                                                refreshing={this.state.isExerciseListRefreshing}
-                                                title={'Loading...'}
-                                                titleColor={AppColors.primary.yellow.hundredPercent}
-                                                tintColor={AppColors.primary.yellow.hundredPercent}
-                                            />
-                                        }
-                                    >
+                                    <View style={{flex: 1}}>
                                         <ActivityIndicator
                                             color={AppColors.primary.yellow.hundredPercent}
                                             size={'large'}
                                         />
                                         <Text style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
-                                    </ScrollView>
+                                    </View>
                                     :
                                     <Exercises
                                         completedExercises={completedExercises}
@@ -849,7 +899,7 @@ class Home extends Component {
                         :
                         null
                 }
-            </View>
+            </ScrollView>
         );
     };
 
@@ -875,8 +925,20 @@ class Home extends Component {
             :
             true;
         return (
-            <View style={{ flex: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
-                <Spacer />
+            <ScrollView
+                contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
+                refreshControl={
+                    <RefreshControl
+                        colors={[AppColors.primary.yellow.hundredPercent]}
+                        onRefresh={this._handleExerciseListRefresh}
+                        refreshing={this.state.isExerciseListRefreshing}
+                        title={'Loading...'}
+                        titleColor={AppColors.primary.yellow.hundredPercent}
+                        tintColor={AppColors.primary.yellow.hundredPercent}
+                    />
+                }
+                tabLabel={tabs[index]}
+            >
                 <ListItem
                     containerStyle={{ borderBottomWidth: 0 }}
                     disabled={disabled}
@@ -946,25 +1008,13 @@ class Home extends Component {
                             :
                             !recoveryObj
                                 ?
-                                <ScrollView
-                                    contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
-                                    refreshControl={
-                                        <RefreshControl
-                                            colors={[AppColors.primary.yellow.hundredPercent]}
-                                            onRefresh={this._handleExerciseListRefresh}
-                                            refreshing={this.state.isExerciseListRefreshing}
-                                            title={'Loading...'}
-                                            titleColor={AppColors.primary.yellow.hundredPercent}
-                                            tintColor={AppColors.primary.yellow.hundredPercent}
-                                        />
-                                    }
-                                >
+                                <View style={{flex: 1}}>
                                     <ActivityIndicator
                                         color={AppColors.primary.yellow.hundredPercent}
                                         size={'large'}
                                     />
                                     <Text style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
-                                </ScrollView>
+                                </View>
                                 :
                                 <Exercises
                                     completedExercises={completedExercises}
@@ -1029,7 +1079,7 @@ class Home extends Component {
                         :
                         null
                 }
-            </View>
+            </ScrollView>
         );
     };
 
@@ -1042,7 +1092,7 @@ class Home extends Component {
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer />
-                <ListItem
+                {/*<ListItem
                     containerStyle={{ borderBottomWidth: 0 }}
                     hideChevron={true}
                     subtitle={`${['a'].length ? '--' : ''}`}
@@ -1074,20 +1124,20 @@ class Home extends Component {
                     <Spacer size={20} />
                     <View style={{ backgroundColor: `${AppColors.primary.yellow.hundredPercent}B3`, width: AppSizes.screen.widthThird, height: 3, bottom: 0, left: AppSizes.screen.widthThird, right: AppSizes.screen.widthThird, position: 'absolute' }} />
                 </View>
-                <Spacer size={20} />
+                <Spacer size={20} />*/}
                 {
                     train.postPracticeSurveys.map((postPracticeSurvey, i) =>
                         <View key={`postPracticeSurveys${i}`}>
                             <ListItem
                                 containerStyle={{ borderBottomWidth: 0 }}
-                                leftIcon={{ name: postPracticeSurvey.isPostPracticeSurveyCompleted ? 'check-box' : 'fiber-manual-record', size: 20, color: AppColors.black }}
+                                leftIcon={{ name: postPracticeSurvey.isPostPracticeSurveyCompleted ? 'check-circle' : 'fiber-manual-record', size: 20, color: AppColors.black }}
                                 rightIcon={{ name: `expand-${postPracticeSurvey.isPostPracticeSurveyCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
                                 onPress={() => {
                                     let newTrainObject = Object.assign({}, train);
                                     newTrainObject.postPracticeSurveys[i].isPostPracticeSurveyCollapsed = !postPracticeSurvey.isPostPracticeSurveyCollapsed;
                                     this.setState({ train: newTrainObject });
                                 }}
-                                title={'POST PRACTICE SURVEY'}
+                                title={`TRAINING SESSION #${i+1}`}
                                 titleStyle={[AppStyles.h3, { fontWeight: 'bold', color: AppColors.activeTabText }]}
                             />
                             { postPracticeSurvey.isPostPracticeSurveyCollapsed && train.postPracticeSurveys.length > 1 ? this.renderDefaultListGap() : null }
@@ -1102,15 +1152,15 @@ class Home extends Component {
                                                 postPracticeSurvey.isPostPracticeSurveyCompleted
                                                     ?
                                                     <View style={{ flexDirection: 'row' }}>
-                                                        <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: disabledBackgroundColor }}>
-                                                            <Text h7 style={{ color: disabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN'}</Text>
+                                                        <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: whenDisabledBackgroundColor, borderColor: whenDisabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                                            <Text h7 style={{ color: whenDisabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN TO LOG'}</Text>
                                                             <Text>
-                                                                <Text h6 style={{ color: disabledDescriptionColor, fontWeight: 'bold' }}>{'IMMEDIATELY '}</Text>
-                                                                <Text h6 style={{ color: disabledDescriptionColor, fontWeight: 'bold' }}>{'AFTER '}</Text>
-                                                                <Text h6 style={{ color: disabledDescriptionColor, fontWeight: 'bold' }}>{'TRAINING'}</Text>
+                                                                <Text h6 style={{ color: whenDisabledDescriptionColor, fontWeight: 'bold' }}>{'IMMEDIATELY '}</Text>
+                                                                <Text h6 style={{ color: whenDisabledDescriptionColor, fontWeight: 'bold' }}>{'AFTER '}</Text>
+                                                                <Text h6 style={{ color: whenDisabledDescriptionColor, fontWeight: 'bold' }}>{'TRAINING'}</Text>
                                                             </Text>
                                                         </View>
-                                                        <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: disabledBackgroundColor }}>
+                                                        <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: disabledBackgroundColor, borderColor: disabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
                                                             <Text h7 style={{ color: disabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHY'}</Text>
                                                             <Text>
                                                                 <Text h6 style={{ color: disabledDescriptionColor, fontWeight: 'bold' }}>{'LOAD & FATIGUE '}</Text>
@@ -1121,22 +1171,21 @@ class Home extends Component {
                                                     :
                                                     <View>
                                                         <View style={{ flexDirection: 'row' }}>
-                                                            <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: enabledBackgroundColor }}>
-                                                                <Text h7 style={{ color: enabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN'}</Text>
+                                                            <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                                                <Text h7 style={{ color: whenEnabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN TO LOG'}</Text>
                                                                 <Text>
-                                                                    <Text h6 style={{ color: enabledDescriptionColor, fontWeight: 'bold' }}>{'IMMEDIATELY '}</Text>
-                                                                    <Text h6 style={{ color: enabledDescriptionColor, fontWeight: 'bold' }}>{'AFTER '}</Text>
-                                                                    <Text h6 style={{ color: enabledDescriptionColor, fontWeight: 'bold' }}>{'TRAINING'}</Text>
+                                                                    <Text h6 style={{ color: whenEnabledDescriptionColor, fontWeight: 'bold' }}>{'RIGHT AFTER '}</Text>
+                                                                    <Text h6 style={{ color: whenEnabledDescriptionColor, fontWeight: 'bold' }}>{'TRAINING'}</Text>
                                                                 </Text>
                                                             </View>
-                                                            <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: enabledBackgroundColor }}>
+                                                            {/*<View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: enabledBackgroundColor, borderColor: enabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
                                                                 <Text h7 style={{ color: enabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'ACTIVE TIME'}</Text>
                                                                 <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
                                                                     <Text h1 style={{ color: enabledDescriptionColor }}>{'1 '}</Text>
                                                                     <Text h7 style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'MIN'}</Text>
                                                                 </View>
-                                                            </View>
-                                                            <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: enabledBackgroundColor }}>
+                                                            </View>*/}
+                                                            <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: enabledBackgroundColor, borderColor: enabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
                                                                 <Text h7 style={{ color: enabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHY'}</Text>
                                                                 <Text>
                                                                     <Text h6 style={{ color: enabledDescriptionColor, fontWeight: 'bold' }}>{'LOAD & FATIGUE '}</Text>
@@ -1150,12 +1199,12 @@ class Home extends Component {
                                                                 <View>
                                                                     <Spacer size={60} />
                                                                     <Button
-                                                                        backgroundColor={AppColors.white}
-                                                                        color={AppColors.primary.yellow.hundredPercent}
+                                                                        backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                                                        color={AppColors.white}
                                                                         containerViewStyle={{ position: 'absolute', left: 10, bottom: 0, right: 25 }}
                                                                         outlined
                                                                         onPress={this._togglePostSessionSurveyModal}
-                                                                        title={'Start'}
+                                                                        title={'Rate Your Session'}
                                                                     />
                                                                 </View>
                                                                 :
@@ -1169,40 +1218,6 @@ class Home extends Component {
                             { i === train.postPracticeSurveys.length - 1 ? <Spacer size={60}/> : null }
                         </View>
                     )
-                }
-                {
-                    train.postPracticeSurveys.length && train.postPracticeSurveys[train.postPracticeSurveys.length-1].isPostPracticeSurveyCompleted
-                        ?
-                        <View style={{ flexDirection: 'row', flex: 1, position: 'absolute', bottom: 15, }}>
-                            <Button
-                                backgroundColor={AppColors.primary.yellow.hundredPercent}
-                                color={AppColors.white}
-                                containerViewStyle={{ flex: 1 }}
-                                fontSize={AppStyles.h6.fontSize}
-                                onPress={() => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(false, false, index+1))}
-                                raised={false}
-                                title={'Go to Recovery'}
-                            />
-                            <Button
-                                backgroundColor={AppColors.white}
-                                color={AppColors.primary.yellow.hundredPercent}
-                                containerViewStyle={{ flex: 1 }}
-                                fontSize={AppStyles.h6.fontSize}
-                                onPress={() => {
-                                    let newTrainObject = Object.assign({}, train);
-                                    newTrainObject.postPracticeSurveys.push({
-                                        isPostPracticeSurveyCollapsed: false,
-                                        isPostPracticeSurveyCompleted: false,
-                                    });
-                                    this.setState({ train: newTrainObject });
-                                    this._togglePostSessionSurveyModal();
-                                }}
-                                outlined
-                                title={'Log Another Session'}
-                            />
-                        </View>
-                        :
-                        null
                 }
                 {
                     this.state.isPostSessionSurveyModalOpen
@@ -1245,11 +1260,11 @@ class Home extends Component {
     render() {
         return(
             <ScrollableTabView
+                ref={tabView => { this.tabView = tabView; }}
+                renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{borderBottomWidth: 0,}} />}
                 tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
                 tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
                 tabBarUnderlineStyle={{ height: 0 }}
-                ref={tabView => { this.tabView = tabView; }}
-                renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} />}
             >
                 {this.renderPrepare(0)}
                 {this.renderTrain(1)}

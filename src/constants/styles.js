@@ -361,24 +361,24 @@ export default {
     },
     leftTabBar: {
         height:         Sizes.tabbarHeight,
-        width:          Sizes.screen.widthThreeQuarters,
         paddingRight:   Sizes.padding * 3,
         alignItems:     'flex-end',
         justifyContent: 'center',
+        // width:          Sizes.screen.widthThreeQuarters,
     },
     centerTabBar: {
         height:         Sizes.tabbarHeight,
-        width:          Sizes.screen.widthHalf,
         alignItems:     'center',
         justifyContent: 'center',
         paddingLeft:    Sizes.padding * 0.1,
+        // width:          Sizes.screen.widthHalf,
     },
     rightTabBar: {
         height:         Sizes.tabbarHeight,
-        width:          Sizes.screen.widthThreeQuarters,
         alignItems:     'flex-start',
         justifyContent: 'center',
         paddingLeft:    Sizes.padding * 2.8,
+        // width:          Sizes.screen.widthThreeQuarters,
     },
 
     // Radial Menu

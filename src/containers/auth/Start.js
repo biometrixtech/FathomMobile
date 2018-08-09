@@ -11,6 +11,7 @@ const Start = ({
     email,
     environment,
     finalizeLogin,
+    jwt,
     getUserSensorData,
     onFormSubmit,
     password,
@@ -23,6 +24,7 @@ const Start = ({
         email={email}
         environment={environment}
         finalizeLogin={finalizeLogin}
+        jwt={jwt}
         getUserSensorData={getUserSensorData}
         onFormSubmit={onFormSubmit}
         password={password}
@@ -39,6 +41,7 @@ Start.propTypes = {
     environment:       PropTypes.string,
     finalizeLogin:     PropTypes.func.isRequired,
     getUserSensorData: PropTypes.func.isRequired,
+    jwt:               PropTypes.string,
     onFormSubmit:      PropTypes.func.isRequired,
     password:          PropTypes.string,
     registerDevice:    PropTypes.func.isRequired,
@@ -49,6 +52,7 @@ Start.defaultProps = {
     certificate: null,
     environment: 'PROD',
     email:       null,
+    jwt:         null,
     password:    null,
 };
 
@@ -56,6 +60,7 @@ const mapStateToProps = state => ({
     certificate: state.init.certificate || null,
     environment: state.init.environment || 'PROD',
     email:       state.init.email || null,
+    jwt:         state.init.jwt || null,
     password:    state.init.password || null,
     user:        state.user,
 });
