@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-07-27 21:44:36
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-08-03 04:41:10
+ * @Last Modified time: 2018-08-09 10:02:36
  */
 
 /**
@@ -1261,7 +1261,7 @@ class Home extends Component {
         return(
             <ScrollableTabView
                 ref={tabView => { this.tabView = tabView; }}
-                renderTabBar={() => <ScrollableTabBar renderTab={this.renderTab} style={{borderBottomWidth: 0,}} />}
+                renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{borderBottomWidth: 0,}} />}
                 tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
                 tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
                 tabBarUnderlineStyle={{ height: 0 }}
