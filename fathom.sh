@@ -153,6 +153,7 @@ initialize() {
             sed -i '' 's/babel\-jest/\<rootDir\>\/node_modules\/react-native\/jest\/preprocessor.js/' ./node_modules/react-native/jest-preset.json
             yes | cp ./custom/android/RNPushNotificationHelper.java ./node_modules/react-native-push-notification/android/src/main/java/com/dieam/reactnativepushnotification/modules/RNPushNotificationHelper.java
             yes | cp ./custom/javascript/SvgImage.js ./node_modules/react-native-remote-svg/SvgImage.js # handles the iOS patch too
+            yes | cp ./custom/javascript/ScrollableTabBar.js ./node_modules/react-native-scrollable-tab-view/ScrollableTabBar.js
 
             # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
             android_nvm_location=`find ~/ -name '.nvm' -type d -print -quit`
