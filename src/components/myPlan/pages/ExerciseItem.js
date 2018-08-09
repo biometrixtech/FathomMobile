@@ -12,11 +12,11 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { Image, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles, MyPlan } from '../../../constants';
-import { Checkbox, Text } from '../../custom';
+import { Checkbox, TabIcon, Text } from '../../custom';
 
 /* Component ==================================================================== */
 const ExerciseItem = ({
@@ -26,9 +26,9 @@ const ExerciseItem = ({
     isLastItem,
     toggleSelectedExercise,
 }) => (
-    <View style={[AppStyles.paddingTopSml]}>
+    <View style={[AppStyles.paddingTopSml, {borderTopWidth: 1, borderTopColor: AppColors.zeplin.lightGrey, marginHorizontal: 10}]}>
         <View style={[AppStyles.paddingVerticalSml, {flex: 1, flexDirection: 'row', justifyContent: 'space-between',}]}>
-            <View style={{justifyContent: 'center', flex: 1,}}>
+            <View style={{flex: 1, justifyContent: 'center',}}>
                 <Checkbox
                     checked={completedExercises.includes(exercise.library_id)}
                     checkedColor={AppColors.primary.yellow.hundredPercent}
@@ -38,27 +38,48 @@ const ExerciseItem = ({
                     size={20}
                 />
             </View>
-            <View style={{justifyContent: 'center', flex: 7,}}>
+            <TouchableOpacity
+                onPress={() => toggleSelectedExercise(exercise, true)}
+                style={{flex: 2,}}
+            >
+                <Image
+                    resizeMode={'contain'}
+                    source={{uri: MyPlan.cleanExercise(exercise).thumbnailUrl}}
+                    style={{flex: 1, width: 70}}
+                />
+            </TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => toggleSelectedExercise(exercise, true)}
+                style={{flex: 6, justifyContent: 'center',}}
+            >
                 <Text
-                    onPress={() => toggleSelectedExercise(exercise, true)}
+                    p
                     style={{
-                        color:              completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black,
-                        flexWrap:           'wrap',
-                        fontWeight:         'bold',
-                        textDecorationLine: 'none',
+                        color:      completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black,
+                        flexWrap:   'wrap',
+                        fontWeight: '500',
                     }}
                 >
                     {MyPlan.cleanExercise(exercise).displayName}
                 </Text>
-            </View>
-            <View style={{justifyContent: 'center', flex: 2, paddingRight: 10,}}>
-                <Text style={[AppStyles.textRightAligned, {color: completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.secondary.blue.hundredPercent, fontWeight: 'bold'}]}>
+                <Text
+                    p
+                    style={[{
+                        color:      completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.secondary.blue.hundredPercent,
+                        fontWeight: 'bold',
+                    }]}
+                >
                     {MyPlan.cleanExercise(exercise).dosage}
                 </Text>
-            </View>
-        </View>
-        <View style={[isLastItem ? {} : {borderLeftWidth: 1, borderLeftColor: AppColors.primary.grey.thirtyPercent}, {marginLeft: 18}]}>
-            <Text style={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontal, {color: AppColors.primary.grey.thirtyPercent}]}>{''}</Text>
+            </TouchableOpacity>
+            <TabIcon
+                color={completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black}
+                containerStyle={[{flex: 1, justifyContent: 'center',}]}
+                icon={'arrow-right'}
+                onPress={() => toggleSelectedExercise(exercise, true)}
+                size={24}
+                type={'simple-line-icon'}
+            />
         </View>
     </View>
 );

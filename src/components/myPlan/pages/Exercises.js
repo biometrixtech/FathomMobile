@@ -14,14 +14,14 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, } from '../../../constants';
-import { Text } from '../../custom';
+import { AppColors, AppSizes, AppStyles, } from '../../../constants';
+import { Button, Text, } from '../../custom';
 
 // Components
-import { ExerciseItem } from './';
+import { ExerciseItem, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -42,8 +42,7 @@ const Exercises = ({
                 {_.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) =>
                     exerciseIndex.length > 0 ?
                         <View key={index}>
-                            <Text style={[AppStyles.paddingVerticalSml, {marginLeft: 14}]}>{index}</Text>
-                            <View style={{borderLeftWidth: 1, borderLeftColor: AppColors.primary.grey.thirtyPercent, marginLeft: 18, height: 10}} />
+                            <Text style={[AppStyles.paddingVerticalSml, {fontWeight: 'normal', marginLeft: 14}]}>{index}</Text>
                             {_.map(exerciseIndex, (exercise, i) =>
                                 <ExerciseItem
                                     completedExercises={completedExercises}
@@ -59,16 +58,24 @@ const Exercises = ({
                         null
                 )}
                 { completedExercises.length > 0 ?
-                    <TouchableOpacity
+                    <Button
+                        backgroundColor={AppColors.primary.yellow.hundredPercent}
+                        buttonStyle={{marginVertical: AppSizes.padding}}
+                        color={AppColors.white}
                         onPress={toggleCompletedAMPMRecoveryModal}
-                        style={[AppStyles.nextButtonWrapper]}
-                    >
-                        <Text style={[AppStyles.nextButtonText]}>{'Recovery Complete'}</Text>
-                    </TouchableOpacity>
+                        raised={false}
+                        title={'Recovery Complete'}
+                    />
                     :
-                    <View style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.fiftyPercent}]}>
-                        <Text style={[AppStyles.nextButtonText]}>{'complete the exercises to log'}</Text>
-                    </View>
+                    <Button
+                        backgroundColor={AppColors.white}
+                        buttonStyle={{marginVertical: AppSizes.padding}}
+                        color={AppColors.primary.yellow.hundredPercent}
+                        onPress={() => null}
+                        outlined
+                        raised={false}
+                        title={'Check Boxes to Complete Recovery'}
+                    />
                 }
             </View>
             :
