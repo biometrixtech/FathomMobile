@@ -6473,8 +6473,8 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
 
 needle@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/needle/-/needle-2.2.1.tgz#b5e325bd3aae8c2678902fa296f729455d1d3a7d"
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/needle/-/needle-2.2.2.tgz#1120ca4c41f2fcc6976fd28a8968afe239929418"
   dependencies:
     debug "^2.1.2"
     iconv-lite "^0.4.4"
@@ -7829,8 +7829,8 @@ react-native-remote-svg@^1.2.0:
   resolved "https://registry.yarnpkg.com/react-native-remote-svg/-/react-native-remote-svg-1.2.0.tgz#0382d522913e01dc19025efe8e0f8b1a55692a55"
 
 react-native-router-flux@^4.0.0-beta.31:
-  version "4.0.0-beta.42"
-  resolved "https://registry.yarnpkg.com/react-native-router-flux/-/react-native-router-flux-4.0.0-beta.42.tgz#fd129e734f20a655f82d6b8f70b101c3e630c521"
+  version "4.0.0-beta.43"
+  resolved "https://registry.yarnpkg.com/react-native-router-flux/-/react-native-router-flux-4.0.0-beta.43.tgz#4062c36c7cd133e0305a66221558035f83a3561f"
   dependencies:
     lodash.isequal "^4.5.0"
     opencollective "^1.0.3"
@@ -8825,8 +8825,8 @@ source-map-support@^0.4.15, source-map-support@^0.4.2:
     source-map "^0.5.6"
 
 source-map-support@^0.5.6:
-  version "0.5.6"
-  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.6.tgz#4435cee46b1aab62b8e8610ce60f788091c51c13"
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.7.tgz#71503b94aefbc89789841100c18c0cc63a7e6137"
   dependencies:
     buffer-from "^1.0.0"
     source-map "^0.6.0"
