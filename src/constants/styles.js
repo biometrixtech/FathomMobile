@@ -362,21 +362,18 @@ export default {
         paddingRight:   Sizes.padding * (Platform.OS === 'ios' ? 3 : 3.2),
         alignItems:     'flex-end',
         justifyContent: 'center',
-        // width:          Sizes.screen.widthThreeQuarters,
     },
     centerTabBar: {
         height:         Sizes.tabbarHeight,
         alignItems:     'center',
         justifyContent: 'center',
         paddingLeft:    Sizes.padding * (Platform.OS === 'ios' ? 0.2 : 0.3),
-        // width:          Sizes.screen.widthHalf,
     },
     rightTabBar: {
         height:         Sizes.tabbarHeight,
         alignItems:     'flex-start',
         justifyContent: 'center',
         paddingLeft:    Sizes.padding * (Platform.OS === 'ios' ? 3.1 : 3.3),
-        // width:          Sizes.screen.widthThreeQuarters,
     },
 
     // Radial Menu
