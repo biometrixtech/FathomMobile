@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { BackHandler, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
@@ -48,16 +48,32 @@ class Start extends Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            splashScreen: true,
+        };
+    }
+
+    componentWillMount = () => {
+        if (Platform.OS === 'ios') {
+            SplashScreen.hide();
+        }
     }
 
     componentDidMount = () => {
         setTimeout(() => {
             if (this.props.email !== null && this.props.password !== null && this.props.user.id && this.props.jwt) {
+
                 Promise.resolve(this.login());
             } else {
-                SplashScreen.hide();
+                this.hideSplash();
             }
         }, 10);
+    }
+
+    hideSplash = () => {
+        this.setState({ splashScreen: false });
+        SplashScreen.hide();
     }
 
     _routeToLogin = () => {
@@ -134,9 +150,9 @@ class Start extends Component {
                 } else {
                     this._routeToOnboarding();
                 }
-                SplashScreen.hide();
+                this.hideSplash();
             })).catch((err) => {
-                SplashScreen.hide();
+                this.hideSplash();
                 const error = AppAPI.handleError(err);
                 console.log('err',error);
                 this._routeToLogin();
@@ -144,7 +160,28 @@ class Start extends Component {
     }
 
     render = () => {
-        return (
+        let { splashScreen } = this.state;
+        return Platform.OS === 'ios' && splashScreen
+            ?
+            <View>
+                <ImageBackground
+                    source={require('../../../assets/images/standard/background.png')}
+                    style={[AppStyles.containerCentered, { height: AppSizes.screen.height, width: AppSizes.screen.width }]}
+                >
+                    <Image
+                        resizeMode={'contain'}
+                        source={require('../../../assets/images/standard/stacked_icon.png')}
+                        style={{ paddingBottom: 40, height: 100, width: 100 }}
+                    />
+                    <View style={{ paddingTop: 40 }}>
+                        <ActivityIndicator
+                            color={AppColors.primary.yellow.hundredPercent}
+                            size={'large'}
+                        />
+                    </View>
+                </ImageBackground>
+            </View>
+            :
             <View>
                 <ImageBackground
                     source={require('../../../assets/images/standard/start.png')}
@@ -170,7 +207,6 @@ class Start extends Component {
                     <Text p robotoRegular style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(15)}}>{'Let\'s login now.'}</Text>
                 </TouchableOpacity>
             </View>
-        );
     }
 }
 
