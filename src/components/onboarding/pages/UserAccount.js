@@ -46,8 +46,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     title: {
-        fontSize:   15,
-        fontWeight: 'bold',
+        ...AppStyles.oswaldBold,
+        fontSize: 15,
     },
     wrapper: {
         paddingHorizontal: 10,

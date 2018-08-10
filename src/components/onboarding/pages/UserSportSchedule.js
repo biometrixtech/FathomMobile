@@ -29,15 +29,15 @@ const styles = StyleSheet.create({
         // border: 'none',
     },
     selectedText: {
+        ...AppStyles.oswaldBold,
         color:               AppColors.secondary.blue.eightyPercent,
-        fontWeight:          'bold',
         textDecorationColor: AppColors.secondary.blue.eightyPercent,
         textDecorationLine:  'underline',
         textDecorationStyle: 'dashed',
     },
     unselectedText: {
-        color:      AppColors.primary.grey.fiftyPercent,
-        fontWeight: 'bold',
+        ...AppStyles.oswaldBold,
+        color: AppColors.primary.grey.fiftyPercent,
     },
     wrapper: {
         paddingBottom: 20,

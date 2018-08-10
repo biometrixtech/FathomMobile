@@ -12,7 +12,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
@@ -56,10 +56,10 @@ const SoreBodyPart = ({
         <View>
             { index ?
                 <View>
-                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
+                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.primary.grey.thirtyPercent}]}>
                         {index}
                     </Text>
-                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
+                    <Text h3 oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black}]}>
                         {`How ${helpingVerb} your ${bodyPartName} feeling?`}
                     </Text>
                     <View style={[AppStyles.containerCentered]}>
@@ -77,10 +77,10 @@ const SoreBodyPart = ({
                 null
             }
             <View style={[AppStyles.row, AppStyles.paddingVerticalSml, {justifyContent: 'space-between'}]}>
-                <Text style={[AppStyles.paddingHorizontal, AppStyles.bold, {color: AppColors.black}]}>
+                <Text oswaldBold style={[AppStyles.paddingHorizontal, {color: AppColors.black}]}>
                     {bodyPartName}
                 </Text>
-                <Text style={[AppStyles.paddingHorizontal, AppStyles.textRightAligned, AppStyles.bold, {color: AppColors.slider[severityValue]}]}>
+                <Text oswaldBold style={[AppStyles.paddingHorizontal, AppStyles.textRightAligned, {color: AppColors.slider[severityValue]}]}>
                     {severityString.length > 0 ? `${severityValue}: ${severityString}` : ''}
                 </Text>
             </View>

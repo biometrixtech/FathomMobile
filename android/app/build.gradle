@@ -86,7 +86,7 @@ import com.android.build.OutputFile
         // where to put drawable resources / React Native assets, e.g. the ones you use via
         // require('./image.png')), in release mode
         resourcesDirRelease: "$buildDir/intermediates/res/merged/release",
-        nodeExecutableAndArgs: ["/Users/mazenchami/.nvm/versions/node/v10.4.1/bin/node"],
+        nodeExecutableAndArgs: ["/Users/virdesai/.nvm/versions/node/v10.4.1/bin/node"],
         entryFile: "index.js"
  ]
 

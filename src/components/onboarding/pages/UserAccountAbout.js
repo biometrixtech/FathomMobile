@@ -48,16 +48,14 @@ const styles = StyleSheet.create({
         width: AppSizes.screen.width,
     },
     pickerSelectAndroid: {
-        color:      AppColors.primary.grey.hundredPercent,
-        fontFamily: AppFonts.base.family,
-        fontSize:   AppFonts.base.size,
-        fontWeight: AppFonts.base.fontWeight,
+        ...AppFonts.oswaldMedium,
+        color:    AppColors.primary.grey.hundredPercent,
+        fontSize: AppFonts.base.size,
     },
     pickerSelectIOS: {
+        ...AppFonts.oswaldMedium,
         color:          AppColors.primary.grey.hundredPercent,
-        fontFamily:     AppFonts.base.family,
         fontSize:       AppFonts.base.size,
-        fontWeight:     AppFonts.base.fontWeight,
         height:         40,
         justifyContent: 'center',
         paddingLeft:    10,
@@ -113,7 +111,7 @@ class UserAccountAbout extends Component {
                     confirmBtnText={'Confirm'}
                     customStyles={{
                         dateInput:       styles.reusableCustomSpacing,
-                        placeholderText: {color: AppColors.border, fontFamily: AppFonts.base.family, fontSize: AppFonts.base.size, fontWeight: AppFonts.base.fontWeight,},
+                        placeholderText: {color: AppColors.border, fontSize: AppFonts.base.size, ...AppFonts.oswaldMedium, },
                         btnTextConfirm:  {color: AppColors.primary.yellow.hundredPercent},
                     }}
                     date={user.personal_data.birth_date || ''}

@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:28:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-16 18:49:35
+ * @Last Modified time: 2018-08-09 20:40:45
  */
 
 /**
@@ -50,6 +50,7 @@ class CustomCard extends Component {
                 width:           AppSizes.screen.width * 0.85,
             }],
             titleStyle: [
+                AppStyles.oswaldBold,
                 AppStyles.h2,
                 { marginBottom: 15 },
             ],

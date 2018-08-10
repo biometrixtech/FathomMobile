@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import { RefreshControl, ScrollView, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles, } from '../../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
 import { Button, Text, } from '../../custom';
 
 // Components
@@ -42,7 +42,7 @@ const Exercises = ({
                 {_.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) =>
                     exerciseIndex.length > 0 ?
                         <View key={index}>
-                            <Text style={[AppStyles.paddingVerticalSml, {fontWeight: 'normal', marginLeft: 14}]}>{index}</Text>
+                            <Text robotoRegular style={[AppStyles.paddingVerticalSml, {marginLeft: 14, fontSize: AppFonts.scaleFont(15)}]}>{index}</Text>
                             {_.map(exerciseIndex, (exercise, i) =>
                                 <ExerciseItem
                                     completedExercises={completedExercises}
@@ -62,8 +62,11 @@ const Exercises = ({
                         backgroundColor={AppColors.primary.yellow.hundredPercent}
                         buttonStyle={{marginVertical: AppSizes.padding}}
                         color={AppColors.white}
+                        fontFamily={AppStyles.robotoBold.fontFamily}
+                        fontWeight={AppStyles.robotoBold.fontWeight}
                         onPress={toggleCompletedAMPMRecoveryModal}
                         raised={false}
+                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                         title={'Recovery Complete'}
                     />
                     :
@@ -71,16 +74,19 @@ const Exercises = ({
                         backgroundColor={AppColors.white}
                         buttonStyle={{marginVertical: AppSizes.padding}}
                         color={AppColors.primary.yellow.hundredPercent}
+                        fontFamily={AppStyles.robotoBold.fontFamily}
+                        fontWeight={AppStyles.robotoBold.fontWeight}
                         onPress={() => null}
                         outlined
                         raised={false}
+                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                         title={'Check Boxes to Complete Recovery'}
                     />
                 }
             </View>
             :
             <View style={[AppStyles.paddingHorizontal]}>
-                <Text style={[AppStyles.textCenterAligned, AppStyles.h3]}>{'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing. If you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.'}</Text>
+                <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: AppFonts.scaleFont(15) }]}>{'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing. If you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.'}</Text>
             </View>
         }
     </View>

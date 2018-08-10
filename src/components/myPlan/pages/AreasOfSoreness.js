@@ -12,11 +12,11 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
-import { SVGImage, Text } from '../../custom';
+import { AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
+import { SVGImage } from '../../custom';
 
 // import third-party libraries
 import _ from 'lodash';
