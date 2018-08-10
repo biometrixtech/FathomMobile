@@ -173,7 +173,7 @@ class CustomText extends Component {
                             onPress={this._toggleTruncatedText}
                             style={{color: AppColors.primary.yellow.hundredPercent, textDecorationLine: 'underline'}}
                         >
-                            {this.state.isTextExpanded ? 'see less' : 'see more'}
+                            {this.state.isTextExpanded ? '\nsee less' : '\nsee more'}
                         </Text>
                     </Text>
                 </View>

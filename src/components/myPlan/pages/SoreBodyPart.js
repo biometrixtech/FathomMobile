@@ -59,7 +59,7 @@ const SoreBodyPart = ({
                     <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.primary.grey.thirtyPercent}]}>
                         {index}
                     </Text>
-                    <Text h3 oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black}]}>
+                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, {color: AppColors.black}]}>
                         {`How ${helpingVerb} your ${bodyPartName} feeling?`}
                     </Text>
                     <View style={[AppStyles.containerCentered]}>

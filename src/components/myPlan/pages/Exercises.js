@@ -60,19 +60,19 @@ const Exercises = ({
                 { completedExercises.length > 0 ?
                     <Button
                         backgroundColor={AppColors.primary.yellow.hundredPercent}
-                        buttonStyle={{marginVertical: AppSizes.padding}}
+                        buttonStyle={{borderRadius: 0, marginVertical: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed}}
                         color={AppColors.white}
                         fontFamily={AppStyles.robotoBold.fontFamily}
                         fontWeight={AppStyles.robotoBold.fontWeight}
                         onPress={toggleCompletedAMPMRecoveryModal}
-                        raised={false}
+                        rounded={false}
                         textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                         title={'Recovery Complete'}
                     />
                     :
                     <Button
                         backgroundColor={AppColors.white}
-                        buttonStyle={{marginVertical: AppSizes.padding}}
+                        buttonStyle={{borderRadius: 0, marginVertical: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed}}
                         color={AppColors.primary.yellow.hundredPercent}
                         fontFamily={AppStyles.robotoBold.fontFamily}
                         fontWeight={AppStyles.robotoBold.fontWeight}

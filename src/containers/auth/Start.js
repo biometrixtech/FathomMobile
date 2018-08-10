@@ -10,12 +10,14 @@ const Start = ({
     certificate,
     email,
     environment,
+    expires,
     finalizeLogin,
     jwt,
     getUserSensorData,
     onFormSubmit,
     password,
     registerDevice,
+    sessionToken,
     user,
 }) => (
     <Layout
@@ -23,12 +25,14 @@ const Start = ({
         certificate={certificate}
         email={email}
         environment={environment}
+        expires={expires}
         finalizeLogin={finalizeLogin}
         jwt={jwt}
         getUserSensorData={getUserSensorData}
         onFormSubmit={onFormSubmit}
         password={password}
         registerDevice={registerDevice}
+        sessionToken={sessionToken}
         user={user}
     />
 );
@@ -39,30 +43,36 @@ Start.propTypes = {
     certificate:       PropTypes.object,
     email:             PropTypes.string,
     environment:       PropTypes.string,
+    expires:           PropTypes.string,
     finalizeLogin:     PropTypes.func.isRequired,
     getUserSensorData: PropTypes.func.isRequired,
     jwt:               PropTypes.string,
     onFormSubmit:      PropTypes.func.isRequired,
     password:          PropTypes.string,
     registerDevice:    PropTypes.func.isRequired,
+    sessionToken:      PropTypes.string,
     user:              PropTypes.object.isRequired,
 };
 
 Start.defaultProps = {
-    certificate: null,
-    environment: 'PROD',
-    email:       null,
-    jwt:         null,
-    password:    null,
+    certificate:  null,
+    environment:  'PROD',
+    email:        null,
+    expires:      null,
+    jwt:          null,
+    password:     null,
+    sessionToken: null,
 };
 
 const mapStateToProps = state => ({
-    certificate: state.init.certificate || null,
-    environment: state.init.environment || 'PROD',
-    email:       state.init.email || null,
-    jwt:         state.init.jwt || null,
-    password:    state.init.password || null,
-    user:        state.user,
+    certificate:  state.init.certificate || null,
+    environment:  state.init.environment || 'PROD',
+    email:        state.init.email || null,
+    expires:      state.init.expires || null,
+    jwt:          state.init.jwt || null,
+    password:     state.init.password || null,
+    sessionToken: state.init.session_token || null,
+    user:         state.user,
 });
 
 const mapDispatchToProps = {

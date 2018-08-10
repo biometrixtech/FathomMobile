@@ -26,8 +26,8 @@ const ExerciseItem = ({
     isLastItem,
     toggleSelectedExercise,
 }) => (
-    <View style={[AppStyles.paddingTopSml, {borderTopWidth: 1, borderTopColor: AppColors.zeplin.lightGrey, marginHorizontal: 10}]}>
-        <View style={[AppStyles.paddingVerticalSml, {flex: 1, flexDirection: 'row', justifyContent: 'space-between',}]}>
+    <View style={[AppStyles.paddingVerticalXSml, {borderTopWidth: 1, borderTopColor: AppColors.zeplin.lightGrey, marginHorizontal: 10}]}>
+        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
             <View style={{flex: 1, justifyContent: 'center',}}>
                 <Checkbox
                     checked={completedExercises.includes(exercise.library_id)}
@@ -40,12 +40,12 @@ const ExerciseItem = ({
             </View>
             <TouchableOpacity
                 onPress={() => toggleSelectedExercise(exercise, true)}
-                style={{flex: 2,}}
+                style={[AppStyles.paddingHorizontalMed, {flex: 2,}]}
             >
                 <Image
                     resizeMode={'contain'}
                     source={{uri: MyPlan.cleanExercise(exercise).thumbnailUrl}}
-                    style={{flex: 1, width: 70}}
+                    style={{height: 70, width: 70}}
                 />
             </TouchableOpacity>
             <TouchableOpacity
@@ -66,10 +66,10 @@ const ExerciseItem = ({
                 <Text
                     p
                     robotoBold
-                    style={[{
+                    style={{
                         color:    completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.secondary.blue.hundredPercent,
                         fontSize: AppFonts.scaleFont(15),
-                    }]}
+                    }}
                 >
                     {MyPlan.cleanExercise(exercise).dosage}
                 </Text>

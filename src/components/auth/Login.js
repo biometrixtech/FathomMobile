@@ -174,7 +174,7 @@ class Login extends Component {
                         error:                'Your email must be a valid email format',
                         keyboardType:         'email-address',
                         label:                ' ',
-                        placeholder:          'e-mail address',
+                        placeholder:          'e-mail',
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
                         onSubmitEditing:      () => this._focusNextField('Password'),
                         returnKeyType:        'next',
@@ -260,7 +260,7 @@ class Login extends Component {
                     .then(response => {
                         let { authorization, user } = response;
                         return this.props.registerDevice(this.props.certificate, this.props.device, user)
-                            .then(() => this.props.finalizeLogin(user, credentials, authorization.jwt));
+                            .then(() => this.props.finalizeLogin(user, credentials, authorization));
                     })
                     .then(() => this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
@@ -310,16 +310,18 @@ class Login extends Component {
                         type={this.state.form_fields}
                         value={this.state.form_values}
                     />
-                    <Spacer size={10} />
+                    <Spacer size={50} />
                     <Button
                         backgroundColor={AppColors.white}
-                        buttonStyle={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontalXLrg,]}
+                        buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal, {justifyContent: 'center', width: '85%',}]}
+                        containerViewStyle={{ alignItems: 'center', justifyContent: 'center', }}
                         disabled={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? true : false}
+                        disabledStyle={{width: '100%'}}
                         fontFamily={AppStyles.robotoBold.fontFamily}
                         fontWeight={AppStyles.robotoBold.fontWeight}
                         onPress={this.login}
                         textColor={AppColors.primary.yellow.hundredPercent}
-                        textStyle={{ fontSize: AppFonts.scaleFont(16)}}
+                        textStyle={{ fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%', }}
                         title={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? 'Logging in...' : 'Login'}
                     />
                     <Spacer size={10} />

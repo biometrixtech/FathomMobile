@@ -15,6 +15,10 @@ import Fabric from 'react-native-fabric';
 import JWT from './jwt';
 import { AppConfig, ErrorMessages, APIConfig } from '../constants';
 import { store } from '../store';
+import { init } from '../actions';
+
+// import third-party libraries
+import { Actions } from 'react-native-router-flux';
 
 const { Answers } = Fabric;
 
@@ -220,8 +224,32 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                     }
                 }
 
+                // if we get a 401 - authorization failed, re-authorizeUser
+                if (rawRes && /401/.test(`${rawRes.status}`)) {
+                    let authorization = {
+                        jwt:           currentState.init.jwt,
+                        expires:       currentState.init.expires,
+                        session_token: currentState.init.sessionToken,
+                    };
+                    let credentials = {
+                        Email:    currentState.init.email,
+                        Password: currentState.init.password,
+                    };
+                    init.authorizeUser(authorization, currentState.user, credentials)
+                        .then(() => {
+                            // re-send API
+                            return fetcher(method, inputEndpoint, inputParams, body, api_enum);
+                        })
+                        .catch(() => {
+                            // logout user and route to login
+                            return init.logout().then(() => Actions.login());
+                        })
+                }
+
+
                 // Only continue if the header is successful
                 if (rawRes && /20[012]/.test(`${rawRes.status}`)) { return jsonRes; }
+
                 throw jsonRes;
             })
             .then(res => {

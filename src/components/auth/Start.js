@@ -32,18 +32,24 @@ class Start extends Component {
         authorizeUser:  PropTypes.func.isRequired,
         email:          PropTypes.string,
         environment:    PropTypes.string,
+        expires:        PropTypes.string,
         finalizeLogin:  PropTypes.func.isRequired,
         jwt:            PropTypes.string,
         onFormSubmit:   PropTypes.func,
         password:       PropTypes.string,
         registerDevice: PropTypes.func.isRequired,
+        sessionToken:   PropTypes.string,
         user:           PropTypes.object.isRequired,
     }
 
     static defaultProps = {
-        email:       null,
-        environment: 'PROD',
-        password:    null,
+        email:        null,
+        environment:  'PROD',
+        expires:      null,
+        jwt:          null,
+        onFormSubmit: null,
+        password:     null,
+        sessionToken: null,
     }
 
     constructor(props) {
@@ -62,7 +68,14 @@ class Start extends Component {
 
     componentDidMount = () => {
         setTimeout(() => {
-            if (this.props.email !== null && this.props.password !== null && this.props.user.id && this.props.jwt) {
+            if(
+                this.props.email !== null &&
+                this.props.password !== null &&
+                this.props.user.id &&
+                this.props.jwt &&
+                this.props.sessionToken &&
+                this.props.expires
+            ) {
                 Promise.resolve(this.login());
             } else {
                 this.hideSplash();
@@ -98,49 +111,38 @@ class Start extends Component {
         };
 
         /**
-          * - if jwt valid & user object
-          *   - getUserSensorData(user.id)
-          *     - registerDevice (user, userCreds, token, resolve, reject)
-          *       - finalizeLogin (user, userCreds, token, resolve, reject)
-          * - else if jwt not valid
-          *   - authorizeUser (authorization, user, userCreds, resolve, reject)
-          *     - getUserSensorData(user.id)
-          *       - registerDevice (user, userCreds, token, resolve, reject)
-          *         - finalizeLogin (user, userCreds, token, resolve, reject)
-
-
-
           * NOTE: we only come here if the user email, password, id, and jwt token exists
-          * - registerDevice
-          *   - finalizeLogin
-          *     - successful - go to onboarding or home
-          *     - unsuccessful - go to login
+          * - authorizeUser - ONLY IF, our this.props.expires is expired
+          *   - registerDevice
+          *     - finalizeLogin
+          *       - successful - go to onboarding or home
+          *       - unsuccessful - go to login
           */
-
-        /*return this.props.onFormSubmit({
-            email:    credentials.Email,
-            password: credentials.Password,
-        }, false).then(response => {
-            let { authorization, user } = response;
-            return (
-                authorization && authorization.expires && moment(authorization.expires) > moment.utc()
-                    ? Promise.resolve(response)
-                    : authorization && authorization.session_token
-                        ? this.props.authorizeUser(authorization, user, credentials)
-                        : Promise.reject('Unexpected response authorization')
-            );
-        })
+        let authorization = {
+            jwt:           this.props.jwt,
+            expires:       this.props.expires,
+            session_token: this.props.sessionToken,
+        };
+        return (
+            this.props && this.props.expires && moment(this.props.expires) > moment.utc()
+                ? Promise.resolve()
+                : this.props && this.props.sessionToken
+                    ? this.props.authorizeUser(authorization, this.props.user, credentials)
+                    : Promise.reject('Unexpected response authorization')
+        )
             .then(response => {
-                return this.props.getUserSensorData(response.user.id)
-                    .then(res => Promise.resolve(response))
+                if(response) {
+                    authorization.expires = response.authorization.expires;
+                    authorization.jwt = response.authorization.jwt;
+                }
+                return this.props.getUserSensorData(this.props.user.id)
+                    .then(res => Promise.resolve())
                     .catch(err => Promise.reject(err));
             })
-            .then(response => {
-                return this.props.registerDevice(this.props.certificate, this.props.device, this.props.user)
-                    .then(() => this.props.finalizeLogin(this.props.user, credentials, this.props.jwt));
-            })*/
-        return this.props.registerDevice(this.props.certificate, this.props.device, this.props.user)
-            .then(() => this.props.finalizeLogin(this.props.user, credentials, this.props.jwt))
+            .then(() => this.props.registerDevice(this.props.certificate, this.props.device, this.props.user))
+            .then(() => {
+                return this.props.finalizeLogin(this.props.user, credentials, authorization)
+            })
             .then(() => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
@@ -200,10 +202,10 @@ class Start extends Component {
                 </ImageBackground>
                 <TouchableOpacity
                     onPress={this._routeToLogin}
-                    style={[AppStyles.containerCentered, {height: AppSizes.screen.heightOneThird, width: AppSizes.screen.width,}]}
+                    style={[AppStyles.containerCentered, {backgroundColor: AppColors.primary.grey.twentyPercent, height: AppSizes.screen.heightOneThird, width: AppSizes.screen.width,}]}
                 >
-                    <Text h5 oswaldMedium style={[AppStyles.paddingBottom, {color: AppColors.black, fontSize: AppFonts.scaleFont(20)}]}>{'ALREADY A MEMBER?'}</Text>
-                    <Text p robotoRegular style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(15)}}>{'Let\'s login now.'}</Text>
+                    <Text h5 oswaldMedium style={[AppStyles.paddingBottom, {color: AppColors.black, fontSize: AppFonts.scaleFont(24)}]}>{'ALREADY A MEMBER?'}</Text>
+                    <Text p robotoRegular style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(18)}}>{'Let\'s login now.'}</Text>
                 </TouchableOpacity>
             </View>
     }
