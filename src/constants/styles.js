@@ -345,10 +345,9 @@ export default {
         tintColor: Colors.white,
     },
     navbarImageTitle: {
-        height:       Sizes.navbarHeight/(Platform.OS === 'ios' ? 1.8 : 1.5),
-        resizeMode:   'contain',
-        flex:         1,
-        marginBottom: Platform.OS === 'ios' ? 6 : 0
+        height:     Sizes.navbarHeight/(Platform.OS === 'ios' ? 1.8 : 1.5),
+        resizeMode: 'contain',
+        marginTop:  (Sizes.navbarHeight - (Sizes.navbarHeight/(Platform.OS === 'ios' ? 1.8 : 1.5))) / 2,
     },
 
     // TabBar
