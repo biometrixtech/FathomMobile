@@ -560,7 +560,7 @@ class MyPlan extends Component {
                                 colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
                                 style={[AppStyles.containerCentered, AppStyles.paddingVertical, AppStyles.paddingHorizontal, {flex: 1}]}
                             >
-                                <Text style={[AppStyles.paddingVertical, AppStyles.h1, AppStyles.textCenterAligned, AppStyles.bold, {color: AppColors.white}]}>{`You've completed your ${timeOfDay} Recovery!`}</Text>
+                                <Text style={[AppStyles.paddingVertical, AppStyles.h1, AppStyles.textCenterAligned, AppStyles.oswaldBold, {color: AppColors.white}]}>{`You've completed your ${timeOfDay} Recovery!`}</Text>
                                 <Text style={[AppStyles.paddingVertical, AppStyles.h3, AppStyles.textCenterAligned, {color: AppColors.white}]}>{completedAMPMRecoverMessage}</Text>
                                 <Button
                                     backgroundColor={AppColors.primary.yellow.hundredPercent}

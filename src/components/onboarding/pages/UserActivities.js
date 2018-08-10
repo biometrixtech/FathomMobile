@@ -27,14 +27,14 @@ const styles = StyleSheet.create({
         // border: 'none',
     },
     selectedText: {
-        ...AppStyles.bold,
+        ...AppStyles.oswaldBold,
         color:               AppColors.secondary.blue.eightyPercent,
         textDecorationColor: AppColors.secondary.blue.eightyPercent,
         textDecorationLine:  'underline',
         textDecorationStyle: 'dashed',
     },
     unselectedText: {
-        ...AppStyles.bold,
+        ...AppStyles.oswaldBold,
         color: AppColors.primary.grey.fiftyPercent,
     },
     wrapper: {

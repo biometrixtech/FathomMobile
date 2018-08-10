@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
         width:           '50%',
     },
     text: {
-        ...AppStyles.bold,
+        ...AppStyles.oswaldBold,
     },
     textWrapper: {
         alignItems:      'center',

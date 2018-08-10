@@ -41,14 +41,14 @@ const styles = StyleSheet.create({
 const UserRole = ({ componentStep, currentStep, handleFormChange, user }) => (
     <View style={[AppStyles.paddingHorizontalSml, [componentStep === currentStep ? {} : {display: 'none'}] ]}>
         <View style={[AppStyles.paddingVerticalXLrg, AppStyles.paddingHorizontalXLrg]}>
-            <Text style={[AppFonts.h2, AppStyles.bold, AppStyles.textCenterAligned, {color: AppColors.primary.grey.hundredPercent}]}>{'Which one of the follow describes you the best?'}</Text>
+            <Text style={[AppFonts.h2, AppStyles.oswaldBold, AppStyles.textCenterAligned, {color: AppColors.primary.grey.hundredPercent}]}>{'Which one of the follow describes you the best?'}</Text>
         </View>
         <TouchableOpacity onPress={() => handleFormChange('role', 'athlete')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
             <ImageBackground
                 source={require('../../../../assets/images/standard/athlete.jpg')}
                 style={[AppStyles.containerCentered]}
             >
-                <Text style={[AppFonts.h2, AppStyles.bold, {color: AppColors.white}]}>{'ATHLETE'}</Text>
+                <Text style={[AppFonts.h2, AppStyles.oswaldBold, {color: AppColors.white}]}>{'ATHLETE'}</Text>
             </ImageBackground>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleFormChange('role', 'manager')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
@@ -56,7 +56,7 @@ const UserRole = ({ componentStep, currentStep, handleFormChange, user }) => (
                 source={require('../../../../assets/images/standard/parent.jpg')}
                 style={[AppStyles.containerCentered]}
             >
-                <Text style={[AppFonts.h2, AppStyles.bold, {color: AppColors.white}]}>{'ATHLETE\'S PARENT'}</Text>
+                <Text style={[AppFonts.h2, AppStyles.oswaldBold, {color: AppColors.white}]}>{'ATHLETE\'S PARENT'}</Text>
             </ImageBackground>
         </TouchableOpacity>
     </View>

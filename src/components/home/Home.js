@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2018-07-27 21:44:36
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-08-10 04:16:52
+ * @Last Modified time: 2018-08-10 04:33:15
  */
 
 /**
@@ -1010,7 +1010,7 @@ console.log(disabled, activeRecoveryActiveTimeBackgroundColor);
                                     <Text h6 oswaldMedium style={{ color: activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(18) }}>{'TRAINING'}</Text>
                                 </View>
                                 <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: activeRecoveryActiveTimeBackgroundColor, borderColor: activeRecoveryActiveTimeBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                    <Text h7 oswaldMedium style={{ color: activeRecoveryWhenHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'TYP. ACTIVE TIME'}</Text>
+                                    <Text h7 oswaldMedium style={{ color: activeRecoveryActiveTimeHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'TYP. ACTIVE TIME'}</Text>
                                     <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
                                         <Text h1 oswaldMedium style={{ color: activeRecoveryActiveTimeDescriptionColor, fontSize: AppFonts.scaleFont(28) }}>{'5-15 '}</Text>
                                         <Text h7 oswaldMedium style={{ color: activeRecoveryActiveTimeDescriptionColor, lineHeight: AppStyles.h1.lineHeight - 3*AppStyles.h1.marginBottom, fontSize: AppFonts.scaleFont(12) }}>{'MIN'}</Text>
