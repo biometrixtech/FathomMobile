@@ -2394,8 +2394,8 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000875"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000875.tgz#6f904fc89120de4029a9ca0f21d7ac3db89a0dce"
+  version "1.0.30000876"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000876.tgz#0cbd78ad84900196982e5145c26170f6d6a93fd7"
 
 caniuse-lite@^1.0.30000844:
   version "1.0.30000874"
@@ -7829,8 +7829,8 @@ react-native-remote-svg@^1.2.0:
   resolved "https://registry.yarnpkg.com/react-native-remote-svg/-/react-native-remote-svg-1.2.0.tgz#0382d522913e01dc19025efe8e0f8b1a55692a55"
 
 react-native-router-flux@^4.0.0-beta.31:
-  version "4.0.0-beta.43"
-  resolved "https://registry.yarnpkg.com/react-native-router-flux/-/react-native-router-flux-4.0.0-beta.43.tgz#4062c36c7cd133e0305a66221558035f83a3561f"
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-router-flux/-/react-native-router-flux-4.0.0.tgz#3bac7eb3c9b6ab73ffa2fb24b9593bcf72aac668"
   dependencies:
     lodash.isequal "^4.5.0"
     opencollective "^1.0.3"

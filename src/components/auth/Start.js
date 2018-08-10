@@ -63,7 +63,6 @@ class Start extends Component {
     componentDidMount = () => {
         setTimeout(() => {
             if (this.props.email !== null && this.props.password !== null && this.props.user.id && this.props.jwt) {
-
                 Promise.resolve(this.login());
             } else {
                 this.hideSplash();

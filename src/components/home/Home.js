@@ -35,14 +35,14 @@ const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
 const whenEnabledBorderColor = AppColors.zeplin.lightGrey;
 const whenEnabledDescriptionColor = AppColors.zeplin.darkGrey;
 const whenDisabledBackgroundColor = AppColors.white;
-const whenDisabledHeaderColor = AppColors.zeplin.blueBackground;
-const whenDisabledBorderColor = AppColors.zeplin.blueBackground;
-const whenDisabledDescriptionColor = AppColors.zeplin.blueBackground;
+const whenDisabledHeaderColor = AppColors.zeplin.greyText;
+const whenDisabledBorderColor = AppColors.zeplin.greyText;
+const whenDisabledDescriptionColor = AppColors.zeplin.greyText;
 
 const disabledBackgroundColor = AppColors.white;
-const disabledHeaderColor = AppColors.zeplin.blueBackground;
-const disabledBorderColor = AppColors.zeplin.blueBackground;
-const disabledDescriptionColor = AppColors.zeplin.blueBackground;
+const disabledHeaderColor = AppColors.zeplin.greyText;
+const disabledBorderColor = AppColors.zeplin.greyText;
+const disabledDescriptionColor = AppColors.zeplin.greyText;
 const enabledBackgroundColor = AppColors.zeplin.darkBlue;
 const enabledHeaderColor = AppColors.white;
 const enabledBorderColor = AppColors.zeplin.darkBlue;
@@ -127,7 +127,7 @@ class Home extends Component {
             .then(() => this.props.getMyPlan(userId, moment().format('YYYY-MM-DD')))
             .then(response => {
                 if(response.daily_plans[0].daily_readiness_survey_completed) {
-                    let postPracticeSurveys = response.daily_plans[0].practice_sessions.map(session => session.post_session_survey
+                    let postPracticeSurveys = response.daily_plans[0].training_sessions.map(session => session.post_session_survey
                         ? {
                             isPostPracticeSurveyCollapsed: true,
                             isPostPracticeSurveyCompleted: true,
@@ -933,7 +933,7 @@ class Home extends Component {
     };
 
     renderRecover = (index) => {
-        let { completedExercises, recover, train } = this.state;
+        let { completedExercises, recover } = this.state;
         let { plan } = this.props;
 
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
@@ -945,32 +945,24 @@ class Home extends Component {
             'Loading...';
         let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
 
-        // let isPostRecoveryCompleted = dailyPlanObj && dailyPlanObj.post_recovery_completed ? true : false;
-        let disabled = recoveryObj && !recoveryObj.display_exercises
-        // !isDailyReadinessSurveyCompleted || train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted) || (recover.isActiveRecoveryCollapsed && recover.finished) || recoveryObj.completed
-        // !isPostRecoveryCompleted || (!isDailyReadinessSurveyCompleted || train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted)) || dailyPlanObj.post_recovery_completed
-        // :
-        // true;
+        let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
+        let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
+        let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed ? true : false;
 
-        // let disabled = dailyPlanObj && dailyPlanObj.pre_recovery ?
-        //     isPreRecoveryCompleted || (!isDailyReadinessSurveyCompleted || (prepare.isActiveRecoveryCollapsed === true && prepare.finishedRecovery)) || dailyPlanObj.pre_recovery_completed
-        //     :
-        //     true;
+        let activeRecoveryBackgroundColor = disabled ? disabledBackgroundColor : isActive ? enabledBackgroundColor : isCompleted ? enabledBackgroundColor : disabledBackgroundColor;
+        let activeRecoveryDescriptionColor = disabled ? disabledDescriptionColor : isActive ? enabledDescriptionColor : isCompleted ? enabledDescriptionColor : disabledDescriptionColor;
+        let activeRecoveryHeaderColor = disabled ? disabledHeaderColor : isActive ? enabledHeaderColor : isCompleted ? enabledHeaderColor : disabledHeaderColor;
+        let activeRecoveryBorderColor = disabled ? disabledBorderColor : isActive ? enabledBorderColor : isCompleted ? enabledBorderColor : disabledBorderColor;
+        let activeRecoveryActiveTimeBackgroundColor = disabled ? disabledBackgroundColor : isActive ? enabledBackgroundColor : isCompleted ? whenEnabledBackgroundColor : disabledBackgroundColor;
+        let activeRecoveryActiveTimeDescriptionColor = disabled ? disabledDescriptionColor : isActive ? enabledDescriptionColor : isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
+        let activeRecoveryActiveTimeHeaderColor = disabled ? disabledHeaderColor : isActive ? enabledHeaderColor : isCompleted ? whenEnabledHeaderColor : disabledHeaderColor;
+        let activeRecoveryActiveTimeBorderColor = disabled ? disabledBorderColor : isActive ? enabledBorderColor : isCompleted ? whenEnabledBorderColor : disabledBorderColor;
+        let activeRecoveryActiveTimeSubtextColor = disabled ? disabledDescriptionColor : isActive ? subtextColor : isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
+        let activeRecoveryWhenBackgroundColor = disabled ? whenDisabledBackgroundColor : isActive ? whenEnabledBackgroundColor : isCompleted ? whenEnabledBackgroundColor : whenDisabledBackgroundColor;
+        let activeRecoveryWhenDescriptionColor = disabled ? whenDisabledDescriptionColor : isActive ? whenEnabledDescriptionColor : isCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
+        let activeRecoveryWhenHeaderColor = disabled ? whenDisabledHeaderColor : isActive ? whenEnabledHeaderColor : isCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor;
+        let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive ? whenEnabledBorderColor : isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
 
-        let activeRecoveryBackgroundColor = disabled && !recoveryObj ? disabledBackgroundColor : disabled && recoveryObj && !recoveryObj.display_exercises ? enabledBackgroundColor : !disabled && recoveryObj && recoveryObj.display_exercises ? enabledBackgroundColor : disabledBackgroundColor;
-        let activeRecoveryDescriptionColor = disabled && !recoveryObj ? disabledDescriptionColor : disabled && recoveryObj && !recoveryObj.display_exercises ? enabledDescriptionColor : !disabled && recoveryObj && recoveryObj.display_exercises ? enabledDescriptionColor : disabledDescriptionColor;
-        let activeRecoveryHeaderColor = disabled && !recoveryObj ? disabledHeaderColor : disabled && recoveryObj && !recoveryObj.display_exercises ? enabledHeaderColor : !disabled && recoveryObj && recoveryObj.display_exercises ? enabledHeaderColor : disabledHeaderColor;
-        let activeRecoveryBorderColor = disabled && !recoveryObj ? disabledBorderColor : disabled && recoveryObj && !recoveryObj.display_exercises ? enabledBorderColor : !disabled && recoveryObj && recoveryObj.display_exercises ? enabledBorderColor : disabledBorderColor;
-        let activeRecoveryActiveTimeBackgroundColor = disabled && !recoveryObj ? AppColors.white : disabled && recoveryObj && !recoveryObj.display_exercises ? AppColors.white : !disabled && recoveryObj && recoveryObj.display_exercises ? activeRecoveryBackgroundColor : AppColors.white;
-        let activeRecoveryActiveTimeDescriptionColor = disabled && !recoveryObj ? AppColors.zeplin.darkBlue : disabled && recoveryObj && !recoveryObj.display_exercises ? AppColors.zeplin.darkBlue : !disabled && recoveryObj && recoveryObj.display_exercises ? activeRecoveryDescriptionColor : AppColors.zeplin.darkBlue;
-        let activeRecoveryActiveTimeHeaderColor = disabled && !recoveryObj ? AppColors.zeplin.lightGrey : disabled && recoveryObj && !recoveryObj.display_exercises ? AppColors.zeplin.lightGrey : !disabled && recoveryObj && recoveryObj.display_exercises ? activeRecoveryHeaderColor : AppColors.zeplin.lightGrey;
-        let activeRecoveryActiveTimeBorderColor = disabled && !recoveryObj ? AppColors.zeplin.lightGrey : disabled && recoveryObj && !recoveryObj.display_exercises ? AppColors.zeplin.lightGrey : !disabled && recoveryObj && recoveryObj.display_exercises ? activeRecoveryBorderColor : AppColors.zeplin.lightGrey;
-        let activeRecoveryActiveTimeSubtextColor = disabled && !recoveryObj ? AppColors.zeplin.darkBlue : disabled && recoveryObj && !recoveryObj.display_exercises ? AppColors.zeplin.darkBlue : !disabled && recoveryObj && recoveryObj.display_exercises ? subtextColor : AppColors.zeplin.darkBlue;
-        let activeRecoveryWhenBackgroundColor = disabled && !recoveryObj ? whenDisabledBackgroundColor : disabled && recoveryObj && !recoveryObj.display_exercises ? whenEnabledBackgroundColor : !disabled && recoveryObj && recoveryObj.display_exercises ? whenEnabledBackgroundColor : whenDisabledBackgroundColor;
-        let activeRecoveryWhenDescriptionColor = disabled && !recoveryObj ? whenDisabledDescriptionColor : disabled && recoveryObj && !recoveryObj.display_exercises ? whenEnabledDescriptionColor : !disabled && recoveryObj && recoveryObj.display_exercises ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
-        let activeRecoveryWhenHeaderColor = disabled && !recoveryObj ? whenDisabledHeaderColor : disabled && recoveryObj && !recoveryObj.display_exercises ? whenEnabledHeaderColor : !disabled && recoveryObj && recoveryObj.display_exercises ? whenEnabledHeaderColor : whenDisabledHeaderColor;
-        let activeRecoveryWhenBorderColor = disabled && !recoveryObj ? whenDisabledBorderColor : disabled && recoveryObj && !recoveryObj.display_exercises ? whenEnabledBorderColor : !disabled && recoveryObj && recoveryObj.display_exercises ? whenEnabledBorderColor : whenDisabledBorderColor;
-console.log(disabled, activeRecoveryActiveTimeBackgroundColor);
         return (
             <ScrollView
                 contentContainerStyle={{flexGrow: 1, justifyContent: 'center', backgroundColor: AppColors.white }}
@@ -989,16 +981,23 @@ console.log(disabled, activeRecoveryActiveTimeBackgroundColor);
                 <ListItem
                     containerStyle={{ borderBottomWidth: 0 }}
                     disabled={disabled}
-                    hideChevron={disabled}
-                    leftIcon={{ name: recover.isActiveRecoveryCollapsed && recover.finished ? 'check-box' : disabled ? 'lock' : 'fiber-manual-record', size: 20, color: AppColors.black }}
+                    hideChevron={true}
+                    leftIcon={{ name: isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record', size: 20, color: isCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black }}
                     title={'ACTIVE RECOVERY'}
                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                 />
                 {
-                    recover.finished
+                    recover.finished || isCompleted
                         ?
-                        <View>
-                            <Text oswaldRegular style={{ paddingHorizontal: 30, color: AppColors.zeplin.greyText }}>{recoveryMessage}</Text>
+                        <View style={{ flex: 1, paddingLeft: 10 }}>
+                            {
+                                this.renderActiveRecoveryBlocks(
+                                    recoveryObj,
+                                    {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
+                                    {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
+                                    true
+                                )
+                            }
                         </View>
                         :
                         disabled
@@ -1017,28 +1016,33 @@ console.log(disabled, activeRecoveryActiveTimeBackgroundColor);
                                     </View>
                                 </View>
                             </View>
-                            :
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ flex: 1, paddingLeft: 10 }}>
-                                    {
-                                        this.renderActiveRecoveryBlocks(
-                                            recoveryObj,
-                                            {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                            {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
-                                            true
-                                        )
-                                    }
+                            : recover.isActiveRecoveryCollapsed ?
+                                <View>
+                                    <View style={{ flex: 1, paddingLeft: 10 }}>
+                                        {
+                                            this.renderActiveRecoveryBlocks(
+                                                recoveryObj,
+                                                {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
+                                                {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
+                                                true
+                                            )
+                                        }
+                                    </View>
+                                    <Spacer size={60}/>
+                                    <Button
+                                        backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                        color={AppColors.white}
+                                        containerViewStyle={{ position: 'absolute', left: 10, bottom: 0, right: 25 }}
+                                        fontFamily={AppStyles.robotoBold.fontFamily}
+                                        fontWeight={AppStyles.robotoBold.fontWeight}
+                                        outlined
+                                        onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) })}
+                                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                                        title={'Start'}
+                                    />
                                 </View>
-                                <Spacer size={60}/>
-                                <Button
-                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
-                                    color={AppColors.white}
-                                    containerViewStyle={{ position: 'absolute', left: 10, bottom: 0, right: 25 }}
-                                    outlined
-                                    onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) })}
-                                    title={'Start'}
-                                />
-                            </View>
+                                :
+                                null
                 }
                 <View style={{ flex: 1 }}>
                     {
@@ -1053,7 +1057,7 @@ console.log(disabled, activeRecoveryActiveTimeBackgroundColor);
                                         color={AppColors.primary.yellow.hundredPercent}
                                         size={'large'}
                                     />
-                                    <Text h1 oswaldRegular style={[AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
+                                    <Text oswaldRegular style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
                                 </View>
                                 :
                                 <View style={{flex: 1}}>
@@ -1070,7 +1074,8 @@ console.log(disabled, activeRecoveryActiveTimeBackgroundColor);
                                         <Text
                                             onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) }) }
                                             p
-                                            style={[AppStyles.textCenterAligned, {color: AppColors.secondary.blue.eightyPercent, textDecorationLine: 'none',}]}
+                                            robotoBold
+                                            style={[AppStyles.textCenterAligned, {color: AppColors.secondary.blue.eightyPercent, textDecorationLine: 'none', fontSize: AppFonts.scaleFont(12) }]}
                                         >
                                             {'Hide Exercises ^'}
                                         </Text>
