@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:32:47
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-30 21:02:37
+ * @Last Modified time: 2018-08-09 21:06:40
  */
 
 /**
@@ -31,11 +31,10 @@ import _ from 'lodash';
 import Egg from 'react-native-egg';
 import FormValidation from 'tcomb-form-native';
 import Modal from 'react-native-modalbox';
-import SplashScreen from 'react-native-splash-screen';
 
 // Consts and Libs
 import { AppAPI } from '../../lib';
-import { AppColors, APIConfig, AppSizes, AppStyles } from '../../constants';
+import { AppColors, APIConfig, AppFonts, AppSizes, AppStyles } from '../../constants';
 import { onboardingUtils } from '../../constants/utils';
 
 // Components
@@ -59,12 +58,18 @@ inputStyle.textbox.error.borderRightWidth = 0;
 inputStyle.textbox.error.borderTopWidth = 0;
 inputStyle.textbox.error.color = AppColors.secondary.red.fiftyPercent;
 inputStyle.textbox.error.textAlign = 'center';
+inputStyle.textbox.error.fontFamily = AppStyles.robotoBold.fontFamily;
+inputStyle.textbox.error.fontWeight = AppStyles.robotoBold.fontWeight;
+inputStyle.textbox.error.fontSize = AppFonts.scaleFont(15);
 inputStyle.textbox.normal.borderColor = AppColors.white;
 inputStyle.textbox.normal.borderLeftWidth = 0;
 inputStyle.textbox.normal.borderRightWidth = 0;
 inputStyle.textbox.normal.borderTopWidth = 0;
 inputStyle.textbox.normal.color = AppColors.primary.yellow.hundredPercent;
 inputStyle.textbox.normal.textAlign = 'center';
+inputStyle.textbox.normal.fontFamily = AppStyles.robotoBold.fontFamily;
+inputStyle.textbox.normal.fontWeight = AppStyles.robotoBold.fontWeight;
+inputStyle.textbox.normal.fontSize = AppFonts.scaleFont(15);
 inputStyle.textboxView.error.color = AppColors.white;
 inputStyle.textboxView.normal.color = AppColors.white;
 inputStyle.errorBlock.color = AppColors.secondary.red.fiftyPercent;
@@ -310,8 +315,11 @@ class Login extends Component {
                         backgroundColor={AppColors.white}
                         buttonStyle={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontalXLrg,]}
                         disabled={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? true : false}
+                        fontFamily={AppStyles.robotoBold.fontFamily}
+                        fontWeight={AppStyles.robotoBold.fontWeight}
                         onPress={this.login}
                         textColor={AppColors.primary.yellow.hundredPercent}
+                        textStyle={{ fontSize: AppFonts.scaleFont(16)}}
                         title={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? 'Logging in...' : 'Login'}
                     />
                     <Spacer size={10} />

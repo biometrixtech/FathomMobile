@@ -16,7 +16,7 @@ import { Platform, View, } from 'react-native';
 import Video from 'react-native-video';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles } from '../../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
 import { TabIcon, Text, } from '../../custom';
 import { Error } from '../../general';
 
@@ -40,13 +40,13 @@ const SingleExerciseItem = ({
             :
             <Error type={'URL not defined.'} />
         }
-        <Text h2 style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, AppStyles.textBold, {color: AppColors.black}]}>
+        <Text h2 oswaldMedium style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(28)}]}>
             {exercise.displayName}
         </Text>
-        <Text p style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, AppStyles.textBold, {color: AppColors.primary.yellow.hundredPercent}]}>
+        <Text p robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, {color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(15)}]}>
             {exercise.dosage}
         </Text>
-        <Text h6 style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, {color: AppColors.zeplin.darkGreyText}]} truncate={100}>
+        <Text h6 robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15)}]} truncate={100}>
             {exercise.description}
         </Text>
         <TabIcon

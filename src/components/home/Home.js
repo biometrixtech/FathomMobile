@@ -2,43 +2,33 @@
  * @Author: Vir Desai
  * @Date: 2018-07-27 21:44:36
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-08-09 10:02:36
+ * @Last Modified time: 2018-08-10 03:03:03
  */
 
 /**
  * Home View
  */
 import React, { Component } from 'react';
-import { ActivityIndicator, AppState, BackHandler, Platform, RefreshControl, ScrollView, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, BackHandler, Platform, RefreshControl, ScrollView, TouchableWithoutFeedback, View } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import Collapsible from 'react-native-collapsible';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import Modal from 'react-native-modalbox';
 import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants } from '../../constants/';
+import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants, AppFonts } from '../../constants/';
 
 // Components
 import { Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
-import { WebView } from '../general';
 import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } from '../myPlan/pages';
 
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
 const recoveryMessage = 'Great work! Keep taking care of your body. Target 2-4 Active Recovery sessions after each hard training session.';
-
-// const enabledDescriptionColor = AppColors.primary.yellow.hundredPercent;
-// const enabledBackgroundColor = AppColors.zeplin.blueBackground;
-// const enabledHeaderColor = AppColors.white;
-
-// const disabledDescriptionColor = `${AppColors.primary.yellow.hundredPercent}CC`; // 80%
-// const disabledBackgroundColor = `${AppColors.zeplin.blueBackground}CC`; // 80%
-// const disabledHeaderColor = `${AppColors.white}CC`; // 80%
 
 const whenEnabledBackgroundColor = AppColors.white;
 const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
@@ -529,8 +519,7 @@ class Home extends Component {
         let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
         isTabActive = isTabActive;
         const textStyle = AppStyles.tabHeaders;
-        const fontWeight = isTabActive ? '500' : 'normal';
-        const fontSize = isTabActive ? AppStyles.h5.fontSize : AppStyles.h6.fontSize;
+        const fontSize = isTabActive ? AppFonts.scaleFont(20) : AppFonts.scaleFont(16);
         let { page0, page1, page2 } = this.state;
         let yPosition = page === 0 ? page0.y : page === 1 ? page1.y : page2.y;
         let xPosition = page === 0 ? page0.x + page0.width : page === 1 ? page1.x + page1.width : page2.x + page2.width;
@@ -563,7 +552,7 @@ class Home extends Component {
                                 page2: page === 2 ? event.nativeEvent.layout : page2,
                             })
                         }
-                        style={[textStyle, {color: isTabActive ? AppColors.activeTabText : AppColors.inactiveTabText, fontWeight, fontSize }]}
+                        style={[textStyle, {color: isTabActive ? AppColors.activeTabText : AppColors.inactiveTabText, fontSize }]}
                     >
                         {name}
                     </Text>
@@ -582,7 +571,7 @@ class Home extends Component {
                     }
                 </View>
                 {
-                    isTabActive ? <View style={{ backgroundColor: AppColors.primary.yellow.hundredPercent, width: AppSizes.screen.widthQuarter, height: 4, bottom: 0, left: AppSizes.screen.width * (page === 0 ? 0.375 : page === 1 ? 0.1275 : 0.1125), position: 'absolute' }} /> : null
+                    isTabActive ? <View style={{ backgroundColor: AppColors.primary.yellow.hundredPercent, width: AppSizes.screen.widthQuarter, height: 4, bottom: 0, left: AppSizes.screen.width * (page === 0 ? 0.375 : page === 1 ? 0.1275 : 0.1275), position: 'absolute' }} /> : null
                 }
             </View>
         </TouchableWithoutFeedback>;
@@ -598,26 +587,26 @@ class Home extends Component {
     }
 
     renderActiveRecoveryBlocks = (recoveryObj, whenStyles, styles) => {
-        return(
+        return (
             <View style={{ flexDirection: 'row' }}>
                 <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: whenStyles. activeRecoveryWhenBackgroundColor, borderColor: whenStyles. activeRecoveryWhenBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                    <Text h7 style={{ color: whenStyles. activeRecoveryWhenHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN'}</Text>
-                    <Text h6 style={{ color: whenStyles. activeRecoveryWhenDescriptionColor, fontWeight: 'bold' }}>{'ANYTIME'}</Text>
-                    <Text h6 style={{ color: whenStyles. activeRecoveryWhenDescriptionColor, fontWeight: 'bold' }}>{'BEFORE'}</Text>
-                    <Text h6 style={{ color: whenStyles. activeRecoveryWhenDescriptionColor, fontWeight: 'bold' }}>{'TRAINING'}</Text>
+                    <Text h7 oswaldMedium style={{ color: whenStyles. activeRecoveryWhenHeaderColor, fontSize: AppFonts.scaleFont(12), paddingBottom: 5 }}>{'WHEN'}</Text>
+                    <Text h6 oswaldMedium style={{ color: whenStyles. activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(14) }}>{'ANYTIME'}</Text>
+                    <Text h6 oswaldMedium style={{ color: whenStyles. activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(14) }}>{'BEFORE'}</Text>
+                    <Text h6 oswaldMedium style={{ color: whenStyles. activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(14) }}>{'TRAINING'}</Text>
                 </View>
                 <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: styles.activeRecoveryActiveTimeBackgroundColor, borderColor: styles.activeRecoveryActiveTimeBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                    <Text h7 style={{ color: styles.activeRecoveryActiveTimeHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'ACTIVE TIME'}</Text>
+                    <Text h7 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'flex-end', }}>
-                        <Text h1 style={{ color: styles.activeRecoveryActiveTimeDescriptionColor }}>{`${Math.ceil(parseFloat(recoveryObj.minutes_duration))} `}</Text>
-                        <Text h7 style={{ color: styles.activeRecoveryActiveTimeSubtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'MIN'}</Text>
+                        <Text h1 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeDescriptionColor, fontSize: AppFonts.scaleFont(28) }}>{`${Math.ceil(parseFloat(recoveryObj.minutes_duration))} `}</Text>
+                        <Text h7 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeSubtextColor, lineHeight: AppStyles.h1.lineHeight - 3*AppStyles.h1.marginBottom, fontSize: AppFonts.scaleFont(12) }}>{'MIN'}</Text>
                     </View>
                 </View>
                 <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: styles.activeRecoveryBackgroundColor, borderColor: styles.activeRecoveryBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                    <Text h7 style={{ color: styles.activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'IMPACT SCORE'}</Text>
+                    <Text h7 oswaldMedium style={{ color: styles.activeRecoveryHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'IMPACT SCORE'}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'flex-end', }}>
-                        <Text h1 style={{ color: styles.activeRecoveryDescriptionColor }}>{`${parseFloat(recoveryObj.impact_score).toFixed(1) || '#'} `}</Text>
-                        <Text h7 style={{ color: styles.subtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'/5'}</Text>
+                        <Text h1 oswaldMedium style={{ color: styles.activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(28) }}>{`${parseFloat(recoveryObj.impact_score).toFixed(1) || '#'} `}</Text>
+                        <Text h7 oswaldMedium style={{ color: styles.subtextColor, lineHeight: AppStyles.h1.lineHeight - 3*AppStyles.h1.marginBottom, fontSize: AppFonts.scaleFont(12) }}>{'/5'}</Text>
                     </View>
                 </View>
             </View>
@@ -706,7 +695,7 @@ class Home extends Component {
                     hideChevron={true}
                     leftIcon={{ name: isDailyReadinessSurveyCompleted ? 'check-circle' : 'fiber-manual-record', size: 20, color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black }}
                     title={'READINESS SURVEY'}
-                    titleStyle={[AppStyles.h3, { fontWeight: 'bold', color: AppColors.activeTabText }]}
+                    titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                 />
                 {
                     prepare.isReadinessSurveyCollapsed || isDailyReadinessSurveyCompleted
@@ -718,14 +707,14 @@ class Home extends Component {
                             <View style={{ flex: 1, paddingLeft: 10 }}>
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                        <Text h7 style={{ color: whenEnabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN'}</Text>
-                                        <Text style={{ color: whenEnabledDescriptionColor, fontWeight: 'bold' }}>{'EARLY IN'}</Text>
-                                        <Text style={{ color: whenEnabledDescriptionColor, fontWeight: 'bold' }}>{'THE DAY'}</Text>
+                                        <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
+                                        <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'EARLY IN'}</Text>
+                                        <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'THE DAY'}</Text>
                                     </View>
                                     <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: readinessSurveyBackgroundColor, borderColor: readinessSurveyBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                        <Text h7 style={{ color: readinessSurveyHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHY'}</Text>
-                                        <Text style={{ color: readinessSurveyDescriptionColor, fontWeight: 'bold' }}>{'PERSONALIZE'}</Text>
-                                        <Text style={{ color: readinessSurveyDescriptionColor, fontWeight: 'bold' }}>{'YOUR PLAN'}</Text>
+                                        <Text h7 oswaldMedium style={{ color: readinessSurveyHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHY'}</Text>
+                                        <Text oswaldMedium style={{ color: readinessSurveyDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'PERSONALIZE'}</Text>
+                                        <Text oswaldMedium style={{ color: readinessSurveyDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'YOUR PLAN'}</Text>
                                     </View>
                                 </View>
                                 <Spacer size={60}/>
@@ -733,8 +722,11 @@ class Home extends Component {
                                     backgroundColor={AppColors.primary.yellow.hundredPercent}
                                     color={AppColors.white}
                                     containerViewStyle={{ position: 'absolute', left: 10, bottom: 0, right: 25 }}
+                                    fontFamily={AppStyles.robotoBold.fontFamily}
+                                    fontWeight={AppStyles.robotoBold.fontWeight}
                                     outlined
                                     onPress={() => this.setState({ isReadinessSurveyModalOpen: true })}
+                                    textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                                     title={'Start'}
                                 />
                             </View>
@@ -748,7 +740,7 @@ class Home extends Component {
                     leftIcon={{ name: (prepare.isActiveRecoveryCollapsed && prepare.finishedRecovery) || (dailyPlanObj && dailyPlanObj.pre_recovery_completed) ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record', size: 20, color: (prepare.isActiveRecoveryCollapsed && prepare.finishedRecovery) || (dailyPlanObj && dailyPlanObj.pre_recovery_completed) ? AppColors.primary.yellow.hundredPercent : AppColors.black }}
                     // onPress={() => !isDailyReadinessSurveyCompleted ? null : this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed }) }) }
                     title={'ACTIVE RECOVERY'}
-                    titleStyle={[AppStyles.h3, { fontWeight: 'bold', color: AppColors.activeTabText }]}
+                    titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                 />
                 {
                     prepare.isActiveRecoveryCollapsed
@@ -784,22 +776,25 @@ class Home extends Component {
                                                     backgroundColor={AppColors.primary.yellow.hundredPercent}
                                                     color={AppColors.white}
                                                     containerViewStyle={{ position: 'absolute', left: 10, bottom: 0, right: 25 }}
+                                                    fontFamily={AppStyles.robotoBold.fontFamily}
+                                                    fontWeight={AppStyles.robotoBold.fontWeight}
                                                     outlined
                                                     onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed })}) }
+                                                    textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                                                     title={'Start'}
                                                 />
                                             </View>
                                             :
                                             <View style={{ flexDirection: 'row' }}>
-                                                <View style={{ flex: 2, marginRight: 5, padding: 8, backgroundColor: activeRecoveryWhenBackgroundColor, borderColor: activeRecoveryWhenBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                                    <Text h7 style={{ color: activeRecoveryWhenHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN'}</Text>
-                                                    <Text style={{ color: activeRecoveryWhenDescriptionColor, fontWeight: 'bold' }}>{'ANYTIME BEFORE TRAINING'}</Text>
+                                                <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: activeRecoveryWhenBackgroundColor, borderColor: activeRecoveryWhenBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                                    <Text h7 oswaldMedium style={{ color: activeRecoveryWhenHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
+                                                    <Text oswaldMedium style={{ color: activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(18) }}>{'ANYTIME BEFORE TRAINING'}</Text>
                                                 </View>
                                                 <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: activeRecoveryBackgroundColor, borderColor: activeRecoveryBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                                    <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'TYP. ACTIVE TIME'}</Text>
+                                                    <Text h7 oswaldMedium style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'TYP. ACTIVE TIME'}</Text>
                                                     <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                                        <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{'5-15 '}</Text>
-                                                        <Text h7 style={{ color: activeRecoveryDescriptionColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'MIN'}</Text>
+                                                        <Text h1 oswaldMedium style={{ color: activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(28) }}>{'5-15 '}</Text>
+                                                        <Text h7 oswaldMedium style={{ color: activeRecoveryDescriptionColor, lineHeight: AppStyles.h1.lineHeight - 3*AppStyles.h1.marginBottom, fontSize: AppFonts.scaleFont(12) }}>{'MIN'}</Text>
                                                     </View>
                                                 </View>
                                             </View>
@@ -818,7 +813,7 @@ class Home extends Component {
                                             color={AppColors.primary.yellow.hundredPercent}
                                             size={'large'}
                                         />
-                                        <Text style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
+                                        <Text oswaldRegular style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
                                     </View>
                                     :
                                     <View style={{flex: 1}}>
@@ -834,7 +829,8 @@ class Home extends Component {
                                             <Text
                                                 onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed }) }) }
                                                 p
-                                                style={[AppStyles.textCenterAligned, {color: AppColors.secondary.blue.eightyPercent, textDecorationLine: 'none',}]}
+                                                robotoBold
+                                                style={[AppStyles.textCenterAligned, {color: AppColors.secondary.blue.eightyPercent, textDecorationLine: 'none', fontSize: AppFonts.scaleFont(12) }]}
                                             >
                                                 {'Hide Exercises ^'}
                                             </Text>
@@ -877,8 +873,11 @@ class Home extends Component {
                             backgroundColor={AppColors.primary.yellow.hundredPercent}
                             color={AppColors.white}
                             containerViewStyle={[AppStyles.nextButtonWrapper, { width: AppSizes.screen.width - 60, position: 'absolute', bottom: 15, left: 15, right: 15 }]}
+                            fontFamily={AppStyles.robotoBold.fontFamily}
+                            fontWeight={AppStyles.robotoBold.fontWeight}
                             onPress={() => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(false, false, index+1))}
                             raised={false}
+                            textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                             title={'Go to Train'}
                         />
                         :
@@ -970,7 +969,7 @@ class Home extends Component {
             true;
         return (
             <ScrollView
-                contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
+                contentContainerStyle={{flexGrow: 1, justifyContent: 'center', backgroundColor: AppColors.white }}
                 refreshControl={
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
@@ -991,27 +990,27 @@ class Home extends Component {
                     rightIcon={!isDailyReadinessSurveyCompleted ? null : { name: `expand-${recover.isActiveRecoveryCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
                     onPress={() => disabled ? null : this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) }) }
                     title={'ACTIVE RECOVERY'}
-                    titleStyle={[AppStyles.h3, { fontWeight: 'bold', color: AppColors.activeTabText }]}
+                    titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                 />
                 {
                     recover.finished
                         ?
                         <View>
-                            <Text style={{ paddingHorizontal: 30, color: AppColors.zeplin.greyText }}>{recoveryMessage}</Text>
+                            <Text oswaldRegular style={{ paddingHorizontal: 30, color: AppColors.zeplin.greyText }}>{recoveryMessage}</Text>
                         </View>
                         :
                         disabled
                             ?
                             <View style={{ flexDirection: 'row', paddingLeft: 25 }}>
-                                <View style={{ flex: 2, marginRight: 5, padding: 8, backgroundColor: disabledBackgroundColor }}>
-                                    <Text h7 style={{ color: disabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN'}</Text>
-                                    <Text style={{ color: disabledDescriptionColor, fontWeight: 'bold' }}>{'ANYTIME AFTER TRAINING'}</Text>
+                                <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: disabledBackgroundColor, borderColor: disabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                    <Text h7 oswaldMedium style={{ color: disabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
+                                    <Text oswaldMedium style={{ color: disabledDescriptionColor, fontSize: AppFonts.scaleFont(18) }}>{'ANYTIME AFTER TRAINING'}</Text>
                                 </View>
-                                <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: disabledBackgroundColor }}>
-                                    <Text h7 style={{ color: disabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'TYPICAL ACTIVE TIME'}</Text>
+                                <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: disabledBackgroundColor, borderColor: disabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                    <Text h7 oswaldMedium style={{ color: disabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'TYPICAL ACTIVE TIME'}</Text>
                                     <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                        <Text h1 style={{ color: disabledDescriptionColor }}>{'15 '}</Text>
-                                        <Text h7 style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'MIN'}</Text>
+                                        <Text h1 oswaldMedium style={{ color: disabledDescriptionColor, fontSize: AppFonts.scaleFont(28) }}>{'15 '}</Text>
+                                        <Text h7 oswaldMedium style={{ color: disabledDescriptionColor, lineHeight: AppStyles.h1.lineHeight - 3*AppStyles.h1.marginBottom, fontSize: AppFonts.scaleFont(12) }}>{'MIN'}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -1020,24 +1019,24 @@ class Home extends Component {
                                 <View style={{ paddingLeft: 15, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent }}/>
                                 <View style={{ flex: 1, paddingLeft: 10 }}>
                                     <View style={{ flexDirection: 'row' }}>
-                                        <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: activeRecoveryBackgroundColor }}>
-                                            <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN'}</Text>
-                                            <Text h6 style={{ color: activeRecoveryDescriptionColor, fontWeight: 'bold' }}>{'ANYTIME'}</Text>
-                                            <Text h6 style={{ color: activeRecoveryDescriptionColor, fontWeight: 'bold' }}>{'BEFORE'}</Text>
-                                            <Text h6 style={{ color: activeRecoveryDescriptionColor, fontWeight: 'bold' }}>{'TRAINING'}</Text>
+                                        <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: activeRecoveryBackgroundColor, borderColor: activeRecoveryBackgroundColor, borderWidth: 1, borderRadius: 5 }}>
+                                            <Text h7 oswaldMedium style={{ color: activeRecoveryHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
+                                            <Text h6 oswaldMedium style={{ color: activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(14) }}>{'ANYTIME'}</Text>
+                                            <Text h6 oswaldMedium style={{ color: activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(14) }}>{'BEFORE'}</Text>
+                                            <Text h6 oswaldMedium style={{ color: activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(14) }}>{'TRAINING'}</Text>
                                         </View>
-                                        <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: activeRecoveryBackgroundColor }}>
-                                            <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'ACTIVE TIME'}</Text>
+                                        <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: activeRecoveryBackgroundColor, borderColor: activeRecoveryBackgroundColor, borderWidth: 1, borderRadius: 5 }}>
+                                            <Text h7 oswaldMedium style={{ color: activeRecoveryHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
                                             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                                <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{`${recoveryObj && recoveryObj.minutes_duration ? parseFloat(recoveryObj.minutes_duration).toFixed(1) : ''} `}</Text>
-                                                <Text h7 style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'MIN'}</Text>
+                                                <Text h1 oswaldMedium style={{ color: activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(28) }}>{`${recoveryObj && recoveryObj.minutes_duration ? parseFloat(recoveryObj.minutes_duration).toFixed(1) : ''} `}</Text>
+                                                <Text h7 oswaldMedium style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - 3*AppStyles.h1.marginBottom, fontSize: AppFonts.scaleFont(12) }}>{'MIN'}</Text>
                                             </View>
                                         </View>
-                                        <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: activeRecoveryBackgroundColor }}>
-                                            <Text h7 style={{ color: activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'IMPACT SCORE'}</Text>
+                                        <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: activeRecoveryBackgroundColor, borderColor: activeRecoveryBackgroundColor, borderWidth: 1, borderRadius: 5 }}>
+                                            <Text h7 oswaldMedium style={{ color: activeRecoveryHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'IMPACT SCORE'}</Text>
                                             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                                <Text h1 style={{ color: activeRecoveryDescriptionColor }}>{`${recoveryObj && recoveryObj.impact_score ? parseFloat(recoveryObj.impact_score).toFixed(1) : ''} `}</Text>
-                                                <Text h7 style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - AppStyles.h1.marginBottom }}>{'/5'}</Text>
+                                                <Text h1 oswaldMedium style={{ color: activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(28) }}>{`${recoveryObj && recoveryObj.impact_score ? parseFloat(recoveryObj.impact_score).toFixed(1) : ''} `}</Text>
+                                                <Text h7 oswaldMedium style={{ color: subtextColor, lineHeight: AppStyles.h1.lineHeight - 3*AppStyles.h1.marginBottom, fontSize: AppFonts.scaleFont(12) }}>{'/5'}</Text>
                                             </View>
                                         </View>
                                     </View>
@@ -1057,7 +1056,7 @@ class Home extends Component {
                                         color={AppColors.primary.yellow.hundredPercent}
                                         size={'large'}
                                     />
-                                    <Text style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
+                                    <Text h1 oswaldRegular style={[AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
                                 </View>
                                 :
                                 <Exercises
@@ -1182,7 +1181,7 @@ class Home extends Component {
                                     this.setState({ train: newTrainObject });
                                 }}
                                 title={`TRAINING SESSION #${i+1}`}
-                                titleStyle={[AppStyles.h3, { fontWeight: 'bold', color: AppColors.activeTabText }]}
+                                titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                             />
                             { postPracticeSurvey.isPostPracticeSurveyCollapsed && train.postPracticeSurveys.length > 1 ? this.renderDefaultListGap() : null }
                             {
@@ -1197,18 +1196,18 @@ class Home extends Component {
                                                     ?
                                                     <View style={{ flexDirection: 'row' }}>
                                                         <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: whenDisabledBackgroundColor, borderColor: whenDisabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                                            <Text h7 style={{ color: whenDisabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN TO LOG'}</Text>
+                                                            <Text h7 oswaldMedium style={{ color: whenDisabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN TO LOG'}</Text>
                                                             <Text>
-                                                                <Text h6 style={{ color: whenDisabledDescriptionColor, fontWeight: 'bold' }}>{'IMMEDIATELY '}</Text>
-                                                                <Text h6 style={{ color: whenDisabledDescriptionColor, fontWeight: 'bold' }}>{'AFTER '}</Text>
-                                                                <Text h6 style={{ color: whenDisabledDescriptionColor, fontWeight: 'bold' }}>{'TRAINING'}</Text>
+                                                                <Text h6 oswaldMedium style={{ color: whenDisabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'IMMEDIATELY '}</Text>
+                                                                <Text h6 oswaldMedium style={{ color: whenDisabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'AFTER '}</Text>
+                                                                <Text h6 oswaldMedium style={{ color: whenDisabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'TRAINING'}</Text>
                                                             </Text>
                                                         </View>
                                                         <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: disabledBackgroundColor, borderColor: disabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                                            <Text h7 style={{ color: disabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHY'}</Text>
+                                                            <Text h7 oswaldMedium style={{ color: disabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHY'}</Text>
                                                             <Text>
-                                                                <Text h6 style={{ color: disabledDescriptionColor, fontWeight: 'bold' }}>{'LOAD & FATIGUE '}</Text>
-                                                                <Text h6 style={{ color: disabledDescriptionColor, fontWeight: 'bold' }}>{'MONITORING'}</Text>
+                                                                <Text h6 oswaldMedium style={{ color: disabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'LOAD & FATIGUE '}</Text>
+                                                                <Text h6 oswaldMedium style={{ color: disabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'MONITORING'}</Text>
                                                             </Text>
                                                         </View>
                                                     </View>
@@ -1216,10 +1215,10 @@ class Home extends Component {
                                                     <View>
                                                         <View style={{ flexDirection: 'row' }}>
                                                             <View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                                                <Text h7 style={{ color: whenEnabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHEN TO LOG'}</Text>
+                                                                <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN TO LOG'}</Text>
                                                                 <Text>
-                                                                    <Text h6 style={{ color: whenEnabledDescriptionColor, fontWeight: 'bold' }}>{'RIGHT AFTER '}</Text>
-                                                                    <Text h6 style={{ color: whenEnabledDescriptionColor, fontWeight: 'bold' }}>{'TRAINING'}</Text>
+                                                                    <Text h6 oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20), lineHeight: AppFonts.lineHeight(22) }}>{'RIGHT AFTER '}</Text>
+                                                                    <Text h6 oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20), lineHeight: AppFonts.lineHeight(22) }}>{'TRAINING'}</Text>
                                                                 </Text>
                                                             </View>
                                                             {/*<View style={{ flex: 1, marginRight: 5, padding: 8, backgroundColor: enabledBackgroundColor, borderColor: enabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
@@ -1230,10 +1229,10 @@ class Home extends Component {
                                                                 </View>
                                                             </View>*/}
                                                             <View style={{ flex: 1, marginRight: 10, padding: 8, backgroundColor: enabledBackgroundColor, borderColor: enabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                                                <Text h7 style={{ color: enabledHeaderColor, fontWeight: 'bold', paddingBottom: 5 }}>{'WHY'}</Text>
+                                                                <Text h7 oswaldMedium style={{ color: enabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHY'}</Text>
                                                                 <Text>
-                                                                    <Text h6 style={{ color: enabledDescriptionColor, fontWeight: 'bold' }}>{'LOAD & FATIGUE '}</Text>
-                                                                    <Text h6 style={{ color: enabledDescriptionColor, fontWeight: 'bold' }}>{'MONITORING'}</Text>
+                                                                    <Text h6 oswaldMedium style={{ color: enabledDescriptionColor, fontSize: AppFonts.scaleFont(20), lineHeight: AppFonts.lineHeight(22) }}>{'LOAD & FATIGUE '}</Text>
+                                                                    <Text h6 oswaldMedium style={{ color: enabledDescriptionColor, fontSize: AppFonts.scaleFont(20), lineHeight: AppFonts.lineHeight(22) }}>{'MONITORING'}</Text>
                                                                 </Text>
                                                             </View>
                                                         </View>
@@ -1246,8 +1245,11 @@ class Home extends Component {
                                                                         backgroundColor={AppColors.primary.yellow.hundredPercent}
                                                                         color={AppColors.white}
                                                                         containerViewStyle={{ position: 'absolute', left: 10, bottom: 0, right: 25 }}
+                                                                        fontFamily={AppStyles.robotoBold.fontFamily}
+                                                                        fontWeight={AppStyles.robotoBold.fontWeight}
                                                                         outlined
                                                                         onPress={this._togglePostSessionSurveyModal}
+                                                                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                                                                         title={'Rate Your Session'}
                                                                     />
                                                                 </View>

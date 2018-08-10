@@ -14,10 +14,10 @@ import moment from 'moment';
 
 // Consts and Libs
 import { AppAPI } from '../../lib/';
-import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
+import { AppColors, AppSizes, AppStyles, AppFonts, } from '../../constants';
 
 // Components
-import { Button, Spacer, Text } from '../custom/';
+import { Button, Text } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -150,12 +150,15 @@ class Start extends Component {
                     source={require('../../../assets/images/standard/start.png')}
                     style={[AppStyles.containerCentered, {height: AppSizes.screen.heightTwoThirds, width: AppSizes.screen.width,}]}
                 >
-                    <Text h1 style={[AppStyles.paddingVertical, {color: AppColors.white,}]}>{'JOIN FATHOM'}</Text>
+                    <Text h1 oswaldMedium style={[AppStyles.paddingVertical, {color: AppColors.white, fontSize: AppFonts.scaleFont(38)}]}>{'JOIN FATHOM'}</Text>
                     <Button
                         backgroundColor={AppColors.white}
                         buttonStyle={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontalLrg]}
+                        fontFamily={AppStyles.robotoBold.fontFamily}
+                        fontWeight={AppStyles.robotoBold.fontWeight}
                         onPress={this._routeToOnboarding}
                         textColor={AppColors.primary.yellow.hundredPercent}
+                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                         title={'Create Account'}
                     />
                 </ImageBackground>
@@ -163,8 +166,8 @@ class Start extends Component {
                     onPress={this._routeToLogin}
                     style={[AppStyles.containerCentered, {height: AppSizes.screen.heightOneThird, width: AppSizes.screen.width,}]}
                 >
-                    <Text h5 style={[AppStyles.paddingBottom, {color: AppColors.black,}]}>{'ALREADY A MEMEBER?'}</Text>
-                    <Text p style={{color: AppColors.primary.yellow.hundredPercent,}}>{'Let\'s login now.'}</Text>
+                    <Text h5 oswaldMedium style={[AppStyles.paddingBottom, {color: AppColors.black, fontSize: AppFonts.scaleFont(20)}]}>{'ALREADY A MEMBER?'}</Text>
+                    <Text p robotoRegular style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(15)}}>{'Let\'s login now.'}</Text>
                 </TouchableOpacity>
             </View>
         );

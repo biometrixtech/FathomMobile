@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import { Image, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles, MyPlan } from '../../../constants';
+import { AppColors, AppFonts, AppStyles, MyPlan } from '../../../constants';
 import { Checkbox, TabIcon, Text } from '../../custom';
 
 /* Component ==================================================================== */
@@ -54,19 +54,21 @@ const ExerciseItem = ({
             >
                 <Text
                     p
+                    oswaldMedium
                     style={{
-                        color:      completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black,
-                        flexWrap:   'wrap',
-                        fontWeight: '500',
+                        color:    completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black,
+                        flexWrap: 'wrap',
+                        fontSize: AppFonts.scaleFont(16),
                     }}
                 >
                     {MyPlan.cleanExercise(exercise).displayName}
                 </Text>
                 <Text
                     p
+                    robotoBold
                     style={[{
-                        color:      completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.secondary.blue.hundredPercent,
-                        fontWeight: 'bold',
+                        color:    completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.secondary.blue.hundredPercent,
+                        fontSize: AppFonts.scaleFont(15),
                     }]}
                 >
                     {MyPlan.cleanExercise(exercise).dosage}

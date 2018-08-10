@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:16:07 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-12 01:03:48
+ * @Last Modified time: 2018-08-09 20:24:34
  */
 
 /**
@@ -25,6 +25,8 @@ import {
 // Components
 import { Text } from './';
 
+import { AppFonts } from '../../constants';
+
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     alerts: {
@@ -43,9 +45,9 @@ const styles = StyleSheet.create({
         backgroundColor:   '#59DC9A',
     },
     msg_text: {
-        textAlign:  'center',
-        color:      '#16693c',
-        fontWeight: '500',
+        textAlign: 'center',
+        color:     '#16693c',
+        ...AppFonts.oswaldMedium,
     },
 
     // Error

@@ -46,7 +46,7 @@ const UserRole = ({ componentStep, currentStep, handleFormChange, user }) => (
         <TouchableOpacity onPress={() => handleFormChange('role', 'athlete')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
             <ImageBackground
                 source={require('../../../../assets/images/standard/athlete.jpg')}
-                style={[AppStyles.containerCentered, AppStyles.fullHeightWeight]}
+                style={[AppStyles.containerCentered]}
             >
                 <Text style={[AppFonts.h2, AppStyles.bold, {color: AppColors.white}]}>{'ATHLETE'}</Text>
             </ImageBackground>
@@ -54,7 +54,7 @@ const UserRole = ({ componentStep, currentStep, handleFormChange, user }) => (
         <TouchableOpacity onPress={() => handleFormChange('role', 'manager')} style={[AppStyles.containerCentered, styles.cardWrapper]}>
             <ImageBackground
                 source={require('../../../../assets/images/standard/parent.jpg')}
-                style={[AppStyles.containerCentered, AppStyles.fullHeightWeight]}
+                style={[AppStyles.containerCentered]}
             >
                 <Text style={[AppFonts.h2, AppStyles.bold, {color: AppColors.white}]}>{'ATHLETE\'S PARENT'}</Text>
             </ImageBackground>

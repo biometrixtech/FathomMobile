@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:19:33
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-30 20:55:31
+ * @Last Modified time: 2018-08-10 03:14:52
  */
 
 /**
@@ -44,35 +44,31 @@ export default {
 
     // Text Styles
     tabHeaders: {
-        fontFamily: Fonts.base.family,
+        ...Fonts.oswaldMedium,
         fontSize:   Fonts.base.size,
-        lineHeight: Fonts.base.lineHeight,
-        fontWeight: '500',
+        lineHeight: Fonts.lineHeight(20),
         fontStyle:  'normal'
     },
     baseText: {
-        fontFamily: Fonts.base.family,
+        ...Fonts.oswaldMedium,
         fontSize:   Fonts.base.size,
         lineHeight: Fonts.base.lineHeight,
         color:      Colors.primary.grey.fiftyPercent,
-        fontWeight: '400',
         fontStyle:  'normal'
     },
     p: {
-        fontFamily:   Fonts.base.family,
+        ...Fonts.oswaldMedium,
         fontSize:     Fonts.base.size,
         lineHeight:   Fonts.base.lineHeight,
         color:        Colors.primary.grey.fiftyPercent,
-        fontWeight:   '400',
         fontStyle:    'normal',
         marginBottom: 8,
     },
     h0: {
-        fontFamily:   Fonts.h0.family,
+        ...Fonts.oswaldMedium,
         fontSize:     Fonts.h0.size,
         lineHeight:   Fonts.h0.lineHeight,
         color:        Colors.primary.grey.hundredPercent,
-        fontWeight:   '400',
         fontStyle:    'normal',
         margin:       0,
         marginBottom: 4,
@@ -80,11 +76,10 @@ export default {
         right:        0,
     },
     h1: {
-        fontFamily:   Fonts.h1.family,
+        ...Fonts.oswaldBold,
         fontSize:     Fonts.h1.size,
         lineHeight:   Fonts.h1.lineHeight,
         color:        Colors.primary.grey.hundredPercent,
-        fontWeight:   '800',
         fontStyle:    'normal',
         margin:       0,
         marginBottom: 4,
@@ -92,11 +87,10 @@ export default {
         right:        0,
     },
     h2: {
-        fontFamily:   Fonts.h2.family,
+        ...Fonts.oswaldBold,
         fontSize:     Fonts.h2.size,
         lineHeight:   Fonts.h2.lineHeight,
         color:        Colors.primary.grey.hundredPercent,
-        fontWeight:   '800',
         fontStyle:    'normal',
         margin:       0,
         marginBottom: 4,
@@ -104,11 +98,10 @@ export default {
         right:        0,
     },
     h3: {
-        fontFamily:   Fonts.h3.family,
+        ...Fonts.oswaldMedium,
         fontSize:     Fonts.h3.size,
         lineHeight:   Fonts.h3.lineHeight,
         color:        Colors.primary.grey.hundredPercent,
-        fontWeight:   '400',
         fontStyle:    'normal',
         margin:       0,
         marginBottom: 4,
@@ -116,11 +109,10 @@ export default {
         right:        0,
     },
     h4: {
-        fontFamily:   Fonts.h4.family,
+        ...Fonts.oswaldBold,
         fontSize:     Fonts.h4.size,
         lineHeight:   Fonts.h4.lineHeight,
         color:        Colors.primary.grey.hundredPercent,
-        fontWeight:   '800',
         fontStyle:    'normal',
         margin:       0,
         marginBottom: 4,
@@ -128,11 +120,10 @@ export default {
         right:        0,
     },
     h5: {
-        fontFamily:   Fonts.h5.family,
+        ...Fonts.oswaldBold,
         fontSize:     Fonts.h5.size,
         lineHeight:   Fonts.h5.lineHeight,
         color:        Colors.primary.grey.hundredPercent,
-        fontWeight:   '800',
         fontStyle:    'normal',
         margin:       0,
         marginTop:    4,
@@ -141,58 +132,67 @@ export default {
         right:        0,
     },
     h6: {
-        fontFamily: Fonts.h6.family,
+        ...Fonts.oswaldMedium,
         fontSize:   Fonts.h6.size,
         lineHeight: Fonts.h6.lineHeight,
         color:      Colors.primary.grey.hundredPercent,
-        fontWeight: '400',
         fontStyle:  'normal'
     },
     h7: {
-        fontFamily: Fonts.h7.family,
+        ...Fonts.oswaldMedium,
         fontSize:   Fonts.h7.size,
         lineHeight: Fonts.h7.lineHeight,
         color:      Colors.primary.grey.hundredPercent,
-        fontWeight: '400',
         fontStyle:  'normal'
     },
-    thin: {
-        fontWeight: '100',
+    oswaldExtraLight: {
+        ...Fonts.oswaldExtraLight,
     },
-    ultra_light: {
-        fontWeight: '200',
+    oswaldLight: {
+        ...Fonts.oswaldLight,
     },
-    light: {
-        fontWeight: '300',
+    oswaldRegular: {
+        ...Fonts.oswaldRegular,
     },
-    regular: {
-        fontWeight: '400',
+    oswaldMedium: {
+        ...Fonts.oswaldMedium,
     },
-    medium: {
-        fontWeight: '500',
+    oswaldSemiBold: {
+        ...Fonts.oswaldSemiBold,
     },
-    semibold: {
-        fontWeight: '600',
+    oswaldBold: {
+        ...Fonts.oswaldBold,
     },
-    bold: {
-        fontWeight: '700',
+    oswaldHeavy: {
+        ...Fonts.oswaldHeavy,
     },
-    heavy: {
-        fontWeight: '800',
+    robotoThin: {
+        ...Fonts.robotoThin,
     },
-    strong: {
-        fontWeight: '900',
+    robotoLight: {
+        ...Fonts.robotoLight,
+    },
+    robotoRegular: {
+        ...Fonts.robotoRegular,
+    },
+    robotoMedium: {
+        ...Fonts.robotoMedium,
+    },
+    robotoBold: {
+        ...Fonts.robotoBold,
+    },
+    robotoBlack: {
+        ...Fonts.robotoBlack,
     },
     link: {
         textDecorationLine: 'underline',
         color:              Colors.secondary.blue.hundredPercent,
     },
     subtext: {
-        fontFamily: Fonts.base.family,
+        ...Fonts.oswaldRegular,
         fontSize:   Fonts.base.size * 0.7,
         lineHeight: parseInt(Fonts.base.lineHeight * 0.8, 10),
         color:      Colors.primary.grey.hundredPercent,
-        fontWeight: '400',
     },
 
     // Helper Text Styles
@@ -203,7 +203,7 @@ export default {
         textAlign: 'right',
     },
     textBold: {
-        fontWeight: 'bold',
+        ...Fonts.oswaldBold,
     },
 
     // Padding
@@ -336,11 +336,10 @@ export default {
         justifyContent:    'center',
     },
     navbarTitle: {
-        color:      Colors.white,
-        fontWeight: 'bold',
-        fontFamily: Fonts.base.family,
-        fontSize:   Fonts.base.size+5,
-        alignSelf:  'center',
+        ...Fonts.oswaldBold,
+        color:     Colors.white,
+        fontSize:  Fonts.base.size+5,
+        alignSelf: 'center',
     },
     navbarButton: {
         tintColor: Colors.white,
@@ -361,7 +360,7 @@ export default {
     },
     leftTabBar: {
         height:         Sizes.tabbarHeight,
-        paddingRight:   Sizes.padding * 3,
+        paddingRight:   Sizes.padding * (Platform.OS === 'ios' ? 3 : 3.2),
         alignItems:     'flex-end',
         justifyContent: 'center',
         // width:          Sizes.screen.widthThreeQuarters,
@@ -370,14 +369,14 @@ export default {
         height:         Sizes.tabbarHeight,
         alignItems:     'center',
         justifyContent: 'center',
-        paddingLeft:    Sizes.padding * 0.1,
+        paddingLeft:    Sizes.padding * (Platform.OS === 'ios' ? 0.2 : 0.3),
         // width:          Sizes.screen.widthHalf,
     },
     rightTabBar: {
         height:         Sizes.tabbarHeight,
         alignItems:     'flex-start',
         justifyContent: 'center',
-        paddingLeft:    Sizes.padding * 2.8,
+        paddingLeft:    Sizes.padding * (Platform.OS === 'ios' ? 3.1 : 3.3),
         // width:          Sizes.screen.widthThreeQuarters,
     },
 
@@ -411,15 +410,16 @@ export default {
         justifyContent: 'center'
     },
     continueButton: {
+        ...Fonts.oswaldBold,
         backgroundColor:    Colors.transparent,
         color:              Colors.primary.yellow.hundredPercent,
-        fontWeight:         'bold',
         paddingLeft:        20,
         textDecorationLine: 'none',
     },
     nextButtonText: {
+        ...Fonts.oswaldBold,
         color:         Colors.white,
-        fontWeight:    'bold',
+        fontSize:      Fonts.scaleFont(16),
         paddingBottom: 20,
         paddingTop:    20,
     },

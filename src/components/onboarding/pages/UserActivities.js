@@ -27,15 +27,15 @@ const styles = StyleSheet.create({
         // border: 'none',
     },
     selectedText: {
+        ...AppStyles.bold,
         color:               AppColors.secondary.blue.eightyPercent,
-        fontWeight:          'bold',
         textDecorationColor: AppColors.secondary.blue.eightyPercent,
         textDecorationLine:  'underline',
         textDecorationStyle: 'dashed',
     },
     unselectedText: {
-        color:      AppColors.primary.grey.fiftyPercent,
-        fontWeight: 'bold',
+        ...AppStyles.bold,
+        color: AppColors.primary.grey.fiftyPercent,
     },
     wrapper: {
         paddingBottom: 20,
