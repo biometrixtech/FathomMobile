@@ -11,6 +11,10 @@
 
 import { Actions } from '../constants';
 import { AppAPI, AppUtil } from '../lib';
+import { store } from '../store';
+
+// import third-party libraries
+import moment from 'moment';
 
 /**
   * Get My User Data
@@ -44,6 +48,25 @@ const createUser = (payload) => {
         .then(userData => userData)
         .catch(err => {
             console.log('err',err);
+        });
+};
+
+/**
+  * Clear User data
+  * - WARNING: this will clear the users data for my plan and reset the reducer!
+  */
+const clearUserData = () => {
+    let bodyObj = {};
+    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    return AppAPI.clear_user_data.post(false, bodyObj)
+        .then(response => {
+            store.dispatch({
+                type: Actions.NOTIFICATION_RECEIVED
+            });
+            return Promise.resolve(response);
+        })
+        .catch(err => {
+            return Promise.reject(err);
         });
 };
 
@@ -282,6 +305,7 @@ const selectGraph = (selectedGraphIndex) => {
 };
 
 export default {
+    clearUserData,
     createTrainingGroup,
     createUser,
     getAccessories,

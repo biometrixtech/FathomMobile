@@ -34,6 +34,7 @@ const whenEnabledBackgroundColor = AppColors.white;
 const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
 const whenEnabledBorderColor = AppColors.zeplin.lightGrey;
 const whenEnabledDescriptionColor = AppColors.zeplin.darkGrey;
+
 const whenDisabledBackgroundColor = AppColors.white;
 const whenDisabledHeaderColor = AppColors.zeplin.greyText;
 const whenDisabledBorderColor = AppColors.zeplin.greyText;
@@ -112,7 +113,8 @@ class Home extends Component {
                     }
                 ],
             },
-            update: false,
+            update:  false,
+            loading: false,
         };
         this.renderTab = this.renderTab.bind(this);
     }
@@ -462,6 +464,8 @@ class Home extends Component {
                 newRecover.finished = false;
                 let newPrepare = _.cloneDeep(this.state.prepare);
                 newPrepare.isActiveRecoveryCollapsed = true;
+                newPrepare.isReadinessSurveyCollapsed = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+                newPrepare.isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
                 this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
                 this.setState({
                     completedExercises:       [],
@@ -530,18 +534,20 @@ class Home extends Component {
         const textStyle = AppStyles.tabHeaders;
         const fontSize = isTabActive ? AppFonts.scaleFont(20) : AppFonts.scaleFont(16);
         let { page0, page1, page2 } = this.state;
-        let yPosition = page === 0 ? page0.y : page === 1 ? page1.y : page2.y;
-        let xPosition = page === 0 ? page0.x + page0.width : page === 1 ? page1.x + page1.width : page2.x + page2.width;
 
         let flag = dailyPlanObj && page === dailyPlanObj.nav_bar_indicator ? true : false;
 
         let currentPage = this.tabView ? this.tabView.state.currentPage : 0;
-        let page0Width = AppSizes.screen.widthThreeQuarters;
+
+        let page0Width = currentPage === 0 ? AppSizes.screen.widthThreeQuarters : currentPage === 1 ? AppSizes.screen.widthQuarter : 0;
         let page1Width = currentPage === 0 || currentPage === 2 ? AppSizes.screen.widthQuarter : AppSizes.screen.widthHalf;
-        let page2Width = AppSizes.screen.widthThreeQuarters;
-        let page0Styles = [AppStyles.leftTabBar, {width: page0Width,}];
-        let page1Styles = [AppStyles.centerTabBar, {width: page1Width,}];
-        let page2Styles = [AppStyles.rightTabBar, {width: page2Width,}];
+        let page2Width = currentPage === 2 ? AppSizes.screen.widthThreeQuarters : currentPage === 1 ? AppSizes.screen.widthQuarter : 0;
+        let page0ExtraStyles = currentPage === 0 ? {paddingLeft: AppSizes.screen.widthQuarter} : {};
+        let page1ExtraStyles = {};
+        let page2ExtraStyles = currentPage === 2 ? {paddingRight: AppSizes.screen.widthQuarter} : {};
+        let page0Styles = [AppStyles.leftTabBar, page0ExtraStyles, {width: page0Width,}];
+        let page1Styles = [AppStyles.centerTabBar, page1ExtraStyles, {width: page1Width,}];
+        let page2Styles = [AppStyles.rightTabBar, page2ExtraStyles, {width: page2Width,}];
 
         let textWrapperStyle = isTabActive ?
             {
@@ -560,60 +566,46 @@ class Home extends Component {
             onPress={() => onPressHandler(page)}
             onLayout={onLayoutHandler}
         >
-            <View>
-                <View style={[page === 0 ? page0Styles : page === 1 ? page1Styles : page2Styles]}>
-                    <View
-                        style={[textWrapperStyle, {
-                            flex:           1,
-                            justifyContent: 'center',
-                        }]}
-                    >
-                        <Text
-                            onLayout={event =>
-                                this.setState({
-                                    page0: page === 0 ? event.nativeEvent.layout : page0,
-                                    page1: page === 1 ? event.nativeEvent.layout : page1,
-                                    page2: page === 2 ? event.nativeEvent.layout : page2,
-                                })
-                            }
-                            style={[
-                                textStyle,
-                                {
-                                    color: isTabActive ? AppColors.activeTabText : AppColors.inactiveTabText,
-                                    fontSize,
-                                }
-                            ]}
-                        >
-                            {name}
-                        </Text>
-                        {
-                            flag
-                                ?
-                                <TabIcon
-                                    containerStyle={[{ position: 'absolute', top: yPosition, left: xPosition }]}
-                                    size={10}
-                                    selected
-                                    color={AppColors.primary.yellow.hundredPercent}
-                                    icon={'fiber-manual-record'}
-                                />
-                                :
-                                null
+            <View style={[page === 0 ? page0Styles : page === 1 ? page1Styles : page2Styles]}>
+                <View
+                    style={[textWrapperStyle, {
+                        alignItems:     'center',
+                        flex:           1,
+                        flexDirection:  'row',
+                        justifyContent: 'center',
+                    }]}
+                >
+                    <Text
+                        onLayout={event =>
+                            this.setState({
+                                page0: page === 0 ? event.nativeEvent.layout : page0,
+                                page1: page === 1 ? event.nativeEvent.layout : page1,
+                                page2: page === 2 ? event.nativeEvent.layout : page2,
+                            })
                         }
-                    </View>
+                        style={[
+                            textStyle,
+                            {
+                                color: isTabActive ? AppColors.activeTabText : AppColors.inactiveTabText,
+                                fontSize,
+                            }
+                        ]}
+                    >
+                        {name}
+                    </Text>
+                    {
+                        flag ?
+                            <TabIcon
+                                containerStyle={[AppStyles.indicatorContainerStyles,]}
+                                size={10}
+                                selected
+                                color={AppColors.primary.yellow.hundredPercent}
+                                icon={'fiber-manual-record'}
+                            />
+                            :
+                            null
+                    }
                 </View>
-                {/*
-                    isTabActive ?
-                        <View style={{
-                            backgroundColor: AppColors.primary.yellow.hundredPercent,
-                            bottom:          0,
-                            height:          4,
-                            left:            AppSizes.screen.width * (page === 0 ? 0.4 : page === 1 ? 0.165 : 0.1285),
-                            position:        'absolute',
-                            width:           AppSizes.screen.widthQuarter * (page === 0 ? 0.95 : page === 1 ? 0.75 : 0.95),
-                        }} />
-                        :
-                        null
-                */}
             </View>
         </TouchableWithoutFeedback>;
     }
@@ -631,9 +623,9 @@ class Home extends Component {
         if(!recoveryObj && !recoveryObj.minutes_duration && !recoveryObj.impact_score) {
             return (
                 <View style={{ flexDirection: 'row' }}>
-                    <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryWhenBackgroundColor, borderColor: styles.activeRecoveryWhenBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                        <Text h7 oswaldMedium style={{ color: styles.activeRecoveryWhenHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
-                        <Text oswaldMedium style={{ color: styles.activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
+                    <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: whenStyles.activeRecoveryWhenBackgroundColor, borderColor: whenStyles.activeRecoveryWhenBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                        <Text h7 oswaldMedium style={{ color: whenStyles.activeRecoveryWhenHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
+                        <Text oswaldMedium style={{ color: whenStyles.activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
                     </View>
                     <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryBackgroundColor, borderColor: styles.activeRecoveryBorderColor, borderWidth: 1, borderRadius: 5 }}>
                         <Text h7 oswaldMedium style={{ color: styles.activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'TYP. ACTIVE TIME'}</Text>
@@ -649,9 +641,9 @@ class Home extends Component {
         }
         return (
             <View style={{ flexDirection: 'row', }}>
-                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: whenStyles. activeRecoveryWhenBackgroundColor, borderColor: whenStyles. activeRecoveryWhenBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                    <Text h7 oswaldMedium style={{ color: whenStyles. activeRecoveryWhenHeaderColor, fontSize: AppFonts.scaleFont(12), paddingBottom: 5 }}>{'WHEN'}</Text>
-                    <Text h6 oswaldMedium style={{ color: whenStyles. activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(18) }}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
+                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: whenStyles.activeRecoveryWhenBackgroundColor, borderColor: whenStyles.activeRecoveryWhenBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                    <Text h7 oswaldMedium style={{ color: whenStyles.activeRecoveryWhenHeaderColor, fontSize: AppFonts.scaleFont(12), paddingBottom: 5 }}>{'WHEN'}</Text>
+                    <Text h6 oswaldMedium style={{ color: whenStyles.activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(18) }}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
                 </View>
                 <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryActiveTimeBackgroundColor, borderColor: styles.activeRecoveryActiveTimeBorderColor, borderWidth: 1, borderRadius: 5 }}>
                     <Text h7 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
@@ -683,35 +675,29 @@ class Home extends Component {
         let isDailyReadinessSurveyCompleted = dailyPlanObj && (dailyPlanObj.daily_readiness_survey_completed || prepare.isReadinessSurveyCompleted) ? true : false;
         // assuming AM/PM is switching to something for prepared vs recover
         let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
-        let loadingText = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ?
-            'Creating/updating your plan...'
-            :
-            'Loading...';
         let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
 
-        let isPreRecoveryCompleted = dailyPlanObj && dailyPlanObj.pre_recovery_completed ? true : false;
-        let disabled = dailyPlanObj && dailyPlanObj.pre_recovery ?
-            isPreRecoveryCompleted || (!isDailyReadinessSurveyCompleted || (prepare.isActiveRecoveryCollapsed === true && prepare.finishedRecovery)) || dailyPlanObj.pre_recovery_completed
-            :
-            true;
+        let disabled = !recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
+        let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
+        let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed  ? true : false;
 
         let readinessSurveyBackgroundColor = isDailyReadinessSurveyCompleted ? disabledBackgroundColor : enabledBackgroundColor;
         let readinessSurveyDescriptionColor = isDailyReadinessSurveyCompleted ? disabledDescriptionColor : enabledDescriptionColor;
         let readinessSurveyHeaderColor = isDailyReadinessSurveyCompleted ? disabledHeaderColor : enabledHeaderColor;
         let readinessSurveyBorderColor = isDailyReadinessSurveyCompleted ? disabledBorderColor : enabledBorderColor;
-        let activeRecoveryBackgroundColor = disabled && !recoveryObj ? disabledBackgroundColor : disabled && recoveryObj && !recoveryObj.display_exercises ? enabledBackgroundColor : !disabled && recoveryObj && recoveryObj.display_exercises ? enabledBackgroundColor : disabledBackgroundColor;
-        let activeRecoveryDescriptionColor = disabled && !recoveryObj ? disabledDescriptionColor : disabled && recoveryObj && !recoveryObj.display_exercises ? enabledDescriptionColor : !disabled && recoveryObj && recoveryObj.display_exercises ? enabledDescriptionColor : disabledDescriptionColor;
-        let activeRecoveryHeaderColor = disabled && !recoveryObj ? disabledHeaderColor : disabled && recoveryObj && !recoveryObj.display_exercises ? enabledHeaderColor : !disabled && recoveryObj && recoveryObj.display_exercises ? enabledHeaderColor : disabledHeaderColor;
-        let activeRecoveryBorderColor = disabled && !recoveryObj ? disabledBorderColor : disabled && recoveryObj && !recoveryObj.display_exercises ? enabledBorderColor : !disabled && recoveryObj && recoveryObj.display_exercises ? enabledBorderColor : disabledBorderColor;
-        let activeRecoveryActiveTimeBackgroundColor = disabled && !recoveryObj ? AppColors.white : disabled && recoveryObj && !recoveryObj.display_exercises ? AppColors.white : !disabled && recoveryObj && recoveryObj.display_exercises ? activeRecoveryBackgroundColor : AppColors.white;
-        let activeRecoveryActiveTimeDescriptionColor = disabled && !recoveryObj ? AppColors.zeplin.darkBlue : disabled && recoveryObj && !recoveryObj.display_exercises ? AppColors.zeplin.darkBlue : !disabled && recoveryObj && recoveryObj.display_exercises ? activeRecoveryDescriptionColor : AppColors.zeplin.darkBlue;
-        let activeRecoveryActiveTimeHeaderColor = disabled && !recoveryObj ? AppColors.zeplin.lightGrey : disabled && recoveryObj && !recoveryObj.display_exercises ? AppColors.zeplin.lightGrey : !disabled && recoveryObj && recoveryObj.display_exercises ? activeRecoveryHeaderColor : AppColors.zeplin.lightGrey;
-        let activeRecoveryActiveTimeBorderColor = disabled && !recoveryObj ? AppColors.zeplin.lightGrey : disabled && recoveryObj && !recoveryObj.display_exercises ? AppColors.zeplin.lightGrey : !disabled && recoveryObj && recoveryObj.display_exercises ? activeRecoveryBorderColor : AppColors.zeplin.lightGrey;
-        let activeRecoveryActiveTimeSubtextColor = disabled && !recoveryObj ? AppColors.zeplin.darkBlue : disabled && recoveryObj && !recoveryObj.display_exercises ? AppColors.zeplin.darkBlue : !disabled && recoveryObj && recoveryObj.display_exercises ? subtextColor : AppColors.zeplin.darkBlue;
-        let activeRecoveryWhenBackgroundColor = disabled && !recoveryObj ? whenDisabledBackgroundColor : disabled && recoveryObj && !recoveryObj.display_exercises ? whenEnabledBackgroundColor : !disabled && recoveryObj && recoveryObj.display_exercises ? whenEnabledBackgroundColor : whenDisabledBackgroundColor;
-        let activeRecoveryWhenDescriptionColor = disabled && !recoveryObj ? whenDisabledDescriptionColor : disabled && recoveryObj && !recoveryObj.display_exercises ? whenEnabledDescriptionColor : !disabled && recoveryObj && recoveryObj.display_exercises ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
-        let activeRecoveryWhenHeaderColor = disabled && !recoveryObj ? whenDisabledHeaderColor : disabled && recoveryObj && !recoveryObj.display_exercises ? whenEnabledHeaderColor : !disabled && recoveryObj && recoveryObj.display_exercises ? whenEnabledHeaderColor : whenDisabledHeaderColor;
-        let activeRecoveryWhenBorderColor = disabled && !recoveryObj ? whenDisabledBorderColor : disabled && recoveryObj && !recoveryObj.display_exercises ? whenEnabledBorderColor : !disabled && recoveryObj && recoveryObj.display_exercises ? whenEnabledBorderColor : whenDisabledBorderColor;
+        let activeRecoveryBackgroundColor = disabled ? disabledBackgroundColor : isActive ? enabledBackgroundColor : isCompleted ? enabledBackgroundColor : disabledBackgroundColor;
+        let activeRecoveryDescriptionColor = disabled ? disabledDescriptionColor : isActive ? enabledDescriptionColor : isCompleted ? enabledDescriptionColor : disabledDescriptionColor;
+        let activeRecoveryHeaderColor = disabled ? disabledHeaderColor : isActive ? enabledHeaderColor : isCompleted ? enabledHeaderColor : disabledHeaderColor;
+        let activeRecoveryBorderColor = disabled ? disabledBorderColor : isActive ? enabledBorderColor : isCompleted ? enabledBorderColor : disabledBorderColor;
+        let activeRecoveryActiveTimeBackgroundColor = disabled ? disabledBackgroundColor : isActive ? enabledBackgroundColor : isCompleted ? whenEnabledBackgroundColor : disabledBackgroundColor;
+        let activeRecoveryActiveTimeDescriptionColor = disabled ? disabledDescriptionColor : isActive ? enabledDescriptionColor : isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
+        let activeRecoveryActiveTimeHeaderColor = disabled ? disabledHeaderColor : isActive ? enabledHeaderColor : isCompleted ? whenEnabledHeaderColor : disabledHeaderColor;
+        let activeRecoveryActiveTimeBorderColor = disabled ? disabledBorderColor : isActive ? enabledBorderColor : isCompleted ? whenEnabledBorderColor : disabledBorderColor;
+        let activeRecoveryActiveTimeSubtextColor = disabled ? disabledDescriptionColor : isActive ? subtextColor : isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
+        let activeRecoveryWhenBackgroundColor = disabled ? whenDisabledBackgroundColor : isActive ? whenEnabledBackgroundColor : isCompleted ? whenEnabledBackgroundColor : whenDisabledBackgroundColor;
+        let activeRecoveryWhenDescriptionColor = disabled ? whenDisabledDescriptionColor : isActive ? whenEnabledDescriptionColor : isCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
+        let activeRecoveryWhenHeaderColor = disabled ? whenDisabledHeaderColor : isActive ? whenEnabledHeaderColor : isCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor;
+        let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive ? whenEnabledBorderColor : isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
 
         return (
             <ScrollView
@@ -744,64 +730,77 @@ class Home extends Component {
                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                 />
                 {
-                    prepare.isReadinessSurveyCollapsed || isDailyReadinessSurveyCompleted
-                        ?
+                    isDailyReadinessSurveyCompleted ?
                         null
                         :
-                        <View style={{ flexDirection: 'row', }}>
-                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
-                            <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                        <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
-                                        <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'EARLY IN\nTHE DAY'}</Text>
+                        prepare.isReadinessSurveyCollapsed ?
+                            null
+                            :
+                            <View style={{ flexDirection: 'row', }}>
+                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
+                                <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                            <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
+                                            <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'EARLY IN\nTHE DAY'}</Text>
+                                        </View>
+                                        <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: readinessSurveyBackgroundColor, borderColor: readinessSurveyBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                            <Text h7 oswaldMedium style={{ color: readinessSurveyHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHY'}</Text>
+                                            <Text oswaldMedium style={{ color: readinessSurveyDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'PERSONALIZE\nYOUR PLAN'}</Text>
+                                        </View>
                                     </View>
-                                    <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: readinessSurveyBackgroundColor, borderColor: readinessSurveyBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                        <Text h7 oswaldMedium style={{ color: readinessSurveyHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHY'}</Text>
-                                        <Text oswaldMedium style={{ color: readinessSurveyDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'PERSONALIZE\nYOUR PLAN'}</Text>
-                                    </View>
+                                    <Spacer size={12}/>
+                                    <Button
+                                        backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                        buttonStyle={{width: '100%',}}
+                                        containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
+                                        color={AppColors.white}
+                                        fontFamily={AppStyles.robotoBold.fontFamily}
+                                        fontWeight={AppStyles.robotoBold.fontWeight}
+                                        outlined
+                                        onPress={() => this.setState({ isReadinessSurveyModalOpen: true })}
+                                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                                        title={'Start'}
+                                    />
                                 </View>
-                                <Spacer size={12}/>
-                                <Button
-                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
-                                    buttonStyle={{width: '100%',}}
-                                    containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                    color={AppColors.white}
-                                    fontFamily={AppStyles.robotoBold.fontFamily}
-                                    fontWeight={AppStyles.robotoBold.fontWeight}
-                                    outlined
-                                    onPress={() => this.setState({ isReadinessSurveyModalOpen: true })}
-                                    textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                                    title={'Start'}
-                                />
                             </View>
-                        </View>
                 }
                 { prepare.isReadinessSurveyCollapsed || isDailyReadinessSurveyCompleted ? this.renderDefaultListGap(23) : null }
                 <ListItem
                     containerStyle={{ borderBottomWidth: 0 }}
-                    disabled={recoveryObj && recoveryObj.completed ? false : disabled}
+                    disabled={disabled}
                     hideChevron={true}
                     leftIcon={
                         <TabIcon
                             containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                            size={(prepare.isActiveRecoveryCollapsed && prepare.finishedRecovery) || (dailyPlanObj && dailyPlanObj.pre_recovery_completed) ? AppFonts.scaleFont(24) : 20}
-                            color={(prepare.isActiveRecoveryCollapsed && prepare.finishedRecovery) || (dailyPlanObj && dailyPlanObj.pre_recovery_completed) ? AppColors.primary.yellow.hundredPercent : AppColors.black}
-                            icon={(prepare.isActiveRecoveryCollapsed && prepare.finishedRecovery) || (dailyPlanObj && dailyPlanObj.pre_recovery_completed) ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
+                            size={isCompleted ? AppFonts.scaleFont(24) : 20}
+                            color={isCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
+                            icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
                         />
                     }
-                    // onPress={() => !isDailyReadinessSurveyCompleted ? null : this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed }) }) }
                     title={'ACTIVE RECOVERY'}
                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                 />
                 {
-                    prepare.isActiveRecoveryCollapsed
-                        ?
-                        prepare.finishedRecovery || (dailyPlanObj && dailyPlanObj.pre_recovery_completed)
-                            ?
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
-                                <View style={{flex: 1, paddingLeft: 30, paddingRight: 15}}>
+                    /* eslint-disable indent */
+                    disabled ?
+                        <View style={{ flex: 1, flexDirection: 'row' }}>
+                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                            <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
+                                {
+                                    this.renderActiveRecoveryBlocks(
+                                        false,
+                                        {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
+                                        {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
+                                    )
+                                }
+                            </View>
+                        </View>
+                    : isActive ?
+                        prepare.isActiveRecoveryCollapsed ?
+                            <View style={{ flex: 1, flexDirection: 'row' }}>
+                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                                <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
                                     {
                                         this.renderActiveRecoveryBlocks(
                                             recoveryObj,
@@ -809,136 +808,93 @@ class Home extends Component {
                                             {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
                                         )
                                     }
+                                    <Spacer size={12}/>
+                                    <Button
+                                        backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                        buttonStyle={{width: '100%',}}
+                                        containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
+                                        color={AppColors.white}
+                                        fontFamily={AppStyles.robotoBold.fontFamily}
+                                        fontWeight={AppStyles.robotoBold.fontWeight}
+                                        outlined
+                                        onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed })}) }
+                                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                                        title={'Start'}
+                                    />
                                 </View>
                             </View>
                             :
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
-                                <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                    {
-                                        recoveryObj
-                                            ?
-                                            <View>
-                                                {
-                                                    this.renderActiveRecoveryBlocks(
-                                                        recoveryObj,
-                                                        {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                                        {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
-                                                    )
-                                                }
-                                                <Spacer size={12}/>
-                                                <Button
-                                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
-                                                    buttonStyle={{width: '100%',}}
-                                                    containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                                    color={AppColors.white}
-                                                    fontFamily={AppStyles.robotoBold.fontFamily}
-                                                    fontWeight={AppStyles.robotoBold.fontWeight}
-                                                    outlined
-                                                    onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed })}) }
-                                                    textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                                                    title={'Start'}
-                                                />
-                                            </View>
-                                            :
+                            <View style={{flex: 1}}>
+                                <View style={{flexDirection: 'row',}}>
+                                    <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                                    <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
+                                        {
                                             this.renderActiveRecoveryBlocks(
-                                                false,
+                                                recoveryObj,
                                                 {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
                                                 {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
                                             )
-                                    }
-                                </View>
-                            </View>
-                        :
-                        <View style={{ flex: 1 }}>
-                            { disabled
-                                ?
-                                null
-                                :
-                                !recoveryObj ?
-                                    <View style={{flex: 1}}>
-                                        <ActivityIndicator
-                                            color={AppColors.primary.yellow.hundredPercent}
-                                            size={'large'}
-                                        />
-                                        <Text oswaldRegular style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
-                                    </View>
-                                    :
-                                    <View style={{flex: 1}}>
-                                        <View style={{flexDirection: 'row',}}>
-                                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
-                                            <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
+                                        }
+                                        <Spacer size={20}/>
+                                        <Text
+                                            onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed }) }) }
+                                            robotoBold
+                                            style={[AppStyles.textCenterAligned,
                                                 {
-                                                    this.renderActiveRecoveryBlocks(
-                                                        recoveryObj,
-                                                        {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                                        {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
-                                                    )
+                                                    color:              AppColors.secondary.blue.eightyPercent,
+                                                    fontSize:           AppFonts.scaleFont(14),
+                                                    marginRight:        10,
+                                                    textDecorationLine: 'none',
                                                 }
-                                                <Spacer size={20}/>
-                                                <Text
-                                                    onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed }) }) }
-                                                    robotoBold
-                                                    style={[AppStyles.textCenterAligned,
-                                                        {
-                                                            color:              AppColors.secondary.blue.eightyPercent,
-                                                            fontSize:           AppFonts.scaleFont(14),
-                                                            marginRight:        10,
-                                                            textDecorationLine: 'none',
-                                                        }
-                                                    ]}
-                                                >
-                                                    {'Hide Exercises ^'}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                        <Exercises
-                                            completedExercises={completedExercises}
-                                            exerciseList={exerciseList}
-                                            handleCompleteExercise={this._handleCompleteExercise}
-                                            handleExerciseListRefresh={this._handleExerciseListRefresh}
-                                            isExerciseListRefreshing={this.state.isExerciseListRefreshing}
-                                            toggleCompletedAMPMRecoveryModal={() =>
-                                                this.props.patchActiveRecovery(this.props.user.id, 'pre').then(() =>
-                                                    this.setState({
-                                                        completedExercises: [],
-                                                        prepare:            Object.assign({}, this.state.prepare, {
-                                                            finishedRecovery:          true,
-                                                            isActiveRecoveryCollapsed: true,
-                                                        }),
-                                                        update: true,
-                                                    })
-                                                )
-                                            }
-                                            toggleSelectedExercise={this._toggleSelectedExercise}
-                                        />
+                                            ]}
+                                        >
+                                            {'Hide Exercises ^'}
+                                        </Text>
                                     </View>
-                            }
-                            { this.state.loading ?
-                                <ActivityIndicator
-                                    color={AppColors.primary.yellow.hundredPercent}
-                                    size={'large'}
-                                    style={[AppStyles.activityIndicator]}
-                                /> : null
-                            }
+                                </View>
+                                <Exercises
+                                    completedExercises={completedExercises}
+                                    exerciseList={exerciseList}
+                                    handleCompleteExercise={this._handleCompleteExercise}
+                                    handleExerciseListRefresh={this._handleExerciseListRefresh}
+                                    isExerciseListRefreshing={this.state.isExerciseListRefreshing}
+                                    isLoading={this.state.loading}
+                                    toggleCompletedAMPMRecoveryModal={() => {
+                                        this.setState({ loading: true });
+                                        this.props.patchActiveRecovery(this.props.user.id, 'pre')
+                                            .then(() =>
+                                                this.setState({
+                                                    completedExercises: [],
+                                                    loading:            false,
+                                                    prepare:            Object.assign({}, this.state.prepare, {
+                                                        finishedRecovery:          true,
+                                                        isActiveRecoveryCollapsed: true,
+                                                    }),
+                                                    update: true,
+                                                })
+                                            )
+                                            .catch(() => {
+                                                this.setState({ loading: false });
+                                            })
+                                    }}
+                                    toggleSelectedExercise={this._toggleSelectedExercise}
+                                />
+                            </View>
+                    : isCompleted ?
+                        <View style={{ flex: 1, flexDirection: 'row' }}>
+                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                            <View style={{flex: 1, paddingLeft: 30, paddingRight: 15}}>
+                                {
+                                    this.renderActiveRecoveryBlocks(
+                                        recoveryObj,
+                                        {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
+                                        {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
+                                    )
+                                }
+                            </View>
                         </View>
-                }
-                {
-                    prepare.isActiveRecoveryCollapsed && completedExercises.length
-                        ?
-                        <Button
-                            backgroundColor={AppColors.primary.yellow.hundredPercent}
-                            color={AppColors.white}
-                            containerViewStyle={[AppStyles.nextButtonWrapper, { width: AppSizes.screen.width - 60, position: 'absolute', bottom: 15, left: 15, right: 15 }]}
-                            fontFamily={AppStyles.robotoBold.fontFamily}
-                            fontWeight={AppStyles.robotoBold.fontWeight}
-                            onPress={() => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(false, false, index+1))}
-                            raised={false}
-                            textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                            title={'Go to Train'}
-                        />
-                        :
-                        null
+                    :
+                    null
                 }
                 {
                     this.state.isReadinessSurveyModalOpen
@@ -1008,12 +964,7 @@ class Home extends Component {
         let { plan } = this.props;
 
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
         let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery ? dailyPlanObj.post_recovery : false;
-        let loadingText = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ?
-            'Creating/updating your plan...'
-            :
-            'Loading...';
         let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
 
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
@@ -1066,10 +1017,108 @@ class Home extends Component {
                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                 />
                 {
-                    recover.finished || isCompleted
-                        ?
-                        <View style={{ flexDirection: 'row', }}>
-                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
+                    /* eslint-disable indent */
+                    disabled ?
+                        <View style={{ flex: 1, flexDirection: 'row', }}>
+                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                            <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
+                                {
+                                    this.renderActiveRecoveryBlocks(
+                                        false,
+                                        {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
+                                        {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
+                                        true
+                                    )
+                                }
+                            </View>
+                        </View>
+                    : isActive ?
+                        recover.isActiveRecoveryCollapsed ?
+                            <View style={{ flex: 1, flexDirection: 'row', }}>
+                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                                <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
+                                    {
+                                        this.renderActiveRecoveryBlocks(
+                                            recoveryObj,
+                                            {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
+                                            {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
+                                            true
+                                        )
+                                    }
+                                    <Spacer size={12}/>
+                                    <Button
+                                        backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                        color={AppColors.white}
+                                        containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
+                                        fontFamily={AppStyles.robotoBold.fontFamily}
+                                        fontWeight={AppStyles.robotoBold.fontWeight}
+                                        outlined
+                                        onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) })}
+                                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                                        title={'Start'}
+                                    />
+                                </View>
+                            </View>
+                            :
+                            <View style={{flex: 1}}>
+                                <View style={{flexDirection: 'row',}}>
+                                    <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                                    <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
+                                        {
+                                            this.renderActiveRecoveryBlocks(
+                                                recoveryObj,
+                                                {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
+                                                {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
+                                                true
+                                            )
+                                        }
+                                        <Spacer size={20}/>
+                                        <Text
+                                            onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) }) }
+                                            robotoBold
+                                            style={[AppStyles.textCenterAligned,
+                                                {
+                                                    color:              AppColors.secondary.blue.eightyPercent,
+                                                    fontSize:           AppFonts.scaleFont(14),
+                                                    marginRight:        10,
+                                                    textDecorationLine: 'none',
+                                                }
+                                            ]}
+                                        >
+                                            {'Hide Exercises ^'}
+                                        </Text>
+                                    </View>
+                                </View>
+                                <Exercises
+                                    completedExercises={completedExercises}
+                                    exerciseList={exerciseList}
+                                    handleCompleteExercise={this._handleCompleteExercise}
+                                    handleExerciseListRefresh={this._handleExerciseListRefresh}
+                                    isExerciseListRefreshing={this.state.isExerciseListRefreshing}
+                                    isLoading={this.state.loading}
+                                    toggleCompletedAMPMRecoveryModal={() => {
+                                        this.setState({ loading: true });
+                                        this.props.patchActiveRecovery(this.props.user.id, 'post')
+                                            .then(() =>
+                                                this.setState({
+                                                    completedExercises: [],
+                                                    loading:            false,
+                                                    recover:            Object.assign({}, this.state.recover, {
+                                                        finished:                  !!completedExercises.length,
+                                                        isActiveRecoveryCollapsed: true,
+                                                    })
+                                                })
+                                            )
+                                            .catch(() => {
+                                                this.setState({ loading: false });
+                                            })
+                                    }}
+                                    toggleSelectedExercise={this._toggleSelectedExercise}
+                                />
+                            </View>
+                    : isCompleted ?
+                        <View style={{ flex: 1, flexDirection: 'row', }}>
+                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
                                 {
                                     this.renderActiveRecoveryBlocks(
@@ -1081,128 +1130,9 @@ class Home extends Component {
                                 }
                             </View>
                         </View>
-                        :
-                        disabled
-                            ?
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
-                                <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                    {
-                                        this.renderActiveRecoveryBlocks(
-                                            false,
-                                            {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                            {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
-                                            false
-                                        )
-                                    }
-                                </View>
-                            </View>
-                            : recover.isActiveRecoveryCollapsed ?
-                                <View style={{ flexDirection: 'row', }}>
-                                    <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
-                                    <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                        {
-                                            this.renderActiveRecoveryBlocks(
-                                                recoveryObj,
-                                                {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                                {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
-                                                true
-                                            )
-                                        }
-                                        <Spacer size={12}/>
-                                        <Button
-                                            backgroundColor={AppColors.primary.yellow.hundredPercent}
-                                            color={AppColors.white}
-                                            containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                            fontFamily={AppStyles.robotoBold.fontFamily}
-                                            fontWeight={AppStyles.robotoBold.fontWeight}
-                                            outlined
-                                            onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) })}
-                                            textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                                            title={'Start'}
-                                        />
-                                    </View>
-                                </View>
-                                :
-                                null
+                    :
+                    null
                 }
-                <View style={{ flex: 1 }}>
-                    {
-                        recover.finished || disabled || recover.isActiveRecoveryCollapsed
-                            ?
-                            null
-                            :
-                            !recoveryObj
-                                ?
-                                <View style={{flex: 1}}>
-                                    <ActivityIndicator
-                                        color={AppColors.primary.yellow.hundredPercent}
-                                        size={'large'}
-                                    />
-                                    <Text oswaldRegular style={[AppStyles.h1, AppStyles.paddingVertical, AppStyles.textCenterAligned]}>{loadingText}</Text>
-                                </View>
-                                :
-                                <View style={{flex: 1}}>
-                                    <View style={{flexDirection: 'row',}}>
-                                        <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
-                                        <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
-                                            {
-                                                this.renderActiveRecoveryBlocks(
-                                                    recoveryObj,
-                                                    {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                                    {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
-                                                )
-                                            }
-                                            <Spacer size={20}/>
-                                            <Text
-                                                onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) }) }
-                                                robotoBold
-                                                style={[AppStyles.textCenterAligned,
-                                                    {
-                                                        color:              AppColors.secondary.blue.eightyPercent,
-                                                        fontSize:           AppFonts.scaleFont(14),
-                                                        marginRight:        10,
-                                                        textDecorationLine: 'none',
-                                                    }
-                                                ]}
-                                            >
-                                                {'Hide Exercises ^'}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                    <Exercises
-                                        completedExercises={completedExercises}
-                                        exerciseList={exerciseList}
-                                        handleCompleteExercise={this._handleCompleteExercise}
-                                        handleExerciseListRefresh={this._handleExerciseListRefresh}
-                                        isExerciseListRefreshing={this.state.isExerciseListRefreshing}
-                                        toggleCompletedAMPMRecoveryModal={() =>
-                                            this.props.patchActiveRecovery(this.props.user.id, 'post').then(() =>
-                                                this.setState({
-                                                    completedExercises: [],
-                                                    recover:            Object.assign({}, this.state.recover, {
-                                                        finished:                  !!completedExercises.length,
-                                                        isActiveRecoveryCollapsed: true,
-                                                    })
-                                                })
-                                            )
-                                        }
-                                        toggleSelectedExercise={this._toggleSelectedExercise}
-                                    />
-                                </View>
-                    }
-                    {
-                        this.state.loading
-                            ?
-                            <ActivityIndicator
-                                color={AppColors.primary.yellow.hundredPercent}
-                                size={'large'}
-                                style={[AppStyles.activityIndicator]}
-                            />
-                            :
-                            null
-                    }
-                </View>
                 {
                     this.state.isSelectedExerciseModalOpen
                         ?
@@ -1261,8 +1191,6 @@ class Home extends Component {
                                         icon={postPracticeSurvey.isPostPracticeSurveyCompleted ? 'check-circle' : isDailyReadinessSurveyCompleted ? 'fiber-manual-record' : 'lock'}
                                     />
                                 }
-                                // rightIcon={{ name: `expand-${postPracticeSurvey.isPostPracticeSurveyCollapsed ? 'more' : 'less'}`, color: AppColors.black }}
-                                // onPress={() => {let newTrainObject = Object.assign({}, train); newTrainObject.postPracticeSurveys[i].isPostPracticeSurveyCollapsed = !postPracticeSurvey.isPostPracticeSurveyCollapsed; this.setState({ train: newTrainObject }); }}
                                 title={`TRAINING SESSION #${i+1}`}
                                 titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                             />

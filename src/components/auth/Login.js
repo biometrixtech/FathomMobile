@@ -174,7 +174,7 @@ class Login extends Component {
                         error:                'Your email must be a valid email format',
                         keyboardType:         'email-address',
                         label:                ' ',
-                        placeholder:          'e-mail',
+                        placeholder:          'email',
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
                         onSubmitEditing:      () => this._focusNextField('Password'),
                         returnKeyType:        'next',
@@ -244,13 +244,14 @@ class Login extends Component {
                     password: credentials.Password,
                 }, false).then(response => {
                     let { authorization, user } = response;
-                    return (
-                        authorization && authorization.expires && moment(authorization.expires) > moment.utc()
-                            ? Promise.resolve(response)
-                            : authorization && authorization.session_token
-                                ? this.props.authorizeUser(authorization, user, credentials)
-                                : Promise.reject('Unexpected response authorization')
-                    );
+                    // return (
+                    //     authorization && authorization.expires && moment(authorization.expires) > moment.utc()
+                    //         ? Promise.resolve(response)
+                    //         : authorization && authorization.session_token
+                    //             ? this.props.authorizeUser(authorization, user, credentials)
+                    //             : Promise.reject('Unexpected response authorization')
+                    // );
+                    return this.props.authorizeUser(authorization, user, credentials)
                 })
                     .then(response => {
                         return this.props.getUserSensorData(response.user.id)
@@ -265,11 +266,11 @@ class Login extends Component {
                     .then(() => this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
-                        if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                        // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                             Actions.home();
-                        } else {
-                            Actions.onboarding();
-                        }
+                        // } else {
+                        //     Actions.onboarding();
+                        // }
                     })).catch((err) => {
                         console.log('err',err);
                         const error = AppAPI.handleError(err);

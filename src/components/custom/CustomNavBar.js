@@ -6,10 +6,10 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, StatusBar, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Image, StatusBar, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
+import { AppColors, AppSizes, AppStyles, } from '../../constants';
 import { TabIcon, Text, } from './';
 
 // import third-party libraries
@@ -30,13 +30,17 @@ class CustomNavBar extends Component {
 
     static defaultProps = {}
 
+    componentDidMount = () => {
+        StatusBar.setBarStyle('dark-content', false);
+    }
+
     _renderLeft = () => {
         return (
             <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingXSml}}>
                 { Actions.currentParams.onLeft ?
                     <TabIcon
                         icon={Actions.currentScene === 'home' ? 'settings' : 'arrow-left'}
-                        iconStyle={[{color: AppColors.black}]}
+                        iconStyle={[{color: AppColors.black,}]}
                         onPress={Actions.currentParams.onLeft}
                         reverse={false}
                         size={26}
@@ -54,7 +58,7 @@ class CustomNavBar extends Component {
             return (
                 <Image
                     source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
-                    style={[AppStyles.navbarImageTitle, {flex: 8, justifyContent: 'center',}]}
+                    style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center'}]}
                 />
             )
         }
@@ -77,7 +81,7 @@ class CustomNavBar extends Component {
     render = () => {
         return (
             <View>
-                <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, height: AppSizes.statusBarHeight,}}></View>
+                <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
                 <View style={[styles.container , Actions.currentScene === 'settings' ? {borderBottomColor: AppColors.border, borderBottomWidth: 2,} : {}]}>
                     {this._renderLeft()}
                     {this._renderMiddle()}

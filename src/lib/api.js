@@ -235,15 +235,17 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                         Email:    currentState.init.email,
                         Password: currentState.init.password,
                     };
-                    init.authorizeUser(authorization, currentState.user, credentials)
-                        .then(() => {
+                    console.log('+++++++', authorization, credentials, init, this);
+                    // TODO: NEEDS TO BE FIXED!
+                    return init.authorizeUser(authorization, currentState.user, credentials)
+                        .then((res) => { console.log('res',res);
                             // re-send API
                             return fetcher(method, inputEndpoint, inputParams, body, api_enum);
                         })
-                        .catch(() => {
+                        .catch((err) => { console.log('err',err);
                             // logout user and route to login
                             return init.logout().then(() => Actions.login());
-                        })
+                        });
                 }
 
 

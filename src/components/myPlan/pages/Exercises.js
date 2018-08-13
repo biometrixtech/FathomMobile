@@ -7,6 +7,7 @@
         handleCompleteExercise={this._handleCompleteExercise}
         handleExerciseListRefresh={this._handleExerciseListRefresh}
         isExerciseListRefreshing={this.state.isExerciseListRefreshing}
+        isLoading={this.state.loading}
         toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
         toggleSelectedExercise={this._toggleSelectedExercise}
     />
@@ -14,7 +15,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { RefreshControl, ScrollView, TouchableOpacity, View, } from 'react-native';
+import { ActivityIndicator, RefreshControl, ScrollView, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
@@ -25,6 +26,7 @@ import { ExerciseItem, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
+import Modal from 'react-native-modalbox';
 
 /* Component ==================================================================== */
 const Exercises = ({
@@ -33,6 +35,7 @@ const Exercises = ({
     handleCompleteExercise,
     handleExerciseListRefresh,
     isExerciseListRefreshing,
+    isLoading,
     toggleCompletedAMPMRecoveryModal,
     toggleSelectedExercise,
 }) => (
@@ -85,10 +88,25 @@ const Exercises = ({
                 }
             </View>
             :
-            <View style={[AppStyles.paddingHorizontal]}>
+            <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVertical]}>
                 <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: AppFonts.scaleFont(15) }]}>{'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing. If you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.'}</Text>
             </View>
         }
+        <Modal
+            backdrop={false}
+            backdropColor={'transparent'}
+            backdropPressToClose={false}
+            coverScreen={true}
+            isOpen={isLoading}
+            style={{backgroundColor: AppColors.transparent,}}
+            swipeToClose={false}
+        >
+            <ActivityIndicator
+                color={AppColors.primary.yellow.hundredPercent}
+                size={'large'}
+                style={[AppStyles.activityIndicator]}
+            />
+        </Modal>
     </View>
 );
 
@@ -98,6 +116,7 @@ Exercises.propTypes = {
     handleCompleteExercise:           PropTypes.func.isRequired,
     handleExerciseListRefresh:        PropTypes.func.isRequired,
     isExerciseListRefreshing:         PropTypes.bool.isRequired,
+    isLoading:                        PropTypes.bool.isRequired,
     toggleCompletedAMPMRecoveryModal: PropTypes.func.isRequired,
     toggleSelectedExercise:           PropTypes.func.isRequired,
 };

@@ -43,12 +43,6 @@ export default {
     },
 
     // Text Styles
-    tabHeaders: {
-        ...Fonts.oswaldMedium,
-        fontSize:   Fonts.base.size,
-        lineHeight: Fonts.lineHeight(20),
-        fontStyle:  'normal'
-    },
     baseText: {
         ...Fonts.oswaldMedium,
         fontSize:   Fonts.base.size,
@@ -347,33 +341,36 @@ export default {
     navbarImageTitle: {
         height:     Sizes.navbarHeight/(Platform.OS === 'ios' ? 1.8 : 1.5),
         resizeMode: 'contain',
-        marginTop:  (Sizes.navbarHeight - (Sizes.navbarHeight/(Platform.OS === 'ios' ? 1.8 : 1.5))) / 2,
+        // marginTop:  (Sizes.navbarHeight - (Sizes.navbarHeight/(Platform.OS === 'ios' ? 1.8 : 1.5))) / 2,
     },
 
     // TabBar
-    tabbar: {
-        height:         Sizes.tabbarHeight,
-        width:          Sizes.screen.widthThreeQuarters,
-        alignItems:     'flex-end',
-        justifyContent: 'center',
+    tabHeaders: {
+        ...Fonts.oswaldMedium,
+        fontSize:   Fonts.base.size,
+        fontStyle:  'normal',
+        lineHeight: Fonts.lineHeight(20),
+        textAlign:  'center',
+    },
+    indicatorContainerStyles: {
+        height:         Fonts.lineHeight(20),
+        justifyContent: 'flex-start',
+        paddingLeft:    2,
     },
     leftTabBar: {
+        alignItems:     'center',
         height:         Sizes.tabbarHeight,
-        paddingRight:   Sizes.padding * (Platform.OS === 'ios' ? 3 : 3.2),
-        alignItems:     'flex-end',
         justifyContent: 'center',
     },
     centerTabBar: {
-        height:         Sizes.tabbarHeight,
         alignItems:     'center',
+        height:         Sizes.tabbarHeight,
         justifyContent: 'center',
-        paddingLeft:    Sizes.padding * (Platform.OS === 'ios' ? 0.2 : 0.3),
     },
     rightTabBar: {
+        alignItems:     'center',
         height:         Sizes.tabbarHeight,
-        alignItems:     'flex-start',
         justifyContent: 'center',
-        paddingLeft:    Sizes.padding * (Platform.OS === 'ios' ? 3.1 : 3.3),
     },
 
     // Radial Menu
