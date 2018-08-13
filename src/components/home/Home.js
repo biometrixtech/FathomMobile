@@ -285,7 +285,12 @@ class Home extends Component {
                     isReadinessSurveyCompleted: true,
                 });
                 this.setState({
-                    completedExercises:         [],
+                    completedExercises: [],
+                    dailyReadiness:     {
+                        readiness:     0,
+                        sleep_quality: 0,
+                        soreness:      [],
+                    },
                     isReadinessSurveyModalOpen: false,
                     loading:                    false,
                     prepare:                    newPrepareObject,
@@ -466,12 +471,27 @@ class Home extends Component {
                 newPrepare.isActiveRecoveryCollapsed = true;
                 newPrepare.isReadinessSurveyCollapsed = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
                 newPrepare.isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+                let updatedTrainingSession = [];
+                _.map(dailyPlanObj.training_sessions, trainingSession => {
+                    let newSession = {};
+                    newSession.isPostPracticeSurveyCollapsed = true;
+                    newSession.isPostPracticeSurveyCompleted = true;
+                    updatedTrainingSession.push(newSession);
+                });
+                let newSession = {};
+                newSession.isPostPracticeSurveyCollapsed = false;
+                newSession.isPostPracticeSurveyCompleted = false;
+                updatedTrainingSession.push(newSession);
+                let newTrain = Object.assign({}, this.state.train, {
+                    postPracticeSurveys: updatedTrainingSession,
+                });
                 this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
                 this.setState({
                     completedExercises:       [],
                     isExerciseListRefreshing: false,
                     prepare:                  newPrepare,
                     recover:                  newRecover,
+                    train:                    newTrain,
                 });
             })
             .catch(error => {
@@ -674,10 +694,10 @@ class Home extends Component {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && (dailyPlanObj.daily_readiness_survey_completed || prepare.isReadinessSurveyCompleted) ? true : false;
         // assuming AM/PM is switching to something for prepared vs recover
-        let recoveryObj = isDailyReadinessSurveyCompleted && dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
+        let recoveryObj = dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
         let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
 
-        let disabled = !recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
+        let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed  ? true : false;
 
