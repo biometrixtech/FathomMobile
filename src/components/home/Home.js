@@ -1312,8 +1312,10 @@ class Home extends Component {
     };
 
     _goToScrollviewPage = (pageIndex) => {
-        if (this.tabView) {
-            this.tabView.goToPage(pageIndex);
+        if(this.tabView) {
+            setTimeout(() => {
+                this.tabView.goToPage(pageIndex);
+            }, 300);
         }
     }
 
