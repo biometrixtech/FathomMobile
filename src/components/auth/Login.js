@@ -244,14 +244,15 @@ class Login extends Component {
                     password: credentials.Password,
                 }, false).then(response => {
                     let { authorization, user } = response;
-                    // return (
-                    //     authorization && authorization.expires && moment(authorization.expires) > moment.utc()
-                    //         ? Promise.resolve(response)
-                    //         : authorization && authorization.session_token
-                    //             ? this.props.authorizeUser(authorization, user, credentials)
-                    //             : Promise.reject('Unexpected response authorization')
-                    // );
                     return this.props.authorizeUser(authorization, user, credentials)
+                        .then(res => {
+                            let returnObj = {};
+                            returnObj.user = user;
+                            returnObj.authorization = res.authorization;
+                            returnObj.authorization.session_token = response.authorization.session_token;
+                            return Promise.resolve(returnObj);
+                        })
+                        .catch(err => Promise.reject('Unexpected response authorization'))
                 })
                     .then(response => {
                         return this.props.getUserSensorData(response.user.id)

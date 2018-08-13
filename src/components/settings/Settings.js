@@ -119,7 +119,7 @@ class Settings extends Component {
     }
 
     render = () => {
-        const userEmail = this.props.user.personal_data.email;
+        const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
                 <ListItem

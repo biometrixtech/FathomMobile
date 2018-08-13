@@ -236,7 +236,6 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                         Password: currentState.init.password,
                     };
                     console.log('+++++++', authorization, credentials, init, this);
-                    // TODO: NEEDS TO BE FIXED!
                     return init.authorizeUser(authorization, currentState.user, credentials)
                         .then((res) => { console.log('res',res);
                             // re-send API

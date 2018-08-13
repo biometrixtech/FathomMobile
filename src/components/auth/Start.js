@@ -113,7 +113,7 @@ class Start extends Component {
 
         /**
           * NOTE: we only come here if the user email, password, id, and jwt token exists
-          * - authorizeUser - ONLY IF, our this.props.expires is expired
+          * - authorizeUser
           *   - registerDevice
           *     - finalizeLogin
           *       - successful - go to onboarding or home
@@ -124,13 +124,7 @@ class Start extends Component {
             expires:       this.props.expires,
             session_token: this.props.sessionToken,
         };
-        return (
-            this.props && this.props.expires && moment(this.props.expires) > moment.utc()
-                ? Promise.resolve()
-                : this.props && this.props.sessionToken
-                    ? this.props.authorizeUser(authorization, this.props.user, credentials)
-                    : Promise.reject('Unexpected response authorization')
-        )
+        return this.props.authorizeUser(authorization, this.props.user, credentials)
             .then(response => {
                 if(response) {
                     authorization.expires = response.authorization.expires;
