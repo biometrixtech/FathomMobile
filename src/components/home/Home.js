@@ -903,7 +903,7 @@ class Home extends Component {
                                                         finishedRecovery:          true,
                                                         isActiveRecoveryCollapsed: true,
                                                     }),
-                                                    update: true,
+                                                    // update: true,
                                                 })
                                             )
                                             .catch(() => {
