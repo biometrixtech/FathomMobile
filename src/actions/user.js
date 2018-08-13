@@ -63,6 +63,10 @@ const clearUserData = () => {
             store.dispatch({
                 type: Actions.NOTIFICATION_RECEIVED
             });
+            store.dispatch({
+                type: Actions.GET_SORE_BODY_PARTS,
+                data: {body_parts: []},
+            });
             return Promise.resolve(response);
         })
         .catch(err => {

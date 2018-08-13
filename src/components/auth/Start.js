@@ -78,7 +78,6 @@ class Start extends Component {
             ) {
                 Promise.resolve(this.login());
             } else {
-                this._routeToLogin();
                 this.hideSplash();
             }
         }, 10);
@@ -141,11 +140,11 @@ class Start extends Component {
             .then(() => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
-                // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                     this._routeToHome();
-                // } else {
-                //     this._routeToOnboarding();
-                // }
+                } else {
+                    this._routeToOnboarding();
+                }
                 this.hideSplash();
             })).catch((err) => {
                 this.hideSplash();

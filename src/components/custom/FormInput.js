@@ -50,7 +50,8 @@ class CustomFormInput extends Component {
             }],
             inputStyle: [{
                 ...AppFonts.oswaldMedium,
-                color:             AppColors.primary.grey.hundredPercent,
+                color:             AppColors.black,
+                fontSize:          AppFonts.scaleFont(18),
                 paddingHorizontal: 10,
                 paddingVertical:   3,
             }],

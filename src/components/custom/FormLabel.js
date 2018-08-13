@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:29:10 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:29:10
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-08-09 19:59:54
  */
@@ -40,7 +40,8 @@ class CustomFormLabel extends Component {
             ...this.props,
             labelStyle: [{
                 ...AppFonts.oswaldMedium,
-                color: AppColors.primary.grey.hundredPercent,
+                color:    AppColors.primary.grey.hundredPercent,
+                fontSize: AppFonts.scaleFont(14),
             }],
         };
 

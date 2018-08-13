@@ -72,7 +72,6 @@ const Index = (
                 panHandlers={null}
                 renderLeftButton={null}
                 title={'GET STARTED'}
-                // titleStyle={{flex: 1, textAlign: 'center',}}
             />
             <Scene
                 Layout={LoginComponent}
@@ -117,14 +116,10 @@ const Index = (
                 component={SettingsContainer}
                 hideNavBar={false}
                 navBar={CustomNavBar}
-                // navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0}}
                 onLeft={() => Actions.home()}
-                // onRight={() => null}
                 key={'settings'}
                 panHandlers={null}
-                // rightTitle={' '}
                 title={'SETTINGS'}
-                // titleStyle={{flex: 1, textAlign: 'center',}}
             />
             <Scene
                 Layout={BluetoothConnectComponent}

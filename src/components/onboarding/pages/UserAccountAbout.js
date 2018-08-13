@@ -12,10 +12,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
+    Keyboard,
     KeyboardAvoidingView,
     Platform,
     StyleSheet,
     TouchableOpacity,
+    TouchableWithoutFeedback,
     View,
 } from 'react-native';
 
@@ -49,12 +51,12 @@ const styles = StyleSheet.create({
     },
     pickerSelectAndroid: {
         ...AppFonts.oswaldMedium,
-        color:    AppColors.primary.grey.hundredPercent,
+        color:    AppColors.black,
         fontSize: AppFonts.base.size,
     },
     pickerSelectIOS: {
         ...AppFonts.oswaldMedium,
-        color:          AppColors.primary.grey.hundredPercent,
+        color:          AppColors.black,
         fontSize:       AppFonts.base.size,
         height:         40,
         justifyContent: 'center',
@@ -74,14 +76,20 @@ const styles = StyleSheet.create({
 
 const Wrapper = props => Platform.OS === 'ios' ?
     (
-        <KeyboardAvoidingView behavior={'padding'} style={[styles.background, {borderTopWidth: 1, borderTopColor: AppColors.border,}]}>
-            {props.children}
+        <KeyboardAvoidingView behavior={'padding'} style={[styles.background]}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                <View>
+                    {props.children}
+                </View>
+            </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
     ) :
     (
-        <View style={[styles.background, {borderTopWidth: 1, borderTopColor: AppColors.border,}]}>
-            {props.children}
-        </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <View style={[styles.background]}>
+                {props.children}
+            </View>
+        </TouchableWithoutFeedback>
     );
 
 /* Component ==================================================================== */
@@ -111,7 +119,8 @@ class UserAccountAbout extends Component {
                     confirmBtnText={'Confirm'}
                     customStyles={{
                         dateInput:       styles.reusableCustomSpacing,
-                        placeholderText: {color: AppColors.border, fontSize: AppFonts.base.size, ...AppFonts.oswaldMedium, },
+                        dateText:        {...AppFonts.oswaldMedium, color: AppColors.black, fontSize: AppFonts.scaleFont(18),},
+                        placeholderText: {color: AppColors.zeplin.lightGrey, fontSize: AppFonts.base.size, ...AppFonts.oswaldMedium, },
                         btnTextConfirm:  {color: AppColors.primary.yellow.hundredPercent},
                     }}
                     date={user.personal_data.birth_date || ''}
@@ -138,7 +147,7 @@ class UserAccountAbout extends Component {
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
                         inputIOS:         [styles.pickerSelectIOS],
-                        placeholderColor: AppColors.border,
+                        placeholderColor: AppColors.zeplin.lightGrey,
                         viewContainer:    [styles.androidViewContainer],
                     }}
                     value={user.injury_status}
@@ -151,7 +160,7 @@ class UserAccountAbout extends Component {
                     maxLength={5}
                     onChangeText={text => handleFormChange('personal_data.zip_code', text)}
                     placeholder={'Zip Code'}
-                    placeholderTextColor={AppColors.border}
+                    placeholderTextColor={AppColors.zeplin.lightGrey}
                     returnKeyType={'next'}
                     textInputRef={input => {
                         this.inputs.zip_code = input;
@@ -170,7 +179,7 @@ class UserAccountAbout extends Component {
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
                         inputIOS:         [styles.pickerSelectIOS],
-                        placeholderColor: AppColors.border,
+                        placeholderColor: AppColors.zeplin.lightGrey,
                         viewContainer:    [styles.androidViewContainer],
                     }}
                     value={parseInt(user.biometric_data.height.in, 10) || null}
@@ -179,7 +188,7 @@ class UserAccountAbout extends Component {
                     { user.biometric_data.height.in > 0 ?
                         <Text>{Math.floor(user.biometric_data.height.in / 12) + '\'' + user.biometric_data.height.in % 12 + '"'}</Text>
                         :
-                        <Text style={{color: AppColors.border}}>{'Height'}</Text>
+                        <Text style={{color: AppColors.zeplin.lightGrey}}>{'Height'}</Text>
                     }
                 </TouchableOpacity>*/}
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.mass.lb.length > 0 ? 'Weight (lbs)' : ' '}</FormLabel>
@@ -189,7 +198,7 @@ class UserAccountAbout extends Component {
                     keyboardType={'numeric'}
                     onChangeText={text => handleFormChange('biometric_data.mass.lb', text)}
                     placeholder={'Weight (lbs)'}
-                    placeholderTextColor={AppColors.border}
+                    placeholderTextColor={AppColors.zeplin.lightGrey}
                     returnKeyType={'done'}
                     textInputRef={input => {
                         this.inputs.mass = input;
@@ -208,7 +217,7 @@ class UserAccountAbout extends Component {
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
                         inputIOS:         [styles.pickerSelectIOS],
-                        placeholderColor: AppColors.border,
+                        placeholderColor: AppColors.zeplin.lightGrey,
                         viewContainer:    [styles.androidViewContainer],
                     }}
                     value={user.biometric_data.sex}
@@ -226,7 +235,7 @@ class UserAccountAbout extends Component {
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
                         inputIOS:         [styles.reusableCustomSpacing, styles.pickerSelectIOS],
-                        placeholderColor: AppColors.border,
+                        placeholderColor: AppColors.zeplin.lightGrey,
                         viewContainer:    [styles.androidViewContainer],
                     }}
                     value={user.system_type}
@@ -237,7 +246,7 @@ class UserAccountAbout extends Component {
                         onboardingUtils.isUserAboutValid(user).isValid ?
                             {}
                             :
-                            {color: AppColors.border}
+                            {color: AppColors.zeplin.lightGrey}
                     ]}
                 >{'CONTINUE'}</Text>
             </Wrapper>

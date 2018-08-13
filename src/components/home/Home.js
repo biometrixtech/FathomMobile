@@ -493,6 +493,19 @@ class Home extends Component {
                     recover:                  newRecover,
                     train:                    newTrain,
                 });
+                // pull areas of soreness
+                this.props.getSoreBodyParts()
+                    .then(soreBodyParts => {
+                        let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+                        newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
+                        this.setState({ dailyReadiness: newDailyReadiness });
+                    })
+                    .catch(err => {
+                        // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
+                        let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+                        newDailyReadiness.soreness = [];
+                        this.setState({ dailyReadiness: newDailyReadiness });
+                    });
             })
             .catch(error => {
                 // console.log('error',error);
