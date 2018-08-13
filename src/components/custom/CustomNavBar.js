@@ -6,7 +6,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, StatusBar, StyleSheet, View, } from 'react-native';
+import { Image, Platform, StatusBar, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles, } from '../../constants';
@@ -31,7 +31,10 @@ class CustomNavBar extends Component {
     static defaultProps = {}
 
     componentDidMount = () => {
-        StatusBar.setBarStyle('dark-content', false);
+        StatusBar.setBarStyle('dark-content');
+        if(Platform.OS === 'android') {
+            StatusBar.setBackgroundColor(AppColors.primary.grey.twentyPercent);
+        }
     }
 
     _renderLeft = () => {
