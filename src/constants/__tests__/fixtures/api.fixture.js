@@ -17,9 +17,9 @@ export default {
         PROD: 'https://apis.production.fathomai.com'
     },
     // The URL we're connecting to
-    hostname: 'https://apis.production.fathomai.com', // deployment
+    // hostname: 'https://apis.production.fathomai.com', // deployment
     // hostname: 'https://apis.qa.fathomai.com', // qa
-    // hostname: 'https://apis.test.fathomai.com', // test
+    hostname: 'https://apis.test.fathomai.com', // test
     // hostname: 'https://apis.dev.fathomai.com', // development
 
     // Map shortnames to the actual endpoints, so that we can
@@ -31,20 +31,21 @@ export default {
     //    - AppAPI.favorites.patch()
     //    - AppAPI.blog.delete()
     endpoints: new Map([
-        ['create_user',     '/users/user'],
-        ['update_user',     '/users/user/{userId}'],
-        ['authorize',       '/users/user/{userId}/authorize'],
-        ['forgot_password', '/users/user/forgot_password'],
-        ['login',           '/users/user/sign_in'], // If you change the key, update the reference below
-        ['register_device', '/users/device/{device_uuid}'],
+        ['create_user',     '/users/1.0.0/user'],
+        ['update_user',     '/users/1.0.0/user/{userId}'],
+        ['authorize',       '/users/1.0.0/user/{userId}/authorize'],
+        ['forgot_password', '/users/1.0.0/user/forgot_password'],
+        ['login',           '/users/1.0.0/user/sign_in'], // If you change the key, update the reference below
+        ['register_device', '/users/1.0.0/device/{device_uuid}'],
         // My Plan specific routes
-        ['get_my_plan',           '/plans/daily_plan'], // POST
-        ['get_sore_body_parts',   '/plans/daily_readiness/previous'], // GET
-        ['post_readiness_survey', '/plans/daily_readiness'], // POST
-        ['post_session_survey',   '/plans/post_session_survey'], // POST
-        ['active_recovery',       '/plans/active_recovery'], // PATCH
+        ['get_my_plan',           '/plans/1.0.0/daily_plan'], // POST
+        ['get_sore_body_parts',   '/plans/1.0.0/daily_readiness/previous'], // GET
+        ['post_readiness_survey', '/plans/1.0.0/daily_readiness'], // POST
+        ['post_session_survey',   '/plans/1.0.0/post_session_survey'], // POST
+        ['active_recovery',       '/plans/1.0.0/active_recovery'], // PATCH
+        ['clear_user_data',       '/plans/1.0.0/misc/clear_user_data'], // POST
         // sensor specific routes
-        ['sensor_mobile_pair', '/users/user/{userId}/sensor_mobile_pair'], // CRUD
+        ['sensor_mobile_pair', '/users/1.0.0/user/{userId}/sensor_mobile_pair'], // CRUD
     ]),
 
     // Which 'endpoint' key deals with our tokens?

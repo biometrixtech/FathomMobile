@@ -23,9 +23,11 @@ export default function initReducer(state = initialState, action) {
         });
     case Actions.LOGIN:
         return Object.assign({}, state, {
-            email:    action.email,
-            password: action.password,
-            jwt:      action.jwt,
+            email:         action.email,
+            password:      action.password,
+            jwt:           action.jwt,
+            session_token: action.session_token || state.session_token,
+            expires:       action.expires,
         });
     case Actions.GET_MY_PLAN: // double reducer for editing 2 stores
         return Object.assign({}, state, {

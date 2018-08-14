@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:34:45 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:22:13
+ * @Last Modified time: 2018-08-10 04:25:25
  */
 
 /**
@@ -124,7 +124,7 @@ class KitOwnerView extends Component {
                                     title={'OWNER'}
                                     containerStyle={{ padding: 10, backgroundColor: AppColors.secondary.light_blue.fiftyPercent }}
                                     rightTitle={'Erase Owner'}
-                                    rightTitleStyle={[AppStyles.baseText, { color: AppColors.primary.yellow.hundredPercent, fontWeight: 'bold' }]}
+                                    rightTitleStyle={[AppStyles.baseText, AppStyles.oswaldBold, { color: AppColors.primary.yellow.hundredPercent, }]}
                                     onPress={() => Actions.refresh({ isResetModalVisible: true })}
                                     hideChevron
                                 />
@@ -134,7 +134,7 @@ class KitOwnerView extends Component {
                                         title={'OWNER'}
                                         containerStyle={{ padding: 10, backgroundColor: AppColors.secondary.light_blue.fiftyPercent }}
                                         rightTitle={'Save'}
-                                        rightTitleStyle={[AppStyles.baseText, { color: AppColors.primary.yellow.hundredPercent, fontWeight: 'bold' }]}
+                                        rightTitleStyle={[AppStyles.baseText, AppStyles.oswaldBold, { color: AppColors.primary.yellow.hundredPercent, }]}
                                         onPress={() => this.props.startConnect()
                                             .then(() => this.props.assignKitName(this.props.bluetooth.accessoryData.id, this.props.bluetooth.accessoryData.name.slice(11)))
                                             .then(() => this.props.setOwnerFlag(this.props.bluetooth.accessoryData.id, true))

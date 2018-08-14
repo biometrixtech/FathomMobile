@@ -6,16 +6,18 @@
  */
 
 import React, { Component } from 'react';
-// import { StatusBar, Platform } from 'react-native';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
-import { Router, Stack } from 'react-native-router-flux';
 import { PersistGate } from 'redux-persist/es/integration/react';
-import { Actions } from './constants';
-import { Platform, PushNotificationIOS } from 'react-native';
-import PushNotification from 'react-native-push-notification';
+import { Platform, PushNotificationIOS, } from 'react-native';
 
+// import components
+import { Actions } from './constants';
 import Routes from './routes';
+
+// import third-party libraries
+import { Router, Stack } from 'react-native-router-flux';
+import PushNotification from 'react-native-push-notification';
 
 // Hide StatusBar on Android as it overlaps tabs
 // if (Platform.OS === 'android') {

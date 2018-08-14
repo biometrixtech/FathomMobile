@@ -15,10 +15,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
     Image,
+    Keyboard,
     KeyboardAvoidingView,
     Platform,
     StyleSheet,
     TouchableOpacity,
+    TouchableWithoutFeedback,
     View,
 } from 'react-native';
 
@@ -45,13 +47,19 @@ const styles = StyleSheet.create({
 const Wrapper = props => Platform.OS === 'ios' ?
     (
         <KeyboardAvoidingView behavior={'padding'} style={[styles.background]}>
-            {props.children}
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                <View>
+                    {props.children}
+                </View>
+            </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
     ) :
     (
-        <View style={[styles.background]}>
-            {props.children}
-        </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <View style={[styles.background]}>
+                {props.children}
+            </View>
+        </TouchableWithoutFeedback>
     );
 
 /* Component ==================================================================== */
@@ -88,7 +96,7 @@ class UserAccountInfo extends Component {
                                 this.focusNextField('last_name');
                             }}
                             placeholder={'First Name'}
-                            placeholderTextColor={AppColors.border}
+                            placeholderTextColor={AppColors.zeplin.lightGrey}
                             returnKeyType={'next'}
                             textInputRef={input => {
                                 this.inputs.first_name = input;
@@ -109,7 +117,7 @@ class UserAccountInfo extends Component {
                                     this.focusNextField('email')
                             }
                             placeholder={'Last Name'}
-                            placeholderTextColor={AppColors.border}
+                            placeholderTextColor={AppColors.zeplin.lightGrey}
                             returnKeyType={'next'}
                             textInputRef={input => {
                                 this.inputs.last_name = input;
@@ -130,7 +138,7 @@ class UserAccountInfo extends Component {
                     }}
                     keyboardType={'email-address'}
                     placeholder={'E-mail Address'}
-                    placeholderTextColor={AppColors.border}
+                    placeholderTextColor={AppColors.zeplin.lightGrey}
                     returnKeyType={'next'}
                     textInputRef={input => {
                         this.inputs.email = input;
@@ -148,7 +156,7 @@ class UserAccountInfo extends Component {
                         this.focusNextField('password');
                     }}
                     placeholder={'Phone Number (optional)'}
-                    placeholderTextColor={AppColors.border}
+                    placeholderTextColor={AppColors.zeplin.lightGrey}
                     returnKeyType={'next'}
                     textInputRef={input => {
                         this.inputs.phone_number = input;
@@ -165,7 +173,7 @@ class UserAccountInfo extends Component {
                             setAccordionSection(0, 1);
                         }}
                         placeholder={'Password'}
-                        placeholderTextColor={AppColors.border}
+                        placeholderTextColor={AppColors.zeplin.lightGrey}
                         returnKeyType={'done'}
                         secureTextEntry={isPasswordSecure}
                         textInputRef={input => {
@@ -174,7 +182,7 @@ class UserAccountInfo extends Component {
                         value={user.password}
                     />
                     <TabIcon
-                        color={AppColors.border}
+                        color={AppColors.zeplin.lightGrey}
                         containerStyle={[{position: 'absolute', top: 15, right: 25, width: '10%'}]}
                         icon={isPasswordSecure ? 'visibility' : 'visibility-off'}
                         onPress={toggleShowPassword}
@@ -187,7 +195,7 @@ class UserAccountInfo extends Component {
                         onboardingUtils.isUserAccountInformationValid(user).isValid ?
                             {}
                             :
-                            {color: AppColors.border}
+                            {color: AppColors.zeplin.lightGrey}
                     ]}
                 >{'CONTINUE'}</Text>
             </Wrapper>

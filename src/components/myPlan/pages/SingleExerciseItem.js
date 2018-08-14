@@ -16,8 +16,8 @@ import { Platform, View, } from 'react-native';
 import Video from 'react-native-video';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles } from '../../../constants';
-import { TabIcon, Text, } from '../../custom';
+import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
+import { Spacer, TabIcon, Text, } from '../../custom';
 import { Error } from '../../general';
 
 /* Component ==================================================================== */
@@ -40,15 +40,19 @@ const SingleExerciseItem = ({
             :
             <Error type={'URL not defined.'} />
         }
-        <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, AppStyles.textBold, AppStyles.h2]}>
+        <Spacer size={10} />
+        <Text h2 oswaldMedium style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(28)}]}>
             {exercise.displayName}
         </Text>
-        <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, AppStyles.textBold, {color: AppColors.primary.yellow.hundredPercent}]}>
+        <Spacer size={10} />
+        <Text p robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, {color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(15)}]}>
             {exercise.dosage}
         </Text>
-        <Text style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, {color: AppColors.zeplin.darkGreyText}]} truncate={100}>
+        <Spacer size={10} />
+        <Text h6 robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15)}]} truncate={100}>
             {exercise.description}
         </Text>
+        <Spacer size={20} />
         <TabIcon
             containerStyle={[{alignSelf: 'center'}]}
             icon={'check'}
@@ -58,6 +62,7 @@ const SingleExerciseItem = ({
             size={34}
             type={'material-community'}
         />
+        <Spacer size={20} />
     </View>
 );
 
