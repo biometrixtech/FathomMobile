@@ -9,6 +9,7 @@ import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, Toucha
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
+import _ from 'lodash';
 import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
 
@@ -124,26 +125,29 @@ class Start extends Component {
             expires:       this.props.expires,
             session_token: this.props.sessionToken,
         };
-        // return this.props.getUser(this.props.user.id)
-        //     .then(res => this.props.authorizeUser(authorization, res.user, credentials))
-        return this.props.authorizeUser(authorization, this.props.user, credentials)
+        let userObj = _.cloneDeep(this.props.user);
+        return this.props.getUser(userObj.id)
+            .then(res => {
+                userObj = _.cloneDeep(res.user);
+                return this.props.authorizeUser(authorization, res.user, credentials);
+            })
             .then(response => {
                 if(response) {
                     authorization.expires = response.authorization.expires;
                     authorization.jwt = response.authorization.jwt;
                 }
-                return this.props.getUserSensorData(this.props.user.id)
+                return this.props.getUserSensorData(userObj.id)
                     .then(res => Promise.resolve())
                     .catch(err => Promise.reject(err));
             })
-            .then(() => this.props.registerDevice(this.props.certificate, this.props.device, this.props.user))
+            .then(() => this.props.registerDevice(this.props.certificate, this.props.device, userObj))
             .then(() => {
-                return this.props.finalizeLogin(this.props.user, credentials, authorization)
+                return this.props.finalizeLogin(userObj, credentials, authorization)
             })
             .then(() => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
-                if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                if(userObj.onboarding_status && userObj.onboarding_status.includes('account_setup')) {
                     this._routeToHome();
                 } else {
                     this._routeToOnboarding();

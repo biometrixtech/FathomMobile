@@ -50,9 +50,9 @@ const styles = StyleSheet.create({
         width: AppSizes.screen.width,
     },
     pickerSelectAndroid: {
-        ...AppFonts.oswaldMedium,
-        color:    AppColors.black,
-        fontSize: AppFonts.base.size,
+        color: AppColors.black,
+        // ...AppFonts.oswaldMedium,
+        // fontSize: AppFonts.base.size,
     },
     pickerSelectIOS: {
         ...AppFonts.oswaldMedium,
@@ -112,7 +112,7 @@ class UserAccountAbout extends Component {
             user,
         } = this.props;
         return(
-            <Wrapper>
+            <View>
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.birth_date.length > 0 ?'Date of Birth' : ' '}</FormLabel>
                 <DatePicker
                     cancelBtnText={'Cancel'}
@@ -139,7 +139,7 @@ class UserAccountAbout extends Component {
                 <RNPickerSelect
                     hideIcon={true}
                     items={UserAccountConstants.possibleInjuryStatuses}
-                    onValueChange={value => handleFormChange('injury_status', value)}
+                    onValueChange={value => value ? handleFormChange('injury_status', value) : null}
                     placeholder={{
                         label: 'Health Status',
                         value: null,
@@ -156,7 +156,7 @@ class UserAccountAbout extends Component {
                 <FormInput
                     blurOnSubmit={ true }
                     containerStyle={{marginLeft: 0, paddingLeft: 10}}
-                    keyboardType={'numeric'}
+                    keyboardType={'number-pad'}
                     maxLength={5}
                     onChangeText={text => handleFormChange('personal_data.zip_code', text)}
                     placeholder={'Zip Code'}
@@ -171,7 +171,7 @@ class UserAccountAbout extends Component {
                 <RNPickerSelect
                     hideIcon={true}
                     items={UserAccountConstants.heights}
-                    onValueChange={value => handleFormChange('biometric_data.height.in', value)}
+                    onValueChange={value => value ? handleFormChange('biometric_data.height.in', value) : null}
                     placeholder={{
                         label: 'Height',
                         value: null,
@@ -195,7 +195,7 @@ class UserAccountAbout extends Component {
                 <FormInput
                     blurOnSubmit={ true }
                     containerStyle={{marginLeft: 0, paddingLeft: 10}}
-                    keyboardType={'numeric'}
+                    keyboardType={'number-pad'}
                     onChangeText={text => handleFormChange('biometric_data.mass.lb', text)}
                     placeholder={'Weight (lbs)'}
                     placeholderTextColor={AppColors.zeplin.lightGrey}
@@ -209,7 +209,7 @@ class UserAccountAbout extends Component {
                 <RNPickerSelect
                     hideIcon={true}
                     items={UserAccountConstants.possibleGenders}
-                    onValueChange={value => handleFormChange('biometric_data.sex', value)}
+                    onValueChange={value => value ? handleFormChange('biometric_data.sex', value) : null}
                     placeholder={{
                         label: 'Sex',
                         value: null,
@@ -249,7 +249,7 @@ class UserAccountAbout extends Component {
                             {color: AppColors.zeplin.lightGrey}
                     ]}
                 >{'CONTINUE'}</Text>
-            </Wrapper>
+            </View>
         )
     }
 }

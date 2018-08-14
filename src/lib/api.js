@@ -15,7 +15,7 @@ import Fabric from 'react-native-fabric';
 import JWT from './jwt';
 import { AppConfig, ErrorMessages, APIConfig } from '../constants';
 import { store } from '../store';
-import { init } from '../actions';
+import { Actions as DispatchActions } from '../constants';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
@@ -47,6 +47,7 @@ const DEBUG_MODE = AppConfig.DEV;
 
 // Number each API request (used for debugging)
 let requestCounter = 0;
+let unauthorizedCounter = 0;
 
 
 /* Helper Functions ==================================================================== */
@@ -225,28 +226,35 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                 }
 
                 // if we get a 401 - authorization failed, re-authorizeUser
-                if (rawRes && /401/.test(`${rawRes.status}`)) {
-                    let authorization = {
-                        jwt:           currentState.init.jwt,
-                        expires:       currentState.init.expires,
-                        session_token: currentState.init.sessionToken,
-                    };
-                    let credentials = {
-                        Email:    currentState.init.email,
-                        Password: currentState.init.password,
-                    };
-                    console.log('+++++++', authorization, credentials, init, this);
-                    return init.authorizeUser(authorization, currentState.user, credentials)
-                        .then((res) => { console.log('res',res);
+                console.log('++++++++++',rawRes);
+                if (rawRes && /401/.test(`${rawRes.status}`) && endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
+                    unauthorizedCounter += 1;
+                    if(unauthorizedCounter === 2) {
+                        store.dispatch({
+                            type: DispatchActions.LOGOUT
+                        });
+                        return Actions.login();
+                    }
+                    let userIdObj = {userId: currentState.user.id};
+                    let sessionTokenObj = {session_token: currentState.init.session_token};
+                    return fetcher('POST', '/users/1.0.0/user/{userId}/authorize', userIdObj, sessionTokenObj, 0)
+                        .then((res) => {
+                            store.dispatch({
+                                type:    Actions.LOGIN,
+                                jwt:     res.authorization.jwt,
+                                expires: res.authorization.expires,
+                            });
                             // re-send API
-                            return fetcher(method, inputEndpoint, inputParams, body, api_enum);
+                            return fetcher(method, endpoint, params, body, api_enum);
                         })
-                        .catch((err) => { console.log('err',err);
+                        .catch((err) => {
                             // logout user and route to login
-                            return init.logout().then(() => Actions.login());
+                            store.dispatch({
+                                type: DispatchActions.LOGOUT
+                            });
+                            return Actions.login();
                         });
                 }
-
 
                 // Only continue if the header is successful
                 if (rawRes && /20[012]/.test(`${rawRes.status}`)) { return jsonRes; }

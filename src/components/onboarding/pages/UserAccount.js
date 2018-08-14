@@ -4,6 +4,7 @@
     <UserAccount
         componentStep={1}
         currentStep={step}
+        displayCoach={resultMsg.error && resultMsg.error.length > 0}
         handleFormChange={this._handleUserFormChange}
         handleFormSubmit={this._handleFormSubmit}
         isUpdatingUser={this.props.user.id ? true : false}
@@ -13,7 +14,17 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+    Image,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
+} from 'react-native';
 
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
@@ -30,6 +41,9 @@ import Collapsible from 'react-native-collapsible';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    background: {
+        // width: AppSizes.screen.width,
+    },
     headerWrapper: {
         alignItems:    'center',
         flexDirection: 'row',
@@ -51,6 +65,24 @@ const styles = StyleSheet.create({
         paddingVertical:   10,
     },
 });
+
+const Wrapper = props => Platform.OS === 'ios' ?
+    (
+        <KeyboardAvoidingView behavior={'padding'} style={[styles.background]}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                <ScrollView>
+                    {props.children}
+                </ScrollView>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+    ) :
+    (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <ScrollView style={[styles.background]}>
+                {props.children}
+            </ScrollView>
+        </TouchableWithoutFeedback>
+    );
 
 /* Component ==================================================================== */
 class UserAccount extends Component {
@@ -234,6 +266,7 @@ class UserAccount extends Component {
         const {
             componentStep,
             currentStep,
+            displayCoach,
             handleFormChange,
             handleFormSubmit,
             heightPressed,
@@ -280,12 +313,12 @@ class UserAccount extends Component {
         return (
             <View style={{flex: 1}}>
                 <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1} : {display: 'none'}] ]}>
-                    <ScrollView>
-                        { this.state.coachContent.length > 0 ?
+                    <Wrapper>
+                        { displayCoach && this.state.coachContent.length > 0 ?
                             <Coach
                                 text={this.state.coachContent}
                             />
-                            : this.state.accordionSection !== false && _.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle ?
+                            : displayCoach && this.state.accordionSection !== false && _.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle ?
                                 <Coach
                                     text={_.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle}
                                 />
@@ -300,7 +333,7 @@ class UserAccount extends Component {
                             renderHeader={this._renderHeader}
                             sections={SECTIONS}
                         />
-                    </ScrollView>
+                    </Wrapper>
                 </View>
             </View>
         );
@@ -310,6 +343,7 @@ class UserAccount extends Component {
 UserAccount.propTypes = {
     componentStep:    PropTypes.number.isRequired,
     currentStep:      PropTypes.number.isRequired,
+    displayCoach:     PropTypes.bool.isRequired,
     handleFormChange: PropTypes.func.isRequired,
     heightPressed:    PropTypes.func.isRequired,
     isUpdatingUser:   PropTypes.bool.isRequired,

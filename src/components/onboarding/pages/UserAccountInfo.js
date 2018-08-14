@@ -84,7 +84,7 @@ class UserAccountInfo extends Component {
             user,
         } = this.props;
         return(
-            <Wrapper>
+            <View>
                 <View style={[{borderTopWidth: 1, borderTopColor: AppColors.border, flexDirection: 'row',}]}>
                     <View style={[styles.leftItem]}>
                         <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.first_name.length > 0 ? 'First Name' : ' '}</FormLabel>
@@ -198,7 +198,7 @@ class UserAccountInfo extends Component {
                             {color: AppColors.zeplin.lightGrey}
                     ]}
                 >{'CONTINUE'}</Text>
-            </Wrapper>
+            </View>
         )
     }
 }
