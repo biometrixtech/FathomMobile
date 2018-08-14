@@ -9,6 +9,8 @@
 import DeviceInfo from 'react-native-device-info';
 import uuidByString from 'uuid-by-string';
 
+import { store } from '../store';
+
 /**
  * Global Util Functions
  */
@@ -34,8 +36,12 @@ const MS_IN_DAY = 1000 * 60 * 60 * 24;
 
 const UTIL = {
     getDeviceUUID: () => {
+        // setup evn flag
+        let currentState = store.getState();
+        let env = currentState.init.environment;
+        let envFlag = env === 'PROD' ? 'production' : env.toLowerCase();
         // mobile uuid
-        let uniqueId = DeviceInfo.getUniqueID();
+        let uniqueId = `${envFlag}_${DeviceInfo.getUniqueID()}`;
         let uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
         if(!uuidRegex.test(uniqueId)) {
             // not a uuid, lets unparse it

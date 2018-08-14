@@ -18,7 +18,7 @@ import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-nat
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
 import { onboardingUtils } from '../../../constants/utils';
-import { Coach, TabIcon, Text } from '../../custom';
+import { Coach, Spacer, TabIcon, Text } from '../../custom';
 
 // import components
 import { UserAccountAbout, UserAccountInfo, UserSports } from './';
@@ -31,23 +31,20 @@ import Collapsible from 'react-native-collapsible';
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     headerWrapper: {
+        alignItems:    'center',
         flexDirection: 'row',
-        paddingTop:    10,
     },
     iconContainer: {
         backgroundColor: AppColors.transparent,
-        marginBottom:    0,
+        height:          AppFonts.scaleFont(18),
         marginLeft:      0,
-        marginRight:     10,
-        marginTop:       0,
-        padding:         0,
     },
     iconStyle: {
         fontSize: 20,
     },
     title: {
-        fontSize:   15,
-        fontWeight: 'bold',
+        ...AppStyles.oswaldBold,
+        fontSize: AppFonts.scaleFont(18),
     },
     wrapper: {
         paddingHorizontal: 10,
@@ -78,16 +75,44 @@ class UserAccount extends Component {
         }
         return(
             <View>
-                <View style={[styles.headerWrapper]}>
+                <Spacer size={10} />
+                <View style={[styles.headerWrapper,]}>
                     <TabIcon
                         containerStyle={[styles.iconContainer]}
-                        icon={isFormValid ? 'check-circle' : 'circle-outline'}
-                        iconStyle={[styles.iconStyle, isFormValid ? {color: AppColors.primary.yellow.hundredPercent} : {color: AppColors.black}]}
+                        icon={
+                            isFormValid ?
+                                'check-circle'
+                                : (this.state.accordionSection + 1) === section.index ?
+                                    'circle'
+                                    :
+                                    'circle-outline'
+                        }
+                        iconStyle={[
+                            styles.iconStyle,
+                            isFormValid ?
+                                {color: AppColors.primary.yellow.hundredPercent}
+                                : (this.state.accordionSection + 1) === section.index ?
+                                    {color: AppColors.black}
+                                    :
+                                    {color: AppColors.zeplin.lightGrey}
+                        ]}
                         reverse={true}
                         size={10}
                         type={'material-community'}
                     />
-                    <Text style={[styles.title, isFormValid ? {color: AppColors.primary.yellow.hundredPercent} : {color: AppColors.black}]}>{section.header}</Text>
+                    <Text
+                        style={[
+                            styles.title,
+                            isFormValid ?
+                                {color: AppColors.primary.yellow.hundredPercent}
+                                : (this.state.accordionSection + 1) === section.index ?
+                                    {color: AppColors.black}
+                                    :
+                                    {color: AppColors.zeplin.lightGrey}
+                        ]}
+                    >
+                        {section.header}
+                    </Text>
                 </View>
                 { section.index === 1 || (section.index === 2 && this.state.accordionSection === 1) ?
                     <View
@@ -255,18 +280,18 @@ class UserAccount extends Component {
         return (
             <View style={{flex: 1}}>
                 <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1} : {display: 'none'}] ]}>
-                    { this.state.coachContent.length > 0 ?
-                        <Coach
-                            text={this.state.coachContent}
-                        />
-                        : this.state.accordionSection !== false && _.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle ?
-                            <Coach
-                                text={_.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle}
-                            />
-                            :
-                            null
-                    }
                     <ScrollView>
+                        { this.state.coachContent.length > 0 ?
+                            <Coach
+                                text={this.state.coachContent}
+                            />
+                            : this.state.accordionSection !== false && _.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle ?
+                                <Coach
+                                    text={_.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle}
+                                />
+                                :
+                                null
+                        }
                         <Accordion
                             activeSection={this.state.accordionSection}
                             onChange={this._setAccordionSection}
@@ -277,12 +302,6 @@ class UserAccount extends Component {
                         />
                     </ScrollView>
                 </View>
-                {/*<TouchableOpacity
-                    onPress={() => onboardingUtils.getCurrentStep(user) === onboardingUtils.getTotalSteps(user) ? handleFormSubmit() : this._setAccordionSection(0, 1)}
-                    style={[AppStyles.nextButtonWrapper]}
-                >
-                    <Text style={[AppStyles.nextButtonText]}>{onboardingUtils.getCurrentStep(user) === onboardingUtils.getTotalSteps(user) ? 'Create Account' : 'Next Step'}</Text>
-                </TouchableOpacity>*/}
             </View>
         );
     }

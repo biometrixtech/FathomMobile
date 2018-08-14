@@ -21,7 +21,8 @@ const Settings = ({
     deleteUserSensorData,
     disconnectFromSingleSensor,
     getSingleSensorSavedPractices,
-    logout
+    logout,
+    user,
 }) => (
     <Layout
         accessoryData={accessoryData}
@@ -29,6 +30,7 @@ const Settings = ({
         disconnectFromSingleSensor={disconnectFromSingleSensor}
         getSingleSensorSavedPractices={getSingleSensorSavedPractices}
         logout={logout}
+        user={user}
     />
 );
 
@@ -39,6 +41,7 @@ Settings.propTypes = {
     disconnectFromSingleSensor:    PropTypes.func.isRequired,
     getSingleSensorSavedPractices: PropTypes.func.isRequired,
     logout:                        PropTypes.func.isRequired,
+    user:                          PropTypes.object.isRequired,
 };
 
 Settings.defaultProps = {
@@ -46,6 +49,7 @@ Settings.defaultProps = {
 
 const mapStateToProps = state => ({
     accessoryData: state.ble.accessoryData || {},
+    user:          state.user || {},
 });
 
 const mapDispatchToProps = {

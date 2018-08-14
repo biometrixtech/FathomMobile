@@ -99,9 +99,12 @@ const tabbar = {
 };
 
 const zeplin = {
-    blueBackground: '#183C4D',
-    greyText:       '#B2B2B2',
-    darkGreyText:   '#868686',
+    blueBackground: '#183C4D', // 24, 60, 77
+    greyText:       '#B2B2B2', // 178, 178, 178
+    darkGreyText:   '#868686', // 134, 134, 134
+    lightGrey:      '#D5D5D5', // 213, 213, 213
+    darkGrey:       '#2B2B2B', // 43, 43, 43
+    darkBlue:       '#081832', // 8, 24, 50
 }
 
 export default {
