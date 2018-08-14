@@ -34,6 +34,7 @@ class Start extends Component {
         environment:    PropTypes.string,
         expires:        PropTypes.string,
         finalizeLogin:  PropTypes.func.isRequired,
+        getUser:        PropTypes.func.isRequired,
         jwt:            PropTypes.string,
         onFormSubmit:   PropTypes.func,
         password:       PropTypes.string,
@@ -78,7 +79,6 @@ class Start extends Component {
             ) {
                 Promise.resolve(this.login());
             } else {
-                this._routeToLogin();
                 this.hideSplash();
             }
         }, 10);
@@ -124,6 +124,8 @@ class Start extends Component {
             expires:       this.props.expires,
             session_token: this.props.sessionToken,
         };
+        // return this.props.getUser(this.props.user.id)
+        //     .then(res => this.props.authorizeUser(authorization, res.user, credentials))
         return this.props.authorizeUser(authorization, this.props.user, credentials)
             .then(response => {
                 if(response) {
@@ -141,11 +143,11 @@ class Start extends Component {
             .then(() => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
-                // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                     this._routeToHome();
-                // } else {
-                //     this._routeToOnboarding();
-                // }
+                } else {
+                    this._routeToOnboarding();
+                }
                 this.hideSplash();
             })).catch((err) => {
                 this.hideSplash();

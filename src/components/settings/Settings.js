@@ -106,11 +106,26 @@ class Settings extends Component {
                 {
                     text:    'Yes',
                     onPress: () => {
-                        return UserActions.clearUserData();
+                        return UserActions.clearUserData()
+                            .catch(err => this._alertResetError(err));
                     }
                 },
                 {
                     text:  'No',
+                    style: 'cancel'
+                },
+            ],
+            { cancelable: true }
+        )
+    }
+
+    _alertResetError = err => {
+        Alert.alert(
+            'Error!',
+            'Ooops! Something went wrong with reset. Please try again.',
+            [
+                {
+                    text:  'OK',
                     style: 'cancel'
                 },
             ],

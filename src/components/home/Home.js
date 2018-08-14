@@ -689,7 +689,7 @@ class Home extends Component {
                 <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryActiveTimeBackgroundColor, borderColor: styles.activeRecoveryActiveTimeBorderColor, borderWidth: 1, borderRadius: 5 }}>
                     <Text h7 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
                     <View style={{ alignItems: 'center', flexDirection: 'row', flex: 1, }}>
-                        <Text h1 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{`${recoveryObj && recoveryObj.minutes_duration ? parseFloat(recoveryObj.minutes_duration).toFixed(1) : '#'}`}</Text>
+                        <Text h1 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{`${recoveryObj && recoveryObj.minutes_duration ? parseFloat(recoveryObj.minutes_duration).toFixed(1) : '0'}`}</Text>
                         <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
                             <Text h7 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeSubtextColor, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
                         </View>
@@ -698,7 +698,7 @@ class Home extends Component {
                 <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryBackgroundColor, borderColor: styles.activeRecoveryBorderColor, borderWidth: 1, borderRadius: 5 }}>
                     <Text h7 oswaldMedium style={{ color: styles.activeRecoveryHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'IMPACT SCORE'}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
-                        <Text h1 oswaldMedium style={{ color: styles.activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{`${recoveryObj && recoveryObj.impact_score ? parseFloat(recoveryObj.impact_score).toFixed(1) : '#'}`}</Text>
+                        <Text h1 oswaldMedium style={{ color: styles.activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{`${recoveryObj && recoveryObj.impact_score ? parseFloat(recoveryObj.impact_score).toFixed(1) : '0'}`}</Text>
                         <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
                             <Text h7 oswaldMedium style={{ color: styles.subtextColor, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'/ 5'}</Text>
                         </View>
@@ -838,7 +838,26 @@ class Home extends Component {
                             </View>
                         </View>
                     : isActive ?
-                        prepare.isActiveRecoveryCollapsed ?
+                        exerciseList.totalLength === 0 ?
+                            <View style={{ flex: 1, flexDirection: 'row' }}>
+                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                                <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
+                                    {
+                                        this.renderActiveRecoveryBlocks(
+                                            recoveryObj,
+                                            {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
+                                            {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
+                                        )
+                                    }
+                                    <Spacer size={12}/>
+                                    <View style={{flex: 1}}>
+                                        <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVertical]}>
+                                            <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: AppFonts.scaleFont(15) }]}>{'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.'}</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                            </View>
+                        : prepare.isActiveRecoveryCollapsed ?
                             <View style={{ flex: 1, flexDirection: 'row' }}>
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                 <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
@@ -1074,7 +1093,27 @@ class Home extends Component {
                             </View>
                         </View>
                     : isActive ?
-                        recover.isActiveRecoveryCollapsed ?
+                        exerciseList.totalLength === 0 ?
+                            <View style={{ flex: 1, flexDirection: 'row' }}>
+                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                                <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
+                                    {
+                                        this.renderActiveRecoveryBlocks(
+                                            recoveryObj,
+                                            {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
+                                            {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
+                                            true
+                                        )
+                                    }
+                                    <Spacer size={12}/>
+                                    <View style={{flex: 1}}>
+                                        <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVertical]}>
+                                            <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: AppFonts.scaleFont(15) }]}>{'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.'}</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                            </View>
+                        : recover.isActiveRecoveryCollapsed ?
                             <View style={{ flex: 1, flexDirection: 'row', }}>
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                 <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>

@@ -19,16 +19,16 @@ import moment from 'moment';
 /**
   * Get My User Data
   */
-const getUser = () => {
-    return dispatch => AppAPI.user.get()
-        .then((userData) => {
+const getUser = (userId) => {
+    return dispatch => AppAPI.get_user.get({userId})
+        .then(userData => {
             dispatch({
                 type: Actions.USER_REPLACE,
                 data: userData,
             });
-
-            return userData;
-        });
+            return Promise.resolve(userData);
+        })
+        .catch(err => Promise.reject(err));
 };
 
 /**
