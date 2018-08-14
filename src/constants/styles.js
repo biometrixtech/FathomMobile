@@ -355,7 +355,6 @@ export default {
     indicatorContainerStyles: {
         height:         Fonts.lineHeight(20),
         justifyContent: 'flex-start',
-        paddingLeft:    2,
     },
     leftTabBar: {
         alignItems:     'center',

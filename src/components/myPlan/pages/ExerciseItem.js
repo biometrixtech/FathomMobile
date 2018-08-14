@@ -26,9 +26,9 @@ const ExerciseItem = ({
     isLastItem,
     toggleSelectedExercise,
 }) => (
-    <View style={[AppStyles.paddingVerticalXSml, {borderTopWidth: 1, borderTopColor: AppColors.zeplin.lightGrey, marginHorizontal: 10}]}>
+    <View style={[{borderTopWidth: 1, borderTopColor: AppColors.zeplin.lightGrey, marginHorizontal: 10}]}>
         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
-            <View style={{flex: 1, justifyContent: 'center',}}>
+            <View style={[AppStyles.paddingVerticalXSml, {flex: 1, justifyContent: 'center',}]}>
                 <Checkbox
                     checked={completedExercises.includes(exercise.library_id)}
                     checkedColor={AppColors.primary.yellow.hundredPercent}
@@ -40,17 +40,17 @@ const ExerciseItem = ({
             </View>
             <TouchableOpacity
                 onPress={() => toggleSelectedExercise(exercise, true)}
-                style={[AppStyles.paddingHorizontalMed, {flex: 2,}]}
+                style={[AppStyles.paddingHorizontalMed, {flex: 2, justifyContent: 'center',}]}
             >
                 <Image
                     resizeMode={'contain'}
                     source={{uri: MyPlan.cleanExercise(exercise).thumbnailUrl}}
-                    style={{height: 70, width: 70}}
+                    style={{height: 75, width: 75,}}
                 />
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => toggleSelectedExercise(exercise, true)}
-                style={{flex: 6, justifyContent: 'center',}}
+                style={[AppStyles.paddingVerticalXSml, {flex: 6, justifyContent: 'center',}]}
             >
                 <Text
                     p
@@ -79,7 +79,7 @@ const ExerciseItem = ({
                 containerStyle={[{flex: 1, justifyContent: 'center',}]}
                 icon={'arrow-right'}
                 onPress={() => toggleSelectedExercise(exercise, true)}
-                size={24}
+                size={18}
                 type={'simple-line-icon'}
             />
         </View>

@@ -581,12 +581,23 @@ class Home extends Component {
         let page0Styles = [AppStyles.leftTabBar, page0ExtraStyles, {width: page0Width,}];
         let page1Styles = [AppStyles.centerTabBar, page1ExtraStyles, {width: page1Width,}];
         let page2Styles = [AppStyles.rightTabBar, page2ExtraStyles, {width: page2Width,}];
-
+        let textBorderWidth = 4;
+        let iconSize = 10;
+        let iconLeftPadding = 2;
+        let iconBottomPadding = textBorderWidth;
         let textWrapperStyle = isTabActive ?
             {
-                borderBottomWidth: 4,
+                borderBottomWidth: textBorderWidth,
                 borderBottomColor: AppColors.primary.yellow.hundredPercent,
-                paddingHorizontal: AppSizes.paddingSml,
+                marginLeft:        iconSize + iconLeftPadding,
+                paddingHorizontal: AppSizes.paddingXSml,
+                textAlign:         'center',
+            }
+            :
+            {};
+        let extraIconContainerStyle = isTabActive ?
+            {
+                marginBottom: iconBottomPadding,
             }
             :
             {};
@@ -600,37 +611,34 @@ class Home extends Component {
             onLayout={onLayoutHandler}
         >
             <View style={[page === 0 ? page0Styles : page === 1 ? page1Styles : page2Styles]}>
-                <View
-                    style={[textWrapperStyle, {
-                        alignItems:     'center',
-                        flex:           1,
-                        flexDirection:  'row',
-                        justifyContent: 'center',
-                    }]}
-                >
-                    <Text
-                        onLayout={event =>
-                            this.setState({
-                                page0: page === 0 ? event.nativeEvent.layout : page0,
-                                page1: page === 1 ? event.nativeEvent.layout : page1,
-                                page2: page === 2 ? event.nativeEvent.layout : page2,
-                            })
-                        }
-                        style={[
-                            textStyle,
-                            {
-                                color: isTabActive ? AppColors.activeTabText : AppColors.inactiveTabText,
-                                fontSize,
-                            }
-                        ]}
+                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
+                    <View
+                        style={[textWrapperStyle,]}
                     >
-                        {name}
-                    </Text>
+                        <Text
+                            onLayout={event =>
+                                this.setState({
+                                    page0: page === 0 ? event.nativeEvent.layout : page0,
+                                    page1: page === 1 ? event.nativeEvent.layout : page1,
+                                    page2: page === 2 ? event.nativeEvent.layout : page2,
+                                })
+                            }
+                            style={[
+                                textStyle,
+                                {
+                                    color: isTabActive ? AppColors.activeTabText : AppColors.inactiveTabText,
+                                    fontSize,
+                                }
+                            ]}
+                        >
+                            {name}
+                        </Text>
+                    </View>
                     {
                         flag ?
                             <TabIcon
-                                containerStyle={[AppStyles.indicatorContainerStyles,]}
-                                size={10}
+                                containerStyle={[AppStyles.indicatorContainerStyles, extraIconContainerStyle, {paddingLeft: iconLeftPadding,}]}
+                                size={iconSize}
                                 selected
                                 color={AppColors.primary.yellow.hundredPercent}
                                 icon={'fiber-manual-record'}
@@ -903,7 +911,7 @@ class Home extends Component {
                                                         finishedRecovery:          true,
                                                         isActiveRecoveryCollapsed: true,
                                                     }),
-                                                    // update: true,
+                                                    update: true,
                                                 })
                                             )
                                             .catch(() => {
