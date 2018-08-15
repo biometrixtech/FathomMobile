@@ -11,9 +11,10 @@ import { Image, Platform, StatusBar, StyleSheet, View, } from 'react-native';
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles, } from '../../constants';
 import { TabIcon, Text, } from './';
+import { store } from '../../store';
 
 // import third-party libraries
-import { Actions } from 'react-native-router-flux';
+import { Actions, } from 'react-native-router-flux';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -40,17 +41,26 @@ class CustomNavBar extends Component {
     _renderLeft = () => {
         return (
             <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingXSml}}>
-                { Actions.currentParams.onLeft ?
+                { Actions.currentScene === 'onboarding' && !store.getState().user.id ?
                     <TabIcon
-                        icon={Actions.currentScene === 'home' ? 'settings' : 'arrow-left'}
+                        icon={'arrow-left'}
                         iconStyle={[{color: AppColors.black,}]}
                         onPress={Actions.currentParams.onLeft}
                         reverse={false}
                         size={26}
-                        type={Actions.currentScene === 'home' ? 'material-community' : 'simple-line-icon'}
+                        type={'simple-line-icon'}
                     />
-                    :
-                    null
+                    : Actions.currentParams.onLeft && Actions.currentScene !== 'onboarding' ?
+                        <TabIcon
+                            icon={Actions.currentScene === 'home' ? 'settings' : 'arrow-left'}
+                            iconStyle={[{color: AppColors.black,}]}
+                            onPress={Actions.currentParams.onLeft}
+                            reverse={false}
+                            size={26}
+                            type={Actions.currentScene === 'home' ? 'material-community' : 'simple-line-icon'}
+                        />
+                        :
+                        null
                 }
             </View>
         )
