@@ -21,29 +21,39 @@ import { AppColors, AppFonts } from '../../constants';
 /* Component ==================================================================== */
 class CustomFormLabel extends Component {
     static propTypes = {
+        children:       PropTypes.node,
+        containerStyle: PropTypes.oneOfType([
+            PropTypes.array,
+            PropTypes.shape({}),
+        ]),
         labelStyle: PropTypes.oneOfType([
             PropTypes.array,
             PropTypes.shape({}),
         ]),
-        children: PropTypes.node,
     }
 
     static defaultProps = {
+        children:       null,
         containerStyle: [],
         labelStyle:     [],
-        children:       null,
     }
 
     labelProps = () => {
         // Defaults
         const props = {
             ...this.props,
-            labelStyle: [{
+            containerStyle: [],
+            labelStyle:     [{
                 ...AppFonts.oswaldMedium,
                 color:    AppColors.primary.grey.hundredPercent,
                 fontSize: AppFonts.scaleFont(14),
+                opacity:  0.6,
             }],
         };
+
+        if (this.props.containerStyle) {
+            props.containerStyle.push(this.props.containerStyle);
+        }
 
         if (this.props.labelStyle) {
             props.labelStyle.push(this.props.labelStyle);

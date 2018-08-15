@@ -91,6 +91,7 @@ class UserAccount extends Component {
         this.state = {
             accordionSection: 0,
             coachContent:     '',
+            isFormValid:      false,
             isPasswordSecure: true,
         };
     }
@@ -133,6 +134,7 @@ class UserAccount extends Component {
                         type={'material-community'}
                     />
                     <Text
+                        oswaldMedium
                         style={[
                             styles.title,
                             isFormValid ?
@@ -140,7 +142,8 @@ class UserAccount extends Component {
                                 : (this.state.accordionSection + 1) === section.index ?
                                     {color: AppColors.black}
                                     :
-                                    {color: AppColors.zeplin.lightGrey}
+                                    {color: AppColors.zeplin.lightGrey},
+                            {fontSize: AppFonts.scaleFont(18)},
                         ]}
                     >
                         {section.header}
@@ -234,25 +237,35 @@ class UserAccount extends Component {
                 errorsArray = onboardingUtils.areSportsValid(user.sports).errorsArray;
             }
             if(errorsArray.length > 0) {
-                this.setState({ coachContent: errorsArray });
+                this.setState({
+                    coachContent: errorsArray,
+                    isFormValid:  false,
+                });
             } else {
-                this.setState({ accordionSection: nextStep });
+                this.setState({
+                    accordionSection: nextStep,
+                    isFormValid:      false,
+                });
             }
         } else {
             let coachesMessage = '';
+            errorsArray = errorsArray.concat(onboardingUtils.isUserAccountInformationValid(user).errorsArray);
+            errorsArray = errorsArray.concat(onboardingUtils.isUserAboutValid(user).errorsArray);
             if(section === 1) {
-                errorsArray = onboardingUtils.isUserAccountInformationValid(user).errorsArray;
                 coachesMessage = 'The ACCOUNT INFORMATION section has invalid fields. Please complete first and try agian.';
             } else if(section === 2) {
-                errorsArray = onboardingUtils.isUserAboutValid(user).errorsArray;
                 coachesMessage = 'The TELL US ABOUT YOU section has invalid fields. Please complete first and try agian.';
             }
             if(errorsArray.length > 0) {
-                this.setState({ coachContent: coachesMessage });
+                this.setState({
+                    coachContent: coachesMessage,
+                    isFormValid:  false,
+                });
             } else {
                 this.setState({
                     accordionSection: section,
                     coachContent:     '',
+                    isFormValid:      true,
                 });
             }
         }
@@ -333,6 +346,23 @@ class UserAccount extends Component {
                             renderHeader={this._renderHeader}
                             sections={SECTIONS}
                         />
+                        { this.state.accordionSection === false ?
+                            <View style={{marginLeft: 10, borderLeftWidth: 1, borderColor: AppColors.border,}}>
+                                <Spacer size={40} />
+                                <Text
+                                    oswaldRegular
+                                    onPress={() => this.state.isFormValid ? handleFormSubmit() : this._setAccordionSection(0, 1)}
+                                    style={[AppStyles.continueButton,
+                                        {
+                                            fontSize:      AppFonts.scaleFont(16),
+                                            paddingBottom: AppSizes.padding,
+                                        },
+                                    ]}
+                                >{'CONTINUE...'}</Text>
+                            </View>
+                            :
+                            null
+                        }
                     </Wrapper>
                 </View>
             </View>

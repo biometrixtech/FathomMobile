@@ -29,7 +29,7 @@ import {
     AppStyles,
     UserAccount as UserAccountConstants,
 } from '../../../constants';
-import { FormInput, FormLabel, RadioButton, Text } from '../../custom';
+import { FormInput, FormLabel, RadioButton, Spacer, Text } from '../../custom';
 import { onboardingUtils } from '../../../constants/utils';
 
 // import third-party libraries
@@ -51,13 +51,13 @@ const styles = StyleSheet.create({
     },
     pickerSelectAndroid: {
         color: AppColors.black,
-        // ...AppFonts.oswaldMedium,
-        // fontSize: AppFonts.base.size,
+        // ...AppFonts.robotoRegular,
+        // fontSize: AppFonts.scaleFont(16),
     },
     pickerSelectIOS: {
-        ...AppFonts.oswaldMedium,
+        ...AppFonts.robotoRegular,
         color:          AppColors.black,
-        fontSize:       AppFonts.base.size,
+        fontSize:       AppFonts.scaleFont(16),
         height:         40,
         justifyContent: 'center',
         paddingLeft:    10,
@@ -112,15 +112,15 @@ class UserAccountAbout extends Component {
             user,
         } = this.props;
         return(
-            <View>
+            <View style={[{borderTopWidth: 1, borderTopColor: AppColors.border,}]}>
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.birth_date.length > 0 ?'Date of Birth' : ' '}</FormLabel>
                 <DatePicker
                     cancelBtnText={'Cancel'}
                     confirmBtnText={'Confirm'}
                     customStyles={{
                         dateInput:       styles.reusableCustomSpacing,
-                        dateText:        {...AppFonts.oswaldMedium, color: AppColors.black, fontSize: AppFonts.scaleFont(18),},
-                        placeholderText: {color: AppColors.zeplin.lightGrey, fontSize: AppFonts.base.size, ...AppFonts.oswaldMedium, },
+                        dateText:        {...AppFonts.robotoRegular, color: AppColors.black, fontSize: AppFonts.scaleFont(16),},
+                        placeholderText: {color: AppColors.zeplin.lightGrey, fontSize: AppFonts.scaleFont(16), ...AppFonts.robotoRegular, },
                         btnTextConfirm:  {color: AppColors.primary.yellow.hundredPercent},
                     }}
                     date={user.personal_data.birth_date || ''}
@@ -240,15 +240,21 @@ class UserAccountAbout extends Component {
                     }}
                     value={user.system_type}
                 />*/}
+                <Spacer size={50} />
                 <Text
+                    oswaldRegular
                     onPress={() => onboardingUtils.isUserAboutValid(user).isValid ? setAccordionSection() : null}
-                    style={[AppStyles.paddingVertical, AppStyles.continueButton,
+                    style={[AppStyles.continueButton,
                         onboardingUtils.isUserAboutValid(user).isValid ?
                             {}
                             :
-                            {color: AppColors.zeplin.lightGrey}
+                            {color: AppColors.zeplin.lightGrey},
+                        {
+                            fontSize:      AppFonts.scaleFont(16),
+                            paddingBottom: AppSizes.padding,
+                        },
                     ]}
-                >{'CONTINUE'}</Text>
+                >{'CONTINUE...'}</Text>
             </View>
         )
     }

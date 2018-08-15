@@ -25,8 +25,8 @@ import {
 } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles } from '../../../constants';
-import { FormInput, FormLabel, TabIcon, Text } from '../../custom';
+import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
+import { FormInput, FormLabel, Spacer, TabIcon, Text } from '../../custom';
 import { onboardingUtils } from '../../../constants/utils';
 
 /* Styles ==================================================================== */
@@ -164,7 +164,7 @@ class UserAccountInfo extends Component {
                     value={user.personal_data.phone_number}
                 />
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.password.length > 0 ? 'Password' : ' '}</FormLabel>
-                <View>
+                <View style={[{flexDirection: 'row',}]}>
                     <FormInput
                         blurOnSubmit={ true }
                         containerStyle={{marginLeft: 0, paddingLeft: 10}}
@@ -183,21 +183,27 @@ class UserAccountInfo extends Component {
                     />
                     <TabIcon
                         color={AppColors.zeplin.lightGrey}
-                        containerStyle={[{position: 'absolute', top: 15, right: 25, width: '10%'}]}
+                        containerStyle={[{height: '100%', position: 'absolute', right: 2, top: 0,}]}
                         icon={isPasswordSecure ? 'visibility' : 'visibility-off'}
                         onPress={toggleShowPassword}
                         size={24}
                     />
                 </View>
+                <Spacer size={40} />
                 <Text
+                    oswaldRegular
                     onPress={() => onboardingUtils.isUserAccountInformationValid(user).isValid ? setAccordionSection(0, 1) : null}
-                    style={[AppStyles.paddingVertical, AppStyles.continueButton,
+                    style={[AppStyles.continueButton,
                         onboardingUtils.isUserAccountInformationValid(user).isValid ?
                             {}
                             :
-                            {color: AppColors.zeplin.lightGrey}
+                            {color: AppColors.zeplin.lightGrey},
+                        {
+                            fontSize:      AppFonts.scaleFont(16),
+                            paddingBottom: AppSizes.padding,
+                        },
                     ]}
-                >{'CONTINUE'}</Text>
+                >{'CONTINUE...'}</Text>
             </View>
         )
     }
