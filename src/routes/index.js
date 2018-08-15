@@ -69,6 +69,7 @@ const Index = (
                 hideNavBar={false}
                 key={'onboarding'}
                 navBar={CustomNavBar}
+                onLeft={() => Actions.start()}
                 panHandlers={null}
                 renderLeftButton={null}
                 title={'GET STARTED'}

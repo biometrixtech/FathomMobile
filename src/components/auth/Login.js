@@ -38,7 +38,7 @@ import { AppColors, APIConfig, AppFonts, AppSizes, AppStyles } from '../../const
 import { onboardingUtils } from '../../constants/utils';
 
 // Components
-import { Alerts, Button, Card, ListItem, Spacer, Text } from '../custom';
+import { Alerts, Button, Card, ListItem, Spacer, TabIcon, Text } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -286,6 +286,16 @@ class Login extends Component {
 
         return (
             <Wrapper>
+
+                <TabIcon
+                    containerStyle={[{position: 'absolute', top: AppSizes.statusBarHeight + 10, left: 10}]}
+                    icon={'arrow-left'}
+                    iconStyle={[{color: AppColors.white,}]}
+                    onPress={() => Actions.start()}
+                    reverse={false}
+                    size={26}
+                    type={'simple-line-icon'}
+                />
 
                 <View>
                     <Egg
