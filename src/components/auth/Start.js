@@ -9,6 +9,7 @@ import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, Toucha
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
+import _ from 'lodash';
 import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
 
@@ -34,6 +35,7 @@ class Start extends Component {
         environment:    PropTypes.string,
         expires:        PropTypes.string,
         finalizeLogin:  PropTypes.func.isRequired,
+        getUser:        PropTypes.func.isRequired,
         jwt:            PropTypes.string,
         onFormSubmit:   PropTypes.func,
         password:       PropTypes.string,
@@ -78,7 +80,6 @@ class Start extends Component {
             ) {
                 Promise.resolve(this.login());
             } else {
-                this._routeToLogin();
                 this.hideSplash();
             }
         }, 10);
@@ -124,28 +125,33 @@ class Start extends Component {
             expires:       this.props.expires,
             session_token: this.props.sessionToken,
         };
-        return this.props.authorizeUser(authorization, this.props.user, credentials)
+        let userObj = _.cloneDeep(this.props.user);
+        return this.props.getUser(userObj.id)
+            .then(res => {
+                userObj = _.cloneDeep(res.user);
+                return this.props.authorizeUser(authorization, res.user, credentials);
+            })
             .then(response => {
-                if(response) {
+                if(response && response.authorization) {
                     authorization.expires = response.authorization.expires;
                     authorization.jwt = response.authorization.jwt;
                 }
-                return this.props.getUserSensorData(this.props.user.id)
+                return this.props.getUserSensorData(userObj.id)
                     .then(res => Promise.resolve())
                     .catch(err => Promise.reject(err));
             })
-            .then(() => this.props.registerDevice(this.props.certificate, this.props.device, this.props.user))
+            .then(() => this.props.registerDevice(this.props.certificate, this.props.device, userObj))
             .then(() => {
-                return this.props.finalizeLogin(this.props.user, credentials, authorization)
+                return this.props.finalizeLogin(userObj, credentials, authorization)
             })
             .then(() => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
-                // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                if(userObj.onboarding_status && userObj.onboarding_status.includes('account_setup')) {
                     this._routeToHome();
-                // } else {
-                //     this._routeToOnboarding();
-                // }
+                } else {
+                    this._routeToOnboarding();
+                }
                 this.hideSplash();
             })).catch((err) => {
                 this.hideSplash();

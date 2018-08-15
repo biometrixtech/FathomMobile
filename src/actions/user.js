@@ -19,16 +19,16 @@ import moment from 'moment';
 /**
   * Get My User Data
   */
-const getUser = () => {
-    return dispatch => AppAPI.user.get()
-        .then((userData) => {
+const getUser = (userId) => {
+    return dispatch => AppAPI.get_user.get({userId})
+        .then(userData => {
             dispatch({
                 type: Actions.USER_REPLACE,
                 data: userData,
             });
-
-            return userData;
-        });
+            return Promise.resolve(userData);
+        })
+        .catch(err => Promise.reject(err));
 };
 
 /**
@@ -37,7 +37,19 @@ const getUser = () => {
   */
 const updateUser = (payload, userId) => {
     return dispatch => AppAPI.update_user.put({userId}, payload)
-        .then((userData) => userData);
+        .then(userData => {
+            dispatch({
+                type:     Actions.LOGIN,
+                email:    payload.email,
+                password: payload.password,
+            });
+            dispatch({
+                type: Actions.USER_REPLACE,
+                data: userData.user
+            });
+            return Promise.resolve(userData);
+        })
+        .catch(err => Promise.reject(err));
 };
 
 /**
@@ -45,9 +57,10 @@ const updateUser = (payload, userId) => {
   */
 const createUser = (payload) => {
     return dispatch => AppAPI.create_user.post(false, payload)
-        .then(userData => userData)
+        .then(userData => Promise.resolve(userData))
         .catch(err => {
             console.log('err',err);
+            return Promise.reject(err);
         });
 };
 
