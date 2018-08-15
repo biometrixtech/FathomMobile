@@ -35,6 +35,7 @@ import { onboardingUtils } from '../../constants/utils';
 // Components
 import {
     Alerts,
+    Coach,
     ProgressBar,
     Text,
     WebViewPage,
@@ -71,6 +72,10 @@ const styles = StyleSheet.create({
         borderLeftWidth: 1,
         width:           '20%',
     },
+    errorWrapper: {
+        paddingHorizontal: 10,
+        paddingVertical:   10,
+    }
 });
 
 /* Component ==================================================================== */
@@ -119,7 +124,7 @@ class Onboarding extends Component {
                                 : user.biometric_data && user.biometric_data.height.m ?
                                     onboardingUtils.metersToInches(user.biometric_data.height.m).toString()
                                     :
-                                    ''
+                                    '60'
                         },
                         mass: {
                             lb: user.biometric_data && user.biometric_data.mass.lb ?
@@ -134,7 +139,7 @@ class Onboarding extends Component {
                     personal_data: {
                         account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                         account_type:   'free', // 'paid', 'free'
-                        birth_date:     user.personal_data && user.personal_data.birth_date ? user.personal_data.birth_date : '',
+                        birth_date:     user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'YYYY-MM-DD').format('MM/DD/YYYY') : '',
                         first_name:     user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
                         last_name:      user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
                         phone_number:   user.personal_data && user.personal_data.phone_number ? user.personal_data.phone_number : '',
@@ -382,9 +387,10 @@ class Onboarding extends Component {
     }
 
     _handleOnboardingFieldSetup = (newUser, clearedToPlay, errorsArray) => {
-        // set loading state
+        // reset error and set loading state
         this.setState({
-            loading: true,
+            loading:   true,
+            resultMsg: { error: '' },
         });
         // only submit required fields
         let userObj = {};
@@ -413,32 +419,47 @@ class Onboarding extends Component {
         // create or update, if no errors
         if(errorsArray.length === 0) {
             if(this.props.user.id) {
-                this.props.updateUser(userObj, this.props.user.id)
-                    .then(response => this._handleLoginFinalize(userObj));
-            } else {
-                this.props.createUser(userObj)
-                    .then(response => this._handleLoginFinalize(userObj));
+                return this.props.updateUser(userObj, this.props.user.id)
+                    .then(response => {
+                        this.setState({ loading: false });
+                        return Actions.home();
+                    });
             }
+            return this.props.createUser(userObj)
+                .then(response => this._handleLoginFinalize(userObj))
+                .catch(err => {
+                    const error = AppAPI.handleError(err);
+                    return this.setState({ resultMsg: { error }, loading: false });
+                });
         }
+        return this.setState({ resultMsg: { error: 'Unexpected error occurred, please try again!' }, loading: false });
     }
 
     _handleLoginFinalize = (userObj) => {
+        let credentials = {
+            Email:    userObj.email,
+            Password: userObj.password,
+        };
         return this.props.onFormSubmit({
             email:    userObj.email,
             password: userObj.password,
-        }, false).then(response => {
-            let { authorization, user } = response;
-            return (
-                authorization && authorization.expires && moment(authorization.expires) > moment.utc()
-                    ? Promise.resolve(response)
-                    : authorization && authorization.session_token
-                        ? this.props.authorizeUser(authorization, user)
-                        : Promise.reject('Unexpected response authorization')
-            );
-        })
+        }, false)
             .then(response => {
-                this.props.getUserSensorData(response.user.id);
-                return Promise.resolve(response);
+                let { authorization, user } = response;
+                return this.props.authorizeUser(authorization, user, credentials)
+                    .then(res => {
+                        let returnObj = {};
+                        returnObj.user = user;
+                        returnObj.authorization = res.authorization;
+                        returnObj.authorization.session_token = authorization.session_token;
+                        return Promise.resolve(returnObj);
+                    })
+                    .catch(err => Promise.reject('Unexpected response authorization'))
+            })
+            .then(response => {
+                return this.props.getUserSensorData(response.user.id)
+                    .then(res => Promise.resolve(response))
+                    .catch(err => Promise.reject(err));
             })
             .then(response => {
                 let { authorization, user } = response;
@@ -493,11 +514,11 @@ class Onboarding extends Component {
                     currentStep={onboardingUtils.getCurrentStep(form_fields.user)}
                     totalSteps={onboardingUtils.getTotalSteps(form_fields.user)}
                 />
-                { resultMsg.error && resultMsg.error.length === 0 ?
+                { resultMsg.error && resultMsg.error.length > 0 ?
                     <View style={styles.errorWrapper}>
-                        { resultMsg.error.map((error, i) =>
-                            <Text style={styles.errorText} key={i}>{error}</Text>
-                        )}
+                        <Coach
+                            text={resultMsg.error}
+                        />
                     </View>
                     :
                     null
@@ -511,6 +532,7 @@ class Onboarding extends Component {
                 <UserAccount
                     componentStep={2}
                     currentStep={step}
+                    displayCoach={resultMsg.error && resultMsg.error.length === 0 ? true : false}
                     handleFormChange={this._handleUserFormChange}
                     handleFormSubmit={this._handleFormSubmit}
                     heightPressed={this._heightPressed}

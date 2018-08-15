@@ -33,6 +33,7 @@ export default {
     endpoints: new Map([
         ['create_user',     '/users/1.0.0/user'],
         ['update_user',     '/users/1.0.0/user/{userId}'],
+        ['get_user',        '/users/1.0.0/user/{userId}'],
         ['authorize',       '/users/1.0.0/user/{userId}/authorize'],
         ['forgot_password', '/users/1.0.0/user/forgot_password'],
         ['login',           '/users/1.0.0/user/sign_in'], // If you change the key, update the reference below

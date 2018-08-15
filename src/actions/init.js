@@ -45,7 +45,7 @@ const authorizeUser = (authorization, user, userCreds) => {
                 email:         userCreds.Email,
                 password:      userCreds.Password,
                 jwt:           response.authorization.jwt,
-                session_token: response.authorization.session_token,
+                session_token: session_token,
                 expires:       response.authorization.expires,
             });
 
