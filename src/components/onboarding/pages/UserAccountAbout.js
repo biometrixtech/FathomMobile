@@ -217,10 +217,6 @@ class UserAccountAbout extends Component {
                     oswaldRegular
                     onPress={() => onboardingUtils.isUserAboutValid(user).isValid ? setAccordionSection() : null}
                     style={[AppStyles.continueButton,
-                        onboardingUtils.isUserAboutValid(user).isValid ?
-                            {}
-                            :
-                            {color: AppColors.zeplin.lightGrey},
                         {
                             fontSize:      AppFonts.scaleFont(16),
                             paddingBottom: AppSizes.padding,
