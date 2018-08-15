@@ -15,6 +15,10 @@ import Fabric from 'react-native-fabric';
 import JWT from './jwt';
 import { AppConfig, ErrorMessages, APIConfig } from '../constants';
 import { store } from '../store';
+import { Actions as DispatchActions } from '../constants';
+
+// import third-party libraries
+import { Actions } from 'react-native-router-flux';
 
 const { Answers } = Fabric;
 
@@ -43,6 +47,7 @@ const DEBUG_MODE = AppConfig.DEV;
 
 // Number each API request (used for debugging)
 let requestCounter = 0;
+let unauthorizedCounter = 0;
 
 
 /* Helper Functions ==================================================================== */
@@ -220,8 +225,40 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                     }
                 }
 
+                // if we get a 401 - authorization failed, re-authorizeUser
+                console.log('++++++++++',rawRes);
+                if (rawRes && /401/.test(`${rawRes.status}`) && endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
+                    unauthorizedCounter += 1;
+                    // if(unauthorizedCounter === 2) {
+                    //     store.dispatch({
+                    //         type: DispatchActions.LOGOUT
+                    //     });
+                    //     return Actions.login();
+                    // }
+                    let userIdObj = {userId: currentState.user.id};
+                    let sessionTokenObj = {session_token: currentState.init.session_token};
+                    return fetcher('POST', '/users/1.0.0/user/{userId}/authorize', userIdObj, sessionTokenObj, 0)
+                        .then((res) => {
+                            store.dispatch({
+                                type:    DispatchActions.LOGIN,
+                                jwt:     res.authorization.jwt,
+                                expires: res.authorization.expires,
+                            });
+                            // re-send API
+                            return fetcher(method, endpoint, params, body, api_enum);
+                        })
+                        .catch((err) => {
+                            // logout user and route to login
+                            store.dispatch({
+                                type: DispatchActions.LOGOUT
+                            });
+                            return Actions.login();
+                        });
+                }
+
                 // Only continue if the header is successful
                 if (rawRes && /20[012]/.test(`${rawRes.status}`)) { return jsonRes; }
+
                 throw jsonRes;
             })
             .then(res => {

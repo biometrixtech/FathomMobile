@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
+import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants, AppFonts } from '../../../constants';
 import { FathomSlider, TabIcon, Text } from '../../custom';
 
 // Components
@@ -38,10 +38,10 @@ const PostSessionSurvey = ({
         'No, nothing is bothering me'
         :
         'Done';
-    return(
+    return (
         <View style={{flex: 1}}>
             <ScrollView>
-                <View style={{backgroundColor: AppColors.primary.grey.twentyPercent}}>
+                <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, width: AppSizes.screen.width}}>
                     <TabIcon
                         containerStyle={[{alignSelf: 'flex-end'}, AppStyles.padding]}
                         icon={'close'}
@@ -51,16 +51,16 @@ const PostSessionSurvey = ({
                         size={30}
                         type={'material-community'}
                     />
-                    <Text style={[AppStyles.h1, AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {color: AppColors.black, paddingTop: 0}]}>{'HOW WAS YOUR WORKOUT?'}</Text>
+                    <Text oswaldRegular style={[AppStyles.h1, AppStyles.paddingVerticalSml, {color: AppColors.black, paddingTop: 0, alignSelf: 'center', textAlign: 'center'}]}>{'HOW WAS YOUR WORKOUT?'}</Text>
                 </View>
                 <View>
-                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
+                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.primary.grey.thirtyPercent}]}>
                         {'1'}
                     </Text>
-                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
+                    <Text oswaldBold style={[AppStyles.h3, AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black}]}>
                         {'How hard did that practice feel?'}
                     </Text>
-                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.secondary.blue.hundredPercent}]}>
+                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.secondary.blue.hundredPercent}]}>
                         {`${postSession.RPE + 1} - ${MyPlanConstants.postSessionFeel[postSession.RPE].toUpperCase()}`}
                     </Text>
                     <FathomSlider
@@ -82,13 +82,13 @@ const PostSessionSurvey = ({
                     />
                 )}
                 <View>
-                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
+                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.primary.grey.thirtyPercent}]}>
                         {soreBodyParts.body_parts.length ? soreBodyParts.body_parts.length + 2 : '2'}
                     </Text>
-                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, AppStyles.bold, {color: AppColors.black}]}>
+                    <Text oswaldBold style={[AppStyles.h3, AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black}]}>
                         {'Did anything bother you?'}
                     </Text>
-                    <Text style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.bold, {color: AppColors.primary.grey.thirtyPercent}]}>
+                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.primary.grey.thirtyPercent}]}>
                         {'If yes, select area of soreness or pains'}
                     </Text>
                     <AreasOfSoreness
@@ -100,7 +100,7 @@ const PostSessionSurvey = ({
                     />
                 </View>
                 <TouchableOpacity onPress={handleFormSubmit} style={[AppStyles.nextButtonWrapper, {margin: 10}]}>
-                    <Text style={[AppStyles.nextButtonText]}>{isAnythingBotheringText}</Text>
+                    <Text robotoBold style={[AppStyles.nextButtonText, { fontSize: AppFonts.scaleFont(16) }]}>{isAnythingBotheringText}</Text>
                 </TouchableOpacity>
             </ScrollView>
         </View>

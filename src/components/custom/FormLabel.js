@@ -1,8 +1,8 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:29:10 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:29:10
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:25:13
+ * @Last Modified time: 2018-08-09 19:59:54
  */
 
 /**
@@ -21,29 +21,39 @@ import { AppColors, AppFonts } from '../../constants';
 /* Component ==================================================================== */
 class CustomFormLabel extends Component {
     static propTypes = {
+        children:       PropTypes.node,
+        containerStyle: PropTypes.oneOfType([
+            PropTypes.array,
+            PropTypes.shape({}),
+        ]),
         labelStyle: PropTypes.oneOfType([
             PropTypes.array,
             PropTypes.shape({}),
         ]),
-        children: PropTypes.node,
     }
 
     static defaultProps = {
+        children:       null,
         containerStyle: [],
         labelStyle:     [],
-        children:       null,
     }
 
     labelProps = () => {
         // Defaults
         const props = {
             ...this.props,
-            labelStyle: [{
-                color:      AppColors.primary.grey.hundredPercent,
-                fontFamily: AppFonts.base.family,
-                fontWeight: AppFonts.h0.fontWeight
+            containerStyle: [{}],
+            labelStyle:     [{
+                ...AppFonts.oswaldMedium,
+                color:    AppColors.primary.grey.hundredPercent,
+                fontSize: AppFonts.scaleFont(14),
+                opacity:  0.6,
             }],
         };
+
+        if (this.props.containerStyle) {
+            props.containerStyle.push(this.props.containerStyle);
+        }
 
         if (this.props.labelStyle) {
             props.labelStyle.push(this.props.labelStyle);

@@ -11,13 +11,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import {
@@ -27,7 +21,7 @@ import {
     AppStyles,
     UserAccount as UserAccountConstants,
 } from '../../../constants';
-import { FormInput, FormLabel, RadioButton, Text } from '../../custom';
+import { FormInput, FormLabel, RadioButton, Spacer, Text } from '../../custom';
 import { onboardingUtils } from '../../../constants/utils';
 
 // import third-party libraries
@@ -42,18 +36,21 @@ const styles = StyleSheet.create({
         height:            40,
         justifyContent:    'center',
         marginRight:       20,
-        paddingLeft:       10,
+        paddingLeft:       11,
     },
     background: {
         width: AppSizes.screen.width,
     },
     pickerSelectAndroid: {
-        color: AppColors.primary.grey.hundredPercent,
+        color: AppColors.black,
     },
     pickerSelectIOS: {
-        color:          AppColors.primary.grey.hundredPercent,
+        ...AppFonts.robotoRegular,
+        color:          AppColors.black,
+        fontSize:       AppFonts.scaleFont(16),
         height:         40,
         justifyContent: 'center',
+        paddingLeft:    10,
     },
     reusableCustomSpacing: {
         alignItems:        'flex-start',
@@ -66,18 +63,6 @@ const styles = StyleSheet.create({
         paddingLeft:       20,
     },
 });
-
-const Wrapper = props => Platform.OS === 'ios' ?
-    (
-        <KeyboardAvoidingView behavior={'padding'} style={[styles.background, {borderTopWidth: 1, borderTopColor: AppColors.border,}]}>
-            {props.children}
-        </KeyboardAvoidingView>
-    ) :
-    (
-        <View style={[styles.background, {borderTopWidth: 1, borderTopColor: AppColors.border,}]}>
-            {props.children}
-        </View>
-    );
 
 /* Component ==================================================================== */
 class UserAccountAbout extends Component {
@@ -99,14 +84,16 @@ class UserAccountAbout extends Component {
             user,
         } = this.props;
         return(
-            <Wrapper>
+            <View style={[{borderTopWidth: 1, borderTopColor: AppColors.border,}]}>
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.birth_date.length > 0 ?'Date of Birth' : ' '}</FormLabel>
                 <DatePicker
                     cancelBtnText={'Cancel'}
                     confirmBtnText={'Confirm'}
                     customStyles={{
                         dateInput:       styles.reusableCustomSpacing,
-                        placeholderText: {color: AppColors.border, fontSize: AppFonts.base.size},
+                        dateText:        {...AppFonts.robotoRegular, color: AppColors.black, fontSize: AppFonts.scaleFont(16),},
+                        placeholderText: {color: AppColors.zeplin.lightGrey, fontSize: AppFonts.scaleFont(16), ...AppFonts.robotoRegular, },
+                        btnTextConfirm:  {color: AppColors.primary.yellow.hundredPercent},
                     }}
                     date={user.personal_data.birth_date || ''}
                     format={'MM/DD/YYYY'}
@@ -124,15 +111,15 @@ class UserAccountAbout extends Component {
                 <RNPickerSelect
                     hideIcon={true}
                     items={UserAccountConstants.possibleInjuryStatuses}
-                    onValueChange={value => handleFormChange('injury_status', value)}
+                    onValueChange={value => value ? handleFormChange('injury_status', value) : null}
                     placeholder={{
                         label: 'Health Status',
                         value: null,
                     }}
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
-                        inputIOS:         [styles.reusableCustomSpacing, styles.pickerSelectIOS],
-                        placeholderColor: AppColors.border,
+                        inputIOS:         [styles.pickerSelectIOS],
+                        placeholderColor: AppColors.zeplin.lightGrey,
                         viewContainer:    [styles.androidViewContainer],
                     }}
                     value={user.injury_status}
@@ -141,11 +128,11 @@ class UserAccountAbout extends Component {
                 <FormInput
                     blurOnSubmit={ true }
                     containerStyle={{marginLeft: 0, paddingLeft: 10}}
-                    keyboardType={'numeric'}
+                    keyboardType={'number-pad'}
                     maxLength={5}
                     onChangeText={text => handleFormChange('personal_data.zip_code', text)}
                     placeholder={'Zip Code'}
-                    placeholderTextColor={AppColors.border}
+                    placeholderTextColor={AppColors.zeplin.lightGrey}
                     returnKeyType={'next'}
                     textInputRef={input => {
                         this.inputs.zip_code = input;
@@ -156,15 +143,15 @@ class UserAccountAbout extends Component {
                 <RNPickerSelect
                     hideIcon={true}
                     items={UserAccountConstants.heights}
-                    onValueChange={value => handleFormChange('biometric_data.height.in', value)}
+                    onValueChange={value => value ? handleFormChange('biometric_data.height.in', value) : null}
                     placeholder={{
                         label: 'Height',
                         value: null,
                     }}
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
-                        inputIOS:         [styles.reusableCustomSpacing, styles.pickerSelectIOS],
-                        placeholderColor: AppColors.border,
+                        inputIOS:         [styles.pickerSelectIOS],
+                        placeholderColor: AppColors.zeplin.lightGrey,
                         viewContainer:    [styles.androidViewContainer],
                     }}
                     value={parseInt(user.biometric_data.height.in, 10) || null}
@@ -173,17 +160,17 @@ class UserAccountAbout extends Component {
                     { user.biometric_data.height.in > 0 ?
                         <Text>{Math.floor(user.biometric_data.height.in / 12) + '\'' + user.biometric_data.height.in % 12 + '"'}</Text>
                         :
-                        <Text style={{color: AppColors.border}}>{'Height'}</Text>
+                        <Text style={{color: AppColors.zeplin.lightGrey}}>{'Height'}</Text>
                     }
                 </TouchableOpacity>*/}
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.mass.lb.length > 0 ? 'Weight (lbs)' : ' '}</FormLabel>
                 <FormInput
                     blurOnSubmit={ true }
                     containerStyle={{marginLeft: 0, paddingLeft: 10}}
-                    keyboardType={'numeric'}
+                    keyboardType={'number-pad'}
                     onChangeText={text => handleFormChange('biometric_data.mass.lb', text)}
                     placeholder={'Weight (lbs)'}
-                    placeholderTextColor={AppColors.border}
+                    placeholderTextColor={AppColors.zeplin.lightGrey}
                     returnKeyType={'done'}
                     textInputRef={input => {
                         this.inputs.mass = input;
@@ -194,15 +181,15 @@ class UserAccountAbout extends Component {
                 <RNPickerSelect
                     hideIcon={true}
                     items={UserAccountConstants.possibleGenders}
-                    onValueChange={value => handleFormChange('biometric_data.sex', value)}
+                    onValueChange={value => value ? handleFormChange('biometric_data.sex', value) : null}
                     placeholder={{
                         label: 'Sex',
                         value: null,
                     }}
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
-                        inputIOS:         [styles.reusableCustomSpacing, styles.pickerSelectIOS],
-                        placeholderColor: AppColors.border,
+                        inputIOS:         [styles.pickerSelectIOS],
+                        placeholderColor: AppColors.zeplin.lightGrey,
                         viewContainer:    [styles.androidViewContainer],
                     }}
                     value={user.biometric_data.sex}
@@ -220,21 +207,23 @@ class UserAccountAbout extends Component {
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
                         inputIOS:         [styles.reusableCustomSpacing, styles.pickerSelectIOS],
-                        placeholderColor: AppColors.border,
+                        placeholderColor: AppColors.zeplin.lightGrey,
                         viewContainer:    [styles.androidViewContainer],
                     }}
                     value={user.system_type}
                 />*/}
+                <Spacer size={50} />
                 <Text
+                    oswaldRegular
                     onPress={() => onboardingUtils.isUserAboutValid(user).isValid ? setAccordionSection() : null}
-                    style={[AppStyles.paddingVertical, AppStyles.continueButton,
-                        onboardingUtils.isUserAboutValid(user).isValid ?
-                            {}
-                            :
-                            {color: AppColors.border}
+                    style={[AppStyles.continueButton,
+                        {
+                            fontSize:      AppFonts.scaleFont(16),
+                            paddingBottom: AppSizes.padding,
+                        },
                     ]}
-                >{'CONTINUE'}</Text>
-            </Wrapper>
+                >{'CONTINUE...'}</Text>
+            </View>
         )
     }
 }

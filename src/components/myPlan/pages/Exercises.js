@@ -7,6 +7,7 @@
         handleCompleteExercise={this._handleCompleteExercise}
         handleExerciseListRefresh={this._handleExerciseListRefresh}
         isExerciseListRefreshing={this.state.isExerciseListRefreshing}
+        isLoading={this.state.loading}
         toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
         toggleSelectedExercise={this._toggleSelectedExercise}
     />
@@ -14,17 +15,18 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, RefreshControl, ScrollView, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, } from '../../../constants';
-import { Text } from '../../custom';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
+import { Button, Text, } from '../../custom';
 
 // Components
-import { ExerciseItem } from './';
+import { ExerciseItem, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
+import Modal from 'react-native-modalbox';
 
 /* Component ==================================================================== */
 const Exercises = ({
@@ -33,63 +35,72 @@ const Exercises = ({
     handleCompleteExercise,
     handleExerciseListRefresh,
     isExerciseListRefreshing,
+    isLoading,
     toggleCompletedAMPMRecoveryModal,
     toggleSelectedExercise,
 }) => (
     <View style={{flex: 1}}>
-        <ScrollView
-            contentContainerStyle={exerciseList.totalLength > 0 ? {} : {flexGrow: 1, justifyContent: 'center'}}
-            refreshControl={
-                <RefreshControl
-                    colors={[AppColors.primary.yellow.hundredPercent]}
-                    onRefresh={handleExerciseListRefresh}
-                    refreshing={isExerciseListRefreshing}
-                    title={'Loading...'}
-                    titleColor={AppColors.primary.yellow.hundredPercent}
-                    tintColor={AppColors.primary.yellow.hundredPercent}
+        <View>
+            {_.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) =>
+                exerciseIndex.length > 0 ?
+                    <View key={index}>
+                        <Text robotoRegular style={[AppStyles.paddingVerticalSml, {marginLeft: 14, fontSize: AppFonts.scaleFont(15)}]}>{index}</Text>
+                        {_.map(exerciseIndex, (exercise, i) =>
+                            <ExerciseItem
+                                completedExercises={completedExercises}
+                                exercise={exercise}
+                                handleCompleteExercise={handleCompleteExercise}
+                                isLastItem={i + 1 === exerciseList.totalLength}
+                                key={exercise.library_id+i}
+                                toggleSelectedExercise={toggleSelectedExercise}
+                            />
+                        )}
+                    </View>
+                    :
+                    null
+            )}
+            { completedExercises.length > 0 ?
+                <Button
+                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                    buttonStyle={{borderRadius: 0, marginVertical: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed}}
+                    color={AppColors.white}
+                    fontFamily={AppStyles.robotoBold.fontFamily}
+                    fontWeight={AppStyles.robotoBold.fontWeight}
+                    onPress={toggleCompletedAMPMRecoveryModal}
+                    rounded={false}
+                    textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                    title={'Recovery Complete'}
+                />
+                :
+                <Button
+                    backgroundColor={AppColors.white}
+                    buttonStyle={{borderRadius: 0, marginVertical: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed}}
+                    color={AppColors.primary.yellow.hundredPercent}
+                    fontFamily={AppStyles.robotoBold.fontFamily}
+                    fontWeight={AppStyles.robotoBold.fontWeight}
+                    onPress={() => null}
+                    outlined
+                    raised={false}
+                    textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                    title={'Check Boxes to Complete Recovery'}
                 />
             }
+        </View>
+        <Modal
+            backdrop={false}
+            backdropColor={'transparent'}
+            backdropPressToClose={false}
+            coverScreen={true}
+            isOpen={isLoading}
+            style={{backgroundColor: AppColors.transparent,}}
+            swipeToClose={false}
         >
-            { exerciseList.totalLength > 0 ?
-                <View>
-                    {_.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) =>
-                        exerciseIndex[0].length > 0 ?
-                            <View key={index}>
-                                <Text style={[AppStyles.paddingVerticalSml, {marginLeft: 14}]}>{index}</Text>
-                                <View style={{borderLeftWidth: 1, borderLeftColor: AppColors.primary.grey.thirtyPercent, marginLeft: 18, height: 10}} />
-                                {_.map(exerciseIndex[0], (exercise, i) =>
-                                    <ExerciseItem
-                                        completedExercises={completedExercises}
-                                        exercise={exercise}
-                                        handleCompleteExercise={handleCompleteExercise}
-                                        isLastItem={i + 1 === exerciseList.totalLength}
-                                        key={exercise.library_id+i}
-                                        toggleSelectedExercise={toggleSelectedExercise}
-                                    />
-                                )}
-                            </View>
-                            :
-                            null
-                    )}
-                    { completedExercises.length > 0 ?
-                        <TouchableOpacity
-                            onPress={toggleCompletedAMPMRecoveryModal}
-                            style={[AppStyles.nextButtonWrapper]}
-                        >
-                            <Text style={[AppStyles.nextButtonText]}>{'Recovery Complete'}</Text>
-                        </TouchableOpacity>
-                        :
-                        <View style={[AppStyles.nextButtonWrapper, {backgroundColor: AppColors.primary.grey.fiftyPercent}]}>
-                            <Text style={[AppStyles.nextButtonText]}>{'complete the exercises to log'}</Text>
-                        </View>
-                    }
-                </View>
-                :
-                <View style={[AppStyles.paddingHorizontal]}>
-                    <Text style={[AppStyles.textCenterAligned, AppStyles.h3]}>{'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing. If you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.'}</Text>
-                </View>
-            }
-        </ScrollView>
+            <ActivityIndicator
+                color={AppColors.primary.yellow.hundredPercent}
+                size={'large'}
+                style={[AppStyles.activityIndicator]}
+            />
+        </Modal>
     </View>
 );
 
@@ -99,6 +110,7 @@ Exercises.propTypes = {
     handleCompleteExercise:           PropTypes.func.isRequired,
     handleExerciseListRefresh:        PropTypes.func.isRequired,
     isExerciseListRefreshing:         PropTypes.bool.isRequired,
+    isLoading:                        PropTypes.bool.isRequired,
     toggleCompletedAMPMRecoveryModal: PropTypes.func.isRequired,
     toggleSelectedExercise:           PropTypes.func.isRequired,
 };

@@ -29,7 +29,7 @@ const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
     if(endDate) {
         myPlanObj.end_date = endDate;
     }
-    myPlanObj.event_date = `${(new Date()).toISOString().split('.')[0]}Z`;
+    myPlanObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.get_my_plan.post(false, myPlanObj)
         .then(myPlanData => {
             dispatch({
@@ -126,7 +126,7 @@ const getSoreBodyParts = user_id => {
 const patchActiveRecovery = (user_id, recovery_type) => {
     let bodyObj = {};
     bodyObj.user_id = user_id;
-    bodyObj.event_date = moment().format('YYYY-MM-DD');
+    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.recovery_type = recovery_type;
     return dispatch => AppAPI.active_recovery.patch(false, bodyObj)
         .then(myPlanData => {

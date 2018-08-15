@@ -40,7 +40,7 @@ export default {
         widthFourFifths:    screenWidth * 0.8,
     },
     navbarHeight:    Platform.OS === 'ios' ? 64 : 54, // header with title and nav bar buttons
-    statusBarHeight: Platform.OS === 'ios' ? 16 : 0,  // time and icon indicators
+    statusBarHeight: Platform.OS === 'ios' ? 20 : 0,  // time and icon indicators
     tabbarHeight:    51,
 
     padding:     20,

@@ -40,6 +40,15 @@ const authorizeUser = (authorization, user, userCreds) => {
                 return Promise.reject('Token decode failed.');
             }
 
+            dispatch({
+                type:          Actions.LOGIN,
+                email:         userCreds.Email,
+                password:      userCreds.Password,
+                jwt:           response.authorization.jwt,
+                session_token: session_token,
+                expires:       response.authorization.expires,
+            });
+
             return Promise.resolve(response);
         })
         .catch(err => {
@@ -110,13 +119,15 @@ const registerDevice = (certificate, device, user) => {
   * Finalize Login
   * - universal login steps
   */
-const finalizeLogin = (user, userCreds, token) => {
+const finalizeLogin = (user, userCreds, authorization) => {
     return dispatch => new Promise((resolve, reject) => {
         dispatch({
-            type:     Actions.LOGIN,
-            email:    userCreds.Email,
-            password: userCreds.Password,
-            jwt:      token,
+            type:          Actions.LOGIN,
+            email:         userCreds.Email,
+            password:      userCreds.Password,
+            jwt:           authorization.jwt,
+            session_token: authorization.session_token,
+            expires:       authorization.expires,
         });
 
         // Get user details from API, using my token

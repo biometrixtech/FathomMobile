@@ -129,6 +129,7 @@ initialize() {
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-vector-icons/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-splash-screen/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-push-notification/android/build.gradle
+            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-video/android/build.gradle
 
             sed -i '' 's/compile(/implementation(/g' ./node_modules/react-native-fabric/android/build.gradle
             sed -i '' 's/, }/ }/g' ./node_modules/react-native-scrollable-tab-view/SceneComponent.js
@@ -148,11 +149,13 @@ initialize() {
             sed -i '' 's/26/27/g' ./node_modules/react-native-code-push/android/app/build.gradle
             sed -i '' 's/23/27/g' ./node_modules/react-native-push-notification/android/build.gradle
             sed -i '' 's/provided/compileOnly/g' ./node_modules/react-native-linear-gradient/android/build.gradle
+            sed -i '' 's/provided/compileOnly/g' ./node_modules/react-native-video/android/build.gradle
             sed -i '' 's/Compile /Implementation /g' ./node_modules/react-native-splash-screen/android/build.gradle
             sed -i '' 's/Compile /Implementation /g' ./node_modules/react-native-push-notification/android/build.gradle
             sed -i '' 's/babel\-jest/\<rootDir\>\/node_modules\/react-native\/jest\/preprocessor.js/' ./node_modules/react-native/jest-preset.json
             yes | cp ./custom/android/RNPushNotificationHelper.java ./node_modules/react-native-push-notification/android/src/main/java/com/dieam/reactnativepushnotification/modules/RNPushNotificationHelper.java
             yes | cp ./custom/javascript/SvgImage.js ./node_modules/react-native-remote-svg/SvgImage.js # handles the iOS patch too
+            yes | cp ./custom/javascript/ScrollableTabBar.js ./node_modules/react-native-scrollable-tab-view/ScrollableTabBar.js
 
             # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
             android_nvm_location=`find ~/ -name '.nvm' -type d -print -quit`

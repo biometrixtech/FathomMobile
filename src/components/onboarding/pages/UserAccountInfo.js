@@ -7,24 +7,18 @@
         isUpdatingUser={isUpdatingUser}
         setAccordionSection={this._setAccordionSection}
         toggleShowPassword={this._toggleShowPassword}
+        updateErrorMessage={this._updateErrorMessage}
         user={form_fields.user}
     />
  *
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { Image, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles } from '../../../constants';
-import { FormInput, FormLabel, TabIcon, Text } from '../../custom';
+import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
+import { FormInput, FormLabel, Spacer, TabIcon, Text } from '../../custom';
 import { onboardingUtils } from '../../../constants/utils';
 
 /* Styles ==================================================================== */
@@ -41,18 +35,6 @@ const styles = StyleSheet.create({
         width:           '50%',
     },
 });
-
-const Wrapper = props => Platform.OS === 'ios' ?
-    (
-        <KeyboardAvoidingView behavior={'padding'} style={[styles.background]}>
-            {props.children}
-        </KeyboardAvoidingView>
-    ) :
-    (
-        <View style={[styles.background]}>
-            {props.children}
-        </View>
-    );
 
 /* Component ==================================================================== */
 class UserAccountInfo extends Component {
@@ -73,10 +55,11 @@ class UserAccountInfo extends Component {
             isUpdatingUser,
             setAccordionSection,
             toggleShowPassword,
+            updateErrorMessage,
             user,
         } = this.props;
         return(
-            <Wrapper>
+            <View>
                 <View style={[{borderTopWidth: 1, borderTopColor: AppColors.border, flexDirection: 'row',}]}>
                     <View style={[styles.leftItem]}>
                         <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.first_name.length > 0 ? 'First Name' : ' '}</FormLabel>
@@ -88,7 +71,7 @@ class UserAccountInfo extends Component {
                                 this.focusNextField('last_name');
                             }}
                             placeholder={'First Name'}
-                            placeholderTextColor={AppColors.border}
+                            placeholderTextColor={AppColors.zeplin.lightGrey}
                             returnKeyType={'next'}
                             textInputRef={input => {
                                 this.inputs.first_name = input;
@@ -109,7 +92,7 @@ class UserAccountInfo extends Component {
                                     this.focusNextField('email')
                             }
                             placeholder={'Last Name'}
-                            placeholderTextColor={AppColors.border}
+                            placeholderTextColor={AppColors.zeplin.lightGrey}
                             returnKeyType={'next'}
                             textInputRef={input => {
                                 this.inputs.last_name = input;
@@ -130,7 +113,7 @@ class UserAccountInfo extends Component {
                     }}
                     keyboardType={'email-address'}
                     placeholder={'E-mail Address'}
-                    placeholderTextColor={AppColors.border}
+                    placeholderTextColor={AppColors.zeplin.lightGrey}
                     returnKeyType={'next'}
                     textInputRef={input => {
                         this.inputs.email = input;
@@ -141,14 +124,14 @@ class UserAccountInfo extends Component {
                 <FormInput
                     blurOnSubmit={ false }
                     containerStyle={{marginLeft: 0, paddingLeft: 10}}
-                    keyboardType={'numeric'}
+                    keyboardType={'number-pad'}
                     maxLength={10}
                     onChangeText={(text) => handleFormChange('personal_data.phone_number', text)}
                     onSubmitEditing={() => {
                         this.focusNextField('password');
                     }}
                     placeholder={'Phone Number (optional)'}
-                    placeholderTextColor={AppColors.border}
+                    placeholderTextColor={AppColors.zeplin.lightGrey}
                     returnKeyType={'next'}
                     textInputRef={input => {
                         this.inputs.phone_number = input;
@@ -156,7 +139,7 @@ class UserAccountInfo extends Component {
                     value={user.personal_data.phone_number}
                 />
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.password.length > 0 ? 'Password' : ' '}</FormLabel>
-                <View>
+                <View style={[{flexDirection: 'row',}]}>
                     <FormInput
                         blurOnSubmit={ true }
                         containerStyle={{marginLeft: 0, paddingLeft: 10}}
@@ -165,7 +148,7 @@ class UserAccountInfo extends Component {
                             setAccordionSection(0, 1);
                         }}
                         placeholder={'Password'}
-                        placeholderTextColor={AppColors.border}
+                        placeholderTextColor={AppColors.zeplin.lightGrey}
                         returnKeyType={'done'}
                         secureTextEntry={isPasswordSecure}
                         textInputRef={input => {
@@ -174,23 +157,25 @@ class UserAccountInfo extends Component {
                         value={user.password}
                     />
                     <TabIcon
-                        color={AppColors.border}
-                        containerStyle={[{position: 'absolute', top: 15, right: 25, width: '10%'}]}
+                        color={AppColors.zeplin.lightGrey}
+                        containerStyle={[{height: '100%', position: 'absolute', right: 2, top: 0,}]}
                         icon={isPasswordSecure ? 'visibility' : 'visibility-off'}
                         onPress={toggleShowPassword}
                         size={24}
                     />
                 </View>
+                <Spacer size={40} />
                 <Text
-                    onPress={() => onboardingUtils.isUserAccountInformationValid(user).isValid ? setAccordionSection(0, 1) : null}
-                    style={[AppStyles.paddingVertical, AppStyles.continueButton,
-                        onboardingUtils.isUserAccountInformationValid(user).isValid ?
-                            {}
-                            :
-                            {color: AppColors.border}
+                    oswaldRegular
+                    onPress={() => onboardingUtils.isUserAccountInformationValid(user).isValid ? setAccordionSection(0, 1) : updateErrorMessage()}
+                    style={[AppStyles.continueButton,
+                        {
+                            fontSize:      AppFonts.scaleFont(16),
+                            paddingBottom: AppSizes.padding,
+                        },
                     ]}
-                >{'CONTINUE'}</Text>
-            </Wrapper>
+                >{'CONTINUE...'}</Text>
+            </View>
         )
     }
 }
@@ -201,6 +186,7 @@ UserAccountInfo.propTypes = {
     isUpdatingUser:      PropTypes.bool.isRequired,
     setAccordionSection: PropTypes.func.isRequired,
     toggleShowPassword:  PropTypes.func.isRequired,
+    updateErrorMessage:  PropTypes.func.isRequired,
     user:                PropTypes.object.isRequired,
 };
 UserAccountInfo.defaultProps = {};

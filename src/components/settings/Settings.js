@@ -20,6 +20,7 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 import { AppColors, AppSizes, AppStyles } from '../../constants';
 import { ListItem } from '../custom';
 import { AppUtil } from '../../lib';
+import { user as UserActions, } from '../../actions';
 
 // Components
 import { Alert, BackHandler, Platform, View, } from 'react-native';
@@ -32,6 +33,7 @@ class Settings extends Component {
         deleteUserSensorData:       PropTypes.func.isRequired,
         disconnectFromSingleSensor: PropTypes.func.isRequired,
         logout:                     PropTypes.func.isRequired,
+        user:                       PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -96,7 +98,43 @@ class Settings extends Component {
         }
     }
 
+    _resetAccountData = () => {
+        Alert.alert(
+            'Warning!',
+            'Are you sure you want to reset this account?',
+            [
+                {
+                    text:    'Yes',
+                    onPress: () => {
+                        return UserActions.clearUserData()
+                            .catch(err => this._alertResetError(err));
+                    }
+                },
+                {
+                    text:  'No',
+                    style: 'cancel'
+                },
+            ],
+            { cancelable: true }
+        )
+    }
+
+    _alertResetError = err => {
+        Alert.alert(
+            'Error!',
+            'Ooops! Something went wrong with reset. Please try again.',
+            [
+                {
+                    text:  'OK',
+                    style: 'cancel'
+                },
+            ],
+            { cancelable: true }
+        )
+    }
+
     render = () => {
+        const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
                 <ListItem
@@ -115,6 +153,21 @@ class Settings extends Component {
                     title={'LOGOUT'}
                     titleStyle={{color: AppColors.black}}
                 />
+                {
+                    /hello[+]demo[0-9]@fathomai.com/g.test(userEmail) ||
+                    /dipesh[+]mvp@fathomai.com/g.test(userEmail) ||
+                    /mazen[+]mvp@fathomai.com/g.test(userEmail) ?
+                        <ListItem
+                            chevronColor={AppColors.black}
+                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
+                            leftIcon={{color: AppColors.black, name: 'lock-reset', size: 24, type: 'material-community'}}
+                            onPress={() => this._resetAccountData()}
+                            title={'RESET ACCOUNT DATA'}
+                            titleStyle={{color: AppColors.black}}
+                        />
+                        :
+                        null
+                }
                 <Toast
                     position={'top'}
                     ref={'toast'}

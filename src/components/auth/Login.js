@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:32:47
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-30 21:02:37
+ * @Last Modified time: 2018-08-09 21:06:40
  */
 
 /**
@@ -17,6 +17,7 @@ import {
     BackHandler,
     Image,
     ImageBackground,
+    Keyboard,
     KeyboardAvoidingView,
     Platform,
     StyleSheet,
@@ -30,15 +31,14 @@ import _ from 'lodash';
 import Egg from 'react-native-egg';
 import FormValidation from 'tcomb-form-native';
 import Modal from 'react-native-modalbox';
-import SplashScreen from 'react-native-splash-screen';
 
 // Consts and Libs
 import { AppAPI } from '../../lib';
-import { AppColors, APIConfig, AppSizes, AppStyles } from '../../constants';
+import { AppColors, APIConfig, AppFonts, AppSizes, AppStyles } from '../../constants';
 import { onboardingUtils } from '../../constants/utils';
 
 // Components
-import { Alerts, Button, Card, ListItem, Spacer, Text } from '../custom';
+import { Alerts, Button, Card, ListItem, Spacer, TabIcon, Text } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -58,12 +58,18 @@ inputStyle.textbox.error.borderRightWidth = 0;
 inputStyle.textbox.error.borderTopWidth = 0;
 inputStyle.textbox.error.color = AppColors.secondary.red.fiftyPercent;
 inputStyle.textbox.error.textAlign = 'center';
+inputStyle.textbox.error.fontFamily = AppStyles.robotoBold.fontFamily;
+inputStyle.textbox.error.fontWeight = AppStyles.robotoBold.fontWeight;
+inputStyle.textbox.error.fontSize = AppFonts.scaleFont(15);
 inputStyle.textbox.normal.borderColor = AppColors.white;
 inputStyle.textbox.normal.borderLeftWidth = 0;
 inputStyle.textbox.normal.borderRightWidth = 0;
 inputStyle.textbox.normal.borderTopWidth = 0;
 inputStyle.textbox.normal.color = AppColors.primary.yellow.hundredPercent;
 inputStyle.textbox.normal.textAlign = 'center';
+inputStyle.textbox.normal.fontFamily = AppStyles.robotoBold.fontFamily;
+inputStyle.textbox.normal.fontWeight = AppStyles.robotoBold.fontWeight;
+inputStyle.textbox.normal.fontSize = AppFonts.scaleFont(15);
 inputStyle.textboxView.error.color = AppColors.white;
 inputStyle.textboxView.normal.color = AppColors.white;
 inputStyle.errorBlock.color = AppColors.secondary.red.fiftyPercent;
@@ -168,7 +174,7 @@ class Login extends Component {
                         error:                'Your email must be a valid email format',
                         keyboardType:         'email-address',
                         label:                ' ',
-                        placeholder:          'username',
+                        placeholder:          'email',
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
                         onSubmitEditing:      () => this._focusNextField('Password'),
                         returnKeyType:        'next',
@@ -214,6 +220,9 @@ class Login extends Component {
         // Get new credentials and update
         const credentials = this.form.getValue();
 
+        // close keyboard
+        Keyboard.dismiss();
+
         // Form is valid
         if (credentials) {
             this.setState({ form_values: credentials }, () => {
@@ -235,31 +244,34 @@ class Login extends Component {
                     password: credentials.Password,
                 }, false).then(response => {
                     let { authorization, user } = response;
-                    return (
-                        authorization && authorization.expires && moment(authorization.expires) > moment.utc()
-                            ? Promise.resolve(response)
-                            : authorization && authorization.session_token
-                                ? this.props.authorizeUser(authorization, user, credentials)
-                                : Promise.reject('Unexpected response authorization')
-                    );
+                    return this.props.authorizeUser(authorization, user, credentials)
+                        .then(res => {
+                            let returnObj = {};
+                            returnObj.user = user;
+                            returnObj.authorization = res.authorization;
+                            returnObj.authorization.session_token = response.authorization.session_token;
+                            return Promise.resolve(returnObj);
+                        })
+                        .catch(err => Promise.reject('Unexpected response authorization'))
                 })
                     .then(response => {
-                        this.props.getUserSensorData(response.user.id);
-                        return Promise.resolve(response);
+                        return this.props.getUserSensorData(response.user.id)
+                            .then(res => Promise.resolve(response))
+                            .catch(err => Promise.reject(err));
                     })
                     .then(response => {
                         let { authorization, user } = response;
                         return this.props.registerDevice(this.props.certificate, this.props.device, user)
-                            .then(() => this.props.finalizeLogin(user, credentials, authorization.jwt));
+                            .then(() => this.props.finalizeLogin(user, credentials, authorization));
                     })
                     .then(() => this.setState({
                         resultMsg: { success: 'Success, now loading your data!' },
                     }, () => {
-                        // if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                        if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                             Actions.home();
-                        // } else {
-                        //     Actions.onboarding();
-                        // }
+                        } else {
+                            Actions.onboarding();
+                        }
                     })).catch((err) => {
                         console.log('err',err);
                         const error = AppAPI.handleError(err);
@@ -274,6 +286,16 @@ class Login extends Component {
 
         return (
             <Wrapper>
+
+                <TabIcon
+                    containerStyle={[{position: 'absolute', top: 30, left: 10}]}
+                    icon={'arrow-left'}
+                    iconStyle={[{color: AppColors.white,}]}
+                    onPress={() => Actions.start()}
+                    reverse={false}
+                    size={26}
+                    type={'simple-line-icon'}
+                />
 
                 <View>
                     <Egg
@@ -300,13 +322,18 @@ class Login extends Component {
                         type={this.state.form_fields}
                         value={this.state.form_values}
                     />
-                    <Spacer size={10} />
+                    <Spacer size={50} />
                     <Button
                         backgroundColor={AppColors.white}
-                        buttonStyle={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontalXLrg,]}
+                        buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal, {justifyContent: 'center', width: '85%',}]}
+                        containerViewStyle={{ alignItems: 'center', justifyContent: 'center', }}
                         disabled={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? true : false}
+                        disabledStyle={{width: '100%'}}
+                        fontFamily={AppStyles.robotoBold.fontFamily}
+                        fontWeight={AppStyles.robotoBold.fontWeight}
                         onPress={this.login}
                         textColor={AppColors.primary.yellow.hundredPercent}
+                        textStyle={{ fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%', }}
                         title={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? 'Logging in...' : 'Login'}
                     />
                     <Spacer size={10} />

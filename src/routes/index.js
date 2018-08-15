@@ -6,14 +6,14 @@
  */
 
 import React from 'react';
-import { Image } from 'react-native';
+import { Image, } from 'react-native';
 
 // import third-party libraries
 import { Actions, Router, Scene, Stack } from 'react-native-router-flux';
 
 // Consts, Libs, and Utils
-import { AppColors, AppStyles, } from '../constants';
-import { TabIcon, } from '../components/custom';
+import { AppColors, AppSizes, AppStyles, } from '../constants';
+import { CustomNavBar, TabIcon, } from '../components/custom';
 
 // import components
 import LoginContainer from '../containers/auth/Login';
@@ -53,12 +53,12 @@ import HomeContainer from '../containers/home/Home';
 import HomeComponent from '../components/home/Home';
 
 const Index = (
-    <Router>
-        <Stack hideNavBar key={'root'}>
+    <Router hideNavBar={true}>
+        <Stack hideNavBar={true} key={'root'} titleStyle={{ alignSelf: 'center' }}>
             <Scene
                 Layout={StartComponent}
                 component={StartContainer}
-                hideNavBar
+                hideNavBar={true}
                 initial={true}
                 key={'start'}
                 panHandlers={null}
@@ -68,29 +68,30 @@ const Index = (
                 component={OnboardingContainer}
                 hideNavBar={false}
                 key={'onboarding'}
+                navBar={CustomNavBar}
+                onLeft={() => Actions.start()}
                 panHandlers={null}
                 renderLeftButton={null}
                 title={'GET STARTED'}
-                titleStyle={{flex: 1, textAlign: 'center',}}
             />
             <Scene
                 Layout={LoginComponent}
                 component={LoginContainer}
-                hideNavBar
+                hideNavBar={true}
                 key={'login'}
                 panHandlers={null}
             />
             {/*<Scene
                 Layout={SignUpComponent}
                 component={SignUpContainer}
-                hideNavBar
+                hideNavBar={true}
                 key={'signUp'}
                 panHandlers={null}
             />
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
-                hideNavBar
+                hideNavBar={true}
                 key={'forgotPassword'}
                 panHandlers={null}
             />*/}
@@ -99,31 +100,15 @@ const Index = (
                 component={HomeContainer}
                 hideNavBar={false}
                 key={'home'}
-                leftButtonStyle={[AppStyles.navbarImageTitle]}
-                navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0 }}
-                navigationBarTitleImage={require('../../assets/images/standard/fathom-gold-and-grey.png')}
-                navigationBarTitleImageStyle={[AppStyles.navbarImageTitle]}
+                navBar={CustomNavBar}
                 onLeft={() => Actions.settings()}
-                onRight={() => null}
                 panHandlers={null}
-                renderLeftButton={
-                    <TabIcon
-                        containerStyle={[AppStyles.paddingLeftSml]}
-                        icon={'settings'}
-                        iconStyle={[{color: AppColors.black}]}
-                        onPress={() => Actions.settings()}
-                        reverse={false}
-                        size={26}
-                        type={'material-community'}
-                    />
-                }
-                rightTitle={' '}
                 type={'replace'}
             />
             <Scene
                 Layout={MyPlanComponent}
                 component={MyPlanContainer}
-                hideNavBar
+                hideNavBar={true}
                 key={'myPlan'}
                 panHandlers={null}
             />
@@ -131,19 +116,16 @@ const Index = (
                 Layout={SettingsComponent}
                 component={SettingsContainer}
                 hideNavBar={false}
-                navigationBarStyle={{borderBottomColor: AppColors.border, borderBottomWidth: 2, elevation: 0}}
+                navBar={CustomNavBar}
                 onLeft={() => Actions.home()}
-                onRight={() => null}
                 key={'settings'}
                 panHandlers={null}
-                rightTitle={' '}
                 title={'SETTINGS'}
-                titleStyle={{flex: 1, textAlign: 'center',}}
             />
             <Scene
                 Layout={BluetoothConnectComponent}
                 component={BluetoothConnectContainer}
-                hideNavBar
+                hideNavBar={true}
                 key={'bluetoothConnect'}
                 panHandlers={null}
                 // title={'Bluetooth Connect'}
@@ -153,7 +135,7 @@ const Index = (
                 <Scene
                     Layout={KitManagementComponent}
                     component={KitManagementContainer}
-                    hideNavBar
+                    hideNavBar={true}
                     key={'kitManagement'}
                     panHandlers={null}
                     // title={'Kit Management'}

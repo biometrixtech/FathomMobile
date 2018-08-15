@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:28:53
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:25:08
+ * @Last Modified time: 2018-08-09 19:58:57
  */
 
 /**
@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import { FormInput } from 'react-native-elements';
 
 // Consts and Libs
-import { AppColors, AppFonts } from '../../constants';
+import { AppColors, AppFonts, } from '../../constants';
 
 /* Component ==================================================================== */
 class CustomFormInput extends Component {
@@ -44,14 +44,13 @@ class CustomFormInput extends Component {
                 borderBottomColor: AppColors.border,
                 borderBottomWidth: 1,
                 backgroundColor:   'rgba(255,255,255,0.05)',
-                marginTop:         10,
                 marginLeft:        20,
                 marginRight:       20,
             }],
             inputStyle: [{
-                color:             AppColors.primary.grey.hundredPercent,
-                fontFamily:        AppFonts.base.family,
-                fontWeight:        AppFonts.base.fontWeight,
+                ...AppFonts.robotoRegular,
+                color:             AppColors.black,
+                fontSize:          AppFonts.scaleFont(16),
                 paddingHorizontal: 10,
                 paddingVertical:   3,
             }],

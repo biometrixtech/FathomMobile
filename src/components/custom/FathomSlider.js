@@ -19,9 +19,13 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
+
+// import third-party libraries
 import { Slider } from 'react-native-elements';
 
-import { AppColors } from '../../constants';
+// import constants
+import { AppColors, AppStyles, } from '../../constants';
 
 /* Component ==================================================================== */
 const FathomSlider = ({
@@ -35,14 +39,16 @@ const FathomSlider = ({
     thumbTintColor,
     value,
 }) => (
-    <Slider
-        maximumValue={maximumValue}
-        minimumValue={minimumValue}
-        onSlidingComplete={val => handleFormChange(name, val, bodyPart, side)}
-        step={step}
-        thumbTintColor={thumbTintColor}
-        value={value}
-    />
+    <View style={[AppStyles.paddingHorizontalMed]}>
+        <Slider
+            maximumValue={maximumValue}
+            minimumValue={minimumValue}
+            onSlidingComplete={val => handleFormChange(name, val, bodyPart, side)}
+            step={step}
+            thumbTintColor={thumbTintColor}
+            value={value}
+        />
+    </View>
 );
 
 FathomSlider.propTypes = {

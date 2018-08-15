@@ -10,29 +10,43 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, WebView } from 'react-native';
 
-import { AppColors, AppSizes } from '../../constants';
+import { AppSizes } from '../../constants';
 
 /* Component ==================================================================== */
-const WebViewPage = ({ source, style }) => (
+const WebViewPage = ({ allowsInlineMediaPlayback, backgroundColor, height, scrollEnabled, source, width, }) => (
     <View
         style={{
-            backgroundColor: AppColors.black,
-            flex:            1,
-            height:          AppSizes.screen.height * 0.75,
-            opacity:         0.5,
-            width:           AppSizes.screen.width,
+            // backgroundColor: backgroundColor ? backgroundColor : AppColors.black,
+            flex:    1,
+            height:  height ? height : AppSizes.screen.height * 0.75,
+            opacity: 0.5,
+            width:   width ? width : AppSizes.screen.width,
         }}
     >
         <WebView
+            allowsInlineMediaPlayback={allowsInlineMediaPlayback}
+            scrollEnabled={scrollEnabled}
             source={{uri: source}}
+            style={{flex: 1}}
         />
     </View>
 );
 
 WebViewPage.propTypes = {
-    source: PropTypes.string.isRequired,
+    allowsInlineMediaPlayback: PropTypes.bool,
+    backgroundColor:           PropTypes.string,
+    height:                    PropTypes.number,
+    scrollEnabled:             PropTypes.bool,
+    source:                    PropTypes.string.isRequired,
+    width:                     PropTypes.number,
 };
-WebViewPage.defaultProps = {};
+WebViewPage.defaultProps = {
+    allowsInlineMediaPlayback: false,
+    backgroundColor:           null,
+    height:                    null,
+    scrollEnabled:             true,
+    width:                     null,
+};
 
 /* Export Component ==================================================================== */
 export default WebViewPage;

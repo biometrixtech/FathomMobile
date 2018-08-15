@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:28:39
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-30 01:08:18
+ * @Last Modified time: 2018-08-09 19:58:20
  */
 
 /**
@@ -44,11 +44,10 @@ class CustomButton extends Component {
     buttonProps = () => {
         // Defaults
         const props = {
+            ...AppFonts.oswaldBold,
             title:              this.props.title || 'Coming Soon...',
             color:              this.props.textColor || '#fff',
-            fontWeight:         'bold',
             onPress:            this.props.onPress,
-            fontFamily:         AppFonts.base.family,
             fontSize:           AppFonts.base.size,
             borderRadius:       AppSizes.borderRadius,
             containerViewStyle: { borderRadius: AppSizes.borderRadius },
