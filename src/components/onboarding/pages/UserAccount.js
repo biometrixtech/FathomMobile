@@ -57,13 +57,6 @@ const styles = StyleSheet.create({
     },
 });
 
-const Wrapper = props =>
-    (
-        <KeyboardAwareScrollView>
-            {props.children}
-        </KeyboardAwareScrollView>
-    );
-
 /* Component ==================================================================== */
 class UserAccount extends Component {
     constructor(props) {
@@ -74,6 +67,8 @@ class UserAccount extends Component {
             isFormValid:      false,
             isPasswordSecure: true,
         };
+
+        this.scrollViewRef = {};
     }
 
     _renderHeader = (section) => {
@@ -255,6 +250,14 @@ class UserAccount extends Component {
         this.setState({ isPasswordSecure: !this.state.isPasswordSecure});
     };
 
+    _updateErrorMessage = () => {
+        this.scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
+        this.setState({
+            coachContent: onboardingUtils.isUserAccountInformationValid(this.props.user).errorsArray,
+            isFormValid:  false,
+        });
+    };
+
     render = () => {
         const {
             componentStep,
@@ -275,6 +278,7 @@ class UserAccount extends Component {
                     isUpdatingUser={isUpdatingUser}
                     setAccordionSection={this._setAccordionSection}
                     toggleShowPassword={this._toggleShowPassword}
+                    updateErrorMessage={this._updateErrorMessage}
                     user={user}
                 />,
                 header:   'ACCOUNT INFORMATION',
@@ -306,7 +310,7 @@ class UserAccount extends Component {
         return (
             <View style={{flex: 1}}>
                 <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1} : {display: 'none'}] ]}>
-                    <Wrapper>
+                    <KeyboardAwareScrollView ref={ref => {this.scrollViewRef = ref}}>
                         { displayCoach && this.state.coachContent.length > 0 ?
                             <Coach
                                 text={this.state.coachContent}
@@ -343,7 +347,7 @@ class UserAccount extends Component {
                             :
                             null
                         }
-                    </Wrapper>
+                    </KeyboardAwareScrollView>
                 </View>
             </View>
         );
