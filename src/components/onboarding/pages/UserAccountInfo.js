@@ -13,20 +13,11 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-    Image,
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
-} from 'react-native';
+import { Image, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles } from '../../../constants';
-import { FormInput, FormLabel, TabIcon, Text } from '../../custom';
+import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
+import { FormInput, FormLabel, Spacer, TabIcon, Text } from '../../custom';
 import { onboardingUtils } from '../../../constants/utils';
 
 /* Styles ==================================================================== */
@@ -43,24 +34,6 @@ const styles = StyleSheet.create({
         width:           '50%',
     },
 });
-
-const Wrapper = props => Platform.OS === 'ios' ?
-    (
-        <KeyboardAvoidingView behavior={'padding'} style={[styles.background]}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <View>
-                    {props.children}
-                </View>
-            </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-    ) :
-    (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <View style={[styles.background]}>
-                {props.children}
-            </View>
-        </TouchableWithoutFeedback>
-    );
 
 /* Component ==================================================================== */
 class UserAccountInfo extends Component {
@@ -84,7 +57,7 @@ class UserAccountInfo extends Component {
             user,
         } = this.props;
         return(
-            <Wrapper>
+            <View>
                 <View style={[{borderTopWidth: 1, borderTopColor: AppColors.border, flexDirection: 'row',}]}>
                     <View style={[styles.leftItem]}>
                         <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.first_name.length > 0 ? 'First Name' : ' '}</FormLabel>
@@ -164,7 +137,7 @@ class UserAccountInfo extends Component {
                     value={user.personal_data.phone_number}
                 />
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.password.length > 0 ? 'Password' : ' '}</FormLabel>
-                <View>
+                <View style={[{flexDirection: 'row',}]}>
                     <FormInput
                         blurOnSubmit={ true }
                         containerStyle={{marginLeft: 0, paddingLeft: 10}}
@@ -183,22 +156,28 @@ class UserAccountInfo extends Component {
                     />
                     <TabIcon
                         color={AppColors.zeplin.lightGrey}
-                        containerStyle={[{position: 'absolute', top: 15, right: 25, width: '10%'}]}
+                        containerStyle={[{height: '100%', position: 'absolute', right: 2, top: 0,}]}
                         icon={isPasswordSecure ? 'visibility' : 'visibility-off'}
                         onPress={toggleShowPassword}
                         size={24}
                     />
                 </View>
+                <Spacer size={40} />
                 <Text
+                    oswaldRegular
                     onPress={() => onboardingUtils.isUserAccountInformationValid(user).isValid ? setAccordionSection(0, 1) : null}
-                    style={[AppStyles.paddingVertical, AppStyles.continueButton,
+                    style={[AppStyles.continueButton,
                         onboardingUtils.isUserAccountInformationValid(user).isValid ?
                             {}
                             :
-                            {color: AppColors.zeplin.lightGrey}
+                            {color: AppColors.zeplin.lightGrey},
+                        {
+                            fontSize:      AppFonts.scaleFont(16),
+                            paddingBottom: AppSizes.padding,
+                        },
                     ]}
-                >{'CONTINUE'}</Text>
-            </Wrapper>
+                >{'CONTINUE...'}</Text>
+            </View>
         )
     }
 }

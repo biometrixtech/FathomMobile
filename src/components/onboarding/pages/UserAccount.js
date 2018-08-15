@@ -4,6 +4,7 @@
     <UserAccount
         componentStep={1}
         currentStep={step}
+        displayCoach={resultMsg.error && resultMsg.error.length > 0}
         handleFormChange={this._handleUserFormChange}
         handleFormSubmit={this._handleFormSubmit}
         isUpdatingUser={this.props.user.id ? true : false}
@@ -13,7 +14,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, View, } from 'react-native';
 
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
@@ -24,12 +25,16 @@ import { Coach, Spacer, TabIcon, Text } from '../../custom';
 import { UserAccountAbout, UserAccountInfo, UserSports } from './';
 
 // import third-party libraries
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import _ from 'lodash';
 import Accordion from 'react-native-collapsible/Accordion';
 import Collapsible from 'react-native-collapsible';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    background: {
+        // width: AppSizes.screen.width,
+    },
     headerWrapper: {
         alignItems:    'center',
         flexDirection: 'row',
@@ -52,6 +57,13 @@ const styles = StyleSheet.create({
     },
 });
 
+const Wrapper = props =>
+    (
+        <KeyboardAwareScrollView>
+            {props.children}
+        </KeyboardAwareScrollView>
+    );
+
 /* Component ==================================================================== */
 class UserAccount extends Component {
     constructor(props) {
@@ -59,6 +71,7 @@ class UserAccount extends Component {
         this.state = {
             accordionSection: 0,
             coachContent:     '',
+            isFormValid:      false,
             isPasswordSecure: true,
         };
     }
@@ -101,6 +114,7 @@ class UserAccount extends Component {
                         type={'material-community'}
                     />
                     <Text
+                        oswaldMedium
                         style={[
                             styles.title,
                             isFormValid ?
@@ -108,7 +122,8 @@ class UserAccount extends Component {
                                 : (this.state.accordionSection + 1) === section.index ?
                                     {color: AppColors.black}
                                     :
-                                    {color: AppColors.zeplin.lightGrey}
+                                    {color: AppColors.zeplin.lightGrey},
+                            {fontSize: AppFonts.scaleFont(18)},
                         ]}
                     >
                         {section.header}
@@ -202,25 +217,35 @@ class UserAccount extends Component {
                 errorsArray = onboardingUtils.areSportsValid(user.sports).errorsArray;
             }
             if(errorsArray.length > 0) {
-                this.setState({ coachContent: errorsArray });
+                this.setState({
+                    coachContent: errorsArray,
+                    isFormValid:  false,
+                });
             } else {
-                this.setState({ accordionSection: nextStep });
+                this.setState({
+                    accordionSection: nextStep,
+                    isFormValid:      false,
+                });
             }
         } else {
             let coachesMessage = '';
+            errorsArray = errorsArray.concat(onboardingUtils.isUserAccountInformationValid(user).errorsArray);
+            errorsArray = errorsArray.concat(onboardingUtils.isUserAboutValid(user).errorsArray);
             if(section === 1) {
-                errorsArray = onboardingUtils.isUserAccountInformationValid(user).errorsArray;
                 coachesMessage = 'The ACCOUNT INFORMATION section has invalid fields. Please complete first and try agian.';
             } else if(section === 2) {
-                errorsArray = onboardingUtils.isUserAboutValid(user).errorsArray;
                 coachesMessage = 'The TELL US ABOUT YOU section has invalid fields. Please complete first and try agian.';
             }
             if(errorsArray.length > 0) {
-                this.setState({ coachContent: coachesMessage });
+                this.setState({
+                    coachContent: coachesMessage,
+                    isFormValid:  false,
+                });
             } else {
                 this.setState({
                     accordionSection: section,
                     coachContent:     '',
+                    isFormValid:      true,
                 });
             }
         }
@@ -234,6 +259,7 @@ class UserAccount extends Component {
         const {
             componentStep,
             currentStep,
+            displayCoach,
             handleFormChange,
             handleFormSubmit,
             heightPressed,
@@ -280,12 +306,12 @@ class UserAccount extends Component {
         return (
             <View style={{flex: 1}}>
                 <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1} : {display: 'none'}] ]}>
-                    <ScrollView>
-                        { this.state.coachContent.length > 0 ?
+                    <Wrapper>
+                        { displayCoach && this.state.coachContent.length > 0 ?
                             <Coach
                                 text={this.state.coachContent}
                             />
-                            : this.state.accordionSection !== false && _.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle ?
+                            : displayCoach && this.state.accordionSection !== false && _.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle ?
                                 <Coach
                                     text={_.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle}
                                 />
@@ -300,7 +326,24 @@ class UserAccount extends Component {
                             renderHeader={this._renderHeader}
                             sections={SECTIONS}
                         />
-                    </ScrollView>
+                        { this.state.accordionSection === false ?
+                            <View style={{marginLeft: 10, borderLeftWidth: 1, borderColor: AppColors.border,}}>
+                                <Spacer size={40} />
+                                <Text
+                                    oswaldRegular
+                                    onPress={() => this.state.isFormValid ? handleFormSubmit() : this._setAccordionSection(0, 1)}
+                                    style={[AppStyles.continueButton,
+                                        {
+                                            fontSize:      AppFonts.scaleFont(16),
+                                            paddingBottom: AppSizes.padding,
+                                        },
+                                    ]}
+                                >{'CONTINUE...'}</Text>
+                            </View>
+                            :
+                            null
+                        }
+                    </Wrapper>
                 </View>
             </View>
         );
@@ -310,6 +353,7 @@ class UserAccount extends Component {
 UserAccount.propTypes = {
     componentStep:    PropTypes.number.isRequired,
     currentStep:      PropTypes.number.isRequired,
+    displayCoach:     PropTypes.bool.isRequired,
     handleFormChange: PropTypes.func.isRequired,
     heightPressed:    PropTypes.func.isRequired,
     isUpdatingUser:   PropTypes.bool.isRequired,
