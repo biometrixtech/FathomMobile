@@ -42,7 +42,7 @@ class CustomFormLabel extends Component {
         // Defaults
         const props = {
             ...this.props,
-            containerStyle: [],
+            containerStyle: [{}],
             labelStyle:     [{
                 ...AppFonts.oswaldMedium,
                 color:    AppColors.primary.grey.hundredPercent,

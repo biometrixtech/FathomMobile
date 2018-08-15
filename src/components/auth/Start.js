@@ -129,9 +129,7 @@ class Start extends Component {
         return this.props.getUser(userObj.id)
             .then(res => {
                 userObj = _.cloneDeep(res.user);
-                // TODO: FIX THIS
-                return userObj;
-                // return this.props.authorizeUser(authorization, res.user, credentials);
+                return this.props.authorizeUser(authorization, res.user, credentials);
             })
             .then(response => {
                 if(response && response.authorization) {

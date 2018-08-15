@@ -14,17 +14,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-    Image,
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
-} from 'react-native';
+import { Image, StyleSheet, View, } from 'react-native';
 
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
@@ -35,6 +25,7 @@ import { Coach, Spacer, TabIcon, Text } from '../../custom';
 import { UserAccountAbout, UserAccountInfo, UserSports } from './';
 
 // import third-party libraries
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import _ from 'lodash';
 import Accordion from 'react-native-collapsible/Accordion';
 import Collapsible from 'react-native-collapsible';
@@ -66,22 +57,11 @@ const styles = StyleSheet.create({
     },
 });
 
-const Wrapper = props => Platform.OS === 'ios' ?
+const Wrapper = props =>
     (
-        <KeyboardAvoidingView behavior={'padding'} style={[styles.background]}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <ScrollView>
-                    {props.children}
-                </ScrollView>
-            </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-    ) :
-    (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <ScrollView style={[styles.background]}>
-                {props.children}
-            </ScrollView>
-        </TouchableWithoutFeedback>
+        <KeyboardAwareScrollView>
+            {props.children}
+        </KeyboardAwareScrollView>
     );
 
 /* Component ==================================================================== */

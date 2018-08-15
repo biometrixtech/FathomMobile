@@ -124,7 +124,7 @@ class Onboarding extends Component {
                                 : user.biometric_data && user.biometric_data.height.m ?
                                     onboardingUtils.metersToInches(user.biometric_data.height.m).toString()
                                     :
-                                    ''
+                                    '60'
                         },
                         mass: {
                             lb: user.biometric_data && user.biometric_data.mass.lb ?
@@ -400,8 +400,7 @@ class Onboarding extends Component {
         userObj.system_type = newUser.system_type;
         userObj.injury_status = newUser.injury_status;
         userObj.cleared_to_play = clearedToPlay;
-        // TODO: FIX LINE BELOW!
-        userObj.onboarding_status = [];//['account_setup'];
+        userObj.onboarding_status = ['account_setup'];
         userObj.biometric_data = {};
         userObj.biometric_data.height = {};
         userObj.biometric_data.height.m = +(onboardingUtils.inchesToMeters(parseFloat(newUser.biometric_data.height.in))) + 0.1;

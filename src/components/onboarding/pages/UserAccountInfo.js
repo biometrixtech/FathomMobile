@@ -13,16 +13,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-    Image,
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
-} from 'react-native';
+import { Image, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
@@ -43,24 +34,6 @@ const styles = StyleSheet.create({
         width:           '50%',
     },
 });
-
-const Wrapper = props => Platform.OS === 'ios' ?
-    (
-        <KeyboardAvoidingView behavior={'padding'} style={[styles.background]}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <View>
-                    {props.children}
-                </View>
-            </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-    ) :
-    (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <View style={[styles.background]}>
-                {props.children}
-            </View>
-        </TouchableWithoutFeedback>
-    );
 
 /* Component ==================================================================== */
 class UserAccountInfo extends Component {

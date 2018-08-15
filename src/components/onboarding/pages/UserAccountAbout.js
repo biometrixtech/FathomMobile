@@ -11,15 +11,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
-} from 'react-native';
+import { StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import {
@@ -44,15 +36,13 @@ const styles = StyleSheet.create({
         height:            40,
         justifyContent:    'center',
         marginRight:       20,
-        paddingLeft:       10,
+        paddingLeft:       11,
     },
     background: {
         width: AppSizes.screen.width,
     },
     pickerSelectAndroid: {
         color: AppColors.black,
-        // ...AppFonts.robotoRegular,
-        // fontSize: AppFonts.scaleFont(16),
     },
     pickerSelectIOS: {
         ...AppFonts.robotoRegular,
@@ -73,24 +63,6 @@ const styles = StyleSheet.create({
         paddingLeft:       20,
     },
 });
-
-const Wrapper = props => Platform.OS === 'ios' ?
-    (
-        <KeyboardAvoidingView behavior={'padding'} style={[styles.background]}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <View>
-                    {props.children}
-                </View>
-            </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-    ) :
-    (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <View style={[styles.background]}>
-                {props.children}
-            </View>
-        </TouchableWithoutFeedback>
-    );
 
 /* Component ==================================================================== */
 class UserAccountAbout extends Component {
