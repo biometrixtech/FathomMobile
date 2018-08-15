@@ -7,6 +7,7 @@
         isUpdatingUser={isUpdatingUser}
         setAccordionSection={this._setAccordionSection}
         toggleShowPassword={this._toggleShowPassword}
+        updateErrorMessage={this._updateErrorMessage}
         user={form_fields.user}
     />
  *
@@ -54,6 +55,7 @@ class UserAccountInfo extends Component {
             isUpdatingUser,
             setAccordionSection,
             toggleShowPassword,
+            updateErrorMessage,
             user,
         } = this.props;
         return(
@@ -165,12 +167,8 @@ class UserAccountInfo extends Component {
                 <Spacer size={40} />
                 <Text
                     oswaldRegular
-                    onPress={() => onboardingUtils.isUserAccountInformationValid(user).isValid ? setAccordionSection(0, 1) : null}
+                    onPress={() => onboardingUtils.isUserAccountInformationValid(user).isValid ? setAccordionSection(0, 1) : updateErrorMessage()}
                     style={[AppStyles.continueButton,
-                        onboardingUtils.isUserAccountInformationValid(user).isValid ?
-                            {}
-                            :
-                            {color: AppColors.zeplin.lightGrey},
                         {
                             fontSize:      AppFonts.scaleFont(16),
                             paddingBottom: AppSizes.padding,
@@ -188,6 +186,7 @@ UserAccountInfo.propTypes = {
     isUpdatingUser:      PropTypes.bool.isRequired,
     setAccordionSection: PropTypes.func.isRequired,
     toggleShowPassword:  PropTypes.func.isRequired,
+    updateErrorMessage:  PropTypes.func.isRequired,
     user:                PropTypes.object.isRequired,
 };
 UserAccountInfo.defaultProps = {};

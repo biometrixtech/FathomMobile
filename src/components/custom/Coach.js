@@ -37,23 +37,26 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const Coach = ({ text }) => (
-    // Diagonal gradient from bottom left to top right
-    <LinearGradient
-        colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
-        end={{x: 1, y: 0}}
-        start={{x: 0, y: 1}}
-        style={[AppStyles.containerCentered, styles.coachWrapper]}
-    >
-        <Image
-            maintainAspectRatio={true}
-            resizeMode={'contain'}
-            source={require('../../../assets/images/standard/coach-avatar.png')}
-            style={[styles.imageStyle]}
-        />
-        <Text p style={[styles.coachText]}>{text}</Text>
-    </LinearGradient>
-);
+const Coach = ({ text }) => {
+    text = Array.isArray(text) && text.length > 0 ? text.join('\n') : text;
+    return(
+        // Diagonal gradient from bottom left to top right
+        <LinearGradient
+            colors={[AppColors.gradient.blue.gradientStart, AppColors.gradient.blue.gradientEnd]}
+            end={{x: 1, y: 0}}
+            start={{x: 0, y: 1}}
+            style={[AppStyles.containerCentered, styles.coachWrapper]}
+        >
+            <Image
+                maintainAspectRatio={true}
+                resizeMode={'contain'}
+                source={require('../../../assets/images/standard/coach-avatar.png')}
+                style={[styles.imageStyle]}
+            />
+            <Text p style={[styles.coachText]}>{text}</Text>
+        </LinearGradient>
+    )
+}
 
 Coach.propTypes = {
     text: PropTypes.oneOfType([

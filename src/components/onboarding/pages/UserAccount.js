@@ -255,6 +255,13 @@ class UserAccount extends Component {
         this.setState({ isPasswordSecure: !this.state.isPasswordSecure});
     };
 
+    _updateErrorMessage = () => {
+        this.setState({
+            coachContent: onboardingUtils.isUserAccountInformationValid(this.props.user).errorsArray,
+            isFormValid:  false,
+        });
+    };
+
     render = () => {
         const {
             componentStep,
@@ -275,6 +282,7 @@ class UserAccount extends Component {
                     isUpdatingUser={isUpdatingUser}
                     setAccordionSection={this._setAccordionSection}
                     toggleShowPassword={this._toggleShowPassword}
+                    updateErrorMessage={this._updateErrorMessage}
                     user={user}
                 />,
                 header:   'ACCOUNT INFORMATION',
@@ -303,6 +311,7 @@ class UserAccount extends Component {
                 index:  3,
             },*/
         ];
+        console.log(this.state.coachContent);
         return (
             <View style={{flex: 1}}>
                 <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1} : {display: 'none'}] ]}>
