@@ -57,4 +57,5 @@ export default {
     WIFI:                    'WIFI',
     // OTHER
     APP_LOADED:              'APP_LOADED',
+    UPDATE_CONNECTION:       'UPDATE_CONNECTION',
 };

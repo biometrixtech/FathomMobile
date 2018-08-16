@@ -10,6 +10,9 @@ import DeviceInfo from 'react-native-device-info';
 import uuidByString from 'uuid-by-string';
 
 import { store } from '../store';
+import { ErrorMessages } from '../constants';
+
+import { init as InitActions, } from '../actions';
 
 /**
  * Global Util Functions
@@ -49,6 +52,40 @@ const UTIL = {
         }
         uniqueId = uniqueId.toLowerCase();
         return uniqueId;
+    },
+
+    getNetworkStatus: () => {
+        let currentState = store.getState();
+        let connectionInfo = currentState.init.connectionInfo;
+        let returnObj = { message: '', online: connectionInfo.online };
+        console.log('---___---',connectionInfo);
+        // ErrorMessages.noInternetConnection
+        // ErrorMessages.serverUnavailable
+        // ErrorMessages.connectingToNetwork
+        // ErrorMessages.getScheduledMaintenanceMessage(startDateTime, endDateTime)
+        if(connectionInfo.online && (connectionInfo.connectionType === 'wifi' || connectionInfo.connectionType === 'cellular') ) {
+            // we are connected - ping our maintenance API
+            InitActions.getMaintenanceWindow()
+                .then(response => {
+                    console.log('RESPONSE FROM MAINTENANCE WINDOW', response);
+                    if(response.maintenance_windows.length > 0) {
+                        // we have a maintenance window, display message
+                        let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(response.maintenance_windows[0]);
+                        // logic based on parseMaintenanceWindow - alert user
+                    }
+                })
+                .catch(err => {
+                    console.log('ERR FROM MAINTENANCE WINDOW', err);
+                    // F -> check time server or always up server
+                        // T -> returnObj.message = ErrorMessages.serverUnavailable;
+                        // F -> returnObj.message = ErrorMessages.noInternetConnection;
+                });
+        } else {
+            // no internet
+            returnObj.message = ErrorMessages.noInternetConnection;
+        }
+
+        return returnObj;
     },
 
     /**

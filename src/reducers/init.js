@@ -21,6 +21,13 @@ export default function initReducer(state = initialState, action) {
         return Object.assign({}, state, {
             lastOpened: (new Date()).toLocaleDateString(),
         });
+    case Actions.UPDATE_CONNECTION:
+        return Object.assign({}, state, {
+            connectionInfo: {
+                connectionType: action.data.connectionType || state.connectionInfo.connectionType,
+                online:         action.data.online || state.connectionInfo.online,
+            }
+        });
     case Actions.LOGIN:
         return Object.assign({}, state, {
             email:         action.email || state.email,

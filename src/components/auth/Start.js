@@ -14,11 +14,11 @@ import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
 
 // Consts and Libs
-import { AppAPI } from '../../lib/';
+import { AppAPI, AppUtil } from '../../lib/';
 import { AppColors, AppSizes, AppStyles, AppFonts, } from '../../constants';
 
 // Components
-import { Button, Text } from '../custom';
+import { Alerts, Button, Spacer, Text } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -31,6 +31,7 @@ class Start extends Component {
 
     static propTypes = {
         authorizeUser:  PropTypes.func.isRequired,
+        connectionInfo: PropTypes.object,
         email:          PropTypes.string,
         environment:    PropTypes.string,
         expires:        PropTypes.string,
@@ -45,20 +46,23 @@ class Start extends Component {
     }
 
     static defaultProps = {
-        email:        null,
-        environment:  'PROD',
-        expires:      null,
-        jwt:          null,
-        onFormSubmit: null,
-        password:     null,
-        sessionToken: null,
+        connectionInfo: null,
+        email:          null,
+        environment:    'PROD',
+        expires:        null,
+        jwt:            null,
+        onFormSubmit:   null,
+        password:       null,
+        sessionToken:   null,
     }
 
     constructor(props) {
         super(props);
 
         this.state = {
-            splashScreen: true,
+            splashScreen:   true,
+            isOnline:       true,
+            networkMessage: '',
         };
     }
 
@@ -69,6 +73,7 @@ class Start extends Component {
     }
 
     componentDidMount = () => {
+        // let networkStatus = AppUtil.getNetworkStatus();
         setTimeout(() => {
             if(
                 this.props.email !== null &&
@@ -83,6 +88,18 @@ class Start extends Component {
                 this.hideSplash();
             }
         }, 10);
+    }
+
+    componentWillReceiveProps = (nextProps) => {
+        if(!_.isEqual(nextProps.connectionInfo, this.props.connectionInfo)) {
+            console.log('++NEW PROPS++',nextProps.connectionInfo, this.props.connectionInfo);
+            let networkStatus = AppUtil.getNetworkStatus();
+            console.log('++HI++',networkStatus);
+            this.setState({
+                isOnline:       networkStatus.online,
+                networkMessage: networkStatus.message,
+            });
+        }
     }
 
     hideSplash = () => {
@@ -189,7 +206,12 @@ class Start extends Component {
                     source={require('../../../assets/images/standard/start.png')}
                     style={[AppStyles.containerCentered, {height: AppSizes.screen.heightTwoThirds, width: AppSizes.screen.width,}]}
                 >
-                    <Text h1 oswaldMedium style={[AppStyles.paddingVertical, {color: AppColors.white, fontSize: AppFonts.scaleFont(38)}]}>{'JOIN FATHOM'}</Text>
+                    <Text h1 oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(38)}}>{'JOIN FATHOM'}</Text>
+                    <Spacer size={this.state.isOnline ? 20 : 15} />
+                    <Alerts
+                        error={this.state.isOnline ? '' : this.state.networkMessage}
+                    />
+                    <Spacer size={this.state.isOnline ? 0 : 15} />
                     <Button
                         backgroundColor={AppColors.white}
                         buttonStyle={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontalLrg]}

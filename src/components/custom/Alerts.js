@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:16:07 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:16:07
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-08-09 20:24:34
  */
@@ -25,7 +25,7 @@ import {
 // Components
 import { Text } from './';
 
-import { AppFonts } from '../../constants';
+import { AppColors, AppFonts } from '../../constants';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -36,36 +36,30 @@ const styles = StyleSheet.create({
 
     // Success
     msg: {
-        right:             0,
-        left:              0,
         paddingVertical:   10,
-        paddingHorizontal: 10,
-        borderLeftWidth:   3,
-        borderColor:       '#1C854C',
-        backgroundColor:   '#59DC9A',
+        paddingHorizontal: 90,
+        backgroundColor:   AppColors.alerts.successBackground,
     },
     msg_text: {
         textAlign: 'center',
-        color:     '#16693c',
+        color:     AppColors.white,
         ...AppFonts.oswaldMedium,
     },
 
     // Error
     msgError: {
-        borderColor:     '#C02827',
-        backgroundColor: '#FB6567',
+        backgroundColor: AppColors.alerts.errorBackground,
     },
     msgError_text: {
-        color: '#7f1a1a',
+        color: AppColors.white,
     },
 
     // Status
     msgStatus: {
-        borderColor:     '#408491',
-        backgroundColor: '#8EDBE5',
+        backgroundColor: AppColors.alerts.statusBackground,
     },
     msgStatus_text: {
-        color: '#2f606a',
+        color: AppColors.white,
     },
 });
 

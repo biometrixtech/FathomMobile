@@ -20,6 +20,16 @@ import { Platform } from 'react-native';
 // import third-party libraries
 
 /**
+  * Ping Maintenance API
+  * - to know of upcoming, current, and future maintenance windows
+  */
+const getMaintenanceWindow = () => {
+    return AppAPI.maintenance_status.get()
+        .then(response => Promise.resolve(response))
+        .catch(error => Promise.reject(error));
+};
+
+/**
   * Authorize User
   * - will get new token
   */
@@ -267,6 +277,7 @@ const appLoaded = () => {
 export default {
     appLoaded,
     forgotPassword,
+    getMaintenanceWindow,
     registerDevice,
     authorizeUser,
     startLogin,

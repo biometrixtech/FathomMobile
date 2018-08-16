@@ -1,9 +1,12 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-04-30 13:24:02 
+ * @Author: Vir Desai
+ * @Date: 2018-04-30 13:24:02
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-06-29 01:24:17
  */
+
+// import third-party libraries
+import moment from 'moment';
 
 export default {
     // Defaults
@@ -32,4 +35,34 @@ export default {
     MULTIPLE_PREPROCESSING_UPLOADING:  'X athletes are still uploading sessions - make sure their kits have wifi access and check back soon.',
     MULTIPLE_PREPROCESSING_PROCESSING: 'X athletes\' session are still processing - check back soon.',
     MULTIPLE_PREPROCESSING_ERROR:      'Uh Oh! X of your sessions were odd balls. We\'re on it and will get you your results soon.',
+
+    // network errors
+    noInternetConnection:           'INTERNET CONNECTION LOST. TRYING TO RECONNECT...',
+    serverUnavailable:              'SERVER UNAVAILABLE. TRYING TO RECONNECT...',
+    connectingToNetwork:            'CONNECTING',
+    getScheduledMaintenanceMessage: (maintenanceWindowObj) => {
+        const currentLocalDateTime = moment();
+        const localStartDate = moment.utc(maintenanceWindowObj.start_date).toDate();
+        const localEndDate = moment.utc(maintenanceWindowObj.end_date).toDate();
+        let message = '';
+        let displayMessage = true;
+        let startTime = moment(localStartDate);
+        let endTime = moment(localEndDate);
+        if(endTime < currentLocalDateTime) {
+            displayMessage = false;
+        } else if(currentLocalDateTime.isBetween(startTime, endTime)) {
+            message = `We are currently in a scheduled maintenance window until ${endTime.format('h:mm A')} ${endTime.format('dddd, MMMM DD, YYYY')}. We apologize for the inconvenience.`;
+        } else {
+            if(startTime.format('DD') === endTime.format('DD')) {
+                message = `Service will be interrupted from ${startTime.format('h:mm A')} - ${endTime.format('h:mm A')} on ${startTime.format('dddd, MMMM DD, YYYY')}. We apologize for the inconvenience.`;
+            } else {
+                message = `Service will be interrupted from ${startTime.format('h:mm A dddd, MMMM DD')} to ${endTime.format('h:mm A dddd, MMMM DD, YYYY')}. We apologize for the inconvenience.`;
+            }
+        }
+        return {
+            displayMessage: displayMessage,
+            header:         'Scheduled Maintenance',
+            message:        message,
+        }
+    }
 };
