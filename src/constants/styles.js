@@ -196,6 +196,9 @@ export default {
     textRightAligned: {
         textAlign: 'right',
     },
+    textLeftAligned: {
+        textAlign: 'left',
+    },
     textBold: {
         ...Fonts.oswaldBold,
     },

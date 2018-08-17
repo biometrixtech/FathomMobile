@@ -5,6 +5,7 @@
         handleFormChange={handleFormChange}
         heightPressed={heightPressed}
         setAccordionSection={this._setAccordionSection}
+        updateErrorMessage={this._updateErrorMessage}
         user={user}
     />
  *
@@ -81,6 +82,7 @@ class UserAccountAbout extends Component {
             handleFormChange,
             heightPressed,
             setAccordionSection,
+            updateErrorMessage,
             user,
         } = this.props;
         return(
@@ -215,7 +217,7 @@ class UserAccountAbout extends Component {
                 <Spacer size={50} />
                 <Text
                     oswaldRegular
-                    onPress={() => onboardingUtils.isUserAboutValid(user).isValid ? setAccordionSection() : null}
+                    onPress={() => onboardingUtils.isUserAboutValid(user).isValid ? setAccordionSection() : updateErrorMessage(true)}
                     style={[AppStyles.continueButton,
                         {
                             fontSize:      AppFonts.scaleFont(16),
@@ -232,6 +234,7 @@ UserAccountAbout.propTypes = {
     handleFormChange:    PropTypes.func.isRequired,
     heightPressed:       PropTypes.func.isRequired,
     setAccordionSection: PropTypes.func.isRequired,
+    updateErrorMessage:  PropTypes.func.isRequired,
     user:                PropTypes.object.isRequired,
 };
 UserAccountAbout.defaultProps = {};
