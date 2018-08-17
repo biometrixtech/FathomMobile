@@ -107,11 +107,18 @@ const zeplin = {
     darkBlue:       '#081832', // 8, 24, 50
 }
 
+const alerts = {
+    errorBackground:   '#972C2F',
+    statusBackground:  '#1E6789',
+    successBackground: '#59DC9A',
+}
+
 export default {
     ...app,
     ...borders,
     ...brand,
     ...sliders,
     ...tabbar,
+    alerts,
     zeplin,
 };
