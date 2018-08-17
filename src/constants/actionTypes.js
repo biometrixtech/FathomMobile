@@ -56,5 +56,4 @@ export default {
     WIFI_SCAN:               'WIFI_SCAN',
     WIFI:                    'WIFI',
     // OTHER
-    APP_LOADED:              'APP_LOADED',
 };

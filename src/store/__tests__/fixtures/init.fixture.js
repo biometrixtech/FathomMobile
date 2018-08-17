@@ -13,7 +13,6 @@ export default {
     environment:   'PROD', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
     expires:       null,
     jwt:           null,
-    lastOpened:    null, // for user entering the app for the first time in a day to track the last day the app was opened
     notification:  false,
     password:      null,
     session_token: null,
