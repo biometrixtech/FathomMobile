@@ -185,7 +185,7 @@ class Login extends Component {
                     Password: {
                         blurOnSubmit:         true,
                         clearButtonMode:      'while-editing',
-                        error:                'YOUR PASSWORD MUST BE 8-16 CHARACTERS, INCLUDE AN UPPERCASE LETTER, A LOWERCASE LETTER, AND A NUMBER.',
+                        error:                'YOUR PASSWORD MUST BE 8-16 CHARACTERS, INCLUDE AN UPPERCASE LETTER, A LOWERCASE LETTER, AND A NUMBER',
                         label:                ' ',
                         password:             true,
                         placeholder:          'password',
