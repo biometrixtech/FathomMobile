@@ -57,32 +57,40 @@ const UTIL = {
     getNetworkStatus: () => {
         let currentState = store.getState();
         let connectionInfo = currentState.init.connectionInfo;
-        let returnObj = { message: '', online: connectionInfo.online };
+        let returnObj = { displayAlert: false, displayMessage: false, header: null, message: null, online: connectionInfo.online };
         console.log('---___---',connectionInfo);
-        // ErrorMessages.noInternetConnection
-        // ErrorMessages.serverUnavailable
+
         // ErrorMessages.connectingToNetwork
-        // ErrorMessages.getScheduledMaintenanceMessage(startDateTime, endDateTime)
         if(connectionInfo.online && (connectionInfo.connectionType === 'wifi' || connectionInfo.connectionType === 'cellular') ) {
             // we are connected - ping our maintenance API
             InitActions.getMaintenanceWindow()
                 .then(response => {
                     console.log('RESPONSE FROM MAINTENANCE WINDOW', response);
                     if(response.maintenance_windows.length > 0) {
-                        // we have a maintenance window, display message
+                        // we have a maintenance window, display message based on logic
                         let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(response.maintenance_windows[0]);
-                        // logic based on parseMaintenanceWindow - alert user
+                        returnObj.message = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.message : '';
+                        returnObj.header = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.header : '';
+                        returnObj.displayAlert = parseMaintenanceWindow.displayAlert;
                     }
                 })
                 .catch(err => {
                     console.log('ERR FROM MAINTENANCE WINDOW', err);
-                    // F -> check time server or always up server
-                        // T -> returnObj.message = ErrorMessages.serverUnavailable;
-                        // F -> returnObj.message = ErrorMessages.noInternetConnection;
+                    returnObj.displayMessage = true;
+                    fetch('https://www.google.com/')
+                        .then(res => {
+                            if(res.status >= 400) {
+                                returnObj.message = ErrorMessages.serverUnavailable;
+                            }
+                        })
+                        .catch(error => {
+                            returnObj.message = ErrorMessages.noInternetConnection;
+                        });
                 });
         } else {
             // no internet
             returnObj.message = ErrorMessages.noInternetConnection;
+            returnObj.displayMessage = true;
         }
 
         return returnObj;

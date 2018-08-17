@@ -60,9 +60,12 @@ class Start extends Component {
         super(props);
 
         this.state = {
-            splashScreen:   true,
+            displayAlert:   false,
+            displayMessage: false,
+            header:         '',
             isOnline:       true,
             networkMessage: '',
+            splashScreen:   true,
         };
     }
 
@@ -73,29 +76,41 @@ class Start extends Component {
     }
 
     componentDidMount = () => {
-        // let networkStatus = AppUtil.getNetworkStatus();
-        setTimeout(() => {
-            if(
-                this.props.email !== null &&
-                this.props.password !== null &&
-                this.props.user.id &&
-                this.props.jwt &&
-                this.props.sessionToken &&
-                this.props.expires
-            ) {
-                Promise.resolve(this.login());
-            } else {
-                this.hideSplash();
-            }
-        }, 10);
+        let networkStatus = AppUtil.getNetworkStatus();
+        if(networkStatus.displayAlert || networkStatus.displayMessage) {
+            this.setState({
+                displayAlert:   networkStatus.displayAlert,
+                displayMessage: networkStatus.displayMessage,
+                header:         networkStatus.header,
+                isOnline:       networkStatus.online,
+                networkMessage: networkStatus.message,
+            });
+        } else {
+            setTimeout(() => {
+                if(
+                    this.props.email !== null &&
+                    this.props.password !== null &&
+                    this.props.user.id &&
+                    this.props.jwt &&
+                    this.props.sessionToken &&
+                    this.props.expires
+                ) {
+                    Promise.resolve(this.login());
+                } else {
+                    this.hideSplash();
+                }
+            }, 10);
+        }
     }
 
     componentWillReceiveProps = (nextProps) => {
         if(!_.isEqual(nextProps.connectionInfo, this.props.connectionInfo)) {
-            console.log('++NEW PROPS++',nextProps.connectionInfo, this.props.connectionInfo);
             let networkStatus = AppUtil.getNetworkStatus();
             console.log('++HI++',networkStatus);
             this.setState({
+                displayAlert:   networkStatus.displayAlert,
+                displayMessage: networkStatus.displayMessage,
+                header:         networkStatus.header,
                 isOnline:       networkStatus.online,
                 networkMessage: networkStatus.message,
             });
