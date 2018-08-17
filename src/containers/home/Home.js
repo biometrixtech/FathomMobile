@@ -9,14 +9,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { plan as PlanActions, init as InitActions } from '../../actions';
+import { plan as PlanActions, } from '../../actions';
 
 const Home = ({
     Layout,
-    appLoaded,
     getMyPlan,
     getSoreBodyParts,
-    lastOpened,
     notification,
     patchActiveRecovery,
     plan,
@@ -25,10 +23,8 @@ const Home = ({
     user,
 }) => (
     <Layout
-        appLoaded={appLoaded}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
-        lastOpened={lastOpened}
         notification={notification}
         patchActiveRecovery={patchActiveRecovery}
         plan={plan}
@@ -40,10 +36,8 @@ const Home = ({
 
 Home.propTypes = {
     Layout:              PropTypes.func.isRequired,
-    appLoaded:           PropTypes.func.isRequired,
     getMyPlan:           PropTypes.func.isRequired,
     getSoreBodyParts:    PropTypes.func.isRequired,
-    lastOpened:          PropTypes.string, // cannot make it required as null would not be a valid value for an isRequired check which is a bug in the prop-types packages that is being discussed
     notification:        PropTypes.bool.isRequired,
     patchActiveRecovery: PropTypes.func.isRequired,
     plan:                PropTypes.object.isRequired,
@@ -53,18 +47,15 @@ Home.propTypes = {
 };
 
 Home.defaultProps = {
-    lastOpened: null,
 };
 
 const mapStateToProps = state => ({
-    lastOpened:   state.init.lastOpened,
     notification: state.init.notification,
     plan:         state.plan,
     user:         state.user,
 });
 
 const mapDispatchToProps = {
-    appLoaded:           InitActions.appLoaded,
     getMyPlan:           PlanActions.getMyPlan,
     getSoreBodyParts:    PlanActions.getSoreBodyParts,
     patchActiveRecovery: PlanActions.patchActiveRecovery,
