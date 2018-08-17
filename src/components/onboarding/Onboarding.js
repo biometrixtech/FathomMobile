@@ -408,6 +408,7 @@ class Onboarding extends Component {
         userObj.biometric_data.mass = {};
         userObj.biometric_data.mass.kg = +(onboardingUtils.lbsToKgs(parseFloat(newUser.biometric_data.mass.lb))) + 0.1;
         userObj.biometric_data.mass.lb = +(parseFloat(newUser.biometric_data.mass.lb).toFixed(2)) + 0.1;
+        userObj.biometric_data.sex = newUser.biometric_data.sex;
         userObj.personal_data = {};
         userObj.personal_data.birth_date = newUser.personal_data.birth_date;
         userObj.personal_data.first_name = newUser.personal_data.first_name;
