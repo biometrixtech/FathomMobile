@@ -25,7 +25,7 @@ import {
 // Components
 import { Text } from './';
 
-import { AppColors, AppFonts } from '../../constants';
+import { AppColors, AppFonts, AppStyles, } from '../../constants';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -36,14 +36,14 @@ const styles = StyleSheet.create({
 
     // Success
     msg: {
-        backgroundColor: AppColors.alerts.successBackground,
-        paddingVertical: 10,
+        paddingVertical:   10,
+        paddingHorizontal: 10,
+        backgroundColor:   AppColors.alerts.successBackground,
     },
     msg_text: {
         ...AppFonts.oswaldMedium,
-        color:     AppColors.white,
-        fontSize:  AppFonts.scaleFont(14),
-        textAlign: 'center',
+        color:    AppColors.white,
+        fontSize: AppFonts.scaleFont(14),
     },
 
     // Error
@@ -64,12 +64,17 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const Alerts = ({ status, success, error }) => (
+const Alerts = ({ error, leftAlignText, status, success, }) => (
     <View style={styles.alerts}>
         {!!success &&
           <View>
               <View style={[styles.msg]}>
-                  <Text style={[styles.msg_text]}>{success}</Text>
+                  <Text style={[
+                      leftAlignText ? AppStyles.textLeftAligned : AppStyles.textCenterAligned,
+                      styles.msg_text,
+                  ]}>
+                      {Array.isArray(success) ? success[0].toUpperCase() : success.toUpperCase()}
+                  </Text>
               </View>
           </View>
         }
@@ -77,8 +82,12 @@ const Alerts = ({ status, success, error }) => (
         {!!status &&
           <View>
               <View style={[styles.msg, styles.msgStatus]}>
-                  <Text style={[styles.msg_text, styles.msgStatus_text]}>
-                      {status}
+                  <Text style={[
+                      leftAlignText ? AppStyles.textLeftAligned : AppStyles.textCenterAligned,
+                      styles.msg_text,
+                      styles.msgStatus_text,
+                  ]}>
+                      {Array.isArray(status) ? status[0].toUpperCase() : status.toUpperCase()}
                   </Text>
               </View>
           </View>
@@ -89,11 +98,12 @@ const Alerts = ({ status, success, error }) => (
               <View style={[styles.msg, styles.msgError]}>
                   <Text
                       style={[
+                          leftAlignText ? AppStyles.textLeftAligned : AppStyles.textCenterAligned,
                           styles.msg_text,
                           styles.msgError_text,
                       ]}
                   >
-                      {error}
+                      {Array.isArray(error) ? error[0].toUpperCase() : error.toUpperCase()}
                   </Text>
               </View>
           </View>
@@ -102,15 +112,26 @@ const Alerts = ({ status, success, error }) => (
 );
 
 Alerts.propTypes = {
-    status:  PropTypes.string,
-    success: PropTypes.string,
-    error:   PropTypes.string,
+    error: PropTypes.oneOfType([
+        PropTypes.array,
+        PropTypes.string,
+    ]),
+    leftAlignText: PropTypes.bool,
+    status:        PropTypes.oneOfType([
+        PropTypes.array,
+        PropTypes.string,
+    ]),
+    success: PropTypes.oneOfType([
+        PropTypes.array,
+        PropTypes.string,
+    ]),
 };
 
 Alerts.defaultProps = {
-    status:  '',
-    success: '',
-    error:   '',
+    error:         '',
+    leftAlignText: false,
+    status:        '',
+    success:       '',
 };
 
 Alerts.componentName = 'Alerts';
