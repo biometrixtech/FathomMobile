@@ -24,6 +24,14 @@ export default function initReducer(state = initialState, action) {
                 online:         action.data.online || state.connectionInfo.online,
             }
         });
+    case Actions.SCHEDULED_MAINTENANCE_ADDRESSED:
+        return Object.assign({}, state, {
+            scheduledMaintenance: false,
+        });
+    case Actions.SCHEDULED_MAINTENANCE_RECEIVED:
+        return Object.assign({}, state, {
+            scheduledMaintenance: true,
+        });
     case Actions.LOGIN:
         return Object.assign({}, state, {
             email:         action.email || state.email,

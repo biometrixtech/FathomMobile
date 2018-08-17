@@ -14,6 +14,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import {
+    Alert,
     BackHandler,
     Image,
     ImageBackground,
@@ -33,9 +34,10 @@ import FormValidation from 'tcomb-form-native';
 import Modal from 'react-native-modalbox';
 
 // Consts and Libs
-import { AppAPI } from '../../lib';
-import { AppColors, APIConfig, AppFonts, AppSizes, AppStyles } from '../../constants';
+import { AppAPI, AppUtil, } from '../../lib';
+import { Actions as DispatchActions, AppColors, APIConfig, AppFonts, AppSizes, AppStyles } from '../../constants';
 import { onboardingUtils } from '../../constants/utils';
+import { store } from '../../store';
 
 // Components
 import { Alerts, Button, Card, ListItem, Spacer, TabIcon, Text } from '../custom';
@@ -171,7 +173,7 @@ class Login extends Component {
                         autoCapitalize:       'none',
                         blurOnSubmit:         false,
                         clearButtonMode:      'while-editing',
-                        error:                'Your email must be a valid email format',
+                        error:                'YOUR EMAIL MUST BE A VALID EMAIL FORMAT',
                         keyboardType:         'email-address',
                         label:                ' ',
                         placeholder:          'email',
@@ -183,7 +185,7 @@ class Login extends Component {
                     Password: {
                         blurOnSubmit:         true,
                         clearButtonMode:      'while-editing',
-                        error:                'Your password must be 8-16 characters, include an uppercase letter, a lowercase letter, and a number',
+                        error:                'YOUR PASSWORD MUST BE 8-16 CHARACTERS, INCLUDE AN UPPERCASE LETTER, A LOWERCASE LETTER, AND A NUMBER.',
                         label:                ' ',
                         password:             true,
                         placeholder:          'password',
@@ -195,6 +197,12 @@ class Login extends Component {
                     },
                 },
             },
+            alertPresent:   false,
+            displayAlert:   false,
+            displayMessage: false,
+            header:         '',
+            isOnline:       false,
+            networkMessage: '',
         };
     }
 
@@ -204,6 +212,46 @@ class Login extends Component {
         }
     }
 
+    componentDidMount = () => {
+        AppUtil.getNetworkStatus()
+            .then(response => {
+                if(response.displayAlert || response.displayMessage) {
+                    this.setState({
+                        displayAlert:   response.displayAlert,
+                        displayMessage: response.displayMessage,
+                        header:         response.header,
+                        isOnline:       response.online,
+                        networkMessage: response.message,
+                        resultMsg:      { error: response.displayMessage ? response.message : '' },
+                    });
+                    this._handleAlert();
+                }
+            });
+    }
+
+    _handleAlert = () => {
+        const { displayAlert, header, networkMessage } = this.state;
+        if(displayAlert && !this.state.alertPresent) {
+            this.setState({ alertPresent: true });
+            Alert.alert(
+                header,
+                networkMessage,
+                [
+                    {
+                        text:    'OK',
+                        onPress: () => {
+                            this.setState({ alertPresent: false });
+                            // store.dispatch({
+                            //     type: DispatchActions.SCHEDULED_MAINTENANCE_ADDRESSED,
+                            // });
+                        },
+                        style: 'cancel',
+                    },
+                ],
+                { cancelable: true }
+            )
+        }
+    }
 
     _focusNextField = (id) => {
         this.form.refs.input.refs[id].refs.input.focus();
@@ -226,7 +274,7 @@ class Login extends Component {
         // Form is valid
         if (credentials) {
             this.setState({ form_values: credentials }, () => {
-                this.setState({ resultMsg: { status: 'One moment...' } });
+                this.setState({ resultMsg: { status: 'ONE MOMENT...' } });
 
                 /**
                   * - if jwt valid
@@ -265,7 +313,7 @@ class Login extends Component {
                             .then(() => this.props.finalizeLogin(user, credentials, authorization));
                     })
                     .then(() => this.setState({
-                        resultMsg: { success: 'Success, now loading your data!' },
+                        resultMsg: { success: 'SUCCESS, NOW LOADING YOUR DATA!!' },
                     }, () => {
                         if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                             Actions.home();

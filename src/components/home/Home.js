@@ -9,7 +9,7 @@
  * Home View
  */
 import React, { Component } from 'react';
-import { ActivityIndicator, BackHandler, Platform, RefreshControl, ScrollView, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Alert, BackHandler, Platform, RefreshControl, ScrollView, TouchableWithoutFeedback, View } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -20,7 +20,9 @@ import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants, AppFonts } from '../../constants/';
+import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants, AppFonts } from '../../constants/';
+import { store } from '../../store';
+import { AppUtil, } from '../../lib';
 
 // Components
 import { Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
@@ -29,8 +31,8 @@ import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } fro
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
 const highSorenessMessage = 'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.';
-const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Active recovery is low-impact today so let\'s pick up with post practice recovery after your next session!';
-const lowSorenessPostMessage = 'Looks like you\'re all clear for practice! Active recovery is low-impact today so let\'s pick up with post practice recovery after your next session!';
+const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Active recovery is low-impact this morning so let\'s pick up with post practice recovery!';
+const lowSorenessPostMessage = 'Looks like you\'re all clear! Active recovery is low-impact for now so let\'s pick up tomorrow or after the next practice you log!';
 
 const whenEnabledBackgroundColor = AppColors.white;
 const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
@@ -107,7 +109,13 @@ class Home extends Component {
                     }
                 ],
             },
-            loading: false,
+            loading:        false,
+            alertPresent:   false,
+            displayAlert:   false,
+            displayMessage: false,
+            header:         '',
+            isOnline:       false,
+            networkMessage: '',
         };
         this.renderTab = this.renderTab.bind(this);
     }
@@ -178,6 +186,47 @@ class Home extends Component {
     componentWillUnmount = () => {
         if (Platform.OS === 'android') {
             BackHandler.removeEventListener('hardwareBackPress');
+        }
+    }
+
+    componentDidMount = () => {
+        AppUtil.getNetworkStatus()
+            .then(response => {
+                if(response.displayAlert || response.displayMessage) {
+                    this.setState({
+                        displayAlert:   response.displayAlert,
+                        displayMessage: response.displayMessage,
+                        header:         response.header,
+                        isOnline:       response.online,
+                        networkMessage: response.message,
+                        resultMsg:      { error: response.displayMessage ? response.message : '' },
+                    });
+                    this._handleAlert();
+                }
+            });
+    }
+
+    _handleAlert = () => {
+        const { displayAlert, header, networkMessage } = this.state;
+        if(displayAlert && !this.state.alertPresent) {
+            this.setState({ alertPresent: true });
+            Alert.alert(
+                header,
+                networkMessage,
+                [
+                    {
+                        text:    'OK',
+                        onPress: () => {
+                            this.setState({ alertPresent: false });
+                            // store.dispatch({
+                            //     type: DispatchActions.SCHEDULED_MAINTENANCE_ADDRESSED,
+                            // });
+                        },
+                        style: 'cancel',
+                    },
+                ],
+                { cancelable: true }
+            )
         }
     }
 

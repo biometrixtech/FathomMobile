@@ -36,14 +36,14 @@ const styles = StyleSheet.create({
 
     // Success
     msg: {
-        paddingVertical:   10,
-        paddingHorizontal: 90,
-        backgroundColor:   AppColors.alerts.successBackground,
+        backgroundColor: AppColors.alerts.successBackground,
+        paddingVertical: 10,
     },
     msg_text: {
-        textAlign: 'center',
-        color:     AppColors.white,
         ...AppFonts.oswaldMedium,
+        color:     AppColors.white,
+        fontSize:  AppFonts.scaleFont(14),
+        textAlign: 'center',
     },
 
     // Error

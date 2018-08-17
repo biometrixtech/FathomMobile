@@ -7,15 +7,16 @@
 
 /* eslint-disable no-process-env */
 export default {
-    certificate:    null,
-    connectionInfo: { connectionType: 'unknown', online: false },
-    device:         null,
-    email:          null,
-    environment:    'TEST', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
-    expires:        null,
-    jwt:            null,
-    notification:   false,
-    password:       null,
-    session_token:  null,
-    token:          null, // push notification token
+    certificate:          null,
+    connectionInfo:       { connectionType: 'unknown', online: false },
+    device:               null,
+    email:                null,
+    environment:          'TEST', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
+    expires:              null,
+    jwt:                  null,
+    notification:         false,
+    password:             null,
+    session_token:        null,
+    scheduledMaintenance: false,
+    token:                null, // push notification token
 };

@@ -25,7 +25,12 @@ import { Platform } from 'react-native';
   */
 const getMaintenanceWindow = () => {
     return AppAPI.maintenance_status.get()
-        .then(response => Promise.resolve(response))
+        .then(response => {
+            store.dispatch({
+                type: Actions.SCHEDULED_MAINTENANCE_RECEIVED,
+            });
+            return Promise.resolve(response);
+        })
         .catch(error => Promise.reject(error));
 };
 

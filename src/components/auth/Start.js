@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
@@ -15,9 +15,15 @@ import moment from 'moment';
 
 // Consts and Libs
 import { AppAPI, AppUtil } from '../../lib/';
-import { AppColors, AppSizes, AppStyles, AppFonts, } from '../../constants';
-
-// Components
+import {
+    Actions as DispatchActions,
+    AppColors,
+    AppSizes,
+    AppStyles,
+    AppFonts,
+    ErrorMessages,
+} from '../../constants';
+import { store } from '../../store';
 import { Alerts, Button, Spacer, Text } from '../custom';
 
 /* Styles ==================================================================== */
@@ -30,36 +36,39 @@ class Start extends Component {
     static componentName = 'Start';
 
     static propTypes = {
-        authorizeUser:  PropTypes.func.isRequired,
-        connectionInfo: PropTypes.object,
-        email:          PropTypes.string,
-        environment:    PropTypes.string,
-        expires:        PropTypes.string,
-        finalizeLogin:  PropTypes.func.isRequired,
-        getUser:        PropTypes.func.isRequired,
-        jwt:            PropTypes.string,
-        onFormSubmit:   PropTypes.func,
-        password:       PropTypes.string,
-        registerDevice: PropTypes.func.isRequired,
-        sessionToken:   PropTypes.string,
-        user:           PropTypes.object.isRequired,
+        authorizeUser:        PropTypes.func.isRequired,
+        connectionInfo:       PropTypes.object,
+        email:                PropTypes.string,
+        environment:          PropTypes.string,
+        expires:              PropTypes.string,
+        finalizeLogin:        PropTypes.func.isRequired,
+        getUser:              PropTypes.func.isRequired,
+        jwt:                  PropTypes.string,
+        onFormSubmit:         PropTypes.func,
+        password:             PropTypes.string,
+        registerDevice:       PropTypes.func.isRequired,
+        scheduledMaintenance: PropTypes.bool,
+        sessionToken:         PropTypes.string,
+        user:                 PropTypes.object.isRequired,
     }
 
     static defaultProps = {
-        connectionInfo: null,
-        email:          null,
-        environment:    'PROD',
-        expires:        null,
-        jwt:            null,
-        onFormSubmit:   null,
-        password:       null,
-        sessionToken:   null,
+        connectionInfo:       null,
+        email:                null,
+        environment:          'PROD',
+        expires:              null,
+        jwt:                  null,
+        onFormSubmit:         null,
+        password:             null,
+        scheduledMaintenance: null,
+        sessionToken:         null,
     }
 
     constructor(props) {
         super(props);
 
         this.state = {
+            alertPresent:   false,
             displayAlert:   false,
             displayMessage: false,
             header:         '',
@@ -76,44 +85,52 @@ class Start extends Component {
     }
 
     componentDidMount = () => {
-        let networkStatus = AppUtil.getNetworkStatus();
-        if(networkStatus.displayAlert || networkStatus.displayMessage) {
-            this.setState({
-                displayAlert:   networkStatus.displayAlert,
-                displayMessage: networkStatus.displayMessage,
-                header:         networkStatus.header,
-                isOnline:       networkStatus.online,
-                networkMessage: networkStatus.message,
-            });
-        } else {
-            setTimeout(() => {
-                if(
-                    this.props.email !== null &&
-                    this.props.password !== null &&
-                    this.props.user.id &&
-                    this.props.jwt &&
-                    this.props.sessionToken &&
-                    this.props.expires
-                ) {
-                    Promise.resolve(this.login());
-                } else {
-                    this.hideSplash();
-                }
-            }, 10);
-        }
+        setTimeout(() => {
+            AppUtil.getNetworkStatus()
+                .then(response => {
+                    if(response.displayAlert || response.displayMessage) {
+                        this.setState({
+                            displayAlert:   response.displayAlert,
+                            displayMessage: response.displayMessage,
+                            header:         response.header,
+                            isOnline:       response.online,
+                            networkMessage: response.message,
+                        });
+                        this.hideSplash();
+                        this._handleAlert();
+                    } else {
+                        if(
+                            this.props.email !== null &&
+                            this.props.password !== null &&
+                            this.props.user.id &&
+                            this.props.jwt &&
+                            this.props.sessionToken &&
+                            this.props.expires
+                        ) {
+                            Promise.resolve(this.login());
+                        } else {
+                            this.hideSplash();
+                        }
+                    }
+                });
+        }, 10);
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(!_.isEqual(nextProps.connectionInfo, this.props.connectionInfo)) {
-            let networkStatus = AppUtil.getNetworkStatus();
-            console.log('++HI++',networkStatus);
-            this.setState({
-                displayAlert:   networkStatus.displayAlert,
-                displayMessage: networkStatus.displayMessage,
-                header:         networkStatus.header,
-                isOnline:       networkStatus.online,
-                networkMessage: networkStatus.message,
-            });
+        if(nextProps.init && nextProps.init.scheduledMaintenance) {
+            AppUtil.getNetworkStatus()
+                .then(response => {
+                    if(!_.isEqual(nextProps, this.props)) {
+                        this.setState({
+                            displayAlert:   response.displayAlert,
+                            displayMessage: response.displayMessage,
+                            header:         response.header,
+                            isOnline:       response.online,
+                            networkMessage: response.message,
+                        });
+                        this._handleAlert();
+                    }
+                });
         }
     }
 
@@ -136,6 +153,30 @@ class Start extends Component {
 
     _routeToHome = () => {
         Actions.home();
+    }
+
+    _handleAlert = () => {
+        const { displayAlert, header, networkMessage } = this.state;
+        if(displayAlert && !this.state.alertPresent) {
+            this.setState({ alertPresent: true });
+            Alert.alert(
+                header,
+                networkMessage,
+                [
+                    {
+                        text:    'OK',
+                        onPress: () => {
+                            this.setState({ alertPresent: false });
+                            // store.dispatch({
+                            //     type: DispatchActions.SCHEDULED_MAINTENANCE_ADDRESSED,
+                            // });
+                        },
+                        style: 'cancel',
+                    },
+                ],
+                { cancelable: true }
+            )
+        }
     }
 
     login = () => {
@@ -222,14 +263,17 @@ class Start extends Component {
                     style={[AppStyles.containerCentered, {height: AppSizes.screen.heightTwoThirds, width: AppSizes.screen.width,}]}
                 >
                     <Text h1 oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(38)}}>{'JOIN FATHOM'}</Text>
-                    <Spacer size={this.state.isOnline ? 20 : 15} />
-                    <Alerts
-                        error={this.state.isOnline ? '' : this.state.networkMessage}
-                    />
-                    <Spacer size={this.state.isOnline ? 0 : 15} />
+                    <Spacer size={this.state.displayMessage ? 20 : 15} />
+                    <View style={{width: AppSizes.screen.widthThreeQuarters}}>
+                        <Alerts
+                            error={this.state.displayMessage ? this.state.networkMessage: ''}
+                        />
+                    </View>
+                    <Spacer size={this.state.displayMessage ? 0 : 15} />
                     <Button
                         backgroundColor={AppColors.white}
                         buttonStyle={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontalLrg]}
+                        disabled={this.state.displayMessage}
                         fontFamily={AppStyles.robotoBold.fontFamily}
                         fontWeight={AppStyles.robotoBold.fontWeight}
                         onPress={this._routeToOnboarding}
@@ -239,7 +283,7 @@ class Start extends Component {
                     />
                 </ImageBackground>
                 <TouchableOpacity
-                    onPress={this._routeToLogin}
+                    onPress={this.state.displayMessage ? null : this._routeToLogin}
                     style={[AppStyles.containerCentered, {backgroundColor: AppColors.primary.grey.twentyPercent, height: AppSizes.screen.heightOneThird, width: AppSizes.screen.width,}]}
                 >
                     <Text h5 oswaldMedium style={[AppStyles.paddingBottom, {color: AppColors.black, fontSize: AppFonts.scaleFont(24)}]}>{'ALREADY A MEMBER?'}</Text>

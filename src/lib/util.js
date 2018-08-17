@@ -55,45 +55,62 @@ const UTIL = {
     },
 
     getNetworkStatus: () => {
-        let currentState = store.getState();
-        let connectionInfo = currentState.init.connectionInfo;
-        let returnObj = { displayAlert: false, displayMessage: false, header: null, message: null, online: connectionInfo.online };
-        console.log('---___---',connectionInfo);
-
-        // ErrorMessages.connectingToNetwork
-        if(connectionInfo.online && (connectionInfo.connectionType === 'wifi' || connectionInfo.connectionType === 'cellular') ) {
-            // we are connected - ping our maintenance API
-            InitActions.getMaintenanceWindow()
-                .then(response => {
-                    console.log('RESPONSE FROM MAINTENANCE WINDOW', response);
-                    if(response.maintenance_windows.length > 0) {
-                        // we have a maintenance window, display message based on logic
-                        let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(response.maintenance_windows[0]);
-                        returnObj.message = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.message : '';
-                        returnObj.header = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.header : '';
-                        returnObj.displayAlert = parseMaintenanceWindow.displayAlert;
-                    }
-                })
-                .catch(err => {
-                    console.log('ERR FROM MAINTENANCE WINDOW', err);
-                    returnObj.displayMessage = true;
-                    fetch('https://www.google.com/')
-                        .then(res => {
-                            if(res.status >= 400) {
-                                returnObj.message = ErrorMessages.serverUnavailable;
+        return new Promise((resolve, reject) => {
+            const serverToTest = 'https://www.google.com/';
+            let currentState = store.getState();
+            let connectionInfo = currentState.init.connectionInfo;
+            let returnObj = { displayAlert: false, displayMessage: false, header: null, message: null, online: connectionInfo.online };
+            if(connectionInfo.online && (connectionInfo.connectionType === 'wifi' || connectionInfo.connectionType === 'cellular') ) {
+                // we are connected - ping our maintenance API
+                InitActions.getMaintenanceWindow()
+                    .then(response => {
+                        if(response.status >= 500) {
+                            /*global fetch*/
+                            fetch(serverToTest)
+                                .then(res => {
+                                    if(res.status >= 400) {
+                                        returnObj.message = ErrorMessages.serverUnavailable;
+                                    }
+                                    return resolve(returnObj);
+                                })
+                                .catch(error => {
+                                    returnObj.message = ErrorMessages.noInternetConnection;
+                                    return resolve(returnObj);
+                                });
+                        } else {
+                            if(response.maintenance_windows.length > 0) {
+                                // we have a maintenance window, display message based on logic
+                                let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(response.maintenance_windows[0]);
+                                returnObj.message = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.message : '';
+                                returnObj.header = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.header : '';
+                                returnObj.displayAlert = parseMaintenanceWindow.displayAlert;
+                                return resolve(returnObj);
                             }
-                        })
-                        .catch(error => {
-                            returnObj.message = ErrorMessages.noInternetConnection;
-                        });
-                });
-        } else {
-            // no internet
-            returnObj.message = ErrorMessages.noInternetConnection;
-            returnObj.displayMessage = true;
-        }
-
-        return returnObj;
+                        }
+                        return resolve(returnObj);
+                    })
+                    .catch(err => {
+                        returnObj.displayMessage = true;
+                        /*global fetch*/
+                        fetch(serverToTest)
+                            .then(res => {
+                                if(res.status >= 400) {
+                                    returnObj.message = ErrorMessages.serverUnavailable;
+                                }
+                                return resolve(returnObj);
+                            })
+                            .catch(error => {
+                                returnObj.message = ErrorMessages.noInternetConnection;
+                                return resolve(returnObj);
+                            });
+                    });
+            } else {
+                // no internet
+                returnObj.message = ErrorMessages.noInternetConnection;
+                returnObj.displayMessage = true;
+                return resolve(returnObj);
+            }
+        });
     },
 
     /**
