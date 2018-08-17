@@ -154,24 +154,7 @@ function cleanExercise(exercise) {
 }
 
 function scrollableTabViewPage(dailyPlanObj, disabled, index) {
-    if(index) { return index; }
-    let page = 0;
-    if(disabled) {
-        page = dailyPlanObj && dailyPlanObj.nav_bar_indicator === null && disabled ?
-            1
-            : dailyPlanObj ?
-                Math.floor(dailyPlanObj.landing_screen)
-                :
-                0;
-    } else {
-        page = dailyPlanObj && dailyPlanObj.nav_bar_indicator === null ?
-            1
-            : dailyPlanObj ?
-                Math.floor(dailyPlanObj.landing_screen)
-                :
-                0;
-    }
-    return page;
+    return Math.floor(dailyPlanObj.landing_screen);
 }
 
 export default {

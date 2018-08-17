@@ -257,15 +257,7 @@ const sendDeviceToken = (token) => {
     }));
 };
 
-const appLoaded = () => {
-    return dispatch => Promise.resolve(dispatch({
-        type: Actions.APP_LOADED,
-    }));
-};
-
-
 export default {
-    appLoaded,
     forgotPassword,
     registerDevice,
     authorizeUser,
