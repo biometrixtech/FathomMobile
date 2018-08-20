@@ -10,7 +10,6 @@ import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
 import com.smixx.fabric.FabricPackage;
-import com.microsoft.codepush.react.CodePush;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -24,11 +23,6 @@ import java.util.List;
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
-
-    @Override
-    protected String getJSBundleFile() {
-      return CodePush.getJSBundleFile();
-    }
 
     @Override
     public boolean getUseDeveloperSupport() {
@@ -46,7 +40,6 @@ public class MainApplication extends Application implements ReactApplication {
           new RNDeviceInfo(),
           new LocationServicesDialogBoxPackage(),
           new FabricPackage(),
-          new CodePush(BuildConfig.CODEPUSH_KEY, getApplicationContext(), BuildConfig.DEBUG),
           new VectorIconsPackage(),
           new BleManagerPackage()
       );
