@@ -13,6 +13,7 @@ import { NetInfo, Platform, PushNotificationIOS, } from 'react-native';
 
 // import components
 import { Actions } from './constants';
+import { AppUtil } from './lib';
 import Routes from './routes';
 
 // import third-party libraries
@@ -91,6 +92,10 @@ class Root extends Component {
             'connectionChange',
             this._handleIsConnectedConnectivityChange
         );
+    }
+
+    componentDidMount = () => {
+        AppUtil.getMaintenanceWindow();
     }
 
     _handleConnectivityChange = (connectionInfo) => {

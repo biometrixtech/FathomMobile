@@ -58,7 +58,7 @@ Start.propTypes = {
     onFormSubmit:         PropTypes.func.isRequired,
     password:             PropTypes.string,
     registerDevice:       PropTypes.func.isRequired,
-    scheduledMaintenance: PropTypes.bool,
+    scheduledMaintenance: PropTypes.object,
     sessionToken:         PropTypes.string,
     user:                 PropTypes.object.isRequired,
 };

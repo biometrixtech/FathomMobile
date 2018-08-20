@@ -47,7 +47,7 @@ class Start extends Component {
         onFormSubmit:         PropTypes.func,
         password:             PropTypes.string,
         registerDevice:       PropTypes.func.isRequired,
-        scheduledMaintenance: PropTypes.bool,
+        scheduledMaintenance: PropTypes.object,
         sessionToken:         PropTypes.string,
         user:                 PropTypes.object.isRequired,
     }
@@ -68,13 +68,7 @@ class Start extends Component {
         super(props);
 
         this.state = {
-            alertPresent:   false,
-            displayAlert:   false,
-            displayMessage: false,
-            header:         '',
-            isOnline:       true,
-            networkMessage: '',
-            splashScreen:   true,
+            splashScreen: true,
         };
     }
 
@@ -96,44 +90,14 @@ class Start extends Component {
             ) {
                 Promise.resolve(this.login());
             } else {
-                AppUtil.getNetworkStatus()
-                    .then(response => {
-                        if(response.displayAlert || response.displayMessage) {
-                            this.setState({
-                                displayAlert:   response.displayAlert,
-                                displayMessage: response.displayMessage,
-                                header:         response.header,
-                                isOnline:       response.online,
-                                networkMessage: response.message,
-                            });
-                            this.hideSplash();
-                            this._handleAlert();
-                        } else {
-                            this.hideSplash();
-                        }
-                    });
+                this.hideSplash();
+                if(!this.props.scheduledMaintenance.addressed) {
+                    let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
+                    let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
+                    AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
+                }
             }
         }, 10);
-    }
-
-    componentWillReceiveProps = (nextProps) => {
-        console.log(nextProps,this.props);
-        if(nextProps && nextProps.scheduledMaintenance) {
-            AppUtil.getNetworkStatus()
-                .then(response => {
-                    if(!_.isEqual(nextProps, this.props)) {
-                        console.log('++++HI+++++');
-                        this.setState({
-                            displayAlert:   response.displayAlert,
-                            displayMessage: response.displayMessage,
-                            header:         response.header,
-                            isOnline:       response.online,
-                            networkMessage: response.message,
-                        });
-                        this._handleAlert();
-                    }
-                });
-        }
     }
 
     hideSplash = () => {
@@ -155,31 +119,6 @@ class Start extends Component {
 
     _routeToHome = () => {
         Actions.home();
-    }
-
-    _handleAlert = () => {
-        const { displayAlert, header, networkMessage } = this.state;
-        console.log(displayAlert, this.state.alertPresent);
-        if(displayAlert && !this.state.alertPresent) {
-            this.setState({ alertPresent: true });
-            Alert.alert(
-                header,
-                networkMessage,
-                [
-                    {
-                        text:    'OK',
-                        onPress: () => {
-                            this.setState({ alertPresent: false });
-                            // store.dispatch({
-                            //     type: DispatchActions.SCHEDULED_MAINTENANCE_ADDRESSED,
-                            // });
-                        },
-                        style: 'cancel',
-                    },
-                ],
-                { cancelable: true }
-            )
-        }
     }
 
     login = () => {

@@ -24,13 +24,13 @@ export default function initReducer(state = initialState, action) {
                 online:         action.data.online || state.connectionInfo.online,
             }
         });
-    case Actions.SCHEDULED_MAINTENANCE_ADDRESSED:
+    case Actions.UPDATE_SCHEDULED_MAINTENANCE:
         return Object.assign({}, state, {
-            scheduledMaintenance: false,
-        });
-    case Actions.SCHEDULED_MAINTENANCE_RECEIVED:
-        return Object.assign({}, state, {
-            scheduledMaintenance: true,
+            scheduledMaintenance: {
+                addressed:  action.data.addressed,
+                end_date:   action.data.end_date,
+                start_date: action.data.start_date,
+            },
         });
     case Actions.LOGIN:
         return Object.assign({}, state, {

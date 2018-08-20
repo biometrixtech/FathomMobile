@@ -5,15 +5,15 @@
  * @Last Modified time: 2018-06-28 11:41:51
  */
 
-import { AsyncStorage } from 'react-native';
+import { Alert, AsyncStorage } from 'react-native';
 
 // import third-party libraries
+import _ from 'lodash';
 import DeviceInfo from 'react-native-device-info';
-import moment from 'moment';
 import uuidByString from 'uuid-by-string';
 
 import { store } from '../store';
-import { ErrorMessages } from '../constants';
+import { Actions as DispatchActions, } from '../constants';
 
 import { init as InitActions, } from '../actions';
 
@@ -58,93 +58,140 @@ const UTIL = {
     },
 
     getNetworkStatus: () => {
-        return new Promise((resolve, reject) => {
-            const serverToTest = 'https://www.google.com/';
+
+    },
+
+    getMaintenanceWindow: () => {
+        let currentState = store.getState();
+        let connectionInfo = currentState.init.connectionInfo;
+        if(connectionInfo.online && (connectionInfo.connectionType === 'wifi' || connectionInfo.connectionType === 'cellular') ) {
+            return ;
+        }
+        InitActions.getMaintenanceWindow();
+
+        // return new Promise((resolve, reject) => {
+        //     const serverToTest = 'https://www.google.com/';
+        //     let currentState = store.getState();
+        //     let connectionInfo = currentState.init.connectionInfo;
+        //     let returnObj = {
+        //         addressed:      false,
+        //         displayAlert:   false,
+        //         displayMessage: false,
+        //         header:         null,
+        //         message:        null,
+        //         online:         connectionInfo.online,
+        //         rawData:        {},
+        //     };
+        //     if(connectionInfo.online && (connectionInfo.connectionType === 'wifi' || connectionInfo.connectionType === 'cellular') ) {
+        //         // we are connected - check local storage first
+        //         // UTIL._retrieveAsyncStorageData('maintenance_window')
+        //         //     .then(asyncStorageResult => {
+        //         //         if(asyncStorageResult && !asyncStorageResult.addressed) {
+        //         //             returnObj.message = asyncStorageResult.displayAlert ? asyncStorageResult.message : '';
+        //         //             returnObj.header = asyncStorageResult.displayAlert ? asyncStorageResult.header : '';
+        //         //             returnObj.displayAlert = asyncStorageResult.displayAlert;
+        //         //         }
+        //         //         return resolve(returnObj);
+        //         //     });
+        //         // we are connected - ping our maintenance API
+        //         InitActions.getMaintenanceWindow()
+        //             .then(response => {
+        //                 if(response.status >= 500) {
+        //                     /*global fetch*/
+        //                     fetch(serverToTest)
+        //                         .then(res => {
+        //                             if(res.status >= 400) {
+        //                                 returnObj.message = ErrorMessages.serverUnavailable;
+        //                             }
+        //                             return resolve(returnObj);
+        //                         })
+        //                         .catch(error => {
+        //                             returnObj.message = ErrorMessages.noInternetConnection;
+        //                             return resolve(returnObj);
+        //                         });
+        //                 } else {
+        //                     if(response.maintenance_windows.length > 0) {
+        //                         UTIL._retrieveAsyncStorageData('maintenance_window')
+        //                             .then(asyncStorageResult => {
+        //                                 // we have a maintenance window, display message based on logic
+        //                                 let apiMaintenanceWindow = response.maintenance_windows[0];
+        //                                 returnObj.rawData = apiMaintenanceWindow;
+        //                                 let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
+        //                                 if(
+        //                                     asyncStorageResult &&
+        //                                     asyncStorageResult.rawData &&
+        //                                     asyncStorageResult.rawData.start_date === apiMaintenanceWindow.start_date &&
+        //                                     asyncStorageResult.rawData.end_date === apiMaintenanceWindow.end_date &&
+        //                                     asyncStorageResult.addressed
+        //                                 ) {
+        //                                     // we have something locally, check logic and update as needed
+        //                                     returnObj.message = parseMaintenanceWindow.message;
+        //                                     returnObj.header = parseMaintenanceWindow.header;
+        //                                     returnObj.displayAlert = false;
+        //                                 } else {
+        //                                     // nothing locally, create local storage
+        //                                     returnObj.message = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.message : '';
+        //                                     returnObj.header = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.header : '';
+        //                                     returnObj.displayAlert = parseMaintenanceWindow.displayAlert;
+        //                                     UTIL._storeAsyncStorageData('maintenance_window', returnObj);
+        //                                 }
+        //                                 return resolve(returnObj);
+        //                             });
+        //                     }
+        //                 }
+        //                 // return resolve(returnObj);
+        //             })
+        //             .catch(err => {
+        //                 returnObj.displayMessage = true;
+        //                 /*global fetch*/
+        //                 fetch(serverToTest)
+        //                     .then(res => {
+        //                         if(res.status >= 400) {
+        //                             returnObj.message = ErrorMessages.serverUnavailable;
+        //                         }
+        //                         return resolve(returnObj);
+        //                     })
+        //                     .catch(error => {
+        //                         returnObj.message = ErrorMessages.noInternetConnection;
+        //                         return resolve(returnObj);
+        //                     });
+        //             });
+        //     } else {
+        //         // no internet
+        //         returnObj.message = ErrorMessages.noInternetConnection;
+        //         returnObj.displayMessage = true;
+        //         return resolve(returnObj);
+        //     }
+        //     // return resolve(returnObj);
+        // });
+    },
+
+    handleScheduledMaintenanceAlert: (displayAlert, header, message) => {
+        if(displayAlert) {
             let currentState = store.getState();
-            let connectionInfo = currentState.init.connectionInfo;
-            let returnObj = {
-                addressed:      false,
-                displayAlert:   false,
-                displayMessage: false,
-                header:         null,
-                message:        null,
-                online:         connectionInfo.online,
-                rawData:        {},
-            };
-            if(connectionInfo.online && (connectionInfo.connectionType === 'wifi' || connectionInfo.connectionType === 'cellular') ) {
-                // we are connected - ping our maintenance API
-                InitActions.getMaintenanceWindow()
-                    .then(response => {
-                        if(response.status >= 500) {
-                            /*global fetch*/
-                            fetch(serverToTest)
-                                .then(res => {
-                                    if(res.status >= 400) {
-                                        returnObj.message = ErrorMessages.serverUnavailable;
-                                    }
-                                    return resolve(returnObj);
-                                })
-                                .catch(error => {
-                                    returnObj.message = ErrorMessages.noInternetConnection;
-                                    return resolve(returnObj);
-                                });
-                        } else {
-                            if(response.maintenance_windows.length > 0) {
-                                UTIL._retrieveAsyncStorageData('maintenance_window')
-                                    .then(result => {
-                                        // we have a maintenance window, display message based on logic
-                                        let apiMaintenanceWindow = response.maintenance_windows[0];
-                                        returnObj.rawData = apiMaintenanceWindow;
-                                        let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
-                                        console.log('result',result);
-                                        console.log('apiMaintenanceWindow',apiMaintenanceWindow);
-                                        if(
-                                            result &&
-                                            result.rawData &&
-                                            result.rawData.start_date === apiMaintenanceWindow.start_date &&
-                                            result.rawData.end_date === apiMaintenanceWindow.end_date &&
-                                            result.addressed
-                                        ) {
-                                            // we have something locally, check logic and update as needed
-                                            returnObj.message = parseMaintenanceWindow.message;
-                                            returnObj.header = parseMaintenanceWindow.header;
-                                            returnObj.displayAlert = false;
-                                        } else {
-                                            // nothing locally, create local storage
-                                            returnObj.message = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.message : '';
-                                            returnObj.header = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.header : '';
-                                            returnObj.displayAlert = parseMaintenanceWindow.displayAlert;
-                                            UTIL._storeAsyncStorageData('maintenance_window', returnObj);
-                                        }
-                                        return resolve(returnObj);
-                                    });
-                            }
-                        }
-                        return resolve(returnObj);
-                    })
-                    .catch(err => {
-                        returnObj.displayMessage = true;
-                        /*global fetch*/
-                        fetch(serverToTest)
-                            .then(res => {
-                                if(res.status >= 400) {
-                                    returnObj.message = ErrorMessages.serverUnavailable;
+            let scheduledMaintenance = currentState.init.scheduledMaintenance;
+            Alert.alert(
+                header,
+                message,
+                [
+                    {
+                        text:    'OK',
+                        onPress: () => {
+                            store.dispatch({
+                                type: DispatchActions.UPDATE_SCHEDULED_MAINTENANCE,
+                                data: {
+                                    addressed:  true,
+                                    end_date:   scheduledMaintenance.end_date,
+                                    start_date: scheduledMaintenance.start_date,
                                 }
-                                return resolve(returnObj);
                             })
-                            .catch(error => {
-                                returnObj.message = ErrorMessages.noInternetConnection;
-                                return resolve(returnObj);
-                            });
-                    });
-            } else {
-                // no internet
-                returnObj.message = ErrorMessages.noInternetConnection;
-                returnObj.displayMessage = true;
-                return resolve(returnObj);
-            }
-            return resolve(returnObj);
-        });
+                        },
+                        style: 'cancel',
+                    },
+                ],
+                { cancelable: true }
+            );
+        }
     },
 
     /**

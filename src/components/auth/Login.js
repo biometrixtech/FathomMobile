@@ -35,7 +35,7 @@ import Modal from 'react-native-modalbox';
 
 // Consts and Libs
 import { AppAPI, AppUtil, } from '../../lib';
-import { Actions as DispatchActions, AppColors, APIConfig, AppFonts, AppSizes, AppStyles } from '../../constants';
+import { Actions as DispatchActions, AppColors, APIConfig, AppFonts, AppSizes, AppStyles, ErrorMessages, } from '../../constants';
 import { onboardingUtils } from '../../constants/utils';
 import { store } from '../../store';
 
@@ -197,12 +197,6 @@ class Login extends Component {
                     },
                 },
             },
-            alertPresent:   false,
-            displayAlert:   false,
-            displayMessage: false,
-            header:         '',
-            isOnline:       false,
-            networkMessage: '',
         };
     }
 
@@ -213,43 +207,10 @@ class Login extends Component {
     }
 
     componentDidMount = () => {
-        AppUtil.getNetworkStatus()
-            .then(response => {
-                if(response.displayAlert || response.displayMessage) {
-                    this.setState({
-                        displayAlert:   response.displayAlert,
-                        displayMessage: response.displayMessage,
-                        header:         response.header,
-                        isOnline:       response.online,
-                        networkMessage: response.message,
-                        resultMsg:      { error: response.displayMessage ? response.message : '' },
-                    });
-                    this._handleAlert();
-                }
-            });
-    }
-
-    _handleAlert = () => {
-        const { displayAlert, header, networkMessage } = this.state;
-        if(displayAlert && !this.state.alertPresent) {
-            this.setState({ alertPresent: true });
-            Alert.alert(
-                header,
-                networkMessage,
-                [
-                    {
-                        text:    'OK',
-                        onPress: () => {
-                            this.setState({ alertPresent: false });
-                            // store.dispatch({
-                            //     type: DispatchActions.SCHEDULED_MAINTENANCE_ADDRESSED,
-                            // });
-                        },
-                        style: 'cancel',
-                    },
-                ],
-                { cancelable: true }
-            )
+        if(!this.props.scheduledMaintenance.addressed) {
+            let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
+            let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
+            AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
         }
     }
 

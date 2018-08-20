@@ -41,28 +41,31 @@ export default {
     serverUnavailable:              'SERVER UNAVAILABLE. TRYING TO RECONNECT...',
     connectingToNetwork:            'CONNECTING',
     getScheduledMaintenanceMessage: (maintenanceWindowObj) => {
-        const currentLocalDateTime = moment();
-        const localStartDate = moment.utc(maintenanceWindowObj.start_date).toDate();
-        const localEndDate = moment.utc(maintenanceWindowObj.end_date).toDate();
-        let message = '';
-        let displayAlert = true;
-        let startTime = moment(localStartDate);
-        let endTime = moment(localEndDate);
-        if(endTime < currentLocalDateTime) {
-            displayAlert = false;
-        } else if(currentLocalDateTime.isBetween(startTime, endTime)) {
-            message = `We are currently in a scheduled maintenance window until ${endTime.format('h:mm A')} ${endTime.format('dddd, MMMM DD, YYYY')}. We apologize for the inconvenience.`;
-        } else {
-            if(startTime.format('DD') === endTime.format('DD')) {
-                message = `Service will be interrupted from ${startTime.format('h:mm A')} - ${endTime.format('h:mm A')} on ${startTime.format('dddd, MMMM DD, YYYY')}. We apologize for the inconvenience.`;
+        if(maintenanceWindowObj.start_date && maintenanceWindowObj.end_date) {
+            const currentLocalDateTime = moment();
+            const localStartDate = moment.utc(maintenanceWindowObj.start_date).toDate();
+            const localEndDate = moment.utc(maintenanceWindowObj.end_date).toDate();
+            let message = '';
+            let displayAlert = true;
+            let startTime = moment(localStartDate);
+            let endTime = moment(localEndDate);
+            if(endTime < currentLocalDateTime) {
+                displayAlert = false;
+            } else if(currentLocalDateTime.isBetween(startTime, endTime)) {
+                message = `We are currently in a scheduled maintenance window until ${endTime.format('h:mm A')} ${endTime.format('dddd, MMMM DD, YYYY')}. We apologize for the inconvenience.`;
             } else {
-                message = `Service will be interrupted from ${startTime.format('h:mm A dddd, MMMM DD')} to ${endTime.format('h:mm A dddd, MMMM DD, YYYY')}. We apologize for the inconvenience.`;
+                if(startTime.format('DD') === endTime.format('DD')) {
+                    message = `Service will be interrupted from ${startTime.format('h:mm A')} - ${endTime.format('h:mm A')} on ${startTime.format('dddd, MMMM DD, YYYY')}. We apologize for the inconvenience.`;
+                } else {
+                    message = `Service will be interrupted from ${startTime.format('h:mm A dddd, MMMM DD')} to ${endTime.format('h:mm A dddd, MMMM DD, YYYY')}. We apologize for the inconvenience.`;
+                }
+            }
+            return {
+                displayAlert: displayAlert,
+                header:       'Scheduled Maintenance',
+                message:      message,
             }
         }
-        return {
-            displayAlert: displayAlert,
-            header:       'Scheduled Maintenance',
-            message:      message,
-        }
+        return { displayAlert: false, header: null, message: null }
     }
 };

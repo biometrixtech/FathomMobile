@@ -20,12 +20,12 @@ import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
 
 // Consts and Libs
-import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants, AppFonts } from '../../constants/';
+import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants/';
 import { store } from '../../store';
 import { AppUtil, } from '../../lib';
 
 // Components
-import { Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
+import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
 import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } from '../myPlan/pages';
 
 // Tabs titles
@@ -109,13 +109,7 @@ class Home extends Component {
                     }
                 ],
             },
-            loading:        false,
-            alertPresent:   false,
-            displayAlert:   false,
-            displayMessage: false,
-            header:         '',
-            isOnline:       false,
-            networkMessage: '',
+            loading: false,
         };
         this.renderTab = this.renderTab.bind(this);
     }
@@ -190,43 +184,10 @@ class Home extends Component {
     }
 
     componentDidMount = () => {
-        AppUtil.getNetworkStatus()
-            .then(response => {
-                if(response.displayAlert || response.displayMessage) {
-                    this.setState({
-                        displayAlert:   response.displayAlert,
-                        displayMessage: response.displayMessage,
-                        header:         response.header,
-                        isOnline:       response.online,
-                        networkMessage: response.message,
-                        resultMsg:      { error: response.displayMessage ? response.message : '' },
-                    });
-                    this._handleAlert();
-                }
-            });
-    }
-
-    _handleAlert = () => {
-        const { displayAlert, header, networkMessage } = this.state;
-        if(displayAlert && !this.state.alertPresent) {
-            this.setState({ alertPresent: true });
-            Alert.alert(
-                header,
-                networkMessage,
-                [
-                    {
-                        text:    'OK',
-                        onPress: () => {
-                            this.setState({ alertPresent: false });
-                            // store.dispatch({
-                            //     type: DispatchActions.SCHEDULED_MAINTENANCE_ADDRESSED,
-                            // });
-                        },
-                        style: 'cancel',
-                    },
-                ],
-                { cancelable: true }
-            )
+        if(!this.props.scheduledMaintenance.addressed) {
+            let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
+            let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
+            AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
         }
     }
 
@@ -1354,6 +1315,23 @@ class Home extends Component {
             }, 300);
         }
     }
+
+    // _renderCustomTopBar = () => {
+    //     return(
+    //         <View>
+    //             <ScrollableTabBar
+    //                 locked
+    //                 renderTab={this.renderTab}
+    //                 style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderBottomWidth: 0,}}
+    //             />
+    //             <Alerts
+    //                 extraStyles={{paddingLeft: 20}}
+    //                 leftAlignText
+    //                 status={this.state.displayMessage ? this.state.networkMessage: 'help'}
+    //             />
+    //         </View>
+    //     )
+    // }
 
     render() {
         return (

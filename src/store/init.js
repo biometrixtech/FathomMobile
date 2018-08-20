@@ -17,6 +17,6 @@ export default {
     notification:         false,
     password:             null,
     session_token:        null,
-    scheduledMaintenance: false,
+    scheduledMaintenance: { addressed: false, end_date: null, start_date: null },
     token:                null, // push notification token
 };
