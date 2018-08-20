@@ -300,7 +300,7 @@ class Login extends Component {
                 <View>
                     <Egg
                         onCatch={() => this.setState({ isModalVisible: true })}
-                        setps={'TTT'}
+                        setps={'TTTTT'}
                     >
                         <Image
                             resizeMode={'contain'}
