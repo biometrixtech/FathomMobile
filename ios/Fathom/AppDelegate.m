@@ -7,7 +7,6 @@
 
 #import "AppDelegate.h"
 #import <AVFoundation/AVFoundation.h>
-#import <CodePush/CodePush.h>
 #import <Fabric/Fabric.h>
 #import <Crashlytics/Crashlytics.h>
 #import <asl.h>
@@ -32,11 +31,11 @@
 
 
 #ifdef DEBUG
-  jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.101:8081/index.bundle?platform=ios&dev=true"];
+  jsCodeLocation = [NSURL URLWithString:@"http://192.168.1.2:8081/index.bundle?platform=ios&dev=true"];
 //  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 
 #else
-    jsCodeLocation = [CodePush bundleURL];
+    jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithBundleURL:jsCodeLocation

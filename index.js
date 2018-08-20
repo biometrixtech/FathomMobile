@@ -2,7 +2,7 @@
  * @Author: Vir Desai 
  * @Date: 2017-10-12 11:17:47 
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-21 16:05:54
+ * @Last Modified time: 2018-08-19 19:29:25
  */
 
 /**
@@ -13,7 +13,6 @@ import React from 'react';
 import { AppRegistry, YellowBox } from 'react-native';
 import Root from './src';
 import {configureStore} from './src/store';
-import codePush from 'react-native-code-push';
 
 
 YellowBox.ignoreWarnings([
@@ -25,13 +24,8 @@ YellowBox.ignoreWarnings([
     'startLoadWithResult invoked with invalid lockIdentifier'
 ]);
 
-let codePushOptions = {
-    updateDialog: false,
-    installMode:  codePush.InstallMode.IMMEDIATE
-};
-
 const { persistor, store } = configureStore();
 
 const App = () => <Root store={store} persistor={persistor}/>;
 
-AppRegistry.registerComponent('Fathom', () => codePush(codePushOptions)(App));
+AppRegistry.registerComponent('Fathom', () => App);
