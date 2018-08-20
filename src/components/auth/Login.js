@@ -249,7 +249,7 @@ class Login extends Component {
                             let returnObj = {};
                             returnObj.user = user;
                             returnObj.authorization = res.authorization;
-                            returnObj.authorization.session_token = response.authorization.session_token;
+                            returnObj.authorization.session_token = authorization.session_token;
                             return Promise.resolve(returnObj);
                         })
                         .catch(err => Promise.reject('Unexpected response authorization'))
@@ -300,7 +300,7 @@ class Login extends Component {
                 <View>
                     <Egg
                         onCatch={() => this.setState({ isModalVisible: true })}
-                        setps={'TTT'}
+                        setps={'TTTTT'}
                     >
                         <Image
                             resizeMode={'contain'}

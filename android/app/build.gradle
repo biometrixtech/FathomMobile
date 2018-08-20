@@ -91,7 +91,6 @@ import com.android.build.OutputFile
  ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -140,27 +139,22 @@ android {
         }
     }
     buildTypes {
-        debug {
-            // Note: CodePush updates should not be tested in Debug mode as they are overriden by the RN packager. However, because CodePush checks for updates in all modes, we must supply a key.
-            buildConfigField "String", "CODEPUSH_KEY", '""'
-        }
+        debug {}
         releaseStaging {
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            buildConfigField "String", "CODEPUSH_KEY", '"yUip94F_KaezxSrrlFCDJDrnIRkHNy8a-_BnM"'
             signingConfig signingConfigs.release
             matchingFallbacks = ['release', 'debug']
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            buildConfigField "String", "CODEPUSH_KEY", '"7LJiescWwsZkIPqAU3IRpm0l_5pVNy8a-_BnM"'
             signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
-        variant.outputs.each { output ->
+        variant.outputs.all { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
             def versionCodes = ["armeabi-v7a": 1, "x86": 2]
@@ -168,6 +162,9 @@ android {
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
+            }
+            if (variant.buildType.name == "release") {
+                outputFileName = "FathomAI.apk"
             }
         }
     }
@@ -193,7 +190,6 @@ dependencies {
     implementation project(':react-native-push-notification')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-splash-screen')
-    implementation project(':react-native-code-push')
     implementation project(':react-native-fabric')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-ble-manager')
