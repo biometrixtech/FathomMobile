@@ -21,7 +21,6 @@ This is a starter [React Native app](https://facebook.github.io/react-native/). 
    1. [Renaming the App](/docs/renaming.md)
    1. [Interacting with a REST API](/docs/api.md)
    1. [Testing](/docs/testing.md)
-   1. [CodePush](/docs/codepush.md)
    1. [Contributing](/docs/contributing.md)
 
 ---
@@ -88,22 +87,14 @@ Starts the React Native packager to develop on:
     1. *Release* - Creates an iOS deployable build for Production using the current project code
     1. *Staging* - Creates an iOS deployable build for Staging using the current project code
 
-#### 2.4 CodePush
-
-1. __Release__ - Bundle and Release the current React Native project code to Staging (check [docs](/docs/codepush.md) to ensure changes in project will all be deployable through CodePush)
-    1. *Android* - Bundle and Release the current Android encompassed React Native project code to Staging
-    1. *iOS* - Bundle and Release the current iOS encompassed React Native project code to Staging
-    1. *Both* - Bundle and Release the current Android and iOS React Native project code to Staging
-1. __Promote__ - Promote a CodePush build from Staging to Production
-    1. *Android* - Promote the Android CodePush build from Staging to Production
-    1. *iOS* - Promote the iOS CodePush build from Staging to Production
-    1. *Both* - Promote both the Android and iOS CodePush builds from Staging to Production
-
 ---
 
 ## Understanding the File Structure
 
 - `/android` - The native Android stuff
+- `/assets` - Storage of app fonts and images
+  - `/fonts` - Fathom branded font files (Libre Franklin)
+  - `/images` - Image assets used throughout the mobile apps
 - `/doc` - Extra linked docs
 - `/ios` - The native iOS stuff
 - `/keys` - App keys of iOS push notifications, iOS signing certificates, and Code Push deployment keys
@@ -112,9 +103,6 @@ Starts the React Native packager to develop on:
   - `/actions` - Redux Actions: payloads of information that send data _from_ your application _to_ your store. [Read More &rarr;](https://redux.js.org/docs/basics/Actions.html)
   - `/components` - 'Dumb-components' / presentational
   - `/constants` - Shared variables, configs, and theme specific styles/variables (across platforms)
-    - `/assets` - Storage of app fonts and images
-      - `/fonts` - Fathom branded font files (Libre Franklin)
-      - `/images` - Image assets used throughout the mobile apps
   - `/containers` - 'Smart-components' that connect business logic to presentation [Read More &rarr;](https://redux.js.org/docs/basics/UsageWithReact.html#presentational-and-container-components)
   - `/lib` - Utils, custom libraries, and functions that are shared across platforms
   - `/reducers` - Redux Reducers: Mobile app Redux Actions dispatch to reducers, which actually change the state [Read More &rarr;](https://redux.js.org/docs/basics/Reducers.html)
