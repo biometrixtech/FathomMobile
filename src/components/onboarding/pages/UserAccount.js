@@ -146,7 +146,7 @@ class UserAccount extends Component {
                 <View style={{marginLeft: 10, borderLeftWidth: 1, borderColor: AppColors.border,}}>
                     <Alerts
                         leftAlignText
-                        error={this.props.error.length > 0 ? this.props.error : this.state.coachContent}
+                        error={this.props.error && this.props.error.length > 0 ? this.props.error : this.state.coachContent}
                     />
                     {section.content}
                 </View>
