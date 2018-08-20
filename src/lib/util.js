@@ -110,6 +110,7 @@ const UTIL = {
                 returnObj.displayMessage = true;
                 return resolve(returnObj);
             }
+            return resolve(returnObj);
         });
     },
 
