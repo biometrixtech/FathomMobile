@@ -9,6 +9,7 @@ import { AsyncStorage } from 'react-native';
 
 // import third-party libraries
 import DeviceInfo from 'react-native-device-info';
+import moment from 'moment';
 import uuidByString from 'uuid-by-string';
 
 import { store } from '../store';
@@ -61,7 +62,15 @@ const UTIL = {
             const serverToTest = 'https://www.google.com/';
             let currentState = store.getState();
             let connectionInfo = currentState.init.connectionInfo;
-            let returnObj = { displayAlert: false, displayMessage: false, header: null, message: null, online: connectionInfo.online };
+            let returnObj = {
+                addressed:      false,
+                displayAlert:   false,
+                displayMessage: false,
+                header:         null,
+                message:        null,
+                online:         connectionInfo.online,
+                rawData:        {},
+            };
             if(connectionInfo.online && (connectionInfo.connectionType === 'wifi' || connectionInfo.connectionType === 'cellular') ) {
                 // we are connected - ping our maintenance API
                 InitActions.getMaintenanceWindow()
@@ -81,12 +90,34 @@ const UTIL = {
                                 });
                         } else {
                             if(response.maintenance_windows.length > 0) {
-                                // we have a maintenance window, display message based on logic
-                                let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(response.maintenance_windows[0]);
-                                returnObj.message = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.message : '';
-                                returnObj.header = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.header : '';
-                                returnObj.displayAlert = parseMaintenanceWindow.displayAlert;
-                                return resolve(returnObj);
+                                UTIL._retrieveAsyncStorageData('maintenance_window')
+                                    .then(result => {
+                                        // we have a maintenance window, display message based on logic
+                                        let apiMaintenanceWindow = response.maintenance_windows[0];
+                                        returnObj.rawData = apiMaintenanceWindow;
+                                        let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
+                                        console.log('result',result);
+                                        console.log('apiMaintenanceWindow',apiMaintenanceWindow);
+                                        if(
+                                            result &&
+                                            result.rawData &&
+                                            result.rawData.start_date === apiMaintenanceWindow.start_date &&
+                                            result.rawData.end_date === apiMaintenanceWindow.end_date &&
+                                            result.addressed
+                                        ) {
+                                            // we have something locally, check logic and update as needed
+                                            returnObj.message = parseMaintenanceWindow.message;
+                                            returnObj.header = parseMaintenanceWindow.header;
+                                            returnObj.displayAlert = false;
+                                        } else {
+                                            // nothing locally, create local storage
+                                            returnObj.message = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.message : '';
+                                            returnObj.header = parseMaintenanceWindow.displayAlert ? parseMaintenanceWindow.header : '';
+                                            returnObj.displayAlert = parseMaintenanceWindow.displayAlert;
+                                            UTIL._storeAsyncStorageData('maintenance_window', returnObj);
+                                        }
+                                        return resolve(returnObj);
+                                    });
                             }
                         }
                         return resolve(returnObj);
@@ -116,23 +147,47 @@ const UTIL = {
         });
     },
 
-    _storeData: async (key, value) => {
+    /**
+      * AsyncStorage save data
+      * key -> index of data
+      * data -> data to store (if object, will JSON.stringify)
+      */
+    _storeAsyncStorageData: async (key, data) => {
+        let newData = typeof data === 'object' ? JSON.stringify(data) : data;
         try {
-            await AsyncStorage.setItem(key, value);
+            await AsyncStorage.setItem(key, newData);
         } catch (error) {
-            // Error saving data
+            console.log('error from _storeAsyncStorageData', error);
         }
     },
 
-    _retrieveData: async (key) => {
+    /**
+      * AsyncStorage retrieve data
+      * key -> index of data
+      */
+    _retrieveAsyncStorageData: async (key) => {
+        return await AsyncStorage.getItem(key)
+            .then(result => {
+                if (result) {
+                    try {
+                        result = JSON.parse(result);
+                    } catch (error) {
+                        console.log('error from _retrieveAsyncStorageData', error);
+                    }
+                }
+                return result;
+            });
+    },
+
+    /**
+      * AsyncStorage remove data
+      * key -> index of data
+      */
+    _removeAsyncStorageData: async (key) => {
         try {
-            const value = await AsyncStorage.getItem(key);
-            if (value !== null) {
-                // We have data!!
-                console.log(value);
-            }
+            await AsyncStorage.removeItem(key);
         } catch (error) {
-            // Error retrieving data
+            console.log('error from _removeAsyncStorageData', error);
         }
     },
 

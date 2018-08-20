@@ -86,41 +86,43 @@ class Start extends Component {
 
     componentDidMount = () => {
         setTimeout(() => {
-            AppUtil.getNetworkStatus()
-                .then(response => {
-                    if(response.displayAlert || response.displayMessage) {
-                        this.setState({
-                            displayAlert:   response.displayAlert,
-                            displayMessage: response.displayMessage,
-                            header:         response.header,
-                            isOnline:       response.online,
-                            networkMessage: response.message,
-                        });
-                        this.hideSplash();
-                        this._handleAlert();
-                    } else {
-                        if(
-                            this.props.email !== null &&
-                            this.props.password !== null &&
-                            this.props.user.id &&
-                            this.props.jwt &&
-                            this.props.sessionToken &&
-                            this.props.expires
-                        ) {
-                            Promise.resolve(this.login());
+            if(
+                this.props.email !== null &&
+                this.props.password !== null &&
+                this.props.user.id &&
+                this.props.jwt &&
+                this.props.sessionToken &&
+                this.props.expires
+            ) {
+                Promise.resolve(this.login());
+            } else {
+                AppUtil.getNetworkStatus()
+                    .then(response => {
+                        if(response.displayAlert || response.displayMessage) {
+                            this.setState({
+                                displayAlert:   response.displayAlert,
+                                displayMessage: response.displayMessage,
+                                header:         response.header,
+                                isOnline:       response.online,
+                                networkMessage: response.message,
+                            });
+                            this.hideSplash();
+                            this._handleAlert();
                         } else {
                             this.hideSplash();
                         }
-                    }
-                });
+                    });
+            }
         }, 10);
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(nextProps.init && nextProps.init.scheduledMaintenance) {
+        console.log(nextProps,this.props);
+        if(nextProps && nextProps.scheduledMaintenance) {
             AppUtil.getNetworkStatus()
                 .then(response => {
                     if(!_.isEqual(nextProps, this.props)) {
+                        console.log('++++HI+++++');
                         this.setState({
                             displayAlert:   response.displayAlert,
                             displayMessage: response.displayMessage,
@@ -157,6 +159,7 @@ class Start extends Component {
 
     _handleAlert = () => {
         const { displayAlert, header, networkMessage } = this.state;
+        console.log(displayAlert, this.state.alertPresent);
         if(displayAlert && !this.state.alertPresent) {
             this.setState({ alertPresent: true });
             Alert.alert(
