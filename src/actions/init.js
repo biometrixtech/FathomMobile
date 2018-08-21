@@ -24,30 +24,32 @@ import moment from 'moment';
   * Ping Maintenance API
   * - to know of upcoming, current, and future maintenance windows
   */
-const getMaintenanceWindow = () => {
+const getMaintenanceWindow = (updateReducer) => {
     return AppAPI.maintenance_status.get()
         .then(response => {
-            let currentState = store.getState();
-            let scheduledMaintenance = currentState.init.scheduledMaintenance;
-            let isNewWindow = (
-                response.maintenance_windows[0] &&
-                moment(scheduledMaintenance.end_date).isSame(moment(response.maintenance_windows[0].end_date)) &&
-                moment(scheduledMaintenance.start_date).isSame(moment(response.maintenance_windows[0].start_date))
-            ) ?
-                false
-                :
-                true;
-            let addressedFlag = isNewWindow ? false : true;
-            let endDate = response.maintenance_windows[0] ? response.maintenance_windows[0].end_date : null;
-            let startDate = response.maintenance_windows[0] ? response.maintenance_windows[0].start_date : null;
-            store.dispatch({
-                type: Actions.UPDATE_SCHEDULED_MAINTENANCE,
-                data: {
-                    addressed:  addressedFlag,
-                    end_date:   endDate,
-                    start_date: startDate,
-                }
-            });
+            if(updateReducer) {
+                let currentState = store.getState();
+                let scheduledMaintenance = currentState.init.scheduledMaintenance;
+                let isNewWindow = (
+                    response.maintenance_windows[0] &&
+                    moment(scheduledMaintenance.end_date).isSame(moment(response.maintenance_windows[0].end_date)) &&
+                    moment(scheduledMaintenance.start_date).isSame(moment(response.maintenance_windows[0].start_date))
+                ) ?
+                    false
+                    :
+                    true;
+                let addressedFlag = isNewWindow ? false : true;
+                let endDate = response.maintenance_windows[0] ? response.maintenance_windows[0].end_date : null;
+                let startDate = response.maintenance_windows[0] ? response.maintenance_windows[0].start_date : null;
+                store.dispatch({
+                    type: Actions.UPDATE_SCHEDULED_MAINTENANCE,
+                    data: {
+                        addressed:  addressedFlag,
+                        end_date:   endDate,
+                        start_date: startDate,
+                    }
+                });
+            }
             return Promise.resolve(response);
         })
         .catch(error => Promise.reject(error));

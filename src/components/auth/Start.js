@@ -91,6 +91,7 @@ class Start extends Component {
                 Promise.resolve(this.login());
             } else {
                 this.hideSplash();
+                // check if we have a maintenance window to alert the user on
                 if(!this.props.scheduledMaintenance.addressed) {
                     let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
                     let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
