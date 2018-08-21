@@ -11,17 +11,67 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-    ScrollView,
+    View, StyleSheet
 } from 'react-native';
 import FormValidation from 'tcomb-form-native';
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
 import { AppAPI } from '../../lib';
-import { AppStyles } from '../../constants';
-
+import { AppColors, AppFonts, AppSizes, AppStyles } from '../../constants';
+import _ from 'lodash';
 // Components
 import { Alerts, Card, Text, Button } from '../custom';
+
+/* Styles ==================================================================== */
+const styles = StyleSheet.create({
+    background: {
+        // width: AppSizes.screen.width,
+    },
+    headerWrapper: {
+        alignItems:    'center',
+        flexDirection: 'row',
+    },
+    iconContainer: {
+        backgroundColor: AppColors.transparent,
+        height:          AppFonts.scaleFont(18),
+        marginLeft:      0,
+    },
+    iconStyle: {
+        fontSize: 20,
+    },
+    title: {
+        ...AppStyles.oswaldBold,
+        fontSize: AppFonts.scaleFont(18),
+    },
+    wrapper: {
+        paddingHorizontal: 10,
+        paddingVertical:   10,
+    },
+});
+let inputStyle = _.cloneDeep(FormValidation.form.Form.stylesheet);
+inputStyle.textbox.error.borderColor = AppColors.secondary.red.fiftyPercent;
+inputStyle.textbox.error.borderLeftWidth = 0;
+inputStyle.textbox.error.borderRightWidth = 0;
+inputStyle.textbox.error.borderTopWidth = 0;
+inputStyle.textbox.error.color = AppColors.secondary.red.fiftyPercent;
+inputStyle.textbox.error.textAlign = 'center';
+inputStyle.textbox.error.fontFamily = AppStyles.robotoBold.fontFamily;
+inputStyle.textbox.error.fontWeight = AppStyles.robotoBold.fontWeight;
+inputStyle.textbox.error.fontSize = AppFonts.scaleFont(15);
+inputStyle.textbox.normal.borderColor = AppColors.primary.grey.fiftyPercent;
+inputStyle.textbox.normal.borderLeftWidth = 0;
+inputStyle.textbox.normal.borderRightWidth = 0;
+inputStyle.textbox.normal.borderTopWidth = 0;
+inputStyle.textbox.normal.color = AppColors.primary.yellow.hundredPercent;
+inputStyle.textbox.normal.textAlign = 'center';
+inputStyle.textbox.normal.fontFamily = AppStyles.robotoBold.fontFamily;
+inputStyle.textbox.normal.fontWeight = AppStyles.robotoBold.fontWeight;
+inputStyle.textbox.normal.fontSize = AppFonts.scaleFont(15);
+inputStyle.textboxView.error.color = AppColors.white;
+inputStyle.textboxView.normal.color = AppColors.white;
+inputStyle.errorBlock.color = AppColors.secondary.red.fiftyPercent;
+inputStyle.errorBlock.textAlign = 'center';
 
 /* Component ==================================================================== */
 class ForgotPassword extends Component {
@@ -66,8 +116,18 @@ class ForgotPassword extends Component {
                     Email: {
                         error:           'Please enter a valid email',
                         autoCapitalize:  'none',
+                        blurOnSubmit:         false,
                         clearButtonMode: 'while-editing',
+                        error:                'Your email must be a valid email format',
+                        keyboardType:         'email-address',
+                        label:                ' ',
+                        placeholder:          'email',
+                        placeholderTextColor: AppColors.primary.yellow.hundredPercent,
+                        returnKeyType:        'next',
+                        stylesheet:           inputStyle,    
                     },
+
+                    
                 },
             },
         };
@@ -122,37 +182,55 @@ class ForgotPassword extends Component {
         const Form = FormValidation.form.Form;
 
         return (
-            <ScrollView
+            <View style={{backgroundColor: AppColors.white, width: AppSizes.screen.width}}>
+            <View style={[styles.wrapper]}>
+                
+            {/*<View
                 automaticallyAdjustContentInsets={false}
                 ref={a => { this.scrollView = a; }}
                 style={[AppStyles.container]}
                 contentContainerStyle={[AppStyles.container, { alignItems: 'center' }]}
-            >
-                <Card>
+            >*/}
+                {/*<Card>*/}
                     <Alerts
                         status={this.state.resultMsg.status}
                         success={this.state.resultMsg.success}
                         error={this.state.resultMsg.error}
                     />
-
-                    <Text p style={[AppStyles.textCenterAligned]}>
-                        Enter your email address and we will send you an email with a link to reset your password.
+                   <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black}]}>
+                        {'Reset Your Password'}
                     </Text>
-
+                    <Text robotoRegular p style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
+                        Enter your email to reset your password.
+                    </Text>
+                    <View style={{width: AppSizes.screen.widthFourFifths }}>
                     <Form
                         ref={(b) => { this.form = b; }}
                         type={this.state.form_fields}
                         value={this.state.form_values}
                         options={this.state.options}
+                        
                     />
 
                     <Button
-                        title={'Submit'}
+                        backgroundColor={AppColors.primary.yellow.hundredPercent}
+                        buttonStyle={{borderRadius: 0, marginVertical: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed}}
+                        color={AppColors.white}
+                        fontFamily={AppStyles.robotoBold.fontFamily}
+                        fontWeight={AppStyles.robotoBold.fontWeight}
+                        rounded={false}
+                        outlined
+                        raised={false}
+                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                        title={'Reset'}
                         onPress={this.forgotPassword}
                     />
 
-                </Card>
-            </ScrollView>
+                   
+                {/*</Card>*/}
+                </View>
+            </View>
+        </View>
         );
     }
 }

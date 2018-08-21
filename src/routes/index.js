@@ -87,14 +87,17 @@ const Index = (
                 hideNavBar={true}
                 key={'signUp'}
                 panHandlers={null}
-            />
+            />*/
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
-                hideNavBar={true}
+                hideNavBar={false}
                 key={'forgotPassword'}
+                navBar={CustomNavBar}
+                onLeft={() => Actions.login()}
                 panHandlers={null}
-            />*/}
+                title={'FORGOT PASSWORD'}
+            />}
             <Scene
                 Layout={HomeComponent}
                 component={HomeContainer}
