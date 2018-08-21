@@ -17,10 +17,11 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, View } from 'react-native';
+import { Platform, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes } from '../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
+import { Text } from './';
 import data_uri from '../../../assets/images/body/data_uri';
 
 // import third-party libraries
@@ -29,13 +30,17 @@ import Image from 'react-native-remote-svg';
 /* Component ==================================================================== */
 class SVGImage extends Component {
     static propTypes = {
-        image:    PropTypes.string.isRequired,
-        selected: PropTypes.bool,
-        style:    PropTypes.object.isRequired,
+        image:       PropTypes.string.isRequired,
+        overlay:     PropTypes.bool,
+        overlayText: PropTypes.string,
+        selected:    PropTypes.bool,
+        style:       PropTypes.object.isRequired,
     }
 
     static defaultProps = {
-        selected: false,
+        overlay:     false,
+        overlayText: null,
+        selected:    false,
     }
 
     imageString = () => {
@@ -208,17 +213,47 @@ class SVGImage extends Component {
             height:         AppSizes.screen.widthQuarter + 5,
             width:          AppSizes.screen.widthQuarter + 5,
             borderRadius:   AppSizes.screen.widthQuarter + 5,
-            borderWidth:    3,
-            borderColor:    this.props.selected ? AppColors.secondary.blue.hundredPercent : AppColors.white,
+            borderWidth:    5,
+            borderColor:    this.props.selected ? AppColors.primary.yellow.hundredPercent : AppColors.white,
             justifyContent: 'center',
             alignItems:     'center',
             overflow:       'hidden'
         }}>
-          <Image
-            source={ Platform.OS ==='ios' ? this.imageString(): { uri: this.imageString() } }
-            style={this.props.style}
-            resizeMode={'contain'}
-          />
+            <Image
+                resizeMode={'contain'}
+                source={ Platform.OS ==='ios' ? this.imageString(): { uri: this.imageString() } }
+                style={this.props.style}
+            />
+            { this.props.selected && this.props.overlay ?
+                <View
+                    style={{
+                        ...StyleSheet.absoluteFillObject,
+                        alignItems:      'center',
+                        backgroundColor: AppColors.black,
+                        justifyContent:  'center',
+                        opacity:         0.5,
+                    }}
+                >
+                    { this.props.overlayText ?
+                        <Text
+                            oswaldRegular
+                            style={[
+                                AppStyles.textCenterAligned,
+                                {
+                                    color:    AppColors.white,
+                                    fontSize: AppFonts.scaleFont(15),
+                                }
+                            ]}
+                        >
+                            {this.props.overlayText}
+                        </Text>
+                        :
+                        null
+                    }
+                </View>
+                :
+                null
+            }
         </View>
     );
 }

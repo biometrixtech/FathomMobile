@@ -15,14 +15,14 @@ import PropTypes from 'prop-types';
 import { TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
-import { AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
-import { SVGImage } from '../../custom';
+import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
+import { SVGImage, Text, } from '../../custom';
 
 // import third-party libraries
 import _ from 'lodash';
 
 // Components
-import { SoreBodyPart } from './';
+import { SoreBodyPart, } from './';
 
 /* Component ==================================================================== */
 const AreasOfSoreness = ({
@@ -39,40 +39,74 @@ const AreasOfSoreness = ({
             _.findIndex(soreBodyParts.body_parts, u => u.body_part === o.index && u.side === 0) === -1 &&
             (itemStateFiltered.length === 1 || itemStateFiltered.length === 0);
     });
-    newBodyPartMap = _.orderBy(newBodyPartMap, ['order'], ['asc']);
     let areaOfSorenessClicked = _.filter(soreBodyPartsState, bodyPartState => _.findIndex(soreBodyParts.body_parts, bodyPartProp => bodyPartProp.body_part === bodyPartState.body_part && bodyPartProp.side === bodyPartState.side) === -1);
+    let groupedNewBodyPartMap = _.groupBy(newBodyPartMap, 'location');
     return(
         <View>
-            <View style={[AppStyles.row, AppStyles.containerCentered, {flexWrap: 'wrap'}]}>
-                {_.map(newBodyPartMap, (body, index) => {
-                    let isSelected = false;
-                    _.map(areaOfSorenessClicked, area => {
-                        if(area.body_part === body.index) {
-                            isSelected = true;
-                        }
-                    });
-                    let bodyImage = body.image[0] || body.image[2];
-                    let bodyIndexInState = _.findIndex(soreBodyParts.body_parts, a => a.body_part === body.index);
-                    if(body.bilateral && bodyIndexInState > -1) {
-                        let newBodyImageIndex = soreBodyParts.body_parts[bodyIndexInState].side === 1 ? 2 : 1;
-                        bodyImage = body.image[newBodyImageIndex];
-                    }
-                    return(
-                        <TouchableOpacity
-                            activeOpacity={0.5}
-                            key={`AreasOfSoreness0${index}`}
-                            onPress={() => handleAreaOfSorenessClick(body)}
-                            style={[AppStyles.paddingSml]}
+            {_.map(groupedNewBodyPartMap, (object, key) => {
+                let bodyPartMap = _.orderBy(object, ['order'], ['asc']);
+                return(
+                    <View key={key}>
+                        <Text
+                            oswaldRegular
+                            style={[
+                                AppStyles.textCenterAligned,
+                                {
+                                    color:         AppColors.zeplin.darkGrey,
+                                    fontSize:      AppFonts.scaleFont(18),
+                                    paddingBottom: AppSizes.paddingSml,
+                                    paddingTop:    AppSizes.padding,
+                                }
+                            ]}
                         >
-                            <SVGImage
-                                image={bodyImage}
-                                selected={isSelected}
-                                style={{width: 100, height: 100}}
-                            />
-                        </TouchableOpacity>
-                    )
-                })}
-            </View>
+                            {key.length > 0 ? key.toUpperCase() : 'OTHER'}
+                        </Text>
+                        <View style={[AppStyles.row, AppStyles.containerCentered, {flexWrap: 'wrap'}]}>
+                            {_.map(bodyPartMap, (body, index) => {
+                                let isSelected = false;
+                                _.map(areaOfSorenessClicked, area => {
+                                    if(area.body_part === body.index) {
+                                        isSelected = true;
+                                    }
+                                });
+                                let bodyImage = body.image[0] || body.image[2];
+                                let bodyIndexInState = _.findIndex(soreBodyParts.body_parts, a => a.body_part === body.index);
+                                if(body.bilateral && bodyIndexInState > -1) {
+                                    let newBodyImageIndex = soreBodyParts.body_parts[bodyIndexInState].side === 1 ? 2 : 1;
+                                    bodyImage = body.image[newBodyImageIndex];
+                                }
+                                let mainBodyPartName = (
+                                    body.label.slice(-1) === 's' && body.bilateral
+                                ) ?
+                                    body.label === 'Achilles' ?
+                                        body.label.toUpperCase()
+                                        : body.label === 'Calves' ?
+                                            'CALF'
+                                            :
+                                            body.label.slice(0, -1).toUpperCase()
+                                    :
+                                    body.label.toUpperCase();
+                                return(
+                                    <TouchableOpacity
+                                        activeOpacity={0.5}
+                                        key={`AreasOfSoreness0${index}`}
+                                        onPress={() => handleAreaOfSorenessClick(body)}
+                                        style={[AppStyles.paddingSml]}
+                                    >
+                                        <SVGImage
+                                            image={bodyImage}
+                                            overlay={true}
+                                            overlayText={mainBodyPartName}
+                                            selected={isSelected}
+                                            style={{width: 100, height: 100}}
+                                        />
+                                    </TouchableOpacity>
+                                )
+                            })}
+                        </View>
+                    </View>
+                )
+            })}
             {_.map(areaOfSorenessClicked, (area, i) => {
                 return(
                     <View key={`AreasOfSoreness1${i}`} style={[AppStyles.paddingVertical]}>
