@@ -11,7 +11,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-    View, StyleSheet
+    View, StyleSheet, TouchableOpacity
 } from 'react-native';
 import FormValidation from 'tcomb-form-native';
 import { Actions } from 'react-native-router-flux';
@@ -182,8 +182,9 @@ class ForgotPassword extends Component {
         const Form = FormValidation.form.Form;
 
         return (
-            <View style={{backgroundColor: AppColors.white, width: AppSizes.screen.width}}>
-            <View style={[styles.wrapper]}>
+            <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: AppColors.white}}>
+                <View >
+            {/*<View style={[styles.wrapper]}>*/}
                 
             {/*<View
                 automaticallyAdjustContentInsets={false}
@@ -200,36 +201,50 @@ class ForgotPassword extends Component {
                    <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black}]}>
                         {'Reset Your Password'}
                     </Text>
-                    <Text robotoRegular p style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
-                        Enter your email to reset your password.
-                    </Text>
-                    <View style={{width: AppSizes.screen.widthFourFifths }}>
-                    <Form
-                        ref={(b) => { this.form = b; }}
-                        type={this.state.form_fields}
-                        value={this.state.form_values}
-                        options={this.state.options}
+                    <View style={[AppStyles.containerCentered]}>
+                        <View style={{width: AppSizes.screen.widthFourFifths}}>
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
+                            Enter your email to receive instructions on how to reset your password.
+                        </Text>
+                        </View>
+                    </View>
+                    <View style={[AppStyles.containerCentered]}>
+                        <View style={{width: AppSizes.screen.widthTwoThirds}}>
                         
-                    />
+                        <Form
+                            ref={(b) => { this.form = b; }}
+                            type={this.state.form_fields}
+                            value={this.state.form_values}
+                            options={this.state.options}
+                            
+                        />
+                        </View>
+                    </View>
 
-                    <Button
-                        backgroundColor={AppColors.primary.yellow.hundredPercent}
-                        buttonStyle={{borderRadius: 0, marginVertical: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed}}
-                        color={AppColors.white}
-                        fontFamily={AppStyles.robotoBold.fontFamily}
-                        fontWeight={AppStyles.robotoBold.fontWeight}
-                        rounded={false}
-                        outlined
-                        raised={false}
-                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                        title={'Reset'}
-                        onPress={this.forgotPassword}
-                    />
 
                    
                 {/*</Card>*/}
-                </View>
+
+            {/*</View>*/}
             </View>
+            <TouchableOpacity onPress={this.forgotPassword} style={[AppStyles.nextButtonWrapper, {margin: 10}]}>
+                    <Text robotoBold style={[AppStyles.nextButtonText, { fontSize: AppFonts.scaleFont(16) }]}>Reset</Text>
+                </TouchableOpacity>
+                        {/*<Button
+                            backgroundColor={AppColors.primary.yellow.hundredPercent}
+                            
+                            buttonStyle={{borderRadius: 0}}
+                            color={AppColors.white}
+                            fontFamily={AppStyles.robotoBold.fontFamily}
+                            fontWeight={AppStyles.robotoBold.fontWeight}
+                            rounded={false}
+                            outlined={false}
+                            raised={false}
+                            textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                            title={'Reset'}
+                            
+                        />*/}
+            
         </View>
         );
     }
