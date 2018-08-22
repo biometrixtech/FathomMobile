@@ -51,7 +51,7 @@ class AreasOfSoreness extends Component {
                     return(
                         <View key={key}>
                             <Text
-                                oswaldRegular
+                                oswaldMedium
                                 style={[
                                     AppStyles.textCenterAligned,
                                     {
@@ -119,7 +119,7 @@ class AreasOfSoreness extends Component {
                 <TouchableOpacity
                     style={[AppStyles.allGoodBtn, {
                         backgroundColor: AppColors.white,
-                        borderColor:     this.state.isAllGood ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.lightGrey,
+                        borderColor:     this.state.isAllGood ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
                     }]}
                     onPress={() => {
                         this.setState({
@@ -134,7 +134,7 @@ class AreasOfSoreness extends Component {
                         style={[
                             AppStyles.textCenterAligned,
                             {
-                                color:    this.state.isAllGood ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.lightGrey,
+                                color:    this.state.isAllGood ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
                                 fontSize: AppFonts.scaleFont(18),
                             }
                         ]}

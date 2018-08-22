@@ -429,7 +429,7 @@ export default {
     sorenessPainValues: {
         alignSelf:      'center',
         borderRadius:   35 / 2,
-        borderWidth:    1,
+        borderWidth:    3,
         height:         35,
         justifyContent: 'center',
         width:          35,
@@ -441,5 +441,5 @@ export default {
         height:         100,
         justifyContent: 'center',
         width:          100,
-    }
+    },
 };

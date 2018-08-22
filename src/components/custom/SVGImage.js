@@ -210,14 +210,14 @@ class SVGImage extends Component {
 
     render = () => (
         <View style={{
-            height:         AppSizes.screen.widthQuarter + 5,
-            width:          AppSizes.screen.widthQuarter + 5,
+            alignItems:     'center',
+            borderColor:    this.props.selected ? AppColors.primary.yellow.hundredPercent : AppColors.white,
             borderRadius:   AppSizes.screen.widthQuarter + 5,
             borderWidth:    5,
-            borderColor:    this.props.selected ? AppColors.primary.yellow.hundredPercent : AppColors.white,
+            height:         AppSizes.screen.widthQuarter + 5,
             justifyContent: 'center',
-            alignItems:     'center',
-            overflow:       'hidden'
+            overflow:       'hidden',
+            width:          AppSizes.screen.widthQuarter + 5,
         }}>
             <Image
                 resizeMode={'contain'}
@@ -231,6 +231,8 @@ class SVGImage extends Component {
                         alignItems:      'center',
                         backgroundColor: 'rgba(43, 43, 43, 0.5)',
                         justifyContent:  'center',
+
+                        flex: 1,
                     }}
                 >
                     { this.props.overlayText ?

@@ -9,7 +9,7 @@
  * Home View
  */
 import React, { Component } from 'react';
-import { ActivityIndicator, Alert, BackHandler, Platform, RefreshControl, ScrollView, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, BackHandler, Platform, RefreshControl, ScrollView, TouchableWithoutFeedback, View } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';

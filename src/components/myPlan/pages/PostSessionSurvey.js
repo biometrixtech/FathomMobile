@@ -84,7 +84,7 @@ const PostSessionSurvey = ({
                         {soreBodyParts.body_parts.length ? soreBodyParts.body_parts.length + 2 : '2'}
                     </Text>
                     <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                        {'Is anything else bothering you?'}
+                        {`Is anything ${soreBodyParts.body_parts && soreBodyParts.body_parts.length > 0 ? 'else' : ''} bothering you?`}
                     </Text>
                     <AreasOfSoreness
                         handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, false, isAllGood)}

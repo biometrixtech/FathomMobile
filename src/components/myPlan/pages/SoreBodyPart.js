@@ -85,7 +85,7 @@ class SoreBodyPart extends Component {
                     <Text oswaldRegular style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(18),}]}>
                         {'I FEEL'}
                         <Text oswaldMedium style={{fontSize: AppFonts.scaleFont(18),}}>
-                            {` ${bodyPartName.toUpperCase()}...`}
+                            {` ${bodyPartName === 'Abdominals' ? bodyPartName.slice(0, -1).toUpperCase() : bodyPartName.toUpperCase()}...`}
                         </Text>
                     </Text>
                 }
@@ -94,7 +94,7 @@ class SoreBodyPart extends Component {
                         <View>
                             <TabIcon
                                 containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
-                                icon={this.state.type === 'all-good' ? 'check-circle' : 'circle-thin'}
+                                icon={this.state.type === 'all-good' ? 'check-circle' : 'checkbox-blank-circle-outline'}
                                 iconStyle={[{color: this.state.type === 'all-good' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
                                 onPress={() => {
                                     this.setState({
@@ -106,7 +106,7 @@ class SoreBodyPart extends Component {
                                 }}
                                 reverse={false}
                                 size={35}
-                                type={'font-awesome'}
+                                type={'material-community'}
                             />
                             <Text
                                 oswaldRegular
@@ -114,7 +114,7 @@ class SoreBodyPart extends Component {
                                     AppStyles.textCenterAligned,
                                     {
                                         color:           this.state.type === 'all-good' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                        fontSize:        AppFonts.scaleFont(12),
+                                        fontSize:        AppFonts.scaleFont(14),
                                         paddingVertical: AppSizes.paddingSml,
                                     }
                                 ]}
@@ -128,7 +128,7 @@ class SoreBodyPart extends Component {
                     <View>
                         <TabIcon
                             containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
-                            icon={this.state.type === 'soreness' ? 'check-circle' : 'circle-thin'}
+                            icon={this.state.type === 'soreness' ? 'check-circle' : 'checkbox-blank-circle-outline'}
                             iconStyle={[{color: this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
                             onPress={() => {
                                 this.setState({
@@ -140,7 +140,7 @@ class SoreBodyPart extends Component {
                             }}
                             reverse={false}
                             size={35}
-                            type={'font-awesome'}
+                            type={'material-community'}
                         />
                         <Text
                             oswaldRegular
@@ -148,7 +148,7 @@ class SoreBodyPart extends Component {
                                 AppStyles.textCenterAligned,
                                 {
                                     color:           this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                    fontSize:        AppFonts.scaleFont(12),
+                                    fontSize:        AppFonts.scaleFont(14),
                                     paddingVertical: AppSizes.paddingSml,
                                 }
                             ]}
@@ -159,7 +159,7 @@ class SoreBodyPart extends Component {
                     <View>
                         <TabIcon
                             containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
-                            icon={this.state.type === 'pain' ? 'check-circle' : 'circle-thin'}
+                            icon={this.state.type === 'pain' ? 'check-circle' : 'checkbox-blank-circle-outline'}
                             iconStyle={[{color: this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
                             onPress={() => {
                                 this.setState({
@@ -171,7 +171,7 @@ class SoreBodyPart extends Component {
                             }}
                             reverse={false}
                             size={35}
-                            type={'font-awesome'}
+                            type={'material-community'}
                         />
                         <Text
                             oswaldRegular
@@ -179,7 +179,7 @@ class SoreBodyPart extends Component {
                                 AppStyles.textCenterAligned,
                                 {
                                     color:           this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                    fontSize:        AppFonts.scaleFont(12),
+                                    fontSize:        AppFonts.scaleFont(14),
                                     paddingVertical: AppSizes.paddingSml,
                                 }
                             ]}
@@ -199,22 +199,6 @@ class SoreBodyPart extends Component {
                                     key={value+key}
                                     style={{justifyContent: 'center', width: (AppSizes.screen.width - (AppSizes.paddingLrg * 2)) / (sorenessPainMapping.length - 1)}}
                                 >
-                                    <Text
-                                        oswaldRegular
-                                        style={[
-                                            AppStyles.textCenterAligned,
-                                            {
-                                                color:             this.state.value === key ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                                flex:              1,
-                                                fontSize:          AppFonts.scaleFont(12),
-                                                paddingHorizontal: AppSizes.paddingXSml,
-                                                paddingVertical:   AppSizes.paddingSml,
-                                                textAlignVertical: 'bottom',
-                                            }
-                                        ]}
-                                    >
-                                        {value}
-                                    </Text>
                                     <TouchableOpacity
                                         style={[AppStyles.sorenessPainValues, {
                                             backgroundColor: this.state.value === key ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
@@ -241,6 +225,21 @@ class SoreBodyPart extends Component {
                                             {key}
                                         </Text>
                                     </TouchableOpacity>
+                                    <Text
+                                        oswaldRegular
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:             this.state.value === key ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
+                                                flex:              1,
+                                                fontSize:          AppFonts.scaleFont(12),
+                                                paddingHorizontal: AppSizes.paddingXSml,
+                                                paddingVertical:   AppSizes.paddingSml,
+                                            }
+                                        ]}
+                                    >
+                                        {value.toUpperCase()}
+                                    </Text>
                                 </View>
                             )
                         })

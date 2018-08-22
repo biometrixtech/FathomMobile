@@ -149,7 +149,7 @@ const UTIL = {
                         style: 'cancel',
                     },
                 ],
-                { cancelable: true }
+                { cancelable: false }
             );
         }
     },

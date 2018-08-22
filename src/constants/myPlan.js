@@ -37,7 +37,7 @@ const bodyPartMapping = [
     {index: 14, order: 11, label: 'Glutes', location: 'back', group: 'muscle', image: {0: 'Glute.svg', 1: 'L_Glute.svg', 2: 'R_Glute.svg'}, bilateral: true, helping_verb: 'are'},
     {index: 15, order: 12, label: 'Hamstrings', location: 'back', group: 'muscle', image: {0: 'Hamstring.svg', 1: 'L_Hamstring.svg', 2: 'R_Hamstring.svg'}, bilateral: true, helping_verb: 'are'},
     {index: 16, order: 13, label: 'Calves', location: 'back', group: 'muscle', image: {0: 'Calf.svg', 1: 'L_Calf.svg', 2: 'R_Calf.svg'}, bilateral: true, helping_verb: 'are'},
-    {index: 17, order: 14, label: 'Achilles', location: 'back', group: 'muscle', image: {0: 'Achilles.svg', 1: 'L_Achilles.svg', 2: 'R_Achilles.svg'}, bilateral: true, helping_verb: 'are'},
+    {index: 17, order: 14, label: 'Achilles', location: 'back', group: 'joint', image: {0: 'Achilles.svg', 1: 'L_Achilles.svg', 2: 'R_Achilles.svg'}, bilateral: true, helping_verb: 'are'},
 ];
 
 const overallReadiness = [
@@ -78,31 +78,21 @@ const muscleLevels = {
     pain: [
         '',
         'Barely Noticeable',
-        'Dull/Widespread Pain',
+        'Dull Pain',
         'Sharp Pain',
         'Pain Limits Movement ',
         'Too Painful to Move',
     ],
 };
 
-const jointLevels = {
-    soreness: [
-        '',
-        'Ache',
-        'Dull Pain',
-        'Sharp Pain',
-        'Pain Limits Movement',
-        'Too Painful to Move',
-    ],
-    pain: [
-        '',
-        'Ache',
-        'Dull Pain',
-        'Sharp Pain',
-        'Pain Limits Movement',
-        'Too Painful to Move',
-    ],
-};
+const jointLevels = [
+    '',
+    'Ache',
+    'Dull Pain',
+    'Sharp Pain',
+    'Pain Limits Movement',
+    'Too Painful to Move',
+];
 
 function sorenessPainScaleMapping(type, value) {
     let newValue = 0;
