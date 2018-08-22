@@ -229,9 +229,8 @@ class SVGImage extends Component {
                     style={{
                         ...StyleSheet.absoluteFillObject,
                         alignItems:      'center',
-                        backgroundColor: AppColors.black,
+                        backgroundColor: 'rgba(43, 43, 43, 0.5)',
                         justifyContent:  'center',
-                        opacity:         0.5,
                     }}
                 >
                     { this.props.overlayText ?
