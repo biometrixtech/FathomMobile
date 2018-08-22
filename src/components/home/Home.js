@@ -199,6 +199,7 @@ class Home extends Component {
         if(
             !areObjectsDifferent &&
             this.props.plan.dailyPlan[0] &&
+            nextProps.plan.dailyPlan[0] &&
             nextProps.plan.dailyPlan[0].landing_screen !== this.props.plan.dailyPlan[0].landing_screen &&
             (
                 nextProps.plan.dailyPlan[0].post_recovery_completed ||
@@ -355,46 +356,51 @@ class Home extends Component {
             });
     }
 
-    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness) => {
+    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood) => {
         let stateObject = isDailyReadiness ? this.state.dailyReadiness : this.state.postSession;
         let newSorenessFields = _.cloneDeep(stateObject.soreness);
-        if(_.findIndex(stateObject.soreness, o => o.body_part === areaClicked.index) > -1) {
-            // body part already exists
-            if(areaClicked.bilateral) {
-                // add other side
-                let currentSelectedSide = _.filter(newSorenessFields, o => o.body_part === areaClicked.index);
-                if(currentSelectedSide.length === 1) {
-                    currentSelectedSide = currentSelectedSide[0].side;
-                    let newMissingSideSorenessPart = {};
-                    newMissingSideSorenessPart.body_part = areaClicked.index;
-                    newMissingSideSorenessPart.severity = 0;
-                    newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
-                    newSorenessFields.push(newMissingSideSorenessPart);
+        if(!areaClicked && isAllGood) {
+            let soreBodyParts = _.intersectionBy(stateObject.soreness, this.props.plan.soreBodyParts.body_parts, 'body_part');
+            newSorenessFields = soreBodyParts;
+        } else {
+            if(_.findIndex(stateObject.soreness, o => o.body_part === areaClicked.index) > -1) {
+                // body part already exists
+                if(areaClicked.bilateral) {
+                    // add other side
+                    let currentSelectedSide = _.filter(newSorenessFields, o => o.body_part === areaClicked.index);
+                    if(currentSelectedSide.length === 1) {
+                        currentSelectedSide = currentSelectedSide[0].side;
+                        let newMissingSideSorenessPart = {};
+                        newMissingSideSorenessPart.body_part = areaClicked.index;
+                        newMissingSideSorenessPart.severity = 0;
+                        newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
+                        newSorenessFields.push(newMissingSideSorenessPart);
+                    } else {
+                        newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
+                    }
                 } else {
                     newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
                 }
             } else {
-                newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
-            }
-        } else {
-            // doesn't exist, create new object
-            if(areaClicked.bilateral) {
-                let newLeftSorenessPart = {};
-                newLeftSorenessPart.body_part = areaClicked.index;
-                newLeftSorenessPart.severity = 0;
-                newLeftSorenessPart.side = 1;
-                newSorenessFields.push(newLeftSorenessPart);
-                let newRightSorenessPart = {};
-                newRightSorenessPart.body_part = areaClicked.index;
-                newRightSorenessPart.severity = 0;
-                newRightSorenessPart.side = 2;
-                newSorenessFields.push(newRightSorenessPart);
-            } else {
-                let newSorenessPart = {};
-                newSorenessPart.body_part = areaClicked.index;
-                newSorenessPart.severity = 0;
-                newSorenessPart.side = 0;
-                newSorenessFields.push(newSorenessPart);
+                // doesn't exist, create new object
+                if(areaClicked.bilateral) {
+                    let newLeftSorenessPart = {};
+                    newLeftSorenessPart.body_part = areaClicked.index;
+                    newLeftSorenessPart.severity = 0;
+                    newLeftSorenessPart.side = 1;
+                    newSorenessFields.push(newLeftSorenessPart);
+                    let newRightSorenessPart = {};
+                    newRightSorenessPart.body_part = areaClicked.index;
+                    newRightSorenessPart.severity = 0;
+                    newRightSorenessPart.side = 2;
+                    newSorenessFields.push(newRightSorenessPart);
+                } else {
+                    let newSorenessPart = {};
+                    newSorenessPart.body_part = areaClicked.index;
+                    newSorenessPart.severity = 0;
+                    newSorenessPart.side = 0;
+                    newSorenessFields.push(newSorenessPart);
+                }
             }
         }
         let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);

@@ -226,9 +226,11 @@ const startLogin = (credentials, reload) => {
   * Logout
   */
 const logout = () => {
-    return dispatch => Promise.resolve(dispatch({
-        type: Actions.LOGOUT
-    }));
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.LOGOUT
+        })
+    );
 };
 
 /**
