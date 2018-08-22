@@ -13,14 +13,14 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts } from '../../../constants';
-import { FathomSlider, Text } from '../../custom';
+import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
+import { Button, FathomSlider, Text, } from '../../custom';
 
 // Components
-import { AreasOfSoreness, SoreBodyPart } from './';
+import { AreasOfSoreness, SoreBodyPart, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -37,10 +37,7 @@ const ReadinessSurvey = ({
 }) => {
     let hourOfDay = moment().get('hour');
     let partOfDay = hourOfDay >= 12 ? 'AFTERNOON' : 'MORNING';
-    let isAnythingBotheringText = !dailyReadiness.sleep_quality && !dailyReadiness.readiness && !dailyReadiness.soreness.length ?
-        'No, nothing is bothering me'
-        :
-        'Done';
+    let isFormValid = _.filter(dailyReadiness.soreness, o => o.severity > 0 && o.severity).length > 0 || (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood);
     return(
         <View style={{flex: 1}}>
             <ScrollView>
@@ -89,6 +86,7 @@ const ReadinessSurvey = ({
                         bodyPartSide={bodyPart.side}
                         handleFormChange={handleFormChange}
                         index={i+3}
+                        isPrevSoreness={true}
                         key={i}
                         surveyObject={dailyReadiness}
                     />
@@ -101,16 +99,51 @@ const ReadinessSurvey = ({
                         {'Is anything else bothering you?'}
                     </Text>
                     <AreasOfSoreness
-                        handleAreaOfSorenessClick={body => handleAreaOfSorenessClick(body, true)}
+                        handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
                         handleFormChange={handleFormChange}
+                        ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
                         soreBodyParts={soreBodyParts}
                         soreBodyPartsState={dailyReadiness.soreness}
                         surveyObject={dailyReadiness}
                     />
                 </View>
-                <TouchableOpacity onPress={handleFormSubmit} style={[AppStyles.nextButtonWrapper, {margin: 10}]}>
-                    <Text robotoBold style={[AppStyles.nextButtonText, { fontSize: AppFonts.scaleFont(16) }]}>{isAnythingBotheringText}</Text>
-                </TouchableOpacity>
+                { isFormValid ?
+                    <Button
+                        backgroundColor={AppColors.primary.yellow.hundredPercent}
+                        buttonStyle={{
+                            alignSelf:       'center',
+                            borderRadius:    5,
+                            marginBottom:    AppSizes.padding,
+                            paddingVertical: AppSizes.paddingMed,
+                            width:           AppSizes.screen.widthTwoThirds
+                        }}
+                        color={AppColors.white}
+                        fontFamily={AppStyles.robotoMedium.fontFamily}
+                        fontWeight={AppStyles.robotoMedium.fontWeight}
+                        onPress={handleFormSubmit}
+                        raised={false}
+                        textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                        title={'Continue'}
+                    />
+                    :
+                    <Button
+                        backgroundColor={AppColors.white}
+                        buttonStyle={{
+                            alignSelf:       'center',
+                            borderRadius:    5,
+                            marginBottom:    AppSizes.padding,
+                            paddingVertical: AppSizes.paddingMed,
+                            width:           AppSizes.screen.widthTwoThirds
+                        }}
+                        color={AppColors.zeplin.lightGrey}
+                        fontFamily={AppStyles.robotoMedium.fontFamily}
+                        fontWeight={AppStyles.robotoMedium.fontWeight}
+                        onPress={() => null}
+                        outlined
+                        textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                        title={'Select an Option'}
+                    />
+                }
             </ScrollView>
         </View>
     )

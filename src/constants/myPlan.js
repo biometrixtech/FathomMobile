@@ -71,35 +71,35 @@ const muscleLevels = {
         '',
         'Tight',
         'Sore',
-        'Limits Movement',
+        'Feel Limited',
         'Struggling to Move',
         'Cannot Move',
     ],
     pain: [
         '',
-        'A little tight or sore',
-        'Sore, can move OK',
-        'Limits movement',
-        'Struggling to move',
-        'Painful to move',
+        'Barely Noticeable',
+        'Dull/Widespread Pain',
+        'Sharp Pain',
+        'Pain Limits Movement ',
+        'Too Painful to Move',
     ],
 };
 
 const jointLevels = {
     soreness: [
         '',
-        'Some Discomfort ',
-        'A Dull Ache',
-        'Severe Ache',
+        'Ache',
+        'Dull Pain',
         'Sharp Pain',
-        'Unable to Move',
+        'Pain Limits Movement',
+        'Too Painful to Move',
     ],
     pain: [
         '',
         'Ache',
-        'Slight Pain',
+        'Dull Pain',
         'Sharp Pain',
-        'Very Painful',
+        'Pain Limits Movement',
         'Too Painful to Move',
     ],
 };
@@ -108,19 +108,19 @@ function sorenessPainScaleMapping(type, value) {
     let newValue = 0;
     if(type === 'soreness') {
         switch (value) {
-        case value === 1:
+        case 1:
             newValue = 1;
             break;
-        case value === 2:
+        case 2:
             newValue = 2;
             break;
-        case value === 3:
+        case 3:
             newValue = 3;
             break;
-        case value === 4:
+        case 4:
             newValue = 3;
             break;
-        case value === 5:
+        case 5:
             newValue = 4;
             break;
         default:
@@ -128,19 +128,19 @@ function sorenessPainScaleMapping(type, value) {
         }
     } else if(type === 'pain') {
         switch (value) {
-        case value === 1:
+        case 1:
             newValue = 2;
             break;
-        case value === 2:
+        case 2:
+            newValue = 2;
+            break;
+        case 3:
             newValue = 3;
             break;
-        case value === 3:
-            newValue = 3;
-            break;
-        case value === 4:
+        case 4:
             newValue = 4;
             break;
-        case value === 5:
+        case 5:
             newValue = 5;
             break;
         default:

@@ -3,10 +3,12 @@
  *
     <SoreBodyPart
         bodyPart={bodyPart}
-        bodyPartSide={bodyPartSide}
+        bodyPartSide={bodyPart.side}
         handleFormChange={handleFormChange}
         index={i+3}
-        surveyObject={surveyObject}
+        isPrevSoreness={true}
+        key={i}
+        surveyObject={dailyReadiness}
     />
  *
  */
@@ -26,12 +28,13 @@ class SoreBodyPart extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            type: ''
+            type:  '',
+            value: null,
         };
     }
 
     render = () => {
-        const { bodyPart, bodyPartSide, handleFormChange, index, surveyObject, } = this.props;
+        const { bodyPart, bodyPartSide, handleFormChange, index, isPrevSoreness, surveyObject, } = this.props;
         let bodyPartSorenessIndex = _.findIndex(surveyObject.soreness, o => (o.body_part === bodyPart.body_part || o.body_part === bodyPart.index) && o.side === bodyPartSide);
         let bodyPartMap = bodyPart.body_part ? MyPlanConstants.bodyPartMapping[bodyPart.body_part] : MyPlanConstants.bodyPartMapping[bodyPart.index];
         let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
@@ -44,7 +47,6 @@ class SoreBodyPart extends Component {
                     []
             :
             [];
-        let severityValue = surveyObject.soreness[bodyPartSorenessIndex] ? surveyObject.soreness[bodyPartSorenessIndex].severity || 0 : 0;
         let helpingVerb = bodyPartMap ? bodyPartMap.helping_verb : '';
         let mainBodyPartName = bodyPartMap ? bodyPartMap.label : '';
         if (mainBodyPartName.slice(-1) === 's' && bodyPartMap.bilateral && !!bodyPartSide) {
@@ -87,13 +89,55 @@ class SoreBodyPart extends Component {
                         </Text>
                     </Text>
                 }
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.paddingLrg,}}>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding,}}>
+                    { isPrevSoreness ?
+                        <View>
+                            <TabIcon
+                                containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
+                                icon={this.state.type === 'all-good' ? 'check-circle' : 'circle-thin'}
+                                iconStyle={[{color: this.state.type === 'all-good' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
+                                onPress={() => {
+                                    this.setState({
+                                        type:  this.state.type === 'all-good' ? '' : 'all-good',
+                                        value: null,
+                                    }, () => {
+                                        handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide);
+                                    });
+                                }}
+                                reverse={false}
+                                size={35}
+                                type={'font-awesome'}
+                            />
+                            <Text
+                                oswaldRegular
+                                style={[
+                                    AppStyles.textCenterAligned,
+                                    {
+                                        color:           this.state.type === 'all-good' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
+                                        fontSize:        AppFonts.scaleFont(12),
+                                        paddingVertical: AppSizes.paddingSml,
+                                    }
+                                ]}
+                            >
+                                {'ALL GOOD'}
+                            </Text>
+                        </View>
+                        :
+                        null
+                    }
                     <View>
                         <TabIcon
                             containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
                             icon={this.state.type === 'soreness' ? 'check-circle' : 'circle-thin'}
                             iconStyle={[{color: this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
-                            onPress={() => this.state.type === 'soreness' ? this.setState({ type: '' }) : this.setState({ type: 'soreness' })}
+                            onPress={() => {
+                                this.setState({
+                                    type:  this.state.type === 'soreness' ? '' : 'soreness',
+                                    value: null,
+                                }, () => {
+                                    handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide);
+                                });
+                            }}
                             reverse={false}
                             size={35}
                             type={'font-awesome'}
@@ -117,7 +161,14 @@ class SoreBodyPart extends Component {
                             containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
                             icon={this.state.type === 'pain' ? 'check-circle' : 'circle-thin'}
                             iconStyle={[{color: this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
-                            onPress={() => this.state.type === 'pain' ? this.setState({ type: '' }) : this.setState({ type: 'pain' })}
+                            onPress={() => {
+                                this.setState({
+                                    type:  this.state.type === 'pain' ? '' : 'pain',
+                                    value: null,
+                                }, () => {
+                                    handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide);
+                                });
+                            }}
                             reverse={false}
                             size={35}
                             type={'font-awesome'}
@@ -137,10 +188,11 @@ class SoreBodyPart extends Component {
                         </Text>
                     </View>
                 </View>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.paddingLrg, paddingHorizontal: AppSizes.paddingLrg}}>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
                     { this.state.type === 'soreness' || this.state.type === 'pain' && bodyPartGroup ?
                         _.map(sorenessPainMapping, (value, key) => {
                             if(key === 0) { return; }
+                            let sorenessPainScaleMappingValue = MyPlanConstants.sorenessPainScaleMapping(this.state.type, key);
                             /*eslint consistent-return: 0*/
                             return(
                                 <View
@@ -152,35 +204,36 @@ class SoreBodyPart extends Component {
                                         style={[
                                             AppStyles.textCenterAligned,
                                             {
-                                                color:             severityValue === key ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
+                                                color:             this.state.value === key ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
                                                 flex:              1,
                                                 fontSize:          AppFonts.scaleFont(12),
                                                 paddingHorizontal: AppSizes.paddingXSml,
                                                 paddingVertical:   AppSizes.paddingSml,
+                                                textAlignVertical: 'bottom',
                                             }
                                         ]}
                                     >
                                         {value}
                                     </Text>
                                     <TouchableOpacity
-                                        style={{
-                                            alignSelf:       'center',
-                                            backgroundColor: severityValue === key ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
-                                            borderColor:     severityValue === key ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                            borderRadius:    35 / 2,
-                                            borderWidth:     1,
-                                            height:          35,
-                                            justifyContent:  'center',
-                                            width:           35,
+                                        style={[AppStyles.sorenessPainValues, {
+                                            backgroundColor: this.state.value === key ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
+                                            borderColor:     this.state.value === key ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
+                                        }]}
+                                        onPress={() => {
+                                            this.setState({
+                                                value: key,
+                                            }, () => {
+                                                handleFormChange('soreness', sorenessPainScaleMappingValue, bodyPartMap.index, bodyPartSide);
+                                            });
                                         }}
-
-                                        onPress={() => handleFormChange('soreness', key, bodyPartMap.index, bodyPartSide)}
                                     >
                                         <Text
+                                            oswaldRegular
                                             style={[
                                                 AppStyles.textCenterAligned,
                                                 {
-                                                    color:    severityValue === key ? AppColors.white : AppColors.primary.grey.fiftyPercent,
+                                                    color:    this.state.value === key ? AppColors.white : AppColors.primary.grey.fiftyPercent,
                                                     fontSize: AppFonts.scaleFont(14),
                                                 }
                                             ]}
@@ -195,24 +248,6 @@ class SoreBodyPart extends Component {
                         null
                     }
                 </View>
-                {/*<View style={[AppStyles.row, AppStyles.paddingVerticalSml, {justifyContent: 'space-between'}]}>
-                    <Text oswaldBold style={[AppStyles.paddingHorizontal, {color: AppColors.black}]}>
-                        {bodyPartName}
-                    </Text>
-                    <Text oswaldBold style={[AppStyles.paddingHorizontal, AppStyles.textRightAligned, {color: AppColors.slider[severityValue]}]}>
-                        {severityString.length > 0 ? `${severityValue}: ${severityString}` : ''}
-                    </Text>
-                </View>
-                <FathomSlider
-                    bodyPart={bodyPartMap.index}
-                    handleFormChange={handleFormChange}
-                    maximumValue={5}
-                    minimumValue={0}
-                    name={'soreness'}
-                    side={bodyPartSide}
-                    thumbTintColor={AppColors.slider[severityValue]}
-                    value={severityValue}
-                />*/}
             </View>
         )
     }
@@ -223,12 +258,14 @@ SoreBodyPart.propTypes = {
     bodyPartSide:     PropTypes.number,
     handleFormChange: PropTypes.func.isRequired,
     index:            PropTypes.number,
+    isPrevSoreness:   PropTypes.bool,
     surveyObject:     PropTypes.object,
 };
 SoreBodyPart.defaultProps = {
-    bodyPartSide: 0,
-    index:        null,
-    surveyObject: {},
+    bodyPartSide:   0,
+    index:          null,
+    isPrevSoreness: false,
+    surveyObject:   {},
 };
 SoreBodyPart.componentName = 'SoreBodyPart';
 
