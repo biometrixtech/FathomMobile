@@ -199,7 +199,7 @@ const logout = () => {
   * POST Forgot Password Email
   */
 const forgotPassword = (email) => {
-    return dispatch => AppAPI.forgotPassword.post(email)
+    return dispatch => AppAPI.forgot_password.post(false, email)
         .then(result => {
             dispatch({
                 type: Actions.FORGOT_PASSWORD_SUCCESS,

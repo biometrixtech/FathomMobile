@@ -21,7 +21,7 @@ import { AppAPI } from '../../lib';
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../constants';
 import _ from 'lodash';
 // Components
-import { Alerts, Card, Text, Button } from '../custom';
+import { Alerts, Text, ProgressBar } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -184,26 +184,22 @@ class ForgotPassword extends Component {
         return (
             <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: AppColors.white}}>
                 <View >
-            {/*<View style={[styles.wrapper]}>*/}
-                
-            {/*<View
-                automaticallyAdjustContentInsets={false}
-                ref={a => { this.scrollView = a; }}
-                style={[AppStyles.container]}
-                contentContainerStyle={[AppStyles.container, { alignItems: 'center' }]}
-            >*/}
-                {/*<Card>*/}
+                    <ProgressBar
+                        currentStep={1}
+                        totalSteps={2}
+                    />
                     <Alerts
                         status={this.state.resultMsg.status}
                         success={this.state.resultMsg.success}
                         error={this.state.resultMsg.error}
                     />
-                   <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black}]}>
+                   <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(20)}]}>
                         {'Reset Your Password'}
                     </Text>
+
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml]}>
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, { fontSize: AppFonts.scaleFont(15) }]}>
                             Enter your email to receive instructions on how to reset your password.
                         </Text>
                         </View>
@@ -220,31 +216,10 @@ class ForgotPassword extends Component {
                         />
                         </View>
                     </View>
-
-
-                   
-                {/*</Card>*/}
-
-            {/*</View>*/}
             </View>
-            <TouchableOpacity onPress={this.forgotPassword} style={[AppStyles.nextButtonWrapper, {margin: 10}]}>
+            <TouchableOpacity onPress={this.forgotPassword} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
                     <Text robotoBold style={[AppStyles.nextButtonText, { fontSize: AppFonts.scaleFont(16) }]}>Reset</Text>
                 </TouchableOpacity>
-                        {/*<Button
-                            backgroundColor={AppColors.primary.yellow.hundredPercent}
-                            
-                            buttonStyle={{borderRadius: 0}}
-                            color={AppColors.white}
-                            fontFamily={AppStyles.robotoBold.fontFamily}
-                            fontWeight={AppStyles.robotoBold.fontWeight}
-                            rounded={false}
-                            outlined={false}
-                            raised={false}
-                            textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                            title={'Reset'}
-                            
-                        />*/}
-            
         </View>
         );
     }

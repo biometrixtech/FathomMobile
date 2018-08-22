@@ -295,11 +295,13 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
             .catch(err => {
                 // API got back to us, clear the timeout
                 clearTimeout(apiTimedOut);
+                debug('here','we are')
                 debug(err, thisUrl);
 
                 try {
                     // Don't send plaintext password to Answers logs
                     if (endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
+                        debug('here','we are1')
                         let answerBody = Object.assign({}, body);
                         delete answerBody.password;
                         Answers.logLogin('Mobile App Login', false, {
@@ -311,6 +313,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                             url:           thisUrl,
                         });
                     } else {
+                        debug('here','we are2')
                         Answers.logCustom('API Response failed', {
                             body:          JSON.stringify(req.body),
                             headers:       JSON.stringify(req.headers),
@@ -321,8 +324,10 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                         });
                     }
                 } catch (error) {
+                    debug('here','we are3')
                     console.log(handleError(error));
                 }
+                debug('here','we are4')
                 return reject(err);
             });
     });
