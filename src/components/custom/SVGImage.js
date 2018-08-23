@@ -213,7 +213,7 @@ class SVGImage extends Component {
             alignItems:     'center',
             borderColor:    this.props.selected ? AppColors.primary.yellow.hundredPercent : AppColors.white,
             borderRadius:   AppSizes.screen.widthQuarter + 5,
-            borderWidth:    5,
+            borderWidth:    Platform.OS === 'ios' ? 5 : 6,
             height:         AppSizes.screen.widthQuarter + 5,
             justifyContent: 'center',
             overflow:       'hidden',
@@ -230,9 +230,11 @@ class SVGImage extends Component {
                         ...StyleSheet.absoluteFillObject,
                         alignItems:      'center',
                         backgroundColor: 'rgba(43, 43, 43, 0.5)',
+                        borderRadius:    AppSizes.screen.widthQuarter + 5,
+                        flex:            1,
+                        height:          '100%',
                         justifyContent:  'center',
-
-                        flex: 1,
+                        width:           '100%',
                     }}
                 >
                     { this.props.overlayText ?

@@ -94,7 +94,7 @@ const jointLevels = [
     'Too Painful to Move',
 ];
 
-function sorenessPainScaleMapping(type, value) {
+function sorenessPainScaleMapping(type, value, isJoint) {
     let newValue = 0;
     if(type === 'soreness') {
         switch (value) {
@@ -120,6 +120,26 @@ function sorenessPainScaleMapping(type, value) {
         switch (value) {
         case 1:
             newValue = 2;
+            break;
+        case 2:
+            newValue = 2;
+            break;
+        case 3:
+            newValue = 3;
+            break;
+        case 4:
+            newValue = 4;
+            break;
+        case 5:
+            newValue = 5;
+            break;
+        default:
+            newValue = 0;
+        }
+    } else if(!type && isJoint) {
+        switch (value) {
+        case 1:
+            newValue = 1;
             break;
         case 2:
             newValue = 2;

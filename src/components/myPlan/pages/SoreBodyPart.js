@@ -38,15 +38,13 @@ class SoreBodyPart extends Component {
         let bodyPartSorenessIndex = _.findIndex(surveyObject.soreness, o => (o.body_part === bodyPart.body_part || o.body_part === bodyPart.index) && o.side === bodyPartSide);
         let bodyPartMap = bodyPart.body_part ? MyPlanConstants.bodyPartMapping[bodyPart.body_part] : MyPlanConstants.bodyPartMapping[bodyPart.index];
         let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
-        let sorenessPainMapping = bodyPartGroup && this.state.type.length > 0 ?
-            bodyPartGroup === 'muscle' ?
+        let sorenessPainMapping =
+            bodyPartGroup && bodyPartGroup === 'muscle' && this.state.type.length > 0 ?
                 MyPlanConstants.muscleLevels[this.state.type]
-                : bodyPartGroup === 'joint' ?
-                    MyPlanConstants.jointLevels[this.state.type]
+                : bodyPartGroup && bodyPartGroup === 'joint' ?
+                    MyPlanConstants.jointLevels
                     :
-                    []
-            :
-            [];
+                    [];
         let helpingVerb = bodyPartMap ? bodyPartMap.helping_verb : '';
         let mainBodyPartName = bodyPartMap ? bodyPartMap.label : '';
         if (mainBodyPartName.slice(-1) === 's' && bodyPartMap.bilateral && !!bodyPartSide) {
@@ -125,74 +123,87 @@ class SoreBodyPart extends Component {
                         :
                         null
                     }
-                    <View>
-                        <TabIcon
-                            containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
-                            icon={this.state.type === 'soreness' ? 'check-circle' : 'checkbox-blank-circle-outline'}
-                            iconStyle={[{color: this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
-                            onPress={() => {
-                                this.setState({
-                                    type:  this.state.type === 'soreness' ? '' : 'soreness',
-                                    value: null,
-                                }, () => {
-                                    handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide);
-                                });
-                            }}
-                            reverse={false}
-                            size={35}
-                            type={'material-community'}
-                        />
-                        <Text
-                            oswaldRegular
-                            style={[
-                                AppStyles.textCenterAligned,
-                                {
-                                    color:           this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                    fontSize:        AppFonts.scaleFont(14),
-                                    paddingVertical: AppSizes.paddingSml,
-                                }
-                            ]}
-                        >
-                            {'SORENESS'}
-                        </Text>
-                    </View>
-                    <View>
-                        <TabIcon
-                            containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
-                            icon={this.state.type === 'pain' ? 'check-circle' : 'checkbox-blank-circle-outline'}
-                            iconStyle={[{color: this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
-                            onPress={() => {
-                                this.setState({
-                                    type:  this.state.type === 'pain' ? '' : 'pain',
-                                    value: null,
-                                }, () => {
-                                    handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide);
-                                });
-                            }}
-                            reverse={false}
-                            size={35}
-                            type={'material-community'}
-                        />
-                        <Text
-                            oswaldRegular
-                            style={[
-                                AppStyles.textCenterAligned,
-                                {
-                                    color:           this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                    fontSize:        AppFonts.scaleFont(14),
-                                    paddingVertical: AppSizes.paddingSml,
-                                }
-                            ]}
-                        >
-                            {'PAIN'}
-                        </Text>
-                    </View>
+                    { bodyPartGroup === 'joint' ?
+                        null
+                        :
+                        <View>
+                            <TabIcon
+                                containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
+                                icon={this.state.type === 'soreness' ? 'check-circle' : 'checkbox-blank-circle-outline'}
+                                iconStyle={[{color: this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
+                                onPress={() => {
+                                    this.setState({
+                                        type:  this.state.type === 'soreness' ? '' : 'soreness',
+                                        value: null,
+                                    }, () => {
+                                        handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide);
+                                    });
+                                }}
+                                reverse={false}
+                                size={35}
+                                type={'material-community'}
+                            />
+                            <Text
+                                oswaldRegular
+                                style={[
+                                    AppStyles.textCenterAligned,
+                                    {
+                                        color:           this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
+                                        fontSize:        AppFonts.scaleFont(14),
+                                        paddingVertical: AppSizes.paddingSml,
+                                    }
+                                ]}
+                            >
+                                {'SORENESS'}
+                            </Text>
+                        </View>
+                    }
+                    { bodyPartGroup === 'joint' ?
+                        null
+                        :
+                        <View>
+                            <TabIcon
+                                containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
+                                icon={this.state.type === 'pain' ? 'check-circle' : 'checkbox-blank-circle-outline'}
+                                iconStyle={[{color: this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
+                                onPress={() => {
+                                    this.setState({
+                                        type:  this.state.type === 'pain' ? '' : 'pain',
+                                        value: null,
+                                    }, () => {
+                                        handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide);
+                                    });
+                                }}
+                                reverse={false}
+                                size={35}
+                                type={'material-community'}
+                            />
+                            <Text
+                                oswaldRegular
+                                style={[
+                                    AppStyles.textCenterAligned,
+                                    {
+                                        color:           this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
+                                        fontSize:        AppFonts.scaleFont(14),
+                                        paddingVertical: AppSizes.paddingSml,
+                                    }
+                                ]}
+                            >
+                                {'PAIN'}
+                            </Text>
+                        </View>
+                    }
                 </View>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
-                    { this.state.type === 'soreness' || this.state.type === 'pain' && bodyPartGroup ?
+                    { bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint') ?
                         _.map(sorenessPainMapping, (value, key) => {
                             if(key === 0) { return; }
-                            let sorenessPainScaleMappingValue = MyPlanConstants.sorenessPainScaleMapping(this.state.type, key);
+                            let sorenessPainScaleMappingValue = (
+                                bodyPartGroup === 'joint'
+                            ) ?
+                                MyPlanConstants.sorenessPainScaleMapping(false, false, true)
+                                :
+                                MyPlanConstants.sorenessPainScaleMapping(this.state.type, key);
                             /*eslint consistent-return: 0*/
                             return(
                                 <View
