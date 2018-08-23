@@ -123,9 +123,11 @@ class ForgotPassword extends Component {
                         resultMsg: { success: 'Awesome, recovery instructions have been sent to your email!' },
                     }, () => {
                         setTimeout(() => {
-                            Actions.root({ type: 'reset' });
+                            //Actions.root({ type: 'reset' });
+                            this._routeToResetPassword(credentials.email);
                         }, 1000);
                     });
+                    //this._routeToResetPassword({emailAddress: credentials.email})
                 }).catch((err) => {
                     const error = AppAPI.handleError(err);
                     this.setState({ resultMsg: { error } });
@@ -134,8 +136,9 @@ class ForgotPassword extends Component {
         }
     }
 
-    _routeToResetPassword = () => {
-        Actions.resetPassword();
+    _routeToResetPassword = (email) => {
+        
+        Actions.resetPassword({emailAddress: email});
     }
 
     render = () => {

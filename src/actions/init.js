@@ -211,6 +211,7 @@ const forgotPassword = (email) => {
             dispatch({
                 type: Actions.FORGOT_PASSWORD_FAILED,
             });
+            console.log('error', err)
             return err;
         });
 };

@@ -12,6 +12,7 @@ const ResetPassword = ({
     onFormSubmit,
     email,
     newPassword,
+    confirmPassword,
     verificationCode,
     loading,
 }) => (
@@ -19,6 +20,7 @@ const ResetPassword = ({
         onFormSubmit={onFormSubmit}
         email={email}
         newPassword={newPassword}
+        confirmPassword={confirmPassword}
         verificationCode={verificationCode}
         loading={loading}
     />
@@ -29,6 +31,7 @@ ResetPassword.propTypes = {
     onFormSubmit:     PropTypes.func.isRequired,
     email:            PropTypes.string,
     newPassword:      PropTypes.string,
+    confirmPassword:  PropTypes.string,
     verificationCode: PropTypes.string,
     loading:          PropTypes.bool,
 };
@@ -36,6 +39,7 @@ ResetPassword.propTypes = {
 ResetPassword.defaultProps = {
     email:            null,
     newPassword:      null,
+    confirmPassword:  null,
     verificationCode: null,
     loading:          false,
 };
@@ -43,6 +47,7 @@ ResetPassword.defaultProps = {
 const mapStateToProps = state => ({
     email:            state.init.email,
     newPassword:      state.init.newPassword,
+    confirmPassword:  state.init.confirmPassword,
     verificationCode: state.init.verificationCode,
     loading:          state.user.loading || false,
 });

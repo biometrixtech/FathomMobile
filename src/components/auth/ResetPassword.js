@@ -70,7 +70,7 @@ class ResetPassword extends Component {
 
         // Passwords Match
         const passwordsMatch = FormValidation.refinement(
-            FormValidation.string, (newPassword, confirmPassword) => {
+            FormValidation.String, (newPassword, confirmPassword) => {
                 if(newPassword == confirmPassword)
                 {
                     return true;
@@ -84,12 +84,12 @@ class ResetPassword extends Component {
         
         // Six-digit Code Validation
         const validCode = FormValidation.refinement(
-            FormValidation.String, (code) => {
+            FormValidation.String, (verificationCode) => {
                 const regularExpression = /\d{6}/;
 
-                return regularExpression.test(code);
-            }
-        )
+                return regularExpression.test(verificationCode);
+            },
+        );
 
         this.state = {
             resultMsg: {
@@ -172,9 +172,13 @@ class ResetPassword extends Component {
             this.setState({
                 form_values: {
                     Email: this.props.email,
-                    VerificationCode: this.props.verificationCode,
-                    NewPassword: this.props.newPassword,
-                    ConfirmPassword: this.props.confirmPassword,
+                },
+            });
+        }
+        if (this.props.emailAddress !== null) {
+            this.setState({
+                form_values: {
+                    Email: this.props.emailAddress,
                 },
             });
         }
@@ -234,7 +238,7 @@ class ResetPassword extends Component {
                         error={this.state.resultMsg.error}
                     />
                    <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(20)}]}>
-                        {'Set New Password'}
+                        {this.props.emailAddress}
                     </Text>
 
                     <View style={[AppStyles.containerCentered]}>
