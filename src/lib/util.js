@@ -8,9 +8,9 @@
 // import third-party libraries
 import DeviceInfo from 'react-native-device-info';
 import uuidByString from 'uuid-by-string';
-
+import { AppColors, AppFonts, AppStyles } from '../constants';
 import { store } from '../store';
-
+import _ from 'lodash';
 /**
  * Global Util Functions
  */
@@ -243,6 +243,33 @@ const UTIL = {
         let newStartDate = `${startDateObject.getFullYear()}-${UTIL.formatDate(startDateObject.getMonth()+1)}-${UTIL.formatDate(startDateObject.getDate())}`;
         let newEndDate = `${endDateObject.getFullYear()}-${UTIL.formatDate(endDateObject.getMonth()+1)}-${UTIL.formatDate(endDateObject.getDate())}`;
         return ({ newStartDate, newEndDate });
+    },
+
+    formatInputStyle(formValidationStyleSheet){
+        let inputStyle = _.cloneDeep(formValidationStyleSheet);
+        inputStyle.textbox.error.borderColor = AppColors.secondary.red.fiftyPercent;
+        inputStyle.textbox.error.borderLeftWidth = 0;
+        inputStyle.textbox.error.borderRightWidth = 0;
+        inputStyle.textbox.error.borderTopWidth = 0;
+        inputStyle.textbox.error.color = AppColors.secondary.red.fiftyPercent;
+        inputStyle.textbox.error.textAlign = 'center';
+        inputStyle.textbox.error.fontFamily = AppStyles.robotoBold.fontFamily;
+        inputStyle.textbox.error.fontWeight = AppStyles.robotoBold.fontWeight;
+        inputStyle.textbox.error.fontSize = AppFonts.scaleFont(15);
+        inputStyle.textbox.normal.borderColor = AppColors.primary.grey.fiftyPercent;
+        inputStyle.textbox.normal.borderLeftWidth = 0;
+        inputStyle.textbox.normal.borderRightWidth = 0;
+        inputStyle.textbox.normal.borderTopWidth = 0;
+        inputStyle.textbox.normal.color = AppColors.primary.yellow.hundredPercent;
+        inputStyle.textbox.normal.textAlign = 'center';
+        inputStyle.textbox.normal.fontFamily = AppStyles.robotoBold.fontFamily;
+        inputStyle.textbox.normal.fontWeight = AppStyles.robotoBold.fontWeight;
+        inputStyle.textbox.normal.fontSize = AppFonts.scaleFont(15);
+        inputStyle.textboxView.error.color = AppColors.white;
+        inputStyle.textboxView.normal.color = AppColors.white;
+        inputStyle.errorBlock.color = AppColors.secondary.red.fiftyPercent;
+        inputStyle.errorBlock.textAlign = 'center';
+        return inputStyle;
     }
 };
 

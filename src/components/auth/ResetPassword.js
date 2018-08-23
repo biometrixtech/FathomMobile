@@ -1,5 +1,5 @@
 /**
- * Forgot Password Screen
+ * Reset Password Screen
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -15,7 +15,7 @@ import { onboardingUtils } from '../../constants/utils';
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../constants';
 import _ from 'lodash';
 // Components
-import { Alerts, ProgressBar, Spacer, Text } from '../custom';
+import { Alerts, Text, ProgressBar } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -32,16 +32,23 @@ const styles = StyleSheet.create({
 let inputStyle = AppUtil.formatInputStyle(FormValidation.form.Form.stylesheet);
 
 /* Component ==================================================================== */
-class ForgotPassword extends Component {
-    static componentName = 'ForgotPassword';
+class ResetPassword extends Component {
+    static componentName = 'ResetPassword';
 
     static propTypes = {
-        onFormSubmit: PropTypes.func.isRequired,
-        email:        PropTypes.string
+        onFormSubmit:     PropTypes.func.isRequired,
+        email:            PropTypes.string,
+        newPassword:      PropTypes.string,
+        confirmPassword:  PropTypes.string,
+        verificationCode: PropTypes.string,
     }
 
     static defaultProps = {
-        email: null,
+        email:            null,
+        newPassword:      null,
+        confirmPassword:  null,
+        verificationCode: null,
+    
     }
 
     constructor(props) {
@@ -54,6 +61,36 @@ class ForgotPassword extends Component {
             },
         );
 
+        // Password Validation
+        const validPassword = FormValidation.refinement(
+            FormValidation.String, (newPassword) => {
+                return onboardingUtils.isPasswordlValid(newPassword);
+            },
+        );
+
+        // Passwords Match
+        const passwordsMatch = FormValidation.refinement(
+            FormValidation.string, (newPassword, confirmPassword) => {
+                if(newPassword == confirmPassword)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            },
+        );
+        
+        // Six-digit Code Validation
+        const validCode = FormValidation.refinement(
+            FormValidation.String, (code) => {
+                const regularExpression = /\d{6}/;
+
+                return regularExpression.test(code);
+            }
+        )
+
         this.state = {
             resultMsg: {
                 status:  '',
@@ -61,16 +98,21 @@ class ForgotPassword extends Component {
                 error:   '',
             },
             form_fields: FormValidation.struct({
-                Email: validEmail,
+                Email:            validEmail,
+                VerificationCode: validCode,
+                NewPassword:      validPassword,
+                ConfirmPassword:  passwordsMatch,
             }),
             empty_form_values: {
-                Email: '',
+                Email:            '',
+                VerificationCode: '',
+                NewPassword:      '',
+                ConfirmPassword:  '',
             },
             form_values: {},
             options:     {
                 fields: {
                     Email: {
-                        error:                'Please enter a valid email',
                         autoCapitalize:       'none',
                         blurOnSubmit:         false,
                         clearButtonMode:      'while-editing',
@@ -82,8 +124,44 @@ class ForgotPassword extends Component {
                         returnKeyType:        'next',
                         stylesheet:           inputStyle,    
                     },
-
-                    
+                    VerificationCode: {
+                        autoCapitalize:       'none',
+                        blurOnSubmit:         false,
+                        clearButtonMode:      'while-editing',
+                        error:                'Please enter a valid verification code',
+                        keyboardType:         'default',
+                        label:                ' ',
+                        placeholder:          'verification code',
+                        placeholderTextColor: AppColors.primary.yellow.hundredPercent,
+                        returnKeyType:        'next',
+                        stylesheet:           inputStyle,    
+                    },
+                    NewPassword: {
+                        autoCapitalize:       'none',
+                        blurOnSubmit:         false,
+                        clearButtonMode:      'while-editing',
+                        error:                onboardingUtils.getPasswordRules(),
+                        keyboardType:         'default',
+                        label:                ' ',
+                        placeholder:          'new password',
+                        placeholderTextColor: AppColors.primary.yellow.hundredPercent,
+                        returnKeyType:        'next',
+                        secureTextEntry:      true,
+                        stylesheet:           inputStyle,    
+                    },
+                    ConfirmPassword: {
+                        autoCapitalize:       'none',
+                        blurOnSubmit:         false,
+                        clearButtonMode:      'while-editing',
+                        error:                'Passwords entered do not match.',
+                        keyboardType:         'default',
+                        label:                ' ',
+                        placeholder:          'confirm password',
+                        placeholderTextColor: AppColors.primary.yellow.hundredPercent,
+                        returnKeyType:        'next',
+                        secureTextEntry:      true,
+                        stylesheet:           inputStyle,    
+                    },
                 },
             },
         };
@@ -94,21 +172,24 @@ class ForgotPassword extends Component {
             this.setState({
                 form_values: {
                     Email: this.props.email,
+                    VerificationCode: this.props.verificationCode,
+                    NewPassword: this.props.newPassword,
+                    ConfirmPassword: this.props.confirmPassword,
                 },
             });
         }
     }
 
     /**
-      * Forgot Password
+      * Reset Password
       */
-    forgotPassword = () => {
-        // Get email
-        const credentials = this.form.getValue();
+    resetPassword = () => {
+        // Get values
+        const userData = this.form.getValue();
 
         // Form is valid
-        if (credentials) {
-            this.setState({ form_values: credentials }, () => {
+        if (userData) {
+            this.setState({ form_values: userData }, () => {
                 this.setState({ resultMsg: { status: 'One moment...' } });
 
                 // Scroll to top, to show message
@@ -117,10 +198,13 @@ class ForgotPassword extends Component {
                 }
 
                 this.props.onFormSubmit({
-                    email: credentials.Email,
+                    email:            userData.Email,
+                    verificationCode: userData.VerificationCode,
+                    newPassword:      userData.NewPassword,
+                    confirmPassword:  userData.ConfirmPassword,
                 }).then(() => {
                     this.setState({
-                        resultMsg: { success: 'Awesome, recovery instructions have been sent to your email!' },
+                        resultMsg: { success: 'Password reset was successful!' },
                     }, () => {
                         setTimeout(() => {
                             Actions.root({ type: 'reset' });
@@ -132,10 +216,6 @@ class ForgotPassword extends Component {
                 });
             });
         }
-    }
-
-    _routeToResetPassword = () => {
-        Actions.resetPassword();
     }
 
     render = () => {
@@ -154,7 +234,7 @@ class ForgotPassword extends Component {
                         error={this.state.resultMsg.error}
                     />
                    <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(20)}]}>
-                        {'Reset Your Password'}
+                        {'Set New Password'}
                     </Text>
 
                     <View style={[AppStyles.containerCentered]}>
@@ -174,21 +254,11 @@ class ForgotPassword extends Component {
                             options={this.state.options}
                             
                         />
-                        <Spacer size={10} />
-                        {<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : this._routeToResetPassword}>
-                            <View>
-                                <Text 
-                                    p 
-                                    onPress={this._routeToResetPassword}
-                                    style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, textDecorationLine: 'none',}]}>{'or enter your verification code'}
-                                </Text>
-                            </View>
-                        </TouchableOpacity>}
                         </View>
                     </View>
             </View>
-            <TouchableOpacity onPress={this.forgotPassword} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
-                    <Text robotoBold style={[AppStyles.nextButtonText, { fontSize: AppFonts.scaleFont(16) }]}>Reset</Text>
+            <TouchableOpacity onPress={this.resetPassword} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
+                    <Text robotoBold style={[AppStyles.nextButtonText, { fontSize: AppFonts.scaleFont(16) }]}>Confirm</Text>
                 </TouchableOpacity>
         </View>
         );
@@ -196,4 +266,4 @@ class ForgotPassword extends Component {
 }
 
 /* Export Component ==================================================================== */
-export default ForgotPassword;
+export default ResetPassword;

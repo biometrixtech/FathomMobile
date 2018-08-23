@@ -216,6 +216,26 @@ const forgotPassword = (email) => {
 };
 
 /**
+  * POST Reset Password form data
+  */
+ const resetPassword = (resetPasswordData) => {
+    return dispatch => AppAPI.reset_password.post(false, resetPasswordData)
+        .then(result => {
+            dispatch({
+                type: Actions.RESET_PASSWORD_SUCCESS,
+                data: result,
+            });
+            return result;
+        })
+        .catch(err => {
+            dispatch({
+                type: Actions.RESET_PASSWORD_FAILED,
+            });
+            return err;
+        });
+};
+
+/**
   * POST SignUp form data
   */
 const signUp = (credentials) => {
@@ -259,6 +279,7 @@ const sendDeviceToken = (token) => {
 
 export default {
     forgotPassword,
+    resetPassword,
     registerDevice,
     authorizeUser,
     startLogin,
