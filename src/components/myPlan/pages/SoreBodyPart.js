@@ -7,7 +7,6 @@
         handleFormChange={handleFormChange}
         index={i+3}
         isPrevSoreness={true}
-        key={i}
         surveyObject={dailyReadiness}
     />
  *
@@ -19,6 +18,7 @@ import { TouchableOpacity, View, } from 'react-native';
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
 import { FathomSlider, SVGImage, TabIcon, Text, } from '../../custom';
+import { ScaleButton } from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -57,16 +57,20 @@ class SoreBodyPart extends Component {
             }
             helpingVerb = 'is';
         }
-        let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'Left ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'Right ' : ''}${mainBodyPartName}`;
+        let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'left ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'right ' : ''}${mainBodyPartName.toLowerCase()}`;
         return(
-            <View style={{paddingBottom: AppSizes.padding}}>
+            <View>
                 { index ?
                     <View>
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                             {index}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {`How ${helpingVerb} your ${bodyPartName} feeling?`}
+                            {`How ${helpingVerb} your `}
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                {bodyPartName}
+                            </Text>
+                            {' feeling?'}
                         </Text>
                         <View style={[AppStyles.containerCentered]}>
                             { bodyPartMap ?
@@ -80,7 +84,7 @@ class SoreBodyPart extends Component {
                         </View>
                     </View>
                     :
-                    <Text oswaldRegular style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(18),}]}>
+                    <Text oswaldLight style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(18),}]}>
                         {'I FEEL'}
                         <Text oswaldMedium style={{fontSize: AppFonts.scaleFont(18),}}>
                             {` ${bodyPartName === 'Abdominals' ? bodyPartName.slice(0, -1).toUpperCase() : bodyPartName.toUpperCase()}...`}
@@ -99,7 +103,7 @@ class SoreBodyPart extends Component {
                                         type:  this.state.type === 'all-good' ? '' : 'all-good',
                                         value: null,
                                     }, () => {
-                                        handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide);
+                                        handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide, true);
                                     });
                                 }}
                                 reverse={false}
@@ -206,52 +210,20 @@ class SoreBodyPart extends Component {
                                 MyPlanConstants.sorenessPainScaleMapping(this.state.type, key);
                             /*eslint consistent-return: 0*/
                             return(
-                                <View
+                                <ScaleButton
+                                    isSelected={this.state.value === key}
                                     key={value+key}
-                                    style={{justifyContent: 'center', width: (AppSizes.screen.width - (AppSizes.paddingLrg * 2)) / (sorenessPainMapping.length - 1)}}
-                                >
-                                    <TouchableOpacity
-                                        style={[AppStyles.sorenessPainValues, {
-                                            backgroundColor: this.state.value === key ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
-                                            borderColor:     this.state.value === key ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                        }]}
-                                        onPress={() => {
-                                            this.setState({
-                                                value: key,
-                                            }, () => {
-                                                handleFormChange('soreness', sorenessPainScaleMappingValue, bodyPartMap.index, bodyPartSide);
-                                            });
-                                        }}
-                                    >
-                                        <Text
-                                            oswaldRegular
-                                            style={[
-                                                AppStyles.textCenterAligned,
-                                                {
-                                                    color:    this.state.value === key ? AppColors.white : AppColors.primary.grey.fiftyPercent,
-                                                    fontSize: AppFonts.scaleFont(14),
-                                                }
-                                            ]}
-                                        >
-                                            {key}
-                                        </Text>
-                                    </TouchableOpacity>
-                                    <Text
-                                        oswaldRegular
-                                        style={[
-                                            AppStyles.textCenterAligned,
-                                            {
-                                                color:             this.state.value === key ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                                flex:              1,
-                                                fontSize:          AppFonts.scaleFont(12),
-                                                paddingHorizontal: AppSizes.paddingXSml,
-                                                paddingVertical:   AppSizes.paddingSml,
-                                            }
-                                        ]}
-                                    >
-                                        {value.toUpperCase()}
-                                    </Text>
-                                </View>
+                                    keyLabel={key}
+                                    sorenessPainMappingLength={sorenessPainMapping.length}
+                                    updateStateAndForm={() => {
+                                        this.setState({
+                                            value: key,
+                                        }, () => {
+                                            handleFormChange('soreness', sorenessPainScaleMappingValue, bodyPartMap.index, bodyPartSide, true);
+                                        });
+                                    }}
+                                    valueLabel={value}
+                                />
                             )
                         })
                         :

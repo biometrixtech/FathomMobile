@@ -156,6 +156,7 @@ class Settings extends Component {
                 {
                     /hello[+]demo[0-9]@fathomai.com/g.test(userEmail) ||
                     /dipesh[+]mvp@fathomai.com/g.test(userEmail) ||
+                    /chrisp[+]mvp@fathomai.com/g.test(userEmail) ||
                     /mazen[+]mvp@fathomai.com/g.test(userEmail) ?
                         <ListItem
                             chevronColor={AppColors.black}
