@@ -49,6 +49,17 @@ const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
 };
 
 /**
+  * Clear My Plan Data
+  */
+const clearMyPlanData = () => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.CLEAR_MY_PLAN
+        })
+    );
+};
+
+/**
   * Post Readiness Survey Data
   */
 const postReadinessSurvey = dailyReadinessObj => {
@@ -142,6 +153,7 @@ const patchActiveRecovery = (user_id, recovery_type) => {
 };
 
 export default {
+    clearMyPlanData,
     getMyPlan,
     getSoreBodyParts,
     patchActiveRecovery,

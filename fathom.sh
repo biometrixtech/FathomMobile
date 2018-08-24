@@ -21,11 +21,6 @@ if test -t 1; then
     fi
 fi
 
-ME=`whoami`
-CODEPUSH="vir/"
-if [ "$ME" == "virdesai" ]; then
-    CODEPUSH=""
-fi
 
 # install_java() {
 #     current_location=`pwd`
@@ -109,7 +104,6 @@ initialize() {
             rm -rf node_modules/ yarn.lock
             yarn
             # android build tools and gradle patches
-            # sed -i '' 's/26.0.3/27.0.3/' ./node_modules/react-native-code-push/android/app/build.gradle
             sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-fabric/android/build.gradle
             sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-ble-manager/android/build.gradle
             sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
@@ -120,7 +114,6 @@ initialize() {
             sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-linear-gradient/android/build.gradle
             sed -i '' 's/23.0.1/27.0.3/g' ./node_modules/react-native-push-notification/android/build.gradle
 
-            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-code-push/android/app/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-fabric/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-ble-manager/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
@@ -146,7 +139,6 @@ initialize() {
             sed -i '' 's/24/27/' ./node_modules/react-native-device-info/android/build.gradle
             sed -i '' 's/22/27/' ./node_modules/react-native-device-info/android/build.gradle
             sed -i '' 's/26/27/' ./node_modules/react-native-ble-manager/android/build.gradle
-            sed -i '' 's/26/27/g' ./node_modules/react-native-code-push/android/app/build.gradle
             sed -i '' 's/23/27/g' ./node_modules/react-native-push-notification/android/build.gradle
             sed -i '' 's/provided/compileOnly/g' ./node_modules/react-native-linear-gradient/android/build.gradle
             sed -i '' 's/provided/compileOnly/g' ./node_modules/react-native-video/android/build.gradle
@@ -338,93 +330,9 @@ build() {
     esac
 }
 
-codepushRelease() {
-    # install code push cli first
-    echo
-    read -p "${grey}Choose which OS to push:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n '`[3]: Both`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
-    echo
-    case "$REPLY" in
-        1)
-            yarn test
-            testValue=$?
-            if [ $testValue -ne 0 ]; then
-                echo "${red}Unit testing failed, not proceeding.${normal}"
-            else
-                echo "Unit testing passed, proceeding.."
-                code-push release-react ${CODEPUSH}FathomAI-Android android
-            fi
-            ;;
-        2)
-            yarn test
-            testValue=$?
-            if [ $testValue -ne 0 ]; then
-                echo "${red}Unit testing failed, not proceeding.${normal}"
-            else
-                echo "Unit testing passed, proceeding.."
-                code-push release-react ${CODEPUSH}FathomAI-iOS ios
-            fi
-            ;;
-        3)
-            yarn test
-            testValue=$?
-            if [ $testValue -ne 0 ]; then
-                echo "${red}Unit testing failed, not proceeding.${normal}"
-            else
-                echo "Unit testing passed, proceeding.."
-                code-push release-react ${CODEPUSH}FathomAI-Android android
-                code-push release-react ${CODEPUSH}FathomAI-iOS ios
-            fi
-            ;;
-        *)
-            echo "${red}Invalid selection${normal}"
-            codepushRelease
-            ;;
-    esac
-}
-
-codepushPromote() {
-    echo
-    read -p "${grey}Choose which OS to promote:${normal}`echo $'\n\n '`[1]: Android`echo $'\n '`[2]: iOS`echo $'\n '`[3]: Both`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
-    echo
-    case "$REPLY" in
-        1)
-            code-push promote ${CODEPUSH}FathomAI-Android Staging Production -t '*'
-            ;;
-        2)
-            code-push promote ${CODEPUSH}FathomAI-iOS Staging Production -t '*'
-            ;;
-        3)
-            code-push promote ${CODEPUSH}FathomAI-Android Staging Production -t '*'
-            code-push promote ${CODEPUSH}FathomAI-iOS Staging Production -t '*'
-            ;;
-        *)
-            echo "${red}Invalid selection${normal}"
-            codepushPromote
-            ;;
-    esac
-}
-
-codepush() {
-    echo
-    read -p "${grey}Choose a codepush option:${normal}`echo $'\n\n '`[1]: Release`echo $'\n '`[2]: Promote`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
-    echo
-    case "$REPLY" in
-        1)
-            codepushRelease
-            ;;
-        2)
-            codepushPromote
-            ;;
-        *)
-            echo "${red}Invalid selection${normal}"
-            codepush
-            ;;
-    esac
-}
-
 main() {
     echo
-    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n '`[4]: CodePush`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
     echo
     case "$REPLY" in
         1)
@@ -435,9 +343,6 @@ main() {
             ;;
         3)
             build
-            ;;
-        4)
-            codepush
             ;;
         *)
             echo "${red}Invalid selection${normal}"

@@ -7,15 +7,16 @@
 
 /* eslint-disable no-process-env */
 export default {
-    certificate:   null,
-    device:        null,
-    email:         null,
-    environment:   'TEST', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
-    expires:       null,
-    jwt:           null,
-    lastOpened:    null, // for user entering the app for the first time in a day to track the last day the app was opened
-    notification:  false,
-    password:      null,
-    session_token: null,
-    token:         null, // push notification token
+    certificate:          null,
+    connectionInfo:       { connectionType: 'unknown', online: false },
+    device:               null,
+    email:                null,
+    environment:          'TEST', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
+    expires:              null,
+    jwt:                  null,
+    notification:         false,
+    password:             null,
+    session_token:        null,
+    scheduledMaintenance: { addressed: false, end_date: null, start_date: null },
+    token:                null, // push notification token
 };

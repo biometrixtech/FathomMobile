@@ -31,22 +31,24 @@ export default {
     //    - AppAPI.favorites.patch()
     //    - AppAPI.blog.delete()
     endpoints: new Map([
-        ['create_user',     '/users/1.0.0/user'],
-        ['update_user',     '/users/1.0.0/user/{userId}'],
-        ['get_user',        '/users/1.0.0/user/{userId}'],
-        ['authorize',       '/users/1.0.0/user/{userId}/authorize'],
-        ['forgot_password', '/users/1.0.0/user/forgot_password'],
-        ['login',           '/users/1.0.0/user/sign_in'], // If you change the key, update the reference below
-        ['register_device', '/users/1.0.0/device/{device_uuid}'],
+        ['create_user',     '/users/1_0/user'],
+        ['update_user',     '/users/1_0/user/{userId}'],
+        ['get_user',        '/users/1_0/user/{userId}'],
+        ['authorize',       '/users/1_0/user/{userId}/authorize'],
+        ['forgot_password', '/users/1_0/user/forgot_password'],
+        ['login',           '/users/1_0/user/sign_in'], // If you change the key, update the reference below
+        ['register_device', '/users/1_0/device/{device_uuid}'],
         // My Plan specific routes
-        ['get_my_plan',           '/plans/1.0.0/daily_plan'], // POST
-        ['get_sore_body_parts',   '/plans/1.0.0/daily_readiness/previous'], // GET
-        ['post_readiness_survey', '/plans/1.0.0/daily_readiness'], // POST
-        ['post_session_survey',   '/plans/1.0.0/post_session_survey'], // POST
-        ['active_recovery',       '/plans/1.0.0/active_recovery'], // PATCH
-        ['clear_user_data',       '/plans/1.0.0/misc/clear_user_data'], // POST
+        ['get_my_plan',           '/plans/1_0/daily_plan'], // POST
+        ['get_sore_body_parts',   '/plans/1_0/daily_readiness/previous'], // GET
+        ['post_readiness_survey', '/plans/1_0/daily_readiness'], // POST
+        ['post_session_survey',   '/plans/1_0/post_session_survey'], // POST
+        ['active_recovery',       '/plans/1_0/active_recovery'], // PATCH
+        ['clear_user_data',       '/plans/1_0/misc/clear_user_data'], // POST
         // sensor specific routes
-        ['sensor_mobile_pair', '/users/1.0.0/user/{userId}/sensor_mobile_pair'], // CRUD
+        ['sensor_mobile_pair', '/users/1_0/user/{userId}/sensor_mobile_pair'], // CRUD
+        // other routes
+        ['maintenance_status', '/meta/1_0/maintenance'], // GET
     ]),
 
     // Which 'endpoint' key deals with our tokens?

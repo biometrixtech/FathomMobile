@@ -149,13 +149,14 @@ class Settings extends Component {
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{color: AppColors.black, name: 'power-settings-new', size: 24}}
-                    onPress={() => this.props.logout().then(() => Actions.start())}
+                    onPress={() => this.props.logout().then(() => {Actions.start(); this.props.clearMyPlanData();})}
                     title={'LOGOUT'}
                     titleStyle={{color: AppColors.black}}
                 />
                 {
                     /hello[+]demo[0-9]@fathomai.com/g.test(userEmail) ||
                     /dipesh[+]mvp@fathomai.com/g.test(userEmail) ||
+                    /chrisp[+]mvp@fathomai.com/g.test(userEmail) ||
                     /mazen[+]mvp@fathomai.com/g.test(userEmail) ?
                         <ListItem
                             chevronColor={AppColors.black}

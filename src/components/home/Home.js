@@ -32,27 +32,29 @@ import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants, AppFonts } from '../../constants/';
+import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants/';
+import { store } from '../../store';
+import { AppUtil, } from '../../lib';
 
 // Components
-import { Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
+import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
 import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } from '../myPlan/pages';
 import { bleUtils } from '../../constants/utils';
 
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
-const recoveryMessage = 'Great work! Keep taking care of your body. Target 2-4 Active Recovery sessions after each hard training session.';
+const highSorenessMessage = 'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.';
+const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Active recovery is low-impact this morning so let\'s pick up with post practice recovery!';
+const lowSorenessPostMessage = 'Looks like you\'re all clear! Active recovery is low-impact for now so let\'s pick up tomorrow or after the next practice you log!';
 
 const whenEnabledBackgroundColor = AppColors.white;
 const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
 const whenEnabledBorderColor = AppColors.zeplin.lightGrey;
 const whenEnabledDescriptionColor = AppColors.zeplin.darkGrey;
-
 const whenDisabledBackgroundColor = AppColors.white;
 const whenDisabledHeaderColor = AppColors.zeplin.greyText;
 const whenDisabledBorderColor = AppColors.zeplin.greyText;
 const whenDisabledDescriptionColor = AppColors.zeplin.greyText;
-
 const disabledBackgroundColor = AppColors.white;
 const disabledHeaderColor = AppColors.zeplin.greyText;
 const disabledBorderColor = AppColors.zeplin.greyText;
@@ -61,7 +63,6 @@ const enabledBackgroundColor = AppColors.zeplin.darkBlue;
 const enabledHeaderColor = AppColors.white;
 const enabledBorderColor = AppColors.zeplin.darkBlue;
 const enabledDescriptionColor = AppColors.primary.yellow.hundredPercent;
-
 const subtextColor = AppColors.white;
 
 /* Component ==================================================================== */
@@ -69,10 +70,8 @@ class Home extends Component {
     static componentName = 'HomeView';
 
     static propTypes = {
-        appLoaded:           PropTypes.func.isRequired,
         ble:                 PropTypes.object.isRequired,
         getSoreBodyParts:    PropTypes.func.isRequired,
-        lastOpened:          PropTypes.string,
         notification:        PropTypes.bool.isRequired,
         patchActiveRecovery: PropTypes.func.isRequired,
         plan:                PropTypes.object.isRequired,
@@ -107,20 +106,17 @@ class Home extends Component {
             },
             prepare: {
                 finishedRecovery:           props.plan && props.plan.dailyPlan[0] && props.plan.dailyPlan[0].pre_recovery_completed ? true : false,
-                flag:                       (new Date()).toLocaleDateString() !== props.lastOpened,
                 isActiveRecoveryCollapsed:  true,
                 isReadinessSurveyCollapsed: true,
                 isReadinessSurveyCompleted: false,
             },
             recover: {
                 finished:                  false,
-                flag:                      false,
                 isActiveRecoveryCollapsed: true,
             },
             selectedExercise: {},
             train:            {
                 completedPostPracticeSurvey: false,
-                flag:                        false,
                 postPracticeSurveys:         [
                     {
                         isPostPracticeSurveyCollapsed: false,
@@ -128,7 +124,6 @@ class Home extends Component {
                     }
                 ],
             },
-            update:  false,
             loading: false,
         };
         this.renderTab = this.renderTab.bind(this);
@@ -140,8 +135,7 @@ class Home extends Component {
         }
         // when we arrive, load MyPlan
         let userId = this.props.user.id;
-        this.props.appLoaded()
-            .then(() => this.props.getMyPlan(userId, moment().format('YYYY-MM-DD')))
+        this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
             .then(response => {
                 if(response.daily_plans[0].daily_readiness_survey_completed) {
                     let postPracticeSurveys = response.daily_plans[0].training_sessions.map(session => session.post_session_survey
@@ -206,6 +200,14 @@ class Home extends Component {
         }
     }
 
+    componentDidMount = () => {
+        if(!this.props.scheduledMaintenance.addressed) {
+            let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
+            let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
+            AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
+        }
+    }
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.notification && nextProps.notification !== this.props.notification) {
             this._handleExerciseListRefresh(true);
@@ -214,9 +216,9 @@ class Home extends Component {
         if(
             !areObjectsDifferent &&
             this.props.plan.dailyPlan[0] &&
+            nextProps.plan.dailyPlan[0] &&
             nextProps.plan.dailyPlan[0].landing_screen !== this.props.plan.dailyPlan[0].landing_screen &&
             (
-                this.state.update ||
                 nextProps.plan.dailyPlan[0].post_recovery_completed ||
                 nextProps.plan.dailyPlan[0].pre_recovery_completed
             )
@@ -230,9 +232,6 @@ class Home extends Component {
                 :
                 true;
             this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(nextProps.plan.dailyPlan[0], disabled));
-            this.setState({
-                update: false,
-            })
         }
     }
 
@@ -296,8 +295,8 @@ class Home extends Component {
         let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
         newDailyReadiness.user_id = this.props.user.id;
         newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
-        newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality + 1;
-        newDailyReadiness.readiness = newDailyReadiness.readiness + 1;
+        newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality;
+        newDailyReadiness.readiness = newDailyReadiness.readiness;
         newDailyReadiness.soreness.map(bodyPart => {
             newDailyReadiness.soreness = newDailyReadiness.soreness.filter(u => { return !!u.severity && u.severity > 0; });
         });
@@ -332,9 +331,9 @@ class Home extends Component {
          * result in a tabPage auto change if a postPracticeSurvey
          * has not already been completed
          */
-        this.setState({ loading: true, update: !this.state.train.completedPostPracticeSurvey, });
+        this.setState({ loading: true });
         let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
-        newPostSessionSurvey.RPE = newPostSessionSurvey.RPE + 1;
+        newPostSessionSurvey.RPE = newPostSessionSurvey.RPE;
         newPostSessionSurvey.soreness.map(bodyPart => {
             newPostSessionSurvey.soreness = _.filter(newPostSessionSurvey.soreness, u => { return !!u.severity && u.severity > 0; });
         });
@@ -379,46 +378,51 @@ class Home extends Component {
             });
     }
 
-    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness) => {
+    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood) => {
         let stateObject = isDailyReadiness ? this.state.dailyReadiness : this.state.postSession;
         let newSorenessFields = _.cloneDeep(stateObject.soreness);
-        if(_.findIndex(stateObject.soreness, o => o.body_part === areaClicked.index) > -1) {
-            // body part already exists
-            if(areaClicked.bilateral) {
-                // add other side
-                let currentSelectedSide = _.filter(newSorenessFields, o => o.body_part === areaClicked.index);
-                if(currentSelectedSide.length === 1) {
-                    currentSelectedSide = currentSelectedSide[0].side;
-                    let newMissingSideSorenessPart = {};
-                    newMissingSideSorenessPart.body_part = areaClicked.index;
-                    newMissingSideSorenessPart.severity = 0;
-                    newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
-                    newSorenessFields.push(newMissingSideSorenessPart);
+        if(!areaClicked && isAllGood) {
+            let soreBodyParts = _.intersectionBy(stateObject.soreness, this.props.plan.soreBodyParts.body_parts, 'body_part');
+            newSorenessFields = soreBodyParts;
+        } else {
+            if(_.findIndex(stateObject.soreness, o => o.body_part === areaClicked.index) > -1) {
+                // body part already exists
+                if(areaClicked.bilateral) {
+                    // add other side
+                    let currentSelectedSide = _.filter(newSorenessFields, o => o.body_part === areaClicked.index);
+                    if(currentSelectedSide.length === 1) {
+                        currentSelectedSide = currentSelectedSide[0].side;
+                        let newMissingSideSorenessPart = {};
+                        newMissingSideSorenessPart.body_part = areaClicked.index;
+                        newMissingSideSorenessPart.severity = 0;
+                        newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
+                        newSorenessFields.push(newMissingSideSorenessPart);
+                    } else {
+                        newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
+                    }
                 } else {
                     newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
                 }
             } else {
-                newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
-            }
-        } else {
-            // doesn't exist, create new object
-            if(areaClicked.bilateral) {
-                let newLeftSorenessPart = {};
-                newLeftSorenessPart.body_part = areaClicked.index;
-                newLeftSorenessPart.severity = 0;
-                newLeftSorenessPart.side = 1;
-                newSorenessFields.push(newLeftSorenessPart);
-                let newRightSorenessPart = {};
-                newRightSorenessPart.body_part = areaClicked.index;
-                newRightSorenessPart.severity = 0;
-                newRightSorenessPart.side = 2;
-                newSorenessFields.push(newRightSorenessPart);
-            } else {
-                let newSorenessPart = {};
-                newSorenessPart.body_part = areaClicked.index;
-                newSorenessPart.severity = 0;
-                newSorenessPart.side = 0;
-                newSorenessFields.push(newSorenessPart);
+                // doesn't exist, create new object
+                if(areaClicked.bilateral) {
+                    let newLeftSorenessPart = {};
+                    newLeftSorenessPart.body_part = areaClicked.index;
+                    newLeftSorenessPart.severity = 0;
+                    newLeftSorenessPart.side = 1;
+                    newSorenessFields.push(newLeftSorenessPart);
+                    let newRightSorenessPart = {};
+                    newRightSorenessPart.body_part = areaClicked.index;
+                    newRightSorenessPart.severity = 0;
+                    newRightSorenessPart.side = 2;
+                    newSorenessFields.push(newRightSorenessPart);
+                } else {
+                    let newSorenessPart = {};
+                    newSorenessPart.body_part = areaClicked.index;
+                    newSorenessPart.severity = 0;
+                    newSorenessPart.side = 0;
+                    newSorenessFields.push(newSorenessPart);
+                }
             }
         }
         let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);
@@ -555,32 +559,6 @@ class Home extends Component {
             isSelectedExerciseModalOpen: isModalOpen,
             selectedExercise:            exerciseObj ? exerciseObj : {},
         });
-    }
-
-    isPrepareFlaged = (dailyPlanObj, isDailyReadinessSurveyCompleted, recoveryObj) => {
-        if (isDailyReadinessSurveyCompleted && recoveryObj && !this.state.prepare.finishedRecovery) {
-            return true;
-        }
-        return this.state.prepare.flag;
-    }
-
-    isTrainFlaged = (dailyPlanObj, isDailyReadinessSurveyCompleted, recoveryObj) => {
-        if (isDailyReadinessSurveyCompleted) {
-            if (!recoveryObj || this.state.prepare.finishedRecovery) {
-                return true
-            }
-        }
-        return this.state.train.flag;
-    }
-
-    isRecoverFlaged = (dailyPlanObj, isDailyReadinessSurveyCompleted, prepareRecoveryObj, recoverRecoveryObj) => {
-        if (this.state.train.completedPostPracticeSurvey && this.state.train.postPracticeSurveys.length === 1 && recoverRecoveryObj) {
-            return true;
-        }
-        if (isDailyReadinessSurveyCompleted && this.state.train.completedPostPracticeSurvey && prepareRecoveryObj && recoverRecoveryObj) {
-            return true;
-        }
-        return this.state.recover.flag;
     }
 
     renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) {
@@ -861,21 +839,11 @@ class Home extends Component {
                         </View>
                     : isActive ?
                         exerciseList.totalLength === 0 ?
-                            <View style={{ flex: 1, flexDirection: 'row' }}>
-                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                                <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                    {
-                                        this.renderActiveRecoveryBlocks(
-                                            recoveryObj,
-                                            {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                            {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
-                                        )
-                                    }
-                                    <Spacer size={12}/>
-                                    <View style={{flex: 1}}>
-                                        <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVertical]}>
-                                            <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: AppFonts.scaleFont(15) }]}>{'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.'}</Text>
-                                        </View>
+                            <View style={{ flex: 1, flexDirection: 'row', }}>
+                                <Spacer size={12}/>
+                                <View style={{flex: 1}}>
+                                    <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVertical]}>
+                                        <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: recoveryObj.impact_score < 1.5 ? AppFonts.scaleFont(18) : AppFonts.scaleFont(15) }]}>{recoveryObj.impact_score < 1.5 ? lowSorenessPreMessage : highSorenessMessage}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -952,7 +920,6 @@ class Home extends Component {
                                                         finishedRecovery:          true,
                                                         isActiveRecoveryCollapsed: true,
                                                     }),
-                                                    update: true,
                                                 })
                                             )
                                             .catch(() => {
@@ -1116,22 +1083,11 @@ class Home extends Component {
                         </View>
                     : isActive ?
                         exerciseList.totalLength === 0 ?
-                            <View style={{ flex: 1, flexDirection: 'row' }}>
-                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                                <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                    {
-                                        this.renderActiveRecoveryBlocks(
-                                            recoveryObj,
-                                            {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                            {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
-                                            true
-                                        )
-                                    }
-                                    <Spacer size={12}/>
-                                    <View style={{flex: 1}}>
-                                        <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVertical]}>
-                                            <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: AppFonts.scaleFont(15) }]}>{'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.'}</Text>
-                                        </View>
+                            <View style={{ flex: 1, flexDirection: 'row', }}>
+                                <Spacer size={12}/>
+                                <View style={{flex: 1}}>
+                                    <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVertical]}>
+                                        <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: recoveryObj.impact_score < 1.5 ? AppFonts.scaleFont(18) : AppFonts.scaleFont(15) }]}>{recoveryObj.impact_score < 1.5 ? lowSorenessPostMessage : highSorenessMessage}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -1387,6 +1343,23 @@ class Home extends Component {
             }, 300);
         }
     }
+
+    // _renderCustomTopBar = () => {
+    //     return(
+    //         <View>
+    //             <ScrollableTabBar
+    //                 locked
+    //                 renderTab={this.renderTab}
+    //                 style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderBottomWidth: 0,}}
+    //             />
+    //             <Alerts
+    //                 extraStyles={{paddingLeft: 20}}
+    //                 leftAlignText
+    //                 status={this.state.displayMessage ? this.state.networkMessage: 'help'}
+    //             />
+    //         </View>
+    //     )
+    // }
 
     render() {
         return (

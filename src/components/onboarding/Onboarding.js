@@ -35,7 +35,6 @@ import { onboardingUtils } from '../../constants/utils';
 // Components
 import {
     Alerts,
-    Coach,
     ProgressBar,
     Text,
     WebViewPage,
@@ -408,6 +407,7 @@ class Onboarding extends Component {
         userObj.biometric_data.mass = {};
         userObj.biometric_data.mass.kg = +(onboardingUtils.lbsToKgs(parseFloat(newUser.biometric_data.mass.lb))) + 0.1;
         userObj.biometric_data.mass.lb = +(parseFloat(newUser.biometric_data.mass.lb).toFixed(2)) + 0.1;
+        userObj.biometric_data.sex = newUser.biometric_data.sex;
         userObj.personal_data = {};
         userObj.personal_data.birth_date = newUser.personal_data.birth_date;
         userObj.personal_data.first_name = newUser.personal_data.first_name;
@@ -423,6 +423,10 @@ class Onboarding extends Component {
                     .then(response => {
                         this.setState({ loading: false });
                         return Actions.home();
+                    })
+                    .catch(err => {
+                        const error = AppAPI.handleError(err);
+                        return this.setState({ resultMsg: { error }, loading: false });
                     });
             }
             return this.props.createUser(userObj)
@@ -470,7 +474,7 @@ class Onboarding extends Component {
                 resultMsg: { success: 'Success, now loading your data!' },
             }, () => {
                 this.setState({ loading: false });
-                Actions.home();
+                return Actions.home();
             })).catch((err) => {
                 console.log('err',err);
                 const error = AppAPI.handleError(err);
@@ -514,15 +518,6 @@ class Onboarding extends Component {
                     currentStep={onboardingUtils.getCurrentStep(form_fields.user)}
                     totalSteps={onboardingUtils.getTotalSteps(form_fields.user)}
                 />
-                { resultMsg.error && resultMsg.error.length > 0 ?
-                    <View style={styles.errorWrapper}>
-                        <Coach
-                            text={resultMsg.error}
-                        />
-                    </View>
-                    :
-                    null
-                }
                 {/*<UserRole
                     componentStep={1}
                     currentStep={step}
@@ -532,7 +527,7 @@ class Onboarding extends Component {
                 <UserAccount
                     componentStep={2}
                     currentStep={step}
-                    displayCoach={resultMsg.error && resultMsg.error.length === 0 ? true : false}
+                    error={this.state.resultMsg.error}
                     handleFormChange={this._handleUserFormChange}
                     handleFormSubmit={this._handleFormSubmit}
                     heightPressed={this._heightPressed}

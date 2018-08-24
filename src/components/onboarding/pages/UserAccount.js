@@ -4,7 +4,7 @@
     <UserAccount
         componentStep={1}
         currentStep={step}
-        displayCoach={resultMsg.error && resultMsg.error.length > 0}
+        error={this.state.resultMsg.error}
         handleFormChange={this._handleUserFormChange}
         handleFormSubmit={this._handleFormSubmit}
         isUpdatingUser={this.props.user.id ? true : false}
@@ -19,7 +19,7 @@ import { Image, StyleSheet, View, } from 'react-native';
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
 import { onboardingUtils } from '../../../constants/utils';
-import { Coach, Spacer, TabIcon, Text } from '../../custom';
+import { Alerts, Spacer, TabIcon, Text } from '../../custom';
 
 // import components
 import { UserAccountAbout, UserAccountInfo, UserSports } from './';
@@ -144,6 +144,10 @@ class UserAccount extends Component {
         return(
             <View>
                 <View style={{marginLeft: 10, borderLeftWidth: 1, borderColor: AppColors.border,}}>
+                    <Alerts
+                        leftAlignText
+                        error={this.props.error && this.props.error.length > 0 ? this.props.error : this.state.coachContent}
+                    />
                     {section.content}
                 </View>
             </View>
@@ -219,6 +223,7 @@ class UserAccount extends Component {
             } else {
                 this.setState({
                     accordionSection: nextStep,
+                    coachContent:     '',
                     isFormValid:      false,
                 });
             }
@@ -250,10 +255,11 @@ class UserAccount extends Component {
         this.setState({ isPasswordSecure: !this.state.isPasswordSecure});
     };
 
-    _updateErrorMessage = () => {
+    _updateErrorMessage = (isAbout) => {
         this.scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
+        let coachesMessage = isAbout ? onboardingUtils.isUserAboutValid(this.props.user).errorsArray : onboardingUtils.isUserAccountInformationValid(this.props.user).errorsArray;
         this.setState({
-            coachContent: onboardingUtils.isUserAccountInformationValid(this.props.user).errorsArray,
+            coachContent: coachesMessage,
             isFormValid:  false,
         });
     };
@@ -262,7 +268,6 @@ class UserAccount extends Component {
         const {
             componentStep,
             currentStep,
-            displayCoach,
             handleFormChange,
             handleFormSubmit,
             heightPressed,
@@ -290,6 +295,7 @@ class UserAccount extends Component {
                     handleFormChange={handleFormChange}
                     heightPressed={heightPressed}
                     setAccordionSection={handleFormSubmit}
+                    updateErrorMessage={this._updateErrorMessage}
                     user={user}
                 />,
                 header:   'ABOUT YOU',
@@ -311,17 +317,6 @@ class UserAccount extends Component {
             <View style={{flex: 1}}>
                 <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1} : {display: 'none'}] ]}>
                     <KeyboardAwareScrollView ref={ref => {this.scrollViewRef = ref}}>
-                        { displayCoach && this.state.coachContent.length > 0 ?
-                            <Coach
-                                text={this.state.coachContent}
-                            />
-                            : displayCoach && this.state.accordionSection !== false && _.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle ?
-                                <Coach
-                                    text={_.find(SECTIONS, section => section.index === this.state.accordionSection + 1).subtitle}
-                                />
-                                :
-                                null
-                        }
                         <Accordion
                             activeSection={this.state.accordionSection}
                             onChange={this._setAccordionSection}
@@ -355,15 +350,20 @@ class UserAccount extends Component {
 }
 
 UserAccount.propTypes = {
-    componentStep:    PropTypes.number.isRequired,
-    currentStep:      PropTypes.number.isRequired,
-    displayCoach:     PropTypes.bool.isRequired,
+    componentStep: PropTypes.number.isRequired,
+    currentStep:   PropTypes.number.isRequired,
+    error:         PropTypes.oneOfType([
+        PropTypes.array,
+        PropTypes.string,
+    ]),
     handleFormChange: PropTypes.func.isRequired,
     heightPressed:    PropTypes.func.isRequired,
     isUpdatingUser:   PropTypes.bool.isRequired,
     user:             PropTypes.object.isRequired,
 };
-UserAccount.defaultProps = {};
+UserAccount.defaultProps = {
+    error: null,
+};
 UserAccount.componentName = 'UserAccount';
 
 /* Export Component ==================================================================== */

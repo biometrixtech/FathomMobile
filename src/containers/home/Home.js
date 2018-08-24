@@ -9,66 +9,62 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { plan as PlanActions, init as InitActions } from '../../actions';
+import { plan as PlanActions, } from '../../actions';
 
 const Home = ({
     Layout,
-    appLoaded,
     ble,
     getMyPlan,
     getSoreBodyParts,
-    lastOpened,
     notification,
     patchActiveRecovery,
     plan,
     postReadinessSurvey,
     postSessionSurvey,
+    scheduledMaintenance,
     user,
 }) => (
     <Layout
-        appLoaded={appLoaded}
         ble={ble}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
-        lastOpened={lastOpened}
         notification={notification}
         patchActiveRecovery={patchActiveRecovery}
         plan={plan}
         postReadinessSurvey={postReadinessSurvey}
         postSessionSurvey={postSessionSurvey}
+        scheduledMaintenance={scheduledMaintenance}
         user={user}
     />
 );
 
 Home.propTypes = {
-    Layout:              PropTypes.func.isRequired,
-    appLoaded:           PropTypes.func.isRequired,
-    ble:                 PropTypes.object.isRequired,
-    getMyPlan:           PropTypes.func.isRequired,
-    getSoreBodyParts:    PropTypes.func.isRequired,
-    lastOpened:          PropTypes.string, // cannot make it required as null would not be a valid value for an isRequired check which is a bug in the prop-types packages that is being discussed
-    notification:        PropTypes.bool.isRequired,
-    patchActiveRecovery: PropTypes.func.isRequired,
-    plan:                PropTypes.object.isRequired,
-    postReadinessSurvey: PropTypes.func.isRequired,
-    postSessionSurvey:   PropTypes.func.isRequired,
-    user:                PropTypes.object.isRequired,
+    Layout:               PropTypes.func.isRequired,
+    ble:                  PropTypes.object.isRequired,
+    getMyPlan:            PropTypes.func.isRequired,
+    getSoreBodyParts:     PropTypes.func.isRequired,
+    notification:         PropTypes.bool.isRequired,
+    patchActiveRecovery:  PropTypes.func.isRequired,
+    plan:                 PropTypes.object.isRequired,
+    postReadinessSurvey:  PropTypes.func.isRequired,
+    postSessionSurvey:    PropTypes.func.isRequired,
+    scheduledMaintenance: PropTypes.object,
+    user:                 PropTypes.object.isRequired,
 };
 
 Home.defaultProps = {
-    lastOpened: null,
+    scheduledMaintenance: null,
 };
 
 const mapStateToProps = state => ({
-    ble:          state.ble,
-    lastOpened:   state.init.lastOpened,
-    notification: state.init.notification,
-    plan:         state.plan,
-    user:         state.user,
+    ble:                  state.ble,
+    notification:         state.init.notification,
+    plan:                 state.plan,
+    scheduledMaintenance: state.init.scheduledMaintenance || null,
+    user:                 state.user,
 });
 
 const mapDispatchToProps = {
-    appLoaded:           InitActions.appLoaded,
     getMyPlan:           PlanActions.getMyPlan,
     getSoreBodyParts:    PlanActions.getSoreBodyParts,
     patchActiveRecovery: PlanActions.patchActiveRecovery,

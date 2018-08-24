@@ -158,7 +158,7 @@ class UserAccountInfo extends Component {
                     />
                     <TabIcon
                         color={AppColors.zeplin.lightGrey}
-                        containerStyle={[{height: '100%', position: 'absolute', right: 2, top: 0,}]}
+                        containerStyle={[{height: '100%', position: 'absolute', right: 10, top: 0,}]}
                         icon={isPasswordSecure ? 'visibility' : 'visibility-off'}
                         onPress={toggleShowPassword}
                         size={24}

@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:16:07 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:16:07
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-08-09 20:24:34
  */
@@ -25,7 +25,7 @@ import {
 // Components
 import { Text } from './';
 
-import { AppFonts } from '../../constants';
+import { AppColors, AppFonts, AppStyles, } from '../../constants';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -36,55 +36,58 @@ const styles = StyleSheet.create({
 
     // Success
     msg: {
-        right:             0,
-        left:              0,
         paddingVertical:   10,
         paddingHorizontal: 10,
-        borderLeftWidth:   3,
-        borderColor:       '#1C854C',
-        backgroundColor:   '#59DC9A',
+        backgroundColor:   AppColors.alerts.successBackground,
     },
     msg_text: {
-        textAlign: 'center',
-        color:     '#16693c',
         ...AppFonts.oswaldMedium,
+        color:    AppColors.white,
+        fontSize: AppFonts.scaleFont(14),
     },
 
     // Error
     msgError: {
-        borderColor:     '#C02827',
-        backgroundColor: '#FB6567',
+        backgroundColor: AppColors.alerts.errorBackground,
     },
     msgError_text: {
-        color: '#7f1a1a',
+        color: AppColors.white,
     },
 
     // Status
     msgStatus: {
-        borderColor:     '#408491',
-        backgroundColor: '#8EDBE5',
+        backgroundColor: AppColors.alerts.statusBackground,
     },
     msgStatus_text: {
-        color: '#2f606a',
+        color: AppColors.white,
     },
 });
 
 /* Component ==================================================================== */
-const Alerts = ({ status, success, error }) => (
+const Alerts = ({ error, extraStyles, leftAlignText, rightAlignText, status, success, }) => (
     <View style={styles.alerts}>
         {!!success &&
           <View>
-              <View style={[styles.msg]}>
-                  <Text style={[styles.msg_text]}>{success}</Text>
+              <View style={[extraStyles, styles.msg]}>
+                  <Text style={[
+                      leftAlignText ? AppStyles.textLeftAligned : rightAlignText ? AppStyles.textRightAligned : AppStyles.textCenterAligned,
+                      styles.msg_text,
+                  ]}>
+                      {Array.isArray(success) ? success[0].toUpperCase() : success.toUpperCase()}
+                  </Text>
               </View>
           </View>
         }
 
         {!!status &&
           <View>
-              <View style={[styles.msg, styles.msgStatus]}>
-                  <Text style={[styles.msg_text, styles.msgStatus_text]}>
-                      {status}
+              <View style={[extraStyles, styles.msg, styles.msgStatus]}>
+                  <Text style={[
+                      leftAlignText ? AppStyles.textLeftAligned : rightAlignText ? AppStyles.textRightAligned : AppStyles.textCenterAligned,
+                      styles.msg_text,
+                      styles.msgStatus_text,
+                  ]}>
+                      {Array.isArray(status) ? status[0].toUpperCase() : status.toUpperCase()}
                   </Text>
               </View>
           </View>
@@ -92,14 +95,15 @@ const Alerts = ({ status, success, error }) => (
 
         {!!error &&
           <View>
-              <View style={[styles.msg, styles.msgError]}>
+              <View style={[extraStyles, styles.msg, styles.msgError]}>
                   <Text
                       style={[
+                          leftAlignText ? AppStyles.textLeftAligned : rightAlignText ? AppStyles.textRightAligned : AppStyles.textCenterAligned,
                           styles.msg_text,
                           styles.msgError_text,
                       ]}
                   >
-                      {error}
+                      {Array.isArray(error) ? error[0].toUpperCase() : error.toUpperCase()}
                   </Text>
               </View>
           </View>
@@ -108,15 +112,31 @@ const Alerts = ({ status, success, error }) => (
 );
 
 Alerts.propTypes = {
-    status:  PropTypes.string,
-    success: PropTypes.string,
-    error:   PropTypes.string,
+    error: PropTypes.oneOfType([
+        PropTypes.array,
+        PropTypes.string,
+    ]),
+    extraStyles: PropTypes.oneOfType([
+        PropTypes.array,
+        PropTypes.shape({}),
+    ]),
+    leftAlignText: PropTypes.bool,
+    status:        PropTypes.oneOfType([
+        PropTypes.array,
+        PropTypes.string,
+    ]),
+    success: PropTypes.oneOfType([
+        PropTypes.array,
+        PropTypes.string,
+    ]),
 };
 
 Alerts.defaultProps = {
-    status:  '',
-    success: '',
-    error:   '',
+    error:         '',
+    extraStyles:   null,
+    leftAlignText: false,
+    status:        '',
+    success:       '',
 };
 
 Alerts.componentName = 'Alerts';
