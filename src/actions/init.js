@@ -219,7 +219,7 @@ const forgotPassword = (email) => {
 /**
   * POST Reset Password form data
   */
- const resetPassword = (resetPasswordData) => {
+const resetPassword = (resetPasswordData) => {
     return dispatch => AppAPI.reset_password.post(false, resetPasswordData)
         .then(result => {
             dispatch({

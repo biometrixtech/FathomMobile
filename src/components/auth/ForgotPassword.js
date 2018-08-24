@@ -123,10 +123,10 @@ class ForgotPassword extends Component {
                     }, () => {
                         setTimeout(() => {
                             //Actions.root({ type: 'reset' });
-                            this._routeToResetPassword(credentials.email);
+                            this._routeToResetPassword(credentials.Email);
                         }, 1000);
                     });
-                    //this._routeToResetPassword({emailAddress: credentials.email})
+                    //this._routeToResetPassword({emailAddress: credentials.Email})
                 }).catch((err) => {
                     const error = AppAPI.handleError(err);
                     this.setState({ resultMsg: { error } });
