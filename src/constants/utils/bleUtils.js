@@ -17,13 +17,18 @@ const bleUtils = {
         let bleImage = null;
         // make sure we have a sensor paired
         if(ble.accessoryData && ble.accessoryData.sensor_pid && ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID()) {
-            const sensorData = BLEActions.getSingleSensorSavedPractices(ble.accessoryData.sensor_pid);
-            console.log('sensorData',sensorData);
+            BLEActions.getSingleSensorSavedPractices(ble.accessoryData.sensor_pid)
+                .then(res => {
+                    console.log('res',res);
+                })
+                .catch(err => {
+                    console.log('err',err);
+                });
             // if(!ble.bluetoothOn) {
             //     // bluetooth off => iconSensorStatusBtOff.png
             //     bleImage = require(`${imagePrefix}iconSensorStatusBtOff.png`);
             // } else {
-                if(sensorData.isSensorConnected) {
+                // if(sensorData.isSensorConnected) {
                     // sensor connected no operation => iconSensorStatusConnected.png
                     // sensor connected sensor in session => iconSensorStatusInSession.png
                     // sensor connected operation in process - no operation (rotate as loading) => iconSensorSyncingConnected.png
@@ -31,10 +36,10 @@ const bleUtils = {
 
                     // animated = true;
                     // bleImage = require(`${imagePrefix}iconSensorSyncingConnected.png`);
-                } else {
+                // } else {
                     // sensor not connected => iconSensorStatusNotConnected.png
                     bleImage = require(`${imagePrefix}iconSensorStatusNotConnected.png`);
-                }
+                // }
             // }
         }
         return {

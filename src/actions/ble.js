@@ -14,6 +14,7 @@ import { AppAPI, AppUtil } from '../lib';
 import { store } from '../store';
 
 // import third-party libraries
+import _ from 'lodash';
 import BleManager from 'react-native-ble-manager';
 import Fabric from 'react-native-fabric';
 
@@ -200,6 +201,17 @@ const setKitTime = (id) => {
 };
 
 /**
+  * converts our unsigned 32-bit integer to epoch time
+  */
+const convertUnsigned32BitIntToEpochTime = array => {
+  	let timestamp = 0;
+  	_.map(array, (i, key) => {
+    		timestamp += i << 8 * key;
+    });
+    return timestamp;
+};
+
+/**
   * NEW FUNCTIONS
   * - 1 Sensor System
   */
@@ -314,45 +326,66 @@ const disconnectFromSingleSensor = (sensor_id) => {
 };
 
 const getSingleSensorSavedPractices = (sensorId, operation_id = '0x00') => {
-    // let currentState = store.getState();
-    // let sensorId = sensor_id || currentState.ble.accessoryData.sensor_pid;
-    // const dataArray = [commands.GET_SINGLE_SENSOR_LIST, convertHex('0x01'), convertHex(operation_id)];
-    // return dispatch => BleManager.start({ showAlert: true })
-    //     .then(() => BleManager.connect(sensorId))
-    //     .then(() => BleManager.retrieveServices(sensorId))
-    //     .then(peripheralInfo => {
-    //         console.log('peripheralInfo',peripheralInfo);
-    //         return write(peripheralInfo.id, dataArray); // get single sensor practices - 0x75
-    //     })
-    //     .then(() => BleManager.disconnect(sensorId))
-    //     .then(response => Promise.resolve(response))
-    //     .catch(err => Promise.reject(err));
-
     const dataArray = [commands.GET_SINGLE_SENSOR_LIST, convertHex('0x01'), convertHex(operation_id)];
-    let isSensorConnected = false;
-    BleManager.start({ showAlert: true })
+    // let isSensorConnected = false;
+    return BleManager.start({ showAlert: true })
         .then(() => BleManager.connect(sensorId))
         .then(() => BleManager.retrieveServices(sensorId))
         .catch(err => BleManager.retrieveServices(sensorId))
-        .then(peripheralInfo => {
-            console.log('++++++++peripheralInfo',peripheralInfo);
-            return write(peripheralInfo.id, dataArray); // get single sensor practices - 0x75
-        })
+        .then(peripheralInfo => write(peripheralInfo.id, dataArray)) // get single sensor practices - 0x75
         .then(response => {
-            console.log('++++++++response',response);
-            isSensorConnected = true;
-            // return Promise.resolve(response);
+            // console.log('++++++++response',response);
+            // isSensorConnected = true;
+            // console.log(response[4]);
+            const numberOfPractices = response[4];
+
+            // const testDataArray = [commands.GET_PRACTICE_TIMESTAMPS, convertHex('0x01'), 2];
+            // write(sensorId, testDataArray)
+            //     .then(res => {
+            //         console.log('res',res);
+            //         let start_epoch = convertUnsigned32BitIntToEpochTime(res.slice(4,8));
+            //         let end_epoch = convertUnsigned32BitIntToEpochTime(res.slice(8,12));
+            //         console.log('start_epoch',start_epoch);
+            //         console.log('end_epoch',end_epoch);
+            //     });
+
+            // const testDataArray2 = [commands.GET_PRACTICE_ACCELERATIONS, convertHex('0x01'), 2];
+            // write(sensorId, testDataArray2)
+            //     .then(res2 => {
+            //         console.log('res2',res2);
+            //     });
+
+            // const testDataArray3 = [commands.GET_PRACTICE_DURATION, convertHex('0x01'), 2];
+            // write(sensorId, testDataArray3)
+            //     .then(res3 => {
+            //         console.log('res3',res3);
+            //     });
+
+            // for each numberOfPractices:
+            // (1) 0x76 (GET_PRACTICE_TIMESTAMPS) - start_time & end_time
+            // (2) 0x77 (GET_PRACTICE_ACCELERATIONS) - inactive_accel, low_accel, mod_accel, & high_accel
+            // (3) 0x78 (GET_PRACTICE_DURATION) - inactive_duration, low_duration, mod_duration, & high_duration
+            // (4) save to AsyncStore
+            // (5) 0x79 (DELETE_SINGLE_PRACTICE) -> delete practice
+            // (6) send built obj to AWS
+            // (7) delete AsyncStorage record
+            return Promise.resolve(response);
         })
         .catch(err => {
             console.log('++++++++err',err);
-            isSensorConnected = false;
-            // return Promise.reject(err)
+            // isSensorConnected = false;
+            return Promise.reject(err)
         });
 
-    return {
-        isSensorConnected,
-    }
+    // return {
+    //     isSensorConnected,
+    // }
 };
+
+// const getPracticeTimestamps = (sensorId, practiceIndex) => {};
+// const getPracticeAccelerations = (sensorId, practiceIndex) => {};
+// const getPracticeDuration = (sensorId, practiceIndex) => {};
+// const deleteSinglePractice = (sensorId, practiceIndex) => {};
 
 /**
   * OLD FUNCTIONS
