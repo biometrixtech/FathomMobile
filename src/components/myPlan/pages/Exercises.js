@@ -67,7 +67,7 @@ const Exercises = ({
                     fontFamily={AppStyles.robotoBold.fontFamily}
                     fontWeight={AppStyles.robotoBold.fontWeight}
                     onPress={toggleCompletedAMPMRecoveryModal}
-                    rounded={false}
+                    raised={false}
                     textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                     title={'Recovery Complete'}
                 />
