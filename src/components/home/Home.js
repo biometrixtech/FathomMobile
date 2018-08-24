@@ -273,8 +273,8 @@ class Home extends Component {
         let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
         newDailyReadiness.user_id = this.props.user.id;
         newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
-        newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality + 1;
-        newDailyReadiness.readiness = newDailyReadiness.readiness + 1;
+        newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality;
+        newDailyReadiness.readiness = newDailyReadiness.readiness;
         newDailyReadiness.soreness.map(bodyPart => {
             newDailyReadiness.soreness = newDailyReadiness.soreness.filter(u => { return !!u.severity && u.severity > 0; });
         });
@@ -311,7 +311,7 @@ class Home extends Component {
          */
         this.setState({ loading: true });
         let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
-        newPostSessionSurvey.RPE = newPostSessionSurvey.RPE + 1;
+        newPostSessionSurvey.RPE = newPostSessionSurvey.RPE;
         newPostSessionSurvey.soreness.map(bodyPart => {
             newPostSessionSurvey.soreness = _.filter(newPostSessionSurvey.soreness, u => { return !!u.severity && u.severity > 0; });
         });

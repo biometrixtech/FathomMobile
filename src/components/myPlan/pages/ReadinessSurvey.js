@@ -37,11 +37,11 @@ class ReadinessSurvey extends Component {
     _scrollTo = (index) => {
         let myComponentsLocation = this.myComponents[index];
         if(myComponentsLocation) {
-            setTimeout(() => {
+            _.delay(() => {
                 this.scrollViewRef.scrollTo({
-                    animated: true,
                     x:        myComponentsLocation.x,
                     y:        myComponentsLocation.y,
+                    animated: true,
                 });
             }, 500);
         }
@@ -58,7 +58,12 @@ class ReadinessSurvey extends Component {
         } = this.props;
         let hourOfDay = moment().get('hour');
         let partOfDay = hourOfDay >= 12 ? 'AFTERNOON' : 'MORNING';
-        let isFormValid = _.filter(dailyReadiness.soreness, o => o.severity > 0 && o.severity).length > 0 || (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood);
+        let isFormValid =
+            dailyReadiness.readiness > 0 &&
+            dailyReadiness.sleep_quality > 0 && (
+                _.filter(dailyReadiness.soreness, o => o.severity && o.severity >= 0).length > 0 ||
+                (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
+            );
         return(
             <View style={{flex: 1}}>
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>

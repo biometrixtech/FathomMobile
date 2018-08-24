@@ -36,11 +36,11 @@ class PostSessionSurvey extends Component {
     _scrollTo = (index) => {
         let myComponentsLocation = this.myComponents[index];
         if(myComponentsLocation) {
-            setTimeout(() => {
+            _.delay(() => {
                 this.scrollViewRef.scrollTo({
-                    animated: true,
                     x:        myComponentsLocation.x,
                     y:        myComponentsLocation.y,
+                    animated: true,
                 });
             }, 500);
         }
@@ -55,7 +55,11 @@ class PostSessionSurvey extends Component {
             postSession,
             soreBodyParts,
         } = this.props;
-        let isFormValid = _.filter(postSession.soreness, o => o.severity > 0).length > 0 || (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood);
+        let isFormValid =
+            postSession.RPE > 0 && (
+                _.filter(postSession.soreness, o => o.severity && o.severity >= 0).length > 0 ||
+                (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
+            );
         return (
             <View style={{flex: 1}}>
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
@@ -80,7 +84,7 @@ class PostSessionSurvey extends Component {
                             {'How hard was your training session?'}
                         </Text>
                         <View style={{flex: 1, flexDirection: 'row', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
-                            <View style={{alignItems: 'flex-end', flex: 5, justifyContent: 'center',}}>
+                            <View style={{alignItems: 'flex-end', flex: 5, justifyContent: 'center', paddingHorizontal: AppSizes.paddingSml}}>
                                 { _.map(MyPlanConstants.postSessionFeel, (value, key) => {
                                     if(key === 0) { return; }
                                     /*eslint consistent-return: 0*/

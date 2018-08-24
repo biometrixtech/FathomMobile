@@ -63,7 +63,7 @@ const muscleLevels = {
         '',
         'Tight',
         'Sore',
-        'Feel Limited',
+        'Movement Limited',
         'Struggling to Move',
         'Cannot Move',
     ],

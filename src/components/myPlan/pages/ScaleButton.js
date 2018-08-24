@@ -28,7 +28,7 @@ const ScaleButton = ({
     valueLabel,
 }) => (
     <View
-        style={{justifyContent: 'center', width: (AppSizes.screen.width - (AppSizes.paddingLrg * 2)) / (sorenessPainMappingLength - 1)}}
+        style={{flex: 1, justifyContent: 'center',}}
     >
         <TouchableOpacity
             style={[AppStyles.sorenessPainValues, {

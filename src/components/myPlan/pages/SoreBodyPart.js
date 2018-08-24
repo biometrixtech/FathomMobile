@@ -87,7 +87,7 @@ class SoreBodyPart extends Component {
                     <Text oswaldLight style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(18),}]}>
                         {'I FEEL'}
                         <Text oswaldMedium style={{fontSize: AppFonts.scaleFont(18),}}>
-                            {` ${bodyPartName === 'Abdominals' ? bodyPartName.slice(0, -1).toUpperCase() : bodyPartName.toUpperCase()}...`}
+                            {` ${bodyPartName === 'abdominals' ? bodyPartName.slice(0, -1).toUpperCase() : bodyPartName.toUpperCase()}...`}
                         </Text>
                     </Text>
                 }
@@ -198,14 +198,14 @@ class SoreBodyPart extends Component {
                         </View>
                     }
                 </View>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.padding}}>
                     { bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint') ?
                         _.map(sorenessPainMapping, (value, key) => {
                             if(key === 0) { return; }
                             let sorenessPainScaleMappingValue = (
                                 bodyPartGroup === 'joint'
                             ) ?
-                                MyPlanConstants.sorenessPainScaleMapping(false, false, true)
+                                MyPlanConstants.sorenessPainScaleMapping(false, key, true)
                                 :
                                 MyPlanConstants.sorenessPainScaleMapping(this.state.type, key);
                             /*eslint consistent-return: 0*/
