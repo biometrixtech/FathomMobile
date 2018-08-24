@@ -154,15 +154,9 @@ class Settings extends Component {
                     titleStyle={{color: AppColors.black}}
                 />
                 {
-                    /hello[+]demo[1-5]@fathomai.com/g.test(userEmail) ||
+                    /hello[+]demo[0-9]@fathomai.com/g.test(userEmail) ||
                     /dipesh[+]mvp@fathomai.com/g.test(userEmail) ||
                     /chrisp[+]mvp@fathomai.com/g.test(userEmail) ||
-                    /melissa[+]mvp@fathomai.com/g.test(userEmail) ||
-                    /amina[+]mvp@fathomai.com/g.test(userEmail) ||
-                    /gabby[+]mvp@fathomai.com/g.test(userEmail) ||
-                    /ivonna[+]mvp@fathomai.com/g.test(userEmail) ||
-                    /paul[+]mvp@fathomai.com/g.test(userEmail) ||
-                    /maria[+]mvp@fathomai.com/g.test(userEmail) ||
                     /mazen[+]mvp@fathomai.com/g.test(userEmail) ?
                         <ListItem
                             chevronColor={AppColors.black}
