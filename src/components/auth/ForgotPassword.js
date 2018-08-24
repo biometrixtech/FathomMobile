@@ -70,7 +70,6 @@ class ForgotPassword extends Component {
             options:     {
                 fields: {
                     Email: {
-                        error:                'Please enter a valid email',
                         autoCapitalize:       'none',
                         blurOnSubmit:         false,
                         clearButtonMode:      'while-editing',
@@ -80,10 +79,10 @@ class ForgotPassword extends Component {
                         placeholder:          'email',
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
                         returnKeyType:        'next',
-                        stylesheet:           inputStyle,    
+                        stylesheet:           inputStyle,
                     },
 
-                    
+
                 },
             },
         };
@@ -137,7 +136,7 @@ class ForgotPassword extends Component {
     }
 
     _routeToResetPassword = (email) => {
-        
+
         Actions.resetPassword({emailAddress: email});
     }
 
@@ -156,44 +155,42 @@ class ForgotPassword extends Component {
                         success={this.state.resultMsg.success}
                         error={this.state.resultMsg.error}
                     />
-                   <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(20)}]}>
+                    <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(20)}]}>
                         {'Reset Your Password'}
                     </Text>
 
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, { fontSize: AppFonts.scaleFont(15) }]}>
-                            Enter your email to receive instructions on how to reset your password.
-                        </Text>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, { fontSize: AppFonts.scaleFont(15) }]}>
+                                {'Enter your email to receive instructions on how to reset your password.'}
+                            </Text>
                         </View>
                     </View>
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthTwoThirds}}>
-                        
-                        <Form
-                            ref={(b) => { this.form = b; }}
-                            type={this.state.form_fields}
-                            value={this.state.form_values}
-                            options={this.state.options}
-                            
-                        />
-                        <Spacer size={10} />
-                        {<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : this._routeToResetPassword}>
-                            <View>
-                                <Text 
-                                    p 
-                                    onPress={this._routeToResetPassword}
-                                    style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, textDecorationLine: 'none',}]}>{'or enter your verification code'}
-                                </Text>
-                            </View>
-                        </TouchableOpacity>}
+                            <Form
+                                ref={(b) => { this.form = b; }}
+                                type={this.state.form_fields}
+                                value={this.state.form_values}
+                                options={this.state.options}
+                            />
+                            <Spacer size={10} />
+                            <TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : this._routeToResetPassword}>
+                                <View>
+                                    <Text
+                                        p
+                                        onPress={this._routeToResetPassword}
+                                        style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, textDecorationLine: 'none',}]}>{'or enter your verification code'}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
                     </View>
-            </View>
-            <TouchableOpacity onPress={this.forgotPassword} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
+                </View>
+                <TouchableOpacity onPress={this.forgotPassword} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
                     <Text robotoBold style={[AppStyles.nextButtonText, { fontSize: AppFonts.scaleFont(16) }]}>Reset</Text>
                 </TouchableOpacity>
-        </View>
+            </View>
         );
     }
 }

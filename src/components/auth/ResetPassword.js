@@ -3,19 +3,20 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-    View, StyleSheet, TouchableOpacity
-} from 'react-native';
-import FormValidation from 'tcomb-form-native';
+import { StyleSheet, TouchableOpacity, View,  } from 'react-native';
+
+// import third-party libraries
 import { Actions } from 'react-native-router-flux';
+import _ from 'lodash';
+import FormValidation from 'tcomb-form-native';
 
 // Consts and Libs
 import { AppAPI, AppUtil } from '../../lib';
 import { onboardingUtils } from '../../constants/utils';
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../constants';
-import _ from 'lodash';
+
 // Components
-import { Alerts, Text, ProgressBar } from '../custom';
+import { Alerts, ProgressBar, Text, } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -48,7 +49,7 @@ class ResetPassword extends Component {
         newPassword:      null,
         confirmPassword:  null,
         verificationCode: null,
-    
+
     }
 
     constructor(props) {
@@ -71,17 +72,13 @@ class ResetPassword extends Component {
         // Passwords Match
         const passwordsMatch = FormValidation.refinement(
             FormValidation.String, (newPassword, confirmPassword) => {
-                if(newPassword == confirmPassword)
-                {
+                if(newPassword === confirmPassword) {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             },
         );
-        
+
         // Six-digit Code Validation
         const validCode = FormValidation.refinement(
             FormValidation.String, (verificationCode) => {
@@ -122,7 +119,7 @@ class ResetPassword extends Component {
                         placeholder:          'email',
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
                         returnKeyType:        'next',
-                        stylesheet:           inputStyle,    
+                        stylesheet:           inputStyle,
                     },
                     VerificationCode: {
                         autoCapitalize:       'none',
@@ -134,7 +131,7 @@ class ResetPassword extends Component {
                         placeholder:          'verification code',
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
                         returnKeyType:        'next',
-                        stylesheet:           inputStyle,    
+                        stylesheet:           inputStyle,
                     },
                     NewPassword: {
                         autoCapitalize:       'none',
@@ -147,7 +144,7 @@ class ResetPassword extends Component {
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
                         returnKeyType:        'next',
                         secureTextEntry:      true,
-                        stylesheet:           inputStyle,    
+                        stylesheet:           inputStyle,
                     },
                     ConfirmPassword: {
                         autoCapitalize:       'none',
@@ -160,7 +157,7 @@ class ResetPassword extends Component {
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
                         returnKeyType:        'next',
                         secureTextEntry:      true,
-                        stylesheet:           inputStyle,    
+                        stylesheet:           inputStyle,
                     },
                 },
             },
@@ -237,34 +234,32 @@ class ResetPassword extends Component {
                         success={this.state.resultMsg.success}
                         error={this.state.resultMsg.error}
                     />
-                   <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(20)}]}>
+                    <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(20)}]}>
                         {this.props.emailAddress}
                     </Text>
 
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, { fontSize: AppFonts.scaleFont(15) }]}>
-                            Enter your email to receive instructions on how to reset your password.
-                        </Text>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, { fontSize: AppFonts.scaleFont(15) }]}>
+                                {'Enter your email to receive instructions on how to reset your password.'}
+                            </Text>
                         </View>
                     </View>
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthTwoThirds}}>
-                        
-                        <Form
-                            ref={(b) => { this.form = b; }}
-                            type={this.state.form_fields}
-                            value={this.state.form_values}
-                            options={this.state.options}
-                            
-                        />
+                            <Form
+                                ref={(b) => { this.form = b; }}
+                                type={this.state.form_fields}
+                                value={this.state.form_values}
+                                options={this.state.options}
+                            />
                         </View>
                     </View>
-            </View>
-            <TouchableOpacity onPress={this.resetPassword} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
+                </View>
+                <TouchableOpacity onPress={this.resetPassword} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
                     <Text robotoBold style={[AppStyles.nextButtonText, { fontSize: AppFonts.scaleFont(16) }]}>Confirm</Text>
                 </TouchableOpacity>
-        </View>
+            </View>
         );
     }
 }

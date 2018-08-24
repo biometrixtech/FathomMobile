@@ -256,10 +256,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                 }
 
                 // Only continue if the header is successful
-                //if (rawRes && /20[012]/.test(`${rawRes.status}`)) { return jsonRes; }
-                if (rawRes && /20[012]/.dev(`${rawRes.status}`)) 
-                { 
-                    return jsonRes; }
+                if (rawRes && /20[012]/.test(`${rawRes.status}`)) { return jsonRes; }
 
                 throw jsonRes;
             })
