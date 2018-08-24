@@ -14,11 +14,17 @@ import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
 
 // Consts and Libs
-import { AppAPI } from '../../lib/';
-import { AppColors, AppSizes, AppStyles, AppFonts, } from '../../constants';
-
-// Components
-import { Button, Text } from '../custom';
+import { AppAPI, AppUtil } from '../../lib/';
+import {
+    Actions as DispatchActions,
+    AppColors,
+    AppSizes,
+    AppStyles,
+    AppFonts,
+    ErrorMessages,
+} from '../../constants';
+import { store } from '../../store';
+import { Alerts, Button, Spacer, Text } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -30,28 +36,32 @@ class Start extends Component {
     static componentName = 'Start';
 
     static propTypes = {
-        authorizeUser:  PropTypes.func.isRequired,
-        email:          PropTypes.string,
-        environment:    PropTypes.string,
-        expires:        PropTypes.string,
-        finalizeLogin:  PropTypes.func.isRequired,
-        getUser:        PropTypes.func.isRequired,
-        jwt:            PropTypes.string,
-        onFormSubmit:   PropTypes.func,
-        password:       PropTypes.string,
-        registerDevice: PropTypes.func.isRequired,
-        sessionToken:   PropTypes.string,
-        user:           PropTypes.object.isRequired,
+        authorizeUser:        PropTypes.func.isRequired,
+        connectionInfo:       PropTypes.object,
+        email:                PropTypes.string,
+        environment:          PropTypes.string,
+        expires:              PropTypes.string,
+        finalizeLogin:        PropTypes.func.isRequired,
+        getUser:              PropTypes.func.isRequired,
+        jwt:                  PropTypes.string,
+        onFormSubmit:         PropTypes.func,
+        password:             PropTypes.string,
+        registerDevice:       PropTypes.func.isRequired,
+        scheduledMaintenance: PropTypes.object,
+        sessionToken:         PropTypes.string,
+        user:                 PropTypes.object.isRequired,
     }
 
     static defaultProps = {
-        email:        null,
-        environment:  'PROD',
-        expires:      null,
-        jwt:          null,
-        onFormSubmit: null,
-        password:     null,
-        sessionToken: null,
+        connectionInfo:       null,
+        email:                null,
+        environment:          'PROD',
+        expires:              null,
+        jwt:                  null,
+        onFormSubmit:         null,
+        password:             null,
+        scheduledMaintenance: null,
+        sessionToken:         null,
     }
 
     constructor(props) {
@@ -81,6 +91,12 @@ class Start extends Component {
                 Promise.resolve(this.login());
             } else {
                 this.hideSplash();
+                // check if we have a maintenance window to alert the user on
+                if(!this.props.scheduledMaintenance.addressed) {
+                    let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
+                    let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
+                    AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
+                }
             }
         }, 10);
     }
@@ -189,10 +205,18 @@ class Start extends Component {
                     source={require('../../../assets/images/standard/start.png')}
                     style={[AppStyles.containerCentered, {height: AppSizes.screen.heightTwoThirds, width: AppSizes.screen.width,}]}
                 >
-                    <Text h1 oswaldMedium style={[AppStyles.paddingVertical, {color: AppColors.white, fontSize: AppFonts.scaleFont(38)}]}>{'JOIN FATHOM'}</Text>
+                    <Text h1 oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(38)}}>{'JOIN FATHOM'}</Text>
+                    <Spacer size={this.state.displayMessage ? 20 : 15} />
+                    <View style={{width: AppSizes.screen.widthThreeQuarters}}>
+                        <Alerts
+                            error={this.state.displayMessage ? this.state.networkMessage: ''}
+                        />
+                    </View>
+                    <Spacer size={this.state.displayMessage ? 0 : 15} />
                     <Button
                         backgroundColor={AppColors.white}
                         buttonStyle={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontalLrg]}
+                        disabled={this.state.displayMessage}
                         fontFamily={AppStyles.robotoBold.fontFamily}
                         fontWeight={AppStyles.robotoBold.fontWeight}
                         onPress={this._routeToOnboarding}
@@ -202,7 +226,7 @@ class Start extends Component {
                     />
                 </ImageBackground>
                 <TouchableOpacity
-                    onPress={this._routeToLogin}
+                    onPress={this.state.displayMessage ? null : this._routeToLogin}
                     style={[AppStyles.containerCentered, {backgroundColor: AppColors.primary.grey.twentyPercent, height: AppSizes.screen.heightOneThird, width: AppSizes.screen.width,}]}
                 >
                     <Text h5 oswaldMedium style={[AppStyles.paddingBottom, {color: AppColors.black, fontSize: AppFonts.scaleFont(24)}]}>{'ALREADY A MEMBER?'}</Text>

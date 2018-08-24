@@ -3,112 +3,251 @@
  *
     <SoreBodyPart
         bodyPart={bodyPart}
-        bodyPartSide={bodyPartSide}
+        bodyPartSide={bodyPart.side}
         handleFormChange={handleFormChange}
         index={i+3}
-        surveyObject={surveyObject}
+        isPrevSoreness={true}
+        surveyObject={dailyReadiness}
     />
  *
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, MyPlan as MyPlanConstants } from '../../../constants';
-import { FathomSlider, SVGImage, Text } from '../../custom';
+import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
+import { FathomSlider, SVGImage, TabIcon, Text, } from '../../custom';
+import { ScaleButton } from './';
 
 // import third-party libraries
 import _ from 'lodash';
 
 /* Component ==================================================================== */
-const SoreBodyPart = ({
-    bodyPart,
-    bodyPartSide,
-    handleFormChange,
-    index,
-    surveyObject,
-}) => {
-    let bodyPartSorenessIndex = _.findIndex(surveyObject.soreness, o => (o.body_part === bodyPart.body_part || o.body_part === bodyPart.index) && o.side === bodyPartSide);
-    let severityValue = surveyObject.soreness[bodyPartSorenessIndex] ? surveyObject.soreness[bodyPartSorenessIndex].severity || 0 : 0;
-    let bodyPartMap = bodyPart.body_part ? MyPlanConstants.bodyPartMapping[bodyPart.body_part] : MyPlanConstants.bodyPartMapping[bodyPart.index];
-    let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
-    let severityString = '';
-    if(bodyPartGroup === 'joint') {
-        severityString = MyPlanConstants.jointLevels[severityValue].toUpperCase();
-    } else if (bodyPartGroup === 'muscle') {
-        severityString = MyPlanConstants.muscleLevels[severityValue].toUpperCase();
+class SoreBodyPart extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            type:  '',
+            value: null,
+        };
     }
-    let helpingVerb = bodyPartMap ? bodyPartMap.helping_verb : '';
-    let mainBodyPartName = bodyPartMap ? bodyPartMap.label.toUpperCase() : '';
-    if (mainBodyPartName.slice(-1) === 'S' && bodyPartMap.bilateral && !!bodyPartSide) {
-        if (mainBodyPartName === 'ACHILLES') {
-            // do nothing
-        } else if (mainBodyPartName === 'CALVES') {
-            mainBodyPartName = 'CALF';
-        } else {
-            mainBodyPartName = mainBodyPartName.slice(0, -1);
-        }
-        helpingVerb = 'is';
-    }
-    let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'LEFT ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'RIGHT ' : ''}${mainBodyPartName}`;
-    return(
-        <View>
-            { index ?
-                <View>
-                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.primary.grey.thirtyPercent}]}>
-                        {index}
-                    </Text>
-                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, {color: AppColors.black}]}>
-                        {`How ${helpingVerb} your ${bodyPartName} feeling?`}
-                    </Text>
-                    <View style={[AppStyles.containerCentered]}>
-                        { bodyPartMap ?
-                            <SVGImage
-                                image={bodyPartMap.image[bodyPartSide]}
-                                style={{width: 100, height: 100}}
-                            />
-                            :
-                            null
-                        }
-                    </View>
-                </View>
-                :
-                null
+
+    render = () => {
+        const { bodyPart, bodyPartSide, handleFormChange, index, isPrevSoreness, surveyObject, } = this.props;
+        let bodyPartSorenessIndex = _.findIndex(surveyObject.soreness, o => (o.body_part === bodyPart.body_part || o.body_part === bodyPart.index) && o.side === bodyPartSide);
+        let bodyPartMap = bodyPart.body_part ? MyPlanConstants.bodyPartMapping[bodyPart.body_part] : MyPlanConstants.bodyPartMapping[bodyPart.index];
+        let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
+        let sorenessPainMapping =
+            bodyPartGroup && bodyPartGroup === 'muscle' && this.state.type.length > 0 ?
+                MyPlanConstants.muscleLevels[this.state.type]
+                : bodyPartGroup && bodyPartGroup === 'joint' ?
+                    MyPlanConstants.jointLevels
+                    :
+                    [];
+        let helpingVerb = bodyPartMap ? bodyPartMap.helping_verb : '';
+        let mainBodyPartName = bodyPartMap ? bodyPartMap.label : '';
+        if (mainBodyPartName.slice(-1) === 's' && bodyPartMap.bilateral && !!bodyPartSide) {
+            if (mainBodyPartName === 'Achilles') {
+                // do nothing
+            } else if (mainBodyPartName === 'Calves') {
+                mainBodyPartName = 'Calf';
+            } else {
+                mainBodyPartName = mainBodyPartName.slice(0, -1);
             }
-            <View style={[AppStyles.row, AppStyles.paddingVerticalSml, {justifyContent: 'space-between'}]}>
-                <Text oswaldBold style={[AppStyles.paddingHorizontal, {color: AppColors.black}]}>
-                    {bodyPartName}
-                </Text>
-                <Text oswaldBold style={[AppStyles.paddingHorizontal, AppStyles.textRightAligned, {color: AppColors.slider[severityValue]}]}>
-                    {severityString.length > 0 ? `${severityValue}: ${severityString}` : ''}
-                </Text>
+            helpingVerb = 'is';
+        }
+        let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'left ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'right ' : ''}${mainBodyPartName.toLowerCase()}`;
+        return(
+            <View>
+                { index ?
+                    <View>
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
+                            {index}
+                        </Text>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                            {`How ${helpingVerb} your `}
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                {bodyPartName}
+                            </Text>
+                            {' feeling?'}
+                        </Text>
+                        <View style={[AppStyles.containerCentered]}>
+                            { bodyPartMap ?
+                                <SVGImage
+                                    image={bodyPartMap.image[bodyPartSide]}
+                                    style={{width: 100, height: 100}}
+                                />
+                                :
+                                null
+                            }
+                        </View>
+                    </View>
+                    :
+                    <Text oswaldLight style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(18),}]}>
+                        {'I FEEL'}
+                        <Text oswaldMedium style={{fontSize: AppFonts.scaleFont(18),}}>
+                            {` ${bodyPartName === 'abdominals' ? bodyPartName.slice(0, -1).toUpperCase() : bodyPartName.toUpperCase()}...`}
+                        </Text>
+                    </Text>
+                }
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding,}}>
+                    { isPrevSoreness ?
+                        <View>
+                            <TabIcon
+                                containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
+                                icon={this.state.type === 'all-good' ? 'check-circle' : 'checkbox-blank-circle-outline'}
+                                iconStyle={[{color: this.state.type === 'all-good' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
+                                onPress={() => {
+                                    this.setState({
+                                        type:  this.state.type === 'all-good' ? '' : 'all-good',
+                                        value: null,
+                                    }, () => {
+                                        handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide, true);
+                                    });
+                                }}
+                                reverse={false}
+                                size={35}
+                                type={'material-community'}
+                            />
+                            <Text
+                                oswaldRegular
+                                style={[
+                                    AppStyles.textCenterAligned,
+                                    {
+                                        color:           this.state.type === 'all-good' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
+                                        fontSize:        AppFonts.scaleFont(14),
+                                        paddingVertical: AppSizes.paddingSml,
+                                    }
+                                ]}
+                            >
+                                {'ALL GOOD'}
+                            </Text>
+                        </View>
+                        :
+                        null
+                    }
+                    { bodyPartGroup === 'joint' ?
+                        null
+                        :
+                        <View>
+                            <TabIcon
+                                containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
+                                icon={this.state.type === 'soreness' ? 'check-circle' : 'checkbox-blank-circle-outline'}
+                                iconStyle={[{color: this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
+                                onPress={() => {
+                                    this.setState({
+                                        type:  this.state.type === 'soreness' ? '' : 'soreness',
+                                        value: null,
+                                    }, () => {
+                                        handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide);
+                                    });
+                                }}
+                                reverse={false}
+                                size={35}
+                                type={'material-community'}
+                            />
+                            <Text
+                                oswaldRegular
+                                style={[
+                                    AppStyles.textCenterAligned,
+                                    {
+                                        color:           this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
+                                        fontSize:        AppFonts.scaleFont(14),
+                                        paddingVertical: AppSizes.paddingSml,
+                                    }
+                                ]}
+                            >
+                                {'SORENESS'}
+                            </Text>
+                        </View>
+                    }
+                    { bodyPartGroup === 'joint' ?
+                        null
+                        :
+                        <View>
+                            <TabIcon
+                                containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
+                                icon={this.state.type === 'pain' ? 'check-circle' : 'checkbox-blank-circle-outline'}
+                                iconStyle={[{color: this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
+                                onPress={() => {
+                                    this.setState({
+                                        type:  this.state.type === 'pain' ? '' : 'pain',
+                                        value: null,
+                                    }, () => {
+                                        handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide);
+                                    });
+                                }}
+                                reverse={false}
+                                size={35}
+                                type={'material-community'}
+                            />
+                            <Text
+                                oswaldRegular
+                                style={[
+                                    AppStyles.textCenterAligned,
+                                    {
+                                        color:           this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
+                                        fontSize:        AppFonts.scaleFont(14),
+                                        paddingVertical: AppSizes.paddingSml,
+                                    }
+                                ]}
+                            >
+                                {'PAIN'}
+                            </Text>
+                        </View>
+                    }
+                </View>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.padding}}>
+                    { bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint') ?
+                        _.map(sorenessPainMapping, (value, key) => {
+                            if(key === 0) { return; }
+                            let sorenessPainScaleMappingValue = (
+                                bodyPartGroup === 'joint'
+                            ) ?
+                                MyPlanConstants.sorenessPainScaleMapping(false, key, true)
+                                :
+                                MyPlanConstants.sorenessPainScaleMapping(this.state.type, key);
+                            /*eslint consistent-return: 0*/
+                            return(
+                                <ScaleButton
+                                    isSelected={this.state.value === key}
+                                    key={value+key}
+                                    keyLabel={key}
+                                    sorenessPainMappingLength={sorenessPainMapping.length}
+                                    updateStateAndForm={() => {
+                                        this.setState({
+                                            value: key,
+                                        }, () => {
+                                            handleFormChange('soreness', sorenessPainScaleMappingValue, bodyPartMap.index, bodyPartSide, true);
+                                        });
+                                    }}
+                                    valueLabel={value}
+                                />
+                            )
+                        })
+                        :
+                        null
+                    }
+                </View>
             </View>
-            <FathomSlider
-                bodyPart={bodyPartMap.index}
-                handleFormChange={handleFormChange}
-                maximumValue={5}
-                minimumValue={0}
-                name={'soreness'}
-                side={bodyPartSide}
-                thumbTintColor={AppColors.slider[severityValue]}
-                value={severityValue}
-            />
-        </View>
-    )
-};
+        )
+    }
+}
 
 SoreBodyPart.propTypes = {
     bodyPart:         PropTypes.object.isRequired,
     bodyPartSide:     PropTypes.number,
     handleFormChange: PropTypes.func.isRequired,
     index:            PropTypes.number,
+    isPrevSoreness:   PropTypes.bool,
     surveyObject:     PropTypes.object,
 };
 SoreBodyPart.defaultProps = {
-    bodyPartSide: 0,
-    index:        null,
-    surveyObject: {},
+    bodyPartSide:   0,
+    index:          null,
+    isPrevSoreness: false,
+    surveyObject:   {},
 };
 SoreBodyPart.componentName = 'SoreBodyPart';
 

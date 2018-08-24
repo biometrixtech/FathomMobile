@@ -423,5 +423,23 @@ export default {
         backgroundColor: Colors.primary.yellow.hundredPercent,
         justifyContent:  'center',
         // width:           Sizes.screen.width,
-    }
+    },
+
+    // misc survey styles
+    sorenessPainValues: {
+        alignSelf:      'center',
+        borderRadius:   35 / 2,
+        borderWidth:    3,
+        height:         35,
+        justifyContent: 'center',
+        width:          35,
+    },
+    allGoodBtn: {
+        alignSelf:      'center',
+        borderRadius:   100 / 2,
+        borderWidth:    2,
+        height:         100,
+        justifyContent: 'center',
+        width:          100,
+    },
 };

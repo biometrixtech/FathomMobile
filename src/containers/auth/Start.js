@@ -8,6 +8,7 @@ const Start = ({
     Layout,
     authorizeUser,
     certificate,
+    connectionInfo,
     email,
     environment,
     expires,
@@ -18,12 +19,14 @@ const Start = ({
     onFormSubmit,
     password,
     registerDevice,
+    scheduledMaintenance,
     sessionToken,
     user,
 }) => (
     <Layout
         authorizeUser={authorizeUser}
         certificate={certificate}
+        connectionInfo={connectionInfo}
         email={email}
         environment={environment}
         expires={expires}
@@ -34,48 +37,55 @@ const Start = ({
         onFormSubmit={onFormSubmit}
         password={password}
         registerDevice={registerDevice}
+        scheduledMaintenance={scheduledMaintenance}
         sessionToken={sessionToken}
         user={user}
     />
 );
 
 Start.propTypes = {
-    Layout:            PropTypes.func.isRequired,
-    authorizeUser:     PropTypes.func.isRequired,
-    certificate:       PropTypes.object,
-    email:             PropTypes.string,
-    environment:       PropTypes.string,
-    expires:           PropTypes.string,
-    finalizeLogin:     PropTypes.func.isRequired,
-    getUser:           PropTypes.func.isRequired,
-    getUserSensorData: PropTypes.func.isRequired,
-    jwt:               PropTypes.string,
-    onFormSubmit:      PropTypes.func.isRequired,
-    password:          PropTypes.string,
-    registerDevice:    PropTypes.func.isRequired,
-    sessionToken:      PropTypes.string,
-    user:              PropTypes.object.isRequired,
+    Layout:               PropTypes.func.isRequired,
+    authorizeUser:        PropTypes.func.isRequired,
+    certificate:          PropTypes.object,
+    connectionInfo:       PropTypes.object,
+    email:                PropTypes.string,
+    environment:          PropTypes.string,
+    expires:              PropTypes.string,
+    finalizeLogin:        PropTypes.func.isRequired,
+    getUser:              PropTypes.func.isRequired,
+    getUserSensorData:    PropTypes.func.isRequired,
+    jwt:                  PropTypes.string,
+    onFormSubmit:         PropTypes.func.isRequired,
+    password:             PropTypes.string,
+    registerDevice:       PropTypes.func.isRequired,
+    scheduledMaintenance: PropTypes.object,
+    sessionToken:         PropTypes.string,
+    user:                 PropTypes.object.isRequired,
 };
 
 Start.defaultProps = {
-    certificate:  null,
-    environment:  'PROD',
-    email:        null,
-    expires:      null,
-    jwt:          null,
-    password:     null,
-    sessionToken: null,
+    certificate:          null,
+    connectionInfo:       null,
+    environment:          'PROD',
+    email:                null,
+    expires:              null,
+    jwt:                  null,
+    password:             null,
+    scheduledMaintenance: null,
+    sessionToken:         null,
 };
 
 const mapStateToProps = state => ({
-    certificate:  state.init.certificate || null,
-    environment:  state.init.environment || 'PROD',
-    email:        state.init.email || null,
-    expires:      state.init.expires || null,
-    jwt:          state.init.jwt || null,
-    password:     state.init.password || null,
-    sessionToken: state.init.session_token || null,
-    user:         state.user,
+    certificate:          state.init.certificate || null,
+    connectionInfo:       state.init.connectionInfo || null,
+    environment:          state.init.environment || 'PROD',
+    email:                state.init.email || null,
+    expires:              state.init.expires || null,
+    jwt:                  state.init.jwt || null,
+    password:             state.init.password || null,
+    scheduledMaintenance: state.init.scheduledMaintenance || null,
+    sessionToken:         state.init.session_token || null,
+    user:                 state.user,
 });
 
 const mapDispatchToProps = {

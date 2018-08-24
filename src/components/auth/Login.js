@@ -33,9 +33,10 @@ import FormValidation from 'tcomb-form-native';
 import Modal from 'react-native-modalbox';
 
 // Consts and Libs
-import { AppAPI } from '../../lib';
-import { AppColors, APIConfig, AppFonts, AppSizes, AppStyles } from '../../constants';
+import { AppAPI, AppUtil, } from '../../lib';
+import { Actions as DispatchActions, AppColors, APIConfig, AppFonts, AppSizes, AppStyles, ErrorMessages, } from '../../constants';
 import { onboardingUtils } from '../../constants/utils';
+import { store } from '../../store';
 
 // Components
 import { Alerts, Button, Card, ListItem, Spacer, TabIcon, Text } from '../custom';
@@ -171,7 +172,7 @@ class Login extends Component {
                         autoCapitalize:       'none',
                         blurOnSubmit:         false,
                         clearButtonMode:      'while-editing',
-                        error:                'Your email must be a valid email format',
+                        error:                'YOUR EMAIL MUST BE A VALID EMAIL FORMAT',
                         keyboardType:         'email-address',
                         label:                ' ',
                         placeholder:          'email',
@@ -183,7 +184,7 @@ class Login extends Component {
                     Password: {
                         blurOnSubmit:         true,
                         clearButtonMode:      'while-editing',
-                        error:                'Your password must be 8-16 characters, include an uppercase letter, a lowercase letter, and a number',
+                        error:                'YOUR PASSWORD MUST BE 8-16 CHARACTERS, INCLUDE AN UPPERCASE LETTER, A LOWERCASE LETTER, AND A NUMBER',
                         label:                ' ',
                         password:             true,
                         placeholder:          'password',
@@ -204,6 +205,13 @@ class Login extends Component {
         }
     }
 
+    componentDidMount = () => {
+        if(!this.props.scheduledMaintenance.addressed) {
+            let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
+            let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
+            AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
+        }
+    }
 
     _focusNextField = (id) => {
         this.form.refs.input.refs[id].refs.input.focus();
@@ -226,7 +234,7 @@ class Login extends Component {
         // Form is valid
         if (credentials) {
             this.setState({ form_values: credentials }, () => {
-                this.setState({ resultMsg: { status: 'One moment...' } });
+                this.setState({ resultMsg: { status: 'ONE MOMENT...' } });
 
                 /**
                   * - if jwt valid
@@ -265,7 +273,7 @@ class Login extends Component {
                             .then(() => this.props.finalizeLogin(user, credentials, authorization));
                     })
                     .then(() => this.setState({
-                        resultMsg: { success: 'Success, now loading your data!' },
+                        resultMsg: { success: 'SUCCESS, NOW LOADING YOUR DATA!!' },
                     }, () => {
                         if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
                             Actions.home();

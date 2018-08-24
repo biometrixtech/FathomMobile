@@ -13,11 +13,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { ble, init } from '../../actions';
+import { ble, init, plan } from '../../actions';
 
 const Settings = ({
     Layout,
     accessoryData,
+    clearMyPlanData,
     deleteUserSensorData,
     disconnectFromSingleSensor,
     getSingleSensorSavedPractices,
@@ -26,6 +27,7 @@ const Settings = ({
 }) => (
     <Layout
         accessoryData={accessoryData}
+        clearMyPlanData={clearMyPlanData}
         deleteUserSensorData={deleteUserSensorData}
         disconnectFromSingleSensor={disconnectFromSingleSensor}
         getSingleSensorSavedPractices={getSingleSensorSavedPractices}
@@ -37,6 +39,7 @@ const Settings = ({
 Settings.propTypes = {
     Layout:                        PropTypes.func.isRequired,
     accessoryData:                 PropTypes.object.isRequired,
+    clearMyPlanData:               PropTypes.func.isRequired,
     deleteUserSensorData:          PropTypes.func.isRequired,
     disconnectFromSingleSensor:    PropTypes.func.isRequired,
     getSingleSensorSavedPractices: PropTypes.func.isRequired,
@@ -53,6 +56,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
+    clearMyPlanData:               plan.clearMyPlanData,
     deleteUserSensorData:          ble.deleteUserSensorData,
     disconnectFromSingleSensor:    ble.disconnectFromSingleSensor,
     getSingleSensorSavedPractices: ble.getSingleSensorSavedPractices,
