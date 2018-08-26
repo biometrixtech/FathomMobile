@@ -59,6 +59,9 @@ export default function initReducer(state = initialState, action) {
     case Actions.SIGN_UP_SUCCESS:
     case Actions.SIGN_UP_FAILURE:
     case Actions.FORGOT_PASSWORD_SUCCESS:
+        return Object.assign({}, state, {
+            email:      action.emailAddress.email || state.email,
+        });
     case Actions.FORGOT_PASSWORD_FAILURE:
     case Actions.RESET_PASSWORD_SUCCESS:
     case Actions.RESET_PASSWORD_FAILURE:

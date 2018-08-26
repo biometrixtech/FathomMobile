@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-    View, StyleSheet, TouchableOpacity
+    Keyboard, View, StyleSheet, TouchableOpacity
 } from 'react-native';
 import FormValidation from 'tcomb-form-native';
 import { Actions } from 'react-native-router-flux';
@@ -71,14 +71,11 @@ class ResetPassword extends Component {
         // Passwords Match
         const passwordsMatch = FormValidation.refinement(
             FormValidation.String, (newPassword, confirmPassword) => {
-                if(newPassword == confirmPassword)
+                if(newPassword === confirmPassword)
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             },
         );
         
@@ -119,10 +116,12 @@ class ResetPassword extends Component {
                         error:                'Your email must be a valid email format',
                         keyboardType:         'email-address',
                         label:                ' ',
+                        onSubmitEditing:      () => this._focusNextField('VerificationCode'),
                         placeholder:          'email',
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
                         returnKeyType:        'next',
-                        stylesheet:           inputStyle,    
+                        stylesheet:           inputStyle, 
+                        value:                this.props.email   
                     },
                     VerificationCode: {
                         autoCapitalize:       'none',
@@ -131,6 +130,7 @@ class ResetPassword extends Component {
                         error:                'Please enter a valid verification code',
                         keyboardType:         'default',
                         label:                ' ',
+                        onSubmitEditing:      () => this._focusNextField('NewPassword'),
                         placeholder:          'verification code',
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
                         returnKeyType:        'next',
@@ -143,6 +143,7 @@ class ResetPassword extends Component {
                         error:                onboardingUtils.getPasswordRules(),
                         keyboardType:         'default',
                         label:                ' ',
+                        onSubmitEditing:      () => this._focusNextField('ConfirmPassword'),
                         placeholder:          'new password',
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
                         returnKeyType:        'next',
@@ -151,14 +152,14 @@ class ResetPassword extends Component {
                     },
                     ConfirmPassword: {
                         autoCapitalize:       'none',
-                        blurOnSubmit:         false,
+                        blurOnSubmit:         true,
                         clearButtonMode:      'while-editing',
                         error:                'Passwords entered do not match.',
                         keyboardType:         'default',
                         label:                ' ',
                         placeholder:          'confirm password',
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
-                        returnKeyType:        'next',
+                        returnKeyType:        'done',
                         secureTextEntry:      true,
                         stylesheet:           inputStyle,    
                     },
@@ -175,13 +176,6 @@ class ResetPassword extends Component {
                 },
             });
         }
-        if (this.props.emailAddress !== null) {
-            this.setState({
-                form_values: {
-                    Email: this.props.emailAddress,
-                },
-            });
-        }
     }
 
     /**
@@ -190,6 +184,9 @@ class ResetPassword extends Component {
     resetPassword = () => {
         // Get values
         const userData = this.form.getValue();
+
+        // close keyboard
+        Keyboard.dismiss();
 
         // Form is valid
         if (userData) {
@@ -224,7 +221,6 @@ class ResetPassword extends Component {
 
     render = () => {
         const Form = FormValidation.form.Form;
-
         return (
             <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: AppColors.white}}>
                 <View >
@@ -237,35 +233,39 @@ class ResetPassword extends Component {
                         success={this.state.resultMsg.success}
                         error={this.state.resultMsg.error}
                     />
-                   <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(20)}]}>
-                        {this.props.emailAddress}
+                    <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(20)}]}>
+                        {'Set Your Password'}
                     </Text>
 
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, { fontSize: AppFonts.scaleFont(15) }]}>
-                            Enter your email to receive instructions on how to reset your password.
-                        </Text>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, { fontSize: AppFonts.scaleFont(15) }]}>
+                                {'You should receive a verification code by email.  Please retrieve that code and enter your new password.'}
+                            </Text>
                         </View>
                     </View>
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthTwoThirds}}>
                         
-                        <Form
-                            ref={(b) => { this.form = b; }}
-                            type={this.state.form_fields}
-                            value={this.state.form_values}
-                            options={this.state.options}
-                            
-                        />
+                            <Form
+                                ref={(b) => { this.form = b; }}
+                                type={this.state.form_fields}
+                                value={this.state.form_values}
+                                options={this.state.options}
+                                
+                            />
                         </View>
                     </View>
-            </View>
-            <TouchableOpacity onPress={this.resetPassword} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
+                </View>
+                <TouchableOpacity onPress={this.resetPassword} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
                     <Text robotoBold style={[AppStyles.nextButtonText, { fontSize: AppFonts.scaleFont(16) }]}>Confirm</Text>
                 </TouchableOpacity>
-        </View>
+            </View>
         );
+    }
+
+    _focusNextField = (id) => {
+        this.form.refs.input.refs[id].refs.input.focus();
     }
 }
 

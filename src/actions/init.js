@@ -202,19 +202,34 @@ const forgotPassword = (email) => {
     return dispatch => AppAPI.forgot_password.post(false, email)
         .then(result => {
             dispatch({
-                type: Actions.FORGOT_PASSWORD_SUCCESS,
-                data: result,
+                type:         Actions.FORGOT_PASSWORD_SUCCESS,
+                data:         result,
+                emailAddress: email,
             });
-            return result;
+            return Promise.resolve(result);
+            //return result;
         })
         .catch(err => {
             dispatch({
-                type: Actions.FORGOT_PASSWORD_FAILED,
+                type:        Actions.FORGOT_PASSWORD_FAILED,
+                emalAddress: email
             });
             console.log('error', err)
-            return err;
+            return Promise.reject(err);
+            //return err;
         });
 };
+/*
+const createUser = (payload) => {
+    return dispatch => AppAPI.create_user.post(false, payload)
+        .then(userData => Promise.resolve(userData))
+        .catch(err => {
+            console.log('err',err);
+            return Promise.reject(err);
+        });
+};
+
+*/
 
 /**
   * POST Reset Password form data
