@@ -121,7 +121,6 @@ class ResetPassword extends Component {
                         placeholderTextColor: AppColors.primary.yellow.hundredPercent,
                         returnKeyType:        'next',
                         stylesheet:           inputStyle, 
-                        value:                this.props.email   
                     },
                     VerificationCode: {
                         autoCapitalize:       'none',
@@ -225,8 +224,8 @@ class ResetPassword extends Component {
             <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: AppColors.white}}>
                 <View >
                     <ProgressBar
-                        currentStep={1}
-                        totalSteps={2}
+                        currentStep={2}
+                        totalSteps={3}
                     />
                     <Alerts
                         status={this.state.resultMsg.status}
