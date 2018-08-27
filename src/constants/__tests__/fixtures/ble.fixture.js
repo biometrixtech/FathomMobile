@@ -89,6 +89,7 @@ export default {
         // SINGLE SENSOR COMMANDS
         DELETE_SINGLE_PRACTICE:         parseInt('0x79', 16),
         IS_SINGLE_SENSOR_IN_SETUP_MODE: parseInt('0x74', 16),
+        GET_ENTIRE_SYSTEM_STATUS:       parseInt('0x7D', 16),
         GET_PRACTICE_ACCELERATIONS:     parseInt('0x77', 16),
         GET_PRACTICE_DURATION:          parseInt('0x78', 16),
         GET_PRACTICE_TIMESTAMPS:        parseInt('0x76', 16),

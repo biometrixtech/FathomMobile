@@ -39,7 +39,6 @@ import { AppUtil, } from '../../lib';
 // Components
 import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
 import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } from '../myPlan/pages';
-import { bleUtils } from '../../constants/utils';
 
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
@@ -85,7 +84,6 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            BLEData:            {},
             completedExercises: [],
             dailyReadiness:     {
                 readiness:     0,
@@ -190,8 +188,6 @@ class Home extends Component {
             .catch(error => {
                 SplashScreen.hide();
             });
-        // trigger BLE Steps function
-        this._handleBLESteps();
     }
 
     componentWillUnmount = () => {
@@ -233,11 +229,6 @@ class Home extends Component {
                 true;
             this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(nextProps.plan.dailyPlan[0], disabled));
         }
-    }
-
-    _handleBLESteps = () => {
-        const BLEData = bleUtils.handleBLESteps(this.props.ble);
-        this.setState({ BLEData });
     }
 
     _handleDailyReadinessFormChange = (name, value, bodyPart, side) => {

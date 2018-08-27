@@ -12,6 +12,7 @@ import { Image, Platform, StatusBar, StyleSheet, View, } from 'react-native';
 import { AppColors, AppSizes, AppStyles, } from '../../constants';
 import { TabIcon, Text, } from './';
 import { store } from '../../store';
+import { bleUtils } from '../../constants/utils';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -30,6 +31,19 @@ class CustomNavBar extends Component {
     static propTypes = {}
 
     static defaultProps = {}
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            BLEData: {},
+        }
+    }
+
+    componentWillMount = () => {
+        // trigger BLE Steps function
+        const BLEData = bleUtils.handleBLESteps(store.getState().ble, store.getState().user.id);
+        this.setState({ BLEData });
+    }
 
     componentDidMount = () => {
         StatusBar.setBarStyle('dark-content');

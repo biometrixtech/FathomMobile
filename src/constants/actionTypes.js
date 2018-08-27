@@ -53,6 +53,7 @@ export default {
     STOP_CONNECT:                 'STOP_CONNECT',
     STOP_SCAN:                    'STOP_SCAN',
     STORE_PARAMS:                 'STORE_PARAMS',
+    UPDATE_BLE_STATUES:           'UPDATE_BLE_STATUES',
     UPSERT_ACCESSORY:             'UPSERT_ACCESSORY',
     WIFI_SCAN:                    'WIFI_SCAN',
     WIFI:                         'WIFI',

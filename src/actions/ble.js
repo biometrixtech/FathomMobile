@@ -17,6 +17,7 @@ import { store } from '../store';
 import _ from 'lodash';
 import BleManager from 'react-native-ble-manager';
 import Fabric from 'react-native-fabric';
+import moment from 'moment';
 
 // Fabric specific
 const { Answers } = Fabric;
@@ -36,7 +37,11 @@ const read = (id) => {
                 deviceInfo: AppConfig.deviceInfo,
                 id,
             });
-            return data;
+            // NOTE: added to make sure our data is correct before returning
+            if(data[0] === 0 && (data[3] === 0 || data[3] === 1)) {
+                return data;
+            }
+            return read(id);
         });
 };
 
@@ -201,14 +206,55 @@ const setKitTime = (id) => {
 };
 
 /**
+  * converts UTC epoch time to local string needed to send to API
+  */
+const convertUTCEpochTimeToLocalString = epoch => {
+    return `${moment.unix(epoch).toISOString(true).split('.')[0]}Z`;
+};
+
+/**
   * converts our unsigned 32-bit integer to epoch time
+  * NOTE: array must be reversed once pulled
+  * start_time = array.slice(4, 8).reverse();
+  * end_time = array.slice(8, 12).reverse();
   */
 const convertUnsigned32BitIntToEpochTime = array => {
-  	let timestamp = 0;
-  	_.map(array, (i, key) => {
-    		timestamp += i << 8 * key;
+    let timestamp = 0;
+    _.map(array, (i, key) => {
+        timestamp += i << 8 * (3 - key);
     });
-    return timestamp;
+    return convertUTCEpochTimeToLocalString(timestamp);
+};
+
+/**
+  * converts to bytes then converts to unsigned 32-bit integer then converts to a float value
+  * NOTE: array must be reversed once pulled
+  * https://jsfiddle.net/L0y7ohtr/82/
+  */
+const convertAccelerationToFloat = array => {
+    let unsigned32BitInt = 0;
+    _.map(array, (i, key) => {
+        let newValue = typeof i === 'string' ? parseInt(i, 16) : i;
+        unsigned32BitInt += newValue << 8 * (3 - key);
+    });
+  	let intData = new Uint32Array(1);
+    intData[0] = unsigned32BitInt;
+    let dataAsFloat = new Float32Array(intData.buffer);
+    return Math.ceil(dataAsFloat[0]);
+};
+
+/**
+  * converts unsigned 16-bit integer to value
+  * NOTE: array must be reversed once pulled
+  * https://jsfiddle.net/L0y7ohtr/81/
+  */
+const convertDurationToInt = array => {
+    let unsigned16BitInt = 0;
+    _.map(array, (i, key) => {
+        let newValue = typeof i === 'string' ? parseInt(i, 16) : i;
+        unsigned16BitInt += newValue << 8 * (1 - key);
+    });
+  	return unsigned16BitInt;
 };
 
 /**
@@ -325,67 +371,95 @@ const disconnectFromSingleSensor = (sensor_id) => {
         .catch(err => Promise.reject(err));
 };
 
-const getSingleSensorSavedPractices = (sensorId, operation_id = '0x00') => {
-    const dataArray = [commands.GET_SINGLE_SENSOR_LIST, convertHex('0x01'), convertHex(operation_id)];
-    // let isSensorConnected = false;
+const getSingleSensorStatus = (sensorId) => {
     return BleManager.start({ showAlert: true })
         .then(() => BleManager.connect(sensorId))
         .then(() => BleManager.retrieveServices(sensorId))
         .catch(err => BleManager.retrieveServices(sensorId))
-        .then(peripheralInfo => write(peripheralInfo.id, dataArray)) // get single sensor practices - 0x75
+        .then(peripheralInfo => {
+            const dataArray = [commands.GET_ENTIRE_SYSTEM_STATUS, convertHex('0x00')];
+            return write(peripheralInfo.id, dataArray); // get entire system status - 0x7D
+        })
         .then(response => {
-            // console.log('++++++++response',response);
-            // isSensorConnected = true;
-            // console.log(response[4]);
-            const numberOfPractices = response[4];
+            let returnObj = {};
+            returnObj.systemStatus = response[4];
+            returnObj.batteryCharge = response[5] > 100 ? 100 : response[5];
+            returnObj.numberOfPractices = response[6];
+            store.dispatch({
+                type:          Actions.UPDATE_BLE_STATUES,
+                batteryCharge: returnObj.batteryCharge,
+                systemStatus:  returnObj.systemStatus,
+            })
+            return Promise.resolve(returnObj);
+        })
+        .catch(err => {
+            return Promise.reject(err)
+        });
+};
 
-            // const testDataArray = [commands.GET_PRACTICE_TIMESTAMPS, convertHex('0x01'), 2];
-            // write(sensorId, testDataArray)
-            //     .then(res => {
-            //         console.log('res',res);
-            //         let start_epoch = convertUnsigned32BitIntToEpochTime(res.slice(4,8));
-            //         let end_epoch = convertUnsigned32BitIntToEpochTime(res.slice(8,12));
-            //         console.log('start_epoch',start_epoch);
-            //         console.log('end_epoch',end_epoch);
-            //     });
+const sleeper = ms => {
+    return x => {
+        return new Promise(resolve => setTimeout(() => resolve(x), ms));
+    }
+};
 
-            // const testDataArray2 = [commands.GET_PRACTICE_ACCELERATIONS, convertHex('0x01'), 2];
-            // write(sensorId, testDataArray2)
-            //     .then(res2 => {
-            //         console.log('res2',res2);
-            //     });
+const getAllPracticeDetails = (sensorId, practiceIndex = 0) => {
+    let returnObj = {};
+    return BleManager.retrieveServices(sensorId)
+        .then(sleeper(1000))
+        .then(peripheralInfo => {
+            let timestampsArray = [commands.GET_PRACTICE_TIMESTAMPS, convertHex('0x01'), convertHex(practiceIndex)];
+            return write(peripheralInfo.id, timestampsArray); // get single sensor practice timestamps - 0x76
+        })
+        .then(response => {
+            returnObj.start_time = convertUnsigned32BitIntToEpochTime(response.slice(4, 8).reverse());
+            returnObj.end_time = convertUnsigned32BitIntToEpochTime(response.slice(8, 12).reverse());
+            return response;
+        })
+        .then(sleeper(1000))
+        .then(res => {
+            const accelerationsArray = [commands.GET_PRACTICE_ACCELERATIONS, convertHex('0x01'), convertHex(practiceIndex)];
+            return write(sensorId, accelerationsArray); // get single sensor practice accelerations - 0x77
+        })
+        .then(res2 => {
+            returnObj.inactive_accel = convertAccelerationToFloat(res2.slice(4, 8).reverse());
+            returnObj.low_accel = convertAccelerationToFloat(res2.slice(8, 12).reverse());
+            returnObj.mod_accel = convertAccelerationToFloat(res2.slice(12, 16).reverse());
+            returnObj.high_accel = convertAccelerationToFloat(res2.slice(16, 20).reverse());
+            return res2;
+        })
+        .then(sleeper(1000))
+        .then(res3 => {
+            const durationsArray = [commands.GET_PRACTICE_DURATION, convertHex('0x01'), convertHex(practiceIndex)];
+            return write(sensorId, durationsArray); // get single sensor practice windows duration - 0x78
+        })
+        .then(res4 => {
+            returnObj.inactive_duration = convertDurationToInt(res4.slice(4, 6).reverse());
+            returnObj.low_duration = convertDurationToInt(res4.slice(6, 8).reverse());
+            returnObj.mod_duration = convertDurationToInt(res4.slice(8, 10).reverse());
+            returnObj.high_duration = convertDurationToInt(res4.slice(10, 12).reverse());
+            return Promise.resolve(returnObj);
+        })
+        .catch(err => {
+            console.log('++++++++err',err);
+            return Promise.reject(err)
+        });
+};
 
-            // const testDataArray3 = [commands.GET_PRACTICE_DURATION, convertHex('0x01'), 2];
-            // write(sensorId, testDataArray3)
-            //     .then(res3 => {
-            //         console.log('res3',res3);
-            //     });
-
-            // for each numberOfPractices:
-            // (1) 0x76 (GET_PRACTICE_TIMESTAMPS) - start_time & end_time
-            // (2) 0x77 (GET_PRACTICE_ACCELERATIONS) - inactive_accel, low_accel, mod_accel, & high_accel
-            // (3) 0x78 (GET_PRACTICE_DURATION) - inactive_duration, low_duration, mod_duration, & high_duration
-            // (4) save to AsyncStore
-            // (5) 0x79 (DELETE_SINGLE_PRACTICE) -> delete practice
-            // (6) send built obj to AWS
-            // (7) delete AsyncStorage record
+const deleteSinglePractice = (sensorId, practiceIndex = 0) => {
+    const dataArray = [commands.DELETE_SINGLE_PRACTICE, convertHex('0x01'), convertHex(practiceIndex)];
+    return BleManager.retrieveServices(sensorId)
+        .then(sleeper(1000))
+        .then(peripheralInfo => write(peripheralInfo.id, dataArray)) // delete single sensor practice - 0x79
+        .then(response => {
+            console.log('++++++++response',response);
             return Promise.resolve(response);
         })
         .catch(err => {
             console.log('++++++++err',err);
-            // isSensorConnected = false;
             return Promise.reject(err)
         });
-
-    // return {
-    //     isSensorConnected,
-    // }
 };
-
-// const getPracticeTimestamps = (sensorId, practiceIndex) => {};
-// const getPracticeAccelerations = (sensorId, practiceIndex) => {};
-// const getPracticeDuration = (sensorId, practiceIndex) => {};
-// const deleteSinglePractice = (sensorId, practiceIndex) => {};
 
 /**
   * OLD FUNCTIONS
@@ -815,15 +889,17 @@ export default {
     checkState,
     connectToAccessory,
     connectWiFi,
+    deleteSinglePractice,
     deleteUserSensorData,
     deviceFound,
     disconnect,
     disconnectFromSingleSensor,
     enableBluetooth,
     getAccessoryKey,
+    getAllPracticeDetails,
     getKitName,
     getOwnerFlag,
-    getSingleSensorSavedPractices,
+    getSingleSensorStatus,
     getUserSensorData,
     getWifiMacAddress,
     handleDisconnect,

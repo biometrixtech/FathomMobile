@@ -80,6 +80,19 @@ const postReadinessSurvey = dailyReadinessObj => {
 };
 
 /**
+  * Post sensor data
+  */
+const postSingleSensorData = dataObj => {
+    return AppAPI.post_sensor_data.post(false, dataObj)
+        .then(data => Promise.resolve(data))
+        .catch(err => {
+            console.log('err',err);
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+}
+
+/**
   * Post Session Survey Data
   */
 const postSessionSurvey = postSessionObj => {
@@ -159,4 +172,5 @@ export default {
     patchActiveRecovery,
     postReadinessSurvey,
     postSessionSurvey,
+    postSingleSensorData,
 };
