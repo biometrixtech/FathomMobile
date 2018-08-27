@@ -207,16 +207,15 @@ const forgotPassword = (email) => {
                 emailAddress: email,
             });
             return Promise.resolve(result);
-            //return result;
         })
         .catch(err => {
             dispatch({
                 type:        Actions.FORGOT_PASSWORD_FAILED,
-                emalAddress: email
+                data:        err,
+                emalAddress: email,
             });
             console.log('error', err)
             return Promise.reject(err);
-            //return err;
         });
 };
 /*
@@ -241,13 +240,15 @@ const createUser = (payload) => {
                 type: Actions.RESET_PASSWORD_SUCCESS,
                 data: result,
             });
-            return result;
+            return Promise.resolve(result);
         })
         .catch(err => {
             dispatch({
                 type: Actions.RESET_PASSWORD_FAILED,
+                data: err,
             });
-            return err;
+            console.log('error', err)
+            return Promise.reject(err);
         });
 };
 

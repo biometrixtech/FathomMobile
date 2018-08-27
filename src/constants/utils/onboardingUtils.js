@@ -325,9 +325,9 @@ const onboardingUtils = {
             || !numbersRegex.test(password)
             || !upperCaseLettersRegex.test(password)
             || !lowerCaseLettersRegex.test(password))
-            return true;
-        else
-            return false;
+        {
+            return true;}
+        return false;
     },
 
     getPasswordRules() {

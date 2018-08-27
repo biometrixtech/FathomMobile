@@ -132,7 +132,16 @@ class ForgotPassword extends Component {
                     //this._routeToResetPassword({emailAddress: credentials.email})
                 }).catch((err) => {
                     const error = AppAPI.handleError(err);
-                    this.setState({ resultMsg: { error } });
+
+                    if(error.includes('UserNotFoundException')) {
+                        this.setState({ resultMsg: {error: 'The email address you provided was not found.'} });    
+                    }
+                    else if(error.includes('LimitExceededException')) {
+                        this.setState({ resultMsg: {error: 'Reset limit exceeded.  Please try again after some time.'} });    
+                    }
+                    else{
+                        this.setState({ resultMsg: { error } });
+                    }
                 });
             });
         }

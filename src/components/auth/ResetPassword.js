@@ -75,6 +75,10 @@ class ResetPassword extends Component {
                 {
                     return true;
                 }
+                else if(newPassword.length === 0 && confirmPassword.length === 0)
+                {
+                    return true;
+                }
                 return false;
             },
         );
@@ -198,16 +202,15 @@ class ResetPassword extends Component {
                 }
 
                 this.props.onFormSubmit({
-                    email:            userData.Email,
-                    verificationCode: userData.VerificationCode,
-                    newPassword:      userData.NewPassword,
-                    confirmPassword:  userData.ConfirmPassword,
+                    email:             userData.Email,
+                    confirmation_code: userData.VerificationCode,
+                    password:          userData.NewPassword,
                 }).then(() => {
                     this.setState({
-                        resultMsg: { success: 'Password reset was successful!' },
+                        resultMsg: { success: 'Password reset was successful!  Logging you in...' },
                     }, () => {
                         setTimeout(() => {
-                            Actions.root({ type: 'reset' });
+                            this._loginUser(userData);
                         }, 1000);
                     });
                 }).catch((err) => {
@@ -265,6 +268,47 @@ class ResetPassword extends Component {
 
     _focusNextField = (id) => {
         this.form.refs.input.refs[id].refs.input.focus();
+    }
+
+    _loginUser(userData){
+        this.props.onSubmitSuccess({
+            email:    userData.Email,
+            password: userData.Password,
+        }, false).then(response => {
+            let { authorization, user } = response;
+            return this.props.authorizeUser(authorization, user, userData)
+                .then(res => {
+                    let returnObj = {};
+                    returnObj.user = user;
+                    returnObj.authorization = res.authorization;
+                    returnObj.authorization.session_token = authorization.session_token;
+                    return Promise.resolve(returnObj);
+                })
+                .catch(err => Promise.reject('Unexpected response authorization'))
+        })
+            .then(response => {
+                return this.props.getUserSensorData(response.user.id)
+                    .then(res => Promise.resolve(response))
+                    .catch(err => Promise.reject(err));
+            })
+            .then(response => {
+                let { authorization, user } = response;
+                return this.props.registerDevice(this.props.certificate, this.props.device, user)
+                    .then(() => this.props.finalizeLogin(user, userData, authorization));
+            })
+            .then(() => this.setState({
+                resultMsg: { success: 'Success, now loading your data!' },
+            }, () => {
+                if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
+                    Actions.home();
+                } else {
+                    Actions.onboarding();
+                }
+            })).catch((err) => {
+                console.log('err',err);
+                const error = AppAPI.handleError(err);
+                return this.setState({ resultMsg: { error } });
+            });
     }
 }
 

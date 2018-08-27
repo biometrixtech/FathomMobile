@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { init } from '../../actions';
+import { ble, init } from '../../actions';
 
 const ResetPassword = ({
     Layout,
@@ -53,7 +53,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    onFormSubmit: init.resetPassword,
+    authorizeUser:     init.authorizeUser,
+    finalizeLogin:     init.finalizeLogin,
+    getUserSensorData: ble.getUserSensorData,
+    onFormSubmit:      init.resetPassword,
+    onSubmitSuccess:   init.startLogin,
+    registerDevice:    init.registerDevice,
+    setEnvironment:    init.setEnvironment,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ResetPassword);
