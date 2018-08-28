@@ -18,6 +18,42 @@ import { store } from '../store';
 import { Platform } from 'react-native';
 
 // import third-party libraries
+import moment from 'moment';
+
+/**
+  * Ping Maintenance API
+  * - to know of upcoming, current, and future maintenance windows
+  */
+const getMaintenanceWindow = (updateReducer) => {
+    return AppAPI.maintenance_status.get()
+        .then(response => {
+            if(updateReducer) {
+                let currentState = store.getState();
+                let scheduledMaintenance = currentState.init.scheduledMaintenance;
+                let isNewWindow = (
+                    response.maintenance_windows[0] &&
+                    moment(scheduledMaintenance.end_date).isSame(moment(response.maintenance_windows[0].end_date)) &&
+                    moment(scheduledMaintenance.start_date).isSame(moment(response.maintenance_windows[0].start_date))
+                ) ?
+                    false
+                    :
+                    true;
+                let addressedFlag = isNewWindow ? false : true;
+                let endDate = response.maintenance_windows[0] ? response.maintenance_windows[0].end_date : null;
+                let startDate = response.maintenance_windows[0] ? response.maintenance_windows[0].start_date : null;
+                store.dispatch({
+                    type: Actions.UPDATE_SCHEDULED_MAINTENANCE,
+                    data: {
+                        addressed:  addressedFlag,
+                        end_date:   endDate,
+                        start_date: startDate,
+                    }
+                });
+            }
+            return Promise.resolve(response);
+        })
+        .catch(error => Promise.reject(error));
+};
 
 /**
   * Authorize User
@@ -190,9 +226,11 @@ const startLogin = (credentials, reload) => {
   * Logout
   */
 const logout = () => {
-    return dispatch => Promise.resolve(dispatch({
-        type: Actions.LOGOUT
-    }));
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.LOGOUT
+        })
+    );
 };
 
 /**
@@ -297,6 +335,7 @@ const sendDeviceToken = (token) => {
 export default {
     forgotPassword,
     resetPassword,
+    getMaintenanceWindow,
     registerDevice,
     authorizeUser,
     startLogin,

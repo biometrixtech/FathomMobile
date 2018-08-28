@@ -20,10 +20,12 @@ import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants, AppFonts } from '../../constants/';
+import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants/';
+import { store } from '../../store';
+import { AppUtil, } from '../../lib';
 
 // Components
-import { Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
+import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
 import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } from '../myPlan/pages';
 
 // Tabs titles
@@ -181,6 +183,14 @@ class Home extends Component {
         }
     }
 
+    componentDidMount = () => {
+        if(!this.props.scheduledMaintenance.addressed) {
+            let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
+            let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
+            AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
+        }
+    }
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.notification && nextProps.notification !== this.props.notification) {
             this._handleExerciseListRefresh(true);
@@ -189,6 +199,7 @@ class Home extends Component {
         if(
             !areObjectsDifferent &&
             this.props.plan.dailyPlan[0] &&
+            nextProps.plan.dailyPlan[0] &&
             nextProps.plan.dailyPlan[0].landing_screen !== this.props.plan.dailyPlan[0].landing_screen &&
             (
                 nextProps.plan.dailyPlan[0].post_recovery_completed ||
@@ -262,8 +273,8 @@ class Home extends Component {
         let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
         newDailyReadiness.user_id = this.props.user.id;
         newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
-        newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality + 1;
-        newDailyReadiness.readiness = newDailyReadiness.readiness + 1;
+        newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality;
+        newDailyReadiness.readiness = newDailyReadiness.readiness;
         newDailyReadiness.soreness.map(bodyPart => {
             newDailyReadiness.soreness = newDailyReadiness.soreness.filter(u => { return !!u.severity && u.severity > 0; });
         });
@@ -300,7 +311,7 @@ class Home extends Component {
          */
         this.setState({ loading: true });
         let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
-        newPostSessionSurvey.RPE = newPostSessionSurvey.RPE + 1;
+        newPostSessionSurvey.RPE = newPostSessionSurvey.RPE;
         newPostSessionSurvey.soreness.map(bodyPart => {
             newPostSessionSurvey.soreness = _.filter(newPostSessionSurvey.soreness, u => { return !!u.severity && u.severity > 0; });
         });
@@ -345,46 +356,51 @@ class Home extends Component {
             });
     }
 
-    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness) => {
+    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood) => {
         let stateObject = isDailyReadiness ? this.state.dailyReadiness : this.state.postSession;
         let newSorenessFields = _.cloneDeep(stateObject.soreness);
-        if(_.findIndex(stateObject.soreness, o => o.body_part === areaClicked.index) > -1) {
-            // body part already exists
-            if(areaClicked.bilateral) {
-                // add other side
-                let currentSelectedSide = _.filter(newSorenessFields, o => o.body_part === areaClicked.index);
-                if(currentSelectedSide.length === 1) {
-                    currentSelectedSide = currentSelectedSide[0].side;
-                    let newMissingSideSorenessPart = {};
-                    newMissingSideSorenessPart.body_part = areaClicked.index;
-                    newMissingSideSorenessPart.severity = 0;
-                    newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
-                    newSorenessFields.push(newMissingSideSorenessPart);
+        if(!areaClicked && isAllGood) {
+            let soreBodyParts = _.intersectionBy(stateObject.soreness, this.props.plan.soreBodyParts.body_parts, 'body_part');
+            newSorenessFields = soreBodyParts;
+        } else {
+            if(_.findIndex(stateObject.soreness, o => o.body_part === areaClicked.index) > -1) {
+                // body part already exists
+                if(areaClicked.bilateral) {
+                    // add other side
+                    let currentSelectedSide = _.filter(newSorenessFields, o => o.body_part === areaClicked.index);
+                    if(currentSelectedSide.length === 1) {
+                        currentSelectedSide = currentSelectedSide[0].side;
+                        let newMissingSideSorenessPart = {};
+                        newMissingSideSorenessPart.body_part = areaClicked.index;
+                        newMissingSideSorenessPart.severity = 0;
+                        newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
+                        newSorenessFields.push(newMissingSideSorenessPart);
+                    } else {
+                        newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
+                    }
                 } else {
                     newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
                 }
             } else {
-                newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
-            }
-        } else {
-            // doesn't exist, create new object
-            if(areaClicked.bilateral) {
-                let newLeftSorenessPart = {};
-                newLeftSorenessPart.body_part = areaClicked.index;
-                newLeftSorenessPart.severity = 0;
-                newLeftSorenessPart.side = 1;
-                newSorenessFields.push(newLeftSorenessPart);
-                let newRightSorenessPart = {};
-                newRightSorenessPart.body_part = areaClicked.index;
-                newRightSorenessPart.severity = 0;
-                newRightSorenessPart.side = 2;
-                newSorenessFields.push(newRightSorenessPart);
-            } else {
-                let newSorenessPart = {};
-                newSorenessPart.body_part = areaClicked.index;
-                newSorenessPart.severity = 0;
-                newSorenessPart.side = 0;
-                newSorenessFields.push(newSorenessPart);
+                // doesn't exist, create new object
+                if(areaClicked.bilateral) {
+                    let newLeftSorenessPart = {};
+                    newLeftSorenessPart.body_part = areaClicked.index;
+                    newLeftSorenessPart.severity = 0;
+                    newLeftSorenessPart.side = 1;
+                    newSorenessFields.push(newLeftSorenessPart);
+                    let newRightSorenessPart = {};
+                    newRightSorenessPart.body_part = areaClicked.index;
+                    newRightSorenessPart.severity = 0;
+                    newRightSorenessPart.side = 2;
+                    newSorenessFields.push(newRightSorenessPart);
+                } else {
+                    let newSorenessPart = {};
+                    newSorenessPart.body_part = areaClicked.index;
+                    newSorenessPart.severity = 0;
+                    newSorenessPart.side = 0;
+                    newSorenessFields.push(newSorenessPart);
+                }
             }
         }
         let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);
@@ -1305,6 +1321,23 @@ class Home extends Component {
             }, 300);
         }
     }
+
+    // _renderCustomTopBar = () => {
+    //     return(
+    //         <View>
+    //             <ScrollableTabBar
+    //                 locked
+    //                 renderTab={this.renderTab}
+    //                 style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderBottomWidth: 0,}}
+    //             />
+    //             <Alerts
+    //                 extraStyles={{paddingLeft: 20}}
+    //                 leftAlignText
+    //                 status={this.state.displayMessage ? this.state.networkMessage: 'help'}
+    //             />
+    //         </View>
+    //     )
+    // }
 
     render() {
         return (

@@ -64,13 +64,13 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const Alerts = ({ error, leftAlignText, status, success, }) => (
+const Alerts = ({ error, extraStyles, leftAlignText, rightAlignText, status, success, }) => (
     <View style={styles.alerts}>
         {!!success &&
           <View>
-              <View style={[styles.msg]}>
+              <View style={[extraStyles, styles.msg]}>
                   <Text style={[
-                      leftAlignText ? AppStyles.textLeftAligned : AppStyles.textCenterAligned,
+                      leftAlignText ? AppStyles.textLeftAligned : rightAlignText ? AppStyles.textRightAligned : AppStyles.textCenterAligned,
                       styles.msg_text,
                   ]}>
                       {Array.isArray(success) ? success[0].toUpperCase() : success.toUpperCase()}
@@ -81,9 +81,9 @@ const Alerts = ({ error, leftAlignText, status, success, }) => (
 
         {!!status &&
           <View>
-              <View style={[styles.msg, styles.msgStatus]}>
+              <View style={[extraStyles, styles.msg, styles.msgStatus]}>
                   <Text style={[
-                      leftAlignText ? AppStyles.textLeftAligned : AppStyles.textCenterAligned,
+                      leftAlignText ? AppStyles.textLeftAligned : rightAlignText ? AppStyles.textRightAligned : AppStyles.textCenterAligned,
                       styles.msg_text,
                       styles.msgStatus_text,
                   ]}>
@@ -95,10 +95,10 @@ const Alerts = ({ error, leftAlignText, status, success, }) => (
 
         {!!error &&
           <View>
-              <View style={[styles.msg, styles.msgError]}>
+              <View style={[extraStyles, styles.msg, styles.msgError]}>
                   <Text
                       style={[
-                          leftAlignText ? AppStyles.textLeftAligned : AppStyles.textCenterAligned,
+                          leftAlignText ? AppStyles.textLeftAligned : rightAlignText ? AppStyles.textRightAligned : AppStyles.textCenterAligned,
                           styles.msg_text,
                           styles.msgError_text,
                       ]}
@@ -116,6 +116,10 @@ Alerts.propTypes = {
         PropTypes.array,
         PropTypes.string,
     ]),
+    extraStyles: PropTypes.oneOfType([
+        PropTypes.array,
+        PropTypes.shape({}),
+    ]),
     leftAlignText: PropTypes.bool,
     status:        PropTypes.oneOfType([
         PropTypes.array,
@@ -129,6 +133,7 @@ Alerts.propTypes = {
 
 Alerts.defaultProps = {
     error:         '',
+    extraStyles:   null,
     leftAlignText: false,
     status:        '',
     success:       '',

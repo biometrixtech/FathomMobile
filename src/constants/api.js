@@ -48,6 +48,8 @@ export default {
         ['clear_user_data',       '/plans/1_0/misc/clear_user_data'], // POST
         // sensor specific routes
         ['sensor_mobile_pair', '/users/1_0/user/{userId}/sensor_mobile_pair'], // CRUD
+        // other routes
+        ['maintenance_status', '/meta/1_0/maintenance'], // GET
     ]),
 
     // Which 'endpoint' key deals with our tokens?

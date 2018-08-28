@@ -5,12 +5,18 @@
  * @Last Modified time: 2018-06-28 11:41:51
  */
 
+import { Alert, AsyncStorage } from 'react-native';
+
 // import third-party libraries
 import DeviceInfo from 'react-native-device-info';
 import uuidByString from 'uuid-by-string';
 import { AppColors, AppFonts, AppStyles } from '../constants';
 import { store } from '../store';
 import _ from 'lodash';
+import { Actions as DispatchActions, ErrorMessages, } from '../constants';
+
+import { init as InitActions, } from '../actions';
+
 /**
  * Global Util Functions
  */
@@ -49,6 +55,148 @@ const UTIL = {
         }
         uniqueId = uniqueId.toLowerCase();
         return uniqueId;
+    },
+
+    getNetworkStatus: () => {
+        // if connection wifi || cellular
+            // ping our server (???)
+                // T -> status >= 500
+                    // T -> ping always available server
+                        // T -> ErrorMessages.serverUnavailable; !!!MSG!!!
+                        // F -> ErrorMessages.noInternetConnection; !!!MSG!!!
+                    // F -> we good!
+                // F -> ping always available server
+                    // T -> ErrorMessages.serverUnavailable; !!!MSG!!!
+                    // F -> ErrorMessages.noInternetConnection; !!!MSG!!!
+        // else -> ErrorMessages.noInternetConnection; !!!MSG!!!
+        return new Promise((resolve, reject) => {
+            const serverToTest = 'https://www.google.com/';
+            let currentState = store.getState();
+            let connectionInfo = currentState.init.connectionInfo;
+            let returnObj = {
+                connectionInfo: connectionInfo,
+                displayMessage: false,
+                message:        null,
+            };
+            console.log('connectionInfo',connectionInfo);
+            if(connectionInfo.online && (connectionInfo.connectionType === 'wifi' || connectionInfo.connectionType === 'cellular') ) {
+                InitActions.getMaintenanceWindow()
+                    .then(response => {
+                        console.log('RESPONSE+',response);
+                        if(response.status >= 500) {
+                            /*global fetch*/
+                            fetch(serverToTest)
+                                .then(res => {
+                                    if(res.status >= 400) {
+                                        returnObj.message = ErrorMessages.serverUnavailable;
+                                        returnObj.displayMessage = true;
+                                    }
+                                    return resolve(returnObj);
+                                })
+                                .catch(error => {
+                                    returnObj.message = ErrorMessages.noInternetConnection;
+                                    returnObj.displayMessage = true;
+                                    return resolve(returnObj);
+                                });
+                        }
+                    })
+                    .catch(err => {
+                        returnObj.displayMessage = true;
+                        /*global fetch*/
+                        fetch(serverToTest)
+                            .then(res => {
+                                if(res.status >= 400) {
+                                    returnObj.message = ErrorMessages.serverUnavailable;
+                                }
+                                return resolve(returnObj);
+                            })
+                            .catch(error => {
+                                returnObj.message = ErrorMessages.noInternetConnection;
+                                return resolve(returnObj);
+                            });
+                    });
+            }
+            // no internet
+            returnObj.message = ErrorMessages.noInternetConnection;
+            returnObj.displayMessage = true;
+            return resolve(returnObj);
+        });
+    },
+
+    getMaintenanceWindow: () => {
+        InitActions.getMaintenanceWindow(true);
+    },
+
+    handleScheduledMaintenanceAlert: (displayAlert, header, message) => {
+        if(displayAlert) {
+            let currentState = store.getState();
+            let scheduledMaintenance = currentState.init.scheduledMaintenance;
+            Alert.alert(
+                header,
+                message,
+                [
+                    {
+                        text:    'OK',
+                        onPress: () => {
+                            store.dispatch({
+                                type: DispatchActions.UPDATE_SCHEDULED_MAINTENANCE,
+                                data: {
+                                    addressed:  true,
+                                    end_date:   scheduledMaintenance.end_date,
+                                    start_date: scheduledMaintenance.start_date,
+                                }
+                            })
+                        },
+                        style: 'cancel',
+                    },
+                ],
+                { cancelable: false }
+            );
+        }
+    },
+
+    /**
+      * AsyncStorage save data
+      * key -> index of data
+      * data -> data to store (if object, will JSON.stringify)
+      */
+    _storeAsyncStorageData: async (key, data) => {
+        let newData = typeof data === 'object' ? JSON.stringify(data) : data;
+        try {
+            await AsyncStorage.setItem(key, newData);
+        } catch (error) {
+            console.log('error from _storeAsyncStorageData', error);
+        }
+    },
+
+    /**
+      * AsyncStorage retrieve data
+      * key -> index of data
+      */
+    _retrieveAsyncStorageData: async (key) => {
+        return await AsyncStorage.getItem(key)
+            .then(result => {
+                if (result) {
+                    try {
+                        result = JSON.parse(result);
+                    } catch (error) {
+                        console.log('error from _retrieveAsyncStorageData', error);
+                    }
+                }
+                return result;
+            });
+    },
+
+    /**
+      * AsyncStorage remove data
+      * key -> index of data
+      */
+    _removeAsyncStorageData: async (key) => {
+        try {
+            await AsyncStorage.removeItem(key);
+        } catch (error) {
+            console.log('error from _removeAsyncStorageData', error);
+        }
     },
 
     /**

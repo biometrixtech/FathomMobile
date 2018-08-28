@@ -119,7 +119,6 @@ const Index = (
                 navBar={CustomNavBar}
                 onLeft={() => Actions.settings()}
                 panHandlers={null}
-                type={'replace'}
             />
             <Scene
                 Layout={MyPlanComponent}

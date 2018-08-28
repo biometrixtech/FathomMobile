@@ -11,113 +11,198 @@
     />
  *
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts } from '../../../constants';
-import { FathomSlider, Text } from '../../custom';
+import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
+import { Button, FathomSlider, Spacer, Text, } from '../../custom';
 
 // Components
-import { AreasOfSoreness, SoreBodyPart } from './';
+import { AreasOfSoreness, ScaleButton, SoreBodyPart, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
 import moment from 'moment';
 
 /* Component ==================================================================== */
-const ReadinessSurvey = ({
-    dailyReadiness,
-    handleAreaOfSorenessClick,
-    handleFormChange,
-    handleFormSubmit,
-    soreBodyParts,
-    user,
-}) => {
-    let hourOfDay = moment().get('hour');
-    let partOfDay = hourOfDay >= 12 ? 'AFTERNOON' : 'MORNING';
-    let isAnythingBotheringText = !dailyReadiness.sleep_quality && !dailyReadiness.readiness && !dailyReadiness.soreness.length ?
-        'No, nothing is bothering me'
-        :
-        'Done';
-    return(
-        <View style={{flex: 1}}>
-            <ScrollView>
-                <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: 'center', width: AppSizes.screen.width}}>
-                    <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black}]}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
-                </View>
-                <View>
-                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.primary.grey.thirtyPercent}]}>
-                        {'1'}
-                    </Text>
-                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, {color: AppColors.black}]}>
-                        {'How mentally ready do you feel for today?'}
-                    </Text>
-                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.secondary.blue.hundredPercent}]}>
-                        {`${dailyReadiness.readiness + 1} - ${MyPlanConstants.overallReadiness[dailyReadiness.readiness].toUpperCase()}`}
-                    </Text>
-                    <FathomSlider
-                        handleFormChange={handleFormChange}
-                        maximumValue={9}
-                        minimumValue={0}
-                        name={'readiness'}
-                        value={dailyReadiness.readiness}
-                    />
-                </View>
-                <View>
-                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.primary.grey.thirtyPercent}]}>
-                        {'2'}
-                    </Text>
-                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, {color: AppColors.black}]}>
-                        {'How well did you sleep last night?'}
-                    </Text>
-                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.secondary.blue.hundredPercent}]}>
-                        {`${dailyReadiness.sleep_quality + 1} - ${MyPlanConstants.sleepQuality[dailyReadiness.sleep_quality].toUpperCase()}`}
-                    </Text>
-                    <FathomSlider
-                        handleFormChange={handleFormChange}
-                        maximumValue={9}
-                        minimumValue={0}
-                        name={'sleep_quality'}
-                        value={dailyReadiness.sleep_quality}
-                    />
-                </View>
-                { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
-                    <SoreBodyPart
-                        bodyPart={bodyPart}
-                        bodyPartSide={bodyPart.side}
-                        handleFormChange={handleFormChange}
-                        index={i+3}
-                        key={i}
-                        surveyObject={dailyReadiness}
-                    />
-                )}
-                <View>
-                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.primary.grey.thirtyPercent}]}>
-                        {soreBodyParts.body_parts && soreBodyParts.body_parts.length > 0 ? soreBodyParts.body_parts.length + 3 : '3'}
-                    </Text>
-                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, AppStyles.h3, {color: AppColors.black}]}>
-                        {'Is anything bothering you?'}
-                    </Text>
-                    <Text oswaldBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.primary.grey.thirtyPercent}]}>
-                        {'If yes, select area of soreness or pains'}
-                    </Text>
-                    <AreasOfSoreness
-                        handleAreaOfSorenessClick={body => handleAreaOfSorenessClick(body, true)}
-                        handleFormChange={handleFormChange}
-                        soreBodyParts={soreBodyParts}
-                        soreBodyPartsState={dailyReadiness.soreness}
-                        surveyObject={dailyReadiness}
-                    />
-                </View>
-                <TouchableOpacity onPress={handleFormSubmit} style={[AppStyles.nextButtonWrapper, {margin: 10}]}>
-                    <Text robotoBold style={[AppStyles.nextButtonText, { fontSize: AppFonts.scaleFont(16) }]}>{isAnythingBotheringText}</Text>
-                </TouchableOpacity>
-            </ScrollView>
-        </View>
-    )
-};
+class ReadinessSurvey extends Component {
+    constructor(props) {
+        super(props);
+        this.scrollViewRef = {};
+        this.myComponents = [];
+    }
+
+    _scrollTo = (index) => {
+        let myComponentsLocation = this.myComponents[index];
+        if(myComponentsLocation) {
+            _.delay(() => {
+                this.scrollViewRef.scrollTo({
+                    x:        myComponentsLocation.x,
+                    y:        myComponentsLocation.y,
+                    animated: true,
+                });
+            }, 500);
+        }
+    }
+
+    render = () => {
+        const {
+            dailyReadiness,
+            handleAreaOfSorenessClick,
+            handleFormChange,
+            handleFormSubmit,
+            soreBodyParts,
+            user,
+        } = this.props;
+        let hourOfDay = moment().get('hour');
+        let partOfDay = hourOfDay >= 12 ? 'AFTERNOON' : 'MORNING';
+        let isFormValid =
+            dailyReadiness.readiness > 0 &&
+            dailyReadiness.sleep_quality > 0 && (
+                _.filter(dailyReadiness.soreness, o => o.severity && o.severity >= 0).length > 0 ||
+                (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
+            );
+        return(
+            <View style={{flex: 1}}>
+                <ScrollView ref={ref => {this.scrollViewRef = ref}}>
+                    <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: 'center', width: AppSizes.screen.width}}>
+                        <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black}]}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
+                    </View>
+                    <View>
+                        <Spacer size={50} />
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
+                            {'1'}
+                        </Text>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                            {'How mentally ready do you feel for today?'}
+                        </Text>
+                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
+                            { _.map(MyPlanConstants.overallReadiness, (value, key) => {
+                                if(key === 0) { return; }
+                                /*eslint consistent-return: 0*/
+                                return(
+                                    <ScaleButton
+                                        isSelected={(dailyReadiness.readiness / 2) === key}
+                                        key={value+key}
+                                        keyLabel={key}
+                                        sorenessPainMappingLength={MyPlanConstants.overallReadiness.length}
+                                        updateStateAndForm={() => {
+                                            handleFormChange('readiness', (key * 2));
+                                            this._scrollTo(0);
+                                        }}
+                                        valueLabel={value}
+                                    />
+                                )
+                            })}
+                        </View>
+                    </View>
+                    <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                        <Spacer size={100} />
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
+                            {'2'}
+                        </Text>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                            {'How well did you sleep last night?'}
+                        </Text>
+                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
+                            { _.map(MyPlanConstants.sleepQuality, (value, key) => {
+                                if(key === 0) { return; }
+                                /*eslint consistent-return: 0*/
+                                return(
+                                    <ScaleButton
+                                        isSelected={(dailyReadiness.sleep_quality / 2) === key}
+                                        key={value+key}
+                                        keyLabel={key}
+                                        sorenessPainMappingLength={MyPlanConstants.sleepQuality.length}
+                                        updateStateAndForm={() => {
+                                            handleFormChange('sleep_quality', (key * 2));
+                                            this._scrollTo(1);
+                                        }}
+                                        valueLabel={value}
+                                    />
+                                )
+                            })}
+                        </View>
+                    </View>
+                    <Spacer size={100} />
+                    { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
+                        <View onLayout={event => {this.myComponents[i + 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}} key={i}>
+                            <SoreBodyPart
+                                bodyPart={bodyPart}
+                                bodyPartSide={bodyPart.side}
+                                handleFormChange={(location, value, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                    handleFormChange(location, value, bodyPartMapIndex, bodyPartSide);
+                                    if(shouldScroll) {
+                                        this._scrollTo(i + 2);
+                                    }
+                                }}
+                                index={i+3}
+                                isPrevSoreness={true}
+                                surveyObject={dailyReadiness}
+                            />
+                            <Spacer size={100} />
+                        </View>
+                    )}
+                    <View onLayout={event => {this.myComponents[soreBodyParts.body_parts ? soreBodyParts.body_parts.length + 1 : 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
+                            {soreBodyParts.body_parts && soreBodyParts.body_parts.length > 0 ? soreBodyParts.body_parts.length + 3 : '3'}
+                        </Text>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                            {`Is anything${soreBodyParts.body_parts && soreBodyParts.body_parts.length > 0 ? ' else ' : ' '}bothering you?`}
+                        </Text>
+                        <AreasOfSoreness
+                            handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
+                            handleFormChange={handleFormChange}
+                            ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
+                            soreBodyParts={soreBodyParts}
+                            soreBodyPartsState={dailyReadiness.soreness}
+                            surveyObject={dailyReadiness}
+                        />
+                    </View>
+                    { isFormValid ?
+                        <Button
+                            backgroundColor={AppColors.primary.yellow.hundredPercent}
+                            buttonStyle={{
+                                alignSelf:       'center',
+                                borderRadius:    5,
+                                marginBottom:    AppSizes.padding,
+                                paddingVertical: AppSizes.paddingMed,
+                                width:           AppSizes.screen.widthTwoThirds
+                            }}
+                            color={AppColors.white}
+                            fontFamily={AppStyles.robotoMedium.fontFamily}
+                            fontWeight={AppStyles.robotoMedium.fontWeight}
+                            onPress={handleFormSubmit}
+                            raised={false}
+                            textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                            title={'Continue'}
+                        />
+                        :
+                        <Button
+                            backgroundColor={AppColors.white}
+                            buttonStyle={{
+                                alignSelf:       'center',
+                                borderRadius:    5,
+                                marginBottom:    AppSizes.padding,
+                                paddingVertical: AppSizes.paddingMed,
+                                width:           AppSizes.screen.widthTwoThirds
+                            }}
+                            color={AppColors.zeplin.lightGrey}
+                            fontFamily={AppStyles.robotoMedium.fontFamily}
+                            fontWeight={AppStyles.robotoMedium.fontWeight}
+                            onPress={() => null}
+                            outlined
+                            textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                            title={'Select an Option'}
+                        />
+                    }
+                </ScrollView>
+            </View>
+        )
+    }
+}
 
 ReadinessSurvey.propTypes = {
     dailyReadiness:            PropTypes.object.isRequired,
