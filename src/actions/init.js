@@ -248,25 +248,14 @@ const forgotPassword = (email) => {
         })
         .catch(err => {
             dispatch({
-                type:        Actions.FORGOT_PASSWORD_FAILED,
-                data:        err,
-                emalAddress: email,
+                type:         Actions.FORGOT_PASSWORD_FAILED,
+                data:         err,
+                emailAddress: email,
             });
             console.log('error', err)
             return Promise.reject(err);
         });
 };
-/*
-const createUser = (payload) => {
-    return dispatch => AppAPI.create_user.post(false, payload)
-        .then(userData => Promise.resolve(userData))
-        .catch(err => {
-            console.log('err',err);
-            return Promise.reject(err);
-        });
-};
-
-*/
 
 /**
   * POST Reset Password form data

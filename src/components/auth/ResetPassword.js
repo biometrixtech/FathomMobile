@@ -83,7 +83,7 @@ class ResetPassword extends Component {
       */
     resetPassword = () => {
         // Get values
-        const userData = this.inputs;
+        const userData = this.state.form_values;
 
         // close keyboard
         Keyboard.dismiss();
@@ -112,7 +112,12 @@ class ResetPassword extends Component {
                     });
                 }).catch((err) => {
                     const error = AppAPI.handleError(err);
-                    this.setState({ resultMsg: { error } });
+                    if(error.includes('ExpiredCodeException')) {
+                        this.setState({ resultMsg: {error: 'The verification code you are using has expired.  Please request a new verification code.'} });    
+                    }
+                    else{
+                        this.setState({ resultMsg: { error } });
+                    }
                 });
             });
         }
@@ -302,6 +307,8 @@ class ResetPassword extends Component {
     }
 
     _loginUser(userData){
+        console.log('here now');
+        console.log(userData);
         this.props.onSubmitSuccess({
             email:    userData.Email,
             password: userData.Password,

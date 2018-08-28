@@ -74,8 +74,8 @@ class ForgotPassword extends Component {
       */
     forgotPassword = () => {
         // Get email
-        const credentials = this.inputs.email.value;
-        
+        const credentials = this.state.form_values;
+ 
         // close keyboard
         Keyboard.dismiss();
 
@@ -90,7 +90,7 @@ class ForgotPassword extends Component {
                 }
 
                 this.props.onFormSubmit({
-                    email: credentials.Email,
+                    email: credentials.email,
                 }).then(() => {
                     this.setState({
                         resultMsg: { success: 'A verification code has been sent to your email.' },
@@ -107,6 +107,9 @@ class ForgotPassword extends Component {
                     }
                     else if(error.includes('LimitExceededException')) {
                         this.setState({ resultMsg: {error: 'Reset limit exceeded.  Please try again after some time.'} });    
+                    }
+                    else if(error.includes('You must specify an endpoint')) {
+                        this.setState({ resultMsg: {error: 'Sorry, we are currently unable to process your request. Please try again after some time.'} });    
                     }
                     else{
                         this.setState({ resultMsg: { error } });
@@ -153,7 +156,7 @@ class ForgotPassword extends Component {
 
 
     render = () => {
-        console.log(this.state)
+
         return (
             <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: AppColors.white}}>
                 <View >

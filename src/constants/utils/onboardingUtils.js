@@ -329,17 +329,15 @@ const onboardingUtils = {
         const numbersRegex = /[0-9]/g;
         const upperCaseLettersRegex = /[A-Z]/g;
         const lowerCaseLettersRegex = /[a-z]/g;
-        let isValid = false;
+        let isValid = true;
         let errorsArray = []
-        if (password && (password.length < 8
+        if (!password || password.length < 8
             || password.length > 16
             || !numbersRegex.test(password)
             || !upperCaseLettersRegex.test(password)
-            || !lowerCaseLettersRegex.test(password)))
+            || !lowerCaseLettersRegex.test(password))
         {
-            isValid = true;}
-        else
-        {
+            isValid = false;
             errorsArray.push('Your password must be 8-16 characters, include an uppercase letter, a lowercase letter, and a number')
         }
         return {
