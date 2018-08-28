@@ -6,16 +6,16 @@ import PropTypes from 'prop-types';
 import {
     Keyboard, View, StyleSheet, TouchableOpacity
 } from 'react-native';
-import FormValidation from 'tcomb-form-native';
+
 import { Actions } from 'react-native-router-flux';
 
 // Consts and Libs
-import { AppAPI, AppUtil } from '../../lib';
+import { AppAPI } from '../../lib';
 import { onboardingUtils } from '../../constants/utils';
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../constants';
 import _ from 'lodash';
 // Components
-import { Alerts, ProgressBar, Spacer, Text } from '../custom';
+import { Alerts, FormInput, ProgressBar, Spacer, Text } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -28,8 +28,6 @@ const styles = StyleSheet.create({
         paddingVertical:   10,
     },
 });
-
-let inputStyle = AppUtil.formatInputStyle(FormValidation.form.Form.stylesheet);
 
 /* Component ==================================================================== */
 class ForgotPassword extends Component {
@@ -46,13 +44,7 @@ class ForgotPassword extends Component {
 
     constructor(props) {
         super(props);
-
-        // Email Validation
-        const validEmail = FormValidation.refinement(
-            FormValidation.String, (email) => {
-                return onboardingUtils.isEmailValid(email);
-            },
-        );
+        this.inputs = {};
 
         this.state = {
             resultMsg: {
@@ -60,30 +52,9 @@ class ForgotPassword extends Component {
                 success: '',
                 error:   '',
             },
-            form_fields: FormValidation.struct({
-                Email: validEmail,
-            }),
-            empty_form_values: {
-                Email: '',
-            },
-            form_values: {},
-            options:     {
-                fields: {
-                    Email: {
-                        autoCapitalize:       'none',
-                        blurOnSubmit:         true,
-                        clearButtonMode:      'while-editing',
-                        error:                'Your email must be a valid email format',
-                        keyboardType:         'email-address',
-                        label:                ' ',
-                        placeholder:          'email',
-                        placeholderTextColor: AppColors.primary.yellow.hundredPercent,
-                        returnKeyType:        'done',
-                        stylesheet:           inputStyle,    
-                    },
 
-                    
-                },
+            form_values: {
+                email: '',
             },
         };
     }
@@ -92,7 +63,7 @@ class ForgotPassword extends Component {
         if (this.props.email !== null) {
             this.setState({
                 form_values: {
-                    Email: this.props.email,
+                    email: this.props.email,
                 },
             });
         }
@@ -103,7 +74,7 @@ class ForgotPassword extends Component {
       */
     forgotPassword = () => {
         // Get email
-        const credentials = this.form.getValue();
+        const credentials = this.inputs.email.value;
         
         // close keyboard
         Keyboard.dismiss();
@@ -125,11 +96,9 @@ class ForgotPassword extends Component {
                         resultMsg: { success: 'A verification code has been sent to your email.' },
                     }, () => {
                         setTimeout(() => {
-                            //Actions.root({ type: 'reset' });
                             this._routeToResetPassword();
                         }, 1000);
                     });
-                    //this._routeToResetPassword({emailAddress: credentials.email})
                 }).catch((err) => {
                     const error = AppAPI.handleError(err);
 
@@ -147,14 +116,44 @@ class ForgotPassword extends Component {
         }
     }
 
+    _validateForm = () => {
+        const form_fields = this.state;
+        let errorsArray = [];
+        errorsArray = errorsArray.concat(onboardingUtils.isEmailValid(form_fields.form_values.email).errorsArray);
+        return errorsArray;
+    }
+
+
+    _handleFormChange = (name, value) => {
+
+        let newFormFields = _.update( this.state.form_values, name, () => value);
+        this.setState({
+            ['form_values']: newFormFields,
+        });
+    }
+
+    _handleFormSubmit = () => {
+        // validation
+        let errorsArray = this._validateForm();
+        if (errorsArray.length === 0)
+        {
+            this.forgotPassword();
+        }
+        else
+        {
+            let newErrorFields = _.update( this.state.resultMsg, 'error', () => errorsArray);
+            this.setState({ resultMsg: newErrorFields });
+        }
+    }
+
     _routeToResetPassword = (email) => {
         
         Actions.resetPassword();
     }
 
-    render = () => {
-        const Form = FormValidation.form.Form;
 
+    render = () => {
+        console.log(this.state)
         return (
             <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: AppColors.white}}>
                 <View >
@@ -179,30 +178,36 @@ class ForgotPassword extends Component {
                         </View>
                     </View>
                     <View style={[AppStyles.containerCentered]}>
-                        <View style={{width: AppSizes.screen.widthTwoThirds}}>
+                        <FormInput
+                            autoCapitalize={'none'}
+                            blurOnSubmit={ true }
+                            clearButtonMode = 'while-editing'
+                            inputStyle = {[{textAlign: 'center', width: AppSizes.screen.widthThreeQuarters,}]}
+                            keyboardType={'email-address'}
+                            onChangeText={(text) => this._handleFormChange('email', text)}
+                            placeholder={'email'}
+                            placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                            returnKeyType={'done'}
+                            textInputRef={input => {
+                                this.inputs.email = input;
+                            }}
+                            value={this.state.form_values.email}
                         
-                            <Form
-                                ref={(b) => { this.form = b; }}
-                                type={this.state.form_fields}
-                                value={this.state.form_values}
-                                options={this.state.options}
-                                
-                            />
-                            <Spacer size={10} />
-                            {<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : this._routeToResetPassword}>
-                                <View>
-                                    <Text 
-                                        p
-                                        robotoRegular 
-                                        onPress={this._routeToResetPassword}
-                                        style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, textDecorationLine: 'none',}]}>{'or enter your verification code'}
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>}
-                        </View>
+                        />
+                        <Spacer size={10} />
+                        {<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : this._routeToResetPassword}>
+                            <View>
+                                <Text 
+                                    p
+                                    robotoRegular 
+                                    onPress={this._routeToResetPassword}
+                                    style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, textDecorationLine: 'none',}]}>{'or enter your verification code'}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>}
                     </View>
                 </View>
-                <TouchableOpacity onPress={this.forgotPassword} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
+                <TouchableOpacity onPress={() => this._handleFormSubmit()} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
                     <Text robotoBold style={[AppStyles.nextButtonText, { fontSize: AppFonts.scaleFont(16) }]}>Reset</Text>
                 </TouchableOpacity>
             </View>

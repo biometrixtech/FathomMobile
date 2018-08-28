@@ -33,11 +33,11 @@ const onboardingUtils = {
             let newError = 'Your First and Last Name are required';
             errorsArray.push(newError);
             isValid = false;
-        } else if( !this.isEmailValid(user.email) ) {
+        } else if( !this.isEmailValid(user.email).isValid ) {
             let newError = 'Your Email must be a valid email format';
             errorsArray.push(newError);
             isValid = false;
-        } else if( !this.isPasswordValid(user.password) ) {
+        } else if( !this.isPasswordValid(user.password).isValid ) {
             let newError = this.getPasswordRules();
             errorsArray.push(newError);
             isValid = false;
@@ -310,7 +310,16 @@ const onboardingUtils = {
 
     isEmailValid(email) {
         const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return emailRegex.test(email);
+        let isValid = emailRegex.test(email);
+        let errorsArray = []
+        if(!isValid)
+        {
+            errorsArray.push('Your email must be a valid email format')
+        }
+        return {
+            errorsArray,
+            isValid
+        };
     },
 
     isPasswordValid(password){
@@ -320,14 +329,23 @@ const onboardingUtils = {
         const numbersRegex = /[0-9]/g;
         const upperCaseLettersRegex = /[A-Z]/g;
         const lowerCaseLettersRegex = /[a-z]/g;
-        if (password.length < 8
+        let isValid = false;
+        let errorsArray = []
+        if (password && (password.length < 8
             || password.length > 16
             || !numbersRegex.test(password)
             || !upperCaseLettersRegex.test(password)
-            || !lowerCaseLettersRegex.test(password))
+            || !lowerCaseLettersRegex.test(password)))
         {
-            return true;}
-        return false;
+            isValid = true;}
+        else
+        {
+            errorsArray.push('Your password must be 8-16 characters, include an uppercase letter, a lowercase letter, and a number')
+        }
+        return {
+            errorsArray,
+            isValid
+        };
     },
 
     getPasswordRules() {
