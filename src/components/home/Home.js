@@ -11,7 +11,6 @@
 import React, { Component } from 'react';
 import {
     ActivityIndicator,
-    Animated,
     AppState,
     BackHandler,
     Easing,

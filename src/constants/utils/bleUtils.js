@@ -3,6 +3,7 @@ import { AsyncStorage } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
+import moment from 'moment';
 
 // import actions, utils
 import { ble as BLEActions, plan as planActions } from '../../actions';
@@ -62,12 +63,14 @@ const bleUtils = {
                                     let dataObj = {};
                                     dataObj.user_id = userId;
                                     dataObj.sessions = sessionsArray;
+                                    dataObj.last_sensor_sync = `${moment().toISOString(true).split('.')[0]}Z`;
                                     planActions.postSingleSensorData(dataObj)
                                         .then(result => {
+                                            // TODO: BRING BACK TWO FUNCTIONS
                                             // delete AsyncStorage record
-                                            AppUtil._removeAsyncStorageData('practices');
+                                            // AppUtil._removeAsyncStorageData('practices');
                                             // 0x79 (BLEActions.deleteSinglePractice) -> delete practice
-                                            bleUtils.deleteSesnorData(ble.accessoryData.sensor_pid, res.numberOfPractices);
+                                            // bleUtils.deleteSesnorData(ble.accessoryData.sensor_pid, res.numberOfPractices);
                                         });
                                 }
                             });

@@ -85,7 +85,13 @@ const convertHex = (value) => {
 
 const convertToUnsigned32BitIntByteArray = (value) => {
     return value.toString(16).match(/.{1,2}/g).map(val => convertHex(val));
-}
+};
+
+const sleeper = ms => {
+    return x => {
+        return new Promise(resolve => setTimeout(() => resolve(x), ms));
+    }
+};
 
 // Creating a promise wrapper for setTimeout
 // const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay));
@@ -395,12 +401,6 @@ const getSingleSensorStatus = (sensorId) => {
         .catch(err => {
             return Promise.reject(err)
         });
-};
-
-const sleeper = ms => {
-    return x => {
-        return new Promise(resolve => setTimeout(() => resolve(x), ms));
-    }
 };
 
 const getAllPracticeDetails = (sensorId, practiceIndex = 0) => {
