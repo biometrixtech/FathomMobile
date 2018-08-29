@@ -253,7 +253,7 @@ class Login extends Component {
     }
 
     render = () => {
-       
+
         return (
             <Wrapper>
 
@@ -283,6 +283,7 @@ class Login extends Component {
                 <View style={[AppStyles.containerCentered]}>
                     <Alerts
                         error={this.state.resultMsg.error}
+                        extraStyles={{width: AppSizes.screen.widthTwoThirds,}}
                         status={this.state.resultMsg.status}
                         success={this.state.resultMsg.success}
                     />
@@ -318,13 +319,13 @@ class Login extends Component {
                         textInputRef={input => {
                             this.inputs.password = input;
                         }}
-                        value={this.state.form_values.VerificationCode}    
+                        value={this.state.form_values.VerificationCode}
                     />
                     <Spacer size={50} />
                     <Button
                         backgroundColor={AppColors.white}
                         buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal, {justifyContent: 'center', width: '85%',}]}
-                        containerViewStyle={{ alignItems: 'center', justifyContent: 'center', }}
+                        containerViewStyle={{ alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf }}
                         disabled={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? true : false}
                         disabledStyle={{width: '100%'}}
                         fontFamily={AppStyles.robotoBold.fontFamily}
@@ -334,18 +335,16 @@ class Login extends Component {
                         textStyle={{ fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%', }}
                         title={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? 'Logging in...' : 'Login'}
                     />
-                    <Spacer size={10} />
-                    {/*}
-                    {<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
-                        <View>
-                            <Text 
-                                p 
-                                onPress={this._routeToForgotPassword}
-                                style={[AppStyles.textCenterAligned, {color: AppColors.white, textDecorationLine: 'none',}]}>{'forgot password'}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>}
-                    */}
+                    <Spacer size={12} />
+                    {/*<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
+                        <Text
+                            onPress={this._routeToForgotPassword}
+                            robotoRegular
+                            style={[AppStyles.textCenterAligned, {color: AppColors.white, textDecorationLine: 'none', fontSize: AppFonts.scaleFont(15),}]}
+                        >
+                            {'forgot password'}
+                        </Text>
+                    </TouchableOpacity>*/}
                 </View>
 
                 <Modal

@@ -25,6 +25,7 @@ import { AppColors, AppSizes, AppStyles, Actions as DispatchActions, } from '../
 import { TabIcon, Text, } from './';
 import { store } from '../../store';
 import { bleUtils } from '../../constants/utils';
+import { AppUtil } from '../../lib';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -52,10 +53,15 @@ class CustomNavBar extends Component {
     constructor(props) {
         super(props);
         let currentState = store.getState();
-        let bleImageToDisplay = (
+        let fetchBleData = (
             currentState.ble.accessoryData &&
-            currentState.ble.accessoryData.sensor_pid
+            currentState.ble.accessoryData.sensor_pid &&
+            currentState.ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID()
         ) ?
+            true
+            :
+            false;
+        let bleImageToDisplay = fetchBleData ?
             require('../../../assets/images/sensor/sensor-operation.png')
             :
             null;
@@ -65,9 +71,8 @@ class CustomNavBar extends Component {
                 bleImage: bleImageToDisplay,
             },
             bluetoothOn:    currentState.ble.bluetoothOn || false,
-            // counter:        0,
+            fetchBleData:   fetchBleData,
             isSensorUIOpen: false,
-            // timer:          null,
         }
         this.handleBleStateChange = this.handleBleStateChange.bind(this);
     }
@@ -84,16 +89,9 @@ class CustomNavBar extends Component {
         }
         this.handlerState = bleManagerEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange );
         // start timer
-        this.triggerBLESteps();
-        // bleUtils.handleBLESteps(store.getState().ble, store.getState().user.id)
-        //     .then(BLEData => {
-        //         let timer = setInterval(this.triggerBLESteps, 60000);
-        //         this.setState({ BLEData, timer });
-        //     })
-        //     .catch(err => {
-        //         let timer = setInterval(this.triggerBLESteps, 60000);
-        //         this.setState({ timer });
-        //     });
+        if(this.state.fetchBleData) {
+            this.triggerBLESteps();
+        }
     }
 
     triggerBLESteps = () => {
@@ -112,14 +110,7 @@ class CustomNavBar extends Component {
 
     componentWillUnmount = () => {
         this.handlerState.remove();
-        // this.clearInterval(this.state.timer);
     }
-
-    // tick = () => {
-    //     this.setState({
-    //         counter: this.state.counter + 1,
-    //     });
-    // }
 
     handleBleStateChange = (data) => {
         this.setState({
