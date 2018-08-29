@@ -121,8 +121,8 @@ class Login extends Component {
                 success: '',
             },
             form_values: {
-                Email:    '',
-                Password: '',
+                email:    '',
+                password: '',
             },
         };
     }
