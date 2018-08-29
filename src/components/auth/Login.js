@@ -217,6 +217,10 @@ class Login extends Component {
         this.form.refs.input.refs[id].refs.input.focus();
     }
 
+    _routeToForgotPassword = () => {
+        Actions.forgotPassword();
+    }
+
     resizeModal = (ev) => {
         this.setState({ modalStyle: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
     }
@@ -345,11 +349,17 @@ class Login extends Component {
                         title={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? 'Logging in...' : 'Login'}
                     />
                     <Spacer size={10} />
-                    {/*<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
+                    {/*}
+                    {<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
                         <View>
-                            <Text p style={[AppStyles.textCenterAligned, {color: AppColors.white, textDecorationLine: 'none',}]}>{'forgot password'}</Text>
+                            <Text 
+                                p 
+                                onPress={this._routeToForgotPassword}
+                                style={[AppStyles.textCenterAligned, {color: AppColors.white, textDecorationLine: 'none',}]}>{'forgot password'}
+                            </Text>
                         </View>
-                    </TouchableOpacity>*/}
+                    </TouchableOpacity>}
+                    */}
                 </View>
 
                 <Modal

@@ -237,19 +237,45 @@ const logout = () => {
   * POST Forgot Password Email
   */
 const forgotPassword = (email) => {
-    return dispatch => AppAPI.forgotPassword.post(email)
+    return dispatch => AppAPI.forgot_password.post(false, email)
         .then(result => {
             dispatch({
-                type: Actions.FORGOT_PASSWORD_SUCCESS,
-                data: result,
+                type:         Actions.FORGOT_PASSWORD_SUCCESS,
+                data:         result,
+                emailAddress: email,
             });
-            return result;
+            return Promise.resolve(result);
         })
         .catch(err => {
             dispatch({
-                type: Actions.FORGOT_PASSWORD_FAILED,
+                type:         Actions.FORGOT_PASSWORD_FAILED,
+                data:         err,
+                emailAddress: email,
             });
-            return err;
+            console.log('error', err)
+            return Promise.reject(err);
+        });
+};
+
+/**
+  * POST Reset Password form data
+  */
+ const resetPassword = (resetPasswordData) => {
+    return dispatch => AppAPI.reset_password.post(false, resetPasswordData)
+        .then(result => {
+            dispatch({
+                type: Actions.RESET_PASSWORD_SUCCESS,
+                data: result,
+            });
+            return Promise.resolve(result);
+        })
+        .catch(err => {
+            dispatch({
+                type: Actions.RESET_PASSWORD_FAILED,
+                data: err,
+            });
+            console.log('error', err)
+            return Promise.reject(err);
         });
 };
 
@@ -297,6 +323,7 @@ const sendDeviceToken = (token) => {
 
 export default {
     forgotPassword,
+    resetPassword,
     getMaintenanceWindow,
     registerDevice,
     authorizeUser,
