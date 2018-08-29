@@ -236,7 +236,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                     // }
                     let userIdObj = {userId: currentState.user.id};
                     let sessionTokenObj = {session_token: currentState.init.session_token};
-                    return fetcher('POST', '/users/1.0.0/user/{userId}/authorize', userIdObj, sessionTokenObj, 0)
+                    return fetcher('POST', '/users/1_0/user/{userId}/authorize', userIdObj, sessionTokenObj, 0)
                         .then((res) => {
                             store.dispatch({
                                 type:    DispatchActions.LOGIN,
