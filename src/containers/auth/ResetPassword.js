@@ -41,32 +41,34 @@ const ResetPassword = ({
 ResetPassword.propTypes = {
     Layout:           PropTypes.func.isRequired,
     authorizeUser:    PropTypes.func.isRequired,
+    confirmPassword:  PropTypes.string,
+    email:            PropTypes.string,
     finalizeLogin:    PropTypes.func.isRequired,
+    loading:          PropTypes.bool,
+    newPassword:      PropTypes.string,
     onFormSubmit:     PropTypes.func.isRequired,
     onSubmitSuccess:  PropTypes.func.isRequired,
-    email:            PropTypes.string,
-    newPassword:      PropTypes.string,
-    confirmPassword:  PropTypes.string,
     registerDevice:   PropTypes.func.isRequired,
     setEnvironment:   PropTypes.func.isRequired,
     verificationCode: PropTypes.string,
-    loading:          PropTypes.bool,
+    
 };
 
 ResetPassword.defaultProps = {
     email:            null,
-    newPassword:      null,
     confirmPassword:  null,
-    verificationCode: null,
     loading:          false,
+    newPassword:      null,
+    verificationCode: null,
+    
 };
 
 const mapStateToProps = state => ({
     email:            state.init.email,
-    newPassword:      state.init.newPassword,
     confirmPassword:  state.init.confirmPassword,
-    verificationCode: state.init.verificationCode,
     loading:          state.user.loading || false,
+    newPassword:      state.init.newPassword,
+    verificationCode: state.init.verificationCode,
 });
 
 const mapDispatchToProps = {

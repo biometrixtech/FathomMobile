@@ -35,23 +35,22 @@ class ResetPassword extends Component {
 
     static propTypes = {
         authorizeUser:    PropTypes.func.isRequired,
+        confirmPassword:  PropTypes.string,
+        email:            PropTypes.string,
         finalizeLogin:    PropTypes.func.isRequired,
+        newPassword:      PropTypes.string,
         onFormSubmit:     PropTypes.func.isRequired,
         onSubmitSuccess:  PropTypes.func.isRequired,
-        email:            PropTypes.string,
-        newPassword:      PropTypes.string,
-        confirmPassword:  PropTypes.string,
         registerDevice:   PropTypes.func.isRequired,
         setEnvironment:   PropTypes.func.isRequired,
         verificationCode: PropTypes.string,
     }
 
     static defaultProps = {
+        confirmPassword:  null,
         email:            null,
         newPassword:      null,
-        confirmPassword:  null,
         verificationCode: null,
-    
     }
 
     constructor(props) {
@@ -60,15 +59,15 @@ class ResetPassword extends Component {
         this.inputs = {};
         this.state = {
             resultMsg: {
+                error:   '',
                 status:  '',
                 success: '',
-                error:   '',
             },
             form_values: {
-                Email:            '',
-                VerificationCode: '',
-                NewPassword:      '',
                 ConfirmPassword:  '',
+                Email:            '',
+                NewPassword:      '',
+                VerificationCode: '',
             },
         };
     }
