@@ -9,18 +9,30 @@ import { ble, init } from '../../actions';
 
 const ResetPassword = ({
     Layout,
+    authorizeUser,
+    finalizeLogin,
+    getUserSensorData,
     onFormSubmit,
+    onSubmitSuccess,
     email,
     newPassword,
     confirmPassword,
+    registerDevice,
+    setEnvironment,
     verificationCode,
     loading,
 }) => (
     <Layout
+        authorizeUser={authorizeUser}
+        finalizeLogin={finalizeLogin}
+        getUserSensorData={getUserSensorData}
         onFormSubmit={onFormSubmit}
+        onSubmitSuccess={onSubmitSuccess}
         email={email}
         newPassword={newPassword}
         confirmPassword={confirmPassword}
+        registerDevice={registerDevice}
+        setEnvironment={setEnvironment}
         verificationCode={verificationCode}
         loading={loading}
     />
@@ -28,10 +40,15 @@ const ResetPassword = ({
 
 ResetPassword.propTypes = {
     Layout:           PropTypes.func.isRequired,
+    authorizeUser:    PropTypes.func.isRequired,
+    finalizeLogin:    PropTypes.func.isRequired,
     onFormSubmit:     PropTypes.func.isRequired,
+    onSubmitSuccess:  PropTypes.func.isRequired,
     email:            PropTypes.string,
     newPassword:      PropTypes.string,
     confirmPassword:  PropTypes.string,
+    registerDevice:   PropTypes.func.isRequired,
+    setEnvironment:   PropTypes.func.isRequired,
     verificationCode: PropTypes.string,
     loading:          PropTypes.bool,
 };

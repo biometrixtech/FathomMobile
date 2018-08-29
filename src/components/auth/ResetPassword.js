@@ -34,10 +34,15 @@ class ResetPassword extends Component {
     static componentName = 'ResetPassword';
 
     static propTypes = {
+        authorizeUser:    PropTypes.func.isRequired,
+        finalizeLogin:    PropTypes.func.isRequired,
         onFormSubmit:     PropTypes.func.isRequired,
+        onSubmitSuccess:  PropTypes.func.isRequired,
         email:            PropTypes.string,
         newPassword:      PropTypes.string,
         confirmPassword:  PropTypes.string,
+        registerDevice:   PropTypes.func.isRequired,
+        setEnvironment:   PropTypes.func.isRequired,
         verificationCode: PropTypes.string,
     }
 
@@ -307,11 +312,10 @@ class ResetPassword extends Component {
     }
 
     _loginUser(userData){
-        console.log('here now');
         console.log(userData);
         this.props.onSubmitSuccess({
             email:    userData.Email,
-            password: userData.Password,
+            password: userData.NewPassword,
         }, false).then(response => {
             let { authorization, user } = response;
             return this.props.authorizeUser(authorization, user, userData)
