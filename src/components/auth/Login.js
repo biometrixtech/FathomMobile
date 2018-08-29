@@ -349,6 +349,7 @@ class Login extends Component {
                         title={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? 'Logging in...' : 'Login'}
                     />
                     <Spacer size={10} />
+                    {/*}
                     {<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
                         <View>
                             <Text 
@@ -358,6 +359,7 @@ class Login extends Component {
                             </Text>
                         </View>
                     </TouchableOpacity>}
+                    */}
                 </View>
 
                 <Modal
