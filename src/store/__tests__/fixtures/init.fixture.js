@@ -11,7 +11,7 @@ export default {
     connectionInfo:       { connectionType: 'unknown', online: false },
     device:               null,
     email:                null,
-    environment:          'DEV', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
+    environment:          'TEST', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
     expires:              null,
     jwt:                  null,
     notification:         false,
