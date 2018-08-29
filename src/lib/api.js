@@ -139,8 +139,8 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
         // Don't add on the login endpoint
         if (endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
             if (jwt) {
-                req.headers.Authorization = jwt;
-            }
+                    req.headers.Authorization = jwt;
+                }
         }
 
         // Add Host name
@@ -213,7 +213,6 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
             .then(async (rawRes) => {
                 // API got back to us, clear the timeout
                 clearTimeout(apiTimedOut);
-
                 let jsonRes = {};
 
                 try {
@@ -258,7 +257,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
 
                 // Only continue if the header is successful
                 if (rawRes && /20[012]/.test(`${rawRes.status}`)) { return jsonRes; }
-
+                
                 throw jsonRes;
             })
             .then(res => {

@@ -20,7 +20,7 @@ export default {
     // hostname: 'https://apis.production.fathomai.com', // deployment
     // hostname: 'https://apis.qa.fathomai.com', // qa
     hostname: 'https://apis.test.fathomai.com', // test
-    // hostname: 'https://apis.dev.fathomai.com', // development
+    //hostname: 'https://apis.dev.fathomai.com', // development
 
     // Map shortnames to the actual endpoints, so that we can
     // use them like so: AppAPI.ENDPOINT_NAME.METHOD()
@@ -35,7 +35,8 @@ export default {
         ['update_user',     '/users/1_0/user/{userId}'],
         ['get_user',        '/users/1_0/user/{userId}'],
         ['authorize',       '/users/1_0/user/{userId}/authorize'],
-        ['forgot_password', '/users/1_0/user/forgot_password'],
+        ['forgot_password', '/plans/1_0/misc/forgot_password'],
+        ['reset_password',  '/plans/1_0/misc/confirm_forgot_password'],
         ['login',           '/users/1_0/user/sign_in'], // If you change the key, update the reference below
         ['register_device', '/users/1_0/device/{device_uuid}'],
         // My Plan specific routes

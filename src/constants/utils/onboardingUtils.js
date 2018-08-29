@@ -25,31 +25,20 @@ const onboardingUtils = {
     isUserAccountInformationValid(user) {
         let errorsArray = [];
         let isValid;
-        // Password Validation
-        // - 8-16 characters
-        // - Must include uppercase letter, lowercase letter, and a number
-        const numbersRegex = /[0-9]/g;
-        const upperCaseLettersRegex = /[A-Z]/g;
-        const lowerCaseLettersRegex = /[a-z]/g;
+
         if(
             user.personal_data.first_name.length === 0
             || user.personal_data.last_name.length === 0
         ) {
-            const newError = 'Your First and Last Name are required';
+            let newError = 'Your First and Last Name are required';
             errorsArray.push(newError);
             isValid = false;
-        } else if( !this.isEmailValid(user.email) ) {
-            const newError = 'Your Email must be a valid email format';
+        } else if( !this.isEmailValid(user.email).isValid ) {
+            let newError = 'Your Email must be a valid email format';
             errorsArray.push(newError);
             isValid = false;
-        } else if(
-            user.password.length < 8
-            || user.password.length > 16
-            || !numbersRegex.test(user.password)
-            || !upperCaseLettersRegex.test(user.password)
-            || !lowerCaseLettersRegex.test(user.password)
-        ) {
-            const newError = 'Your password must be 8-16 characters, include an uppercase letter, a lowercase letter, and a number';
+        } else if( !this.isPasswordValid(user.password).isValid ) {
+            let newError = this.getPasswordRules();
             errorsArray.push(newError);
             isValid = false;
         } else {
@@ -321,8 +310,45 @@ const onboardingUtils = {
 
     isEmailValid(email) {
         const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return emailRegex.test(email);
+        let isValid = emailRegex.test(email);
+        let errorsArray = []
+        if(!isValid)
+        {
+            errorsArray.push('Your email must be a valid email format')
+        }
+        return {
+            errorsArray,
+            isValid
+        };
     },
+
+    isPasswordValid(password){
+        // Password Validation
+        // - 8-16 characters
+        // - Must include uppercase letter, lowercase letter, and a number
+        const numbersRegex = /[0-9]/g;
+        const upperCaseLettersRegex = /[A-Z]/g;
+        const lowerCaseLettersRegex = /[a-z]/g;
+        let isValid = true;
+        let errorsArray = []
+        if (!password || password.length < 8
+            || password.length > 16
+            || !numbersRegex.test(password)
+            || !upperCaseLettersRegex.test(password)
+            || !lowerCaseLettersRegex.test(password))
+        {
+            isValid = false;
+            errorsArray.push('Your password must be 8-16 characters, include an uppercase letter, a lowercase letter, and a number')
+        }
+        return {
+            errorsArray,
+            isValid
+        };
+    },
+
+    getPasswordRules() {
+        return 'Your password must be 8-16 characters, include an uppercase letter, a lowercase letter, and a number';
+    }
 
 }
 
