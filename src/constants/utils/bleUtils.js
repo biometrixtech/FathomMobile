@@ -58,6 +58,8 @@ const bleUtils = {
         // loop through our practices
         for (let i = 0; i < numberOfPractices; i += 1) {
             currentIndex = i;
+            /*eslint no-loop-func:*/
+            /*eslint-env es6*/
             await new Promise((resolve, reject) => {
                 return BLEActions.getAllPracticeDetails(sensor_pid, currentIndex)
                     .then(allPracticeDetails => {
@@ -73,19 +75,19 @@ const bleUtils = {
                     .then(sessionsArray => {
                         console.log('sessionsArray',sessionsArray);
                         if(sessionsArray && sessionsArray.length > 0) {
-                          let dataObj = {};
-                          dataObj.user_id = userId;
-                          dataObj.sessions = sessionsArray;
-                          dataObj.last_sensor_sync = `${moment().toISOString(true).split('.')[0]}Z`;
-                          planActions.postSingleSensorData(dataObj)
-                              .then(result => {
-                                  // TODO: BRING BACK TWO FUNCTIONS
-                                  // delete AsyncStorage record
-                                  // AppUtil._removeAsyncStorageData('practices');
-                                  // 0x79 (BLEActions.deleteSinglePractice) -> delete practice
-                                  // bleUtils.deleteSesnorData(sensor_pid, numberOfPractices);
-                                  return resolve('done!');
-                              });
+                            let dataObj = {};
+                            dataObj.user_id = userId;
+                            dataObj.sessions = sessionsArray;
+                            dataObj.last_sensor_sync = `${moment().toISOString(true).split('.')[0]}Z`;
+                            planActions.postSingleSensorData(dataObj)
+                                .then(result => {
+                                    // TODO: BRING BACK TWO FUNCTIONS
+                                    // delete AsyncStorage record
+                                    // AppUtil._removeAsyncStorageData('practices');
+                                    // 0x79 (BLEActions.deleteSinglePractice) -> delete practice
+                                    // bleUtils.deleteSesnorData(sensor_pid, numberOfPractices);
+                                    return resolve('done!');
+                                });
                         }
                         return resolve();
                     })
@@ -101,6 +103,8 @@ const bleUtils = {
         let promiseChain = Promise.resolve();
         for (let i = 0; i < total; i += 1) {
             currentIndex = i;
+            /*eslint no-shadow: ["error", { "allow": ["currentIndex"] }]*/
+            /*eslint-env es6*/
             const makeNextPromise = currentIndex => () => {
                 return BLEActions.deleteSinglePractice(sensorId, i);
             }
