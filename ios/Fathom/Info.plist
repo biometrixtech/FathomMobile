@@ -53,6 +53,8 @@
 	</dict>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>This app requires Bluetooth to connect to our hardware.</string>
+  <key>NSLocationAlwaysUsageDescription</key>
+  <string/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string/>
 	<key>NSMainNibFile</key>

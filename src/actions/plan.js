@@ -84,7 +84,15 @@ const postReadinessSurvey = dailyReadinessObj => {
   */
 const postSingleSensorData = dataObj => {
     return AppAPI.post_sensor_data.post(false, dataObj)
-        .then(data => Promise.resolve(data))
+        .then(data => {
+            let myPlanData = {};
+            myPlanData.daily_plans = [data.daily_plan];
+            store.dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: myPlanData,
+            });
+            return Promise.resolve(data);
+        })
         .catch(err => {
             console.log('err',err);
             const error = AppAPI.handleError(err);

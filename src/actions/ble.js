@@ -211,6 +211,26 @@ const setKitTime = (id) => {
         });
 };
 
+const startConnection = sensorId => {
+    return BleManager.start({ showAlert: true })
+        .then(() => {
+            store.dispatch({
+                type: Actions.START_BLUETOOTH
+            });
+            return BleManager.connect(sensorId);
+        })
+        .catch(err => BleManager.connect(sensorId))
+        .then(() => Promise.resolve('successfully connected'))
+        .catch(err => Promise.reject(err));
+};
+
+const startDisconnection = sensorId => {
+    return BleManager.disconnect(sensorId)
+        .catch(err => BleManager.disconnect(sensorId))
+        .then(() => Promise.resolve('successfully disconnected'))
+        .catch(err => Promise.reject(err));
+};
+
 /**
   * converts UTC epoch time to local string needed to send to API
   */
@@ -378,9 +398,7 @@ const disconnectFromSingleSensor = (sensor_id) => {
 };
 
 const getSingleSensorStatus = (sensorId) => {
-    return BleManager.start({ showAlert: true })
-        .then(() => BleManager.connect(sensorId))
-        .then(() => BleManager.retrieveServices(sensorId))
+    return BleManager.retrieveServices(sensorId)
         .catch(err => BleManager.retrieveServices(sensorId))
         .then(peripheralInfo => {
             const dataArray = [commands.GET_ENTIRE_SYSTEM_STATUS, convertHex('0x00')];
@@ -919,6 +937,8 @@ export default {
     setWiFiSSID,
     startBluetooth,
     startConnect,
+    startConnection,
+    startDisconnection,
     startScan,
     stopConnect,
     stopScan,

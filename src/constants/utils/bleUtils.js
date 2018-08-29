@@ -7,94 +7,92 @@ import moment from 'moment';
 
 // import actions, utils
 import { ble as BLEActions, plan as planActions } from '../../actions';
+import { AppColors } from '../../constants';
 import { AppUtil } from '../../lib';
 
 const bleUtils = {
 
     handleBLESteps(ble, userId) {
-        console.log('ble',ble);
         // setup variables
         const imagePrefix = '../../../assets/images/sensor/';
         let animated = false;
-        let bleImage = null;
-        let currentIndex = 0;
-        let practices = [];
+        let sensorStatusResults = null;
         // make sure we have a sensor paired
         if(ble.accessoryData && ble.accessoryData.sensor_pid && ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID()) {
-            BLEActions.getSingleSensorStatus(ble.accessoryData.sensor_pid)
+            return BLEActions.startConnection(ble.accessoryData.sensor_pid)
                 .then(res => {
-                    console.log('getSingleSensorStatus',res);
-                    AppUtil._retrieveAsyncStorageData('practices')
-                        .then(result => {
-                            if(result && result.length > 0) {
-                                // we still have items in our local storage, send to API
-                                console.log('we still have items in our local storage, send to API', result);
-                                // send built obj to AWS - planActions.postSingleSensorData(dataObj);
-                            }
-                        });
-                    // res.systemStatus
-                    // res.batteryCharge
-                    // res.numberOfPractices
-                    let promiseChain = Promise.resolve();
-                    for (let i = 0; i < res.numberOfPractices; i += 1) {
-                        currentIndex = i;
-                        /*eslint no-shadow: ["error", { "allow": ["currentIndex"] }]*/
-                        const makeNextPromise = currentIndex => () => {
-                            return BLEActions.getAllPracticeDetails(ble.accessoryData.sensor_pid, currentIndex)
-                                .then(allPracticeDetails => {
-                                    let isLast = (currentIndex + 1) === res.numberOfPractices;
-                                    console.log(`allPracticeDetails - ${currentIndex}`,allPracticeDetails);
-                                    practices.push(allPracticeDetails);
-                                    if(isLast) {
-                                        // save 'practices' to AsyncStore
-                                        AppUtil._storeAsyncStorageData('practices', practices);
-                                    }
-                                    return practices.length === res.numberOfPractices ? practices : null;
-                                })
-                                .catch(error => {
-                                    console.log('ERROR - allPracticeDetails',error);
-                                });
-                        }
-                        promiseChain = promiseChain
-                            .then(makeNextPromise(currentIndex))
-                            .then(sessionsArray => {
-                                if(sessionsArray) {
-                                    console.log('sessionsArray',sessionsArray);
-                                    let dataObj = {};
-                                    dataObj.user_id = userId;
-                                    dataObj.sessions = sessionsArray;
-                                    dataObj.last_sensor_sync = `${moment().toISOString(true).split('.')[0]}Z`;
-                                    planActions.postSingleSensorData(dataObj)
-                                        .then(result => {
-                                            // TODO: BRING BACK TWO FUNCTIONS
-                                            // delete AsyncStorage record
-                                            // AppUtil._removeAsyncStorageData('practices');
-                                            // 0x79 (BLEActions.deleteSinglePractice) -> delete practice
-                                            // bleUtils.deleteSesnorData(ble.accessoryData.sensor_pid, res.numberOfPractices);
-                                        });
-                                }
-                            });
+                    return BLEActions.getSingleSensorStatus(ble.accessoryData.sensor_pid);
+                })
+                .then(sensorStatusResult => {
+                    console.log('getSingleSensorStatus',sensorStatusResult);
+                    sensorStatusResults = sensorStatusResult;
+                    return AppUtil._retrieveAsyncStorageData('practices');
+                })
+                .then(asyncStorageResult => {
+                    if(asyncStorageResult && asyncStorageResult.length > 0) {
+                        // we still have items in our local storage, send to API
+                        console.log('we still have items in our local storage, send to API', asyncStorageResult);
+                        // TODO: what do we want to do here??????
                     }
-                    // if(!ble.bluetoothOn) {
-                    //     // bluetooth off => iconSensorStatusBtOff.png
-                    //     bleImage = require(`${imagePrefix}iconSensorStatusBtOff.png`);
-                    // } else {
-                    //     if(sensorData.isSensorConnected) {
-                    //         // sensor connected no operation => iconSensorStatusConnected.png
-                    //         // sensor connected sensor in session => iconSensorStatusInSession.png
-                    //         // sensor connected operation in process - no operation (rotate as loading) => iconSensorSyncingConnected.png
-                    //         // sensor connected operation in process - sensor in session (rotate as loading) => iconSensorSyncingInSession.png
-                    //         animated = true;
-                    //         bleImage = require(`${imagePrefix}iconSensorSyncingConnected.png`);
-                    //     } else {
-                    //         // sensor not connected => iconSensorStatusNotConnected.png
-                    //         bleImage = require(`${imagePrefix}iconSensorStatusNotConnected.png`);
-                    //     }
-                    // }
+                    return bleUtils.loopThroughPractices(sensorStatusResults.numberOfPractices, ble.accessoryData.sensor_pid, userId);
+                })
+                .then(() => {
+                    return BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+                })
+                .then(res => {
+                    console.log('res-startDisconnection',res);
+                    return Promise.resolve({ animated, bleImage: require(`${imagePrefix}sensor.png`), });
                 })
                 .catch(err => {
-                    console.log('err',err);
+                    console.log('err---',err);
+                    return BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
                 });
+        }
+        return Promise.resolve({ animated, bleImage: null });
+    },
+
+    async loopThroughPractices(numberOfPractices, sensor_pid, userId) {
+        // setup variables
+        let currentIndex = 0;
+        let practices = [];
+        // loop through our practices
+        for (let i = 0; i < numberOfPractices; i += 1) {
+            currentIndex = i;
+            await new Promise((resolve, reject) => {
+                return BLEActions.getAllPracticeDetails(sensor_pid, currentIndex)
+                    .then(allPracticeDetails => {
+                        let isLast = (currentIndex + 1) === numberOfPractices;
+                        console.log(`allPracticeDetails - ${currentIndex}`,allPracticeDetails);
+                        practices.push(allPracticeDetails);
+                        if(isLast) {
+                            // save 'practices' to AsyncStore
+                            AppUtil._storeAsyncStorageData('practices', practices);
+                        }
+                        return practices.length === numberOfPractices ? practices : null;
+                    })
+                    .then(sessionsArray => {
+                        console.log('sessionsArray',sessionsArray);
+                        if(sessionsArray && sessionsArray.length > 0) {
+                          let dataObj = {};
+                          dataObj.user_id = userId;
+                          dataObj.sessions = sessionsArray;
+                          dataObj.last_sensor_sync = `${moment().toISOString(true).split('.')[0]}Z`;
+                          planActions.postSingleSensorData(dataObj)
+                              .then(result => {
+                                  // TODO: BRING BACK TWO FUNCTIONS
+                                  // delete AsyncStorage record
+                                  // AppUtil._removeAsyncStorageData('practices');
+                                  // 0x79 (BLEActions.deleteSinglePractice) -> delete practice
+                                  // bleUtils.deleteSesnorData(sensor_pid, numberOfPractices);
+                                  return resolve('done!');
+                              });
+                        }
+                        return resolve();
+                    })
+                    .catch(error => {
+                        console.log('ERROR - allPracticeDetails',error);
+                    });
+            });
         }
     },
 
@@ -111,12 +109,30 @@ const bleUtils = {
     },
 
     systemStatusMapping(status) {
-        // 0x00 - Undefined status
-        // 0x01 - System in kit, charging or fully charged
-        // 0x02 - System out of kit, can enter practice
-        // 0x03 - System in practice
-        // 0x04 - System battery low (<=5%)
-        // 0x05 - System was placed in unknown kit
+        let color = AppColors.sensor.notConnected;
+        switch (status) {
+        case 0:
+            color = AppColors.sensor.notConnected;
+            break;
+        case 1:
+            color = AppColors.sensor.charging;
+            break;
+        case 2:
+            color = AppColors.sensor.good;
+            break;
+        case 3:
+            color = AppColors.sensor.good;
+            break;
+        case 4:
+            color = AppColors.sensor.unabled;
+            break;
+        case 5:
+            color = AppColors.sensor.unabled;
+            break;
+        default:
+            color = AppColors.sensor.notConnected;
+        }
+        return color;
     },
 
 }

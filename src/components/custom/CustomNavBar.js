@@ -16,6 +16,7 @@ import {
     Platform,
     StatusBar,
     StyleSheet,
+    TouchableOpacity,
     View,
 } from 'react-native';
 
@@ -50,8 +51,23 @@ class CustomNavBar extends Component {
 
     constructor(props) {
         super(props);
+        let currentState = store.getState();
+        let bleImageToDisplay = (
+            currentState.ble.accessoryData &&
+            currentState.ble.accessoryData.sensor_pid
+        ) ?
+            require('../../../assets/images/sensor/sensor-operation.png')
+            :
+            null;
         this.state = {
-            BLEData: {},
+            BLEData: {
+                animated: true,
+                bleImage: bleImageToDisplay,
+            },
+            bluetoothOn:    currentState.ble.bluetoothOn || false,
+            // counter:        0,
+            isSensorUIOpen: false,
+            // timer:          null,
         }
         this.handleBleStateChange = this.handleBleStateChange.bind(this);
     }
@@ -66,26 +82,53 @@ class CustomNavBar extends Component {
         if(Platform.OS === 'android') {
             StatusBar.setBackgroundColor(AppColors.primary.grey.twentyPercent);
         }
-
-        // // trigger BLE Steps function
-        // let BLEData = bleUtils.handleBLESteps(store.getState().ble, store.getState().user.id);
-        // // TODO: make sure to disconnect everytime...
-        // // TODO: make sure to import all BLE update states...
-        // console.log('++++BLEData',BLEData);
-        // this.setState({ BLEData });
-
         this.handlerState = bleManagerEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange );
+        // start timer
+        this.triggerBLESteps();
+        // bleUtils.handleBLESteps(store.getState().ble, store.getState().user.id)
+        //     .then(BLEData => {
+        //         let timer = setInterval(this.triggerBLESteps, 60000);
+        //         this.setState({ BLEData, timer });
+        //     })
+        //     .catch(err => {
+        //         let timer = setInterval(this.triggerBLESteps, 60000);
+        //         this.setState({ timer });
+        //     });
+    }
+
+    triggerBLESteps = () => {
+        this.setState({
+            BLEData: {
+                animated: true,
+                bleImage: require('../../../assets/images/sensor/sensor-operation.png'),
+            }
+        }, () => {
+            bleUtils.handleBLESteps(store.getState().ble, store.getState().user.id)
+                .then(BLEData => {
+                    this.setState({ BLEData });
+                });
+        });
     }
 
     componentWillUnmount = () => {
         this.handlerState.remove();
+        // this.clearInterval(this.state.timer);
     }
 
+    // tick = () => {
+    //     this.setState({
+    //         counter: this.state.counter + 1,
+    //     });
+    // }
+
     handleBleStateChange = (data) => {
-        console.log('hi ble data', data);
-        store.dispatch({
-            type: DispatchActions.CHANGE_STATE,
-            data: data.state,
+        this.setState({
+            bluetoothOn: data.state === 'on' ? true : false,
+        }, () => {
+            store.dispatch({
+                type: DispatchActions.CHANGE_STATE,
+                data: data.state,
+            });
         });
     }
 
@@ -177,8 +220,21 @@ class CustomNavBar extends Component {
     }
 
     _renderRight = () => {
+        if(Actions.currentScene === 'home') {
+            return(
+                store.getState().ble.accessoryData && store.getState().ble.accessoryData.sensor_pid ?
+                    this._renderSensorImage()
+                    :
+                    <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXSml,}}></View>
+            );
+        }
+        return(<View style={{flex: 1}}></View>)
+    }
+
+    _renderSensorImage = () => {
         // set animated values
         const spinValue = new Animated.Value(0);
+        const iconGrow = new Animated.Value(0);
         // First set up animation
         Animated.loop(
             Animated.timing(
@@ -191,47 +247,124 @@ class CustomNavBar extends Component {
                 }
             )
         ).start();
+        Animated.loop(
+            Animated.timing(
+                iconGrow,
+                {
+                    duration:        2000,
+                    easing:          Easing.ease,
+                    toValue:         1,
+                    useNativeDriver: true,
+                }
+            )
+        ).start();
         // Second interpolate beginning and end values (in this case 0 and 1)
         const spin = spinValue.interpolate({
             inputRange:  [0, 1],
             outputRange: ['0deg', '360deg'],
         });
-        let currentState = store.getState();
-        console.log('BLEData',this.state.BLEData);
-        {/* this.state.BLEData.bleImage && this.state.BLEData.animated ?
-            <Animated.Image
-                resizeMode={'contain'}
-                source={this.state.BLEData.bleImage}
-                style={{transform: [{rotate: spin}], width: 34,}}
-            />
-            : this.state.BLEData.bleImage && !this.state.BLEData.animated ?
-                <Image
-                    resizeMode={'contain'}
-                    source={this.state.BLEData.bleImage}
-                    style={{width: 34,}}
-                />
-                :
-                null
-        */}
-        if(Actions.currentScene === 'home') {
-            return (
-                <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingXSml}}>
-                    { currentState.ble.bluetoothOn ?
-                        null
-                        :
-                        <TabIcon
-                            icon={'bluetooth-off'}
-                            iconStyle={[{color: AppColors.black,}]}
-                            onPress={() => this._startBluetooth()}
-                            reverse={false}
-                            size={26}
-                            type={'material-community'}
-                        />
-                    }
-                </View>
-            )
-        }
-        return(<View style={{flex: 1}}></View>)
+        const scaleIcon = iconGrow.interpolate({
+            inputRange:  [0, 1],
+            outputRange: [0.5, 1]
+        });
+        // set other variables
+        const imageWidth = 26;
+        const indicatorSize = 10;
+        return(
+            <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXSml,}}>
+                { this.state.bluetoothOn && this.state.BLEData.bleImage && this.state.BLEData.animated ?
+                    <Animated.Image
+                        resizeMode={'contain'}
+                        source={this.state.BLEData.bleImage}
+                        style={{transform: [{rotate: spin}], width: imageWidth,}}
+                    />
+                    : this.state.bluetoothOn && this.state.BLEData.bleImage && !this.state.BLEData.animated ?
+                        <TouchableOpacity onPress={() => this.setState({ isSensorUIOpen: !this.state.isSensorUIOpen })} style={{width: imageWidth}}>
+                            <Image
+                                resizeMode={'contain'}
+                                source={this.state.BLEData.bleImage}
+                                style={{width: imageWidth,}}
+                            />
+                            { store.getState().ble.systemStatus === 1 ?
+                                <TabIcon
+                                    containerStyle={[{
+                                        borderRadius: (indicatorSize + 10) / 2,
+                                        height:       (indicatorSize + 10),
+                                        position:     'absolute',
+                                        right:        0,
+                                        top:          0,
+                                    }]}
+                                    icon={'bolt'}
+                                    iconStyle={[{color: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),}]}
+                                    onPress={() => null}
+                                    reverse={false}
+                                    size={(indicatorSize + 10)}
+                                    type={'font-awesome'}
+                                />
+                                : store.getState().ble.systemStatus === 2 ?
+                                    <Animated.View
+                                        style={{
+                                            backgroundColor: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),
+                                            borderRadius:    indicatorSize / 2,
+                                            height:          indicatorSize,
+                                            position:        'absolute',
+                                            right:           0,
+                                            top:             2,
+                                            transform:       [{scale: scaleIcon}],
+                                            width:           indicatorSize,
+                                        }}
+                                    />
+                                    :
+                                    <View
+                                        style={{
+                                            backgroundColor: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),
+                                            borderRadius:    indicatorSize / 2,
+                                            height:          indicatorSize,
+                                            position:        'absolute',
+                                            right:           0,
+                                            top:             4,
+                                            width:           indicatorSize,
+                                        }}
+                                    />
+                            }
+                        </TouchableOpacity>
+                        : !this.state.bluetoothOn ?
+                            <TabIcon
+                                icon={'bluetooth-off'}
+                                iconStyle={[{color: AppColors.black,}]}
+                                onPress={() => this._startBluetooth()}
+                                reverse={false}
+                                size={imageWidth}
+                                type={'material-community'}
+                            />
+                            :
+                            <View style={{width: imageWidth}}>
+                                <Image
+                                    resizeMode={'contain'}
+                                    source={this.state.BLEData.bleImage}
+                                    style={{width: imageWidth,}}
+                                />
+                                <View
+                                    style={{
+                                        backgroundColor: AppColors.sensor.notConnected,
+                                        borderRadius:    10 / 2,
+                                        height:          10,
+                                        position:        'absolute',
+                                        right:           0,
+                                        top:             4,
+                                        width:           10,
+                                    }}
+                                />
+                            </View>
+                }
+            </View>
+        )
+    }
+
+    _renderSensorUI = () => {
+        return(
+            <View></View>
+        )
     }
 
     render = () => {
@@ -243,6 +376,11 @@ class CustomNavBar extends Component {
                     {this._renderMiddle()}
                     {this._renderRight()}
                 </View>
+                { this.state.isSensorUIOpen ?
+                    this._renderSensorUI()
+                    :
+                    null
+                }
             </View>
         );
     }

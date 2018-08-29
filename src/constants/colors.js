@@ -113,6 +113,13 @@ const alerts = {
     successBackground: '#59DC9A',
 }
 
+const sensor = {
+    charging:     brand.primary.yellow.hundredPercent,
+    good:         '#2E7D32',
+    notConnected: '#BABABA',
+    unabled:      '#0277BD',
+}
+
 export default {
     ...app,
     ...borders,
@@ -120,5 +127,6 @@ export default {
     ...sliders,
     ...tabbar,
     alerts,
+    sensor,
     zeplin,
 };
