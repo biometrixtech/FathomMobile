@@ -54,44 +54,44 @@ class Root extends Component {
         /*
          * NetInfo exposes info about online/offline status
          */
-        NetInfo.getConnectionInfo()
-            .then(connectionInfo => {
-                console.log(`Initial, type: ${connectionInfo.type}, effectiveType: ${connectionInfo.effectiveType}`);
-                this.props.store.dispatch({
-                    type: Actions.UPDATE_CONNECTION,
-                    data: { connectionType: connectionInfo.type }
-                });
-            });
-        NetInfo.isConnected.fetch()
-            .then(isConnected => {
-                console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-                this.props.store.dispatch({
-                    type: Actions.UPDATE_CONNECTION,
-                    data: { online: isConnected }
-                });
-            });
+        // NetInfo.getConnectionInfo()
+        //     .then(connectionInfo => {
+        //         console.log(`Initial, type: ${connectionInfo.type}, effectiveType: ${connectionInfo.effectiveType}`);
+        //         this.props.store.dispatch({
+        //             type: Actions.UPDATE_CONNECTION,
+        //             data: { connectionType: connectionInfo.type }
+        //         });
+        //     });
+        // NetInfo.isConnected.fetch()
+        //     .then(isConnected => {
+        //         console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+        //         this.props.store.dispatch({
+        //             type: Actions.UPDATE_CONNECTION,
+        //             data: { online: isConnected }
+        //         });
+        //     });
     }
 
     componentWillMount = () => {
-        NetInfo.addEventListener(
-            'connectionChange',
-            this._handleConnectivityChange
-        );
-        NetInfo.isConnected.addEventListener(
-            'connectionChange',
-            this._handleIsConnectedConnectivityChange
-        );
+        // NetInfo.addEventListener(
+        //     'connectionChange',
+        //     this._handleConnectivityChange
+        // );
+        // NetInfo.isConnected.addEventListener(
+        //     'connectionChange',
+        //     this._handleIsConnectedConnectivityChange
+        // );
     }
 
     componentWillUnmount = () => {
-        NetInfo.removeEventListener(
-            'connectionChange',
-            this._handleConnectivityChange
-        );
-        NetInfo.isConnected.removeEventListener(
-            'connectionChange',
-            this._handleIsConnectedConnectivityChange
-        );
+        // NetInfo.removeEventListener(
+        //     'connectionChange',
+        //     this._handleConnectivityChange
+        // );
+        // NetInfo.isConnected.removeEventListener(
+        //     'connectionChange',
+        //     this._handleIsConnectedConnectivityChange
+        // );
     }
 
     componentDidMount = () => {
@@ -99,19 +99,19 @@ class Root extends Component {
     }
 
     _handleConnectivityChange = (connectionInfo) => {
-        console.log(`First change, type: ${connectionInfo.type}, effectiveType: ${connectionInfo.effectiveType}`);
-        this.props.store.dispatch({
-            type: Actions.UPDATE_CONNECTION,
-            data: { connectionType: connectionInfo.type }
-        });
+        // console.log(`First change, type: ${connectionInfo.type}, effectiveType: ${connectionInfo.effectiveType}`);
+        // this.props.store.dispatch({
+        //     type: Actions.UPDATE_CONNECTION,
+        //     data: { connectionType: connectionInfo.type }
+        // });
     }
 
     _handleIsConnectedConnectivityChange = (isConnected) => {
-        console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
-        this.props.store.dispatch({
-            type: Actions.UPDATE_CONNECTION,
-            data: { online: isConnected }
-        });
+        // console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
+        // this.props.store.dispatch({
+        //     type: Actions.UPDATE_CONNECTION,
+        //     data: { online: isConnected }
+        // });
     }
 
     /**

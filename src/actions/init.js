@@ -207,8 +207,8 @@ const startLogin = (credentials, reload) => {
                 // we need to add this here incase we make a call and need jwt in the header
                 dispatch({
                     type:     Actions.LOGIN,
-                    email:    userCreds.Email,
-                    password: userCreds.Password,
+                    email:    userCreds.email,
+                    password: userCreds.password,
                     jwt:      token,
                 });
 
