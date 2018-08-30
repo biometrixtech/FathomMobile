@@ -80,21 +80,17 @@ class CustomNavBar extends Component {
     }
 
     componentWillMount = () => {
-        // console.log('componentWillMount - CustomNavBar.js');
         // trigger check state
         BleManager.checkState();
     }
 
     componentDidMount = () => {
-        // console.log('componentDidMount - CustomNavBar.js');
         StatusBar.setBarStyle('dark-content');
         if(Platform.OS === 'android') {
             StatusBar.setBackgroundColor(AppColors.primary.grey.twentyPercent);
         }
         this.handlerState = bleManagerEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange );
         // start timer
-        // console.log('this.props.routeName',this.props.routeName);
-        // console.log('fetchBleData',this.state.fetchBleData);
         if(this.state.fetchBleData) {
             this._triggerBLESteps();
         }
@@ -110,12 +106,14 @@ class CustomNavBar extends Component {
             bleUtils.handleBLESteps(store.getState().ble, store.getState().user.id)
                 .then(BLEData => {
                     this.setState({ BLEData, isSensorUIOpen: !this.state.isSensorUIOpen });
+                })
+                .catch(BLEData => {
+                    this.setState({ BLEData, isSensorUIOpen: !this.state.isSensorUIOpen });
                 });
         });
     }
 
     componentWillUnmount = () => {
-        // console.log('componentWillUnmount - CustomNavBar.js');
         this.handlerState.remove();
     }
 
@@ -368,9 +366,21 @@ class CustomNavBar extends Component {
     }
 
     _renderSensorUI = () => {
+        let sensorStatusBarObj = bleUtils.sensorStatusBar(store.getState().ble.systemStatus, store.getState().ble.batteryCharge);
         return(
-            <View>
-                <Text oswaldRegular style={{fontSize: AppFonts.scaleFont(14)}}>{'SENSOR UI COMING SOON!'}</Text>
+            <View
+                style={{
+                    backgroundColor: sensorStatusBarObj.backgroundColor,
+                    paddingLeft:     AppSizes.paddingMed,
+                    paddingVertical: AppSizes.paddingMed,
+                }}
+            >
+                <Text oswaldRegular style={{color: AppColors.primary.white.hundredPercent, fontSize: AppFonts.scaleFont(14)}}>
+                    {'SENSOR STATUS: '}
+                    <Text oswaldRegular style={{color: AppColors.white, opacity: 0.5,}}>
+                        {`${sensorStatusBarObj.followUpText} ${sensorStatusBarObj.batteryFollowUp ? sensorStatusBarObj.batteryFollowUp : sensorStatusBarObj.lastSyncFollowUp ? '| synced ' : ''}`}
+                    </Text>
+                </Text>
             </View>
         )
     }

@@ -45,7 +45,8 @@ const bleUtils = {
                 })
                 .catch(err => {
                     console.log('err---',err);
-                    return BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+                    BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+                    return Promise.reject({ bleImage: require(`${imagePrefix}sensor.png`) });
                 });
         }
         return Promise.resolve({ animated, bleImage: null });
@@ -137,6 +138,52 @@ const bleUtils = {
             color = AppColors.sensor.notConnected;
         }
         return color;
+    },
+
+    sensorStatusBar(status, batteryLevel) {
+        let backgroundColor = AppColors.sensor.notConnected;
+        let batteryFollowUp = false;
+        let followUpText = 'NOT CONNECTED';
+        let lastSyncFollowUp = false;
+        switch (status) {
+        case 0:
+            backgroundColor = AppColors.sensor.notConnectedBackground;
+            followUpText = 'NOT CONNECTED';
+            lastSyncFollowUp = true;
+            break;
+        case 1:
+            backgroundColor = AppColors.sensor.charging;
+            batteryFollowUp = `| ${(batteryLevel * 0.095).toFixed(1)}hrs`;
+            followUpText = 'CHARGING';
+            break;
+        case 2:
+            backgroundColor = AppColors.sensor.good;
+            batteryFollowUp = `| ${(batteryLevel * 0.095).toFixed(1)}hrs`;
+            followUpText = 'READY FOR PLAY';
+            break;
+        case 3:
+            backgroundColor = AppColors.sensor.good;
+            batteryFollowUp = `| ${(batteryLevel * 0.095).toFixed(1)}hrs`;
+            followUpText = 'LOGGING ACTIVITY';
+            break;
+        case 4:
+            backgroundColor = AppColors.sensor.unabled;
+            followUpText = 'LOW BATTERY, RETURN TO KIT';
+            break;
+        case 5:
+            backgroundColor = AppColors.sensor.wrongKit;
+            followUpText = 'SENSOR PLACE IN WRONG KIT';
+            break;
+        default:
+            backgroundColor = AppColors.sensor.notConnected;
+            followUpText = 'NOT CONNECTED';
+        }
+        return {
+            backgroundColor,
+            batteryFollowUp,
+            followUpText,
+            lastSyncFollowUp,
+        };
     },
 
 }

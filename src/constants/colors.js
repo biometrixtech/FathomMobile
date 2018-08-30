@@ -114,10 +114,12 @@ const alerts = {
 }
 
 const sensor = {
-    charging:     brand.primary.yellow.hundredPercent,
-    good:         '#2E7D32',
-    notConnected: '#BABABA',
-    unabled:      '#0277BD',
+    charging:               brand.primary.yellow.hundredPercent,
+    good:                   '#2E7D32',
+    notConnected:           '#BABABA',
+    notConnectedBackground: '#081831',
+    unabled:                '#0277BD',
+    wrongKit:               '#972C2F',
 }
 
 export default {
