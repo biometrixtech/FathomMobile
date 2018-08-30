@@ -65,12 +65,12 @@ class Settings extends Component {
                 [
                     {
                         text:  'Cancel',
-                        style: 'cancel'
+                        style: 'cancel',
                     },
                     {
                         text:    'Unpair',
                         onPress: () => {
-                            this.props.disconnectFromSingleSensor(this.props.accessoryData.sensor_pid)
+                            return this.props.disconnectFromSingleSensor(this.props.accessoryData.sensor_pid)
                                 .catch(err => this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid))
                                 .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid))
                                 .then(() => this.refs.toast.show('Successfully UNPAIRED from sensor', DURATION.LENGTH_LONG))
@@ -78,7 +78,7 @@ class Settings extends Component {
                                     this.refs.toast.show('Failed to UNPAIR from sensor', DURATION.LENGTH_LONG);
                                     console.log('error while disconnecting from single sensor',err);
                                 });
-                        }
+                        },
                     },
                 ],
                 { cancelable: true }

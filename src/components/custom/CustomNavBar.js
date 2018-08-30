@@ -21,7 +21,7 @@ import {
 } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles, Actions as DispatchActions, } from '../../constants';
+import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, } from '../../constants';
 import { TabIcon, Text, } from './';
 import { store } from '../../store';
 import { bleUtils } from '../../constants/utils';
@@ -29,6 +29,7 @@ import { AppUtil } from '../../lib';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
+import _ from 'lodash';
 import BleManager from 'react-native-ble-manager';
 import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
 
@@ -56,7 +57,8 @@ class CustomNavBar extends Component {
         let fetchBleData = (
             currentState.ble.accessoryData &&
             currentState.ble.accessoryData.sensor_pid &&
-            currentState.ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID()
+            currentState.ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID() &&
+            this.props.routeName === 'home'
         ) ?
             true
             :
@@ -78,23 +80,27 @@ class CustomNavBar extends Component {
     }
 
     componentWillMount = () => {
+        // console.log('componentWillMount - CustomNavBar.js');
         // trigger check state
         BleManager.checkState();
     }
 
     componentDidMount = () => {
+        // console.log('componentDidMount - CustomNavBar.js');
         StatusBar.setBarStyle('dark-content');
         if(Platform.OS === 'android') {
             StatusBar.setBackgroundColor(AppColors.primary.grey.twentyPercent);
         }
         this.handlerState = bleManagerEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange );
         // start timer
+        // console.log('this.props.routeName',this.props.routeName);
+        // console.log('fetchBleData',this.state.fetchBleData);
         if(this.state.fetchBleData) {
-            this.triggerBLESteps();
+            this._triggerBLESteps();
         }
     }
 
-    triggerBLESteps = () => {
+    _triggerBLESteps = () => {
         this.setState({
             BLEData: {
                 animated: true,
@@ -103,12 +109,13 @@ class CustomNavBar extends Component {
         }, () => {
             bleUtils.handleBLESteps(store.getState().ble, store.getState().user.id)
                 .then(BLEData => {
-                    this.setState({ BLEData });
+                    this.setState({ BLEData, isSensorUIOpen: !this.state.isSensorUIOpen });
                 });
         });
     }
 
     componentWillUnmount = () => {
+        // console.log('componentWillUnmount - CustomNavBar.js');
         this.handlerState.remove();
     }
 
@@ -169,7 +176,7 @@ class CustomNavBar extends Component {
     _renderLeft = () => {
         return (
             <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingXSml}}>
-                { Actions.currentScene === 'onboarding' && !store.getState().user.id ?
+                { this.props.routeName === 'onboarding' && !store.getState().user.id ?
                     <TabIcon
                         icon={'arrow-left'}
                         iconStyle={[{color: AppColors.black,}]}
@@ -178,14 +185,14 @@ class CustomNavBar extends Component {
                         size={26}
                         type={'simple-line-icon'}
                     />
-                    : Actions.currentParams.onLeft && Actions.currentScene !== 'onboarding' ?
+                    : Actions.currentParams.onLeft && this.props.routeName !== 'onboarding' ?
                         <TabIcon
-                            icon={Actions.currentScene === 'home' ? 'settings' : 'arrow-left'}
+                            icon={this.props.routeName === 'home' ? 'settings' : 'arrow-left'}
                             iconStyle={[{color: AppColors.black,}]}
                             onPress={Actions.currentParams.onLeft}
                             reverse={false}
                             size={26}
-                            type={Actions.currentScene === 'home' ? 'material-community' : 'simple-line-icon'}
+                            type={this.props.routeName === 'home' ? 'material-community' : 'simple-line-icon'}
                         />
                         :
                         null
@@ -195,7 +202,7 @@ class CustomNavBar extends Component {
     }
 
     _renderMiddle = () => {
-        if(Actions.currentScene === 'home') {
+        if(this.props.routeName === 'home') {
             return (
                 <Image
                     source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
@@ -211,9 +218,9 @@ class CustomNavBar extends Component {
     }
 
     _renderRight = () => {
-        if(Actions.currentScene === 'home') {
+        if(this.props.routeName === 'home') {
             return(
-                store.getState().ble.accessoryData && store.getState().ble.accessoryData.sensor_pid ?
+                this.state.fetchBleData ?
                     this._renderSensorImage()
                     :
                     <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXSml,}}></View>
@@ -270,7 +277,15 @@ class CustomNavBar extends Component {
                         style={{transform: [{rotate: spin}], width: imageWidth,}}
                     />
                     : this.state.bluetoothOn && this.state.BLEData.bleImage && !this.state.BLEData.animated ?
-                        <TouchableOpacity onPress={() => this.setState({ isSensorUIOpen: !this.state.isSensorUIOpen })} style={{width: imageWidth}}>
+                        <TouchableOpacity
+                            onPress={() =>
+                                this.setState(
+                                    { isSensorUIOpen: !this.state.isSensorUIOpen },
+                                    () => this._triggerBLESteps(),
+                                )
+                            }
+                            style={{width: imageWidth}}
+                        >
                             <Image
                                 resizeMode={'contain'}
                                 source={this.state.BLEData.bleImage}
@@ -354,7 +369,9 @@ class CustomNavBar extends Component {
 
     _renderSensorUI = () => {
         return(
-            <View></View>
+            <View>
+                <Text oswaldRegular style={{fontSize: AppFonts.scaleFont(14)}}>{'SENSOR UI COMING SOON!'}</Text>
+            </View>
         )
     }
 
@@ -362,7 +379,7 @@ class CustomNavBar extends Component {
         return (
             <View>
                 <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
-                <View style={[styles.container , Actions.currentScene === 'settings' ? {borderBottomColor: AppColors.border, borderBottomWidth: 2,} : {}]}>
+                <View style={[styles.container , this.props.routeName === 'settings' ? {borderBottomColor: AppColors.border, borderBottomWidth: 2,} : {}]}>
                     {this._renderLeft()}
                     {this._renderMiddle()}
                     {this._renderRight()}

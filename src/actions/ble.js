@@ -211,8 +211,24 @@ const setKitTime = (id) => {
         });
 };
 
+const startDisconnection = sensorId => {
+    return BleManager.disconnect(sensorId)
+        .catch(err => BleManager.disconnect(sensorId))
+        .then(() => Promise.resolve('successfully disconnected'))
+        .catch(err => Promise.reject(err));
+};
+
 const startConnection = sensorId => {
-    return BleManager.start({ showAlert: true })
+    // let dataArray = [parseInt('0x7E', 16), convertHex('0x00')];
+    // return BleManager.connect(sensorId)
+    //     .then(() => BleManager.retrieveServices(sensorId))
+    //     .catch(err => BleManager.retrieveServices(sensorId))
+    //     .then(peripheralInfo => {
+    //         return write(peripheralInfo.id, dataArray);
+    //     })
+    //     .then(result => console.log('result',result));
+    return startDisconnection(sensorId)
+        .then(() => BleManager.start({ showAlert: true }))
         .then(() => {
             store.dispatch({
                 type: Actions.START_BLUETOOTH
@@ -221,13 +237,6 @@ const startConnection = sensorId => {
         })
         .catch(err => BleManager.connect(sensorId))
         .then(() => Promise.resolve('successfully connected'))
-        .catch(err => Promise.reject(err));
-};
-
-const startDisconnection = sensorId => {
-    return BleManager.disconnect(sensorId)
-        .catch(err => BleManager.disconnect(sensorId))
-        .then(() => Promise.resolve('successfully disconnected'))
         .catch(err => Promise.reject(err));
 };
 
@@ -287,6 +296,13 @@ const convertDurationToInt = array => {
   * NEW FUNCTIONS
   * - 1 Sensor System
   */
+const disconnectFromSensor = sensorId => {
+    return BleManager.disconnect(sensorId)
+        .catch(() => BleManager.disconnect(sensorId))
+        .then(() => Promise.resolve())
+        .catch(() => Promise.reject());
+};
+
 const connectToAccessory = (data) => {
     const getSetupModeArray = [commands.IS_SINGLE_SENSOR_IN_SETUP_MODE, convertHex('0x00')];
     let setKitTimeArray = [commands.SET_TIME, convertHex('0x04')];
@@ -911,6 +927,7 @@ export default {
     deleteUserSensorData,
     deviceFound,
     disconnect,
+    disconnectFromSensor,
     disconnectFromSingleSensor,
     enableBluetooth,
     getAccessoryKey,

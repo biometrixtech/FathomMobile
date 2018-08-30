@@ -26,6 +26,7 @@ import {
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
 import { Icon } from 'react-native-elements';
+import BleManager from 'react-native-ble-manager';
 import Collapsible from 'react-native-collapsible';
 import LinearGradient from 'react-native-linear-gradient';
 import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
@@ -210,7 +211,7 @@ class BluetoothConnectView extends Component {
             .catch(err => this.props.connectToAccessory(data))
             .catch(err => this.props.stopConnect())
             .then(() => {
-                this._toggleAlertNotification();
+                this._toggleAlertNotification(data.id);
                 return this.props.stopConnect();
             })
             .catch(err => {
@@ -227,7 +228,7 @@ class BluetoothConnectView extends Component {
         this.setState({ size: { width: layout.width, height: layout.height } });
     }
 
-    _toggleAlertNotification() {
+    _toggleAlertNotification(sensorId) {
         Alert.alert(
             '',
             'Did your sensor\'s light blink green?',
@@ -237,7 +238,8 @@ class BluetoothConnectView extends Component {
                     onPress: () => {
                         this.setState({ index: 0 });
                         this.pages.progress = 0;
-                        return this.props.checkState();
+                        return this.props.checkState()
+                            .then(() => BleManager.disconnect(sensorId));
                     },
                     style: 'cancel',
                 },
@@ -245,6 +247,7 @@ class BluetoothConnectView extends Component {
                     text:    'Yes',
                     onPress: () => {
                         return this.props.postUserSensorData()
+                            .then(() => BleManager.disconnect(sensorId))
                             .then(() => {
                                 if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
                                     this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
