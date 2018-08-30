@@ -206,7 +206,7 @@ class Home extends Component {
         // TODO: REMOVE WHEN SENSOR DATA VALIDATED
         AppUtil._retrieveAsyncStorageData('practices')
             .then(res => {
-                this.setState({ storedSensorData: res });
+                this.setState({ storedSensorData: res ? res : [] });
             });
     }
 
@@ -1365,7 +1365,7 @@ class Home extends Component {
             <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
                 <Text>{'SENSOR PAGE'}</Text>
-                { this.state.storedSensorData.length > 0 ?
+                { this.state.storedSensorData && this.state.storedSensorData.length > 0 ?
                     _.map(this.state.storedSensorData, (result, i) => {
                         return(
                             <View key={i}>
