@@ -419,7 +419,7 @@ const getSingleSensorStatus = (sensorId) => {
             returnObj.batteryCharge = response[5] > 100 ? 100 : response[5];
             returnObj.numberOfPractices = response[6];
             store.dispatch({
-                type:          Actions.UPDATE_BLE_STATUES,
+                type:          Actions.UPDATE_BLE_STATUSES,
                 batteryCharge: returnObj.batteryCharge,
                 systemStatus:  returnObj.systemStatus,
             })

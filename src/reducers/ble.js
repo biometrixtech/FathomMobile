@@ -25,7 +25,7 @@ export default function bleReducer(state = initialState, action) {
         return Object.assign({}, state, {
             indicator: false
         });
-    case Actions.UPDATE_BLE_STATUES:
+    case Actions.UPDATE_BLE_STATUSES:
         return Object.assign({}, state, {
             batteryCharge: action.batteryCharge,
             systemStatus:  action.systemStatus,
