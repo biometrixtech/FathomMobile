@@ -119,7 +119,6 @@ const Index = (
                 navBar={CustomNavBar}
                 onLeft={() => Actions.settings()}
                 panHandlers={null}
-                type={'replace'}
             />
             <Scene
                 Layout={MyPlanComponent}
@@ -137,7 +136,6 @@ const Index = (
                 key={'settings'}
                 panHandlers={null}
                 title={'SETTINGS'}
-                type={'replace'}
             />
             <Scene
                 Layout={BluetoothConnectComponent}

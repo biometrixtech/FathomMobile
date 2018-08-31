@@ -92,9 +92,50 @@ class CustomNavBar extends Component {
             StatusBar.setBackgroundColor(AppColors.primary.grey.twentyPercent);
         }
         this.handlerState = bleManagerEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange );
-        // start timer
+        // start bluetooth related items
+        this._startBluetooth();
         if(this.state.fetchBleData) {
             this._triggerBLESteps();
+        }
+    }
+
+    componentWillUnmount = () => {
+        this.handlerState.remove();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(!_.isEqual(nextProps, this.props) && nextProps.routeName === 'home') {
+            let currentState = store.getState();
+            if(
+                currentState.ble.accessoryData &&
+                currentState.ble.accessoryData.sensor_pid &&
+                currentState.ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID()
+            ) {
+                this.setState(
+                    {
+                        BLEData: {
+                            animated: true,
+                            bleImage: require('../../../assets/images/sensor/sensor-operation.png'),
+                        },
+                        bluetoothOn:    currentState.ble.bluetoothOn || false,
+                        fetchBleData:   true,
+                        isSensorUIOpen: false,
+                    },
+                    () => this._triggerBLESteps()
+                );
+            } else {
+                this.setState(
+                    {
+                        BLEData: {
+                            animated: false,
+                            bleImage: null,
+                        },
+                        bluetoothOn:    currentState.ble.bluetoothOn || false,
+                        fetchBleData:   false,
+                        isSensorUIOpen: false,
+                    },
+                );
+            }
         }
     }
 
@@ -116,10 +157,6 @@ class CustomNavBar extends Component {
         });
     }
 
-    componentWillUnmount = () => {
-        this.handlerState.remove();
-    }
-
     handleBleStateChange = (data) => {
         this.setState({
             bluetoothOn: data.state === 'on' ? true : false,
@@ -134,9 +171,6 @@ class CustomNavBar extends Component {
     _startBluetooth = () => {
         return BLEActions.startBluetooth()
             .then(() => {
-                store.dispatch({
-                    type: DispatchActions.START_BLUETOOTH
-                });
                 BleManager.checkState();
                 if (Platform.OS === 'android') {
                     return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
@@ -468,7 +502,7 @@ class CustomNavBar extends Component {
                     {this._renderMiddle()}
                     {this._renderRight()}
                 </View>
-                { this.state.isSensorUIOpen ?
+                { this.state.isSensorUIOpen && this.props.routeName === 'home' ?
                     this._renderSensorUI()
                     :
                     null
