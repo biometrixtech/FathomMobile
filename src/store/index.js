@@ -18,7 +18,7 @@ let store;
 const config = {
     key:       'root',
     storage,
-    whitelist: ['init', 'user', 'ble'],
+    whitelist: ['init', 'user', 'ble', 'plan'],
 };
 
 const reducer = persistCombineReducers(config, reducers);
