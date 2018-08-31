@@ -100,10 +100,10 @@ function sorenessPainScaleMapping(type, value, isJoint) {
             newValue = 3;
             break;
         case 4:
-            newValue = 3;
+            newValue = 4;
             break;
         case 5:
-            newValue = 4;
+            newValue = 5;
             break;
         default:
             newValue = 0;
@@ -111,7 +111,7 @@ function sorenessPainScaleMapping(type, value, isJoint) {
     } else if(type === 'pain') {
         switch (value) {
         case 1:
-            newValue = 2;
+            newValue = 1;
             break;
         case 2:
             newValue = 2;
