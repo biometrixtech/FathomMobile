@@ -22,7 +22,7 @@ import {
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, } from '../../constants';
-import { TabIcon, Text, } from './';
+import { Spacer, TabIcon, Text, } from './';
 import { store } from '../../store';
 import { bleUtils } from '../../constants/utils';
 import { AppUtil } from '../../lib';
@@ -32,6 +32,7 @@ import { Actions, } from 'react-native-router-flux';
 import _ from 'lodash';
 import BleManager from 'react-native-ble-manager';
 import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
+import moment from 'moment';
 
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
@@ -366,21 +367,87 @@ class CustomNavBar extends Component {
     }
 
     _renderSensorUI = () => {
-        let sensorStatusBarObj = bleUtils.sensorStatusBar(store.getState().ble.systemStatus, store.getState().ble.batteryCharge);
+        let currentState = store.getState();
+        let bleStore = currentState.ble;
+        let planStore = currentState.plan.dailyPlan && currentState.plan.dailyPlan.length > 0 ? currentState.plan.dailyPlan[0] : false;
+        let sensorStatusBarObj = bleUtils.sensorStatusBar(bleStore.systemStatus, bleStore.batteryCharge);
+        let batteryIconChargeLevelRounded = _.round(bleStore.batteryCharge, -1);
+        let batteryIconChargeLevel = batteryIconChargeLevelRounded === 100 ? 'battery-charging' : `battery-${batteryIconChargeLevelRounded}`;
+        let now = moment();
+        let last_sync = planStore ? moment(planStore.last_sensor_sync).toISOString() : moment();
+        let lastSyncDaysDiff = now.diff(last_sync, 'days');
+        let lastSyncHoursDiff = now.diff(last_sync, 'hours');
+        let daysDiff = lastSyncDaysDiff === 0 ? `${lastSyncHoursDiff}${lastSyncHoursDiff === 1 ? 'hr' : 'hrs'} ago` : `${lastSyncDaysDiff}${lastSyncDaysDiff === 1 ? 'day' : 'days'} ago`;
         return(
-            <View
-                style={{
-                    backgroundColor: sensorStatusBarObj.backgroundColor,
-                    paddingLeft:     AppSizes.paddingMed,
-                    paddingVertical: AppSizes.paddingMed,
-                }}
-            >
-                <Text oswaldRegular style={{color: AppColors.primary.white.hundredPercent, fontSize: AppFonts.scaleFont(14)}}>
-                    {'SENSOR STATUS: '}
-                    <Text oswaldRegular style={{color: AppColors.white, opacity: 0.5,}}>
-                        {`${sensorStatusBarObj.followUpText} ${sensorStatusBarObj.batteryFollowUp ? sensorStatusBarObj.batteryFollowUp : sensorStatusBarObj.lastSyncFollowUp ? '| synced ' : ''}`}
+            <View>
+                <View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: 15,}}>
+                    <View style={{flex: 1, height: 15,}} />
+                    <View style={{flex: 8, height: 15,}} />
+                    <View style={{flex: 1, height: 15, paddingHorizontal: AppSizes.paddingXSml,}}>
+                        <View
+                            style={{
+                                backgroundColor:   AppColors.transparent,
+                                borderBottomColor: sensorStatusBarObj.backgroundColor,
+                                borderBottomWidth: 30,
+                                borderLeftWidth:   15,
+                                borderLeftColor:   AppColors.transparent,
+                                borderRightColor:  AppColors.transparent,
+                                borderRightWidth:  15,
+                                borderStyle:       'solid',
+                                borderTopColor:    AppColors.transparent,
+                                borderTopWidth:    0,
+                                height:            0,
+                                width:             0,
+                            }}
+                        />
+                    </View>
+                </View>
+                <View
+                    style={{
+                        backgroundColor: sensorStatusBarObj.backgroundColor,
+                        flexDirection:   'row',
+                        paddingLeft:     AppSizes.paddingMed,
+                        paddingVertical: AppSizes.paddingMed,
+                    }}
+                >
+                    <Text oswaldMedium style={{color: AppColors.primary.white.hundredPercent, fontSize: AppFonts.scaleFont(14), paddingRight: AppSizes.paddingXSml,}}>
+                        {'SENSOR STATUS:'}
                     </Text>
-                </Text>
+                    { sensorStatusBarObj.batteryFollowUp ?
+                        <View style={{flexDirection: 'row',}}>
+                            <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)',}}>
+                                {`${sensorStatusBarObj.followUpText} | `}
+                            </Text>
+                            <TabIcon
+                                containerStyle={[{paddingRight: AppSizes.paddingXSml,}]}
+                                icon={batteryIconChargeLevel}
+                                iconStyle={[{color: 'rgba(255, 255, 255, 0.5)', transform: [{ rotate: '90deg'}],}]}
+                                reverse={false}
+                                size={AppFonts.scaleFont(20)}
+                                type={'material-community'}
+                            />
+                            <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)',}}>{sensorStatusBarObj.batteryFollowUp}</Text>
+                        </View>
+                        : sensorStatusBarObj.lastSyncFollowUp ?
+                            <View style={{flexDirection: 'row',}}>
+                                <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)',}}>
+                                    {`${sensorStatusBarObj.followUpText} | `}
+                                </Text>
+                                <View style={{justifyContent: 'center'}}>
+                                    <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)', fontSize: AppFonts.scaleFont(14/2), lineHeight: AppFonts.scaleFont(14/2),}}>
+                                        {'synced'}
+                                    </Text>
+                                    <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)', fontSize: AppFonts.scaleFont(14/2), lineHeight: AppFonts.scaleFont(14/2),}}>
+                                        {daysDiff}
+                                    </Text>
+                                </View>
+                            </View>
+                            :
+                            <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)',}}>
+                                {sensorStatusBarObj.followUpText}
+                            </Text>
+                    }
+                </View>
             </View>
         )
     }

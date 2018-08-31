@@ -219,15 +219,11 @@ const startDisconnection = sensorId => {
 };
 
 const startConnection = sensorId => {
-    // let dataArray = [parseInt('0x7E', 16), convertHex('0x00')];
-    // return BleManager.connect(sensorId)
-    //     .then(() => BleManager.retrieveServices(sensorId))
-    //     .catch(err => BleManager.retrieveServices(sensorId))
-    //     .then(peripheralInfo => {
-    //         return write(peripheralInfo.id, dataArray);
-    //     })
-    //     .then(result => console.log('result',result));
     return startDisconnection(sensorId)
+        .catch(err => {
+            // continue normally if startDisconnection failed (could be because we don't have an open connection)
+            return;
+        })
         .then(() => BleManager.start({ showAlert: true }))
         .then(() => {
             store.dispatch({
