@@ -17,6 +17,14 @@ const initialState = Store;
 
 export default function planReducer(state = initialState, action) {
     switch (action.type) {
+    case Actions.CLEAR_COMPLETED_EXERCISES:
+        return Object.assign({}, state, {
+            completedExercises: {},
+        });
+    case Actions.SET_COMPLETED_EXERCISES:
+        return Object.assign({}, state, {
+            completedExercises: action.data,
+        });
     case Actions.GET_SORE_BODY_PARTS:
         return Object.assign({}, state, {
             soreBodyParts: action.data,
@@ -27,9 +35,10 @@ export default function planReducer(state = initialState, action) {
         });
     case Actions.CLEAR_MY_PLAN:
         return Object.assign({}, state, {
-            dailyPlan:     [],
-            soreBodyParts: {},
-            postSession:   {}
+            dailyPlan:          [],
+            soreBodyParts:      {},
+            postSession:        {},
+            completedExercises: {},
         });
     case Actions.POST_READINESS_SURVEY:
         return Object.assign({}, state, {});

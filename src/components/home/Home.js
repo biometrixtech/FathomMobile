@@ -69,14 +69,16 @@ class Home extends Component {
     static componentName = 'HomeView';
 
     static propTypes = {
-        ble:                 PropTypes.object.isRequired,
-        getSoreBodyParts:    PropTypes.func.isRequired,
-        notification:        PropTypes.bool.isRequired,
-        patchActiveRecovery: PropTypes.func.isRequired,
-        plan:                PropTypes.object.isRequired,
-        postReadinessSurvey: PropTypes.func.isRequired,
-        postSessionSurvey:   PropTypes.func.isRequired,
-        user:                PropTypes.object.isRequired,
+        ble:                     PropTypes.object.isRequired,
+        clearCompletedExercises: PropTypes.func.isRequired,
+        setCompletedExercises:   PropTypes.func.isRequired,
+        getSoreBodyParts:        PropTypes.func.isRequired,
+        notification:            PropTypes.bool.isRequired,
+        patchActiveRecovery:     PropTypes.func.isRequired,
+        plan:                    PropTypes.object.isRequired,
+        postReadinessSurvey:     PropTypes.func.isRequired,
+        postSessionSurvey:       PropTypes.func.isRequired,
+        user:                    PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -306,6 +308,7 @@ class Home extends Component {
                 let newPrepareObject = Object.assign({}, this.state.prepare, {
                     isReadinessSurveyCompleted: true,
                 });
+                this.props.clearCompletedExercises();
                 this.setState({
                     completedExercises: [],
                     dailyReadiness:     {
@@ -360,6 +363,7 @@ class Home extends Component {
                 let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
                 newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex - 1].isPostPracticeSurveyCompleted = true;
                 newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex - 1].isPostPracticeSurveyCollapsed = true;
+                this.props.clearCompletedExercises();
                 this.setState({
                     completedExercises:           [],
                     train:                        newTrainObject,
@@ -443,6 +447,7 @@ class Home extends Component {
     }
 
     _toggleCompletedAMPMRecoveryModal = () => {
+        this.props.clearCompletedExercises();
         this.setState({
             completedExercises:               [],
             isCompletedAMPMRecoveryModalOpen: !this.state.isCompletedAMPMRecoveryModalOpen
@@ -450,6 +455,7 @@ class Home extends Component {
     }
 
     _togglePostSessionSurvey = () => {
+        this.props.clearCompletedExercises();
         this.setState({
             completedExercises:           [],
             isPostSessionSurveyModalOpen: !this.state.isPostSessionSurveyModalOpen
@@ -517,6 +523,7 @@ class Home extends Component {
                     postPracticeSurveys: updatedTrainingSession,
                 });
                 this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
+                this.props.clearCompletedExercises();
                 this.setState({
                     completedExercises:       [],
                     isExerciseListRefreshing: false,
@@ -547,12 +554,13 @@ class Home extends Component {
     }
 
     _handleCompleteExercise = (exerciseId) => {
-        let newCompletedExercises = _.cloneDeep(this.state.completedExercises);
+        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
         if(newCompletedExercises && newCompletedExercises.indexOf(exerciseId) > -1) {
             newCompletedExercises.splice(newCompletedExercises.indexOf(exerciseId), 1)
         } else {
             newCompletedExercises.push(exerciseId);
         }
+        this.props.setCompletedExercises(newCompletedExercises);
         this.setState({
             completedExercises:          newCompletedExercises,
             isSelectedExerciseModalOpen: false,
@@ -917,7 +925,7 @@ class Home extends Component {
                                     isPrep={true}
                                     toggleCompletedAMPMRecoveryModal={() => {
                                         this.setState({ loading: true });
-                                        this.props.patchActiveRecovery(this.props.user.id, 'pre')
+                                        this.props.patchActiveRecovery(this.props.user.id, this.state.completedExercises, 'pre')
                                             .then(() =>
                                                 this.setState({
                                                     completedExercises: [],
@@ -1162,7 +1170,7 @@ class Home extends Component {
                                     isLoading={this.state.loading}
                                     toggleCompletedAMPMRecoveryModal={() => {
                                         this.setState({ loading: true });
-                                        this.props.patchActiveRecovery(this.props.user.id, 'post')
+                                        this.props.patchActiveRecovery(this.props.user.id, this.state.completedExercises, 'post')
                                             .then(() =>
                                                 this.setState({
                                                     completedExercises: [],

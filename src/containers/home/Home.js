@@ -14,6 +14,8 @@ import { plan as PlanActions, } from '../../actions';
 const Home = ({
     Layout,
     ble,
+    clearCompletedExercises,
+    setCompletedExercises,
     getMyPlan,
     getSoreBodyParts,
     notification,
@@ -26,6 +28,8 @@ const Home = ({
 }) => (
     <Layout
         ble={ble}
+        clearCompletedExercises={clearCompletedExercises}
+        setCompletedExercises={setCompletedExercises}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
         notification={notification}
@@ -39,17 +43,19 @@ const Home = ({
 );
 
 Home.propTypes = {
-    Layout:               PropTypes.func.isRequired,
-    ble:                  PropTypes.object.isRequired,
-    getMyPlan:            PropTypes.func.isRequired,
-    getSoreBodyParts:     PropTypes.func.isRequired,
-    notification:         PropTypes.bool.isRequired,
-    patchActiveRecovery:  PropTypes.func.isRequired,
-    plan:                 PropTypes.object.isRequired,
-    postReadinessSurvey:  PropTypes.func.isRequired,
-    postSessionSurvey:    PropTypes.func.isRequired,
-    scheduledMaintenance: PropTypes.object,
-    user:                 PropTypes.object.isRequired,
+    Layout:                  PropTypes.func.isRequired,
+    ble:                     PropTypes.object.isRequired,
+    clearCompletedExercises: PropTypes.func.isRequired,
+    setCompletedExercises:   PropTypes.func.isRequired,
+    getMyPlan:               PropTypes.func.isRequired,
+    getSoreBodyParts:        PropTypes.func.isRequired,
+    notification:            PropTypes.bool.isRequired,
+    patchActiveRecovery:     PropTypes.func.isRequired,
+    plan:                    PropTypes.object.isRequired,
+    postReadinessSurvey:     PropTypes.func.isRequired,
+    postSessionSurvey:       PropTypes.func.isRequired,
+    scheduledMaintenance:    PropTypes.object,
+    user:                    PropTypes.object.isRequired,
 };
 
 Home.defaultProps = {
@@ -65,11 +71,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    getMyPlan:           PlanActions.getMyPlan,
-    getSoreBodyParts:    PlanActions.getSoreBodyParts,
-    patchActiveRecovery: PlanActions.patchActiveRecovery,
-    postReadinessSurvey: PlanActions.postReadinessSurvey,
-    postSessionSurvey:   PlanActions.postSessionSurvey,
+    clearCompletedExercises: PlanActions.clearCompletedExercises,
+    setCompletedExercises:   PlanActions.setCompletedExercise,
+    getMyPlan:               PlanActions.getMyPlan,
+    getSoreBodyParts:        PlanActions.getSoreBodyParts,
+    patchActiveRecovery:     PlanActions.patchActiveRecovery,
+    postReadinessSurvey:     PlanActions.postReadinessSurvey,
+    postSessionSurvey:       PlanActions.postSessionSurvey,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
