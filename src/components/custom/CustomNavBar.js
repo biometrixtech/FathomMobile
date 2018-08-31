@@ -26,6 +26,7 @@ import { TabIcon, Text, } from './';
 import { store } from '../../store';
 import { bleUtils } from '../../constants/utils';
 import { AppUtil } from '../../lib';
+import { ble as BLEActions, } from '../../actions';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -98,6 +99,7 @@ class CustomNavBar extends Component {
     }
 
     _triggerBLESteps = () => {
+        this.setState({ isSensorUIOpen: false });
         this.setState({
             BLEData: {
                 animated: true,
@@ -106,10 +108,10 @@ class CustomNavBar extends Component {
         }, () => {
             bleUtils.handleBLESteps(store.getState().ble, store.getState().user.id)
                 .then(BLEData => {
-                    this.setState({ BLEData, isSensorUIOpen: !this.state.isSensorUIOpen });
+                    this.setState({ BLEData, isSensorUIOpen: true });
                 })
                 .catch(BLEData => {
-                    this.setState({ BLEData, isSensorUIOpen: !this.state.isSensorUIOpen });
+                    this.setState({ BLEData, isSensorUIOpen: true });
                 });
         });
     }
@@ -130,7 +132,7 @@ class CustomNavBar extends Component {
     }
 
     _startBluetooth = () => {
-        return BleManager.start({ showAlert: true })
+        return BLEActions.startBluetooth()
             .then(() => {
                 store.dispatch({
                     type: DispatchActions.START_BLUETOOTH
@@ -280,7 +282,7 @@ class CustomNavBar extends Component {
                             onPress={() =>
                                 this.setState(
                                     { isSensorUIOpen: !this.state.isSensorUIOpen },
-                                    () => this._triggerBLESteps(),
+                                    () => this.state.isSensorUIOpen ? this._triggerBLESteps() : null,
                                 )
                             }
                             style={{width: imageWidth}}
@@ -301,7 +303,12 @@ class CustomNavBar extends Component {
                                     }]}
                                     icon={'bolt'}
                                     iconStyle={[{color: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),}]}
-                                    onPress={() => null}
+                                    onPress={() =>
+                                        this.setState(
+                                            { isSensorUIOpen: !this.state.isSensorUIOpen },
+                                            () => this.state.isSensorUIOpen ? this._triggerBLESteps() : null,
+                                        )
+                                    }
                                     reverse={false}
                                     size={(indicatorSize + 10)}
                                     type={'font-awesome'}
