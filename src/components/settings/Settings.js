@@ -58,27 +58,29 @@ class Settings extends Component {
 
     _disconnectFromSingleSensor = () => {
         const uniqueId = AppUtil.getDeviceUUID();
-        if(uniqueId === this.props.accessoryData.mobile_uid) {
+        if(uniqueId === this.props.accessoryData.mobile_udid) {
             Alert.alert(
                 'Warning!',
                 'Are you sure you want to UNPAIR your sensor? You will need to pair it with a mobile device before your next session.',
                 [
                     {
                         text:  'Cancel',
-                        style: 'cancel'
+                        style: 'cancel',
                     },
                     {
                         text:    'Unpair',
                         onPress: () => {
-                            this.props.disconnectFromSingleSensor(this.props.accessoryData.sensor_uid)
-                                .catch(err => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
-                                .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_uid))
+                            // return this.props.disconnectFromSingleSensor(this.props.accessoryData.sensor_pid)
+                            //     .catch(err => this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid))
+                            //     .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid))
+                            // TODO: update these lines
+                            return this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid)
                                 .then(() => this.refs.toast.show('Successfully UNPAIRED from sensor', DURATION.LENGTH_LONG))
                                 .catch(err => {
                                     this.refs.toast.show('Failed to UNPAIR from sensor', DURATION.LENGTH_LONG);
                                     console.log('error while disconnecting from single sensor',err);
                                 });
-                        }
+                        },
                     },
                 ],
                 { cancelable: true }
@@ -141,8 +143,8 @@ class Settings extends Component {
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{color: AppColors.black, name: 'bluetooth', size: 24}}
-                    onPress={() => this.props.accessoryData.sensor_uid ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()}
-                    title={this.props.accessoryData.sensor_uid ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
+                    onPress={() => this.props.accessoryData.sensor_pid ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()}
+                    title={this.props.accessoryData.sensor_pid ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
                     titleStyle={{color: AppColors.black}}
                 />
                 <ListItem
@@ -154,10 +156,16 @@ class Settings extends Component {
                     titleStyle={{color: AppColors.black}}
                 />
                 {
-                    /hello[+]demo[0-9]@fathomai.com/g.test(userEmail) ||
-                    /dipesh[+]mvp@fathomai.com/g.test(userEmail) ||
+                    /hello[+]demo[1-5]@fathomai.com/g.test(userEmail) ||
+                    /amina[+]mvp@fathomai.com/g.test(userEmail) ||
                     /chrisp[+]mvp@fathomai.com/g.test(userEmail) ||
-                    /mazen[+]mvp@fathomai.com/g.test(userEmail) ?
+                    /dipesh[+]mvp@fathomai.com/g.test(userEmail) ||
+                    /gabby[+]mvp@fathomai.com/g.test(userEmail) ||
+                    /ivonna[+]mvp@fathomai.com/g.test(userEmail) ||
+                    /maria[+]mvp@fathomai.com/g.test(userEmail) ||
+                    /mazen[+]mvp@fathomai.com/g.test(userEmail) ||
+                    /melissa[+]mvp@fathomai.com/g.test(userEmail) ||
+                    /paul[+]mvp@fathomai.com/g.test(userEmail) ?
                         <ListItem
                             chevronColor={AppColors.black}
                             containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}

@@ -26,6 +26,7 @@ import {
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
 import { Icon } from 'react-native-elements';
+import BleManager from 'react-native-ble-manager';
 import Collapsible from 'react-native-collapsible';
 import LinearGradient from 'react-native-linear-gradient';
 import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
@@ -33,7 +34,7 @@ import Modal from 'react-native-modalbox';
 import Toast, { DURATION } from 'react-native-easy-toast';
 
 // Consts and Libs
-import { Roles, BLEConfig, AppColors, AppStyles, AppSizes } from '../../constants';
+import { Roles, BLEConfig, AppColors, AppFonts, AppStyles, AppSizes } from '../../constants';
 
 // Components
 import { Button, Coach, FormLabel, ListItem, Pages, Spacer, TabIcon, Text, } from '../custom';
@@ -52,7 +53,7 @@ const NavBar = ({ backButtonColor, onBackPress, title, titleColor, wrapperStyle 
     <View style={[wrapperStyle, {flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'space-between',}]}>
         <View style={{justifyContent: 'center', flex: 1,}}>
             <TabIcon
-                containerStyle={[{alignSelf: 'flex-end'}]}
+                containerStyle={[{alignSelf: 'flex-start'}]}
                 icon={'ios-arrow-back'}
                 iconStyle={[{color: backButtonColor || AppColors.white}]}
                 onPress={onBackPress}
@@ -62,7 +63,7 @@ const NavBar = ({ backButtonColor, onBackPress, title, titleColor, wrapperStyle 
             />
         </View>
         <View style={{alignItems: 'center', justifyContent: 'center', flex: 8,}}>
-            <Text style={[AppStyles.h3, {color: titleColor || AppColors.white, fontWeight: 'bold',}]}>{title}</Text>
+            <Text oswaldRegular style={[{color: titleColor || AppColors.white, fontSize: AppFonts.scaleFont(20),}]}>{title}</Text>
         </View>
         <View style={{justifyContent: 'center', flex: 1,}}></View>
     </View>
@@ -72,27 +73,26 @@ class BluetoothConnectView extends Component {
     static componentName = 'BluetoothConnectView';
 
     static propTypes = {
-        bluetooth:                     PropTypes.shape({}),
-        changeState:                   PropTypes.func.isRequired,
-        checkState:                    PropTypes.func.isRequired,
-        connectToAccessory:            PropTypes.func.isRequired,
-        deviceFound:                   PropTypes.func.isRequired,
-        disconnect:                    PropTypes.func.isRequired,
-        enableBluetooth:               PropTypes.func.isRequired,
-        getAccessoryKey:               PropTypes.func.isRequired,
-        getOwnerFlag:                  PropTypes.func.isRequired,
-        getSingleSensorSavedPractices: PropTypes.func.isRequired,
-        getUserSensorData:             PropTypes.func.isRequired,
-        getWifiMacAddress:             PropTypes.func.isRequired,
-        loginToAccessory:              PropTypes.func.isRequired,
-        postUserSensorData:            PropTypes.func.isRequired,
-        setKitTime:                    PropTypes.func.isRequired,
-        startBluetooth:                PropTypes.func.isRequired,
-        startConnect:                  PropTypes.func.isRequired,
-        startScan:                     PropTypes.func.isRequired,
-        stopConnect:                   PropTypes.func.isRequired,
-        stopScan:                      PropTypes.func.isRequired,
-        user:                          PropTypes.shape({}),
+        bluetooth:          PropTypes.shape({}),
+        changeState:        PropTypes.func.isRequired,
+        checkState:         PropTypes.func.isRequired,
+        connectToAccessory: PropTypes.func.isRequired,
+        deviceFound:        PropTypes.func.isRequired,
+        disconnect:         PropTypes.func.isRequired,
+        enableBluetooth:    PropTypes.func.isRequired,
+        getAccessoryKey:    PropTypes.func.isRequired,
+        getOwnerFlag:       PropTypes.func.isRequired,
+        getUserSensorData:  PropTypes.func.isRequired,
+        getWifiMacAddress:  PropTypes.func.isRequired,
+        loginToAccessory:   PropTypes.func.isRequired,
+        postUserSensorData: PropTypes.func.isRequired,
+        setKitTime:         PropTypes.func.isRequired,
+        startBluetooth:     PropTypes.func.isRequired,
+        startConnect:       PropTypes.func.isRequired,
+        startScan:          PropTypes.func.isRequired,
+        stopConnect:        PropTypes.func.isRequired,
+        stopScan:           PropTypes.func.isRequired,
+        user:               PropTypes.shape({}),
     }
 
     static defaultProps = {
@@ -211,12 +211,12 @@ class BluetoothConnectView extends Component {
             .catch(err => this.props.connectToAccessory(data))
             .catch(err => this.props.stopConnect())
             .then(() => {
-                this._toggleAlertNotification();
+                this._toggleAlertNotification(data.id);
                 return this.props.stopConnect();
             })
             .catch(err => {
                 console.log('err in BluetoothConnect #4',err);
-                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_uid) {
+                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
                     this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
                 }
                 return this.props.stopConnect();
@@ -228,7 +228,7 @@ class BluetoothConnectView extends Component {
         this.setState({ size: { width: layout.width, height: layout.height } });
     }
 
-    _toggleAlertNotification() {
+    _toggleAlertNotification(sensorId) {
         Alert.alert(
             '',
             'Did your sensor\'s light blink green?',
@@ -238,7 +238,8 @@ class BluetoothConnectView extends Component {
                     onPress: () => {
                         this.setState({ index: 0 });
                         this.pages.progress = 0;
-                        return this.props.checkState();
+                        return this.props.checkState()
+                            .then(() => BleManager.disconnect(sensorId));
                     },
                     style: 'cancel',
                 },
@@ -246,8 +247,9 @@ class BluetoothConnectView extends Component {
                     text:    'Yes',
                     onPress: () => {
                         return this.props.postUserSensorData()
+                            .then(() => BleManager.disconnect(sensorId))
                             .then(() => {
-                                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_uid) {
+                                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
                                     this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
                                 }
                                 this.setState({ index: 3 });
@@ -267,7 +269,7 @@ class BluetoothConnectView extends Component {
             !nextProps.bluetooth.scanning &&
             !this.props.bluetooth.scanning &&
             this.props.bluetooth.devicesFound.length === 0 &&
-            this.props.bluetooth.accessoryData.sensor_uid
+            this.props.bluetooth.accessoryData.sensor_pid
         ) {
             // on BLE list page, trigger search
             this.toggleScanning(true);
@@ -282,13 +284,14 @@ class BluetoothConnectView extends Component {
                 startPlay={this.state.index}
             >
 
-                <LinearGradient
-                    colors={[AppColors.gradient.light_blue.gradientStart, AppColors.gradient.light_blue.gradientEnd]}
+                <View
                     style={[AppStyles.containerCentered, AppStyles.paddingHorizontalSml, { flex: 1, flexDirection: 'column', justifyContent: 'space-between', paddingTop: AppSizes.paddingSml }]}
                 >
                     <NavBar
+                        backButtonColor={AppColors.black}
                         onBackPress={() => Actions.pop()}
                         title={'PAIR YOUR KIT'}
+                        titleColor={AppColors.black}
                         wrapperStyle={{flex: 1,}}
                     />
                     <Coach
@@ -300,12 +303,15 @@ class BluetoothConnectView extends Component {
                             source={require('../../../assets/images/standard/kit-activation-1-sensor.png')}
                             style={{flex: 1, width: AppSizes.screen.widthFourFifths}}
                         />
-                        <FormLabel labelStyle={[AppStyles.h3, AppStyles.textCenterAligned, {fontWeight: 'bold'}]}>{accessoryDiscoverabilityInstruction}</FormLabel>
+                        <Text robotoBold style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(20)}]}>{accessoryDiscoverabilityInstruction}</Text>
                     </View>
                     <View style={{flex: 1,}}>
                         <Button
                             backgroundColor={AppColors.primary.yellow.hundredPercent}
                             buttonStyle={{borderRadius: 0, height: '100%', width: AppSizes.screen.width}}
+                            color={AppColors.white}
+                            fontFamily={AppStyles.robotoBold.fontFamily}
+                            fontWeight={AppStyles.robotoBold.fontWeight}
                             onPress={() => {
                                 this.setState({ index: 1 });
                                 this.pages.progress = 1;
@@ -314,13 +320,14 @@ class BluetoothConnectView extends Component {
                                     .then(() => this.toggleScanning(true));
                             }}
                             raised={false}
+                            textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                             title={'Next Step'}
                         />
                     </View>
-                </LinearGradient>
+                </View>
 
                 <View style={[AppStyles.containerCentered, { flex: 1 }]}>
-                    <Text p style={[AppStyles.paddingHorizontal, {color: AppColors.primary.grey.hundredPercent}]}>{'START BLUETOOTH SCAN'}</Text>
+                    <Text robotoRegular style={[AppStyles.paddingHorizontal, {color: AppColors.primary.grey.hundredPercent, fontSize: AppFonts.scaleFont(16),}]}>{'START BLUETOOTH SCAN'}</Text>
                     <TabIcon
                         containerStyle={[{ alignSelf: 'center', backgroundColor: AppColors.primary.yellow.hundredPercent }]}
                         icon={'bluetooth'}
@@ -346,10 +353,11 @@ class BluetoothConnectView extends Component {
                         }}
                         title={'PAIR YOUR KIT'}
                         titleColor={AppColors.black}
+                        wrapperStyle={[AppStyles.paddingHorizontalSml, {flex: 1,}]}
                     />
                     <View style={[AppStyles.paddingLrg, {flex: 1,}]}>
-                        <Text h3 style={[AppStyles.textCenterAligned, {fontWeight: 'bold'}]}>{sensorListTitle}</Text>
-                        <Text p style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml]}>{sensorListSubtitle}</Text>
+                        <Text robotoBold style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(20)}]}>{sensorListTitle}</Text>
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, {fontSize: AppFonts.scaleFont(15)}]}>{sensorListSubtitle}</Text>
                     </View>
                     <View style={[AppStyles.paddingTopSml, {flex: 7,}]}>
                         <Toast
@@ -357,7 +365,7 @@ class BluetoothConnectView extends Component {
                             ref={'toast'}
                         />
                         <View style={[AppStyles.paddingSml, {alignItems: 'center', flexDirection: 'row',}]}>
-                            <Text p style={[AppStyles.paddingHorizontalSml, {color: AppColors.primary.grey.hundredPercent, fontWeight: 'bold', textAlignVertical: 'center',}]}>{'AVAILABLE DEVICES'}</Text>
+                            <Text oswaldRegular style={[AppStyles.paddingHorizontalSml, {color: AppColors.primary.grey.hundredPercent, fontSize: AppFonts.scaleFont(12), textAlignVertical: 'center',}]}>{'AVAILABLE DEVICES'}</Text>
                             { this.props.bluetooth.scanning ?
                                 <ActivityIndicator
                                     animating={true}
@@ -393,12 +401,30 @@ class BluetoothConnectView extends Component {
                                                 return this.props.startConnect(device).then(() => this.connect(device))
                                             }}
                                             title={device.name.replace('fathomS*_','')}
-                                            titleStyle={{color: AppColors.black}}
+                                            titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), fontFamily: 'Roboto', fontWeight: '400', }}
                                         />
                                     })}
                                 </View>
-                                :
-                                null
+                                : this.props.bluetooth.devicesFound.length === 0 && !this.props.bluetooth.scanning ?
+                                    <View style={[AppStyles.containerCentered, {flex: 1}]}>
+                                        <Button
+                                            backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                            buttonStyle={{borderRadius: 3}}
+                                            color={AppColors.white}
+                                            fontFamily={AppStyles.robotoBold.fontFamily}
+                                            fontWeight={AppStyles.robotoBold.fontWeight}
+                                            onPress={() => {
+                                                return this.props.checkState()
+                                                    .then(() => this.startBluetooth())
+                                                    .then(() => this.toggleScanning(true));
+                                            }}
+                                            raised={false}
+                                            textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                                            title={'SCAN AGAIN'}
+                                        />
+                                    </View>
+                                    :
+                                    null
                             }
                         </ScrollView>
                     </View>
@@ -406,6 +432,9 @@ class BluetoothConnectView extends Component {
                         <Button
                             backgroundColor={AppColors.white}
                             buttonStyle={{borderRadius: 0, flex: 1, width: AppSizes.screen.width}}
+                            color={AppColors.primary.yellow.hundredPercent}
+                            fontFamily={AppStyles.robotoBold.fontFamily}
+                            fontWeight={AppStyles.robotoBold.fontWeight}
                             onPress={() => {
                                 this.toggleScanning(false);
                                 this.setState({ index: 0 });
@@ -413,7 +442,7 @@ class BluetoothConnectView extends Component {
                                 return this.props.checkState();
                             }}
                             raised={false}
-                            textColor={AppColors.primary.yellow.hundredPercent}
+                            textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                             title={'I don\'t see my sensor\'s serial number'}
                         />
                     </View>
@@ -429,8 +458,8 @@ class BluetoothConnectView extends Component {
                         size={30}
                     />
                     <View style={[AppStyles.containerCentered, {flex: 1}]}>
-                        <Text h3 style={{color: AppColors.white, fontWeight: 'bold'}}>{successfullyConnected[0]}</Text>
-                        <Text h3 style={{color: AppColors.white, fontWeight: 'bold'}}>{successfullyConnected[1]}</Text>
+                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20),}}>{successfullyConnected[0]}</Text>
+                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20),}}>{successfullyConnected[1]}</Text>
                     </View>
                 </View>
 

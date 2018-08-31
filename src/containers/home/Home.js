@@ -13,6 +13,7 @@ import { plan as PlanActions, } from '../../actions';
 
 const Home = ({
     Layout,
+    ble,
     getMyPlan,
     getSoreBodyParts,
     notification,
@@ -24,6 +25,7 @@ const Home = ({
     user,
 }) => (
     <Layout
+        ble={ble}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
         notification={notification}
@@ -38,6 +40,7 @@ const Home = ({
 
 Home.propTypes = {
     Layout:               PropTypes.func.isRequired,
+    ble:                  PropTypes.object.isRequired,
     getMyPlan:            PropTypes.func.isRequired,
     getSoreBodyParts:     PropTypes.func.isRequired,
     notification:         PropTypes.bool.isRequired,
@@ -54,6 +57,7 @@ Home.defaultProps = {
 };
 
 const mapStateToProps = state => ({
+    ble:                  state.ble,
     notification:         state.init.notification,
     plan:                 state.plan,
     scheduledMaintenance: state.init.scheduledMaintenance || null,

@@ -17,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>26</string>
+	<string>0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2.1.0-beta.13</string>
+	<string>2.1.1-beta.0</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -53,6 +53,8 @@
 	</dict>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>This app requires Bluetooth to connect to our hardware.</string>
+  <key>NSLocationAlwaysUsageDescription</key>
+  <string/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string/>
 	<key>NSMainNibFile</key>

@@ -9,7 +9,19 @@
  * Home View
  */
 import React, { Component } from 'react';
-import { ActivityIndicator, BackHandler, Platform, RefreshControl, ScrollView, TouchableWithoutFeedback, View } from 'react-native';
+import {
+    ActivityIndicator,
+    AppState,
+    AsyncStorage, // TODO: REMOVE WHEN SENSOR DATA VALIDATED
+    BackHandler,
+    Easing,
+    Image,
+    Platform,
+    RefreshControl,
+    ScrollView,
+    TouchableWithoutFeedback,
+    View,
+} from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -29,7 +41,7 @@ import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
 import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } from '../myPlan/pages';
 
 // Tabs titles
-const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
+const tabs = ['PREPARE', 'TRAIN', 'RECOVER', 'SENSOR']; // TODO: REMOVE 'SENSOR' WHEN SENSOR DATA VALIDATED
 const highSorenessMessage = 'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.';
 const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Active recovery is low-impact this morning so let\'s pick up with post practice recovery!';
 const lowSorenessPostMessage = 'Looks like you\'re all clear! Active recovery is low-impact for now so let\'s pick up tomorrow or after the next practice you log!';
@@ -57,6 +69,7 @@ class Home extends Component {
     static componentName = 'HomeView';
 
     static propTypes = {
+        ble:                 PropTypes.object.isRequired,
         getSoreBodyParts:    PropTypes.func.isRequired,
         notification:        PropTypes.bool.isRequired,
         patchActiveRecovery: PropTypes.func.isRequired,
@@ -110,6 +123,7 @@ class Home extends Component {
                 ],
             },
             loading: false,
+            storedSensorData: [],// TODO: REMOVE WHEN SENSOR DATA VALIDATED
         };
         this.renderTab = this.renderTab.bind(this);
     }
@@ -183,12 +197,17 @@ class Home extends Component {
         }
     }
 
-    componentDidMount = () => {
+    componentDidMount = async () => {
         if(!this.props.scheduledMaintenance.addressed) {
             let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
             let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
             AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
         }
+        // TODO: REMOVE WHEN SENSOR DATA VALIDATED
+        AppUtil._retrieveAsyncStorageData('practices')
+            .then(res => {
+                this.setState({ storedSensorData: res ? res : [] });
+            });
     }
 
     componentWillReceiveProps(nextProps) {
@@ -797,7 +816,7 @@ class Home extends Component {
                             icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
                         />
                     }
-                    title={'ACTIVE RECOVERY'}
+                    title={'ACTIVE PREP'}
                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                 />
                 {
@@ -887,6 +906,7 @@ class Home extends Component {
                                     handleExerciseListRefresh={this._handleExerciseListRefresh}
                                     isExerciseListRefreshing={this.state.isExerciseListRefreshing}
                                     isLoading={this.state.loading}
+                                    isPrep={true}
                                     toggleCompletedAMPMRecoveryModal={() => {
                                         this.setState({ loading: true });
                                         this.props.patchActiveRecovery(this.props.user.id, 'pre')
@@ -1339,7 +1359,40 @@ class Home extends Component {
     //     )
     // }
 
+    // TODO: REMOVE WHEN SENSOR DATA VALIDATED
+    renderSensor = (index) => {
+        return(
+            <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding }} tabLabel={tabs[index]}>
+                <Spacer size={30} />
+                <Text>{'SENSOR PAGE'}</Text>
+                { this.state.storedSensorData && this.state.storedSensorData.length > 0 ?
+                    _.map(this.state.storedSensorData, (result, i) => {
+                        return(
+                            <View key={i}>
+                                <Text>{`Practice #${i}`}</Text>
+                                <Text>{`Start Time: ${moment(result.start_time).utc().format('MMMM Do YYYY, h:mm:ss a')}`}</Text>
+                                <Text>{`End Time: ${moment(result.end_time).utc().format('MMMM Do YYYY, h:mm:ss a')}`}</Text>
+                                <Text>{`Inactive Accel: ${result.inactive_accel} (m/s^2)`}</Text>
+                                <Text>{`Low Accel: ${result.low_accel} (m/s^2)`}</Text>
+                                <Text>{`Mod Accel: ${result.mod_accel} (m/s^2)`}</Text>
+                                <Text>{`High Accel: ${result.high_accel} (m/s^2)`}</Text>
+                                <Text>{`Inactive Duration: ${result.inactive_duration} (seconds)`}</Text>
+                                <Text>{`Low Duration: ${result.low_duration} (seconds)`}</Text>
+                                <Text>{`Mod Duration: ${result.mod_duration} (seconds)`}</Text>
+                                <Text>{`High Duration: ${result.high_duration} (seconds)`}</Text>
+                                <Spacer size={10} />
+                            </View>
+                        )
+                    })
+                    :
+                    <Text>{'NO PRACTICES AVAILABLE'}</Text>
+                }
+            </ScrollView>
+        )
+    }
+
     render() {
+        // TODO: REMOVE {this.renderSensor(3)} WHEN SENSOR DATA VALIDATED
         return (
             <ScrollableTabView
                 ref={tabView => { this.tabView = tabView; }}
@@ -1352,6 +1405,7 @@ class Home extends Component {
                 {this.renderPrepare(0)}
                 {this.renderTrain(1)}
                 {this.renderRecover(2)}
+                {this.renderSensor(3)}
             </ScrollableTabView>
         );
     }

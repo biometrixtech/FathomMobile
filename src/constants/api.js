@@ -46,6 +46,7 @@ export default {
         ['post_session_survey',   '/plans/1_0/post_session_survey'], // POST
         ['active_recovery',       '/plans/1_0/active_recovery'], // PATCH
         ['clear_user_data',       '/plans/1_0/misc/clear_user_data'], // POST
+        ['post_sensor_data',      '/plans/1_0/session/sensor_data'], // POST
         // sensor specific routes
         ['sensor_mobile_pair', '/users/1_0/user/{userId}/sensor_mobile_pair'], // CRUD
         // other routes

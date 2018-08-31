@@ -64,6 +64,8 @@ class ReadinessSurvey extends Component {
                 _.filter(dailyReadiness.soreness, o => o.severity && o.severity >= 0).length > 0 ||
                 (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
             );
+        let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
+        newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         return(
             <View style={{flex: 1}}>
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
@@ -127,7 +129,7 @@ class ReadinessSurvey extends Component {
                         </View>
                     </View>
                     <Spacer size={100} />
-                    { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
+                    { _.map(newSoreBodyParts, (bodyPart, i) =>
                         <View onLayout={event => {this.myComponents[i + 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}} key={i}>
                             <SoreBodyPart
                                 bodyPart={bodyPart}
@@ -145,12 +147,12 @@ class ReadinessSurvey extends Component {
                             <Spacer size={100} />
                         </View>
                     )}
-                    <View onLayout={event => {this.myComponents[soreBodyParts.body_parts ? soreBodyParts.body_parts.length + 1 : 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
+                    <View onLayout={event => {this.myComponents[newSoreBodyParts ? newSoreBodyParts.length + 1 : 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {soreBodyParts.body_parts && soreBodyParts.body_parts.length > 0 ? soreBodyParts.body_parts.length + 3 : '3'}
+                            {newSoreBodyParts && newSoreBodyParts.length > 0 ? newSoreBodyParts.length + 3 : '3'}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {`Is anything${soreBodyParts.body_parts && soreBodyParts.body_parts.length > 0 ? ' else ' : ' '}bothering you?`}
+                            {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
                         </Text>
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}

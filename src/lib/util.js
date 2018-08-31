@@ -160,10 +160,10 @@ const UTIL = {
       * key -> index of data
       * data -> data to store (if object, will JSON.stringify)
       */
-    _storeAsyncStorageData: async (key, data) => {
+    _storeAsyncStorageData: (key, data) => {
         let newData = typeof data === 'object' ? JSON.stringify(data) : data;
         try {
-            await AsyncStorage.setItem(key, newData);
+            AsyncStorage.setItem(key, newData);
         } catch (error) {
             console.log('error from _storeAsyncStorageData', error);
         }
@@ -174,16 +174,14 @@ const UTIL = {
       * key -> index of data
       */
     _retrieveAsyncStorageData: async (key) => {
+        /*eslint consistent-return: 0*/
         return await AsyncStorage.getItem(key)
             .then(result => {
-                if (result) {
-                    try {
-                        result = JSON.parse(result);
-                    } catch (error) {
-                        console.log('error from _retrieveAsyncStorageData', error);
-                    }
+                try {
+                    return JSON.parse(result);
+                } catch (error) {
+                    console.log('error from _retrieveAsyncStorageData', error);
                 }
-                return result;
             });
     },
 
