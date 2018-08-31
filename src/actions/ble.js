@@ -296,13 +296,6 @@ const convertDurationToInt = array => {
   * NEW FUNCTIONS
   * - 1 Sensor System
   */
-const disconnectFromSensor = sensorId => {
-    return BleManager.disconnect(sensorId)
-        .catch(() => BleManager.disconnect(sensorId))
-        .then(() => Promise.resolve())
-        .catch(() => Promise.reject());
-};
-
 const connectToAccessory = (data) => {
     const getSetupModeArray = [commands.IS_SINGLE_SENSOR_IN_SETUP_MODE, convertHex('0x00')];
     let setKitTimeArray = [commands.SET_TIME, convertHex('0x04')];
@@ -927,7 +920,6 @@ export default {
     deleteUserSensorData,
     deviceFound,
     disconnect,
-    disconnectFromSensor,
     disconnectFromSingleSensor,
     enableBluetooth,
     getAccessoryKey,

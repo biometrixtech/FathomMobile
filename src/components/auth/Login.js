@@ -319,7 +319,7 @@ class Login extends Component {
                         textInputRef={input => {
                             this.inputs.password = input;
                         }}
-                        value={this.state.form_values.VerificationCode}
+                        value={this.state.form_values.password}
                     />
                     <Spacer size={50} />
                     <Button
