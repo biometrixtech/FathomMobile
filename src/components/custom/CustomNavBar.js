@@ -22,7 +22,7 @@ import {
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, } from '../../constants';
-import { Spacer, TabIcon, Text, } from './';
+import { TabIcon, Text, } from './';
 import { store } from '../../store';
 import { bleUtils } from '../../constants/utils';
 import { AppUtil } from '../../lib';
