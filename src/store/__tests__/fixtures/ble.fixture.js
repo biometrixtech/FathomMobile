@@ -9,6 +9,7 @@ export default {
     accessoryData: {},
     assignType:    '',
     batteryCharge: 0,
+    bleStarted:    false,
     bluetoothOn:   false,
     devicesFound:  [],
     indicator:     false,

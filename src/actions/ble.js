@@ -151,10 +151,17 @@ const enableBluetooth = () => {
 };
 
 const startBluetooth = () => {
-    return dispatch => BleManager.start({ showAlert: true })
-        .then(() => dispatch({
-            type: Actions.START_BLUETOOTH
-        }))
+    let currentBLEState = store.getState().ble;
+    if(currentBLEState.bleStarted) {
+        return Promise.resolve();
+    }
+    return BleManager.start({ showAlert: true })
+        .then(() => {
+            store.dispatch({
+                type: Actions.START_BLUETOOTH
+            });
+            return Promise.resolve();
+        })
         .catch(err => { console.log(err); return Promise.reject(err); });
 };
 
@@ -215,26 +222,19 @@ const startDisconnection = sensorId => {
     return BleManager.disconnect(sensorId)
         .catch(err => BleManager.disconnect(sensorId))
         .then(() => Promise.resolve('successfully disconnected'))
-        .catch(err => Promise.reject(err));
+        .catch(err => Promise.reject(err)); // ble err will always return the same string 'Device not connected'
 };
 
 const startConnection = sensorId => {
-    // let dataArray = [parseInt('0x7E', 16), convertHex('0x00')];
-    // return BleManager.connect(sensorId)
-    //     .then(() => BleManager.retrieveServices(sensorId))
-    //     .catch(err => BleManager.retrieveServices(sensorId))
-    //     .then(peripheralInfo => {
-    //         return write(peripheralInfo.id, dataArray);
-    //     })
-    //     .then(result => console.log('result',result));
     return startDisconnection(sensorId)
-        .then(() => BleManager.start({ showAlert: true }))
-        .then(() => {
-            store.dispatch({
-                type: Actions.START_BLUETOOTH
-            });
-            return BleManager.connect(sensorId);
+        .catch(err => {
+            // ble err will always return the same string 'Device not connected'
+            // continue normally if startDisconnection failed (could be because we don't have an open connection)
+            return true;
         })
+        .then(sleeper(1000))
+        .then(() => startBluetooth())
+        .then(() => BleManager.connect(sensorId))
         .catch(err => BleManager.connect(sensorId))
         .then(() => Promise.resolve('successfully connected'))
         .catch(err => Promise.reject(err));
@@ -397,7 +397,7 @@ const disconnectFromSingleSensor = (sensor_id) => {
     let dataArray = [commands.WIPE_SINGLE_SENSOR_DATA, convertHex('0x00')];
     let currentState = store.getState();
     let sensorId = sensor_id || currentState.ble.accessoryData.sensor_pid;
-    return dispatch => BleManager.start({ showAlert: true })
+    return dispatch => startBluetooth()
         .then(() => BleManager.connect(sensorId))
         .then(() => BleManager.retrieveServices(sensorId))
         .then(peripheralInfo => write(peripheralInfo.id, dataArray)) // wipe single sensor data - 0x7B
