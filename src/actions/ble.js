@@ -222,12 +222,13 @@ const startDisconnection = sensorId => {
     return BleManager.disconnect(sensorId)
         .catch(err => BleManager.disconnect(sensorId))
         .then(() => Promise.resolve('successfully disconnected'))
-        .catch(err => Promise.reject(err));
+        .catch(err => Promise.reject(err)); // ble err will always return the same string 'Device not connected'
 };
 
 const startConnection = sensorId => {
     return startDisconnection(sensorId)
         .catch(err => {
+            // ble err will always return the same string 'Device not connected'
             // continue normally if startDisconnection failed (could be because we don't have an open connection)
             return true;
         })
