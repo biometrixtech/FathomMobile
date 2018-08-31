@@ -237,18 +237,20 @@ class Home extends Component {
         }
     }
 
-    _handleDailyReadinessFormChange = (name, value, bodyPart, side) => {
+    _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side) => {
         let newFormFields;
         if(name === 'soreness' && bodyPart) {
             let newSorenessFields = _.cloneDeep(this.state.dailyReadiness.soreness);
             if(_.findIndex(this.state.dailyReadiness.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
                 // body part already exists
                 let sorenessIndex = [_.findIndex(this.state.dailyReadiness.soreness, (o) => o.body_part === bodyPart && o.side === side)];
+                newSorenessFields[sorenessIndex].pain = isPain;
                 newSorenessFields[sorenessIndex].severity = value;
             } else {
                 // doesn't exist, create new object
                 let newSorenessPart = {};
                 newSorenessPart.body_part = bodyPart;
+                newSorenessPart.pain = isPain;
                 newSorenessPart.severity = value;
                 newSorenessPart.side = side ? side : 0;
                 newSorenessFields.push(newSorenessPart);
@@ -262,18 +264,20 @@ class Home extends Component {
         });
     }
 
-    _handlePostSessionFormChange = (name, value, bodyPart, side) => {
+    _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side) => {
         let newFormFields;
         if(name === 'soreness' && bodyPart) {
             let newSorenessFields = _.cloneDeep(this.state.postSession.soreness);
             if(_.findIndex(this.state.postSession.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
                 // body part already exists
                 let sorenessIndex = [_.findIndex(this.state.postSession.soreness, (o) => o.body_part === bodyPart && o.side === side)];
+                newSorenessFields[sorenessIndex].pain = isPain;
                 newSorenessFields[sorenessIndex].severity = value;
             } else {
                 // doesn't exist, create new object
                 let newSorenessPart = {};
                 newSorenessPart.body_part = bodyPart;
+                newSorenessPart.pain = isPain;
                 newSorenessPart.severity = value;
                 newSorenessPart.side = side ? side : 0;
                 newSorenessFields.push(newSorenessPart);
@@ -391,6 +395,7 @@ class Home extends Component {
                         currentSelectedSide = currentSelectedSide[0].side;
                         let newMissingSideSorenessPart = {};
                         newMissingSideSorenessPart.body_part = areaClicked.index;
+                        newMissingSideSorenessPart.pain = false;
                         newMissingSideSorenessPart.severity = 0;
                         newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
                         newSorenessFields.push(newMissingSideSorenessPart);
@@ -405,17 +410,20 @@ class Home extends Component {
                 if(areaClicked.bilateral) {
                     let newLeftSorenessPart = {};
                     newLeftSorenessPart.body_part = areaClicked.index;
+                    newLeftSorenessPart.pain = false;
                     newLeftSorenessPart.severity = 0;
                     newLeftSorenessPart.side = 1;
                     newSorenessFields.push(newLeftSorenessPart);
                     let newRightSorenessPart = {};
                     newRightSorenessPart.body_part = areaClicked.index;
+                    newRightSorenessPart.pain = false;
                     newRightSorenessPart.severity = 0;
                     newRightSorenessPart.side = 2;
                     newSorenessFields.push(newRightSorenessPart);
                 } else {
                     let newSorenessPart = {};
                     newSorenessPart.body_part = areaClicked.index;
+                    newSorenessPart.pain = false;
                     newSorenessPart.severity = 0;
                     newSorenessPart.side = 0;
                     newSorenessFields.push(newSorenessPart);

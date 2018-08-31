@@ -134,8 +134,8 @@ class ReadinessSurvey extends Component {
                             <SoreBodyPart
                                 bodyPart={bodyPart}
                                 bodyPartSide={bodyPart.side}
-                                handleFormChange={(location, value, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                    handleFormChange(location, value, bodyPartMapIndex, bodyPartSide);
+                                handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                    handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
                                     if(shouldScroll) {
                                         this._scrollTo(i + 2);
                                     }
