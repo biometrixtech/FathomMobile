@@ -92,6 +92,7 @@ class Home extends Component {
             },
             isCompletedAMPMRecoveryModalOpen: true,
             isExerciseListRefreshing:         false,
+            isOffDay:                         false,
             isPostSessionSurveyModalOpen:     false,
             isReadinessSurveyModalOpen:       false,
             isSelectedExerciseModalOpen:      false,
@@ -122,10 +123,10 @@ class Home extends Component {
             train:            {
                 completedPostPracticeSurvey: false,
                 postPracticeSurveys:         [
-                    {
-                        isPostPracticeSurveyCollapsed: false,
-                        isPostPracticeSurveyCompleted: false,
-                    }
+                    // {
+                    //     isPostPracticeSurveyCollapsed: false,
+                    //     isPostPracticeSurveyCompleted: false,
+                    // }
                 ],
             },
             loading: false,
@@ -152,7 +153,7 @@ class Home extends Component {
                             isPostPracticeSurveyCompleted: false,
                         }
                     );
-                    postPracticeSurveys.push({isPostPracticeSurveyCollapsed: false, isPostPracticeSurveyCompleted: false,})
+                    // postPracticeSurveys.push({isPostPracticeSurveyCollapsed: false, isPostPracticeSurveyCompleted: false,})
                     this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(response.daily_plans[0]));
                     this.setState({
                         prepare: Object.assign({}, this.state.prepare, {
@@ -341,10 +342,11 @@ class Home extends Component {
         this.setState({ loading: true });
         let newPostSessionSurvey = {};
         newPostSessionSurvey.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
-        newPostSessionSurvey.RPE = newPostSessionSurvey.RPE;
-        newPostSessionSurvey.soreness.map(bodyPart => {
-            newPostSessionSurvey.soreness = _.filter(newPostSessionSurvey.soreness, u => { return !!u.severity && u.severity > 0; });
-        });
+        newPostSessionSurvey.RPE = this.state.postSession.RPE;
+        newPostSessionSurvey.soreness = this.state.postSession.soreness;
+        // newPostSessionSurvey.soreness = _.map(this.state.postSession.soreness, bodyPart => {
+        //     newPostSessionSurvey.soreness = _.filter(newPostSessionSurvey.soreness, u => { return !!u.severity && u.severity > 0; });
+        // });
         let postSession = {
             event_date:          this.state.postSession.event_date,
             session_type:        this.state.postSession.session_type,
@@ -360,8 +362,10 @@ class Home extends Component {
         }
         let clonedPostPracticeSurveys = _.cloneDeep(this.state.train.postPracticeSurveys);
         let newSurvey = {};
-        newSurvey.isPostPracticeSurveyCollapsed = false;
-        newSurvey.isPostPracticeSurveyCompleted = false;
+        // newSurvey.isPostPracticeSurveyCollapsed = false;
+        newSurvey.isPostPracticeSurveyCollapsed = true;
+        // newSurvey.isPostPracticeSurveyCompleted = false;
+        newSurvey.isPostPracticeSurveyCompleted = true;
         clonedPostPracticeSurveys.push(newSurvey);
         this.props.postSessionSurvey(postSession)
             .then(response => {
@@ -370,8 +374,10 @@ class Home extends Component {
                     postPracticeSurveys:         clonedPostPracticeSurveys,
                 });
                 let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
-                newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex - 1].isPostPracticeSurveyCompleted = true;
-                newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex - 1].isPostPracticeSurveyCollapsed = true;
+                newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
+                // newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex - 1].isPostPracticeSurveyCompleted = true;
+                newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
+                // newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex - 1].isPostPracticeSurveyCollapsed = true;
                 this.setState({
                     completedExercises:           [],
                     train:                        newTrainObject,
@@ -529,19 +535,19 @@ class Home extends Component {
                 newPrepare.isActiveRecoveryCollapsed = true;
                 newPrepare.isReadinessSurveyCollapsed = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
                 newPrepare.isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
-                let updatedTrainingSession = [];
-                _.map(dailyPlanObj.training_sessions, trainingSession => {
-                    let newSession = {};
-                    newSession.isPostPracticeSurveyCollapsed = true;
-                    newSession.isPostPracticeSurveyCompleted = true;
-                    updatedTrainingSession.push(newSession);
-                });
-                let newSession = {};
-                newSession.isPostPracticeSurveyCollapsed = false;
-                newSession.isPostPracticeSurveyCompleted = false;
-                updatedTrainingSession.push(newSession);
+                // let updatedTrainingSession = [];
+                // _.map(dailyPlanObj.training_sessions, trainingSession => {
+                //     let newSession = {};
+                //     newSession.isPostPracticeSurveyCollapsed = true;
+                //     newSession.isPostPracticeSurveyCompleted = true;
+                //     updatedTrainingSession.push(newSession);
+                // });
+                // let newSession = {};
+                // newSession.isPostPracticeSurveyCollapsed = false;
+                // newSession.isPostPracticeSurveyCompleted = false;
+                // updatedTrainingSession.push(newSession);
                 let newTrain = Object.assign({}, this.state.train, {
-                    postPracticeSurveys: updatedTrainingSession,
+                    postPracticeSurveys: dailyPlanObj.training_sessions,
                 });
                 this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
                 this.setState({
@@ -1264,78 +1270,100 @@ class Home extends Component {
         let { plan } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+        let trainingSessions = _.orderBy(dailyPlanObj.training_sessions, o => moment(o.event_date), ['asc']);
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
-                {
-                    train.postPracticeSurveys.map((postPracticeSurvey, i) =>
-                        <View key={`postPracticeSurveys${i}`}>
-                            <ListItem
-                                containerStyle={{ borderBottomWidth: 0 }}
-                                disabled={!isDailyReadinessSurveyCompleted}
-                                hideChevron={true}
-                                leftIcon={
-                                    <TabIcon
-                                        containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                                        size={postPracticeSurvey.isPostPracticeSurveyCompleted ? AppFonts.scaleFont(24) : 20}
-                                        color={postPracticeSurvey.isPostPracticeSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
-                                        icon={postPracticeSurvey.isPostPracticeSurveyCompleted ? 'check-circle' : isDailyReadinessSurveyCompleted ? 'fiber-manual-record' : 'lock'}
-                                    />
-                                }
-                                title={`TRAINING SESSION #${i+1}`}
-                                titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
-                            />
-                            { postPracticeSurvey.isPostPracticeSurveyCollapsed && train.postPracticeSurveys.length > 1 ? this.renderDefaultListGap() : null }
-                            {
-                                postPracticeSurvey.isPostPracticeSurveyCollapsed
-                                    ?
-                                    null
-                                    :
-                                    <View style={{ flexDirection: 'row', }}>
-                                        <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
-                                        <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: isDailyReadinessSurveyCompleted ? whenEnabledBackgroundColor : whenDisabledBackgroundColor, borderColor: isDailyReadinessSurveyCompleted ? whenEnabledBorderColor : whenDisabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                                    <Text h7 oswaldMedium style={{ color: isDailyReadinessSurveyCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor, fontSize: AppFonts.scaleFont(12) }}>{'WHEN TO LOG'}</Text>
-                                                    <Text oswaldMedium style={{ color: isDailyReadinessSurveyCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'RIGHT AFTER\nTRAINING'}</Text>
-                                                </View>
-                                                <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: isDailyReadinessSurveyCompleted ? enabledBackgroundColor : disabledBackgroundColor, borderColor: isDailyReadinessSurveyCompleted ? enabledBorderColor : disabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                                    <Text h7 oswaldMedium style={{ color: isDailyReadinessSurveyCompleted ? enabledHeaderColor : disabledHeaderColor, fontSize: AppFonts.scaleFont(12) }}>{'WHY'}</Text>
-                                                    <Text oswaldMedium style={{ color: isDailyReadinessSurveyCompleted ? enabledDescriptionColor : disabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'LOAD & FATIGUE\nMONITORING'}</Text>
-                                                </View>
-                                            </View>
-                                            <Spacer size={12}/>
-                                            {
-                                                postPracticeSurvey.isPostPracticeSurveyCompleted
-                                                    ?
-                                                    null
-                                                    :
-                                                    <View>
-                                                        {
-                                                            !postPracticeSurvey.isPostPracticeSurveyCompleted && isDailyReadinessSurveyCompleted
-                                                                ?
-                                                                <Button
-                                                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
-                                                                    color={AppColors.white}
-                                                                    containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                                                    fontFamily={AppStyles.robotoBold.fontFamily}
-                                                                    fontWeight={AppStyles.robotoBold.fontWeight}
-                                                                    outlined
-                                                                    onPress={this._togglePostSessionSurveyModal}
-                                                                    textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                                                                    title={'Rate Your Session'}
-                                                                />
-                                                                :
-                                                                null
-                                                        }
-                                                    </View>
-                                            }
-                                        </View>
-                                    </View>
+                { this.state.isOffDay && trainingSessions.length === 0 ?
+                    <View>
+                        <ListItem
+                            containerStyle={{ borderBottomWidth: 0 }}
+                            disabled={!isDailyReadinessSurveyCompleted}
+                            hideChevron={true}
+                            leftIcon={
+                                <TabIcon
+                                    containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                    size={AppFonts.scaleFont(24)}
+                                    color={AppColors.primary.yellow.hundredPercent}
+                                    icon={'check-circle'}
+                                />
                             }
-                            { i === train.postPracticeSurveys.length - 1 ? <Spacer size={60}/> : null }
+                            title={'OFF DAY'}
+                            titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
+                        />
+                        <View style={{ flexDirection: 'row', }}>
+                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
+                            <View style={{ flex: 1, margin: 20, }}>
+                                <Text robotoRegular style={{fontSize: AppFonts.scaleFont(16),}}>{'Make the most of your training by resting well today: hydrate, eat well, sleep early, and do your recomended active recovery.'}</Text>
+                            </View>
                         </View>
-                    )
+                    </View>
+                    :
+                    null
+                }
+                {
+                    _.map(trainingSessions, (postPracticeSurvey, i) => {
+                        let filteredSessionTypes = _.filter(MyPlanConstants.availableSessionTypes, o => o.index === postPracticeSurvey.session_type);
+                        let selectedSessionType = filteredSessionTypes.length === 0 ? 'TRAINING' : filteredSessionTypes[0].label.toUpperCase();
+                        let filteredStrengthConditioningTypes = _.filter(MyPlanConstants.strengthConditioningTypes, o => o.index === postPracticeSurvey.strength_and_conditioning_type);
+                        let filteredSportTypes = _.filter(MyPlanConstants.teamSports, o => o.index === postPracticeSurvey.sport_name);
+                        let selectedSport = filteredSportTypes.length > 0 ? filteredSportTypes[0].label.toUpperCase() : filteredStrengthConditioningTypes.length > 0 ? filteredStrengthConditioningTypes[0].label.toUpperCase() : '';
+                        return(
+                            <View key={`postPracticeSurveys${i}`}>
+                                <ListItem
+                                    containerStyle={{ borderBottomWidth: 0 }}
+                                    disabled={!isDailyReadinessSurveyCompleted}
+                                    hideChevron={true}
+                                    leftIcon={
+                                        <TabIcon
+                                            containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                            size={AppFonts.scaleFont(24)}
+                                            color={AppColors.primary.yellow.hundredPercent}
+                                            icon={'check-circle'}
+                                        />
+                                    }
+                                    title={`${selectedSport} ${selectedSessionType}`}
+                                    titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
+                                />
+                                { this.renderDefaultListGap(24) }
+                            </View>
+                        );
+                    })
+                }
+                <Spacer size={15} />
+                <Button
+                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                    buttonStyle={{justifyContent: 'space-between',}}
+                    color={AppColors.white}
+                    containerViewStyle={{marginLeft: 22, marginRight: 22,}}
+                    fontFamily={AppStyles.oswaldMedium.fontFamily}
+                    fontWeight={AppStyles.oswaldMedium.fontWeight}
+                    leftIcon={{color: AppColors.white, name: 'add', size: AppFonts.scaleFont(30),}}
+                    onPress={this._togglePostSessionSurveyModal}
+                    raised={false}
+                    rightIcon={{color: AppColors.white, name: 'chevron-right', size: AppFonts.scaleFont(30),}}
+                    textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
+                    title={'ADD SESSION'}
+                />
+                <Spacer size={10} />
+                { this.state.isOffDay || trainingSessions.length > 0 ?
+                    null
+                    :
+                    <Button
+                        backgroundColor={AppColors.white}
+                        buttonStyle={{justifyContent: 'space-between',}}
+                        color={AppColors.primary.yellow.hundredPercent}
+                        containerViewStyle={{marginLeft: 22, marginRight: 22,}}
+                        fontFamily={AppStyles.oswaldMedium.fontFamily}
+                        fontWeight={AppStyles.oswaldMedium.fontWeight}
+                        leftIcon={{color: AppColors.white, name: 'add', size: AppFonts.scaleFont(30),}}
+                        onPress={() => this.setState({ isOffDay: true, })}
+                        outlined
+                        raised={false}
+                        rightIcon={{color: AppColors.primary.yellow.hundredPercent, name: 'chevron-right', size: AppFonts.scaleFont(30),}}
+                        textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
+                        title={'NO SESSIONS TODAY'}
+                    />
                 }
                 {
                     this.state.isPostSessionSurveyModalOpen

@@ -108,6 +108,14 @@ const postSessionSurvey = postSessionObj => {
     let newCurrentPlan = _.cloneDeep(currentState.plan.dailyPlan[0]);
     newCurrentPlan.pre_recovery = null;
     newCurrentPlan.post_recovery = null;
+    let newTrainingSessions = _.cloneDeep(newCurrentPlan.training_sessions);
+    let newTrainingSession = {};
+    newTrainingSession.sport_name = postSessionObj.sport_name;
+    newTrainingSession.strength_and_conditioning_type = postSessionObj.strength_and_conditioning_type;
+    newTrainingSession.session_type = postSessionObj.session_type;
+    newTrainingSession.event_date = postSessionObj.event_date;
+    newTrainingSessions.push(newTrainingSession);
+    newCurrentPlan.training_sessions = newTrainingSessions;
     newPlan.daily_plans.push(newCurrentPlan);
     // call api
     return dispatch => AppAPI.post_session_survey.post(false, postSessionObj)
