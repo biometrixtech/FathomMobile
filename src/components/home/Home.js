@@ -122,12 +122,7 @@ class Home extends Component {
             selectedExercise: {},
             train:            {
                 completedPostPracticeSurvey: false,
-                postPracticeSurveys:         [
-                    // {
-                    //     isPostPracticeSurveyCollapsed: false,
-                    //     isPostPracticeSurveyCompleted: false,
-                    // }
-                ],
+                postPracticeSurveys:         [],
             },
             loading: false,
             storedSensorData: [],// TODO: REMOVE WHEN SENSOR DATA VALIDATED
@@ -153,7 +148,6 @@ class Home extends Component {
                             isPostPracticeSurveyCompleted: false,
                         }
                     );
-                    // postPracticeSurveys.push({isPostPracticeSurveyCollapsed: false, isPostPracticeSurveyCompleted: false,})
                     this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(response.daily_plans[0]));
                     this.setState({
                         prepare: Object.assign({}, this.state.prepare, {
@@ -344,9 +338,6 @@ class Home extends Component {
         newPostSessionSurvey.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
         newPostSessionSurvey.RPE = this.state.postSession.RPE;
         newPostSessionSurvey.soreness = this.state.postSession.soreness;
-        // newPostSessionSurvey.soreness = _.map(this.state.postSession.soreness, bodyPart => {
-        //     newPostSessionSurvey.soreness = _.filter(newPostSessionSurvey.soreness, u => { return !!u.severity && u.severity > 0; });
-        // });
         let postSession = {
             event_date:          this.state.postSession.event_date,
             session_type:        this.state.postSession.session_type,
@@ -362,9 +353,7 @@ class Home extends Component {
         }
         let clonedPostPracticeSurveys = _.cloneDeep(this.state.train.postPracticeSurveys);
         let newSurvey = {};
-        // newSurvey.isPostPracticeSurveyCollapsed = false;
         newSurvey.isPostPracticeSurveyCollapsed = true;
-        // newSurvey.isPostPracticeSurveyCompleted = false;
         newSurvey.isPostPracticeSurveyCompleted = true;
         clonedPostPracticeSurveys.push(newSurvey);
         this.props.postSessionSurvey(postSession)
@@ -375,9 +364,7 @@ class Home extends Component {
                 });
                 let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
                 newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
-                // newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex - 1].isPostPracticeSurveyCompleted = true;
                 newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
-                // newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex - 1].isPostPracticeSurveyCollapsed = true;
                 this.setState({
                     completedExercises:           [],
                     train:                        newTrainObject,
@@ -535,17 +522,6 @@ class Home extends Component {
                 newPrepare.isActiveRecoveryCollapsed = true;
                 newPrepare.isReadinessSurveyCollapsed = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
                 newPrepare.isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
-                // let updatedTrainingSession = [];
-                // _.map(dailyPlanObj.training_sessions, trainingSession => {
-                //     let newSession = {};
-                //     newSession.isPostPracticeSurveyCollapsed = true;
-                //     newSession.isPostPracticeSurveyCompleted = true;
-                //     updatedTrainingSession.push(newSession);
-                // });
-                // let newSession = {};
-                // newSession.isPostPracticeSurveyCollapsed = false;
-                // newSession.isPostPracticeSurveyCompleted = false;
-                // updatedTrainingSession.push(newSession);
                 let newTrain = Object.assign({}, this.state.train, {
                     postPracticeSurveys: dailyPlanObj.training_sessions,
                 });
@@ -749,17 +725,14 @@ class Home extends Component {
     renderPrepare = (index) => {
         let { completedExercises, prepare } = this.state;
         let { plan } = this.props;
-
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && (dailyPlanObj.daily_readiness_survey_completed || prepare.isReadinessSurveyCompleted) ? true : false;
         // assuming AM/PM is switching to something for prepared vs recover
         let recoveryObj = dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
         let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
-
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed  ? true : false;
-
         let readinessSurveyBackgroundColor = isDailyReadinessSurveyCompleted ? disabledBackgroundColor : enabledBackgroundColor;
         let readinessSurveyDescriptionColor = isDailyReadinessSurveyCompleted ? disabledDescriptionColor : enabledDescriptionColor;
         let readinessSurveyHeaderColor = isDailyReadinessSurveyCompleted ? disabledHeaderColor : enabledHeaderColor;
@@ -777,7 +750,6 @@ class Home extends Component {
         let activeRecoveryWhenDescriptionColor = disabled ? whenDisabledDescriptionColor : isActive ? whenEnabledDescriptionColor : isCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
         let activeRecoveryWhenHeaderColor = disabled ? whenDisabledHeaderColor : isActive ? whenEnabledHeaderColor : isCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor;
         let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive ? whenEnabledBorderColor : isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
-
         return (
             <ScrollView
                 contentContainerStyle={{flexGrow: 1, backgroundColor: AppColors.white}}
@@ -1050,15 +1022,12 @@ class Home extends Component {
     renderRecover = (index) => {
         let { completedExercises, recover } = this.state;
         let { plan } = this.props;
-
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery ? dailyPlanObj.post_recovery : false;
         let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
-
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed ? true : false;
-
         let activeRecoveryBackgroundColor = disabled ? disabledBackgroundColor : isActive ? enabledBackgroundColor : isCompleted ? enabledBackgroundColor : disabledBackgroundColor;
         let activeRecoveryDescriptionColor = disabled ? disabledDescriptionColor : isActive ? enabledDescriptionColor : isCompleted ? enabledDescriptionColor : disabledDescriptionColor;
         let activeRecoveryHeaderColor = disabled ? disabledHeaderColor : isActive ? enabledHeaderColor : isCompleted ? enabledHeaderColor : disabledHeaderColor;
@@ -1072,7 +1041,6 @@ class Home extends Component {
         let activeRecoveryWhenDescriptionColor = disabled ? whenDisabledDescriptionColor : isActive ? whenEnabledDescriptionColor : isCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
         let activeRecoveryWhenHeaderColor = disabled ? whenDisabledHeaderColor : isActive ? whenEnabledHeaderColor : isCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor;
         let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive ? whenEnabledBorderColor : isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
-
         return (
             <ScrollView
                 contentContainerStyle={{flexGrow: 1, justifyContent: 'center', backgroundColor: AppColors.white }}
@@ -1266,7 +1234,6 @@ class Home extends Component {
     };
 
     renderTrain = (index) => {
-        let train = this.state.train;
         let { plan } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
