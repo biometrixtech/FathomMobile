@@ -137,10 +137,10 @@ class SportScheduleBuilder extends Component {
         let strengthConditioningTypes = _.orderBy(filteredStrengthConditioningTypes, ['order'], ['asc']);
         let filteredSessionTypes = _.filter(MyPlanConstants.availableSessionTypes, o => o.order && o.order > 0);
         let sessionTypes = _.orderBy(filteredSessionTypes, ['order'], ['asc']);
-        let filteredSport = postSession.sport_name >= 0 ? _.filter(teamSports, ['index', postSession.sport_name]) : null;
-        let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0].label.toLowerCase() : '';
-        let filteredSessionType = postSession.session_type >= 0 ? _.filter(sessionTypes, ['index', postSession.session_type]) : null;
-        let selectedSessionType = filteredSessionType && filteredSessionType.length > 0 ? filteredSessionType[0].label.toLowerCase() : '';
+        let filteredSport = postSession.sport_name || postSession.sport_name === 0 ? _.filter(teamSports, ['index', postSession.sport_name]) : postSession.strength_and_conditioning_type || postSession.strength_and_conditioning_type === 0 ? _.filter(strengthConditioningTypes, ['index', postSession.strength_and_conditioning_type]) : null;
+        let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0].label.toLowerCase().replace(' training', '') : '';
+        let filteredSessionType = postSession.session_type || postSession.session_type === 0 ? _.filter(sessionTypes, ['index', postSession.session_type]) : null;
+        let selectedSessionType = filteredSessionType && filteredSessionType.length > 0 ? filteredSessionType[0].label.toLowerCase() : postSession.session_type === 1 ? 'training' : '';
         let selectedStartTime = isFormValid ? this._getDateTimeDurationFromState().event_date : '';
         let selectedDuration = isFormValid ? this._getDateTimeDurationFromState().duration : '';
         let sportText = step === 1 ? 'activity' : step === 2 ? `${selectedSport}...` : `${selectedSport} ${selectedSessionType}`;
@@ -227,7 +227,7 @@ class SportScheduleBuilder extends Component {
                                         buttonStyle={[styles.pill,]}
                                         fontFamily={AppStyles.oswaldRegular.fontFamily}
                                         fontWeight={AppStyles.oswaldRegular.fontWeight}
-                                        key={i}
+                                        key={strengthConditioningType.index}
                                         onPress={() => {
                                             this._nextStep(3);
                                             handleFormChange('strength_and_conditioning_type', strengthConditioningType.index);
