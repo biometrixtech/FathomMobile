@@ -30,6 +30,7 @@ import SVGImage from './SVGImage';
 import TabIcon from './TabIcon';
 import Text from './Text';
 import WebViewPage from './WebViewPage';
+import WheelScrollPicker from './WheelScrollPicker';
 
 export {
     Alerts,
@@ -53,4 +54,5 @@ export {
     TabIcon,
     Text,
     WebViewPage,
+    WheelScrollPicker,
 };

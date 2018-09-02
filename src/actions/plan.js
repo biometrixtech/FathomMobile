@@ -69,11 +69,9 @@ const postReadinessSurvey = dailyReadinessObj => {
                 type: Actions.POST_READINESS_SURVEY,
                 data: myPlanData,
             });
-            console.log('myPlanData',myPlanData);
             return myPlanData;
         }).then(myPlanData => Promise.resolve(myPlanData))
         .catch(err => {
-            console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });
@@ -94,7 +92,6 @@ const postSingleSensorData = dataObj => {
             return Promise.resolve(data);
         })
         .catch(err => {
-            console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });
@@ -123,11 +120,9 @@ const postSessionSurvey = postSessionObj => {
                 type: Actions.GET_MY_PLAN,
                 data: newPlan,
             });
-            console.log('myPlanData',myPlanData);
             return myPlanData;
         }).then(myPlanData => Promise.resolve(myPlanData))
         .catch(err => {
-            console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });
@@ -143,10 +138,8 @@ const getSoreBodyParts = user_id => {
                 type: Actions.GET_SORE_BODY_PARTS,
                 data: soreBodyParts,
             });
-            console.log('soreBodyParts',soreBodyParts);
             return Promise.resolve(soreBodyParts);
         }).catch(err => {
-            console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });

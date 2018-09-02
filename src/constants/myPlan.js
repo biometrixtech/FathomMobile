@@ -172,15 +172,6 @@ const exerciseListOrder = [
     },
 ];
 
-const sessionTypes = {
-    practice_sessions:              0,
-    strength_conditioning_sessions: 1,
-    games:                          2,
-    tournaments:                    3,
-    bump_up_sessions:               4,
-    corrective_sessions:            5,
-};
-
 const postSessionFeel = [
     '',
     'Effortless',
@@ -227,10 +218,74 @@ function scrollableTabViewPage(dailyPlanObj, disabled, index) {
     return Math.floor(dailyPlanObj.landing_screen);
 }
 
+const sessionTypes = {
+    practice:                  0,
+    strength_and_conditioning: 1,
+    game:                      2,
+    tournament:                3,
+    bump_up:                   4,
+    corrective:                5,
+    sport_training:            6,
+};
+
+const availableSessionTypes = [
+    { index: 0, order: 1, label: 'Practice', },
+    { index: 2, order: 2, label: 'Competition', },
+    { index: 6, order: 3, label: 'Training', },
+];
+
+const strengthConditioningTypes = [
+    { index: 0, order: 1, label: 'Endurance', },
+    { index: 1, order: 2, label: 'Power', },
+    { index: 2, order: 3, label: 'Speed', },
+    { index: 3, order: 4, label: 'Strength', },
+    { index: 4, order: 5, label: 'Cross Training', },
+];
+
+const teamSports = [
+    { index: 0, order: 1, label: 'Basketball', },
+    { index: 1, order: 2, label: 'Baseball', },
+    { index: 2, order: null, label: 'Softball', },
+    { index: 3, order: null, label: 'Cycling', },
+    { index: 4, order: null, label: 'Field Hockey', },
+    { index: 5, order: 6, label: 'Football', },
+    { index: 6, order: null, label: 'General Fitness', },
+    { index: 7, order: null, label: 'Golf', },
+    { index: 8, order: null, label: 'Gymnastics', },
+    { index: 9, order: null, label: 'Ice Hockey', },
+    { index: 10, order: 11, label: 'Lacrosse', },
+    { index: 11, order: null, label: 'Rowing', },
+    { index: 12, order: null, label: 'Rugby', },
+    { index: 13, order: null, label: 'Running', },
+    { index: 14, order: 15, label: 'Soccer', },
+    { index: 15, order: null, label: 'Swimming / Diving', },
+    { index: 16, order: 17, label: 'Tennis', },
+    { index: 17, order: null, label: 'Cross Country / Distance Running', },
+    { index: 18, order: null, label: 'Sprints', },
+    { index: 19, order: null, label: 'Jumps', },
+    { index: 20, order: null, label: 'Throws', },
+    { index: 21, order: null, label: 'Volleyball', },
+    { index: 22, order: null, label: 'Wrestling', },
+    { index: 23, order: null, label: 'Weightlifting', },
+];
+
+const timeOptionGroups = {
+    hours:   ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+    minutes: ['00', '15', '30', '45'],
+    amPM:    ['AM', 'PM'],
+};
+
+const durationOptionGroups = {
+    minutes: ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90'],
+    label:   [' ', 'MIN', ' '],
+};
+
 export default {
+    availableSessionTypes,
     bodyPartMapping,
     cleanExercise,
     cleanExerciseList,
+    durationOptionGroups,
     jointLevels,
     muscleLevels,
     overallReadiness,
@@ -239,4 +294,7 @@ export default {
     sessionTypes,
     sleepQuality,
     sorenessPainScaleMapping,
+    strengthConditioningTypes,
+    teamSports,
+    timeOptionGroups,
 };

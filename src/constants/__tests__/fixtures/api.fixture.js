@@ -43,7 +43,7 @@ export default {
         ['get_my_plan',           '/plans/1_0/daily_plan'], // POST
         ['get_sore_body_parts',   '/plans/1_0/daily_readiness/previous'], // GET
         ['post_readiness_survey', '/plans/1_0/daily_readiness'], // POST
-        ['post_session_survey',   '/plans/1_0/post_session_survey'], // POST
+        ['post_session_survey',   '/plans/1_0/session'], // POST
         ['active_recovery',       '/plans/1_0/active_recovery'], // PATCH
         ['clear_user_data',       '/plans/1_0/misc/clear_user_data'], // POST
         ['post_sensor_data',      '/plans/1_0/session/sensor_data'], // POST

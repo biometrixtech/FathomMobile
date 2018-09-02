@@ -99,8 +99,14 @@ class Home extends Component {
             page1:                            {},
             page2:                            {},
             postSession:                      {
-                RPE:      0,
-                soreness: []
+                RPE:                            0,
+                description:                    '',
+                duration:                       0,
+                event_date:                     null,
+                session_type:                   null,
+                soreness:                       [],
+                sport_name:                     null, // this exists for session_type = 0,2,3,6
+                strength_and_conditioning_type: null, // this only exists for session_type=1
             },
             prepare: {
                 finishedRecovery:           props.plan && props.plan.dailyPlan[0] && props.plan.dailyPlan[0].pre_recovery_completed ? true : false,
@@ -333,19 +339,25 @@ class Home extends Component {
          * has not already been completed
          */
         this.setState({ loading: true });
-        let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
+        let newPostSessionSurvey = {};
+        newPostSessionSurvey.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
         newPostSessionSurvey.RPE = newPostSessionSurvey.RPE;
         newPostSessionSurvey.soreness.map(bodyPart => {
             newPostSessionSurvey.soreness = _.filter(newPostSessionSurvey.soreness, u => { return !!u.severity && u.severity > 0; });
         });
-        let session_type = _.find(MyPlanConstants.sessionTypes, (sessionType, index) => this.props.plan.dailyPlan[0][index] && this.props.plan.dailyPlan[0][index].length);
         let postSession = {
-            event_date:   `${moment().toISOString(true).split('.')[0]}Z`,
-            session_id:   session_type ? this.props.plan.dailyPlan[0][session_type].session_id : '',
-            session_type: session_type ? MyPlanConstants.sessionTypes[session_type] : 0,
-            survey:       newPostSessionSurvey,
-            user_id:      this.props.user.id,
+            event_date:          this.state.postSession.event_date,
+            session_type:        this.state.postSession.session_type,
+            duration:            this.state.postSession.duration,
+            description:         this.state.postSession.description,
+            post_session_survey: newPostSessionSurvey,
+            user_id:             this.props.user.id,
         };
+        if(this.state.postSession.session_type === 0 || this.state.postSession.session_type === 2 || this.state.postSession.session_type === 3 || this.state.postSession.session_type === 6) {
+            postSession.sport_name = this.state.postSession.sport_name;
+        } else if(this.state.postSession.session_type === 1) {
+            postSession.strength_and_conditioning_type = this.state.postSession.strength_and_conditioning_type;
+        }
         let clonedPostPracticeSurveys = _.cloneDeep(this.state.train.postPracticeSurveys);
         let newSurvey = {};
         newSurvey.isPostPracticeSurveyCollapsed = false;
@@ -366,8 +378,14 @@ class Home extends Component {
                     isPostSessionSurveyModalOpen: false,
                     loading:                      false,
                     postSession:                  {
-                        RPE:      0,
-                        soreness: []
+                        description:                    '',
+                        duration:                       0,
+                        event_date:                     null,
+                        session_type:                   null,
+                        sport_name:                     null,
+                        strength_and_conditioning_type: null,
+                        RPE:                            0,
+                        soreness:                       [],
                     },
                 });
             })
@@ -450,9 +468,18 @@ class Home extends Component {
     }
 
     _togglePostSessionSurvey = () => {
+        let newPostSession = _.cloneDeep(this.state.postSession);
+        newPostSession.description = '';
+        newPostSession.duration = 0;
+        newPostSession.event_date = null;
+        newPostSession.session_type = null;
+        newPostSession.sport_name = null;
+        newPostSession.strength_and_conditioning_type = null;
+        newPostSession.RPE = 0;
         this.setState({
             completedExercises:           [],
-            isPostSessionSurveyModalOpen: !this.state.isPostSessionSurveyModalOpen
+            isPostSessionSurveyModalOpen: !this.state.isPostSessionSurveyModalOpen,
+            postSession:                  newPostSession,
         });
     }
 
