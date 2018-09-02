@@ -55,11 +55,22 @@ class PostSessionSurvey extends Component {
             postSession,
             soreBodyParts,
         } = this.props;
-        let isFormValid =
-            postSession.RPE > 0 && postSession.event_date && (
-                _.filter(postSession.soreness, o => o.severity && o.severity >= 0).length > 0 ||
-                (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
-            );
+
+        let filteredAreasOfSoreness = _.filter(postSession.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part);
+            return doesItInclude.length === 0;
+        })
+        let filteredSoreBodyParts = _.filter(postSession.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part);
+            return doesItInclude.length > 0;
+        });
+        let areQuestionsValid = postSession.RPE > 0 && postSession.event_date;
+        let areSoreBodyPartsValid = _.filter(filteredSoreBodyParts, o => o.severity >= 0).length > 0;
+        let areAreasOfSorenessValid = (
+            _.filter(filteredAreasOfSoreness, o => o.severity && o.severity >= 0).length > 0 ||
+            (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
+        );
+        let isFormValid = areQuestionsValid && areSoreBodyPartsValid && areAreasOfSorenessValid;
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         return (
