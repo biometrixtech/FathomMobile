@@ -167,6 +167,7 @@ class BluetoothConnectView extends Component {
                 return Promise.resolve();
             })
             .catch(error => {
+                console.log('error',error);
                 this.setState({ index: 1 });
                 this.pages.progress = 1;
             });
@@ -198,9 +199,12 @@ class BluetoothConnectView extends Component {
                     .then(() => Actions.settings());
             }
         } else if (data.state === 'on' && this.pages && this.pages.progress === 1) {
-            this.startBluetooth();
-            this.setState({ index: 2 });
-            this.pages.progress = 2;
+            this.setState(
+                { index: 2 },
+                () => {
+                    this.pages.progress = 2;
+                }
+            );
         }
         return this.props.changeState(data.state);
     }
@@ -313,11 +317,14 @@ class BluetoothConnectView extends Component {
                             fontFamily={AppStyles.robotoBold.fontFamily}
                             fontWeight={AppStyles.robotoBold.fontWeight}
                             onPress={() => {
-                                this.setState({ index: 1 });
-                                this.pages.progress = 1;
-                                return this.props.checkState()
-                                    .then(() => this.startBluetooth())
-                                    .then(() => this.toggleScanning(true));
+                                this.setState(
+                                    { index: 1 },
+                                    () => {
+                                        this.pages.progress = 1;
+                                        return this.props.checkState()
+                                            .then(() => this.toggleScanning(true));
+                                    }
+                                );
                             }}
                             raised={false}
                             textStyle={{ fontSize: AppFonts.scaleFont(16) }}
@@ -333,9 +340,15 @@ class BluetoothConnectView extends Component {
                         icon={'bluetooth'}
                         iconStyle={[{color: AppColors.white}]}
                         onPress={() => {
-                            this.startBluetooth().then(() => this.toggleScanning(true));
-                            this.setState({ index: 2 });
-                            this.pages.progress = 2;
+                            this.setState(
+                                { index: 2 },
+                                () => {
+                                    this.pages.progress = 2;
+                                    return this.props.startBluetooth()
+                                        .then(() => this.toggleScanning(true));
+                                }
+                            );
+
                         }}
                         raised
                         reverse
@@ -381,7 +394,7 @@ class BluetoothConnectView extends Component {
                             refreshControl={
                                 <RefreshControl
                                     colors={[AppColors.primary.yellow.hundredPercent]}
-                                    onRefresh={() => this.startBluetooth().then(() => this.toggleScanning(true))}
+                                    onRefresh={() => this.toggleScanning(true)}
                                     refreshing={false}
                                     title={'Refreshing...'}
                                     titleColor={AppColors.primary.yellow.hundredPercent}
@@ -415,7 +428,6 @@ class BluetoothConnectView extends Component {
                                             fontWeight={AppStyles.robotoBold.fontWeight}
                                             onPress={() => {
                                                 return this.props.checkState()
-                                                    .then(() => this.startBluetooth())
                                                     .then(() => this.toggleScanning(true));
                                             }}
                                             raised={false}

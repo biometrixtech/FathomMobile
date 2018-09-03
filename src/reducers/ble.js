@@ -162,6 +162,9 @@ export default function bleReducer(state = initialState, action) {
     case Actions.SET_KIT_TIME:
     case Actions.SET_OWNER_FLAG:
     case Actions.START_BLUETOOTH:
+        return Object.assign({}, state, {
+            bleStarted: true,
+        });
     case Actions.STORE_PARAMS:
     default:
         return state;

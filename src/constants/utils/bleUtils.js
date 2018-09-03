@@ -152,18 +152,18 @@ const bleUtils = {
             lastSyncFollowUp = true;
             break;
         case 1:
-            backgroundColor = AppColors.sensor.charging;
-            batteryFollowUp = `| ${(batteryLevel * 0.095).toFixed(1)}hrs`;
+            backgroundColor = AppColors.sensor.chargingBackground;
+            batteryFollowUp = `${(batteryLevel * 0.095).toFixed(1)}hrs`;
             followUpText = 'CHARGING';
             break;
         case 2:
             backgroundColor = AppColors.sensor.good;
-            batteryFollowUp = `| ${(batteryLevel * 0.095).toFixed(1)}hrs`;
+            batteryFollowUp = `${(batteryLevel * 0.095).toFixed(1)}hrs`;
             followUpText = 'READY FOR PLAY';
             break;
         case 3:
             backgroundColor = AppColors.sensor.good;
-            batteryFollowUp = `| ${(batteryLevel * 0.095).toFixed(1)}hrs`;
+            batteryFollowUp = `${(batteryLevel * 0.095).toFixed(1)}hrs`;
             followUpText = 'LOGGING ACTIVITY';
             break;
         case 4:
