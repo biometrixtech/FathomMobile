@@ -1244,7 +1244,7 @@ class Home extends Component {
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
-                { !dailyPlanObj.sessions_planned && trainingSessions.length === 0 ?
+                { (dailyPlanObj && !dailyPlanObj.sessions_planned) && trainingSessions.length === 0 ?
                     <View>
                         <ListItem
                             containerStyle={{ borderBottomWidth: 0 }}
@@ -1313,7 +1313,7 @@ class Home extends Component {
                         name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
                         size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
                     }}
-                    onPress={isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal : null}
+                    onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal() : null}
                     outlined={isDailyReadinessSurveyCompleted ? false : true}
                     raised={false}
                     rightIcon={{
@@ -1325,7 +1325,7 @@ class Home extends Component {
                     title={'ADD SESSION'}
                 />
                 <Spacer size={10} />
-                { dailyPlanObj.sessions_planned && trainingSessions.length === 0 ?
+                { (dailyPlanObj && dailyPlanObj.sessions_planned) && trainingSessions.length === 0 ?
                     <Button
                         backgroundColor={AppColors.white}
                         buttonStyle={{justifyContent: 'space-between',}}

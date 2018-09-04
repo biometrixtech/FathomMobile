@@ -144,7 +144,7 @@ class SportScheduleBuilder extends Component {
         let selectedSessionType = filteredSessionType && filteredSessionType.length > 0 ? filteredSessionType[0].label.toLowerCase() : postSession.session_type === 1 ? 'training' : '';
         let selectedStartTime = isFormValid ? this._getDateTimeDurationFromState().event_date : '';
         let selectedDuration = isFormValid ? this._getDateTimeDurationFromState().duration : '';
-        let sportText = step === 1 ? 'activity' : step === 2 ? `${selectedSport}...` : `${selectedSport} ${selectedSessionType}`;
+        let sportText = step === 0 || step === 1 ? 'activity' : step === 2 ? `${selectedSport}...` : `${selectedSport} ${selectedSessionType}`;
         let startTimeText = step === 3 && !isFormValid ? 'time' : step === 3 && isFormValid ? `${selectedStartTime.format('h:mm')}${timeValueGroups.amPM === 0 ? 'AM' : 'PM'}` : '';
         let durationText = step === 3 && !isFormValid ? 'duration' : `${selectedDuration}MIN`;
         return (
