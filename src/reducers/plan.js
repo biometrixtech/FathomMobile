@@ -40,6 +40,10 @@ export default function planReducer(state = initialState, action) {
             postSession:        {},
             soreBodyParts:      {},
         });
+    case Actions.SET_TYPICAL_SESSIONS:
+        return Object.assign({}, state, {
+            typicalSessions: action.data,
+        });
     case Actions.POST_READINESS_SURVEY:
         return Object.assign({}, state, {});
     case Actions.POST_SESSION_SURVEY:

@@ -8,6 +8,7 @@
         handleTogglePostSessionSurvey={this._handleTogglePostSessionSurvey}
         postSession={this.state.postSession}
         soreBodyParts={this.state.soreBodyParts}
+        typicalSessions={this.props.plan.typicalSessions}
     />
  *
  */
@@ -54,6 +55,7 @@ class PostSessionSurvey extends Component {
             handleTogglePostSessionSurvey,
             postSession,
             soreBodyParts,
+            typicalSessions,
         } = this.props;
 
         let filteredAreasOfSoreness = _.filter(postSession.soreness, o => {
@@ -103,6 +105,7 @@ class PostSessionSurvey extends Component {
                             }}
                             postSession={postSession}
                             scrollTo={() => this._scrollTo(0)}
+                            typicalSessions={typicalSessions}
                         />
                     </View>
                     <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
@@ -249,6 +252,7 @@ PostSessionSurvey.propTypes = {
     handleTogglePostSessionSurvey: PropTypes.func.isRequired,
     postSession:                   PropTypes.object.isRequired,
     soreBodyParts:                 PropTypes.object.isRequired,
+    typicalSessions:               PropTypes.array.isRequired,
 };
 PostSessionSurvey.defaultProps = {};
 PostSessionSurvey.componentName = 'PostSessionSurvey';

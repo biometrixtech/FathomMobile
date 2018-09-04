@@ -18,12 +18,14 @@ const Home = ({
     setCompletedExercises,
     getMyPlan,
     getSoreBodyParts,
+    noSessions,
     notification,
     patchActiveRecovery,
     plan,
     postReadinessSurvey,
     postSessionSurvey,
     scheduledMaintenance,
+    typicalSession,
     user,
 }) => (
     <Layout
@@ -32,12 +34,14 @@ const Home = ({
         setCompletedExercises={setCompletedExercises}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
+        noSessions={noSessions}
         notification={notification}
         patchActiveRecovery={patchActiveRecovery}
         plan={plan}
         postReadinessSurvey={postReadinessSurvey}
         postSessionSurvey={postSessionSurvey}
         scheduledMaintenance={scheduledMaintenance}
+        typicalSession={typicalSession}
         user={user}
     />
 );
@@ -49,12 +53,14 @@ Home.propTypes = {
     setCompletedExercises:   PropTypes.func.isRequired,
     getMyPlan:               PropTypes.func.isRequired,
     getSoreBodyParts:        PropTypes.func.isRequired,
+    noSessions:              PropTypes.func.isRequired,
     notification:            PropTypes.bool.isRequired,
     patchActiveRecovery:     PropTypes.func.isRequired,
     plan:                    PropTypes.object.isRequired,
     postReadinessSurvey:     PropTypes.func.isRequired,
     postSessionSurvey:       PropTypes.func.isRequired,
     scheduledMaintenance:    PropTypes.object,
+    typicalSession:          PropTypes.func.isRequired,
     user:                    PropTypes.object.isRequired,
 };
 
@@ -75,9 +81,11 @@ const mapDispatchToProps = {
     setCompletedExercises:   PlanActions.setCompletedExercise,
     getMyPlan:               PlanActions.getMyPlan,
     getSoreBodyParts:        PlanActions.getSoreBodyParts,
+    noSessions:              PlanActions.noSessions,
     patchActiveRecovery:     PlanActions.patchActiveRecovery,
     postReadinessSurvey:     PlanActions.postReadinessSurvey,
     postSessionSurvey:       PlanActions.postSessionSurvey,
+    typicalSession:          PlanActions.typicalSession,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

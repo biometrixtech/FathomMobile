@@ -73,11 +73,13 @@ class Home extends Component {
         clearCompletedExercises: PropTypes.func.isRequired,
         setCompletedExercises:   PropTypes.func.isRequired,
         getSoreBodyParts:        PropTypes.func.isRequired,
+        noSessions:              PropTypes.func.isRequired,
         notification:            PropTypes.bool.isRequired,
         patchActiveRecovery:     PropTypes.func.isRequired,
         plan:                    PropTypes.object.isRequired,
         postReadinessSurvey:     PropTypes.func.isRequired,
         postSessionSurvey:       PropTypes.func.isRequired,
+        typicalSession:          PropTypes.func.isRequired,
         user:                    PropTypes.object.isRequired,
     }
 
@@ -93,7 +95,6 @@ class Home extends Component {
             },
             isCompletedAMPMRecoveryModalOpen: true,
             isExerciseListRefreshing:         false,
-            isOffDay:                         false,
             isPostSessionSurveyModalOpen:     false,
             isReadinessSurveyModalOpen:       false,
             isSelectedExerciseModalOpen:      false,
@@ -480,7 +481,8 @@ class Home extends Component {
     _togglePostSessionSurveyModal = () => {
         this.setState({ loading: true });
         if (!this.state.isPostSessionSurveyModalOpen) {
-            this.props.getSoreBodyParts()
+            this.props.typicalSession(this.props.user.id)
+                .then(() => this.props.getSoreBodyParts())
                 .then(soreBodyParts => {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
                     newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
@@ -1242,7 +1244,7 @@ class Home extends Component {
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
-                { this.state.isOffDay && trainingSessions.length === 0 ?
+                { (dailyPlanObj && !dailyPlanObj.sessions_planned) && trainingSessions.length === 0 ?
                     <View>
                         <ListItem
                             containerStyle={{ borderBottomWidth: 0 }}
@@ -1311,7 +1313,7 @@ class Home extends Component {
                         name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
                         size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
                     }}
-                    onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal : null}
+                    onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal() : null}
                     outlined={isDailyReadinessSurveyCompleted ? false : true}
                     raised={false}
                     rightIcon={{
@@ -1323,9 +1325,7 @@ class Home extends Component {
                     title={'ADD SESSION'}
                 />
                 <Spacer size={10} />
-                { this.state.isOffDay || trainingSessions.length > 0 ?
-                    null
-                    :
+                { (dailyPlanObj && dailyPlanObj.sessions_planned) && trainingSessions.length === 0 ?
                     <Button
                         backgroundColor={AppColors.white}
                         buttonStyle={{justifyContent: 'space-between',}}
@@ -1338,7 +1338,7 @@ class Home extends Component {
                             name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
                             size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
                         }}
-                        onPress={() => isDailyReadinessSurveyCompleted ? this.setState({ isOffDay: true, }) : null}
+                        onPress={() => isDailyReadinessSurveyCompleted ? this.props.noSessions(this.props.user.id) : null}
                         outlined
                         raised={false}
                         rightIcon={{
@@ -1349,6 +1349,8 @@ class Home extends Component {
                         textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
                         title={'NO SESSIONS TODAY'}
                     />
+                    :
+                    null
                 }
                 {
                     this.state.isPostSessionSurveyModalOpen
@@ -1366,6 +1368,7 @@ class Home extends Component {
                                 handleTogglePostSessionSurvey={this._togglePostSessionSurvey}
                                 postSession={this.state.postSession}
                                 soreBodyParts={this.props.plan.soreBodyParts}
+                                typicalSessions={this.props.plan.typicalSessions}
                             />
                             { this.state.loading ?
                                 <ActivityIndicator
@@ -1377,6 +1380,13 @@ class Home extends Component {
                         </Modal>
                         :
                         null
+                }
+                { this.state.loading ?
+                    <ActivityIndicator
+                        color={AppColors.primary.yellow.hundredPercent}
+                        size={'large'}
+                        style={[AppStyles.activityIndicator]}
+                    /> : null
                 }
             </ScrollView>
         );

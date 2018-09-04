@@ -281,15 +281,26 @@ class CustomNavBar extends Component {
             )
         ).start();
         Animated.loop(
-            Animated.timing(
-                iconGrow,
-                {
-                    duration:        2000,
-                    easing:          Easing.ease,
-                    toValue:         1,
-                    useNativeDriver: true,
-                }
-            )
+            Animated.sequence([
+                Animated.timing(
+                    iconGrow,
+                    {
+                        duration:        2000,
+                        easing:          Easing.ease,
+                        toValue:         1,
+                        useNativeDriver: true,
+                    }
+                ),
+                Animated.timing(
+                    iconGrow,
+                    {
+                        duration:        2000,
+                        easing:          Easing.ease,
+                        toValue:         0,
+                        useNativeDriver: true,
+                    }
+                ),
+            ])
         ).start();
         // Second interpolate beginning and end values (in this case 0 and 1)
         const spin = spinValue.interpolate({
@@ -298,7 +309,7 @@ class CustomNavBar extends Component {
         });
         const scaleIcon = iconGrow.interpolate({
             inputRange:  [0, 1],
-            outputRange: [0.5, 1]
+            outputRange: [0.5, 1],
         });
         // set other variables
         const imageWidth = 26;
@@ -413,41 +424,37 @@ class CustomNavBar extends Component {
         let planStore = currentState.plan.dailyPlan && currentState.plan.dailyPlan.length > 0 ? currentState.plan.dailyPlan[0] : false;
         let sensorStatusBarObj = bleUtils.sensorStatusBar(bleStore.systemStatus, bleStore.batteryCharge);
         let batteryIconChargeLevelRounded = _.round(bleStore.batteryCharge, -1);
-        let batteryIconChargeLevel = batteryIconChargeLevelRounded === 100 ? 'battery-charging' : `battery-${batteryIconChargeLevelRounded}`;
+        let batteryIconChargeLevel = batteryIconChargeLevelRounded === 100 ? 'battery-full' : `battery-${batteryIconChargeLevelRounded}`;
+        let batteryIconType = batteryIconChargeLevelRounded === 100 ? 'material' : 'material-community';
         let now = moment();
-        let last_sync = planStore ? moment(planStore.last_sensor_sync).toISOString() : moment();
+        let last_sync = moment(planStore.last_sensor_sync).toISOString();
         let lastSyncDaysDiff = now.diff(last_sync, 'days');
         let lastSyncHoursDiff = now.diff(last_sync, 'hours');
         let daysDiff = lastSyncDaysDiff === 0 ? `${lastSyncHoursDiff}${lastSyncHoursDiff === 1 ? 'hr' : 'hrs'} ago` : `${lastSyncDaysDiff}${lastSyncDaysDiff === 1 ? 'day' : 'days'} ago`;
+        let notchHeightWidth = 24;
         return(
             <View>
-                <View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: 15,}}>
-                    <View style={{flex: 1, height: 15,}} />
-                    <View style={{flex: 8, height: 15,}} />
-                    <View style={{flex: 1, height: 15, paddingHorizontal: AppSizes.paddingXSml,}}>
+                <View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: (notchHeightWidth / 2)}}>
+                    <View style={{flex: 1,}} />
+                    <View style={{flex: 8,}} />
+                    <View style={{flex: 1, overflow: 'visible', paddingHorizontal: AppSizes.paddingXSml,}}>
                         <View
                             style={{
-                                backgroundColor:   AppColors.transparent,
-                                borderBottomColor: sensorStatusBarObj.backgroundColor,
-                                borderBottomWidth: 30,
-                                borderLeftWidth:   15,
-                                borderLeftColor:   AppColors.transparent,
-                                borderRightColor:  AppColors.transparent,
-                                borderRightWidth:  15,
-                                borderStyle:       'solid',
-                                borderTopColor:    AppColors.transparent,
-                                borderTopWidth:    0,
-                                height:            0,
-                                width:             0,
+                                backgroundColor: sensorStatusBarObj.backgroundColor,
+                                height:          notchHeightWidth,
+                                marginTop:       Platform.OS === 'ios' ? 0 : 5,
+                                transform:       [{ rotate: '45deg', }],
+                                width:           notchHeightWidth,
                             }}
                         />
                     </View>
                 </View>
                 <View
                     style={{
+                        alignItems:      'center',
                         backgroundColor: sensorStatusBarObj.backgroundColor,
                         flexDirection:   'row',
-                        paddingLeft:     AppSizes.paddingMed,
+                        paddingLeft:     AppSizes.paddingSml,
                         paddingVertical: AppSizes.paddingMed,
                     }}
                 >
@@ -455,33 +462,36 @@ class CustomNavBar extends Component {
                         {'SENSOR STATUS:'}
                     </Text>
                     { sensorStatusBarObj.batteryFollowUp ?
-                        <View style={{flexDirection: 'row',}}>
-                            <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)',}}>
-                                {`${sensorStatusBarObj.followUpText} | `}
-                            </Text>
+                        <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                            <View style={{borderRightColor: 'rgba(255, 255, 255, 0.5)', borderRightWidth: 1,}}>
+                                <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)', paddingRight: AppSizes.paddingXSml,}}>
+                                    {`${sensorStatusBarObj.followUpText}`}
+                                </Text>
+                            </View>
                             <TabIcon
                                 containerStyle={[{paddingRight: AppSizes.paddingXSml,}]}
                                 icon={batteryIconChargeLevel}
                                 iconStyle={[{color: 'rgba(255, 255, 255, 0.5)', transform: [{ rotate: '90deg'}],}]}
                                 reverse={false}
                                 size={AppFonts.scaleFont(20)}
-                                type={'material-community'}
+                                type={batteryIconType}
                             />
                             <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)',}}>{sensorStatusBarObj.batteryFollowUp}</Text>
                         </View>
                         : sensorStatusBarObj.lastSyncFollowUp ?
-                            <View style={{flexDirection: 'row',}}>
-                                <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)',}}>
-                                    {`${sensorStatusBarObj.followUpText} | `}
+                            <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                                <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)', fontSize: AppFonts.scaleFont(14), paddingRight: AppSizes.paddingXSml,}}>
+                                    {`${sensorStatusBarObj.followUpText}`}
                                 </Text>
-                                <View style={{justifyContent: 'center'}}>
-                                    <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)', fontSize: AppFonts.scaleFont(14/2), lineHeight: AppFonts.scaleFont(14/2),}}>
-                                        {'synced'}
-                                    </Text>
-                                    <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)', fontSize: AppFonts.scaleFont(14/2), lineHeight: AppFonts.scaleFont(14/2),}}>
-                                        {daysDiff}
-                                    </Text>
-                                </View>
+                                { planStore.last_sensor_sync ?
+                                    <View style={{borderLeftColor: 'rgba(255, 255, 255, 0.5)', borderLeftWidth: 1,}}>
+                                        <Text robotoLight style={{color: 'rgba(255, 255, 255, 0.5)', fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>
+                                            {`synced ${daysDiff}`}
+                                        </Text>
+                                    </View>
+                                    :
+                                    null
+                                }
                             </View>
                             :
                             <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)',}}>
@@ -502,7 +512,7 @@ class CustomNavBar extends Component {
                     {this._renderMiddle()}
                     {this._renderRight()}
                 </View>
-                { this.state.isSensorUIOpen && this.props.routeName === 'home' ?
+                {  this.state.isSensorUIOpen && this.props.routeName === 'home' ?
                     this._renderSensorUI()
                     :
                     null

@@ -205,14 +205,58 @@ const patchActiveRecovery = (user_id, completed_exercises, recovery_type) => {
         });
 };
 
+/**
+  * Typical Sessions
+  */
+const typicalSession = (user_id) => {
+    let bodyObj = {};
+    bodyObj.user_id = user_id;
+    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    return dispatch => AppAPI.typical_sessions.post(false, bodyObj)
+        .then(typicalSessionData => {
+            dispatch({
+                type: Actions.SET_TYPICAL_SESSIONS,
+                data: typicalSessionData.typical_sessions,
+            });
+            return Promise.resolve(typicalSessionData);
+        }).catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+};
+
+/**
+  * No Session
+  */
+const noSessions = (user_id) => {
+    let bodyObj = {};
+    bodyObj.user_id = user_id;
+    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    return dispatch => AppAPI.no_sessions.post(false, bodyObj)
+        .then(data => {
+            let myPlanData = {};
+            myPlanData.daily_plans = [data.daily_plan];
+            store.dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: myPlanData,
+            });
+            return Promise.resolve(data);
+        }).catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+};
+
 export default {
     clearCompletedExercises,
     clearMyPlanData,
     setCompletedExercise,
     getMyPlan,
     getSoreBodyParts,
+    noSessions,
     patchActiveRecovery,
     postReadinessSurvey,
     postSessionSurvey,
     postSingleSensorData,
+    typicalSession,
 };
