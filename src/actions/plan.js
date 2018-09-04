@@ -69,11 +69,9 @@ const postReadinessSurvey = dailyReadinessObj => {
                 type: Actions.POST_READINESS_SURVEY,
                 data: myPlanData,
             });
-            console.log('myPlanData',myPlanData);
             return myPlanData;
         }).then(myPlanData => Promise.resolve(myPlanData))
         .catch(err => {
-            console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });
@@ -94,7 +92,6 @@ const postSingleSensorData = dataObj => {
             return Promise.resolve(data);
         })
         .catch(err => {
-            console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });
@@ -111,6 +108,14 @@ const postSessionSurvey = postSessionObj => {
     let newCurrentPlan = _.cloneDeep(currentState.plan.dailyPlan[0]);
     newCurrentPlan.pre_recovery = null;
     newCurrentPlan.post_recovery = null;
+    let newTrainingSessions = _.cloneDeep(newCurrentPlan.training_sessions);
+    let newTrainingSession = {};
+    newTrainingSession.sport_name = postSessionObj.sport_name;
+    newTrainingSession.strength_and_conditioning_type = postSessionObj.strength_and_conditioning_type;
+    newTrainingSession.session_type = postSessionObj.session_type;
+    newTrainingSession.event_date = postSessionObj.event_date;
+    newTrainingSessions.push(newTrainingSession);
+    newCurrentPlan.training_sessions = newTrainingSessions;
     newPlan.daily_plans.push(newCurrentPlan);
     // call api
     return dispatch => AppAPI.post_session_survey.post(false, postSessionObj)
@@ -123,11 +128,9 @@ const postSessionSurvey = postSessionObj => {
                 type: Actions.GET_MY_PLAN,
                 data: newPlan,
             });
-            console.log('myPlanData',myPlanData);
             return myPlanData;
         }).then(myPlanData => Promise.resolve(myPlanData))
         .catch(err => {
-            console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });
@@ -143,10 +146,8 @@ const getSoreBodyParts = user_id => {
                 type: Actions.GET_SORE_BODY_PARTS,
                 data: soreBodyParts,
             });
-            console.log('soreBodyParts',soreBodyParts);
             return Promise.resolve(soreBodyParts);
         }).catch(err => {
-            console.log('err',err);
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });
