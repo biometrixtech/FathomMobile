@@ -13,5 +13,5 @@ export default {
     dailyPlan:          [],
     postSession:        {},
     soreBodyParts:      {},
-    completedExercises: {},
+    completedExercises: [],
 };

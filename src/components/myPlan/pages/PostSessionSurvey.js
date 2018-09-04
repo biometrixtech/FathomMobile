@@ -65,7 +65,7 @@ class PostSessionSurvey extends Component {
             return doesItInclude.length > 0;
         });
         let areQuestionsValid = postSession.RPE > 0 && postSession.event_date;
-        let areSoreBodyPartsValid = _.filter(filteredSoreBodyParts, o => o.severity >= 0).length > 0;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity >= 0).length > 0 : true;
         let areAreasOfSorenessValid = (
             _.filter(filteredAreasOfSoreness, o => o.severity && o.severity >= 0).length > 0 ||
             (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
