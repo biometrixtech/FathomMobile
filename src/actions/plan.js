@@ -60,6 +60,30 @@ const clearMyPlanData = () => {
 };
 
 /**
+  * Clear Completed Exercises
+  */
+const clearCompletedExercises = () => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.CLEAR_COMPLETED_EXERCISES,
+        })
+    );
+};
+
+
+/**
+  * Set Completed Exercise
+  */
+const setCompletedExercise = exercise => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.SET_COMPLETED_EXERCISES,
+            data: exercise,
+        })
+    );
+};
+
+/**
   * Post Readiness Survey Data
   */
 const postReadinessSurvey = dailyReadinessObj => {
@@ -156,19 +180,26 @@ const getSoreBodyParts = user_id => {
 /**
   * Patch Active Recovery
   */
-const patchActiveRecovery = (user_id, recovery_type) => {
+const patchActiveRecovery = (user_id, completed_exercises, recovery_type) => {
     let bodyObj = {};
     bodyObj.user_id = user_id;
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.recovery_type = recovery_type;
+    bodyObj.completed_exercises = completed_exercises;
     return dispatch => AppAPI.active_recovery.patch(false, bodyObj)
         .then(myPlanData => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
                 data: myPlanData,
             });
+            return true;
+        }).then(myPlanData => {
+            dispatch({
+                type: Actions.CLEAR_COMPLETED_EXERCISES,
+            });
             return Promise.resolve(myPlanData);
-        }).catch(err => {
+        })
+        .catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });
@@ -217,7 +248,9 @@ const noSessions = (user_id) => {
 };
 
 export default {
+    clearCompletedExercises,
     clearMyPlanData,
+    setCompletedExercise,
     getMyPlan,
     getSoreBodyParts,
     noSessions,

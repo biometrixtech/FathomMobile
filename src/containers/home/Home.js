@@ -14,6 +14,8 @@ import { plan as PlanActions, } from '../../actions';
 const Home = ({
     Layout,
     ble,
+    clearCompletedExercises,
+    setCompletedExercises,
     getMyPlan,
     getSoreBodyParts,
     noSessions,
@@ -28,6 +30,8 @@ const Home = ({
 }) => (
     <Layout
         ble={ble}
+        clearCompletedExercises={clearCompletedExercises}
+        setCompletedExercises={setCompletedExercises}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
         noSessions={noSessions}
@@ -43,19 +47,21 @@ const Home = ({
 );
 
 Home.propTypes = {
-    Layout:               PropTypes.func.isRequired,
-    ble:                  PropTypes.object.isRequired,
-    getMyPlan:            PropTypes.func.isRequired,
-    getSoreBodyParts:     PropTypes.func.isRequired,
-    noSessions:           PropTypes.func.isRequired,
-    notification:         PropTypes.bool.isRequired,
-    patchActiveRecovery:  PropTypes.func.isRequired,
-    plan:                 PropTypes.object.isRequired,
-    postReadinessSurvey:  PropTypes.func.isRequired,
-    postSessionSurvey:    PropTypes.func.isRequired,
-    scheduledMaintenance: PropTypes.object,
-    typicalSession:       PropTypes.func.isRequired,
-    user:                 PropTypes.object.isRequired,
+    Layout:                  PropTypes.func.isRequired,
+    ble:                     PropTypes.object.isRequired,
+    clearCompletedExercises: PropTypes.func.isRequired,
+    setCompletedExercises:   PropTypes.func.isRequired,
+    getMyPlan:               PropTypes.func.isRequired,
+    getSoreBodyParts:        PropTypes.func.isRequired,
+    noSessions:              PropTypes.func.isRequired,
+    notification:            PropTypes.bool.isRequired,
+    patchActiveRecovery:     PropTypes.func.isRequired,
+    plan:                    PropTypes.object.isRequired,
+    postReadinessSurvey:     PropTypes.func.isRequired,
+    postSessionSurvey:       PropTypes.func.isRequired,
+    scheduledMaintenance:    PropTypes.object,
+    typicalSession:          PropTypes.func.isRequired,
+    user:                    PropTypes.object.isRequired,
 };
 
 Home.defaultProps = {
@@ -71,13 +77,15 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    getMyPlan:           PlanActions.getMyPlan,
-    getSoreBodyParts:    PlanActions.getSoreBodyParts,
-    noSessions:          PlanActions.noSessions,
-    patchActiveRecovery: PlanActions.patchActiveRecovery,
-    postReadinessSurvey: PlanActions.postReadinessSurvey,
-    postSessionSurvey:   PlanActions.postSessionSurvey,
-    typicalSession:      PlanActions.typicalSession,
+    clearCompletedExercises: PlanActions.clearCompletedExercises,
+    setCompletedExercises:   PlanActions.setCompletedExercise,
+    getMyPlan:               PlanActions.getMyPlan,
+    getSoreBodyParts:        PlanActions.getSoreBodyParts,
+    noSessions:              PlanActions.noSessions,
+    patchActiveRecovery:     PlanActions.patchActiveRecovery,
+    postReadinessSurvey:     PlanActions.postReadinessSurvey,
+    postSessionSurvey:       PlanActions.postSessionSurvey,
+    typicalSession:          PlanActions.typicalSession,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

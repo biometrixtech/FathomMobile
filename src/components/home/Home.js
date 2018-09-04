@@ -69,16 +69,18 @@ class Home extends Component {
     static componentName = 'HomeView';
 
     static propTypes = {
-        ble:                 PropTypes.object.isRequired,
-        getSoreBodyParts:    PropTypes.func.isRequired,
-        noSessions:          PropTypes.func.isRequired,
-        notification:        PropTypes.bool.isRequired,
-        patchActiveRecovery: PropTypes.func.isRequired,
-        plan:                PropTypes.object.isRequired,
-        postReadinessSurvey: PropTypes.func.isRequired,
-        postSessionSurvey:   PropTypes.func.isRequired,
-        typicalSession:      PropTypes.func.isRequired,
-        user:                PropTypes.object.isRequired,
+        ble:                     PropTypes.object.isRequired,
+        clearCompletedExercises: PropTypes.func.isRequired,
+        setCompletedExercises:   PropTypes.func.isRequired,
+        getSoreBodyParts:        PropTypes.func.isRequired,
+        noSessions:              PropTypes.func.isRequired,
+        notification:            PropTypes.bool.isRequired,
+        patchActiveRecovery:     PropTypes.func.isRequired,
+        plan:                    PropTypes.object.isRequired,
+        postReadinessSurvey:     PropTypes.func.isRequired,
+        postSessionSurvey:       PropTypes.func.isRequired,
+        typicalSession:          PropTypes.func.isRequired,
+        user:                    PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -86,7 +88,6 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            completedExercises: [],
             dailyReadiness:     {
                 readiness:     0,
                 sleep_quality: 0,
@@ -308,8 +309,8 @@ class Home extends Component {
                 let newPrepareObject = Object.assign({}, this.state.prepare, {
                     isReadinessSurveyCompleted: true,
                 });
+                this.props.clearCompletedExercises();
                 this.setState({
-                    completedExercises: [],
                     dailyReadiness:     {
                         readiness:     0,
                         sleep_quality: 0,
@@ -366,8 +367,8 @@ class Home extends Component {
                 let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
                 newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
                 newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
+                this.props.clearCompletedExercises();
                 this.setState({
-                    completedExercises:           [],
                     train:                        newTrainObject,
                     isPostSessionSurveyModalOpen: false,
                     loading:                      false,
@@ -455,8 +456,8 @@ class Home extends Component {
     }
 
     _toggleCompletedAMPMRecoveryModal = () => {
+        this.props.clearCompletedExercises();
         this.setState({
-            completedExercises:               [],
             isCompletedAMPMRecoveryModalOpen: !this.state.isCompletedAMPMRecoveryModalOpen
         });
     }
@@ -470,8 +471,8 @@ class Home extends Component {
         newPostSession.sport_name = null;
         newPostSession.strength_and_conditioning_type = null;
         newPostSession.RPE = 0;
+        this.props.clearCompletedExercises();
         this.setState({
-            completedExercises:           [],
             isPostSessionSurveyModalOpen: !this.state.isPostSessionSurveyModalOpen,
             postSession:                  newPostSession,
         });
@@ -528,8 +529,8 @@ class Home extends Component {
                     postPracticeSurveys: dailyPlanObj ? dailyPlanObj.training_sessions : [],
                 });
                 this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
+                this.props.clearCompletedExercises();
                 this.setState({
-                    completedExercises:       [],
                     isExerciseListRefreshing: false,
                     prepare:                  newPrepare,
                     recover:                  newRecover,
@@ -558,14 +559,14 @@ class Home extends Component {
     }
 
     _handleCompleteExercise = (exerciseId) => {
-        let newCompletedExercises = _.cloneDeep(this.state.completedExercises);
+        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
         if(newCompletedExercises && newCompletedExercises.indexOf(exerciseId) > -1) {
             newCompletedExercises.splice(newCompletedExercises.indexOf(exerciseId), 1)
         } else {
             newCompletedExercises.push(exerciseId);
         }
+        this.props.setCompletedExercises(newCompletedExercises);
         this.setState({
-            completedExercises:          newCompletedExercises,
             isSelectedExerciseModalOpen: false,
         });
     }
@@ -725,7 +726,8 @@ class Home extends Component {
     }
 
     renderPrepare = (index) => {
-        let { completedExercises, prepare } = this.state;
+        let { prepare } = this.state;
+        let completedExercises = store.getState().plan.completedExercises;
         let { plan } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && (dailyPlanObj.daily_readiness_survey_completed || prepare.isReadinessSurveyCompleted) ? true : false;
@@ -924,10 +926,9 @@ class Home extends Component {
                                     isPrep={true}
                                     toggleCompletedAMPMRecoveryModal={() => {
                                         this.setState({ loading: true });
-                                        this.props.patchActiveRecovery(this.props.user.id, 'pre')
+                                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
                                             .then(() =>
                                                 this.setState({
-                                                    completedExercises: [],
                                                     loading:            false,
                                                     prepare:            Object.assign({}, this.state.prepare, {
                                                         finishedRecovery:          true,
@@ -1022,7 +1023,8 @@ class Home extends Component {
     };
 
     renderRecover = (index) => {
-        let { completedExercises, recover } = this.state;
+        let { recover } = this.state;
+        let completedExercises = store.getState().plan.completedExercises;
         let { plan } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery ? dailyPlanObj.post_recovery : false;
@@ -1165,10 +1167,9 @@ class Home extends Component {
                                     isLoading={this.state.loading}
                                     toggleCompletedAMPMRecoveryModal={() => {
                                         this.setState({ loading: true });
-                                        this.props.patchActiveRecovery(this.props.user.id, 'post')
+                                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'post')
                                             .then(() =>
                                                 this.setState({
-                                                    completedExercises: [],
                                                     loading:            false,
                                                     recover:            Object.assign({}, this.state.recover, {
                                                         finished:                  !!completedExercises.length,
