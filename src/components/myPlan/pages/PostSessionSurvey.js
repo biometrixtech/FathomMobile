@@ -70,7 +70,7 @@ class PostSessionSurvey extends Component {
             _.filter(filteredAreasOfSoreness, o => o.severity && o.severity >= 0).length > 0 ||
             (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
         );
-        let isFormValid = areQuestionsValid && areSoreBodyPartsValid && areAreasOfSorenessValid;
+        let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         return (
