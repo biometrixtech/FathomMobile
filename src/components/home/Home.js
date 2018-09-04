@@ -523,7 +523,7 @@ class Home extends Component {
                 newPrepare.isReadinessSurveyCollapsed = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
                 newPrepare.isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
                 let newTrain = Object.assign({}, this.state.train, {
-                    postPracticeSurveys: dailyPlanObj.training_sessions,
+                    postPracticeSurveys: dailyPlanObj ? dailyPlanObj.training_sessions : [],
                 });
                 this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
                 this.setState({
@@ -1237,7 +1237,7 @@ class Home extends Component {
         let { plan } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
-        let trainingSessions = _.orderBy(dailyPlanObj.training_sessions, o => moment(o.event_date), ['asc']);
+        let trainingSessions = dailyPlanObj ? _.orderBy(dailyPlanObj.training_sessions, o => moment(o.event_date), ['asc']) : [];
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
