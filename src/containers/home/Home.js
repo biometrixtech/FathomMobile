@@ -16,24 +16,28 @@ const Home = ({
     ble,
     getMyPlan,
     getSoreBodyParts,
+    noSessions,
     notification,
     patchActiveRecovery,
     plan,
     postReadinessSurvey,
     postSessionSurvey,
     scheduledMaintenance,
+    typicalSession,
     user,
 }) => (
     <Layout
         ble={ble}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
+        noSessions={noSessions}
         notification={notification}
         patchActiveRecovery={patchActiveRecovery}
         plan={plan}
         postReadinessSurvey={postReadinessSurvey}
         postSessionSurvey={postSessionSurvey}
         scheduledMaintenance={scheduledMaintenance}
+        typicalSession={typicalSession}
         user={user}
     />
 );
@@ -43,12 +47,14 @@ Home.propTypes = {
     ble:                  PropTypes.object.isRequired,
     getMyPlan:            PropTypes.func.isRequired,
     getSoreBodyParts:     PropTypes.func.isRequired,
+    noSessions:           PropTypes.func.isRequired,
     notification:         PropTypes.bool.isRequired,
     patchActiveRecovery:  PropTypes.func.isRequired,
     plan:                 PropTypes.object.isRequired,
     postReadinessSurvey:  PropTypes.func.isRequired,
     postSessionSurvey:    PropTypes.func.isRequired,
     scheduledMaintenance: PropTypes.object,
+    typicalSession:       PropTypes.func.isRequired,
     user:                 PropTypes.object.isRequired,
 };
 
@@ -67,9 +73,11 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
     getMyPlan:           PlanActions.getMyPlan,
     getSoreBodyParts:    PlanActions.getSoreBodyParts,
+    noSessions:          PlanActions.noSessions,
     patchActiveRecovery: PlanActions.patchActiveRecovery,
     postReadinessSurvey: PlanActions.postReadinessSurvey,
     postSessionSurvey:   PlanActions.postSessionSurvey,
+    typicalSession:      PlanActions.typicalSession,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
