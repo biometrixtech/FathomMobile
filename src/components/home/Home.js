@@ -1299,16 +1299,25 @@ class Home extends Component {
                 }
                 <Spacer size={15} />
                 <Button
-                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                    backgroundColor={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.white}
                     buttonStyle={{justifyContent: 'space-between',}}
-                    color={AppColors.white}
+                    color={isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText}
                     containerViewStyle={{marginLeft: 22, marginRight: 22,}}
                     fontFamily={AppStyles.oswaldMedium.fontFamily}
                     fontWeight={AppStyles.oswaldMedium.fontWeight}
-                    leftIcon={{color: AppColors.white, name: 'add', size: AppFonts.scaleFont(30),}}
-                    onPress={this._togglePostSessionSurveyModal}
+                    leftIcon={{
+                        color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
+                        name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
+                        size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
+                    }}
+                    onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal : null}
+                    outlined={isDailyReadinessSurveyCompleted ? false : true}
                     raised={false}
-                    rightIcon={{color: AppColors.white, name: 'chevron-right', size: AppFonts.scaleFont(30),}}
+                    rightIcon={{
+                        color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
+                        name:  'chevron-right',
+                        size:  AppFonts.scaleFont(30),
+                    }}
                     textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
                     title={'ADD SESSION'}
                 />
@@ -1319,15 +1328,23 @@ class Home extends Component {
                     <Button
                         backgroundColor={AppColors.white}
                         buttonStyle={{justifyContent: 'space-between',}}
-                        color={AppColors.primary.yellow.hundredPercent}
+                        color={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText}
                         containerViewStyle={{marginLeft: 22, marginRight: 22,}}
                         fontFamily={AppStyles.oswaldMedium.fontFamily}
                         fontWeight={AppStyles.oswaldMedium.fontWeight}
-                        leftIcon={{color: AppColors.white, name: 'add', size: AppFonts.scaleFont(30),}}
-                        onPress={() => this.setState({ isOffDay: true, })}
+                        leftIcon={{
+                            color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
+                            name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
+                            size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
+                        }}
+                        onPress={() => isDailyReadinessSurveyCompleted ? this.setState({ isOffDay: true, }) : null}
                         outlined
                         raised={false}
-                        rightIcon={{color: AppColors.primary.yellow.hundredPercent, name: 'chevron-right', size: AppFonts.scaleFont(30),}}
+                        rightIcon={{
+                            color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
+                            name:  'chevron-right',
+                            size:  AppFonts.scaleFont(30),
+                        }}
                         textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
                         title={'NO SESSIONS TODAY'}
                     />
