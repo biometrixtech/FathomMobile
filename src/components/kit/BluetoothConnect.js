@@ -252,6 +252,7 @@ class BluetoothConnectView extends Component {
                     onPress: () => {
                         return this.props.postUserSensorData()
                             .then(() => BleManager.disconnect(sensorId))
+                            .catch(err => BleManager.disconnect(sensorId))
                             .then(() => {
                                 if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
                                     this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);

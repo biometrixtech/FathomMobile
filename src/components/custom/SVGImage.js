@@ -124,6 +124,8 @@ class SVGImage extends Component {
             require('../../../assets/images/body/L_Achilles.svg')
           : image === 'R_Achilles.svg' ?
             require('../../../assets/images/body/R_Achilles.svg')
+          : image === 'UpperBackNeck.svg' ?
+            require('../../../assets/images/body/UpperBackNeck.svg')
           :
             require('../../../assets/images/body/Abs.svg')
         :
@@ -203,6 +205,8 @@ class SVGImage extends Component {
             data_uri.L_Achilles
           : image === 'R_Achilles.svg' ?
             data_uri.R_Achilles
+          : image === 'UpperBackNeck.svg' ?
+            data_uri.UpperBackNeck
           :
             data_uri.Abs;
         return imageName;

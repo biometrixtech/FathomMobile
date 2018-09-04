@@ -94,6 +94,7 @@ class Home extends Component {
             },
             isCompletedAMPMRecoveryModalOpen: true,
             isExerciseListRefreshing:         false,
+            isOffDay:                         false,
             isPostSessionSurveyModalOpen:     false,
             isReadinessSurveyModalOpen:       false,
             isSelectedExerciseModalOpen:      false,
@@ -101,8 +102,14 @@ class Home extends Component {
             page1:                            {},
             page2:                            {},
             postSession:                      {
-                RPE:      0,
-                soreness: []
+                RPE:                            0,
+                description:                    '',
+                duration:                       0,
+                event_date:                     null,
+                session_type:                   null,
+                soreness:                       [],
+                sport_name:                     null, // this exists for session_type = 0,2,3,6
+                strength_and_conditioning_type: null, // this only exists for session_type=1
             },
             prepare: {
                 finishedRecovery:           props.plan && props.plan.dailyPlan[0] && props.plan.dailyPlan[0].pre_recovery_completed ? true : false,
@@ -117,12 +124,7 @@ class Home extends Component {
             selectedExercise: {},
             train:            {
                 completedPostPracticeSurvey: false,
-                postPracticeSurveys:         [
-                    {
-                        isPostPracticeSurveyCollapsed: false,
-                        isPostPracticeSurveyCompleted: false,
-                    }
-                ],
+                postPracticeSurveys:         [],
             },
             loading: false,
             storedSensorData: [],// TODO: REMOVE WHEN SENSOR DATA VALIDATED
@@ -148,7 +150,6 @@ class Home extends Component {
                             isPostPracticeSurveyCompleted: false,
                         }
                     );
-                    postPracticeSurveys.push({isPostPracticeSurveyCollapsed: false, isPostPracticeSurveyCompleted: false,})
                     this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(response.daily_plans[0]));
                     this.setState({
                         prepare: Object.assign({}, this.state.prepare, {
@@ -336,23 +337,27 @@ class Home extends Component {
          * has not already been completed
          */
         this.setState({ loading: true });
-        let newPostSessionSurvey = _.cloneDeep(this.state.postSession);
-        newPostSessionSurvey.RPE = newPostSessionSurvey.RPE;
-        newPostSessionSurvey.soreness.map(bodyPart => {
-            newPostSessionSurvey.soreness = _.filter(newPostSessionSurvey.soreness, u => { return !!u.severity && u.severity > 0; });
-        });
-        let session_type = _.find(MyPlanConstants.sessionTypes, (sessionType, index) => this.props.plan.dailyPlan[0][index] && this.props.plan.dailyPlan[0][index].length);
+        let newPostSessionSurvey = {};
+        newPostSessionSurvey.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+        newPostSessionSurvey.RPE = this.state.postSession.RPE;
+        newPostSessionSurvey.soreness = this.state.postSession.soreness;
         let postSession = {
-            event_date:   `${moment().toISOString(true).split('.')[0]}Z`,
-            session_id:   session_type ? this.props.plan.dailyPlan[0][session_type].session_id : '',
-            session_type: session_type ? MyPlanConstants.sessionTypes[session_type] : 0,
-            survey:       newPostSessionSurvey,
-            user_id:      this.props.user.id,
+            event_date:          this.state.postSession.event_date,
+            session_type:        this.state.postSession.session_type,
+            duration:            this.state.postSession.duration,
+            description:         this.state.postSession.description,
+            post_session_survey: newPostSessionSurvey,
+            user_id:             this.props.user.id,
         };
+        if(this.state.postSession.session_type === 0 || this.state.postSession.session_type === 2 || this.state.postSession.session_type === 3 || this.state.postSession.session_type === 6) {
+            postSession.sport_name = this.state.postSession.sport_name;
+        } else if(this.state.postSession.session_type === 1) {
+            postSession.strength_and_conditioning_type = this.state.postSession.strength_and_conditioning_type;
+        }
         let clonedPostPracticeSurveys = _.cloneDeep(this.state.train.postPracticeSurveys);
         let newSurvey = {};
-        newSurvey.isPostPracticeSurveyCollapsed = false;
-        newSurvey.isPostPracticeSurveyCompleted = false;
+        newSurvey.isPostPracticeSurveyCollapsed = true;
+        newSurvey.isPostPracticeSurveyCompleted = true;
         clonedPostPracticeSurveys.push(newSurvey);
         this.props.postSessionSurvey(postSession)
             .then(response => {
@@ -361,8 +366,8 @@ class Home extends Component {
                     postPracticeSurveys:         clonedPostPracticeSurveys,
                 });
                 let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
-                newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex - 1].isPostPracticeSurveyCompleted = true;
-                newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex - 1].isPostPracticeSurveyCollapsed = true;
+                newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
+                newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
                 this.props.clearCompletedExercises();
                 this.setState({
                     //completedExercises:           [],
@@ -370,8 +375,14 @@ class Home extends Component {
                     isPostSessionSurveyModalOpen: false,
                     loading:                      false,
                     postSession:                  {
-                        RPE:      0,
-                        soreness: []
+                        description:                    '',
+                        duration:                       0,
+                        event_date:                     null,
+                        session_type:                   null,
+                        sport_name:                     null,
+                        strength_and_conditioning_type: null,
+                        RPE:                            0,
+                        soreness:                       [],
                     },
                 });
             })
@@ -455,10 +466,19 @@ class Home extends Component {
     }
 
     _togglePostSessionSurvey = () => {
+        let newPostSession = _.cloneDeep(this.state.postSession);
+        newPostSession.description = '';
+        newPostSession.duration = 0;
+        newPostSession.event_date = null;
+        newPostSession.session_type = null;
+        newPostSession.sport_name = null;
+        newPostSession.strength_and_conditioning_type = null;
+        newPostSession.RPE = 0;
         this.props.clearCompletedExercises();
         this.setState({
-            //completedExercises:           [],
-            isPostSessionSurveyModalOpen: !this.state.isPostSessionSurveyModalOpen
+            //completedExercises:         [],
+            isPostSessionSurveyModalOpen: !this.state.isPostSessionSurveyModalOpen,
+            postSession:                  newPostSession,
         });
     }
 
@@ -508,19 +528,8 @@ class Home extends Component {
                 newPrepare.isActiveRecoveryCollapsed = true;
                 newPrepare.isReadinessSurveyCollapsed = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
                 newPrepare.isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
-                let updatedTrainingSession = [];
-                _.map(dailyPlanObj.training_sessions, trainingSession => {
-                    let newSession = {};
-                    newSession.isPostPracticeSurveyCollapsed = true;
-                    newSession.isPostPracticeSurveyCompleted = true;
-                    updatedTrainingSession.push(newSession);
-                });
-                let newSession = {};
-                newSession.isPostPracticeSurveyCollapsed = false;
-                newSession.isPostPracticeSurveyCompleted = false;
-                updatedTrainingSession.push(newSession);
                 let newTrain = Object.assign({}, this.state.train, {
-                    postPracticeSurveys: updatedTrainingSession,
+                    postPracticeSurveys: dailyPlanObj.training_sessions,
                 });
                 this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
                 this.props.clearCompletedExercises();
@@ -725,17 +734,14 @@ class Home extends Component {
         let { prepare } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
         let { plan } = this.props;
-
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && (dailyPlanObj.daily_readiness_survey_completed || prepare.isReadinessSurveyCompleted) ? true : false;
         // assuming AM/PM is switching to something for prepared vs recover
         let recoveryObj = dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
         let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
-
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed  ? true : false;
-
         let readinessSurveyBackgroundColor = isDailyReadinessSurveyCompleted ? disabledBackgroundColor : enabledBackgroundColor;
         let readinessSurveyDescriptionColor = isDailyReadinessSurveyCompleted ? disabledDescriptionColor : enabledDescriptionColor;
         let readinessSurveyHeaderColor = isDailyReadinessSurveyCompleted ? disabledHeaderColor : enabledHeaderColor;
@@ -753,7 +759,6 @@ class Home extends Component {
         let activeRecoveryWhenDescriptionColor = disabled ? whenDisabledDescriptionColor : isActive ? whenEnabledDescriptionColor : isCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
         let activeRecoveryWhenHeaderColor = disabled ? whenDisabledHeaderColor : isActive ? whenEnabledHeaderColor : isCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor;
         let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive ? whenEnabledBorderColor : isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
-
         return (
             <ScrollView
                 contentContainerStyle={{flexGrow: 1, backgroundColor: AppColors.white}}
@@ -1027,15 +1032,12 @@ class Home extends Component {
         let { recover } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
         let { plan } = this.props;
-
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery ? dailyPlanObj.post_recovery : false;
         let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
-
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed ? true : false;
-
         let activeRecoveryBackgroundColor = disabled ? disabledBackgroundColor : isActive ? enabledBackgroundColor : isCompleted ? enabledBackgroundColor : disabledBackgroundColor;
         let activeRecoveryDescriptionColor = disabled ? disabledDescriptionColor : isActive ? enabledDescriptionColor : isCompleted ? enabledDescriptionColor : disabledDescriptionColor;
         let activeRecoveryHeaderColor = disabled ? disabledHeaderColor : isActive ? enabledHeaderColor : isCompleted ? enabledHeaderColor : disabledHeaderColor;
@@ -1049,7 +1051,6 @@ class Home extends Component {
         let activeRecoveryWhenDescriptionColor = disabled ? whenDisabledDescriptionColor : isActive ? whenEnabledDescriptionColor : isCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
         let activeRecoveryWhenHeaderColor = disabled ? whenDisabledHeaderColor : isActive ? whenEnabledHeaderColor : isCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor;
         let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive ? whenEnabledBorderColor : isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
-
         return (
             <ScrollView
                 contentContainerStyle={{flexGrow: 1, justifyContent: 'center', backgroundColor: AppColors.white }}
@@ -1243,82 +1244,120 @@ class Home extends Component {
     };
 
     renderTrain = (index) => {
-        let train = this.state.train;
         let { plan } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+        let trainingSessions = _.orderBy(dailyPlanObj.training_sessions, o => moment(o.event_date), ['asc']);
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
-                {
-                    train.postPracticeSurveys.map((postPracticeSurvey, i) =>
-                        <View key={`postPracticeSurveys${i}`}>
-                            <ListItem
-                                containerStyle={{ borderBottomWidth: 0 }}
-                                disabled={!isDailyReadinessSurveyCompleted}
-                                hideChevron={true}
-                                leftIcon={
-                                    <TabIcon
-                                        containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                                        size={postPracticeSurvey.isPostPracticeSurveyCompleted ? AppFonts.scaleFont(24) : 20}
-                                        color={postPracticeSurvey.isPostPracticeSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
-                                        icon={postPracticeSurvey.isPostPracticeSurveyCompleted ? 'check-circle' : isDailyReadinessSurveyCompleted ? 'fiber-manual-record' : 'lock'}
-                                    />
-                                }
-                                title={`TRAINING SESSION #${i+1}`}
-                                titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
-                            />
-                            { postPracticeSurvey.isPostPracticeSurveyCollapsed && train.postPracticeSurveys.length > 1 ? this.renderDefaultListGap() : null }
-                            {
-                                postPracticeSurvey.isPostPracticeSurveyCollapsed
-                                    ?
-                                    null
-                                    :
-                                    <View style={{ flexDirection: 'row', }}>
-                                        <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
-                                        <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: isDailyReadinessSurveyCompleted ? whenEnabledBackgroundColor : whenDisabledBackgroundColor, borderColor: isDailyReadinessSurveyCompleted ? whenEnabledBorderColor : whenDisabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                                    <Text h7 oswaldMedium style={{ color: isDailyReadinessSurveyCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor, fontSize: AppFonts.scaleFont(12) }}>{'WHEN TO LOG'}</Text>
-                                                    <Text oswaldMedium style={{ color: isDailyReadinessSurveyCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'RIGHT AFTER\nTRAINING'}</Text>
-                                                </View>
-                                                <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: isDailyReadinessSurveyCompleted ? enabledBackgroundColor : disabledBackgroundColor, borderColor: isDailyReadinessSurveyCompleted ? enabledBorderColor : disabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                                    <Text h7 oswaldMedium style={{ color: isDailyReadinessSurveyCompleted ? enabledHeaderColor : disabledHeaderColor, fontSize: AppFonts.scaleFont(12) }}>{'WHY'}</Text>
-                                                    <Text oswaldMedium style={{ color: isDailyReadinessSurveyCompleted ? enabledDescriptionColor : disabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'LOAD & FATIGUE\nMONITORING'}</Text>
-                                                </View>
-                                            </View>
-                                            <Spacer size={12}/>
-                                            {
-                                                postPracticeSurvey.isPostPracticeSurveyCompleted
-                                                    ?
-                                                    null
-                                                    :
-                                                    <View>
-                                                        {
-                                                            !postPracticeSurvey.isPostPracticeSurveyCompleted && isDailyReadinessSurveyCompleted
-                                                                ?
-                                                                <Button
-                                                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
-                                                                    color={AppColors.white}
-                                                                    containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                                                    fontFamily={AppStyles.robotoBold.fontFamily}
-                                                                    fontWeight={AppStyles.robotoBold.fontWeight}
-                                                                    outlined
-                                                                    onPress={this._togglePostSessionSurveyModal}
-                                                                    textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                                                                    title={'Rate Your Session'}
-                                                                />
-                                                                :
-                                                                null
-                                                        }
-                                                    </View>
-                                            }
-                                        </View>
-                                    </View>
+                { this.state.isOffDay && trainingSessions.length === 0 ?
+                    <View>
+                        <ListItem
+                            containerStyle={{ borderBottomWidth: 0 }}
+                            disabled={!isDailyReadinessSurveyCompleted}
+                            hideChevron={true}
+                            leftIcon={
+                                <TabIcon
+                                    containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                    size={AppFonts.scaleFont(24)}
+                                    color={AppColors.primary.yellow.hundredPercent}
+                                    icon={'check-circle'}
+                                />
                             }
-                            { i === train.postPracticeSurveys.length - 1 ? <Spacer size={60}/> : null }
+                            title={'OFF DAY'}
+                            titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
+                        />
+                        <View style={{ flexDirection: 'row', }}>
+                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
+                            <View style={{ flex: 1, margin: 20, }}>
+                                <Text robotoRegular style={{fontSize: AppFonts.scaleFont(16),}}>{'Make the most of your training by resting well today: hydrate, eat well, sleep early, and do your recomended active recovery.'}</Text>
+                            </View>
                         </View>
-                    )
+                    </View>
+                    :
+                    null
+                }
+                {
+                    _.map(trainingSessions, (postPracticeSurvey, i) => {
+                        let filteredSessionTypes = _.filter(MyPlanConstants.availableSessionTypes, o => o.index === postPracticeSurvey.session_type);
+                        let selectedSessionType = filteredSessionTypes.length === 0 ? 'TRAINING' : filteredSessionTypes[0].label.toUpperCase();
+                        let filteredStrengthConditioningTypes = _.filter(MyPlanConstants.strengthConditioningTypes, o => o.index === postPracticeSurvey.strength_and_conditioning_type);
+                        let filteredSportTypes = _.filter(MyPlanConstants.teamSports, o => o.index === postPracticeSurvey.sport_name);
+                        let selectedSport = filteredSportTypes.length > 0 ? filteredSportTypes[0].label.toUpperCase() : filteredStrengthConditioningTypes.length > 0 ? filteredStrengthConditioningTypes[0].label.toUpperCase() : '';
+                        return(
+                            <View key={`postPracticeSurveys${i}`}>
+                                <ListItem
+                                    containerStyle={{ borderBottomWidth: 0 }}
+                                    disabled={!isDailyReadinessSurveyCompleted}
+                                    hideChevron={true}
+                                    leftIcon={
+                                        <TabIcon
+                                            containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                            size={AppFonts.scaleFont(24)}
+                                            color={AppColors.primary.yellow.hundredPercent}
+                                            icon={'check-circle'}
+                                        />
+                                    }
+                                    title={`${selectedSport} ${selectedSessionType}`}
+                                    titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
+                                />
+                                { this.renderDefaultListGap(24) }
+                            </View>
+                        );
+                    })
+                }
+                <Spacer size={15} />
+                <Button
+                    backgroundColor={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                    buttonStyle={{justifyContent: 'space-between',}}
+                    color={isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText}
+                    containerViewStyle={{marginLeft: 22, marginRight: 22,}}
+                    fontFamily={AppStyles.oswaldMedium.fontFamily}
+                    fontWeight={AppStyles.oswaldMedium.fontWeight}
+                    leftIcon={{
+                        color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
+                        name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
+                        size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
+                    }}
+                    onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal : null}
+                    outlined={isDailyReadinessSurveyCompleted ? false : true}
+                    raised={false}
+                    rightIcon={{
+                        color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
+                        name:  'chevron-right',
+                        size:  AppFonts.scaleFont(30),
+                    }}
+                    textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
+                    title={'ADD SESSION'}
+                />
+                <Spacer size={10} />
+                { this.state.isOffDay || trainingSessions.length > 0 ?
+                    null
+                    :
+                    <Button
+                        backgroundColor={AppColors.white}
+                        buttonStyle={{justifyContent: 'space-between',}}
+                        color={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText}
+                        containerViewStyle={{marginLeft: 22, marginRight: 22,}}
+                        fontFamily={AppStyles.oswaldMedium.fontFamily}
+                        fontWeight={AppStyles.oswaldMedium.fontWeight}
+                        leftIcon={{
+                            color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
+                            name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
+                            size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
+                        }}
+                        onPress={() => isDailyReadinessSurveyCompleted ? this.setState({ isOffDay: true, }) : null}
+                        outlined
+                        raised={false}
+                        rightIcon={{
+                            color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
+                            name:  'chevron-right',
+                            size:  AppFonts.scaleFont(30),
+                        }}
+                        textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
+                        title={'NO SESSIONS TODAY'}
+                    />
                 }
                 {
                     this.state.isPostSessionSurveyModalOpen

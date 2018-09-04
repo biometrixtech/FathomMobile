@@ -56,14 +56,25 @@ class ReadinessSurvey extends Component {
             soreBodyParts,
             user,
         } = this.props;
+        let split_afternoon = 12 // 24hr time to split the afternoon
+        let split_evening = 17 // 24hr time to split the evening
         let hourOfDay = moment().get('hour');
-        let partOfDay = hourOfDay >= 12 ? 'AFTERNOON' : 'MORNING';
-        let isFormValid =
-            dailyReadiness.readiness > 0 &&
-            dailyReadiness.sleep_quality > 0 && (
-                _.filter(dailyReadiness.soreness, o => o.severity && o.severity >= 0).length > 0 ||
-                (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
-            );
+        let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'AFTERNOON' : hourOfDay >= split_evening ? 'EVENING' : 'MORNING';
+        let filteredAreasOfSoreness = _.filter(dailyReadiness.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part);
+            return doesItInclude.length === 0;
+        })
+        let filteredSoreBodyParts = _.filter(dailyReadiness.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part);
+            return doesItInclude.length > 0;
+        });
+        let areQuestionsValid = dailyReadiness.readiness > 0 && dailyReadiness.sleep_quality > 0;
+        let areSoreBodyPartsValid = _.filter(filteredSoreBodyParts, o => o.severity >= 0).length > 0;
+        let areAreasOfSorenessValid = (
+            _.filter(filteredAreasOfSoreness, o => o.severity && o.severity >= 0).length > 0 ||
+            (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
+        );
+        let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         return(
