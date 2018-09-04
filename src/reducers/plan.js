@@ -37,8 +37,8 @@ export default function planReducer(state = initialState, action) {
         return Object.assign({}, state, {
             completedExercises: [],
             dailyPlan:          [],
-            soreBodyParts:      {},
             postSession:        {},
+            soreBodyParts:      {},
         });
     case Actions.POST_READINESS_SURVEY:
         return Object.assign({}, state, {});
