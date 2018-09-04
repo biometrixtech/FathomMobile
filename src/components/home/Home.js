@@ -86,7 +86,6 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            //completedExercises: [],
             dailyReadiness:     {
                 readiness:     0,
                 sleep_quality: 0,
@@ -311,7 +310,6 @@ class Home extends Component {
                 });
                 this.props.clearCompletedExercises();
                 this.setState({
-                    //completedExercises: [],
                     dailyReadiness:     {
                         readiness:     0,
                         sleep_quality: 0,
@@ -370,7 +368,6 @@ class Home extends Component {
                 newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
                 this.props.clearCompletedExercises();
                 this.setState({
-                    //completedExercises:           [],
                     train:                        newTrainObject,
                     isPostSessionSurveyModalOpen: false,
                     loading:                      false,
@@ -460,7 +457,6 @@ class Home extends Component {
     _toggleCompletedAMPMRecoveryModal = () => {
         this.props.clearCompletedExercises();
         this.setState({
-            //completedExercises:               [],
             isCompletedAMPMRecoveryModalOpen: !this.state.isCompletedAMPMRecoveryModalOpen
         });
     }
@@ -476,7 +472,6 @@ class Home extends Component {
         newPostSession.RPE = 0;
         this.props.clearCompletedExercises();
         this.setState({
-            //completedExercises:         [],
             isPostSessionSurveyModalOpen: !this.state.isPostSessionSurveyModalOpen,
             postSession:                  newPostSession,
         });
@@ -534,7 +529,6 @@ class Home extends Component {
                 this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
                 this.props.clearCompletedExercises();
                 this.setState({
-                    //completedExercises:       [],
                     isExerciseListRefreshing: false,
                     prepare:                  newPrepare,
                     recover:                  newRecover,
@@ -571,7 +565,6 @@ class Home extends Component {
         }
         this.props.setCompletedExercises(newCompletedExercises);
         this.setState({
-            //completedExercises:          newCompletedExercises,
             isSelectedExerciseModalOpen: false,
         });
     }
@@ -934,7 +927,6 @@ class Home extends Component {
                                         this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
                                             .then(() =>
                                                 this.setState({
-                                                    //completedExercises: [],
                                                     loading:            false,
                                                     prepare:            Object.assign({}, this.state.prepare, {
                                                         finishedRecovery:          true,
@@ -1176,7 +1168,6 @@ class Home extends Component {
                                         this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'post')
                                             .then(() =>
                                                 this.setState({
-                                                    //completedExercises: [],
                                                     loading:            false,
                                                     recover:            Object.assign({}, this.state.recover, {
                                                         finished:                  !!completedExercises.length,
