@@ -30,7 +30,6 @@ import { ble as BLEActions, } from '../../actions';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
-import * as Animatable from 'react-native-animatable';
 import _ from 'lodash';
 import BleManager from 'react-native-ble-manager';
 import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
