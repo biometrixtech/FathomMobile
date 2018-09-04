@@ -463,7 +463,7 @@ class BluetoothConnectView extends Component {
 
                 <View style={[AppStyles.paddingMed, {backgroundColor: AppColors.primary.yellow.hundredPercent, flex: 1}]}>
                     <TabIcon
-                        containerStyle={[{alignSelf: 'flex-end'}]}
+                        containerStyle={[{alignSelf: 'flex-end', paddingTop: 20,}]}
                         icon={'close'}
                         iconStyle={[{color: AppColors.white}]}
                         onPress={() => Actions.settings()}
