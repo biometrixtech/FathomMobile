@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
     Animated,
+    AppState,
     Easing,
     Image,
     NativeEventEmitter,
@@ -27,12 +28,16 @@ import { store } from '../../store';
 import { bleUtils } from '../../constants/utils';
 import { AppUtil } from '../../lib';
 import { ble as BLEActions, } from '../../actions';
+import { Button, } from './'; // TODO: remove when done validating sensor data
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
 import _ from 'lodash';
 import BleManager from 'react-native-ble-manager';
+import Egg from 'react-native-egg'; // TODO: remove when done validating sensor data
 import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
+import Modal from 'react-native-modalbox'; // TODO: remove when done validating sensor data
+import Toast, { DURATION } from 'react-native-easy-toast';
 import moment from 'moment';
 
 const BleManagerModule = NativeModules.BleManager;
@@ -66,24 +71,30 @@ class CustomNavBar extends Component {
             :
             false;
         let bleImageToDisplay = fetchBleData ?
-            require('../../../assets/images/sensor/sensor-operation.png')
+            require('../../../assets/images/sensor/sensor.png')
             :
             null;
         this.state = {
             BLEData: {
-                animated: true,
-                bleImage: bleImageToDisplay,
+                animated:  false,
+                bleImage:  bleImageToDisplay,
+                isFetched: false,
             },
-            bluetoothOn:    currentState.ble.bluetoothOn || false,
-            fetchBleData:   fetchBleData,
-            isSensorUIOpen: false,
+            bluetoothOn:     currentState.ble.bluetoothOn || false,
+            fetchBleData:    fetchBleData,
+            isModalOpen:     false, // TODO: remove when done validating sensor data
+            isSensorUIOpen:  false,
+            storedPractices: [], // TODO: remove when done validating sensor data
         }
         this.handleBleStateChange = this.handleBleStateChange.bind(this);
+
+        this._interval = null;
     }
 
     componentWillMount = () => {
         // trigger check state
         BleManager.checkState();
+        AppState.removeEventListener('change', this._handleAppStateChange);
     }
 
     componentDidMount = () => {
@@ -91,16 +102,24 @@ class CustomNavBar extends Component {
         if(Platform.OS === 'android') {
             StatusBar.setBackgroundColor(AppColors.primary.grey.twentyPercent);
         }
-        this.handlerState = bleManagerEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange );
+        this.handlerState = bleManagerEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange);
+        AppState.addEventListener('change', this._handleAppStateChange);
         // start bluetooth related items
         this._startBluetooth();
         if(this.state.fetchBleData) {
-            this._triggerBLESteps();
+            this._triggerBLESteps(true);
         }
+        // TODO: remove when done validating sensor data
+        AppUtil._retrieveAsyncStorageData('practices')
+            .then(practices => {
+                console.log('practices',practices);
+                this.setState({ storedPractices: practices && practices.length > 0 ? practices : [], })
+            });
     }
 
     componentWillUnmount = () => {
         this.handlerState.remove();
+        this._handleClearInterval();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -114,14 +133,14 @@ class CustomNavBar extends Component {
                 this.setState(
                     {
                         BLEData: {
-                            animated: true,
-                            bleImage: require('../../../assets/images/sensor/sensor-operation.png'),
+                            animated: false,
+                            bleImage: require('../../../assets/images/sensor/sensor.png'),
                         },
                         bluetoothOn:    currentState.ble.bluetoothOn || false,
                         fetchBleData:   true,
                         isSensorUIOpen: false,
                     },
-                    () => this._triggerBLESteps()
+                    () => this._triggerBLESteps(true)
                 );
             } else {
                 this.setState(
@@ -139,22 +158,57 @@ class CustomNavBar extends Component {
         }
     }
 
-    _triggerBLESteps = () => {
-        this.setState({ isSensorUIOpen: false });
-        this.setState({
-            BLEData: {
-                animated: true,
-                bleImage: require('../../../assets/images/sensor/sensor-operation.png'),
-            }
-        }, () => {
-            bleUtils.handleBLESteps(store.getState().ble, store.getState().user.id)
-                .then(BLEData => {
-                    this.setState({ BLEData, isSensorUIOpen: true });
-                })
-                .catch(BLEData => {
-                    this.setState({ BLEData, isSensorUIOpen: true });
-                });
-        });
+    _handleClearInterval = () => {
+        clearInterval(this._interval);
+    }
+
+    _handleSetInterval = () => {
+        this._interval = setInterval(() => {
+            this._triggerBLESteps();
+        }, 30000);
+    }
+
+    _handleAppStateChange = nextAppState => {
+        if(nextAppState === 'active') {
+            this._triggerBLESteps(true);
+        } else if(nextAppState === 'background') {
+            this._handleClearInterval();
+        }
+    }
+
+    _triggerBLESteps = (openSensorStatusUI = false) => {
+        this._handleClearInterval();
+        this.setState({ isFetched: false, isSensorUIOpen: openSensorStatusUI ? openSensorStatusUI : this.state.isSensorUIOpen, });
+        bleUtils.handleBLESingleSensorStatus(store.getState().ble)
+            .then(sensorStatusResponse => {
+                console.log(sensorStatusResponse.sensorStatusResults);
+                if(sensorStatusResponse.sensorStatusResults.numberOfPractices > 0) {
+                    this.setState({
+                        BLEData: {
+                            animated: true,
+                            bleImage: require('../../../assets/images/sensor/sensor-operation.png'),
+                        }
+                    }, () => {
+                        bleUtils.handleBLESteps(store.getState().ble, store.getState().user.id)
+                            .then(BLEData => {
+                                this.setState({ BLEData, isFetched: true, isSensorUIOpen: openSensorStatusUI ? openSensorStatusUI : this.state.isSensorUIOpen, });
+                                this.refs.toast.show('SENSOR SYNCED', DURATION.LENGTH_LONG);
+                                this._handleSetInterval();
+                            })
+                            .catch(BLEData => {
+                                this.setState({ BLEData, isFetched: true, isSensorUIOpen: openSensorStatusUI ? openSensorStatusUI : this.state.isSensorUIOpen, });
+                                this._handleSetInterval();
+                            });
+                    });
+                } else {
+                    this.setState({ isFetched: true, isSensorUIOpen: openSensorStatusUI ? openSensorStatusUI : this.state.isSensorUIOpen, });
+                    this._handleSetInterval();
+                }
+            })
+            .catch(err => {
+                this.setState({ isFetched: true, });
+                this._handleSetInterval();
+            });
     }
 
     handleBleStateChange = (data) => {
@@ -238,11 +292,19 @@ class CustomNavBar extends Component {
 
     _renderMiddle = () => {
         if(this.props.routeName === 'home') {
+            // TODO: remove EGG and update image styles when done validating sensor data
             return (
-                <Image
-                    source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
-                    style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center'}]}
-                />
+                <Egg
+                    onCatch={() => this.setState({ isModalOpen: true, })}
+                    setps={'TTT'}
+                    style={{alignItems: 'center', flex: 8, justifyContent: 'center'}}
+                >
+                    <Image
+                        source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
+                        // style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
+                        style={[AppStyles.navbarImageTitle,]}
+                    />
+                </Egg>
             )
         }
         return (
@@ -327,7 +389,6 @@ class CustomNavBar extends Component {
                             onPress={() =>
                                 this.setState(
                                     { isSensorUIOpen: !this.state.isSensorUIOpen },
-                                    () => this.state.isSensorUIOpen ? this._triggerBLESteps() : null,
                                 )
                             }
                             style={{width: imageWidth}}
@@ -337,7 +398,7 @@ class CustomNavBar extends Component {
                                 source={this.state.BLEData.bleImage}
                                 style={{width: imageWidth,}}
                             />
-                            { store.getState().ble.systemStatus === 1 ?
+                            { this.state.isFetched && store.getState().ble.systemStatus === 1 ?
                                 <TabIcon
                                     containerStyle={[{
                                         borderRadius: (indicatorSize + 10) / 2,
@@ -351,14 +412,13 @@ class CustomNavBar extends Component {
                                     onPress={() =>
                                         this.setState(
                                             { isSensorUIOpen: !this.state.isSensorUIOpen },
-                                            () => this.state.isSensorUIOpen ? this._triggerBLESteps() : null,
                                         )
                                     }
                                     reverse={false}
                                     size={(indicatorSize + 10)}
                                     type={'font-awesome'}
                                 />
-                                : store.getState().ble.systemStatus === 2 ?
+                                : this.state.isFetched && store.getState().ble.systemStatus === 2 ?
                                     <Animated.View
                                         style={{
                                             backgroundColor: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),
@@ -371,18 +431,20 @@ class CustomNavBar extends Component {
                                             width:           indicatorSize,
                                         }}
                                     />
-                                    :
-                                    <View
-                                        style={{
-                                            backgroundColor: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),
-                                            borderRadius:    indicatorSize / 2,
-                                            height:          indicatorSize,
-                                            position:        'absolute',
-                                            right:           0,
-                                            top:             4,
-                                            width:           indicatorSize,
-                                        }}
-                                    />
+                                    : this.state.isFetched ?
+                                        <View
+                                            style={{
+                                                backgroundColor: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),
+                                                borderRadius:    indicatorSize / 2,
+                                                height:          indicatorSize,
+                                                position:        'absolute',
+                                                right:           0,
+                                                top:             4,
+                                                width:           indicatorSize,
+                                            }}
+                                        />
+                                        :
+                                        null
                             }
                         </TouchableOpacity>
                         : !this.state.bluetoothOn ?
@@ -419,6 +481,25 @@ class CustomNavBar extends Component {
     }
 
     _renderSensorUI = () => {
+        // set animated values
+        const spinValue = new Animated.Value(0);
+        // First set up animation
+        Animated.loop(
+            Animated.timing(
+                spinValue,
+                {
+                    duration:        3000,
+                    easing:          Easing.linear,
+                    toValue:         1,
+                    useNativeDriver: true,
+                }
+            )
+        ).start();
+        // Second interpolate beginning and end values (in this case 0 and 1)
+        const spin = spinValue.interpolate({
+            inputRange:  [0, 1],
+            outputRange: ['0deg', '360deg'],
+        });
         let currentState = store.getState();
         let bleStore = currentState.ble;
         let planStore = currentState.plan.dailyPlan && currentState.plan.dailyPlan.length > 0 ? currentState.plan.dailyPlan[0] : false;
@@ -458,45 +539,57 @@ class CustomNavBar extends Component {
                         paddingVertical: AppSizes.paddingMed,
                     }}
                 >
-                    <Text oswaldMedium style={{color: AppColors.primary.white.hundredPercent, fontSize: AppFonts.scaleFont(14), paddingRight: AppSizes.paddingXSml,}}>
+                    <Animated.View style={!this.state.isFetched ? {transform: [{rotate: spin}],} : {}}>
+                        <TabIcon
+                            icon={'sync'}
+                            iconStyle={[{color: AppColors.primary.white.hundredPercent,}]}
+                            onPress={() => this._triggerBLESteps()}
+                            reverse={false}
+                            size={AppFonts.scaleFont(20)}
+                            type={'material-community'}
+                        />
+                    </Animated.View>
+                    <Text oswaldMedium style={{color: AppColors.primary.white.hundredPercent, fontSize: AppFonts.scaleFont(14), paddingHorizontal: AppSizes.paddingXSml,}}>
                         {'SENSOR STATUS:'}
                     </Text>
-                    { sensorStatusBarObj.batteryFollowUp ?
-                        <View style={{alignItems: 'center', flexDirection: 'row',}}>
-                            <View style={{borderRightColor: 'rgba(255, 255, 255, 0.5)', borderRightWidth: 1,}}>
-                                <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)', paddingRight: AppSizes.paddingXSml,}}>
-                                    {`${sensorStatusBarObj.followUpText}`}
-                                </Text>
-                            </View>
-                            <TabIcon
-                                containerStyle={[{paddingRight: AppSizes.paddingXSml,}]}
-                                icon={batteryIconChargeLevel}
-                                iconStyle={[{color: 'rgba(255, 255, 255, 0.5)', transform: [{ rotate: '90deg'}],}]}
-                                reverse={false}
-                                size={AppFonts.scaleFont(20)}
-                                type={batteryIconType}
-                            />
-                            <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)',}}>{sensorStatusBarObj.batteryFollowUp}</Text>
-                        </View>
-                        : sensorStatusBarObj.lastSyncFollowUp ?
+                    { !this.state.isFetched ?
+                        <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)',}}>{'SEARCHING...'}</Text>
+                        : sensorStatusBarObj.batteryFollowUp ?
                             <View style={{alignItems: 'center', flexDirection: 'row',}}>
-                                <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)', fontSize: AppFonts.scaleFont(14), paddingRight: AppSizes.paddingXSml,}}>
-                                    {`${sensorStatusBarObj.followUpText}`}
-                                </Text>
-                                { planStore.last_sensor_sync ?
-                                    <View style={{borderLeftColor: 'rgba(255, 255, 255, 0.5)', borderLeftWidth: 1,}}>
-                                        <Text robotoLight style={{color: 'rgba(255, 255, 255, 0.5)', fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>
-                                            {`synced ${daysDiff}`}
-                                        </Text>
-                                    </View>
-                                    :
-                                    null
-                                }
+                                <View style={{borderRightColor: 'rgba(255, 255, 255, 0.5)', borderRightWidth: 1,}}>
+                                    <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)', paddingRight: AppSizes.paddingXSml,}}>
+                                        {`${sensorStatusBarObj.followUpText}`}
+                                    </Text>
+                                </View>
+                                <TabIcon
+                                    containerStyle={[{paddingHorizontal: AppSizes.paddingXSml,}]}
+                                    icon={batteryIconChargeLevel}
+                                    iconStyle={[{color: 'rgba(255, 255, 255, 0.5)', transform: [{ rotate: '90deg'}],}]}
+                                    reverse={false}
+                                    size={AppFonts.scaleFont(20)}
+                                    type={batteryIconType}
+                                />
+                                <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)',}}>{sensorStatusBarObj.batteryFollowUp}</Text>
                             </View>
-                            :
-                            <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)',}}>
-                                {sensorStatusBarObj.followUpText}
-                            </Text>
+                            : sensorStatusBarObj.lastSyncFollowUp ?
+                                <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                                    <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)', fontSize: AppFonts.scaleFont(14), paddingRight: AppSizes.paddingXSml,}}>
+                                        {`${sensorStatusBarObj.followUpText}`}
+                                    </Text>
+                                    { planStore.last_sensor_sync ?
+                                        <View style={{borderLeftColor: 'rgba(255, 255, 255, 0.5)', borderLeftWidth: 1,}}>
+                                            <Text robotoLight style={{color: 'rgba(255, 255, 255, 0.5)', fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>
+                                                {`synced ${daysDiff}`}
+                                            </Text>
+                                        </View>
+                                        :
+                                        null
+                                    }
+                                </View>
+                                :
+                                <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)',}}>
+                                    {sensorStatusBarObj.followUpText}
+                                </Text>
                     }
                 </View>
             </View>
@@ -504,6 +597,7 @@ class CustomNavBar extends Component {
     }
 
     render = () => {
+        // TODO: remove MODAL when done validating sensor data
         return (
             <View>
                 <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
@@ -517,6 +611,49 @@ class CustomNavBar extends Component {
                     :
                     null
                 }
+                <Toast
+                    position={'bottom'}
+                    ref={'toast'}
+                />
+                <Modal
+                    backButtonClose
+                    coverScreen
+                    isOpen={this.state.isModalOpen}
+                    onClosed={() => this.setState({ isModalOpen: false })}
+                    position={'center'}
+                    style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, height: AppSizes.screen.height, width: AppSizes.screen.width, }]}
+                    swipeToClose={false}
+                >
+                    <View style={[AppStyles.containerCentered, {backgroundColor: AppColors.white, height: AppSizes.screen.height, width: AppSizes.screen.width,}]}>
+                        { this.state.storedPractices && this.state.storedPractices.length === 0 ?
+                            <Text>{'NO STORED PRACTICES'}</Text>
+                            :
+                            null
+                        }
+                        { _.map(this.state.storedPractices, (practice, index) => {
+                            return(
+                                <View key={i} style={{paddingVertical: 10,}}>
+                                    <Text>{`Practice #${i}`}</Text>
+                                    <Text>{`Start Time: ${moment(result.start_time).utc().format('MMMM Do YYYY, h:mm:ss a')}`}</Text>
+                                    <Text>{`End Time: ${moment(result.end_time).utc().format('MMMM Do YYYY, h:mm:ss a')}`}</Text>
+                                    <Text>{`Inactive Accel: ${result.inactive_accel} (m/s^2)`}</Text>
+                                    <Text>{`Low Accel: ${result.low_accel} (m/s^2)`}</Text>
+                                    <Text>{`Mod Accel: ${result.mod_accel} (m/s^2)`}</Text>
+                                    <Text>{`High Accel: ${result.high_accel} (m/s^2)`}</Text>
+                                    <Text>{`Inactive Duration: ${result.inactive_duration} (seconds)`}</Text>
+                                    <Text>{`Low Duration: ${result.low_duration} (seconds)`}</Text>
+                                    <Text>{`Mod Duration: ${result.mod_duration} (seconds)`}</Text>
+                                    <Text>{`High Duration: ${result.high_duration} (seconds)`}</Text>
+                                </View>
+                            )
+                        })}
+                        <Button
+                            backgroundColor={AppColors.primary.grey.fiftyPercent}
+                            onPress={() => this.setState({ isModalOpen: false })}
+                            title={'Close'}
+                        />
+                    </View>
+                </Modal>
             </View>
         );
     }

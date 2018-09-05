@@ -12,6 +12,39 @@ import { AppUtil } from '../../lib';
 
 const bleUtils = {
 
+    handleBLESingleSensorStatus(ble) {
+        // setup variables
+        const imagePrefix = '../../../assets/images/sensor/';
+        let animated = false;
+        let sensorStatusResults = null;
+        // make sure we have a sensor paired
+        if(ble.accessoryData && ble.accessoryData.sensor_pid && ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID()) {
+            return BLEActions.startConnection(ble.accessoryData.sensor_pid)
+                .catch(err => {
+                    console.log('err1---',err);
+                    BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+                    return Promise.reject(err);
+                })
+                .then(res => {
+                    return BLEActions.getSingleSensorStatus(ble.accessoryData.sensor_pid);
+                })
+                .then(response => {
+                    sensorStatusResults = response;
+                    return BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+                })
+                .then(res => {
+                    console.log('res-startDisconnection',res);
+                    return Promise.resolve({ sensorStatusResults });
+                })
+                .catch(err => {
+                    console.log('err2---',err);
+                    BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+                    return Promise.reject(err);
+                });
+        }
+        return Promise.resolve({ sensorStatusResults });
+    },
+
     handleBLESteps(ble, userId) {
         // setup variables
         const imagePrefix = '../../../assets/images/sensor/';
@@ -20,6 +53,11 @@ const bleUtils = {
         // make sure we have a sensor paired
         if(ble.accessoryData && ble.accessoryData.sensor_pid && ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID()) {
             return BLEActions.startConnection(ble.accessoryData.sensor_pid)
+                .catch(err => {
+                    console.log('err1---',err);
+                    BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+                    return Promise.reject(err);
+                })
                 .then(res => {
                     return BLEActions.getSingleSensorStatus(ble.accessoryData.sensor_pid);
                 })
@@ -41,15 +79,15 @@ const bleUtils = {
                 })
                 .then(res => {
                     console.log('res-startDisconnection',res);
-                    return Promise.resolve({ animated, bleImage: require(`${imagePrefix}sensor.png`), });
+                    return Promise.resolve({ animated, bleImage: require(`${imagePrefix}sensor.png`), isFetched: true, });
                 })
                 .catch(err => {
-                    console.log('err---',err);
+                    console.log('err2---',err);
                     BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
-                    return Promise.reject({ bleImage: require(`${imagePrefix}sensor.png`) });
+                    return Promise.reject({ bleImage: require(`${imagePrefix}sensor.png`), isFetched: true, });
                 });
         }
-        return Promise.resolve({ animated, bleImage: null });
+        return Promise.resolve({ animated, bleImage: null, isFetched: true, });
     },
 
     async loopThroughPractices(numberOfPractices, sensor_pid, userId) {

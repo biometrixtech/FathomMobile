@@ -226,17 +226,36 @@ const startDisconnection = sensorId => {
 };
 
 const startConnection = sensorId => {
-    return startDisconnection(sensorId)
-        .catch(err => {
-            // ble err will always return the same string 'Device not connected'
-            // continue normally if startDisconnection failed (could be because we don't have an open connection)
-            return true;
-        })
-        .then(sleeper(1000))
-        .then(() => startBluetooth())
-        .then(() => BleManager.connect(sensorId))
-        .catch(err => BleManager.connect(sensorId))
-        .then(() => Promise.resolve('successfully connected'))
+    // NOTE: timeout function added due to - 'Attempts to connect to a peripheral do not time out' (iOS documentation)
+    let timeout = new Promise((resolve, reject) => {
+        let _interval = setTimeout(() => {
+            let systemStatus = 0;
+            let batteryCharge = 0;
+            store.dispatch({
+                type:          Actions.UPDATE_BLE_STATUSES,
+                batteryCharge: batteryCharge,
+                systemStatus:  systemStatus,
+            });
+            clearInterval(_interval);
+            return reject('could not connect');
+        }, 30000);
+    });
+    let startingToConnect = new Promise((resolve, reject) => {
+        return startDisconnection(sensorId)
+            .catch(err => {
+                // ble err will always return the same string 'Device not connected'
+                // continue normally if startDisconnection failed (could be because we don't have an open connection)
+                return true;
+            })
+            .then(sleeper(1000))
+            .then(() => startBluetooth())
+            .then(() => BleManager.connect(sensorId))
+            .catch(err => BleManager.connect(sensorId))
+            .then(() => resolve('successfully connected'))
+            .catch(err => reject(err));
+    });
+    return Promise.race([timeout, startingToConnect])
+        .then(response => Promise.resolve(response))
         .catch(err => Promise.reject(err));
 };
 
