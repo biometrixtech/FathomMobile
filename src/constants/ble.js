@@ -128,6 +128,7 @@ export default {
         SET_EAP_TYPE:                   parseInt('0x5E', 16),
         SET_GYRO_CALIBRATION:           parseInt('0x60', 16),
         // SINGLE SENSOR COMMANDS
+        DELETE_ALL_PRACTICES:           parseInt('0x7C', 16),
         DELETE_SINGLE_PRACTICE:         parseInt('0x79', 16),
         IS_SINGLE_SENSOR_IN_SETUP_MODE: parseInt('0x74', 16),
         GET_ENTIRE_SYSTEM_STATUS:       parseInt('0x7D', 16),
@@ -135,7 +136,6 @@ export default {
         GET_PRACTICE_DURATION:          parseInt('0x78', 16),
         GET_PRACTICE_TIMESTAMPS:        parseInt('0x76', 16),
         GET_SINGLE_SENSOR_LIST:         parseInt('0x75', 16),
-        WIPE_SINGLE_SENSOR_DATA:        parseInt('0x7B', 16),
     },
 
     roles: {

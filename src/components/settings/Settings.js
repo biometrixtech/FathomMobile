@@ -20,7 +20,7 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 import { AppColors, AppSizes, AppStyles } from '../../constants';
 import { ListItem } from '../custom';
 import { AppUtil } from '../../lib';
-import { user as UserActions, } from '../../actions';
+import { ble as BLEActions, user as UserActions, } from '../../actions';
 
 // Components
 import { Alert, BackHandler, Platform, View, } from 'react-native';
@@ -29,11 +29,11 @@ import { Alert, BackHandler, Platform, View, } from 'react-native';
 class Settings extends Component {
     static componentName = 'SettingsView';
     static propTypes = {
-        accessoryData:              PropTypes.object.isRequired,
-        deleteUserSensorData:       PropTypes.func.isRequired,
-        disconnectFromSingleSensor: PropTypes.func.isRequired,
-        logout:                     PropTypes.func.isRequired,
-        user:                       PropTypes.object.isRequired,
+        accessoryData:                  PropTypes.object.isRequired,
+        deleteUserSensorData:           PropTypes.func.isRequired,
+        deleteAllSingleSensorPractices: PropTypes.func.isRequired,
+        logout:                         PropTypes.func.isRequired,
+        user:                           PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -70,11 +70,14 @@ class Settings extends Component {
                     {
                         text:    'Unpair',
                         onPress: () => {
-                            // return this.props.disconnectFromSingleSensor(this.props.accessoryData.sensor_pid)
-                            //     .catch(err => this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid))
-                            //     .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid))
-                            // TODO: update these lines
-                            return this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid)
+                            // trigger command 0x7C to delete all practices from the sensor
+                            return BLEActions.startConnection(this.props.accessoryData.sensor_pid)
+                                .catch(err => BLEActions.startDisconnection(this.props.accessoryData.sensor_pid))
+                                .then(() => this.props.deleteAllSingleSensorPractices(this.props.accessoryData.sensor_pid))
+                                .catch(err => this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid))
+                                .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid))
+                                .then(() => BLEActions.startDisconnection(this.props.accessoryData.sensor_pid))
+                                .catch(err => BLEActions.startDisconnection(this.props.accessoryData.sensor_pid))
                                 .then(() => this.refs.toast.show('Successfully UNPAIRED from sensor', DURATION.LENGTH_LONG))
                                 .catch(err => {
                                     this.refs.toast.show('Failed to UNPAIR from sensor', DURATION.LENGTH_LONG);
@@ -178,7 +181,7 @@ class Settings extends Component {
                         null
                 }
                 <Toast
-                    position={'top'}
+                    position={'bottom'}
                     ref={'toast'}
                 />
             </View>

@@ -10,6 +10,7 @@
  */
 
 import Alerts from './Alerts';
+import AnimatedProgressBar from './AnimatedProgressBar';
 import Button from './Button';
 import CalendarStrip from './CalendarStrip';
 import Card from './Card';
@@ -34,6 +35,7 @@ import WheelScrollPicker from './WheelScrollPicker';
 
 export {
     Alerts,
+    AnimatedProgressBar,
     Button,
     CalendarStrip,
     Card,

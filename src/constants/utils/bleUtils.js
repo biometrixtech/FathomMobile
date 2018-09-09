@@ -1,155 +1,145 @@
-// import reactnative components
-import { AsyncStorage } from 'react-native';
+// import actions, utils
+import { ble as BLEActions, plan as planActions, } from '../../actions';
+import { AppColors, ErrorMessages, } from '../../constants';
+import { AppUtil, } from '../../lib';
 
 // import third-party libraries
-import _ from 'lodash';
 import moment from 'moment';
-
-// import actions, utils
-import { ble as BLEActions, plan as planActions } from '../../actions';
-import { AppColors } from '../../constants';
-import { AppUtil } from '../../lib';
 
 const bleUtils = {
 
-    handleBLESingleSensorStatus(ble) {
+    handleBLESingleSensorStatus(ble, toDisconnect = true) {
         // setup variables
-        const imagePrefix = '../../../assets/images/sensor/';
-        let animated = false;
-        let sensorStatusResults = null;
+        let systemStatus = null;
+        let batteryCharge = null;
+        let numberOfPractices = null;
         // make sure we have a sensor paired
-        if(ble.accessoryData && ble.accessoryData.sensor_pid && ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID()) {
-            return BLEActions.startConnection(ble.accessoryData.sensor_pid)
-                .catch(err => {
-                    console.log('err1---',err);
-                    BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
-                    return Promise.reject(err);
-                })
-                .then(res => {
-                    return BLEActions.getSingleSensorStatus(ble.accessoryData.sensor_pid);
-                })
-                .then(response => {
-                    sensorStatusResults = response;
+        return BLEActions.startConnection(ble.accessoryData.sensor_pid)
+            .catch(err => {
+                BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+                return Promise.reject(ErrorMessages.sensor.connectionError);
+            })
+            .then(res => BLEActions.getSingleSensorStatus(ble.accessoryData.sensor_pid))
+            .then(response => {
+                systemStatus = response.systemStatus;
+                batteryCharge = response.batteryCharge;
+                numberOfPractices = response.numberOfPractices;
+                if(toDisconnect) {
                     return BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
-                })
-                .then(res => {
-                    console.log('res-startDisconnection',res);
-                    return Promise.resolve({ sensorStatusResults });
-                })
-                .catch(err => {
-                    console.log('err2---',err);
-                    BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
-                    return Promise.reject(err);
-                });
-        }
-        return Promise.resolve({ sensorStatusResults });
-    },
-
-    handleBLESteps(ble, userId) {
-        // setup variables
-        const imagePrefix = '../../../assets/images/sensor/';
-        let animated = false;
-        let sensorStatusResults = null;
-        // make sure we have a sensor paired
-        if(ble.accessoryData && ble.accessoryData.sensor_pid && ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID()) {
-            return BLEActions.startConnection(ble.accessoryData.sensor_pid)
-                .catch(err => {
-                    console.log('err1---',err);
-                    BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
-                    return Promise.reject(err);
-                })
-                .then(res => {
-                    return BLEActions.getSingleSensorStatus(ble.accessoryData.sensor_pid);
-                })
-                .then(sensorStatusResult => {
-                    console.log('getSingleSensorStatus',sensorStatusResult);
-                    sensorStatusResults = sensorStatusResult;
-                    return AppUtil._retrieveAsyncStorageData('practices');
-                })
-                .then(asyncStorageResult => {
-                    if(asyncStorageResult && asyncStorageResult.length > 0) {
-                        // we still have items in our local storage, send to API
-                        console.log('we still have items in our local storage, send to API', asyncStorageResult);
-                        // TODO: what do we want to do here??????
-                    }
-                    return bleUtils.loopThroughPractices(sensorStatusResults.numberOfPractices, ble.accessoryData.sensor_pid, userId);
-                })
-                .then(() => {
-                    return BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
-                })
-                .then(res => {
-                    console.log('res-startDisconnection',res);
-                    return Promise.resolve({ animated, bleImage: require(`${imagePrefix}sensor.png`), isFetched: true, });
-                })
-                .catch(err => {
-                    console.log('err2---',err);
-                    BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
-                    return Promise.reject({ bleImage: require(`${imagePrefix}sensor.png`), isFetched: true, });
-                });
-        }
-        return Promise.resolve({ animated, bleImage: null, isFetched: true, });
-    },
-
-    async loopThroughPractices(numberOfPractices, sensor_pid, userId) {
-        // setup variables
-        let currentIndex = 0;
-        let practices = [];
-        // loop through our practices
-        for (let i = 0; i < numberOfPractices; i += 1) {
-            currentIndex = i;
-            /*eslint no-loop-func:*/
-            /*eslint-env es6*/
-            await new Promise((resolve, reject) => {
-                return BLEActions.getAllPracticeDetails(sensor_pid, currentIndex)
-                    .then(allPracticeDetails => {
-                        let isLast = (currentIndex + 1) === numberOfPractices;
-                        console.log(`allPracticeDetails - ${currentIndex}`,allPracticeDetails);
-                        practices.push(allPracticeDetails);
-                        if(isLast) {
-                            // save 'practices' to AsyncStore
-                            AppUtil._storeAsyncStorageData('practices', practices);
-                        }
-                        return practices.length === numberOfPractices ? practices : null;
-                    })
-                    .then(sessionsArray => {
-                        console.log('sessionsArray',sessionsArray);
-                        if(sessionsArray && sessionsArray.length > 0) {
-                            let dataObj = {};
-                            dataObj.user_id = userId;
-                            dataObj.sessions = sessionsArray;
-                            dataObj.last_sensor_sync = `${moment().toISOString(true).split('.')[0]}Z`;
-                            planActions.postSingleSensorData(dataObj)
-                                .then(result => {
-                                    // TODO: BRING BACK TWO FUNCTIONS
-                                    // delete AsyncStorage record
-                                    // AppUtil._removeAsyncStorageData('practices');
-                                    // 0x79 (BLEActions.deleteSinglePractice) -> delete practice
-                                    // bleUtils.deleteSesnorData(sensor_pid, numberOfPractices);
-                                    return resolve('done!');
-                                });
-                        }
-                        return resolve();
-                    })
-                    .catch(error => {
-                        console.log('ERROR - allPracticeDetails',error);
-                    });
+                }
+                return Promise.resolve({ systemStatus, batteryCharge, numberOfPractices });
+            })
+            .then(res => Promise.resolve({ systemStatus, batteryCharge, numberOfPractices }))
+            .catch(err => {
+                BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+                return Promise.reject(ErrorMessages.sensor.connectionError);
             });
-        }
     },
 
-    deleteSesnorData(sensorId, total) {
-        let currentIndex = 0;
-        let promiseChain = Promise.resolve();
-        for (let i = 0; i < total; i += 1) {
-            currentIndex = i;
-            /*eslint no-shadow: ["error", { "allow": ["currentIndex"] }]*/
-            /*eslint-env es6*/
-            const makeNextPromise = currentIndex => () => {
-                return BLEActions.deleteSinglePractice(sensorId, i);
-            }
-            promiseChain = promiseChain.then(makeNextPromise(currentIndex));
-        }
+    // handleBLESteps(ble, userId) {
+    //     // setup variables
+    //     const imagePrefix = '../../../assets/images/sensor/';
+    //     let animated = false;
+    //     let timestamps = [moment().format('MMMM Do YYYY, h:mm:ss.SSS a')];
+    //     // make sure we have a sensor paired
+    //     return BLEActions.startConnection(ble.accessoryData.sensor_pid)
+    //         .catch(err => {
+    //             BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+    //             return Promise.reject(err);
+    //         })
+    //         .then(res => {
+    //             timestamps = timestamps.concat([moment().format('MMMM Do YYYY, h:mm:ss.SSS a')]);
+    //             return BLEActions.getSingleSensorStatus(ble.accessoryData.sensor_pid);
+    //         })
+    //         .then(sensorStatusResult => {
+    //             timestamps = timestamps.concat([moment().format('MMMM Do YYYY, h:mm:ss.SSS a')]);
+    //             return bleUtils.loopThroughPractices(sensorStatusResult.numberOfPractices, ble.accessoryData.sensor_pid, userId);
+    //         })
+    //         .then(() => {
+    //             timestamps = timestamps.concat([moment().format('MMMM Do YYYY, h:mm:ss.SSS a')]);
+    //             return BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+    //         })
+    //         .then(res => {
+    //             timestamps = timestamps.concat([moment().format('MMMM Do YYYY, h:mm:ss.SSS a')]);
+    //             console.log('handleBLESteps timestamps',timestamps);
+    //             return Promise.resolve({ animated, bleImage: require(`${imagePrefix}sensor.png`), isFetched: true, });
+    //         })
+    //         .catch(err => {
+    //             BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+    //             return Promise.reject({ bleImage: require(`${imagePrefix}sensor.png`), isFetched: true, });
+    //         });
+    // },
+
+    async processPractices(sensor_pid) {
+        await BLEActions.getAllPracticeDetails(sensor_pid)
+            .then(allPracticeDetails => {
+                console.log(`allPracticeDetails - ${0}`,allPracticeDetails);
+                return Promise.resolve();
+            })
+            .catch(err => Promise.reject(ErrorMessages.sensor.retreivalError));
     },
+
+    // async loopThroughPractices(numberOfPractices, sensor_pid, userId) {
+    //     // setup variables
+    //     let currentIndex = 0;
+    //     let practices = [];
+    //     // loop through our practices
+    //     for (let i = 0; i < numberOfPractices; i += 1) {
+    //         currentIndex = i;
+    //         let timestamps = [moment().format('MMMM Do YYYY, h:mm:ss.SSS a')];
+    //         /*eslint no-loop-func:*/
+    //         /*eslint-env es6*/
+    //         await new Promise((resolve, reject) => {
+    //             return BLEActions.getAllPracticeDetails(sensor_pid, currentIndex)
+    //                 .then(allPracticeDetails => {
+    //                     timestamps = timestamps.concat([moment().format('MMMM Do YYYY, h:mm:ss.SSS a')]);
+    //                     let isLast = (currentIndex + 1) === numberOfPractices;
+    //                     console.log(`allPracticeDetails - ${currentIndex}`,allPracticeDetails);
+    //                     practices.push(allPracticeDetails);
+    //                     if(isLast) {
+    //                         // save 'practices' to AsyncStore
+    //                         AppUtil._storeAsyncStorageData('practices', practices);
+    //                     }
+    //                     return practices.length === numberOfPractices ? practices : null;
+    //                 })
+    //                 .then(sessionsArray => {
+    //                     console.log('sessionsArray',sessionsArray);
+    //                     if(sessionsArray && sessionsArray.length > 0) {
+    //                         let dataObj = {};
+    //                         dataObj.user_id = userId;
+    //                         dataObj.sessions = sessionsArray;
+    //                         dataObj.last_sensor_sync = `${moment().toISOString(true).split('.')[0]}Z`;
+    //                         return planActions.postSingleSensorData(dataObj)
+    //                             .then(result => {
+    //                                 timestamps = timestamps.concat([moment().format('MMMM Do YYYY, h:mm:ss.SSS a')]);
+    //                                 // TODO: BRING BACK TWO FUNCTIONS
+    //                                 // delete AsyncStorage record
+    //                                 // AppUtil._removeAsyncStorageData('practices');
+    //                                 // 0x7C (BLEActions.deleteAllSingleSensorPractices) -> delete all practices
+    //                                 return BLEActions.deleteAllSingleSensorPractices(sensor_pid)
+    //                                     .then(response => {
+    //                                         timestamps = timestamps.concat([moment().format('MMMM Do YYYY, h:mm:ss.SSS a')]);
+    //                                         console.log(`loopThroughPractices timestamps #${i}`,timestamps);
+    //                                         console.log('response',response);
+    //                                         return resolve();
+    //                                     })
+    //                                     .catch(err => {
+    //                                         console.log('err',err);
+    //                                         return reject();
+    //                                     });
+    //                             });
+    //                     }
+    //                     timestamps = timestamps.concat([moment().format('MMMM Do YYYY, h:mm:ss.SSS a')]);
+    //                     console.log(`loopThroughPractices timestamps #${i}`,timestamps);
+    //                     return resolve();
+    //                 })
+    //                 .catch(error => {
+    //                     console.log('ERROR - allPracticeDetails',error);
+    //                     return reject();
+    //                 });
+    //         });
+    //     }
+    // },
 
     systemStatusMapping(status) {
         let color = AppColors.sensor.notConnected;
