@@ -229,16 +229,18 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                 console.log('++++++++++',rawRes);
                 if (rawRes && /401/.test(`${rawRes.status}`) && endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
                     unauthorizedCounter += 1;
-                    // if(unauthorizedCounter === 2) {
-                    //     store.dispatch({
-                    //         type: DispatchActions.LOGOUT
-                    //     });
-                    //     return Actions.login();
-                    // }
+                    if(unauthorizedCounter === 5 && /[/]authorize/.test(endpoint)) {
+                        unauthorizedCounter = 0;
+                        store.dispatch({
+                            type: DispatchActions.LOGOUT
+                        });
+                        return Actions.login();
+                    }
                     let userIdObj = {userId: currentState.user.id};
                     let sessionTokenObj = {session_token: currentState.init.session_token};
-                    return fetcher('POST', '/users/1.0.0/user/{userId}/authorize', userIdObj, sessionTokenObj, 0)
+                    return fetcher('POST', APIConfig.endpoints.get('authorize'), userIdObj, sessionTokenObj, 0)
                         .then((res) => {
+                            unauthorizedCounter = 0;
                             store.dispatch({
                                 type:    DispatchActions.LOGIN,
                                 jwt:     res.authorization.jwt,
