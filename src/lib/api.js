@@ -139,8 +139,8 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
         // Don't add on the login endpoint
         if (endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
             if (jwt) {
-                    req.headers.Authorization = jwt;
-                }
+                req.headers.Authorization = jwt;
+            }
         }
 
         // Add Host name

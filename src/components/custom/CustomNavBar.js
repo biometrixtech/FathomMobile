@@ -59,11 +59,29 @@ class CustomNavBar extends Component {
     constructor(props) {
         super(props);
         let currentState = store.getState();
+        let BLEDetails = this._handleBleDetails(this.props.routeName);
+        this.state = {
+            BLEData: {
+                animated: false,
+                bleImage: BLEDetails.bleImageToDisplay,
+            },
+            bluetoothOn:    currentState.ble.bluetoothOn || false,
+            fetchBleData:   BLEDetails.fetchBleData,
+            isFetchingData: false,
+            isSensorUIOpen: false,
+            progressBar:    0,
+        }
+        this.handleBleStateChange = this.handleBleStateChange.bind(this);
+        this._interval = null;
+    }
+
+    _handleBleDetails = (routeName) => {
+        let currentState = store.getState();
         let fetchBleData = (
             currentState.ble.accessoryData &&
             currentState.ble.accessoryData.sensor_pid &&
             currentState.ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID() &&
-            this.props.routeName === 'home'
+            routeName === 'home'
         ) ?
             true
             :
@@ -72,19 +90,7 @@ class CustomNavBar extends Component {
             require(`${sensorImagePrefix}sensor.png`)
             :
             null;
-        this.state = {
-            BLEData: {
-                animated: false,
-                bleImage: bleImageToDisplay,
-            },
-            bluetoothOn:    currentState.ble.bluetoothOn || false,
-            fetchBleData:   fetchBleData,
-            isFetchingData: false,
-            isSensorUIOpen: false,
-            progressBar:    0,
-        }
-        this.handleBleStateChange = this.handleBleStateChange.bind(this);
-        this._interval = null;
+        return { fetchBleData, bleImageToDisplay };
     }
 
     componentWillMount = () => {
@@ -114,6 +120,22 @@ class CustomNavBar extends Component {
     componentWillReceiveProps(nextProps) {
         if(!_.isEqual(nextProps, this.props) && nextProps.routeName === 'home') {
             // headed to home page, start bluetooth/sensor related items
+            let BLEDetails = this._handleBleDetails(nextProps.routeName)
+            let currentState = store.getState();
+            this.setState(
+                {
+                    BLEData: {
+                        animated: false,
+                        bleImage: BLEDetails.bleImageToDisplay,
+                    },
+                    bluetoothOn:    currentState.ble.bluetoothOn || false,
+                    fetchBleData:   BLEDetails.fetchBleData,
+                    isFetchingData: false,
+                    isSensorUIOpen: false,
+                    progressBar:    0,
+                },
+                () => this._handleSetInterval(false),
+            );
         } else if(!_.isEqual(nextProps, this.props) && nextProps.routeName === 'settings') {
             // headed to settings page, clear interval
             this._handleClearInterval();
@@ -141,7 +163,7 @@ class CustomNavBar extends Component {
 
     _handleSetInterval = () => {
         this._interval = setInterval(() => {
-            this._triggerBLESteps();
+            this._triggerBLESteps(true, true);
         }, 30000);
     }
 
@@ -156,7 +178,16 @@ class CustomNavBar extends Component {
         }
     }
 
-    _triggerBLESteps = (animate) => {
+    _triggerBLESteps = (animate, isFromTimer = false) => {
+        // setup constants
+        const validFetchStates = [1, 2, 3];
+        let batterCharge = 0;
+        let numberOfPractices = 0;
+        let systemStatus = 0;
+        let userId = store.getState().user.id;
+        // clear interval
+        this._handleClearInterval();
+        // catch variable
         if(animate) {
             this.setState({
                 BLEData: {
@@ -165,10 +196,21 @@ class CustomNavBar extends Component {
                 },
             });
         }
-        this._handleClearInterval();
+        // start logic
         bleUtils.handleBLESingleSensorStatus(store.getState().ble, false)
             .then(sensorStatusResponse => {
-                console.log(sensorStatusResponse);
+                batterCharge = sensorStatusResponse.batterCharge;
+                numberOfPractices = sensorStatusResponse.numberOfPractices;
+                systemStatus = sensorStatusResponse.systemStatus;
+                return AppUtil._retrieveAsyncStorageData(userId);
+            })
+            .then(asyncRes => {
+                if(asyncRes && asyncRes.practices && Object.keys(asyncRes.practices).length > 0) {
+                    return bleUtils.finalizeBleData(asyncRes.practices, userId);
+                }
+                return true; // NOTE: returning true to drop in .then() because we don't have any practices locally stored
+            })
+            .then(() => {
                 this.setState(
                     {
                         BLEData: {
@@ -176,36 +218,57 @@ class CustomNavBar extends Component {
                             bleImage: require(`${sensorImagePrefix}sensor.png`),
                         },
                         isFetchingData: true,
-                        isSensorUIOpen: true,
+                        isSensorUIOpen: !(isFromTimer && numberOfPractices === 0),
                     },
                     () => {
-                        if(sensorStatusResponse.numberOfPractices > 0) {
-                            this._handlePractices(sensorStatusResponse.numberOfPractices)
-                                .then(res => {
+                        if(numberOfPractices > 0 && validFetchStates.includes(systemStatus)) {
+                            this._handlePractices(numberOfPractices)
+                                .then(() => {
                                     this.setState({ isFetchingData: false, });
-                                    console.log('res',res);
+                                    return AppUtil._retrieveAsyncStorageData(userId);
                                 })
-                                .catch(err => this.refs.toast.show(err, DURATION.LENGTH_LONG));
+                                .then(res => {
+                                    return bleUtils.finalizeBleData(res.practices, userId);
+                                })
+                                .then(() => {
+                                    this._handleSetInterval();
+                                    this.refs.toast.show('SYNC SUCCESSFUL', DURATION.LENGTH_LONG);
+                                })
+                                .catch(err => {
+                                    this.setState({ isFetchingData: false, });
+                                    this.refs.toast.show(err, DURATION.LENGTH_LONG);
+                                    this._handleSetInterval();
+                                });
                         } else {
                             this.setState({ isFetchingData: false, });
-                            // this._handleSetInterval();
-                            console.log('WE don\'t HAVE PRACTICES BRO!');
                         }
                     },
                 );
             })
             .catch(err => {
                 this.refs.toast.show(err, DURATION.LENGTH_LONG);
-                // this._handleSetInterval();
+                this._handleSetInterval();
             });
     }
 
+    /*eslint consistent-return: 0*/
     _handlePractices = async (numberOfPractices) => {
+        let shouldExit = false;
+        let errMsg = '';
         for (let i = 0; i < numberOfPractices; i += 1) {
+            if(shouldExit) {
+                return Promise.reject(errMsg);
+            }
             let progress = (parseFloat(((i+1)/numberOfPractices).toFixed(2))) * 100;
             this.setState({ progressBar: progress });
-            console.log(`PROGRESS ${progress}%`);
-            await bleUtils.processPractices(store.getState().ble.accessoryData.sensor_pid);
+            await bleUtils.processPractices(store.getState().ble.accessoryData.sensor_pid, store.getState().user.id)
+                /*eslint no-loop-func: 0*/
+                /*eslint-env es6*/
+                .catch(err => {
+                    this.refs.toast.show(err, DURATION.LENGTH_LONG);
+                    shouldExit = true;
+                    errMsg = err;
+                });
         }
     }
 
@@ -484,7 +547,7 @@ class CustomNavBar extends Component {
         if(this.state.isFetchingData) {
             return(
                 <AnimatedProgressBar
-                    backgroundColor={AppColors.zeplin.darkBlue}
+                    backgroundColor={sensorStatusBarObj.backgroundColor}
                     borderRadius={0}
                     borderWidth={0}
                     height={45}
