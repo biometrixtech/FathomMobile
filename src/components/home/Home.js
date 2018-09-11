@@ -1235,7 +1235,7 @@ class Home extends Component {
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
         let trainingSessions = dailyPlanObj ? _.orderBy(dailyPlanObj.training_sessions, o => moment(o.event_date), ['asc']) : [];
         let filteredTrainingSessions = trainingSessions.length > 0 ?
-            _.filter(trainingSessions, o => o.sport_name || o.strength_and_conditioning_type)
+            _.filter(trainingSessions, o => o.sport_name !== null || o.strength_and_conditioning_type !== null)
             :
             [];
         return (

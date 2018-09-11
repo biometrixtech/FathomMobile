@@ -59,14 +59,14 @@ class CustomNavBar extends Component {
 
     constructor(props) {
         super(props);
-        let ble = this.props.ble;
+        let currentState = store.getState();
         let BLEDetails = this._handleBleDetails(this.props.routeName);
         this.state = {
             BLEData: {
                 animated: false,
                 bleImage: BLEDetails.bleImageToDisplay,
             },
-            bluetoothOn:    ble.bluetoothOn || false,
+            bluetoothOn:    currentState.ble.bluetoothOn || false,
             fetchBleData:   BLEDetails.fetchBleData,
             isFetchingData: false,
             isSensorUIOpen: false,
@@ -77,11 +77,11 @@ class CustomNavBar extends Component {
     }
 
     _handleBleDetails = (routeName) => {
-        let ble = this.props.ble;
+        let currentState = store.getState();
         let fetchBleData = (
-            Object.keys(ble.accessoryData).length > 0 &&
-            ble.accessoryData.sensor_pid &&
-            ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID() &&
+            Object.keys(currentState.ble.accessoryData).length > 0 &&
+            currentState.ble.accessoryData.sensor_pid &&
+            currentState.ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID() &&
             routeName === 'home'
         ) ?
             true
@@ -122,14 +122,14 @@ class CustomNavBar extends Component {
         if(!_.isEqual(nextProps, this.props) && nextProps.routeName === 'home') {
             // headed to home page, start bluetooth/sensor related items
             let BLEDetails = this._handleBleDetails(nextProps.routeName);
-            let ble = this.props.ble;
+            let currentState = store.getState();
             this.setState(
                 {
                     BLEData: {
                         animated: false,
                         bleImage: BLEDetails.bleImageToDisplay,
                     },
-                    bluetoothOn:    ble.bluetoothOn || false,
+                    bluetoothOn:    currentState.ble.bluetoothOn || false,
                     fetchBleData:   BLEDetails.fetchBleData,
                     isFetchingData: false,
                     isSensorUIOpen: false,
@@ -163,7 +163,8 @@ class CustomNavBar extends Component {
     }
 
     _handleSetInterval = () => {
-        if(this.state.fetchBleData) {
+        let BLEDetails = this._handleBleDetails(this.props.routeName);
+        if(BLEDetails.fetchBleData) {
             this._interval = setInterval(() => {
                 this._triggerBLESteps(true, true);
             }, 30000);
@@ -189,7 +190,7 @@ class CustomNavBar extends Component {
         let batterCharge = 0;
         let numberOfPractices = 0;
         let systemStatus = 0;
-        let userId = this.props.user.id;
+        let userId = store.getState().user.id;
         // clear interval
         this._handleClearInterval();
         // catch variable
@@ -202,7 +203,7 @@ class CustomNavBar extends Component {
             });
         }
         // start logic
-        bleUtils.handleBLESingleSensorStatus(this.props.ble, false)
+        bleUtils.handleBLESingleSensorStatus(store.getState().ble, false)
             .then(sensorStatusResponse => {
                 batterCharge = sensorStatusResponse.batterCharge;
                 numberOfPractices = sensorStatusResponse.numberOfPractices;
@@ -223,7 +224,7 @@ class CustomNavBar extends Component {
                             bleImage: require(`${sensorImagePrefix}sensor.png`),
                         },
                         isFetchingData: true,
-                        isSensorUIOpen: !(isFromTimer && numberOfPractices === 0),
+                        isSensorUIOpen: !(isFromTimer && numberOfPractices === 0) ? !(isFromTimer && numberOfPractices === 0) : this.state.isSensorUIOpen,
                     },
                     () => {
                         if(numberOfPractices > 0 && validFetchStates.includes(systemStatus)) {
@@ -266,7 +267,7 @@ class CustomNavBar extends Component {
             }
             let progress = (parseFloat(((i+1)/numberOfPractices).toFixed(2))) * 100;
             this.setState({ progressBar: progress });
-            await bleUtils.processPractices(this.props.ble.accessoryData.sensor_pid, this.props.user.id)
+            await bleUtils.processPractices(store.getState().ble.accessoryData.sensor_pid, store.getState().user.id)
                 /*eslint no-loop-func: 0*/
                 /*eslint-env es6*/
                 .catch(err => {
@@ -329,7 +330,7 @@ class CustomNavBar extends Component {
     _renderLeft = () => {
         return (
             <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingXSml,}}>
-                { this.props.routeName === 'onboarding' && !this.props.user.id ?
+                { this.props.routeName === 'onboarding' && !store.getState().user.id ?
                     <TabIcon
                         icon={'arrow-left'}
                         iconStyle={[{color: AppColors.black,}]}
@@ -458,7 +459,7 @@ class CustomNavBar extends Component {
                                 source={this.state.BLEData.bleImage}
                                 style={{width: imageWidth,}}
                             />
-                            { this.props.ble.systemStatus === 1 ?
+                            { store.getState().ble.systemStatus === 1 ?
                                 <TabIcon
                                     containerStyle={[{
                                         borderRadius: (indicatorSize + 10) / 2,
@@ -468,7 +469,7 @@ class CustomNavBar extends Component {
                                         top:          0,
                                     }]}
                                     icon={'bolt'}
-                                    iconStyle={[{color: bleUtils.systemStatusMapping(this.props.ble.systemStatus),}]}
+                                    iconStyle={[{color: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),}]}
                                     onPress={() => {
                                         let oppositeSensorUIStatus = !this.state.isSensorUIOpen;
                                         this.setState(
@@ -482,10 +483,10 @@ class CustomNavBar extends Component {
                                     size={(indicatorSize + 10)}
                                     type={'font-awesome'}
                                 />
-                                : this.props.ble.systemStatus === 2 ?
+                                : store.getState().ble.systemStatus === 2 ?
                                     <Animated.View
                                         style={{
-                                            backgroundColor: bleUtils.systemStatusMapping(this.props.ble.systemStatus),
+                                            backgroundColor: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),
                                             borderRadius:    indicatorSize / 2,
                                             height:          indicatorSize,
                                             position:        'absolute',
@@ -538,8 +539,8 @@ class CustomNavBar extends Component {
         let planStore = currentState.plan.dailyPlan && currentState.plan.dailyPlan.length > 0 ? currentState.plan.dailyPlan[0] : false;
         let sensorStatusBarObj = bleUtils.sensorStatusBar(bleStore.systemStatus, bleStore.batteryCharge);
         let batteryIconChargeLevelRounded = _.round(bleStore.batteryCharge, -1);
-        let batteryIconChargeLevel = batteryIconChargeLevelRounded === 100 ? 'battery-full' : `battery-${batteryIconChargeLevelRounded}`;
-        let batteryIconType = batteryIconChargeLevelRounded === 100 ? 'material' : 'material-community';
+        let batteryIconChargeLevel = batteryIconChargeLevelRounded === 100 && bleStore.systemStatus === 0 ? 'battery-charging' : batteryIconChargeLevelRounded === 100 && bleStore.systemStatus !== 0 ? 'battery-full' : `battery-${batteryIconChargeLevelRounded}`;
+        let batteryIconType = batteryIconChargeLevelRounded === 100 && bleStore.systemStatus !== 0 ? 'material' : 'material-community';
         let now = moment();
         let last_sync = moment(planStore.last_sensor_sync).toISOString();
         let lastSyncDaysDiff = now.diff(last_sync, 'days');
@@ -682,12 +683,11 @@ class CustomNavBar extends Component {
                     {this._renderMiddle()}
                     {this._renderRight()}
                 </View>
-                {this._renderSensorUI()}
-                {/*  this.state.isSensorUIOpen && this.props.routeName === 'home' ?
+                { this.state.isSensorUIOpen && this.props.routeName === 'home' ?
                     this._renderSensorUI()
                     :
                     null
-                */}
+                }
                 <Toast
                     position={'bottom'}
                     ref={'toast'}
@@ -699,13 +699,4 @@ class CustomNavBar extends Component {
 }
 
 /* Export Component ==================================================================== */
-/*
- * map state to props
- */
-const mapStateToProps = state => ({
-    ble:  state.ble,
-    user: state.user,
-});
-
-/* clean way of setting up the connect. */
-export default connect(mapStateToProps)(CustomNavBar);
+export default CustomNavBar;
