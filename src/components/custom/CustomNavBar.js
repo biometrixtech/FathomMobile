@@ -549,7 +549,7 @@ class CustomNavBar extends Component {
         if(this.state.isFetchingData) {
             return(
                 <View>
-                    {/*<View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: Platform.OS === 'ios' ? (notchHeightWidth / 6) : (notchHeightWidth / 2), zIndex: 1,}}>
+                    <View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: Platform.OS === 'ios' ? (notchHeightWidth / 6) : (notchHeightWidth / 2), zIndex: 1,}}>
                         <View style={{flex: 1,}} />
                         <View style={{flex: 8,}} />
                         <View style={{flex: 1, overflow: 'visible', paddingHorizontal: AppSizes.paddingXSml,}}>
@@ -563,7 +563,7 @@ class CustomNavBar extends Component {
                                 }}
                             />
                         </View>
-                    </View>*/}
+                    </View>
                     <AnimatedProgressBar
                         backgroundColor={sensorStatusBarObj.backgroundColor}
                         borderRadius={0}
@@ -596,8 +596,13 @@ class CustomNavBar extends Component {
             )
         }
         return(
-            <View>
-                {/*<View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: Platform.OS === 'ios' ? (notchHeightWidth / 6) : (notchHeightWidth / 2), zIndex: 1,}}>
+            <View style={{backgroundColor: sensorStatusBarObj.backgroundColor,}}>
+                <View style={{
+                    backgroundColor: AppColors.white,
+                    flexDirection:   'row',
+                    height:          Platform.OS === 'ios' ? (notchHeightWidth / 6) : (notchHeightWidth / 2),
+                    zIndex:          1,
+                }}>
                     <View style={{flex: 1,}} />
                     <View style={{flex: 8,}} />
                     <View style={{flex: 1, overflow: 'visible', paddingHorizontal: AppSizes.paddingXSml,}}>
@@ -611,7 +616,7 @@ class CustomNavBar extends Component {
                             }}
                         />
                     </View>
-                </View>*/}
+                </View>
                 <View
                     style={{
                         alignItems:      'center',
@@ -677,11 +682,12 @@ class CustomNavBar extends Component {
                     {this._renderMiddle()}
                     {this._renderRight()}
                 </View>
-                {  this.state.isSensorUIOpen && this.props.routeName === 'home' ?
+                {this._renderSensorUI()}
+                {/*  this.state.isSensorUIOpen && this.props.routeName === 'home' ?
                     this._renderSensorUI()
                     :
                     null
-                }
+                */}
                 <Toast
                     position={'bottom'}
                     ref={'toast'}
