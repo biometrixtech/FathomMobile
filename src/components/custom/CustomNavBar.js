@@ -134,7 +134,7 @@ class CustomNavBar extends Component {
                     isSensorUIOpen: false,
                     progressBar:    0,
                 },
-                () => this._handleSetInterval(false),
+                () => this._handleSetInterval(),
             );
         } else if(!_.isEqual(nextProps, this.props) && nextProps.routeName === 'settings') {
             // headed to settings page, clear interval
@@ -162,17 +162,21 @@ class CustomNavBar extends Component {
     }
 
     _handleSetInterval = () => {
-        this._interval = setInterval(() => {
-            this._triggerBLESteps(true, true);
-        }, 30000);
+        if(this.state.fetchBleData) {
+            this._interval = setInterval(() => {
+                this._triggerBLESteps(true, true);
+            }, 30000);
+        }
     }
 
     _handleAppStateChange = nextAppState => {
         if(nextAppState === 'active') {
-            this.setState(
-                { isSensorUIOpen: false, },
-                () => this._triggerBLESteps(true),
-            );
+            if(this.state.fetchBleData) {
+                this.setState(
+                    { isSensorUIOpen: false, },
+                    () => this._triggerBLESteps(true),
+                );
+            }
         } else if(nextAppState === 'background') {
             this._handleClearInterval();
         }
@@ -318,10 +322,7 @@ class CustomNavBar extends Component {
                 }
                 return Promise.resolve();
             })
-            .catch(error => {
-                console.log('error starting bluetooth');
-                return Promise.reject(error);
-            });
+            .catch(error => Promise.reject(error));
     }
 
     _renderLeft = () => {
