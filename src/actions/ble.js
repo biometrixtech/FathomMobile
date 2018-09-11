@@ -362,11 +362,9 @@ const getUserSensorData = (userId) => {
     });
 };
 
-const postUserSensorData = () => {
+const postUserSensorData = (userId) => {
     return dispatch => new Promise((resolve, reject) => {
         let currentState = store.getState();
-        // get user id
-        let userId = currentState.user.id;
         // mobile uuid
         const uniqueId = AppUtil.getDeviceUUID();
         // build object to submit

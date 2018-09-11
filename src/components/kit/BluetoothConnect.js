@@ -35,6 +35,8 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 
 // Consts and Libs
 import { Roles, BLEConfig, AppColors, AppFonts, AppStyles, AppSizes } from '../../constants';
+import { bleUtils } from '../../constants/utils';
+import { ble as BLEActions } from '../../actions';
 
 // Components
 import { Button, Coach, FormLabel, ListItem, Pages, Spacer, TabIcon, Text, } from '../custom';
@@ -122,6 +124,7 @@ class BluetoothConnectView extends Component {
         this.handlerState = bleManagerEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange );
 
         this.props.checkState();
+        this._startBluetooth();
     }
 
     componentWillUnmount = () => {
@@ -131,10 +134,10 @@ class BluetoothConnectView extends Component {
         this.pages = null;
     }
 
-    startBluetooth = () => {
-        return this.props.startBluetooth()
+    _startBluetooth = () => {
+        return BLEActions.startBluetooth()
             .then(() => {
-                this.props.checkState();
+                BleManager.checkState();
                 if (Platform.OS === 'android') {
                     return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
                         .then(result => {
@@ -157,7 +160,7 @@ class BluetoothConnectView extends Component {
                         }))
                         .then(success => {
                             /* eslint-disable no-undef */
-                            return navigator.geolocation.getCurrentPosition((position) => this.props.enableBluetooth(), error => console.log(error), { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 });
+                            return navigator.geolocation.getCurrentPosition((position) => BleManager.enableBluetooth(), error => console.log(error), { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 });
                         })
                         .catch((error) => {
                             console.log(error.message);
@@ -166,11 +169,7 @@ class BluetoothConnectView extends Component {
                 }
                 return Promise.resolve();
             })
-            .catch(error => {
-                console.log('error',error);
-                this.setState({ index: 1 });
-                this.pages.progress = 1;
-            });
+            .catch(error => Promise.reject(error));
     }
 
     handleScan = () => {
@@ -210,13 +209,16 @@ class BluetoothConnectView extends Component {
     }
 
     connect = (data) => {
+        let ble = {};
+        ble.accessoryData = {};
+        ble.accessoryData.sensor_pid = data.id;
         return this.props.stopScan()
             .then(() => this.props.connectToAccessory(data))
             .catch(err => this.props.connectToAccessory(data))
             .catch(err => this.props.stopConnect())
-            .then(() => {
-                this._toggleAlertNotification(data.id);
-                return this.props.stopConnect();
+            .then(() => bleUtils.handleBLESingleSensorStatus(ble, false))
+            .then(res => {
+                this._toggleAlertNotification(data.id, this.props.user.id, res);
             })
             .catch(err => {
                 console.log('err in BluetoothConnect #4',err);
@@ -232,7 +234,7 @@ class BluetoothConnectView extends Component {
         this.setState({ size: { width: layout.width, height: layout.height } });
     }
 
-    _toggleAlertNotification(sensorId) {
+    _toggleAlertNotification(sensorId, userId, sensorStatus) {
         Alert.alert(
             '',
             'Did your sensor\'s light blink green?',
@@ -250,22 +252,26 @@ class BluetoothConnectView extends Component {
                 {
                     text:    'Yes',
                     onPress: () => {
-                        return this.props.postUserSensorData()
+                        if(sensorStatus.numberOfPractices > 0) {
+                            return this._togglePracticesAlertNotification(userId, sensorId);
+                        }
+                        return this.props.postUserSensorData(userId)
                             .then(() => BleManager.disconnect(sensorId))
                             .catch(err => BleManager.disconnect(sensorId))
                             .then(() => {
                                 if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
-                                    this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
+                                    this.refs.toast.show('Failed to PAIR to sensor', DURATION.LENGTH_LONG);
                                 }
                                 this.setState({ index: 3 });
                                 this.pages.progress = 3;
+                                this.props.stopConnect();
                                 return this.props.checkState();
                             });
                     }
                 },
             ],
             { cancelable: false }
-        )
+        );
     }
 
     componentWillReceiveProps(nextProps) {
@@ -279,6 +285,61 @@ class BluetoothConnectView extends Component {
             // on BLE list page, trigger search
             this.toggleScanning(true);
         }
+    }
+
+    _togglePracticesAlertNotification = (userId, sensorId) => {
+        Alert.alert(
+            '',
+            'Data found on this sensor, is it yours?',
+            [
+                {
+                    text:    'No',
+                    onPress: () => {
+                        return bleUtils.deleteAllSingleSensorPractices(sensorId)
+                            .then(() => this.props.postUserSensorData(userId))
+                            .then(res => {
+                                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
+                                    this.refs.toast.show(res, DURATION.LENGTH_LONG);
+                                }
+                                this.setState({ index: 3 });
+                                this.pages.progress = 3;
+                                this.props.stopConnect();
+                                BleManager.disconnect(sensorId)
+                                return this.props.checkState();
+                            })
+                            .catch(err => {
+                                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
+                                    this.refs.toast.show(err, DURATION.LENGTH_LONG);
+                                }
+                                this.setState({ index: 3 });
+                                this.pages.progress = 3;
+                                this.props.stopConnect();
+                                BleManager.disconnect(sensorId)
+                                return this.props.checkState();
+                            });
+                    },
+                    style: 'cancel',
+                },
+                {
+                    text:    'Yes',
+                    onPress: () => {
+                        return this.props.postUserSensorData(userId)
+                            .then(() => BleManager.disconnect(sensorId))
+                            .catch(err => BleManager.disconnect(sensorId))
+                            .then(() => {
+                                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
+                                    this.refs.toast.show('Failed to PAIR to sensor', DURATION.LENGTH_LONG);
+                                }
+                                this.setState({ index: 3 });
+                                this.pages.progress = 3;
+                                this.props.stopConnect();
+                                return this.props.checkState();
+                            });
+                    }
+                },
+            ],
+            { cancelable: false }
+        );
     }
 
     render = () => (
@@ -345,7 +406,7 @@ class BluetoothConnectView extends Component {
                                 { index: 2 },
                                 () => {
                                     this.pages.progress = 2;
-                                    return this.props.startBluetooth()
+                                    return this._startBluetooth()
                                         .then(() => this.toggleScanning(true));
                                 }
                             );

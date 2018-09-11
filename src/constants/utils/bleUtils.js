@@ -68,6 +68,12 @@ const bleUtils = {
             .catch(err => Promise.reject(ErrorMessages.sensor.retreivalError));
     },
 
+    deleteAllSingleSensorPractices(sensorId) {
+        return BLEActions.deleteAllSingleSensorPractices(sensorId)
+            .then(() => Promise.resolve('Successfully PAIRED to sensor'))
+            .catch(() => Promise.reject('Failed to PAIR to sensor'));
+    },
+
     finalizeBleData(practices, userId) {
         let sessionsArray = [];
         _.map(practices, (practice, key) => {
