@@ -5,6 +5,7 @@
  *
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
     Animated,
@@ -58,14 +59,14 @@ class CustomNavBar extends Component {
 
     constructor(props) {
         super(props);
-        let currentState = store.getState();
+        let ble = this.props.ble;
         let BLEDetails = this._handleBleDetails(this.props.routeName);
         this.state = {
             BLEData: {
                 animated: false,
                 bleImage: BLEDetails.bleImageToDisplay,
             },
-            bluetoothOn:    currentState.ble.bluetoothOn || false,
+            bluetoothOn:    ble.bluetoothOn || false,
             fetchBleData:   BLEDetails.fetchBleData,
             isFetchingData: false,
             isSensorUIOpen: false,
@@ -76,11 +77,11 @@ class CustomNavBar extends Component {
     }
 
     _handleBleDetails = (routeName) => {
-        let currentState = store.getState();
+        let ble = this.props.ble;
         let fetchBleData = (
-            currentState.ble.accessoryData &&
-            currentState.ble.accessoryData.sensor_pid &&
-            currentState.ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID() &&
+            Object.keys(ble.accessoryData).length > 0 &&
+            ble.accessoryData.sensor_pid &&
+            ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID() &&
             routeName === 'home'
         ) ?
             true
@@ -120,15 +121,15 @@ class CustomNavBar extends Component {
     componentWillReceiveProps(nextProps) {
         if(!_.isEqual(nextProps, this.props) && nextProps.routeName === 'home') {
             // headed to home page, start bluetooth/sensor related items
-            let BLEDetails = this._handleBleDetails(nextProps.routeName)
-            let currentState = store.getState();
+            let BLEDetails = this._handleBleDetails(nextProps.routeName);
+            let ble = this.props.ble;
             this.setState(
                 {
                     BLEData: {
                         animated: false,
                         bleImage: BLEDetails.bleImageToDisplay,
                     },
-                    bluetoothOn:    currentState.ble.bluetoothOn || false,
+                    bluetoothOn:    ble.bluetoothOn || false,
                     fetchBleData:   BLEDetails.fetchBleData,
                     isFetchingData: false,
                     isSensorUIOpen: false,
@@ -188,7 +189,7 @@ class CustomNavBar extends Component {
         let batterCharge = 0;
         let numberOfPractices = 0;
         let systemStatus = 0;
-        let userId = store.getState().user.id;
+        let userId = this.props.user.id;
         // clear interval
         this._handleClearInterval();
         // catch variable
@@ -201,7 +202,7 @@ class CustomNavBar extends Component {
             });
         }
         // start logic
-        bleUtils.handleBLESingleSensorStatus(store.getState().ble, false)
+        bleUtils.handleBLESingleSensorStatus(this.props.ble, false)
             .then(sensorStatusResponse => {
                 batterCharge = sensorStatusResponse.batterCharge;
                 numberOfPractices = sensorStatusResponse.numberOfPractices;
@@ -236,11 +237,11 @@ class CustomNavBar extends Component {
                                 })
                                 .then(() => {
                                     this._handleSetInterval();
-                                    this.refs.toast.show('SYNC SUCCESSFUL', (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
+                                    this.refs.toast.show('SYNC SUCCESSFUL', (DURATION.LENGTH_SHORT * 2));
                                 })
                                 .catch(err => {
                                     this.setState({ isFetchingData: false, });
-                                    this.refs.toast.show(err, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
+                                    this.refs.toast.show(err, (DURATION.LENGTH_SHORT * 2));
                                     this._handleSetInterval();
                                 });
                         } else {
@@ -250,7 +251,7 @@ class CustomNavBar extends Component {
                 );
             })
             .catch(err => {
-                this.refs.toast.show(err, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
+                this.refs.toast.show(err, (DURATION.LENGTH_SHORT * 2));
                 this._handleSetInterval();
             });
     }
@@ -265,11 +266,11 @@ class CustomNavBar extends Component {
             }
             let progress = (parseFloat(((i+1)/numberOfPractices).toFixed(2))) * 100;
             this.setState({ progressBar: progress });
-            await bleUtils.processPractices(store.getState().ble.accessoryData.sensor_pid, store.getState().user.id)
+            await bleUtils.processPractices(this.props.ble.accessoryData.sensor_pid, this.props.user.id)
                 /*eslint no-loop-func: 0*/
                 /*eslint-env es6*/
                 .catch(err => {
-                    this.refs.toast.show(err, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
+                    this.refs.toast.show(err, (DURATION.LENGTH_SHORT * 2));
                     shouldExit = true;
                     errMsg = err;
                 });
@@ -328,7 +329,7 @@ class CustomNavBar extends Component {
     _renderLeft = () => {
         return (
             <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingXSml,}}>
-                { this.props.routeName === 'onboarding' && !store.getState().user.id ?
+                { this.props.routeName === 'onboarding' && !this.props.user.id ?
                     <TabIcon
                         icon={'arrow-left'}
                         iconStyle={[{color: AppColors.black,}]}
@@ -457,7 +458,7 @@ class CustomNavBar extends Component {
                                 source={this.state.BLEData.bleImage}
                                 style={{width: imageWidth,}}
                             />
-                            { store.getState().ble.systemStatus === 1 ?
+                            { this.props.ble.systemStatus === 1 ?
                                 <TabIcon
                                     containerStyle={[{
                                         borderRadius: (indicatorSize + 10) / 2,
@@ -467,7 +468,7 @@ class CustomNavBar extends Component {
                                         top:          0,
                                     }]}
                                     icon={'bolt'}
-                                    iconStyle={[{color: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),}]}
+                                    iconStyle={[{color: bleUtils.systemStatusMapping(this.props.ble.systemStatus),}]}
                                     onPress={() => {
                                         let oppositeSensorUIStatus = !this.state.isSensorUIOpen;
                                         this.setState(
@@ -481,10 +482,10 @@ class CustomNavBar extends Component {
                                     size={(indicatorSize + 10)}
                                     type={'font-awesome'}
                                 />
-                                : store.getState().ble.systemStatus === 2 ?
+                                : this.props.ble.systemStatus === 2 ?
                                     <Animated.View
                                         style={{
-                                            backgroundColor: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),
+                                            backgroundColor: bleUtils.systemStatusMapping(this.props.ble.systemStatus),
                                             borderRadius:    indicatorSize / 2,
                                             height:          indicatorSize,
                                             position:        'absolute',
@@ -692,4 +693,13 @@ class CustomNavBar extends Component {
 }
 
 /* Export Component ==================================================================== */
-export default CustomNavBar;
+/*
+ * map state to props
+ */
+const mapStateToProps = state => ({
+    ble:  state.ble,
+    user: state.user,
+});
+
+/* clean way of setting up the connect. */
+export default connect(mapStateToProps)(CustomNavBar);

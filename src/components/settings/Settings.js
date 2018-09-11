@@ -78,11 +78,11 @@ class Settings extends Component {
                                     return this._handleBLEUnpair()
                                         .then(res => {
                                             this.setState({ isUnpairing: false, });
-                                            this.refs.toast.show(res, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
+                                            this.refs.toast.show(res, (DURATION.LENGTH_SHORT * 2));
                                         })
                                         .catch(err => {
                                             this.setState({ isUnpairing: false, });
-                                            this.refs.toast.show(err, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
+                                            this.refs.toast.show(err, (DURATION.LENGTH_SHORT * 2));
                                         });
                                 },
                             );
@@ -198,7 +198,7 @@ class Settings extends Component {
                 /*eslint no-loop-func: 0*/
                 /*eslint-env es6*/
                 .catch(err => {
-                    this.refs.toast.show(err, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
+                    this.refs.toast.show(err, (DURATION.LENGTH_SHORT * 2));
                     shouldExit = true;
                     errMsg = err;
                 });
