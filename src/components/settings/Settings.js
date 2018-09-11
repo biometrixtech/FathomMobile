@@ -78,11 +78,11 @@ class Settings extends Component {
                                     return this._handleBLEUnpair()
                                         .then(res => {
                                             this.setState({ isUnpairing: false, });
-                                            this.refs.toast.show(res, DURATION.LENGTH_LONG);
+                                            this.refs.toast.show(res, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
                                         })
                                         .catch(err => {
                                             this.setState({ isUnpairing: false, });
-                                            this.refs.toast.show(err, DURATION.LENGTH_LONG);
+                                            this.refs.toast.show(err, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
                                         });
                                 },
                             );
@@ -142,18 +142,19 @@ class Settings extends Component {
     }
 
     _handleBLEUnpair = () => {
-        return BLEActions.getSingleSensorStatus(this.props.accessoryData.sensor_pid)
+        let sensorPid = this.props.accessoryData.sensor_pid;
+        return BLEActions.getSingleSensorStatus(sensorPid)
             .catch(err => {
                 // not connected, try connecting again
-                return BLEActions.startConnection(this.props.accessoryData.sensor_pid)
-                    .then(() => BLEActions.getSingleSensorStatus(this.props.accessoryData.sensor_pid));
+                return BLEActions.startConnection(sensorPid)
+                    .then(() => BLEActions.getSingleSensorStatus(sensorPid));
             })
             .catch(() => {
                 // cannot connect to sensor
-                return this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid)
+                return this.props.deleteUserSensorData(sensorPid)
                     .catch(() => Promise.reject('Failed to UNPAIR from sensor'))
-                    .then(() => BLEActions.startDisconnection(this.props.accessoryData.sensor_pid))
-                    .catch(() => BLEActions.startDisconnection(this.props.accessoryData.sensor_pid))
+                    .then(() => BLEActions.startDisconnection(sensorPid))
+                    .catch(() => BLEActions.startDisconnection(sensorPid))
                     .then(() => Promise.resolve('Successfully UNPAIRED from sensor'))
                     .catch(() => Promise.resolve('Successfully UNPAIRED from sensor'));
             })
@@ -161,24 +162,24 @@ class Settings extends Component {
                 // sensor available, fetch data first and then complete unpair (toast message success)
                 const validFetchStates = [1, 2, 3];
                 if(res.numberOfPractices > 0 && validFetchStates.includes(res.systemStatus)) {
-                    return this._handlePractices(res.numberOfPractices, this.props.user.id, this.props.accessoryData.sensor_pid)
+                    return this._handlePractices(res.numberOfPractices, this.props.user.id, sensorPid)
                         .then(() => {
                             return AppUtil._retrieveAsyncStorageData(this.props.user.id);
                         })
                         .then(response => {
                             return bleUtils.finalizeBleData(response.practices, this.props.user.id);
                         })
-                        .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid))
+                        .then(() => this.props.deleteUserSensorData(sensorPid))
                         .catch(() => Promise.reject('Failed to UNPAIR from sensor'))
-                        .then(() => BLEActions.startDisconnection(this.props.accessoryData.sensor_pid))
-                        .catch(() => BLEActions.startDisconnection(this.props.accessoryData.sensor_pid))
+                        .then(() => BLEActions.startDisconnection(sensorPid))
+                        .catch(() => BLEActions.startDisconnection(sensorPid))
                         .then(() => Promise.resolve('Successfully UNPAIRED from sensor'))
                         .catch(err => Promise.resolve('Successfully UNPAIRED from sensor'));
                 }
-                return this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid)
+                return this.props.deleteUserSensorData(sensorPid)
                     .catch(() => Promise.reject('Failed to UNPAIR from sensor'))
-                    .then(() => BLEActions.startDisconnection(this.props.accessoryData.sensor_pid))
-                    .catch(() => BLEActions.startDisconnection(this.props.accessoryData.sensor_pid))
+                    .then(() => BLEActions.startDisconnection(sensorPid))
+                    .catch(() => BLEActions.startDisconnection(sensorPid))
                     .then(() => Promise.resolve('Successfully UNPAIRED from sensor'))
                     .catch(() => Promise.resolve('Successfully UNPAIRED from sensor'));
             })
@@ -197,7 +198,7 @@ class Settings extends Component {
                 /*eslint no-loop-func: 0*/
                 /*eslint-env es6*/
                 .catch(err => {
-                    this.refs.toast.show(err, DURATION.LENGTH_LONG);
+                    this.refs.toast.show(err, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
                     shouldExit = true;
                     errMsg = err;
                 });

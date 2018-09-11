@@ -236,11 +236,11 @@ class CustomNavBar extends Component {
                                 })
                                 .then(() => {
                                     this._handleSetInterval();
-                                    this.refs.toast.show('SYNC SUCCESSFUL', DURATION.LENGTH_LONG);
+                                    this.refs.toast.show('SYNC SUCCESSFUL', (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
                                 })
                                 .catch(err => {
                                     this.setState({ isFetchingData: false, });
-                                    this.refs.toast.show(err, DURATION.LENGTH_LONG);
+                                    this.refs.toast.show(err, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
                                     this._handleSetInterval();
                                 });
                         } else {
@@ -250,7 +250,7 @@ class CustomNavBar extends Component {
                 );
             })
             .catch(err => {
-                this.refs.toast.show(err, DURATION.LENGTH_LONG);
+                this.refs.toast.show(err, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
                 this._handleSetInterval();
             });
     }
@@ -269,7 +269,7 @@ class CustomNavBar extends Component {
                 /*eslint no-loop-func: 0*/
                 /*eslint-env es6*/
                 .catch(err => {
-                    this.refs.toast.show(err, DURATION.LENGTH_LONG);
+                    this.refs.toast.show(err, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
                     shouldExit = true;
                     errMsg = err;
                 });
@@ -547,39 +547,56 @@ class CustomNavBar extends Component {
         let notchHeightWidth = 24;
         if(this.state.isFetchingData) {
             return(
-                <AnimatedProgressBar
-                    backgroundColor={sensorStatusBarObj.backgroundColor}
-                    borderRadius={0}
-                    borderWidth={0}
-                    height={45}
-                    maxValue={100}
-                    value={this.state.progressBar}
-                    width={AppSizes.screen.width}
-                    wrapperBackgroundColor={AppColors.primary.grey.thirtyPercent}
-                >
-                    <View
-                        style={{
-                            alignItems:      'center',
-                            backgroundColor: AppColors.transparent,
-                            flexDirection:   'row',
-                            paddingLeft:     AppSizes.paddingSml,
-                            paddingVertical: AppSizes.paddingMed,
-                            width:           AppSizes.screen.width,
-                        }}
+                <View>
+                    {/*<View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: Platform.OS === 'ios' ? (notchHeightWidth / 6) : (notchHeightWidth / 2), zIndex: 1,}}>
+                        <View style={{flex: 1,}} />
+                        <View style={{flex: 8,}} />
+                        <View style={{flex: 1, overflow: 'visible', paddingHorizontal: AppSizes.paddingXSml,}}>
+                            <View
+                                style={{
+                                    backgroundColor: AppColors.transparent,
+                                    height:          notchHeightWidth,
+                                    marginTop:       Platform.OS === 'ios' ? 0 : 5,
+                                    transform:       [{ rotate: '45deg', }],
+                                    width:           notchHeightWidth,
+                                }}
+                            />
+                        </View>
+                    </View>*/}
+                    <AnimatedProgressBar
+                        backgroundColor={sensorStatusBarObj.backgroundColor}
+                        borderRadius={0}
+                        borderWidth={0}
+                        height={AppSizes.tabbarHeight}
+                        maxValue={100}
+                        value={this.state.progressBar}
+                        width={AppSizes.screen.width}
+                        wrapperBackgroundColor={AppColors.primary.grey.thirtyPercent}
                     >
-                        <Text oswaldMedium style={{color: AppColors.primary.white.hundredPercent, fontSize: AppFonts.scaleFont(14), paddingHorizontal: AppSizes.paddingXSml,}}>
-                            {'SENSOR STATUS:'}
-                        </Text>
-                        <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)', paddingRight: AppSizes.paddingXSml,}}>
-                            {`SYNCING ${this.state.progressBar}%`}
-                        </Text>
-                    </View>
-                </AnimatedProgressBar>
+                        <View
+                            style={{
+                                alignItems:      'center',
+                                backgroundColor: AppColors.transparent,
+                                flexDirection:   'row',
+                                paddingLeft:     AppSizes.paddingSml,
+                                paddingVertical: AppSizes.paddingMed,
+                                width:           AppSizes.screen.width,
+                            }}
+                        >
+                            <Text oswaldMedium style={{color: AppColors.primary.white.hundredPercent, fontSize: AppFonts.scaleFont(14), paddingHorizontal: AppSizes.paddingXSml,}}>
+                                {'SENSOR STATUS:'}
+                            </Text>
+                            <Text oswaldMedium style={{color: 'rgba(255, 255, 255, 0.5)', paddingRight: AppSizes.paddingXSml,}}>
+                                {`SYNCING ${this.state.progressBar}%`}
+                            </Text>
+                        </View>
+                    </AnimatedProgressBar>
+                </View>
             )
         }
         return(
             <View>
-                <View style={{backgroundColor: AppColors.white, elevation: 1, flexDirection: 'row', height: Platform.OS === 'ios' ? (notchHeightWidth / 6) : (notchHeightWidth / 2), zIndex: 1,}}>
+                {/*<View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: Platform.OS === 'ios' ? (notchHeightWidth / 6) : (notchHeightWidth / 2), zIndex: 1,}}>
                     <View style={{flex: 1,}} />
                     <View style={{flex: 8,}} />
                     <View style={{flex: 1, overflow: 'visible', paddingHorizontal: AppSizes.paddingXSml,}}>
@@ -593,12 +610,13 @@ class CustomNavBar extends Component {
                             }}
                         />
                     </View>
-                </View>
+                </View>*/}
                 <View
                     style={{
                         alignItems:      'center',
                         backgroundColor: sensorStatusBarObj.backgroundColor,
                         flexDirection:   'row',
+                        height:          AppSizes.tabbarHeight,
                         paddingLeft:     AppSizes.paddingSml,
                         paddingVertical: AppSizes.paddingMed,
                         zIndex:          0,

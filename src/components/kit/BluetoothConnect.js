@@ -223,7 +223,7 @@ class BluetoothConnectView extends Component {
             .catch(err => {
                 console.log('err in BluetoothConnect #4',err);
                 if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
-                    this.refs.toast.show('Failed to connect to kit', DURATION.LENGTH_LONG);
+                    this.refs.toast.show('Failed to connect to kit', (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
                 }
                 return this.props.stopConnect();
             });
@@ -260,7 +260,7 @@ class BluetoothConnectView extends Component {
                             .catch(err => BleManager.disconnect(sensorId))
                             .then(() => {
                                 if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
-                                    this.refs.toast.show('Failed to PAIR to sensor', DURATION.LENGTH_LONG);
+                                    this.refs.toast.show('Failed to PAIR to sensor', (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
                                 }
                                 this.setState({ index: 3 });
                                 this.pages.progress = 3;
@@ -299,7 +299,7 @@ class BluetoothConnectView extends Component {
                             .then(() => this.props.postUserSensorData(userId))
                             .then(res => {
                                 if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
-                                    this.refs.toast.show(res, DURATION.LENGTH_LONG);
+                                    this.refs.toast.show(res, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
                                 }
                                 this.setState({ index: 3 });
                                 this.pages.progress = 3;
@@ -309,7 +309,7 @@ class BluetoothConnectView extends Component {
                             })
                             .catch(err => {
                                 if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
-                                    this.refs.toast.show(err, DURATION.LENGTH_LONG);
+                                    this.refs.toast.show(err, (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
                                 }
                                 this.setState({ index: 3 });
                                 this.pages.progress = 3;
@@ -328,7 +328,7 @@ class BluetoothConnectView extends Component {
                             .catch(err => BleManager.disconnect(sensorId))
                             .then(() => {
                                 if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
-                                    this.refs.toast.show('Failed to PAIR to sensor', DURATION.LENGTH_LONG);
+                                    this.refs.toast.show('Failed to PAIR to sensor', (DURATION.LENGTH_LONG + DURATION.LENGTH_LONG));
                                 }
                                 this.setState({ index: 3 });
                                 this.pages.progress = 3;
