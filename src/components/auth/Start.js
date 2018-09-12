@@ -119,7 +119,7 @@ class Start extends Component {
     }
 
     _routeToHome = () => {
-        Actions.home();
+        Actions.myPlan();
     }
 
     login = () => {

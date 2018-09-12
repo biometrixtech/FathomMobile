@@ -239,7 +239,7 @@ class Login extends Component {
                         resultMsg: { success: 'SUCCESS, NOW LOADING YOUR DATA!!' },
                     }, () => {
                         if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
-                            Actions.home();
+                            Actions.myPlan();
                         } else {
                             Actions.onboarding();
                         }

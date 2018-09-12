@@ -117,7 +117,7 @@ class ResetPassword extends Component {
                 }).catch((err) => {
                     const error = AppAPI.handleError(err);
                     if(error.includes('ExpiredCodeException')) {
-                        this.setState({ resultMsg: {error: 'The verification code you are using has expired.  Please request a new verification code.'} });    
+                        this.setState({ resultMsg: {error: 'The verification code you are using has expired.  Please request a new verification code.'} });
                     }
                     else{
                         this.setState({ resultMsg: { error } });
@@ -170,7 +170,7 @@ class ResetPassword extends Component {
                             textInputRef={input => {
                                 this.inputs.email = input;
                             }}
-                            value={this.state.form_values.Email}    
+                            value={this.state.form_values.Email}
                         />
                         <FormInput
                             autoCapitalize={'none'}
@@ -188,7 +188,7 @@ class ResetPassword extends Component {
                             textInputRef={input => {
                                 this.inputs.verification_code = input;
                             }}
-                            value={this.state.form_values.VerificationCode}    
+                            value={this.state.form_values.VerificationCode}
                         />
                         <FormInput
                             autoCapitalize={'none'}
@@ -206,7 +206,7 @@ class ResetPassword extends Component {
                             textInputRef={input => {
                                 this.inputs.new_password = input;
                             }}
-                            value={this.state.form_values.NewPassword}    
+                            value={this.state.form_values.NewPassword}
                         />
                         <FormInput
                             autoCapitalize={'none'}
@@ -221,9 +221,9 @@ class ResetPassword extends Component {
                             textInputRef={input => {
                                 this.inputs.confirm_password = input;
                             }}
-                            value={this.state.form_values.ConfirmPassword}    
+                            value={this.state.form_values.ConfirmPassword}
                         />
-                
+
                     </View>
                 </View>
                 <TouchableOpacity onPress={() => this._handleFormSubmit()} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
@@ -237,7 +237,7 @@ class ResetPassword extends Component {
         let errorsArray = [];
         const regularExpression = /\d{6}/;
         let isValid = false;
-        
+
         if (regularExpression.test(verificationCode))
         {
             isValid = true;
@@ -255,7 +255,7 @@ class ResetPassword extends Component {
     _passwordsMatch = (newPassword, confirmPassword) => {
         let errorsArray = [];
         let isValid = false;
-        
+
         if(newPassword === confirmPassword)
         {
             isValid = true;
@@ -273,7 +273,7 @@ class ResetPassword extends Component {
             isValid
         };
     }
-    
+
     _focusNextField = (id) => {
         this.inputs[id].focus();
     }
@@ -341,7 +341,7 @@ class ResetPassword extends Component {
                 resultMsg: { success: 'Success, now loading your data!' },
             }, () => {
                 if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
-                    Actions.home();
+                    Actions.myPlan();
                 } else {
                     Actions.onboarding();
                 }

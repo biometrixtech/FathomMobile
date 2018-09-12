@@ -422,7 +422,7 @@ class Onboarding extends Component {
                 return this.props.updateUser(userObj, this.props.user.id)
                     .then(response => {
                         this.setState({ loading: false });
-                        return Actions.home();
+                        return Actions.myPlan();
                     })
                     .catch(err => {
                         const error = AppAPI.handleError(err);
@@ -474,7 +474,7 @@ class Onboarding extends Component {
                 resultMsg: { success: 'Success, now loading your data!' },
             }, () => {
                 this.setState({ loading: false });
-                return Actions.home();
+                return Actions.myPlan();
             })).catch((err) => {
                 console.log('err',err);
                 const error = AppAPI.handleError(err);
