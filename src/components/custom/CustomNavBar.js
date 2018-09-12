@@ -244,24 +244,25 @@ class CustomNavBar extends Component {
                         isFetchingData: true,
                         isSensorUIOpen: !(isFromTimer && numberOfPractices === 0) ? !(isFromTimer && numberOfPractices === 0) : this.state.isSensorUIOpen,
                     },
-                    () => {
-                        if(numberOfPractices > 0 && validFetchStates.includes(systemStatus)) {
-                            this._handlePractices(numberOfPractices)
-                                .then(() => {
-                                    return AppUtil._retrieveAsyncStorageData(userId);
-                                })
-                                .then(res => {
-                                    return bleUtils.finalizeBleData(res.practices, userId);
-                                })
-                                .then(() => {
-                                    this.refs.toast.show('SYNC SUCCESSFUL', (DURATION.LENGTH_SHORT * 2));
-                                })
-                                .catch(err => {
-                                    this.refs.toast.show(err, (DURATION.LENGTH_SHORT * 2));
-                                });
-                        }
-                    },
                 );
+                if(numberOfPractices > 0 && validFetchStates.includes(systemStatus)) {
+                    return this._handlePractices(numberOfPractices)
+                        .then(() => {
+                            return AppUtil._retrieveAsyncStorageData(userId);
+                        })
+                        .then(res => {
+                            return bleUtils.finalizeBleData(res.practices, userId);
+                        })
+                        .then(() => {
+                            this.refs.toast.show('SYNC SUCCESSFUL', (DURATION.LENGTH_SHORT * 2));
+                            return Promise.resolve();
+                        })
+                        .catch(err => {
+                            this.refs.toast.show(err, (DURATION.LENGTH_SHORT * 2));
+                            return Promise.reject();
+                        });
+                }
+                return Promise.resolve();
             })
             .catch(err => {
                 this.setState({
