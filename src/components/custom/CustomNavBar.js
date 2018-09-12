@@ -82,7 +82,7 @@ class CustomNavBar extends Component {
             Object.keys(currentState.ble.accessoryData).length > 0 &&
             currentState.ble.accessoryData.sensor_pid &&
             currentState.ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID() &&
-            routeName === 'home'
+            routeName === 'myPlan'
         ) ?
             true
             :
@@ -119,8 +119,8 @@ class CustomNavBar extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(!_.isEqual(nextProps, this.props) && nextProps.routeName === 'home') {
-            // headed to home page, start bluetooth/sensor related items
+        if(!_.isEqual(nextProps, this.props) && nextProps.routeName === 'myPlan') {
+            // headed to myPlan page, start bluetooth/sensor related items
             let BLEDetails = this._handleBleDetails(nextProps.routeName);
             let currentState = store.getState();
             this.setState(
@@ -341,12 +341,12 @@ class CustomNavBar extends Component {
                     />
                     : Actions.currentParams.onLeft && this.props.routeName !== 'onboarding' ?
                         <TabIcon
-                            icon={this.props.routeName === 'home' ? 'settings' : 'arrow-left'}
+                            icon={this.props.routeName === 'myPlan' ? 'settings' : 'arrow-left'}
                             iconStyle={[{color: AppColors.black,}]}
                             onPress={Actions.currentParams.onLeft}
                             reverse={false}
                             size={26}
-                            type={this.props.routeName === 'home' ? 'material-community' : 'simple-line-icon'}
+                            type={this.props.routeName === 'myPlan' ? 'material-community' : 'simple-line-icon'}
                         />
                         :
                         null
@@ -356,7 +356,7 @@ class CustomNavBar extends Component {
     }
 
     _renderMiddle = () => {
-        if(this.props.routeName === 'home') {
+        if(this.props.routeName === 'myPlan') {
             return (
                 <Image
                     source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
@@ -372,7 +372,7 @@ class CustomNavBar extends Component {
     }
 
     _renderRight = () => {
-        if(this.props.routeName === 'home') {
+        if(this.props.routeName === 'myPlan') {
             return(
                 this.state.fetchBleData ?
                     this._renderSensorImage()
@@ -688,7 +688,7 @@ class CustomNavBar extends Component {
                     {this._renderMiddle()}
                     {this._renderRight()}
                 </View>
-                { this.state.isSensorUIOpen && this.props.routeName === 'home' ?
+                { this.state.isSensorUIOpen && this.props.routeName === 'myPlan' ?
                     this._renderSensorUI()
                     :
                     null
