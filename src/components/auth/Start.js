@@ -118,8 +118,8 @@ class Start extends Component {
         Actions.myPlan();
     }
 
-    _routeToHome = () => {
-        Actions.home();
+    _routeToMyPlan = () => {
+        Actions.myPlan();
     }
 
     login = () => {
@@ -133,7 +133,7 @@ class Start extends Component {
           * - authorizeUser
           *   - registerDevice
           *     - finalizeLogin
-          *       - successful - go to onboarding or home
+          *       - successful - go to onboarding or MyPlan
           *       - unsuccessful - go to login
           */
         let authorization = {
@@ -164,7 +164,7 @@ class Start extends Component {
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
                 if(userObj.onboarding_status && userObj.onboarding_status.includes('account_setup')) {
-                    this._routeToHome();
+                    this._routeToMyPlan();
                 } else {
                     this._routeToOnboarding();
                 }

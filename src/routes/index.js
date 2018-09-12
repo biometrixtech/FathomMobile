@@ -52,9 +52,6 @@ import MyPlanComponent from '../components/myPlan/MyPlan';
 import OnboardingContainer from '../containers/onboarding/Onboarding';
 import OnboardingComponent from '../components/onboarding/Onboarding';
 
-import HomeContainer from '../containers/home/Home';
-import HomeComponent from '../components/home/Home';
-
 const Index = (
     <Router hideNavBar={true}>
         <Stack hideNavBar={true} key={'root'} titleStyle={{ alignSelf: 'center' }}>
@@ -112,19 +109,12 @@ const Index = (
                 title={'FORGOT PASSWORD'}
             />
             <Scene
-                Layout={HomeComponent}
-                component={HomeContainer}
-                hideNavBar={false}
-                key={'home'}
-                navBar={CustomNavBar}
-                onLeft={() => Actions.settings()}
-                panHandlers={null}
-            />
-            <Scene
                 Layout={MyPlanComponent}
                 component={MyPlanContainer}
-                hideNavBar={true}
+                hideNavBar={false}
                 key={'myPlan'}
+                navBar={CustomNavBar}
+                onLeft={() => Actions.settings()}
                 panHandlers={null}
             />
             <Scene
@@ -132,7 +122,7 @@ const Index = (
                 component={SettingsContainer}
                 hideNavBar={false}
                 navBar={CustomNavBar}
-                onLeft={() => Actions.home()}
+                onLeft={() => Actions.myPlan()}
                 key={'settings'}
                 panHandlers={null}
                 title={'SETTINGS'}
