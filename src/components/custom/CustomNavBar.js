@@ -539,8 +539,13 @@ class CustomNavBar extends Component {
         let planStore = currentState.plan.dailyPlan && currentState.plan.dailyPlan.length > 0 ? currentState.plan.dailyPlan[0] : false;
         let sensorStatusBarObj = bleUtils.sensorStatusBar(bleStore.systemStatus, bleStore.batteryCharge);
         let batteryIconChargeLevelRounded = _.round(bleStore.batteryCharge, -1);
-        let batteryIconChargeLevel = batteryIconChargeLevelRounded === 100 && bleStore.systemStatus === 0 ? 'battery-charging' : batteryIconChargeLevelRounded === 100 && bleStore.systemStatus !== 0 ? 'battery-full' : `battery-${batteryIconChargeLevelRounded}`;
-        let batteryIconType = batteryIconChargeLevelRounded === 100 && bleStore.systemStatus !== 0 ? 'material' : 'material-community';
+        let batteryIconChargeLevel = bleStore.systemStatus === 1 ?
+            'battery-charging'
+            : batteryIconChargeLevelRounded === 100 ?
+                'battery-full'
+                :
+                `battery-${batteryIconChargeLevelRounded}`;
+        let batteryIconType = batteryIconChargeLevelRounded === 100 && bleStore.systemStatus !== 1 ? 'material' : 'material-community';
         let now = moment();
         let last_sync = moment(planStore.last_sensor_sync).toISOString();
         let lastSyncDaysDiff = now.diff(last_sync, 'days');
