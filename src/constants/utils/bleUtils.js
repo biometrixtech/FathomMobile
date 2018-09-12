@@ -16,10 +16,6 @@ const bleUtils = {
         let numberOfPractices = null;
         // make sure we have a sensor paired
         return BLEActions.startConnection(ble.accessoryData.sensor_pid)
-            .catch(err => {
-                BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
-                return Promise.reject(ErrorMessages.sensor.connectionError);
-            })
             .then(res => BLEActions.getSingleSensorStatus(ble.accessoryData.sensor_pid))
             .then(response => {
                 systemStatus = response.systemStatus;
@@ -32,7 +28,9 @@ const bleUtils = {
             })
             .then(res => Promise.resolve({ systemStatus, batteryCharge, numberOfPractices }))
             .catch(err => {
-                BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+                if(toDisconnect) {
+                    return BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+                }
                 return Promise.reject(ErrorMessages.sensor.connectionError);
             });
     },
@@ -91,6 +89,12 @@ const bleUtils = {
                     .catch(err => Promise.reject(ErrorMessages.sensor.serverError));
             })
             .catch(err => Promise.reject(ErrorMessages.sensor.serverError));
+    },
+
+    handleBLEDisconnection(sensorId) {
+        return BLEActions.startDisconnection(sensorId)
+            .then(res => Promise.resolve(res))
+            .catch(err => Promise.reject(err));
     },
 
     systemStatusMapping(status) {

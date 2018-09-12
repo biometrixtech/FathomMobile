@@ -71,6 +71,7 @@ class CustomNavBar extends Component {
             isFetchingData: false,
             isSensorUIOpen: false,
             progressBar:    0,
+            syncingBle:     false,
         }
         this.handleBleStateChange = this.handleBleStateChange.bind(this);
         this._interval = null;
@@ -108,21 +109,33 @@ class CustomNavBar extends Component {
         this.handlerState = bleManagerEmitter.addListener('BleManagerDidUpdateState', this.handleBleStateChange);
         AppState.addEventListener('change', this._handleAppStateChange);
         // start bluetooth/sensor related items
-        if(this.state.fetchBleData) {
-            this._handleBLEStepsOnLoad();
+        let BLEDetails = this._handleBleDetails(this.props.routeName);
+        if(BLEDetails.fetchBleData) {
+            this._startBluetooth();
         }
     }
 
     componentWillUnmount = () => {
         this.handlerState.remove();
         this._handleClearInterval();
+        let BLEDetails = this._handleBleDetails(this.props.routeName);
+        if(BLEDetails.fetchBleData) {
+            bleUtils.handleBLEDisconnection(store.getState().ble.accessoryData.sensor_pid);
+        }
     }
 
-    componentWillReceiveProps(nextProps) {
-        if(!_.isEqual(nextProps, this.props) && nextProps.routeName === 'myPlan') {
+    componentWillUpdate(nextProps, nextState) {
+        // setup needed variables
+        let BLEDetails = this._handleBleDetails(nextProps.routeName);
+        let currentState = store.getState();
+        // start logic
+        if(
+            !_.isEqual(nextProps, this.props) &&
+            nextProps.routeName === 'myPlan' &&
+            !nextState.syncingBle &&
+            BLEDetails.fetchBleData
+        ) {
             // headed to myPlan page, start bluetooth/sensor related items
-            let BLEDetails = this._handleBleDetails(nextProps.routeName);
-            let currentState = store.getState();
             this.setState(
                 {
                     BLEData: {
@@ -134,28 +147,32 @@ class CustomNavBar extends Component {
                     isFetchingData: false,
                     isSensorUIOpen: false,
                     progressBar:    0,
+                    syncingBle:     true,
                 },
-                () => this._handleSetInterval(),
+                () => this._triggerBLESteps(true),
             );
-        } else if(!_.isEqual(nextProps, this.props) && nextProps.routeName === 'settings') {
+        } else if(!_.isEqual(nextProps, this.props) && nextProps.routeName === 'settings' && BLEDetails.fetchBleData) {
             // headed to settings page, clear interval
             this._handleClearInterval();
-        }
-    }
-
-    _handleBLEStepsOnLoad = () => {
-        this._startBluetooth()
-            .then(() => {
-                this.setState({
+            bleUtils.handleBLEDisconnection(store.getState().ble.accessoryData.sensor_pid);
+        } else if(nextProps.routeName === 'myPlan' && this.props.routeName === 'settings' && !BLEDetails.fetchBleData) {
+            // headed to myPlan page from settings after unpairing
+            this._handleClearInterval();
+            this.setState(
+                {
                     BLEData: {
-                        animated: true,
-                        bleImage: require(`${sensorImagePrefix}sensor-operation.png`),
+                        animated: false,
+                        bleImage: false,
                     },
+                    bluetoothOn:    currentState.ble.bluetoothOn || false,
+                    fetchBleData:   BLEDetails.fetchBleData,
+                    isFetchingData: false,
                     isSensorUIOpen: false,
-                }, () => {
-                    return this._triggerBLESteps();
-                });
-            });
+                    progressBar:    0,
+                    syncingBle:     false,
+                },
+            );
+        }
     }
 
     _handleClearInterval = () => {
@@ -165,15 +182,15 @@ class CustomNavBar extends Component {
     _handleSetInterval = () => {
         let BLEDetails = this._handleBleDetails(this.props.routeName);
         if(BLEDetails.fetchBleData) {
-            this._interval = setInterval(() => {
-                this._triggerBLESteps(true, true);
-            }, 30000);
+            this._interval = setInterval(() => this._triggerBLESteps(true, true), 30000);
+        } else {
+            this._handleClearInterval();
         }
     }
 
     _handleAppStateChange = nextAppState => {
         if(nextAppState === 'active') {
-            if(this.state.fetchBleData) {
+            if(this._handleBleDetails(this.props.routeName).fetchBleData) {
                 this.setState(
                     { isSensorUIOpen: false, },
                     () => this._triggerBLESteps(true),
@@ -181,13 +198,14 @@ class CustomNavBar extends Component {
             }
         } else if(nextAppState === 'background') {
             this._handleClearInterval();
+            bleUtils.handleBLEDisconnection(store.getState().ble.accessoryData.sensor_pid);
         }
     }
 
     _triggerBLESteps = (animate, isFromTimer = false) => {
         // setup constants
-        const validFetchStates = [1, 2, 3];
-        let batterCharge = 0;
+        const validFetchStates = [1, 2];
+        let batteryCharge = 0;
         let numberOfPractices = 0;
         let systemStatus = 0;
         let userId = store.getState().user.id;
@@ -205,7 +223,7 @@ class CustomNavBar extends Component {
         // start logic
         bleUtils.handleBLESingleSensorStatus(store.getState().ble, false)
             .then(sensorStatusResponse => {
-                batterCharge = sensorStatusResponse.batterCharge;
+                batteryCharge = sensorStatusResponse.batteryCharge;
                 numberOfPractices = sensorStatusResponse.numberOfPractices;
                 systemStatus = sensorStatusResponse.systemStatus;
                 return AppUtil._retrieveAsyncStorageData(userId);
@@ -230,30 +248,39 @@ class CustomNavBar extends Component {
                         if(numberOfPractices > 0 && validFetchStates.includes(systemStatus)) {
                             this._handlePractices(numberOfPractices)
                                 .then(() => {
-                                    this.setState({ isFetchingData: false, });
                                     return AppUtil._retrieveAsyncStorageData(userId);
                                 })
                                 .then(res => {
                                     return bleUtils.finalizeBleData(res.practices, userId);
                                 })
                                 .then(() => {
-                                    this._handleSetInterval();
                                     this.refs.toast.show('SYNC SUCCESSFUL', (DURATION.LENGTH_SHORT * 2));
                                 })
                                 .catch(err => {
-                                    this.setState({ isFetchingData: false, });
                                     this.refs.toast.show(err, (DURATION.LENGTH_SHORT * 2));
-                                    this._handleSetInterval();
                                 });
-                        } else {
-                            this.setState({ isFetchingData: false, });
                         }
                     },
                 );
             })
             .catch(err => {
+                this.setState({
+                    BLEData: {
+                        animated: false,
+                        bleImage: require(`${sensorImagePrefix}sensor.png`),
+                    },
+                    isSensorUIOpen: !(isFromTimer && numberOfPractices === 0) ? !(isFromTimer && numberOfPractices === 0) : this.state.isSensorUIOpen,
+                });
                 this.refs.toast.show(err, (DURATION.LENGTH_SHORT * 2));
-                this._handleSetInterval();
+            })
+            .finally(() => {
+                this.setState(
+                    { isFetchingData: false, syncingBle: false },
+                    () => {
+                        this._handleSetInterval();
+                        return bleUtils.handleBLEDisconnection(store.getState().ble.accessoryData.sensor_pid);
+                    },
+                );
             });
     }
 
@@ -459,45 +486,69 @@ class CustomNavBar extends Component {
                                 source={this.state.BLEData.bleImage}
                                 style={{width: imageWidth,}}
                             />
-                            { store.getState().ble.systemStatus === 1 ?
-                                <TabIcon
-                                    containerStyle={[{
-                                        borderRadius: (indicatorSize + 10) / 2,
-                                        height:       (indicatorSize + 10),
-                                        position:     'absolute',
-                                        right:        0,
-                                        top:          0,
-                                    }]}
-                                    icon={'bolt'}
-                                    iconStyle={[{color: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),}]}
-                                    onPress={() => {
-                                        let oppositeSensorUIStatus = !this.state.isSensorUIOpen;
-                                        this.setState(
-                                            {
-                                                isSensorUIOpen: false,
-                                            },
-                                            () => oppositeSensorUIStatus ? this._triggerBLESteps(true) : null,
-                                        );
+                            { store.getState().ble.systemStatus === 0 ?
+                                <View
+                                    style={{
+                                        backgroundColor: AppColors.sensor.notConnected,
+                                        borderRadius:    10 / 2,
+                                        height:          10,
+                                        position:        'absolute',
+                                        right:           0,
+                                        top:             4,
+                                        width:           10,
                                     }}
-                                    reverse={false}
-                                    size={(indicatorSize + 10)}
-                                    type={'font-awesome'}
                                 />
-                                : store.getState().ble.systemStatus === 2 ?
-                                    <Animated.View
-                                        style={{
-                                            backgroundColor: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),
-                                            borderRadius:    indicatorSize / 2,
-                                            height:          indicatorSize,
-                                            position:        'absolute',
-                                            right:           0,
-                                            top:             2,
-                                            transform:       [{scale: scaleIcon}],
-                                            width:           indicatorSize,
+                                : store.getState().ble.systemStatus === 1 ?
+                                    <TabIcon
+                                        containerStyle={[{
+                                            borderRadius: (indicatorSize + 10) / 2,
+                                            height:       (indicatorSize + 10),
+                                            position:     'absolute',
+                                            right:        0,
+                                            top:          0,
+                                        }]}
+                                        icon={'bolt'}
+                                        iconStyle={[{color: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),}]}
+                                        onPress={() => {
+                                            let oppositeSensorUIStatus = !this.state.isSensorUIOpen;
+                                            this.setState(
+                                                {
+                                                    isSensorUIOpen: false,
+                                                },
+                                                () => oppositeSensorUIStatus ? this._triggerBLESteps(true) : null,
+                                            );
                                         }}
+                                        reverse={false}
+                                        size={(indicatorSize + 10)}
+                                        type={'font-awesome'}
                                     />
-                                    :
-                                    null
+                                    : store.getState().ble.systemStatus === 2 ?
+                                        <Animated.View
+                                            style={{
+                                                backgroundColor: bleUtils.systemStatusMapping(store.getState().ble.systemStatus),
+                                                borderRadius:    indicatorSize / 2,
+                                                height:          indicatorSize,
+                                                position:        'absolute',
+                                                right:           0,
+                                                top:             2,
+                                                transform:       [{scale: scaleIcon}],
+                                                width:           indicatorSize,
+                                            }}
+                                        />
+                                        : store.getState().ble.systemStatus === 3 ?
+                                            <View
+                                                style={{
+                                                    backgroundColor: AppColors.sensor.good,
+                                                    borderRadius:    10 / 2,
+                                                    height:          10,
+                                                    position:        'absolute',
+                                                    right:           0,
+                                                    top:             4,
+                                                    width:           10,
+                                                }}
+                                            />
+                                            :
+                                            null
                             }
                         </TouchableOpacity>
                         : !this.state.bluetoothOn ?
