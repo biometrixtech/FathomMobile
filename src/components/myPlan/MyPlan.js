@@ -287,9 +287,7 @@ class MyPlan extends Component {
         newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
         newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality;
         newDailyReadiness.readiness = newDailyReadiness.readiness;
-        newDailyReadiness.soreness.map(bodyPart => {
-            newDailyReadiness.soreness = newDailyReadiness.soreness.filter(u => u.severity > 0 || u.severity === 0);
-        });
+        newDailyReadiness.soreness= newDailyReadiness.soreness.filter(u => u.severity && u.severity > 0);
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
                 let newPrepareObject = Object.assign({}, this.state.prepare, {
@@ -297,7 +295,7 @@ class MyPlan extends Component {
                 });
                 this.props.clearCompletedExercises();
                 this.setState({
-                    dailyReadiness:     {
+                    dailyReadiness: {
                         readiness:     0,
                         sleep_quality: 0,
                         soreness:      [],
@@ -325,7 +323,7 @@ class MyPlan extends Component {
         let newPostSessionSurvey = {};
         newPostSessionSurvey.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
         newPostSessionSurvey.RPE = this.state.postSession.RPE;
-        newPostSessionSurvey.soreness = this.state.postSession.soreness.filter(u => u.severity > 0 || u.severity === 0);
+        newPostSessionSurvey.soreness = this.state.postSession.soreness.filter(u => u.severity && u.severity > 0);
         let postSession = {
             event_date:          this.state.postSession.event_date,
             session_type:        this.state.postSession.session_type,
