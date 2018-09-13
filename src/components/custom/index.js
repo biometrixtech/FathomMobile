@@ -16,6 +16,7 @@ import CalendarStrip from './CalendarStrip';
 import Card from './Card';
 import Checkbox from './Checkbox';
 import Coach from './Coach';
+import CustomMyPlanNavBar from './CustomMyPlanNavBar';
 import CustomNavBar from './CustomNavBar';
 import FathomSlider from './FathomSlider';
 import FormInput from './FormInput';
@@ -41,6 +42,7 @@ export {
     Card,
     Checkbox,
     Coach,
+    CustomMyPlanNavBar,
     CustomNavBar,
     FathomSlider,
     FormInput,

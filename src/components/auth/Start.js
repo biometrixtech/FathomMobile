@@ -118,10 +118,6 @@ class Start extends Component {
         Actions.myPlan();
     }
 
-    _routeToMyPlan = () => {
-        Actions.myPlan();
-    }
-
     login = () => {
         let credentials = {
             Email:    this.props.email,
