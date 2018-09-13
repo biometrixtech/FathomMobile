@@ -448,22 +448,6 @@ class MyPlan extends Component {
         });
     }
 
-    _togglePostSessionSurvey = () => {
-        let newPostSession = _.cloneDeep(this.state.postSession);
-        newPostSession.description = '';
-        newPostSession.duration = 0;
-        newPostSession.event_date = null;
-        newPostSession.session_type = null;
-        newPostSession.sport_name = null;
-        newPostSession.strength_and_conditioning_type = null;
-        newPostSession.RPE = 0;
-        this.props.clearCompletedExercises();
-        this.setState({
-            isPostSessionSurveyModalOpen: false,
-            postSession:                  newPostSession,
-        });
-    }
-
     _togglePostSessionSurveyModal = () => {
         this.setState({ loading: true });
         if (!this.state.isPostSessionSurveyModalOpen) {
@@ -489,9 +473,19 @@ class MyPlan extends Component {
                     });
                 });
         } else {
+            let newPostSession = _.cloneDeep(this.state.postSession);
+            newPostSession.description = '';
+            newPostSession.duration = 0;
+            newPostSession.event_date = null;
+            newPostSession.session_type = null;
+            newPostSession.sport_name = null;
+            newPostSession.strength_and_conditioning_type = null;
+            newPostSession.RPE = 0;
+            this.props.clearCompletedExercises();
             this.setState({
                 isPostSessionSurveyModalOpen: false,
                 loading:                      false,
+                postSession:                  newPostSession,
             });
         }
     }
@@ -1355,7 +1349,7 @@ class MyPlan extends Component {
                                 handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                                 handleFormChange={this._handlePostSessionFormChange}
                                 handleFormSubmit={this._handlePostSessionSurveySubmit}
-                                handleTogglePostSessionSurvey={this._togglePostSessionSurvey}
+                                handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
                                 postSession={this.state.postSession}
                                 soreBodyParts={this.props.plan.soreBodyParts}
                                 typicalSessions={this.props.plan.typicalSessions}

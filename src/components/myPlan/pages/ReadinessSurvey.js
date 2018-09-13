@@ -75,9 +75,6 @@ class ReadinessSurvey extends Component {
             (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
         );
         let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
-        console.log(filteredSoreBodyParts, _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0);
-        console.log(filteredAreasOfSoreness, _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0);
-        console.log(areQuestionsValid, (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0), areAreasOfSorenessValid);
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         return(
