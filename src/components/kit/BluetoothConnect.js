@@ -223,7 +223,7 @@ class BluetoothConnectView extends Component {
             .catch(err => {
                 console.log('err in BluetoothConnect #4',err);
                 if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
-                    this.refs.toast.show('Failed to connect to kit', (DURATION.LENGTH_SHORT * 2));
+                    this.refs.toast.show('Failed to PAIR to sensor', (DURATION.LENGTH_SHORT * 2));
                 }
                 return this.props.stopConnect();
             });
