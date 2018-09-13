@@ -395,7 +395,7 @@ class MyPlan extends Component {
                         let newMissingSideSorenessPart = {};
                         newMissingSideSorenessPart.body_part = areaClicked.index;
                         newMissingSideSorenessPart.pain = false;
-                        newMissingSideSorenessPart.severity = 0;
+                        newMissingSideSorenessPart.severity = null;
                         newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
                         newSorenessFields.push(newMissingSideSorenessPart);
                     } else {
@@ -410,20 +410,20 @@ class MyPlan extends Component {
                     let newLeftSorenessPart = {};
                     newLeftSorenessPart.body_part = areaClicked.index;
                     newLeftSorenessPart.pain = false;
-                    newLeftSorenessPart.severity = 0;
+                    newLeftSorenessPart.severity = null;
                     newLeftSorenessPart.side = 1;
                     newSorenessFields.push(newLeftSorenessPart);
                     let newRightSorenessPart = {};
                     newRightSorenessPart.body_part = areaClicked.index;
                     newRightSorenessPart.pain = false;
-                    newRightSorenessPart.severity = 0;
+                    newRightSorenessPart.severity = null;
                     newRightSorenessPart.side = 2;
                     newSorenessFields.push(newRightSorenessPart);
                 } else {
                     let newSorenessPart = {};
                     newSorenessPart.body_part = areaClicked.index;
                     newSorenessPart.pain = false;
-                    newSorenessPart.severity = 0;
+                    newSorenessPart.severity = null;
                     newSorenessPart.side = 0;
                     newSorenessFields.push(newSorenessPart);
                 }

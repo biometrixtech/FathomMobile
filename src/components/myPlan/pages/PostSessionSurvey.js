@@ -57,19 +57,18 @@ class PostSessionSurvey extends Component {
             soreBodyParts,
             typicalSessions,
         } = this.props;
-
         let filteredAreasOfSoreness = _.filter(postSession.soreness, o => {
-            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part);
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
             return doesItInclude.length === 0;
-        })
+        });
         let filteredSoreBodyParts = _.filter(postSession.soreness, o => {
-            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part);
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
             return doesItInclude.length > 0;
         });
         let areQuestionsValid = postSession.RPE > 0 && postSession.event_date;
-        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity >= 0).length > 0 : true;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
         let areAreasOfSorenessValid = (
-            _.filter(filteredAreasOfSoreness, o => o.severity && o.severity >= 0).length > 0 ||
+            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
             (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
         );
         let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;
