@@ -160,10 +160,10 @@ const UTIL = {
       * key -> index of data
       * data -> data to store (if object, will JSON.stringify)
       */
-    _storeAsyncStorageData: (key, data) => {
+    _storeAsyncStorageData: async (key, data) => {
         let newData = typeof data === 'object' ? JSON.stringify(data) : data;
         try {
-            AsyncStorage.setItem(key, newData);
+            await AsyncStorage.setItem(key, newData);
         } catch (error) {
             console.log('error from _storeAsyncStorageData', error);
         }
@@ -401,8 +401,8 @@ const UTIL = {
         inputStyle.textAlign = 'center';
         inputStyle.fontFamily = AppStyles.robotoBold.fontFamily;
         inputStyle.fontWeight = AppStyles.robotoBold.fontWeight;
-        
-        
+
+
         return inputStyle;
     }
 };

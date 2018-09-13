@@ -13,7 +13,7 @@ import { Actions, Router, Scene, Stack } from 'react-native-router-flux';
 
 // Consts, Libs, and Utils
 import { AppColors, AppSizes, AppStyles, } from '../constants';
-import { CustomNavBar, TabIcon, } from '../components/custom';
+import { CustomMyPlanNavBar, CustomNavBar, TabIcon, } from '../components/custom';
 
 // import components
 import LoginContainer from '../containers/auth/Login';
@@ -113,19 +113,21 @@ const Index = (
                 component={MyPlanContainer}
                 hideNavBar={false}
                 key={'myPlan'}
-                navBar={CustomNavBar}
+                navBar={CustomMyPlanNavBar}
                 onLeft={() => Actions.settings()}
                 panHandlers={null}
+                type={'replace'}
             />
             <Scene
                 Layout={SettingsComponent}
                 component={SettingsContainer}
                 hideNavBar={false}
+                key={'settings'}
                 navBar={CustomNavBar}
                 onLeft={() => Actions.myPlan()}
-                key={'settings'}
                 panHandlers={null}
                 title={'SETTINGS'}
+                type={'replace'}
             />
             <Scene
                 Layout={BluetoothConnectComponent}

@@ -201,9 +201,9 @@ class SportScheduleBuilder extends Component {
                             <Spacer size={7} />
                             <View style={[AppStyles.containerCentered,]}>
                                 { _.map(typicalSessions, (session, i) => {
-                                    let sportName = session.sport_name ?
+                                    let sportName = session.sport_name || session.sport_name === 0 ?
                                         _.filter(MyPlanConstants.teamSports, ['index', session.sport_name])[0].label.toUpperCase()
-                                        : session.strength_and_conditioning_type ?
+                                        : session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0 ?
                                             _.filter(MyPlanConstants.strengthConditioningTypes, ['index', session.strength_and_conditioning_type])[0].label.toUpperCase().replace(' TRAINING', '')
                                             :
                                             '';

@@ -18,30 +18,32 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles } from '../../constants';
-import { ListItem } from '../custom';
+import { bleUtils } from '../../constants/utils';
+import { ListItem, TabIcon, } from '../custom';
 import { AppUtil } from '../../lib';
-import { user as UserActions, } from '../../actions';
+import { ble as BLEActions, user as UserActions, } from '../../actions';
 
 // Components
-import { Alert, BackHandler, Platform, View, } from 'react-native';
+import { Animated, Alert, BackHandler, Easing, Platform, View, } from 'react-native';
 
 /* Component ==================================================================== */
 class Settings extends Component {
     static componentName = 'SettingsView';
     static propTypes = {
-        accessoryData:              PropTypes.object.isRequired,
-        deleteUserSensorData:       PropTypes.func.isRequired,
-        disconnectFromSingleSensor: PropTypes.func.isRequired,
-        logout:                     PropTypes.func.isRequired,
-        user:                       PropTypes.object.isRequired,
+        accessoryData:                  PropTypes.object.isRequired,
+        deleteUserSensorData:           PropTypes.func.isRequired,
+        deleteAllSingleSensorPractices: PropTypes.func.isRequired,
+        logout:                         PropTypes.func.isRequired,
+        user:                           PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
 
     constructor(props) {
         super(props);
-
-        this.state = {};
+        this.state = {
+            isUnpairing: false,
+        };
     }
 
     componentWillMount = () => {
@@ -70,16 +72,20 @@ class Settings extends Component {
                     {
                         text:    'Unpair',
                         onPress: () => {
-                            // return this.props.disconnectFromSingleSensor(this.props.accessoryData.sensor_pid)
-                            //     .catch(err => this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid))
-                            //     .then(() => this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid))
-                            // TODO: update these lines
-                            return this.props.deleteUserSensorData(this.props.accessoryData.sensor_pid)
-                                .then(() => this.refs.toast.show('Successfully UNPAIRED from sensor', DURATION.LENGTH_LONG))
-                                .catch(err => {
-                                    this.refs.toast.show('Failed to UNPAIR from sensor', DURATION.LENGTH_LONG);
-                                    console.log('error while disconnecting from single sensor',err);
-                                });
+                            this.setState(
+                                { isUnpairing: !this.state.isUnpairing, },
+                                () => {
+                                    return this._handleBLEUnpair()
+                                        .then(res => {
+                                            this.setState({ isUnpairing: false, });
+                                            this.refs.toast.show(res, (DURATION.LENGTH_SHORT * 2));
+                                        })
+                                        .catch(err => {
+                                            this.setState({ isUnpairing: false, });
+                                            this.refs.toast.show(err, (DURATION.LENGTH_SHORT * 2));
+                                        });
+                                },
+                            );
                         },
                     },
                 ],
@@ -135,25 +141,132 @@ class Settings extends Component {
         )
     }
 
+    _handleBLEUnpair = () => {
+        let sensorPid = this.props.accessoryData.sensor_pid;
+        return BLEActions.getSingleSensorStatus(sensorPid)
+            .catch(err => {
+                // not connected, try connecting again
+                return BLEActions.startConnection(sensorPid)
+                    .then(() => BLEActions.getSingleSensorStatus(sensorPid));
+            })
+            .catch(() => {
+                // cannot connect to sensor
+                return this.props.deleteUserSensorData(sensorPid)
+                    .catch(() => Promise.reject('Failed to UNPAIR from sensor'))
+                    .then(() => BLEActions.startDisconnection(sensorPid))
+                    .catch(() => BLEActions.startDisconnection(sensorPid))
+                    .then(() => Promise.resolve('Successfully UNPAIRED from sensor'))
+                    .catch(() => Promise.resolve('Successfully UNPAIRED from sensor'));
+            })
+            .then(res => {
+                // sensor available, fetch data first and then complete unpair (toast message success)
+                const validFetchStates = [1, 2, 3];
+                if(res.numberOfPractices > 0 && validFetchStates.includes(res.systemStatus)) {
+                    return this._handlePractices(res.numberOfPractices, this.props.user.id, sensorPid)
+                        .then(() => {
+                            return AppUtil._retrieveAsyncStorageData(this.props.user.id);
+                        })
+                        .then(response => {
+                            return bleUtils.finalizeBleData(response.practices, this.props.user.id);
+                        })
+                        .then(() => this.props.deleteUserSensorData(sensorPid))
+                        .catch(() => Promise.reject('Failed to UNPAIR from sensor'))
+                        .then(() => BLEActions.startDisconnection(sensorPid))
+                        .catch(() => BLEActions.startDisconnection(sensorPid))
+                        .then(() => Promise.resolve('Successfully UNPAIRED from sensor'))
+                        .catch(err => Promise.resolve('Successfully UNPAIRED from sensor'));
+                }
+                return this.props.deleteUserSensorData(sensorPid)
+                    .catch(() => Promise.reject('Failed to UNPAIR from sensor'))
+                    .then(() => BLEActions.startDisconnection(sensorPid))
+                    .catch(() => BLEActions.startDisconnection(sensorPid))
+                    .then(() => Promise.resolve('Successfully UNPAIRED from sensor'))
+                    .catch(() => Promise.resolve('Successfully UNPAIRED from sensor'));
+            })
+            .catch(err => Promise.reject('Failed to UNPAIR from sensor'));
+    }
+
+    /*eslint consistent-return: 0*/
+    _handlePractices = async (numberOfPractices, userId, sensorPid) => {
+        let shouldExit = false;
+        let errMsg = '';
+        for (let i = 0; i < numberOfPractices; i += 1) {
+            if(shouldExit) {
+                return Promise.reject(errMsg);
+            }
+            await bleUtils.processPractices(sensorPid, userId)
+                /*eslint no-loop-func: 0*/
+                /*eslint-env es6*/
+                .catch(err => {
+                    this.refs.toast.show(err, (DURATION.LENGTH_SHORT * 2));
+                    shouldExit = true;
+                    errMsg = err;
+                });
+        }
+    }
+
     render = () => {
         const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
+        // set animated values
+        const spinValue = new Animated.Value(0);
+        // First set up animation
+        Animated.loop(
+            Animated.timing(
+                spinValue,
+                {
+                    duration:        3000,
+                    easing:          Easing.linear,
+                    toValue:         1,
+                    useNativeDriver: true,
+                }
+            )
+        ).start();
+        // Second interpolate beginning and end values (in this case 0 and 1)
+        const spin = spinValue.interpolate({
+            inputRange:  [0, 1],
+            outputRange: ['0deg', '360deg'],
+        });
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
                 <ListItem
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
-                    leftIcon={{color: AppColors.black, name: 'bluetooth', size: 24}}
-                    onPress={() => this.props.accessoryData.sensor_pid ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()}
+                    leftIcon={ this.state.isUnpairing ?
+                        <Animated.View
+                            style={{transform: [{rotate: spin}],}}
+                        >
+                            <TabIcon
+                                color={AppColors.black}
+                                icon={'loading'}
+                                size={24}
+                                type={'material-community'}
+                            />
+                        </Animated.View>
+                        :
+                        <TabIcon
+                            color={AppColors.black}
+                            icon={'bluetooth'}
+                            size={24}
+                        />
+                    }
+                    onPress={() => this.props.accessoryData.sensor_pid ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()
+                    }
                     title={this.props.accessoryData.sensor_pid ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
-                    titleStyle={{color: AppColors.black}}
+                    titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
                 />
                 <ListItem
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
-                    leftIcon={{color: AppColors.black, name: 'power-settings-new', size: 24}}
+                    leftIcon={
+                        <TabIcon
+                            color={AppColors.black}
+                            icon={'power-settings-new'}
+                            size={24}
+                        />
+                    }
                     onPress={() => this.props.logout().then(() => {Actions.start(); this.props.clearMyPlanData();})}
                     title={'LOGOUT'}
-                    titleStyle={{color: AppColors.black}}
+                    titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
                 />
                 {
                     /hello[+]demo[1-5]@fathomai.com/g.test(userEmail) ||
@@ -169,16 +282,23 @@ class Settings extends Component {
                         <ListItem
                             chevronColor={AppColors.black}
                             containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
-                            leftIcon={{color: AppColors.black, name: 'lock-reset', size: 24, type: 'material-community'}}
+                            leftIcon={
+                                <TabIcon
+                                    color={AppColors.black}
+                                    icon={'lock-reset'}
+                                    size={24}
+                                    type={'material-community'}
+                                />
+                            }
                             onPress={() => this._resetAccountData()}
                             title={'RESET ACCOUNT DATA'}
-                            titleStyle={{color: AppColors.black}}
+                            titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
                         />
                         :
                         null
                 }
                 <Toast
-                    position={'top'}
+                    position={'bottom'}
                     ref={'toast'}
                 />
             </View>

@@ -25,34 +25,40 @@ const { Answers } = Fabric;
 // constants
 const commands = BLEConfig.commands;
 const state = BLEConfig.state;
+const timeoutValue = 30500;
 
 /**
   * UTILITY FUNCTIONS
   */
-const read = (id) => {
+const validateReadData = (response, dataArray) => {
+    return response[0] === 0 && response[2] === dataArray[0] && response[3] === 0;
+};
+
+const read = (id, dataArray) => {
     return BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID)
         .then(data => {
-            Answers.logCustom('BLE read', {
-                data,
-                deviceInfo: AppConfig.deviceInfo,
-                id,
-            });
-            // NOTE: added to make sure our data is correct before returning
-            if(data[0] === 0 && (data[3] === 0 || data[3] === 1)) {
+            // Answers.logCustom('BLE read', {
+            //     data,
+            //     deviceInfo: AppConfig.deviceInfo,
+            //     id,
+            // });
+            if(dataArray && validateReadData(data, dataArray)) {
+                return data;
+            } else if(!dataArray) {
                 return data;
             }
-            return read(id);
+            return read(id, dataArray);
         });
 };
 
 const write = (id, data) => {
-    Answers.logCustom('BLE write', {
-        data,
-        deviceInfo: AppConfig.deviceInfo,
-        id,
-    });
+    // Answers.logCustom('BLE write', {
+    //     data,
+    //     deviceInfo: AppConfig.deviceInfo,
+    //     id,
+    // });
     return BleManager.write(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID, data)
-        .then(() => read(id));
+        .then(() => read(id, data));
 };
 
 /**
@@ -87,7 +93,7 @@ const convertToUnsigned32BitIntByteArray = (value) => {
     return value.toString(16).match(/.{1,2}/g).map(val => convertHex(val));
 };
 
-const sleeper = ms => {
+const sleeper = (ms = 500) => {
     return x => {
         return new Promise(resolve => setTimeout(() => resolve(x), ms));
     }
@@ -226,17 +232,32 @@ const startDisconnection = sensorId => {
 };
 
 const startConnection = sensorId => {
-    return startDisconnection(sensorId)
-        .catch(err => {
-            // ble err will always return the same string 'Device not connected'
-            // continue normally if startDisconnection failed (could be because we don't have an open connection)
-            return true;
+    // NOTE: timeout function added due to - 'Attempts to connect to a peripheral do not time out' (iOS documentation)
+    let timeout = null;
+    let startingToConnect = new Promise((resolve, reject) => {
+        return startDisconnection(sensorId)
+            .catch(err => {
+                // ble err will always return the same string 'Device not connected'
+                // continue normally if startDisconnection failed (could be because we don't have an open connection)
+                return true;
+            })
+            .then(() => startBluetooth())
+            .then(() => BleManager.connect(sensorId))
+            .catch(err => BleManager.connect(sensorId))
+            .then(() => {
+                clearTimeout(timeout);
+                return resolve('successfully connected');
+            })
+            .catch(err => reject(err));
+    });
+    return Promise.race([
+        startingToConnect,
+        new Promise((resolve, reject) => {
+            timeout = setTimeout(() => reject('could not connect'), timeoutValue);
+            return timeout;
         })
-        .then(sleeper(1000))
-        .then(() => startBluetooth())
-        .then(() => BleManager.connect(sensorId))
-        .catch(err => BleManager.connect(sensorId))
-        .then(() => Promise.resolve('successfully connected'))
+    ])
+        .then(response => Promise.resolve(response))
         .catch(err => Promise.reject(err));
 };
 
@@ -341,11 +362,9 @@ const getUserSensorData = (userId) => {
     });
 };
 
-const postUserSensorData = () => {
+const postUserSensorData = (userId) => {
     return dispatch => new Promise((resolve, reject) => {
         let currentState = store.getState();
-        // get user id
-        let userId = currentState.user.id;
         // mobile uuid
         const uniqueId = AppUtil.getDeviceUUID();
         // build object to submit
@@ -393,99 +412,143 @@ const deleteUserSensorData = () => {
     });
 };
 
-const disconnectFromSingleSensor = (sensor_id) => {
-    let dataArray = [commands.WIPE_SINGLE_SENSOR_DATA, convertHex('0x00')];
-    let currentState = store.getState();
-    let sensorId = sensor_id || currentState.ble.accessoryData.sensor_pid;
-    return dispatch => startBluetooth()
-        .then(() => BleManager.connect(sensorId))
-        .then(() => BleManager.retrieveServices(sensorId))
-        .then(peripheralInfo => write(peripheralInfo.id, dataArray)) // wipe single sensor data - 0x7B
-        .then(() => BleManager.disconnect(sensorId))
-        .then(() => Promise.resolve())
+const getSingleSensorStatus = (sensorId) => {
+    // NOTE: timeout function added due to - 'Attempts to connect to a peripheral do not time out' (iOS documentation)
+    let timeout = null;
+    let gettingSensorStatus = new Promise((resolve, reject) => {
+        return BleManager.retrieveServices(sensorId)
+            .catch(err => BleManager.retrieveServices(sensorId))
+            .then(peripheralInfo => {
+                const dataArray = [commands.GET_ENTIRE_SYSTEM_STATUS, convertHex('0x00')];
+                return write(peripheralInfo.id, dataArray); // get entire system status - 0x7D
+            })
+            .then(response => {
+                let returnObj = {};
+                returnObj.systemStatus = response[4];
+                returnObj.batteryCharge = response[5] > 100 ? 100 : response[5];
+                returnObj.numberOfPractices = response[6];
+                store.dispatch({
+                    type:          Actions.UPDATE_BLE_STATUSES,
+                    batteryCharge: returnObj.batteryCharge,
+                    systemStatus:  returnObj.systemStatus,
+                });
+                clearTimeout(timeout);
+                return resolve(returnObj);
+            })
+            .catch(err => {
+                return reject(err);
+            });
+    });
+    return Promise.race([
+        gettingSensorStatus,
+        new Promise((resolve, reject) => {
+            timeout = setTimeout(() => {
+                let systemStatus = 0;
+                let batteryCharge = 0;
+                store.dispatch({
+                    type:          Actions.UPDATE_BLE_STATUSES,
+                    batteryCharge: batteryCharge,
+                    systemStatus:  systemStatus,
+                });
+                return reject('could not connect');
+            }, timeoutValue);
+            return timeout;
+        })
+    ])
+        .then(response => Promise.resolve(response))
         .catch(err => Promise.reject(err));
 };
 
-const getSingleSensorStatus = (sensorId) => {
-    return BleManager.retrieveServices(sensorId)
-        .catch(err => BleManager.retrieveServices(sensorId))
-        .then(peripheralInfo => {
-            const dataArray = [commands.GET_ENTIRE_SYSTEM_STATUS, convertHex('0x00')];
-            return write(peripheralInfo.id, dataArray); // get entire system status - 0x7D
-        })
-        .then(response => {
-            let returnObj = {};
-            returnObj.systemStatus = response[4];
-            returnObj.batteryCharge = response[5] > 100 ? 100 : response[5];
-            returnObj.numberOfPractices = response[6];
-            store.dispatch({
-                type:          Actions.UPDATE_BLE_STATUSES,
-                batteryCharge: returnObj.batteryCharge,
-                systemStatus:  returnObj.systemStatus,
+const getAllPracticeDetails = (sensorId, practiceIndex = 0) => {
+    // NOTE: timeout function added due to - 'Attempts to connect to a peripheral do not time out' (iOS documentation)
+    let timeout = null;
+    let gettingAllPracticeDetails = new Promise((resolve, reject) => {
+        let returnObj = {};
+        return BleManager.retrieveServices(sensorId)
+            .then(peripheralInfo => {
+                let timestampsArray = [commands.GET_PRACTICE_TIMESTAMPS, convertHex('0x01'), convertHex(practiceIndex)];
+                return write(peripheralInfo.id, timestampsArray); // get single sensor practice timestamps - 0x76
             })
-            return Promise.resolve(returnObj);
+            .then(response => {
+                returnObj.start_time = convertUnsigned32BitIntToEpochTime(response.slice(4, 8).reverse());
+                returnObj.end_time = convertUnsigned32BitIntToEpochTime(response.slice(8, 12).reverse());
+                return response;
+            })
+            .then(res => {
+                const accelerationsArray = [commands.GET_PRACTICE_ACCELERATIONS, convertHex('0x01'), convertHex(practiceIndex)];
+                return write(sensorId, accelerationsArray); // get single sensor practice accelerations - 0x77
+            })
+            .then(res2 => {
+                returnObj.inactive_accel = convertAccelerationToFloat(res2.slice(4, 8).reverse());
+                returnObj.low_accel = convertAccelerationToFloat(res2.slice(8, 12).reverse());
+                returnObj.mod_accel = convertAccelerationToFloat(res2.slice(12, 16).reverse());
+                returnObj.high_accel = convertAccelerationToFloat(res2.slice(16, 20).reverse());
+                return res2;
+            })
+            .then(res3 => {
+                const durationsArray = [commands.GET_PRACTICE_DURATION, convertHex('0x01'), convertHex(practiceIndex)];
+                return write(sensorId, durationsArray); // get single sensor practice windows duration - 0x78
+            })
+            .then(res4 => {
+                returnObj.inactive_duration = convertDurationToInt(res4.slice(4, 6).reverse());
+                returnObj.low_duration = convertDurationToInt(res4.slice(6, 8).reverse());
+                returnObj.mod_duration = convertDurationToInt(res4.slice(8, 10).reverse());
+                returnObj.high_duration = convertDurationToInt(res4.slice(10, 12).reverse());
+                return resolve(returnObj);
+            })
+            .catch(err => reject(err));
+    });
+    return Promise.race([
+        gettingAllPracticeDetails,
+        new Promise((resolve, reject) => {
+            timeout = setTimeout(() => reject('could not connect'), timeoutValue);
+            return timeout;
         })
-        .catch(err => {
-            return Promise.reject(err)
-        });
+    ])
+        .then(response => Promise.resolve(response))
+        .catch(err => Promise.reject(err));
 };
 
-const getAllPracticeDetails = (sensorId, practiceIndex = 0) => {
-    let returnObj = {};
-    return BleManager.retrieveServices(sensorId)
-        .then(sleeper(1000))
-        .then(peripheralInfo => {
-            let timestampsArray = [commands.GET_PRACTICE_TIMESTAMPS, convertHex('0x01'), convertHex(practiceIndex)];
-            return write(peripheralInfo.id, timestampsArray); // get single sensor practice timestamps - 0x76
+const deleteAllSingleSensorPractices = (sensorId) => {
+    // NOTE: timeout function added due to - 'Attempts to connect to a peripheral do not time out' (iOS documentation)
+    let timeout = null;
+    let deletingAllPractices = new Promise((resolve, reject) => {
+        const dataArray = [commands.DELETE_ALL_PRACTICES, convertHex('0x00')];
+        return BleManager.retrieveServices(sensorId)
+            .then(peripheralInfo => write(peripheralInfo.id, dataArray)) // delete single sensor practice - 0x79
+            .then(response => resolve(response))
+            .catch(err => reject(err));
+    });
+    return Promise.race([
+        deletingAllPractices,
+        new Promise((resolve, reject) => {
+            timeout = setTimeout(() => reject('could not connect'), timeoutValue);
+            return timeout;
         })
-        .then(response => {
-            returnObj.start_time = convertUnsigned32BitIntToEpochTime(response.slice(4, 8).reverse());
-            returnObj.end_time = convertUnsigned32BitIntToEpochTime(response.slice(8, 12).reverse());
-            return response;
-        })
-        .then(sleeper(1000))
-        .then(res => {
-            const accelerationsArray = [commands.GET_PRACTICE_ACCELERATIONS, convertHex('0x01'), convertHex(practiceIndex)];
-            return write(sensorId, accelerationsArray); // get single sensor practice accelerations - 0x77
-        })
-        .then(res2 => {
-            returnObj.inactive_accel = convertAccelerationToFloat(res2.slice(4, 8).reverse());
-            returnObj.low_accel = convertAccelerationToFloat(res2.slice(8, 12).reverse());
-            returnObj.mod_accel = convertAccelerationToFloat(res2.slice(12, 16).reverse());
-            returnObj.high_accel = convertAccelerationToFloat(res2.slice(16, 20).reverse());
-            return res2;
-        })
-        .then(sleeper(1000))
-        .then(res3 => {
-            const durationsArray = [commands.GET_PRACTICE_DURATION, convertHex('0x01'), convertHex(practiceIndex)];
-            return write(sensorId, durationsArray); // get single sensor practice windows duration - 0x78
-        })
-        .then(res4 => {
-            returnObj.inactive_duration = convertDurationToInt(res4.slice(4, 6).reverse());
-            returnObj.low_duration = convertDurationToInt(res4.slice(6, 8).reverse());
-            returnObj.mod_duration = convertDurationToInt(res4.slice(8, 10).reverse());
-            returnObj.high_duration = convertDurationToInt(res4.slice(10, 12).reverse());
-            return Promise.resolve(returnObj);
-        })
-        .catch(err => {
-            console.log('++++++++err',err);
-            return Promise.reject(err)
-        });
+    ])
+        .then(response => Promise.resolve(response))
+        .catch(err => Promise.reject(err));
 };
 
 const deleteSinglePractice = (sensorId, practiceIndex = 0) => {
-    const dataArray = [commands.DELETE_SINGLE_PRACTICE, convertHex('0x01'), convertHex(practiceIndex)];
-    return BleManager.retrieveServices(sensorId)
-        .then(sleeper(1000))
-        .then(peripheralInfo => write(peripheralInfo.id, dataArray)) // delete single sensor practice - 0x79
-        .then(response => {
-            console.log('++++++++response',response);
-            return Promise.resolve(response);
+    // NOTE: timeout function added due to - 'Attempts to connect to a peripheral do not time out' (iOS documentation)
+    let timeout = null;
+    let deletingPractice = new Promise((resolve, reject) => {
+        const dataArray = [commands.DELETE_SINGLE_PRACTICE, convertHex('0x01'), convertHex(practiceIndex)];
+        return BleManager.retrieveServices(sensorId)
+            .then(peripheralInfo => write(peripheralInfo.id, dataArray)) // delete single sensor practice - 0x79
+            .then(response => resolve(response))
+            .catch(err => reject(err));
+    });
+    return Promise.race([
+        deletingPractice,
+        new Promise((resolve, reject) => {
+            timeout = setTimeout(() => reject('could not connect'), timeoutValue);
+            return timeout;
         })
-        .catch(err => {
-            console.log('++++++++err',err);
-            return Promise.reject(err)
-        });
+    ])
+        .then(response => Promise.resolve(response))
+        .catch(err => Promise.reject(err));
 };
 
 /**
@@ -916,11 +979,11 @@ export default {
     checkState,
     connectToAccessory,
     connectWiFi,
+    deleteAllSingleSensorPractices,
     deleteSinglePractice,
     deleteUserSensorData,
     deviceFound,
     disconnect,
-    disconnectFromSingleSensor,
     enableBluetooth,
     getAccessoryKey,
     getAllPracticeDetails,

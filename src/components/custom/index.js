@@ -10,11 +10,13 @@
  */
 
 import Alerts from './Alerts';
+import AnimatedProgressBar from './AnimatedProgressBar';
 import Button from './Button';
 import CalendarStrip from './CalendarStrip';
 import Card from './Card';
 import Checkbox from './Checkbox';
 import Coach from './Coach';
+import CustomMyPlanNavBar from './CustomMyPlanNavBar';
 import CustomNavBar from './CustomNavBar';
 import FathomSlider from './FathomSlider';
 import FormInput from './FormInput';
@@ -34,11 +36,13 @@ import WheelScrollPicker from './WheelScrollPicker';
 
 export {
     Alerts,
+    AnimatedProgressBar,
     Button,
     CalendarStrip,
     Card,
     Checkbox,
     Coach,
+    CustomMyPlanNavBar,
     CustomNavBar,
     FathomSlider,
     FormInput,

@@ -1,116 +1,100 @@
-// import reactnative components
-import { AsyncStorage } from 'react-native';
+// import actions, utils
+import { ble as BLEActions, plan as planActions, } from '../../actions';
+import { AppColors, ErrorMessages, } from '../../constants';
+import { AppUtil, } from '../../lib';
 
 // import third-party libraries
 import _ from 'lodash';
 import moment from 'moment';
 
-// import actions, utils
-import { ble as BLEActions, plan as planActions } from '../../actions';
-import { AppColors } from '../../constants';
-import { AppUtil } from '../../lib';
-
 const bleUtils = {
 
-    handleBLESteps(ble, userId) {
+    handleBLESingleSensorStatus(ble, toDisconnect = true) {
         // setup variables
-        const imagePrefix = '../../../assets/images/sensor/';
-        let animated = false;
-        let sensorStatusResults = null;
+        let systemStatus = null;
+        let batteryCharge = null;
+        let numberOfPractices = null;
         // make sure we have a sensor paired
-        if(ble.accessoryData && ble.accessoryData.sensor_pid && ble.accessoryData.mobile_udid === AppUtil.getDeviceUUID()) {
-            return BLEActions.startConnection(ble.accessoryData.sensor_pid)
-                .then(res => {
-                    return BLEActions.getSingleSensorStatus(ble.accessoryData.sensor_pid);
-                })
-                .then(sensorStatusResult => {
-                    console.log('getSingleSensorStatus',sensorStatusResult);
-                    sensorStatusResults = sensorStatusResult;
-                    return AppUtil._retrieveAsyncStorageData('practices');
-                })
-                .then(asyncStorageResult => {
-                    if(asyncStorageResult && asyncStorageResult.length > 0) {
-                        // we still have items in our local storage, send to API
-                        console.log('we still have items in our local storage, send to API', asyncStorageResult);
-                        // TODO: what do we want to do here??????
-                    }
-                    return bleUtils.loopThroughPractices(sensorStatusResults.numberOfPractices, ble.accessoryData.sensor_pid, userId);
-                })
-                .then(() => {
+        return BLEActions.startConnection(ble.accessoryData.sensor_pid)
+            .then(res => BLEActions.getSingleSensorStatus(ble.accessoryData.sensor_pid))
+            .then(response => {
+                systemStatus = response.systemStatus;
+                batteryCharge = response.batteryCharge;
+                numberOfPractices = response.numberOfPractices;
+                if(toDisconnect) {
                     return BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
-                })
-                .then(res => {
-                    console.log('res-startDisconnection',res);
-                    return Promise.resolve({ animated, bleImage: require(`${imagePrefix}sensor.png`), });
-                })
-                .catch(err => {
-                    console.log('err---',err);
-                    BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
-                    return Promise.reject({ bleImage: require(`${imagePrefix}sensor.png`) });
-                });
-        }
-        return Promise.resolve({ animated, bleImage: null });
-    },
-
-    async loopThroughPractices(numberOfPractices, sensor_pid, userId) {
-        // setup variables
-        let currentIndex = 0;
-        let practices = [];
-        // loop through our practices
-        for (let i = 0; i < numberOfPractices; i += 1) {
-            currentIndex = i;
-            /*eslint no-loop-func:*/
-            /*eslint-env es6*/
-            await new Promise((resolve, reject) => {
-                return BLEActions.getAllPracticeDetails(sensor_pid, currentIndex)
-                    .then(allPracticeDetails => {
-                        let isLast = (currentIndex + 1) === numberOfPractices;
-                        console.log(`allPracticeDetails - ${currentIndex}`,allPracticeDetails);
-                        practices.push(allPracticeDetails);
-                        if(isLast) {
-                            // save 'practices' to AsyncStore
-                            AppUtil._storeAsyncStorageData('practices', practices);
-                        }
-                        return practices.length === numberOfPractices ? practices : null;
-                    })
-                    .then(sessionsArray => {
-                        console.log('sessionsArray',sessionsArray);
-                        if(sessionsArray && sessionsArray.length > 0) {
-                            let dataObj = {};
-                            dataObj.user_id = userId;
-                            dataObj.sessions = sessionsArray;
-                            dataObj.last_sensor_sync = `${moment().toISOString(true).split('.')[0]}Z`;
-                            planActions.postSingleSensorData(dataObj)
-                                .then(result => {
-                                    // TODO: BRING BACK TWO FUNCTIONS
-                                    // delete AsyncStorage record
-                                    // AppUtil._removeAsyncStorageData('practices');
-                                    // 0x79 (BLEActions.deleteSinglePractice) -> delete practice
-                                    // bleUtils.deleteSesnorData(sensor_pid, numberOfPractices);
-                                    return resolve('done!');
-                                });
-                        }
-                        return resolve();
-                    })
-                    .catch(error => {
-                        console.log('ERROR - allPracticeDetails',error);
-                    });
+                }
+                return Promise.resolve({ systemStatus, batteryCharge, numberOfPractices });
+            })
+            .then(res => Promise.resolve({ systemStatus, batteryCharge, numberOfPractices }))
+            .catch(err => {
+                if(toDisconnect) {
+                    return BLEActions.startDisconnection(ble.accessoryData.sensor_pid);
+                }
+                return Promise.reject(ErrorMessages.sensor.connectionError);
             });
-        }
     },
 
-    deleteSesnorData(sensorId, total) {
-        let currentIndex = 0;
-        let promiseChain = Promise.resolve();
-        for (let i = 0; i < total; i += 1) {
-            currentIndex = i;
-            /*eslint no-shadow: ["error", { "allow": ["currentIndex"] }]*/
-            /*eslint-env es6*/
-            const makeNextPromise = currentIndex => () => {
-                return BLEActions.deleteSinglePractice(sensorId, i);
-            }
-            promiseChain = promiseChain.then(makeNextPromise(currentIndex));
-        }
+    async processPractices(sensor_pid, userId) {
+        let practiceDetails = null;
+        let userPractices = null;
+        // STEP 1a: grab all practice details
+        await BLEActions.getAllPracticeDetails(sensor_pid)
+            .then(allPracticeDetails => {
+                practiceDetails = allPracticeDetails;
+                // STEP 1b: grab all locally practice details
+                return AppUtil._retrieveAsyncStorageData(userId);
+            })
+            .then(asyncResponse => {
+                // STEP 2: store locally
+                if(!asyncResponse) {
+                    userPractices = {};
+                    userPractices.practices = {};
+                } else {
+                    userPractices = asyncResponse;
+                }
+                userPractices.practices[moment(practiceDetails.start_time).unix()] = practiceDetails;
+                return AppUtil._storeAsyncStorageData(userId, userPractices);
+            })
+            .then(() => {
+                // STEP 3: delete off of sensor
+                return BLEActions.deleteSinglePractice(sensor_pid);
+            })
+            .then(() => {
+                return Promise.resolve();
+            })
+            .catch(err => Promise.reject(ErrorMessages.sensor.retreivalError));
+    },
+
+    deleteAllSingleSensorPractices(sensorId) {
+        return BLEActions.deleteAllSingleSensorPractices(sensorId)
+            .then(() => Promise.resolve('Successfully PAIRED to sensor'))
+            .catch(() => Promise.reject('Failed to PAIR to sensor'));
+    },
+
+    finalizeBleData(practices, userId) {
+        let sessionsArray = [];
+        _.map(practices, (practice, key) => {
+            sessionsArray.push(practice);
+        });
+        let dataObj = {};
+        dataObj.user_id = userId;
+        dataObj.sessions = sessionsArray;
+        dataObj.last_sensor_sync = `${moment().toISOString(true).split('.')[0]}Z`;
+        return planActions.postSingleSensorData(dataObj)
+            .then(result => {
+                // delete AsyncStorage record
+                return AppUtil._removeAsyncStorageData(userId)
+                    .then(() => Promise.resolve())
+                    .catch(err => Promise.reject(ErrorMessages.sensor.serverError));
+            })
+            .catch(err => Promise.reject(ErrorMessages.sensor.serverError));
+    },
+
+    handleBLEDisconnection(sensorId) {
+        return BLEActions.startDisconnection(sensorId)
+            .then(res => Promise.resolve(res))
+            .catch(err => Promise.reject(err));
     },
 
     systemStatusMapping(status) {

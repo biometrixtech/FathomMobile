@@ -30,7 +30,7 @@ import { AppUtil, } from '../../lib';
 
 // Components
 import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
-import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } from '../myPlan/pages';
+import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } from './pages';
 
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
@@ -80,7 +80,7 @@ class MyPlan extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dailyReadiness:     {
+            dailyReadiness: {
                 readiness:     0,
                 sleep_quality: 0,
                 soreness:      [],
@@ -459,7 +459,7 @@ class MyPlan extends Component {
         newPostSession.RPE = 0;
         this.props.clearCompletedExercises();
         this.setState({
-            isPostSessionSurveyModalOpen: !this.state.isPostSessionSurveyModalOpen,
+            isPostSessionSurveyModalOpen: false,
             postSession:                  newPostSession,
         });
     }
@@ -1227,10 +1227,14 @@ class MyPlan extends Component {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
         let trainingSessions = dailyPlanObj ? _.orderBy(dailyPlanObj.training_sessions, o => moment(o.event_date), ['asc']) : [];
+        let filteredTrainingSessions = trainingSessions.length > 0 ?
+            _.filter(trainingSessions, o => o.sport_name !== null || o.strength_and_conditioning_type !== null)
+            :
+            [];
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
-                { (dailyPlanObj && !dailyPlanObj.sessions_planned) && trainingSessions.length === 0 ?
+                { (dailyPlanObj && !dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
                     <View>
                         <ListItem
                             containerStyle={{ borderBottomWidth: 0 }}
@@ -1258,7 +1262,7 @@ class MyPlan extends Component {
                     null
                 }
                 {
-                    _.map(trainingSessions, (postPracticeSurvey, i) => {
+                    _.map(filteredTrainingSessions, (postPracticeSurvey, i) => {
                         let filteredSessionTypes = _.filter(MyPlanConstants.availableSessionTypes, o => o.index === postPracticeSurvey.session_type);
                         let selectedSessionType = filteredSessionTypes.length === 0 ? 'TRAINING' : filteredSessionTypes[0].label.toUpperCase();
                         let filteredStrengthConditioningTypes = _.filter(MyPlanConstants.strengthConditioningTypes, o => o.index === postPracticeSurvey.strength_and_conditioning_type);
@@ -1311,7 +1315,7 @@ class MyPlan extends Component {
                     title={'ADD SESSION'}
                 />
                 <Spacer size={10} />
-                { (dailyPlanObj && dailyPlanObj.sessions_planned) && trainingSessions.length === 0 ?
+                { (dailyPlanObj && dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
                     <Button
                         backgroundColor={AppColors.white}
                         buttonStyle={{justifyContent: 'space-between',}}
