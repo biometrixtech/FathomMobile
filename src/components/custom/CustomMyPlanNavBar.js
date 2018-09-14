@@ -183,9 +183,11 @@ class CustomMyPlanNavBar extends Component {
                 );
             }
         } else if(nextAppState === 'background') {
-            this._handleClearInterval();
-            bleUtils.handleBLEDisconnection(store.getState().ble.accessoryData.sensor_pid)
-                .catch(err => console.log('err',err));
+            if(this._handleBleDetails(this.props.routeName).fetchBleData) {
+                this._handleClearInterval();
+                bleUtils.handleBLEDisconnection(store.getState().ble.accessoryData.sensor_pid)
+                    .catch(err => console.log('err',err));
+            }
         }
     }
 
