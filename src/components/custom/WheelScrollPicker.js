@@ -205,6 +205,7 @@ class WheelScrollPicker extends Component {
                 />
                 <ScrollView
                     bounces={false}
+                    nestedScrollEnabled={true}
                     onTouchStart={this.props.onTouchStart}
                     onMomentumScrollBegin={this.onMomentumScrollBegin}
                     onMomentumScrollEnd={this.onMomentumScrollEnd}

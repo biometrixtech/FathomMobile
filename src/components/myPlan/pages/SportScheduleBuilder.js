@@ -50,7 +50,7 @@ class SportScheduleBuilder extends Component {
                 minutes: 2,
                 amPM:    1,
             },
-        }
+        };
     }
 
     _nextStep = newStep => {
@@ -145,8 +145,8 @@ class SportScheduleBuilder extends Component {
         let selectedStartTime = isFormValid ? this._getDateTimeDurationFromState().event_date : '';
         let selectedDuration = isFormValid ? this._getDateTimeDurationFromState().duration : '';
         let sportText = step === 0 || step === 1 ? 'activity' : step === 2 ? `${selectedSport}...` : `${selectedSport} ${selectedSessionType}`;
-        let startTimeText = step === 3 && !isFormValid ? 'time' : step === 3 && isFormValid ? `${selectedStartTime.format('h:mm')}${timeValueGroups.amPM === 0 ? 'AM' : 'PM'}` : '';
-        let durationText = step === 3 && !isFormValid ? 'duration' : `${selectedDuration}MIN`;
+        let startTimeText = (step === 3 || step === 4) && !isFormValid ? 'time' : (step === 3 || step === 4) && isFormValid ? `${selectedStartTime.format('h:mm')}` : '';
+        let durationText = step === 3 && !isFormValid ? 'duration' : `${selectedDuration}`;
         return (
             <View style={{flex: 1,}}>
                 <View style={{flexDirection: 'row'}}>
@@ -169,23 +169,38 @@ class SportScheduleBuilder extends Component {
                         <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32), textAlign: 'center'}}>
                             {`Today I ${step > 2 ? 'had' : 'did'}`}
                         </Text>
-                        <Text
-                            robotoBold
-                            style={{
-                                color:              step >= 3 ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent,
-                                fontSize:           AppFonts.scaleFont(32),
-                                textAlign:          'center',
-                                textDecorationLine: step >= 3 ? 'none' : 'underline',
-                            }}
-                        >
-                            {sportText}
-                            <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}}>{`${step >= 3 ? ' at' : ''}`}</Text>
+                        <Text style={{flexWrap: 'wrap', fontSize: AppFonts.scaleFont(32), lineHeight: AppFonts.scaleFont(32), textAlign: 'center',}}>
+                            <Text
+                                robotoBold
+                                style={{
+                                    color:              step >= 3 ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent,
+                                    textDecorationLine: step >= 3 ? 'none' : 'underline',
+                                }}
+                            >
+                                {sportText}
+                            </Text>
+                            { step >= 3 ?
+                                <Text robotoLight style={{color: AppColors.zeplin.darkGrey,}}>{' at'}</Text>
+                                :
+                                <Text style={{fontSize: AppFonts.scaleFont(32), lineHeight: AppFonts.scaleFont(32),}}>
+                                    <Text robotoLight style={{color: AppColors.zeplin.darkGrey,}}>{' at '}</Text>
+                                    <Text robotoMedium style={{color: 'rgba(117, 117, 117, 0.5)',}}>{'time'}</Text>
+                                    <Text robotoLight style={{color: AppColors.zeplin.darkGrey,}}>{' for '}</Text>
+                                    <Text robotoMedium style={{color: 'rgba(117, 117, 117, 0.5)',}}>{'duration'}</Text>
+                                </Text>
+                            }
                         </Text>
                         { step >= 3 ?
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center'}}>
-                                <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), textDecorationLine: 'underline'}}>{startTimeText}</Text>
+                                <Text robotoBold style={{color: (step === 3 || step === 4) && isFormValid ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), textDecorationLine: (step === 3 || step === 4) && isFormValid ? 'none' : 'underline'}}>
+                                    {startTimeText}
+                                    <Text robotoBold style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? `${timeValueGroups.amPM === 0 ? 'AM' : 'PM'}` : ''}</Text>
+                                </Text>
                                 <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}}>{' for '}</Text>
-                                <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), textDecorationLine: 'underline'}}>{durationText}</Text>
+                                <Text robotoBold style={{color: (step === 3 || step === 4) && isFormValid ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), textDecorationLine: (step === 3 || step === 4) && isFormValid ? 'none' : 'underline'}}>
+                                    {durationText}
+                                    <Text robotoBold style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'MIN' : ''}</Text>
+                                </Text>
                             </View>
                             :
                             null

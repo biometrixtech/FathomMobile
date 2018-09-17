@@ -287,9 +287,7 @@ class MyPlan extends Component {
         newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
         newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality;
         newDailyReadiness.readiness = newDailyReadiness.readiness;
-        newDailyReadiness.soreness.map(bodyPart => {
-            newDailyReadiness.soreness = newDailyReadiness.soreness.filter(u => { return !!u.severity && u.severity > 0; });
-        });
+        newDailyReadiness.soreness= newDailyReadiness.soreness.filter(u => u.severity && u.severity > 0);
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
                 let newPrepareObject = Object.assign({}, this.state.prepare, {
@@ -297,7 +295,7 @@ class MyPlan extends Component {
                 });
                 this.props.clearCompletedExercises();
                 this.setState({
-                    dailyReadiness:     {
+                    dailyReadiness: {
                         readiness:     0,
                         sleep_quality: 0,
                         soreness:      [],
@@ -325,7 +323,7 @@ class MyPlan extends Component {
         let newPostSessionSurvey = {};
         newPostSessionSurvey.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
         newPostSessionSurvey.RPE = this.state.postSession.RPE;
-        newPostSessionSurvey.soreness = this.state.postSession.soreness;
+        newPostSessionSurvey.soreness = this.state.postSession.soreness.filter(u => u.severity && u.severity > 0);
         let postSession = {
             event_date:          this.state.postSession.event_date,
             session_type:        this.state.postSession.session_type,
@@ -395,7 +393,7 @@ class MyPlan extends Component {
                         let newMissingSideSorenessPart = {};
                         newMissingSideSorenessPart.body_part = areaClicked.index;
                         newMissingSideSorenessPart.pain = false;
-                        newMissingSideSorenessPart.severity = 0;
+                        newMissingSideSorenessPart.severity = null;
                         newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
                         newSorenessFields.push(newMissingSideSorenessPart);
                     } else {
@@ -410,20 +408,20 @@ class MyPlan extends Component {
                     let newLeftSorenessPart = {};
                     newLeftSorenessPart.body_part = areaClicked.index;
                     newLeftSorenessPart.pain = false;
-                    newLeftSorenessPart.severity = 0;
+                    newLeftSorenessPart.severity = null;
                     newLeftSorenessPart.side = 1;
                     newSorenessFields.push(newLeftSorenessPart);
                     let newRightSorenessPart = {};
                     newRightSorenessPart.body_part = areaClicked.index;
                     newRightSorenessPart.pain = false;
-                    newRightSorenessPart.severity = 0;
+                    newRightSorenessPart.severity = null;
                     newRightSorenessPart.side = 2;
                     newSorenessFields.push(newRightSorenessPart);
                 } else {
                     let newSorenessPart = {};
                     newSorenessPart.body_part = areaClicked.index;
                     newSorenessPart.pain = false;
-                    newSorenessPart.severity = 0;
+                    newSorenessPart.severity = null;
                     newSorenessPart.side = 0;
                     newSorenessFields.push(newSorenessPart);
                 }
@@ -445,22 +443,6 @@ class MyPlan extends Component {
         this.props.clearCompletedExercises();
         this.setState({
             isCompletedAMPMRecoveryModalOpen: !this.state.isCompletedAMPMRecoveryModalOpen
-        });
-    }
-
-    _togglePostSessionSurvey = () => {
-        let newPostSession = _.cloneDeep(this.state.postSession);
-        newPostSession.description = '';
-        newPostSession.duration = 0;
-        newPostSession.event_date = null;
-        newPostSession.session_type = null;
-        newPostSession.sport_name = null;
-        newPostSession.strength_and_conditioning_type = null;
-        newPostSession.RPE = 0;
-        this.props.clearCompletedExercises();
-        this.setState({
-            isPostSessionSurveyModalOpen: false,
-            postSession:                  newPostSession,
         });
     }
 
@@ -489,9 +471,19 @@ class MyPlan extends Component {
                     });
                 });
         } else {
+            let newPostSession = _.cloneDeep(this.state.postSession);
+            newPostSession.description = '';
+            newPostSession.duration = 0;
+            newPostSession.event_date = null;
+            newPostSession.session_type = null;
+            newPostSession.sport_name = null;
+            newPostSession.strength_and_conditioning_type = null;
+            newPostSession.RPE = 0;
+            this.props.clearCompletedExercises();
             this.setState({
                 isPostSessionSurveyModalOpen: false,
                 loading:                      false,
+                postSession:                  newPostSession,
             });
         }
     }
@@ -1355,7 +1347,7 @@ class MyPlan extends Component {
                                 handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                                 handleFormChange={this._handlePostSessionFormChange}
                                 handleFormSubmit={this._handlePostSessionSurveySubmit}
-                                handleTogglePostSessionSurvey={this._togglePostSessionSurvey}
+                                handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
                                 postSession={this.state.postSession}
                                 soreBodyParts={this.props.plan.soreBodyParts}
                                 typicalSessions={this.props.plan.typicalSessions}

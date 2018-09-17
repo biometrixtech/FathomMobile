@@ -205,7 +205,7 @@ function cleanExercise(exercise) {
     cleanedExercise.library_id = exercise.library_id;
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
-    cleanedExercise.dosage = `${exercise.sets_assigned}x ${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : ''}`;
+    cleanedExercise.dosage = `${exercise.sets_assigned}x ${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : exercise.unit_of_measure === 'yards' ? 'yards' : ''}`;
     cleanedExercise.imageUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.gif`;
     cleanedExercise.thumbnailUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.png`;
     cleanedExercise.videoUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.mp4`;
@@ -269,14 +269,40 @@ const teamSports = [
     { index: 23, order: null, label: 'Weightlifting', },
 ];
 
+const getTimeHours = () => {
+    let hoursList = [];
+    for (let hour = 1; hour <= 12; hour += 1) {
+        hoursList.push(hour.toString());
+    }
+    return hoursList;
+};
+
+const getTimeMinutes = () => {
+    let minutesList = [];
+    for (let min = 0; min <= 45; min += 15) {
+        let minString = min.toString() === '0' ? '00' : min.toString();
+        minutesList.push(minString);
+    }
+    return minutesList;
+};
+
 const timeOptionGroups = {
-    hours:   ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-    minutes: ['00', '15', '30', '45'],
+    hours:   getTimeHours(),
+    minutes: getTimeMinutes(),
     amPM:    ['AM', 'PM'],
 };
 
+const getDurationMinutes = () => {
+    let minutesList = [];
+    for (let min = 5; min <= 120; min += 5) {
+        let minString = min.toString() === '5' ? '05' : min.toString();
+        minutesList.push(minString);
+    }
+    return minutesList;
+};
+
 const durationOptionGroups = {
-    minutes: ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90'],
+    minutes: getDurationMinutes(),
     label:   [' ', 'MIN', ' '],
 };
 
