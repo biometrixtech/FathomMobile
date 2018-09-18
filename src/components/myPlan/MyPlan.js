@@ -1371,7 +1371,7 @@ class MyPlan extends Component {
     };
 
     _goToScrollviewPage = (pageIndex) => {
-        if(this.tabView) {
+        if(this.tabView && !this.state.isReadinessSurveyModalOpen && !this.state.isPostSessionSurveyModalOpen) {
             setTimeout(() => {
                 this.tabView.goToPage(pageIndex);
             }, 300);
