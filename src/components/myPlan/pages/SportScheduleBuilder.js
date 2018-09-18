@@ -120,6 +120,8 @@ class SportScheduleBuilder extends Component {
         now = now.set('second', 0);
         now = now.set('millisecond', 0);
         let hoursIn24 = timeValueGroups.amPM === 0 ? (timeValueGroups.hours + 1) : ((timeValueGroups.hours + 1) + 12);
+        hoursIn24 = hoursIn24 === 12 ? 0 : hoursIn24;
+        hoursIn24 = hoursIn24 === 24 ? 12 : hoursIn24;
         now = now.set('hour', hoursIn24);
         now = now.set('minute', Number(MyPlanConstants.timeOptionGroups.minutes[timeValueGroups.minutes]));
         let duration = Number(MyPlanConstants.durationOptionGroups.minutes[durationValueGroups.minutes]);
