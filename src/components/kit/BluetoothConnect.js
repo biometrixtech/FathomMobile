@@ -209,16 +209,12 @@ class BluetoothConnectView extends Component {
     }
 
     connect = (data) => {
-        let ble = {};
-        ble.accessoryData = {};
-        ble.accessoryData.sensor_pid = data.id;
         return this.props.stopScan()
             .then(() => this.props.connectToAccessory(data))
             .catch(err => this.props.connectToAccessory(data))
             .catch(err => this.props.stopConnect())
-            .then(() => bleUtils.handleBLESingleSensorStatus(ble, false))
-            .then(res => {
-                this._toggleAlertNotification(data.id, this.props.user.id, res);
+            .then(() => {
+                this._toggleAlertNotification(data.id, this.props.user.id);
             })
             .catch(err => {
                 console.log('err in BluetoothConnect #4',err);
@@ -234,7 +230,7 @@ class BluetoothConnectView extends Component {
         this.setState({ size: { width: layout.width, height: layout.height } });
     }
 
-    _toggleAlertNotification(sensorId, userId, sensorStatus) {
+    _toggleAlertNotification(sensorId, userId) {
         Alert.alert(
             '',
             'Did your sensor\'s light blink green?',
@@ -252,20 +248,26 @@ class BluetoothConnectView extends Component {
                 {
                     text:    'Yes',
                     onPress: () => {
-                        if(sensorStatus.numberOfPractices > 0) {
-                            return this._togglePracticesAlertNotification(userId, sensorId);
-                        }
-                        return this.props.postUserSensorData(userId)
-                            .then(() => BleManager.disconnect(sensorId))
-                            .catch(err => BleManager.disconnect(sensorId))
-                            .then(() => {
-                                if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
-                                    this.refs.toast.show('Failed to PAIR to sensor', (DURATION.LENGTH_SHORT * 2));
+                        let ble = {};
+                        ble.accessoryData = {};
+                        ble.accessoryData.sensor_pid = sensorId;
+                        return bleUtils.handleBLESingleSensorStatus(ble, false)
+                            .then(res => {
+                                if(res.numberOfPractices > 0) {
+                                    return this._togglePracticesAlertNotification(userId, sensorId);
                                 }
-                                this.setState({ index: 3 });
-                                this.pages.progress = 3;
-                                this.props.stopConnect();
-                                return this.props.checkState();
+                                return this.props.postUserSensorData(userId)
+                                    .then(() => BleManager.disconnect(sensorId))
+                                    .catch(err => BleManager.disconnect(sensorId))
+                                    .then(() => {
+                                        if (this.props.bluetooth.accessoryData && !this.props.bluetooth.accessoryData.sensor_pid) {
+                                            this.refs.toast.show('Failed to PAIR to sensor', (DURATION.LENGTH_SHORT * 2));
+                                        }
+                                        this.setState({ index: 3 });
+                                        this.pages.progress = 3;
+                                        this.props.stopConnect();
+                                        return this.props.checkState();
+                                    });
                             });
                     }
                 },
