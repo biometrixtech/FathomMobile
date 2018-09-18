@@ -124,8 +124,8 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7
-        versionName "2.1.1-beta.7"
+        versionCode 10
+        versionName "2.1.1-beta.10"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }

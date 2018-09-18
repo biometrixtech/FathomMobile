@@ -192,14 +192,14 @@ class SportScheduleBuilder extends Component {
                         </Text>
                         { step >= 3 ?
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center'}}>
-                                <Text robotoBold style={{color: (step === 3 || step === 4) && isFormValid ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), textDecorationLine: (step === 3 || step === 4) && isFormValid ? 'none' : 'underline'}}>
+                                <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), textDecorationLine: 'underline',}}>
                                     {startTimeText}
-                                    <Text robotoBold style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? `${timeValueGroups.amPM === 0 ? 'AM' : 'PM'}` : ''}</Text>
+                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? `${timeValueGroups.amPM === 0 ? 'AM' : 'PM'}` : ''}</Text>
                                 </Text>
                                 <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}}>{' for '}</Text>
-                                <Text robotoBold style={{color: (step === 3 || step === 4) && isFormValid ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), textDecorationLine: (step === 3 || step === 4) && isFormValid ? 'none' : 'underline'}}>
+                                <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), textDecorationLine: 'underline',}}>
                                     {durationText}
-                                    <Text robotoBold style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'MIN' : ''}</Text>
+                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'MIN' : ''}</Text>
                                 </Text>
                             </View>
                             :

@@ -217,9 +217,11 @@ class SoreBodyPart extends Component {
                                     sorenessPainMappingLength={sorenessPainMapping.length}
                                     updateStateAndForm={() => {
                                         let newType = this.state.type === 'all-good' ? '' : this.state.type;
+                                        let newKey = sorenessPainScaleMappingValue === this.state.value ? null : key;
+                                        sorenessPainScaleMappingValue = sorenessPainScaleMappingValue === this.state.value ? null : sorenessPainScaleMappingValue;
                                         this.setState({
                                             type:  newType,
-                                            value: key,
+                                            value: newKey,
                                         }, () => {
                                             handleFormChange('soreness', sorenessPainScaleMappingValue, this.state.type === 'pain' ,bodyPartMap.index, bodyPartSide, true);
                                         });

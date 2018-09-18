@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Image, } from 'react-native';
+import { Animated, Easing, Image, } from 'react-native';
 
 // import third-party libraries
 import { Actions, Router, Scene, Stack } from 'react-native-router-flux';
@@ -52,9 +52,35 @@ import MyPlanComponent from '../components/myPlan/MyPlan';
 import OnboardingContainer from '../containers/onboarding/Onboarding';
 import OnboardingComponent from '../components/onboarding/Onboarding';
 
+const transitionConfig = () => {
+    return {
+        transitionSpec: {
+            duration:        750,
+            easing:          Easing.out(Easing.poly(4)),
+            timing:          Animated.timing,
+            useNativeDriver: true,
+        },
+        screenInterpolator: sceneProps => {
+            const { position, layout, scene, } = sceneProps;
+            const thisSceneIndex = scene.index;
+            const width = layout.initWidth;
+            const translateX = position.interpolate({
+                inputRange:  [thisSceneIndex - 1, thisSceneIndex, thisSceneIndex + 1],
+                outputRange: [-width, 0, 0]
+            });
+            return { transform: [ { translateX } ] };
+        },
+    }
+};
+
 const Index = (
     <Router hideNavBar={true}>
-        <Stack hideNavBar={true} key={'root'} titleStyle={{ alignSelf: 'center' }}>
+        <Stack
+            hideNavBar={true}
+            key={'root'}
+            titleStyle={{ alignSelf: 'center' }}
+            transitionConfig={transitionConfig}
+        >
             <Scene
                 Layout={StartComponent}
                 component={StartContainer}
