@@ -103,7 +103,7 @@ class SoreBodyPart extends Component {
                                         type:  this.state.type === 'all-good' ? '' : 'all-good',
                                         value: null,
                                     }, () => {
-                                        handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide, true);
+                                        handleFormChange('soreness', 0, this.state.type === 'pain', bodyPartMap.index, bodyPartSide, true);
                                     });
                                 }}
                                 reverse={false}
@@ -140,7 +140,7 @@ class SoreBodyPart extends Component {
                                         type:  this.state.type === 'soreness' ? '' : 'soreness',
                                         value: null,
                                     }, () => {
-                                        handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide);
+                                        handleFormChange('soreness', null, this.state.type === 'pain', bodyPartMap.index, bodyPartSide);
                                     });
                                 }}
                                 reverse={false}
@@ -175,7 +175,7 @@ class SoreBodyPart extends Component {
                                         type:  this.state.type === 'pain' ? '' : 'pain',
                                         value: null,
                                     }, () => {
-                                        handleFormChange('soreness', 0, bodyPartMap.index, bodyPartSide);
+                                        handleFormChange('soreness', null, this.state.type === 'pain', bodyPartMap.index, bodyPartSide);
                                     });
                                 }}
                                 reverse={false}
@@ -216,10 +216,14 @@ class SoreBodyPart extends Component {
                                     keyLabel={key}
                                     sorenessPainMappingLength={sorenessPainMapping.length}
                                     updateStateAndForm={() => {
+                                        let newType = this.state.type === 'all-good' ? '' : this.state.type;
+                                        let newKey = sorenessPainScaleMappingValue === this.state.value ? null : key;
+                                        sorenessPainScaleMappingValue = sorenessPainScaleMappingValue === this.state.value ? null : sorenessPainScaleMappingValue;
                                         this.setState({
-                                            value: key,
+                                            type:  newType,
+                                            value: newKey,
                                         }, () => {
-                                            handleFormChange('soreness', sorenessPainScaleMappingValue, bodyPartMap.index, bodyPartSide, true);
+                                            handleFormChange('soreness', sorenessPainScaleMappingValue, this.state.type === 'pain' ,bodyPartMap.index, bodyPartSide, true);
                                         });
                                     }}
                                     valueLabel={value}

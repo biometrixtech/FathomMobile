@@ -29,7 +29,7 @@ import {
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import Egg from 'react-native-egg';
-import FormValidation from 'tcomb-form-native';
+//import FormValidation from 'tcomb-form-native';
 import Modal from 'react-native-modalbox';
 
 // Consts and Libs
@@ -39,7 +39,7 @@ import { onboardingUtils } from '../../constants/utils';
 import { store } from '../../store';
 
 // Components
-import { Alerts, Button, Card, ListItem, Spacer, TabIcon, Text } from '../custom';
+import { Alerts, Button, Card, FormInput, ListItem, Spacer, TabIcon, Text } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -52,29 +52,6 @@ const styles = StyleSheet.create({
         width: AppSizes.screen.widthThird,
     },
 });
-let inputStyle = _.cloneDeep(FormValidation.form.Form.stylesheet);
-inputStyle.textbox.error.borderColor = AppColors.secondary.red.fiftyPercent;
-inputStyle.textbox.error.borderLeftWidth = 0;
-inputStyle.textbox.error.borderRightWidth = 0;
-inputStyle.textbox.error.borderTopWidth = 0;
-inputStyle.textbox.error.color = AppColors.secondary.red.fiftyPercent;
-inputStyle.textbox.error.textAlign = 'center';
-inputStyle.textbox.error.fontFamily = AppStyles.robotoBold.fontFamily;
-inputStyle.textbox.error.fontWeight = AppStyles.robotoBold.fontWeight;
-inputStyle.textbox.error.fontSize = AppFonts.scaleFont(15);
-inputStyle.textbox.normal.borderColor = AppColors.white;
-inputStyle.textbox.normal.borderLeftWidth = 0;
-inputStyle.textbox.normal.borderRightWidth = 0;
-inputStyle.textbox.normal.borderTopWidth = 0;
-inputStyle.textbox.normal.color = AppColors.primary.yellow.hundredPercent;
-inputStyle.textbox.normal.textAlign = 'center';
-inputStyle.textbox.normal.fontFamily = AppStyles.robotoBold.fontFamily;
-inputStyle.textbox.normal.fontWeight = AppStyles.robotoBold.fontWeight;
-inputStyle.textbox.normal.fontSize = AppFonts.scaleFont(15);
-inputStyle.textboxView.error.color = AppColors.white;
-inputStyle.textboxView.normal.color = AppColors.white;
-inputStyle.errorBlock.color = AppColors.secondary.red.fiftyPercent;
-inputStyle.errorBlock.textAlign = 'center';
 
 const Wrapper = props => Platform.OS === 'ios' ?
     (
@@ -132,22 +109,8 @@ class Login extends Component {
 
     constructor(props) {
         super(props);
-
-        // Email Validation
-        const validEmail = FormValidation.refinement(
-            FormValidation.String, (email) => {
-                if(!onboardingUtils.isEmailValid(email)) { return false; }
-                return true;
-            },
-        );
-
-        // Password Validation - Must be 6 chars long
-        const validPassword = FormValidation.refinement(
-            FormValidation.String, (password) => {
-                if (password.length < 2) { return false; }
-                return true;
-            },
-        );
+        this._focusNextField = this._focusNextField.bind(this);
+        this.inputs = {};
 
         this.state = {
             isModalVisible: false,
@@ -157,44 +120,9 @@ class Login extends Component {
                 status:  '',
                 success: '',
             },
-            form_fields: FormValidation.struct({
-                Email:    validEmail,
-                Password: validPassword,
-            }),
-            empty_form_values: {
-                Email:    '',
-                Password: '',
-            },
-            form_values: {},
-            options:     {
-                fields: {
-                    Email: {
-                        autoCapitalize:       'none',
-                        blurOnSubmit:         false,
-                        clearButtonMode:      'while-editing',
-                        error:                'YOUR EMAIL MUST BE A VALID EMAIL FORMAT',
-                        keyboardType:         'email-address',
-                        label:                ' ',
-                        placeholder:          'email',
-                        placeholderTextColor: AppColors.primary.yellow.hundredPercent,
-                        onSubmitEditing:      () => this._focusNextField('Password'),
-                        returnKeyType:        'next',
-                        stylesheet:           inputStyle,
-                    },
-                    Password: {
-                        blurOnSubmit:         true,
-                        clearButtonMode:      'while-editing',
-                        error:                'YOUR PASSWORD MUST BE 8-16 CHARACTERS, INCLUDE AN UPPERCASE LETTER, A LOWERCASE LETTER, AND A NUMBER',
-                        label:                ' ',
-                        password:             true,
-                        placeholder:          'password',
-                        placeholderTextColor: AppColors.primary.yellow.hundredPercent,
-                        onSubmitEditing:      this.login,
-                        returnKeyType:        'done',
-                        secureTextEntry:      true,
-                        stylesheet:           inputStyle,
-                    },
-                },
+            form_values: {
+                email:    '',
+                password: '',
             },
         };
     }
@@ -214,7 +142,42 @@ class Login extends Component {
     }
 
     _focusNextField = (id) => {
-        this.form.refs.input.refs[id].refs.input.focus();
+        this.inputs[id].focus();
+    }
+
+
+    _handleFormChange = (name, value) => {
+
+        let newFormFields = _.update( this.state.form_values, name, () => value);
+        this.setState({
+            ['form_values']: newFormFields,
+        });
+    }
+
+    _handleFormSubmit = () => {
+        // validation
+        let errorsArray = this._validateForm();
+        if (errorsArray.length === 0)
+        {
+            this.login();
+        }
+        else
+        {
+            let newErrorFields = _.update( this.state.resultMsg, 'error', () => errorsArray);
+            this.setState({ resultMsg: newErrorFields });
+        }
+    }
+
+    _routeToForgotPassword = () => {
+        Actions.forgotPassword();
+    }
+
+    _validateForm = () => {
+        const form_fields = this.state;
+        let errorsArray = [];
+        errorsArray = errorsArray.concat(onboardingUtils.isEmailValid(form_fields.form_values.email).errorsArray);
+        errorsArray = errorsArray.concat(onboardingUtils.isPasswordValid(form_fields.form_values.password).errorsArray);
+        return errorsArray;
     }
 
     resizeModal = (ev) => {
@@ -226,7 +189,7 @@ class Login extends Component {
       */
     login = () => {
         // Get new credentials and update
-        const credentials = this.form.getValue();
+        const credentials = this.state.form_values;
 
         // close keyboard
         Keyboard.dismiss();
@@ -248,8 +211,8 @@ class Login extends Component {
                   *         - finalizeLogin (user, userCreds, token, resolve, reject)
                   */
                 return this.props.onFormSubmit({
-                    email:    credentials.Email,
-                    password: credentials.Password,
+                    email:    credentials.email,
+                    password: credentials.password,
                 }, false).then(response => {
                     let { authorization, user } = response;
                     return this.props.authorizeUser(authorization, user, credentials)
@@ -276,7 +239,7 @@ class Login extends Component {
                         resultMsg: { success: 'SUCCESS, NOW LOADING YOUR DATA!!' },
                     }, () => {
                         if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
-                            Actions.home();
+                            Actions.myPlan();
                         } else {
                             Actions.onboarding();
                         }
@@ -290,7 +253,6 @@ class Login extends Component {
     }
 
     render = () => {
-        const Form = FormValidation.form.Form;
 
         return (
             <Wrapper>
@@ -318,37 +280,70 @@ class Login extends Component {
                     </Egg>
                 </View>
 
-                <View style={{width: AppSizes.screen.widthTwoThirds,}}>
+                <View style={[AppStyles.containerCentered]}>
                     <Alerts
                         error={this.state.resultMsg.error}
+                        extraStyles={{width: AppSizes.screen.widthTwoThirds,}}
                         status={this.state.resultMsg.status}
                         success={this.state.resultMsg.success}
                     />
-                    <Form
-                        options={this.state.options}
-                        ref={b => { this.form = b; }}
-                        type={this.state.form_fields}
-                        value={this.state.form_values}
+                    <FormInput
+                        autoCapitalize={'none'}
+                        blurOnSubmit={ false }
+                        clearButtonMode = 'while-editing'
+                        inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,}]}
+                        keyboardType={'email-address'}
+                        onChangeText={(text) => this._handleFormChange('email', text)}
+                        onSubmitEditing={() => this._focusNextField('password')}
+                        placeholder={'email'}
+                        placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                        returnKeyType={'next'}
+                        textInputRef={input => {
+                            this.inputs.email = input;
+                        }}
+                        value={this.state.form_values.email}
+                    />
+                    <FormInput
+                        autoCapitalize={'none'}
+                        blurOnSubmit={ true }
+                        clearButtonMode = 'while-editing'
+                        inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,paddingTop: 25}]}
+                        keyboardType={'default'}
+                        onChangeText={(text) => this._handleFormChange('password', text)}
+                        onSubmitEditing={() => this._handleFormSubmit()}
+                        password={true}
+                        placeholder={'password'}
+                        placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                        returnKeyType={'done'}
+                        secureTextEntry={true}
+                        textInputRef={input => {
+                            this.inputs.password = input;
+                        }}
+                        value={this.state.form_values.password}
                     />
                     <Spacer size={50} />
                     <Button
                         backgroundColor={AppColors.white}
                         buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal, {justifyContent: 'center', width: '85%',}]}
-                        containerViewStyle={{ alignItems: 'center', justifyContent: 'center', }}
+                        containerViewStyle={{ alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf }}
                         disabled={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? true : false}
                         disabledStyle={{width: '100%'}}
                         fontFamily={AppStyles.robotoBold.fontFamily}
                         fontWeight={AppStyles.robotoBold.fontWeight}
-                        onPress={this.login}
+                        onPress={() => this._handleFormSubmit()}
                         textColor={AppColors.primary.yellow.hundredPercent}
                         textStyle={{ fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%', }}
                         title={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? 'Logging in...' : 'Login'}
                     />
-                    <Spacer size={10} />
+                    <Spacer size={12} />
                     {/*<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
-                        <View>
-                            <Text p style={[AppStyles.textCenterAligned, {color: AppColors.white, textDecorationLine: 'none',}]}>{'forgot password'}</Text>
-                        </View>
+                        <Text
+                            onPress={this._routeToForgotPassword}
+                            robotoRegular
+                            style={[AppStyles.textCenterAligned, {color: AppColors.white, textDecorationLine: 'none', fontSize: AppFonts.scaleFont(15),}]}
+                        >
+                            {'forgot password'}
+                        </Text>
                     </TouchableOpacity>*/}
                 </View>
 

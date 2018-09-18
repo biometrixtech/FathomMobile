@@ -36,6 +36,7 @@ const Exercises = ({
     handleExerciseListRefresh,
     isExerciseListRefreshing,
     isLoading,
+    isPrep,
     toggleCompletedAMPMRecoveryModal,
     toggleSelectedExercise,
 }) => (
@@ -69,7 +70,7 @@ const Exercises = ({
                     onPress={toggleCompletedAMPMRecoveryModal}
                     raised={false}
                     textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                    title={'Recovery Complete'}
+                    title={`${isPrep ? 'Prep' : 'Recovery'} Complete`}
                 />
                 :
                 <Button
@@ -82,7 +83,7 @@ const Exercises = ({
                     outlined
                     raised={false}
                     textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                    title={'Check Boxes to Complete Recovery'}
+                    title={`Check Boxes to Complete ${isPrep ? 'Prep' : 'Recovery'}`}
                 />
             }
         </View>
@@ -111,10 +112,13 @@ Exercises.propTypes = {
     handleExerciseListRefresh:        PropTypes.func.isRequired,
     isExerciseListRefreshing:         PropTypes.bool.isRequired,
     isLoading:                        PropTypes.bool.isRequired,
+    isPrep:                           PropTypes.bool,
     toggleCompletedAMPMRecoveryModal: PropTypes.func.isRequired,
     toggleSelectedExercise:           PropTypes.func.isRequired,
 };
-Exercises.defaultProps = {};
+Exercises.defaultProps = {
+    isPrep: false,
+};
 Exercises.componentName = 'Exercises';
 
 /* Export Component ================================================================== */

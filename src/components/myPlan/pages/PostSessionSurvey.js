@@ -8,6 +8,7 @@
         handleTogglePostSessionSurvey={this._handleTogglePostSessionSurvey}
         postSession={this.state.postSession}
         soreBodyParts={this.state.soreBodyParts}
+        typicalSessions={this.props.plan.typicalSessions}
     />
  *
  */
@@ -20,7 +21,7 @@ import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants, AppFonts, } 
 import { Button, FathomSlider, Spacer, TabIcon, Text, } from '../../custom';
 
 // Components
-import { AreasOfSoreness, ScaleButton, SoreBodyPart, } from './';
+import { AreasOfSoreness, ScaleButton, SoreBodyPart, SportScheduleBuilder, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -54,12 +55,25 @@ class PostSessionSurvey extends Component {
             handleTogglePostSessionSurvey,
             postSession,
             soreBodyParts,
+            typicalSessions,
         } = this.props;
-        let isFormValid =
-            postSession.RPE > 0 && (
-                _.filter(postSession.soreness, o => o.severity && o.severity >= 0).length > 0 ||
-                (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
-            );
+        let filteredAreasOfSoreness = _.filter(postSession.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
+            return doesItInclude.length === 0;
+        });
+        let filteredSoreBodyParts = _.filter(postSession.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
+            return doesItInclude.length > 0;
+        });
+        let areQuestionsValid = postSession.RPE > 0 && postSession.event_date;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
+        let areAreasOfSorenessValid = (
+            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
+            (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
+        );
+        let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;
+        let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
+        newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         return (
             <View style={{flex: 1}}>
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
@@ -80,6 +94,24 @@ class PostSessionSurvey extends Component {
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                             {'1'}
                         </Text>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>
+                            {'Build the sentence'}
+                        </Text>
+                        <Spacer size={24} />
+                        <SportScheduleBuilder
+                            handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
+                            }}
+                            postSession={postSession}
+                            scrollTo={() => this._scrollTo(0)}
+                            typicalSessions={typicalSessions}
+                        />
+                    </View>
+                    <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                        <Spacer size={100} />
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
+                            {'2'}
+                        </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {'How hard was your training session?'}
                         </Text>
@@ -96,7 +128,7 @@ class PostSessionSurvey extends Component {
                                             sorenessPainMappingLength={MyPlanConstants.postSessionFeel.length}
                                             updateStateAndForm={() => {
                                                 handleFormChange('RPE', key);
-                                                this._scrollTo(0);
+                                                this._scrollTo(1);
                                             }}
                                         />
                                     )
@@ -135,15 +167,15 @@ class PostSessionSurvey extends Component {
                         </View>
                     </View>
                     <Spacer size={100} />
-                    { _.map(soreBodyParts.body_parts, (bodyPart, i) =>
-                        <View onLayout={event => {this.myComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}} key={i}>
+                    { _.map(newSoreBodyParts, (bodyPart, i) =>
+                        <View onLayout={event => {this.myComponents[i + 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}} key={i}>
                             <SoreBodyPart
                                 bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
                                 bodyPartSide={bodyPart.side}
-                                handleFormChange={(location, value, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                    handleFormChange(location, value, bodyPartMapIndex, bodyPartSide);
+                                handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                    handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
                                     if(shouldScroll) {
-                                        this._scrollTo(i + 1);
+                                        this._scrollTo(i + 2);
                                     }
                                 }}
                                 index={i+2}
@@ -153,12 +185,12 @@ class PostSessionSurvey extends Component {
                             <Spacer size={100} />
                         </View>
                     )}
-                    <View onLayout={event => {this.myComponents[soreBodyParts.body_parts ? soreBodyParts.body_parts.length : 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
+                    <View onLayout={event => {this.myComponents[newSoreBodyParts ? newSoreBodyParts.length + 1 : 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {soreBodyParts.body_parts.length ? soreBodyParts.body_parts.length + 2 : '2'}
+                            {newSoreBodyParts.length ? newSoreBodyParts.length + 2 : '2'}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {`Is anything${soreBodyParts.body_parts && soreBodyParts.body_parts.length > 0 ? ' else ' : ' '}bothering you?`}
+                            {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
                         </Text>
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, false, isAllGood)}
@@ -219,6 +251,7 @@ PostSessionSurvey.propTypes = {
     handleTogglePostSessionSurvey: PropTypes.func.isRequired,
     postSession:                   PropTypes.object.isRequired,
     soreBodyParts:                 PropTypes.object.isRequired,
+    typicalSessions:               PropTypes.array.isRequired,
 };
 PostSessionSurvey.defaultProps = {};
 PostSessionSurvey.componentName = 'PostSessionSurvey';

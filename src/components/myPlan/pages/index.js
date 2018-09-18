@@ -10,6 +10,7 @@ import ReadinessSurvey from './ReadinessSurvey';
 import ScaleButton from './ScaleButton';
 import SingleExerciseItem from './SingleExerciseItem';
 import SoreBodyPart from './SoreBodyPart';
+import SportScheduleBuilder from './SportScheduleBuilder';
 
 export {
     AreasOfSoreness,
@@ -20,4 +21,5 @@ export {
     ScaleButton,
     SingleExerciseItem,
     SoreBodyPart,
+    SportScheduleBuilder,
 };

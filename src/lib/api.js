@@ -213,7 +213,6 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
             .then(async (rawRes) => {
                 // API got back to us, clear the timeout
                 clearTimeout(apiTimedOut);
-
                 let jsonRes = {};
 
                 try {

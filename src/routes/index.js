@@ -6,14 +6,14 @@
  */
 
 import React from 'react';
-import { Image, } from 'react-native';
+import { Animated, Easing, Image, } from 'react-native';
 
 // import third-party libraries
 import { Actions, Router, Scene, Stack } from 'react-native-router-flux';
 
 // Consts, Libs, and Utils
 import { AppColors, AppSizes, AppStyles, } from '../constants';
-import { CustomNavBar, TabIcon, } from '../components/custom';
+import { CustomMyPlanNavBar, CustomNavBar, TabIcon, } from '../components/custom';
 
 // import components
 import LoginContainer from '../containers/auth/Login';
@@ -24,6 +24,9 @@ import SignUpComponent from '../components/auth/SignUp';
 
 import ForgotPasswordContainer from '../containers/auth/ForgotPassword';
 import ForgotPasswordComponent from '../components/auth/ForgotPassword';
+
+import ResetPasswordContainer from '../containers/auth/ResetPassword';
+import ResetPasswordComponent from '../components/auth/ResetPassword';
 
 import StartContainer from '../containers/auth/Start';
 import StartComponent from '../components/auth/Start';
@@ -49,12 +52,35 @@ import MyPlanComponent from '../components/myPlan/MyPlan';
 import OnboardingContainer from '../containers/onboarding/Onboarding';
 import OnboardingComponent from '../components/onboarding/Onboarding';
 
-import HomeContainer from '../containers/home/Home';
-import HomeComponent from '../components/home/Home';
+const transitionConfig = () => {
+    return {
+        transitionSpec: {
+            duration:        750,
+            easing:          Easing.out(Easing.poly(4)),
+            timing:          Animated.timing,
+            useNativeDriver: true,
+        },
+        screenInterpolator: sceneProps => {
+            const { position, layout, scene, } = sceneProps;
+            const thisSceneIndex = scene.index;
+            const width = layout.initWidth;
+            const translateX = position.interpolate({
+                inputRange:  [thisSceneIndex - 1, thisSceneIndex, thisSceneIndex + 1],
+                outputRange: [-width, 0, 0]
+            });
+            return { transform: [ { translateX } ] };
+        },
+    }
+};
 
 const Index = (
     <Router hideNavBar={true}>
-        <Stack hideNavBar={true} key={'root'} titleStyle={{ alignSelf: 'center' }}>
+        <Stack
+            hideNavBar={true}
+            key={'root'}
+            titleStyle={{ alignSelf: 'center' }}
+            transitionConfig={transitionConfig}
+        >
             <Scene
                 Layout={StartComponent}
                 component={StartContainer}
@@ -87,39 +113,47 @@ const Index = (
                 hideNavBar={true}
                 key={'signUp'}
                 panHandlers={null}
-            />
+            />*/}
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
-                hideNavBar={true}
-                key={'forgotPassword'}
-                panHandlers={null}
-            />*/}
-            <Scene
-                Layout={HomeComponent}
-                component={HomeContainer}
                 hideNavBar={false}
-                key={'home'}
+                key={'forgotPassword'}
                 navBar={CustomNavBar}
-                onLeft={() => Actions.settings()}
+                onLeft={() => Actions.login()}
                 panHandlers={null}
+                title={'FORGOT PASSWORD'}
+            />
+            <Scene
+                Layout={ResetPasswordComponent}
+                component={ResetPasswordContainer}
+                hideNavBar={false}
+                key={'resetPassword'}
+                navBar={CustomNavBar}
+                onLeft={() => Actions.login()}
+                panHandlers={null}
+                title={'FORGOT PASSWORD'}
             />
             <Scene
                 Layout={MyPlanComponent}
                 component={MyPlanContainer}
-                hideNavBar={true}
+                hideNavBar={false}
                 key={'myPlan'}
+                navBar={CustomMyPlanNavBar}
+                onLeft={() => Actions.settings()}
                 panHandlers={null}
+                type={'replace'}
             />
             <Scene
                 Layout={SettingsComponent}
                 component={SettingsContainer}
                 hideNavBar={false}
-                navBar={CustomNavBar}
-                onLeft={() => Actions.home()}
                 key={'settings'}
+                navBar={CustomNavBar}
+                onLeft={() => Actions.myPlan()}
                 panHandlers={null}
                 title={'SETTINGS'}
+                type={'replace'}
             />
             <Scene
                 Layout={BluetoothConnectComponent}

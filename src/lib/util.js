@@ -10,8 +10,9 @@ import { Alert, AsyncStorage } from 'react-native';
 // import third-party libraries
 import DeviceInfo from 'react-native-device-info';
 import uuidByString from 'uuid-by-string';
-
+import { AppColors, AppFonts, AppStyles } from '../constants';
 import { store } from '../store';
+import _ from 'lodash';
 import { Actions as DispatchActions, ErrorMessages, } from '../constants';
 
 import { init as InitActions, } from '../actions';
@@ -173,16 +174,14 @@ const UTIL = {
       * key -> index of data
       */
     _retrieveAsyncStorageData: async (key) => {
+        /*eslint consistent-return: 0*/
         return await AsyncStorage.getItem(key)
             .then(result => {
-                if (result) {
-                    try {
-                        result = JSON.parse(result);
-                    } catch (error) {
-                        console.log('error from _retrieveAsyncStorageData', error);
-                    }
+                try {
+                    return JSON.parse(result);
+                } catch (error) {
+                    console.log('error from _retrieveAsyncStorageData', error);
                 }
-                return result;
             });
     },
 
@@ -390,6 +389,21 @@ const UTIL = {
         let newStartDate = `${startDateObject.getFullYear()}-${UTIL.formatDate(startDateObject.getMonth()+1)}-${UTIL.formatDate(startDateObject.getDate())}`;
         let newEndDate = `${endDateObject.getFullYear()}-${UTIL.formatDate(endDateObject.getMonth()+1)}-${UTIL.formatDate(endDateObject.getDate())}`;
         return ({ newStartDate, newEndDate });
+    },
+
+    formatInputStyle(formValidationStyleSheet){
+        let inputStyle = _.cloneDeep(formValidationStyleSheet);
+        inputStyle.borderColor = AppColors.primary.grey.fiftyPercent;
+        inputStyle.borderLeftWidth = 0;
+        inputStyle.borderRightWidth = 0;
+        inputStyle.borderTopWidth = 0;
+        inputStyle.color = AppColors.primary.yellow.hundredPercent;
+        inputStyle.textAlign = 'center';
+        inputStyle.fontFamily = AppStyles.robotoBold.fontFamily;
+        inputStyle.fontWeight = AppStyles.robotoBold.fontWeight;
+
+
+        return inputStyle;
     }
 };
 

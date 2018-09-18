@@ -25,6 +25,11 @@ export default function bleReducer(state = initialState, action) {
         return Object.assign({}, state, {
             indicator: false
         });
+    case Actions.UPDATE_BLE_STATUSES:
+        return Object.assign({}, state, {
+            batteryCharge: action.batteryCharge,
+            systemStatus:  action.systemStatus,
+        });
     case Actions.CONNECT_TO_ACCESSORY:
         return Object.assign({}, state, {
             accessoryData: {
@@ -157,6 +162,9 @@ export default function bleReducer(state = initialState, action) {
     case Actions.SET_KIT_TIME:
     case Actions.SET_OWNER_FLAG:
     case Actions.START_BLUETOOTH:
+        return Object.assign({}, state, {
+            bleStarted: true,
+        });
     case Actions.STORE_PARAMS:
     default:
         return state;

@@ -14,14 +14,15 @@ import PropTypes from 'prop-types';
 import LinearGradient from 'react-native-linear-gradient';
 
 // Consts
-import { AppColors, AppStyles } from '../../constants';
+import { AppColors, AppFonts, AppStyles, } from '../../constants';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     coachText: {
         color:    AppColors.white,
         flex:     1,
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        fontSize: AppFonts.scaleFont(16),
     },
     coachWrapper: {
         backgroundColor: AppColors.primary.grey.thirtyPercent,
@@ -53,7 +54,7 @@ const Coach = ({ text }) => {
                 source={require('../../../assets/images/standard/coach-avatar.png')}
                 style={[styles.imageStyle]}
             />
-            <Text p style={[styles.coachText]}>{text}</Text>
+            <Text robotoRegular style={[styles.coachText]}>{text}</Text>
         </LinearGradient>
     )
 }

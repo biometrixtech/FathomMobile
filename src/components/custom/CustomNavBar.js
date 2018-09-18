@@ -6,7 +6,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, StatusBar, StyleSheet, View, } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles, } from '../../constants';
@@ -31,6 +31,10 @@ class CustomNavBar extends Component {
 
     static defaultProps = {}
 
+    constructor(props) {
+        super(props);
+    }
+
     componentDidMount = () => {
         StatusBar.setBarStyle('dark-content');
         if(Platform.OS === 'android') {
@@ -40,8 +44,8 @@ class CustomNavBar extends Component {
 
     _renderLeft = () => {
         return (
-            <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingXSml}}>
-                { Actions.currentScene === 'onboarding' && !store.getState().user.id ?
+            <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingXSml,}}>
+                { this.props.routeName === 'onboarding' && !store.getState().user.id ?
                     <TabIcon
                         icon={'arrow-left'}
                         iconStyle={[{color: AppColors.black,}]}
@@ -50,14 +54,14 @@ class CustomNavBar extends Component {
                         size={26}
                         type={'simple-line-icon'}
                     />
-                    : Actions.currentParams.onLeft && Actions.currentScene !== 'onboarding' ?
+                    : Actions.currentParams.onLeft && this.props.routeName !== 'onboarding' ?
                         <TabIcon
-                            icon={Actions.currentScene === 'home' ? 'settings' : 'arrow-left'}
+                            icon={'arrow-left'}
                             iconStyle={[{color: AppColors.black,}]}
                             onPress={Actions.currentParams.onLeft}
                             reverse={false}
                             size={26}
-                            type={Actions.currentScene === 'home' ? 'material-community' : 'simple-line-icon'}
+                            type={'simple-line-icon'}
                         />
                         :
                         null
@@ -67,14 +71,6 @@ class CustomNavBar extends Component {
     }
 
     _renderMiddle = () => {
-        if(Actions.currentScene === 'home') {
-            return (
-                <Image
-                    source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
-                    style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center'}]}
-                />
-            )
-        }
         return (
             <View style={{flex: 8, justifyContent: 'center',}}>
                 <Text style={[AppStyles.h3, {color: AppColors.black, textAlign: 'center'}]}>{Actions.currentParams.title}</Text>
@@ -83,11 +79,6 @@ class CustomNavBar extends Component {
     }
 
     _renderRight = () => {
-        if(Actions.currentScene === 'home') {
-            return (
-                <View style={{flex: 1, justifyContent: 'center',}}></View>
-            )
-        }
         return(<View style={{flex: 1}}></View>)
     }
 
@@ -95,7 +86,7 @@ class CustomNavBar extends Component {
         return (
             <View>
                 <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
-                <View style={[styles.container , Actions.currentScene === 'settings' ? {borderBottomColor: AppColors.border, borderBottomWidth: 2,} : {}]}>
+                <View style={[styles.container, this.props.routeName === 'settings' ? {borderBottomColor: AppColors.border, borderBottomWidth: 2,} : {}]}>
                     {this._renderLeft()}
                     {this._renderMiddle()}
                     {this._renderRight()}

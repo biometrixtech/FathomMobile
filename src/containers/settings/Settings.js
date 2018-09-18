@@ -20,8 +20,7 @@ const Settings = ({
     accessoryData,
     clearMyPlanData,
     deleteUserSensorData,
-    disconnectFromSingleSensor,
-    getSingleSensorSavedPractices,
+    deleteAllSingleSensorPractices,
     logout,
     user,
 }) => (
@@ -29,22 +28,20 @@ const Settings = ({
         accessoryData={accessoryData}
         clearMyPlanData={clearMyPlanData}
         deleteUserSensorData={deleteUserSensorData}
-        disconnectFromSingleSensor={disconnectFromSingleSensor}
-        getSingleSensorSavedPractices={getSingleSensorSavedPractices}
+        deleteAllSingleSensorPractices={deleteAllSingleSensorPractices}
         logout={logout}
         user={user}
     />
 );
 
 Settings.propTypes = {
-    Layout:                        PropTypes.func.isRequired,
-    accessoryData:                 PropTypes.object.isRequired,
-    clearMyPlanData:               PropTypes.func.isRequired,
-    deleteUserSensorData:          PropTypes.func.isRequired,
-    disconnectFromSingleSensor:    PropTypes.func.isRequired,
-    getSingleSensorSavedPractices: PropTypes.func.isRequired,
-    logout:                        PropTypes.func.isRequired,
-    user:                          PropTypes.object.isRequired,
+    Layout:                         PropTypes.func.isRequired,
+    accessoryData:                  PropTypes.object.isRequired,
+    clearMyPlanData:                PropTypes.func.isRequired,
+    deleteUserSensorData:           PropTypes.func.isRequired,
+    deleteAllSingleSensorPractices: PropTypes.func.isRequired,
+    logout:                         PropTypes.func.isRequired,
+    user:                           PropTypes.object.isRequired,
 };
 
 Settings.defaultProps = {
@@ -56,11 +53,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    clearMyPlanData:               plan.clearMyPlanData,
-    deleteUserSensorData:          ble.deleteUserSensorData,
-    disconnectFromSingleSensor:    ble.disconnectFromSingleSensor,
-    getSingleSensorSavedPractices: ble.getSingleSensorSavedPractices,
-    logout:                        init.logout,
+    clearMyPlanData:                plan.clearMyPlanData,
+    deleteUserSensorData:           ble.deleteUserSensorData,
+    deleteAllSingleSensorPractices: ble.deleteAllSingleSensorPractices,
+    logout:                         init.logout,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);

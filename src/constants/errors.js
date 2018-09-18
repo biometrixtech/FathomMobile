@@ -67,5 +67,12 @@ export default {
             }
         }
         return { displayAlert: false, header: null, message: null }
-    }
+    },
+
+    // sensor error messages
+    sensor: {
+        connectionError: 'BRING SENSOR IN RANGE TO SYNC',
+        retreivalError:  'BRING SENSOR BACK IN RANGE TO CONTINUE SYNCING',
+        serverError:     'SYNC SUCCESSFUL, CONNECT TO INTERNET TO COMPLETE',
+    },
 };
