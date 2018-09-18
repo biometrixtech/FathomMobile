@@ -35,7 +35,7 @@ class CustomNavBar extends Component {
         super(props);
     }
 
-    componentDidMount = () => {
+    componentDidMount = () => { console.log('HI from global componentDidMount');
         StatusBar.setBarStyle('dark-content');
         if(Platform.OS === 'android') {
             StatusBar.setBackgroundColor(AppColors.primary.grey.twentyPercent);

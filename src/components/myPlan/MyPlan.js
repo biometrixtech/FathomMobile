@@ -1259,7 +1259,7 @@ class MyPlan extends Component {
                         let selectedSessionType = filteredSessionTypes.length === 0 ? 'TRAINING' : filteredSessionTypes[0].label.toUpperCase();
                         let filteredStrengthConditioningTypes = _.filter(MyPlanConstants.strengthConditioningTypes, o => o.index === postPracticeSurvey.strength_and_conditioning_type);
                         let filteredSportTypes = _.filter(MyPlanConstants.teamSports, o => o.index === postPracticeSurvey.sport_name);
-                        let selectedSport = filteredSportTypes.length > 0 ? filteredSportTypes[0].label.toUpperCase() : filteredStrengthConditioningTypes.length > 0 ? filteredStrengthConditioningTypes[0].label.toUpperCase() : '';
+                        let selectedSport = filteredSportTypes.length > 0 ? filteredSportTypes[0].label.toUpperCase() : filteredStrengthConditioningTypes.length > 0 ? filteredStrengthConditioningTypes[0].label.replace('TRAINING', '').toUpperCase() : '';
                         return(
                             <View key={`postPracticeSurveys${i}`}>
                                 <ListItem
@@ -1274,7 +1274,7 @@ class MyPlan extends Component {
                                             icon={'check-circle'}
                                         />
                                     }
-                                    title={`${selectedSport} ${selectedSessionType}`}
+                                    title={`${selectedSport.replace(' TRAINING', '')} ${selectedSessionType}`}
                                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                                 />
                                 { this.renderDefaultListGap(24) }
