@@ -56,6 +56,7 @@ class ReadinessSurvey extends Component {
             soreBodyParts,
             user,
         } = this.props;
+        console.log('soreBodyParts',soreBodyParts);
         let split_afternoon = 12 // 24hr time to split the afternoon
         let split_evening = 17 // 24hr time to split the evening
         let hourOfDay = moment().get('hour');
@@ -77,16 +78,33 @@ class ReadinessSurvey extends Component {
         let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
+
+        let questionCounter = soreBodyParts.functional_strength_eligible ? 3 : 1;
+
         return(
             <View style={{flex: 1}}>
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
-                    <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: 'center', width: AppSizes.screen.width}}>
-                        <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black}]}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
+                    <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: soreBodyParts.functional_strength_eligible ? 'flex-start' : 'center', width: AppSizes.screen.width}}>
+                        { soreBodyParts.functional_strength_eligible ?
+                            <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black}]}>{'Congrats!'}</Text>
+                            :
+                            <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black}]}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
+                        }
                     </View>
                     <View>
                         <Spacer size={50} />
+                        { soreBodyParts.functional_strength_eligible ?
+                            <View>
+                                <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>{'You\'ve unlocked\nFunctional Strength!'}</Text>
+                                <Spacer size={50} />
+
+                                <Spacer size={50} />
+                            </View>
+                            :
+                            null
+                        }
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {'1'}
+                            {questionCounter}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {'How mentally ready do you feel for today?'}
@@ -114,7 +132,7 @@ class ReadinessSurvey extends Component {
                     <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
                         <Spacer size={100} />
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {'2'}
+                            {questionCounter++}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {'How well did you sleep last night?'}
