@@ -93,18 +93,19 @@ class ReadinessSurvey extends Component {
                             <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black}]}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
                         }
                     </View>
+                    { isFirstFunctionalStrength ?
+                        <View>
+                            <Spacer size={50} />
+                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>{'You\'ve unlocked\nFunctional Strength!'}</Text>
+                            <Spacer size={50} />
+
+                            <Spacer size={50} />
+                        </View>
+                        :
+                        null
+                    }
                     <View>
                         <Spacer size={50} />
-                        { isFirstFunctionalStrength ?
-                            <View>
-                                <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>{'You\'ve unlocked\nFunctional Strength!'}</Text>
-                                <Spacer size={50} />
-
-                                <Spacer size={50} />
-                            </View>
-                            :
-                            null
-                        }
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                             {questionCounter}
                         </Text>
