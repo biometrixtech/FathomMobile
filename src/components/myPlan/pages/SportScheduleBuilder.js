@@ -115,7 +115,13 @@ class SportScheduleBuilder extends Component {
     }
 
     _getDateTimeDurationFromState = () => {
-        let { durationValueGroups, timeValueGroups, } = this.state;
+        let { durationValueGroups, isFormValid, timeValueGroups, } = this.state;
+        if(!isFormValid) {
+            return {
+                duration:   '',
+                event_date: moment(),
+            }
+        }
         let now = moment();
         now = now.set('second', 0);
         now = now.set('millisecond', 0);
@@ -127,8 +133,26 @@ class SportScheduleBuilder extends Component {
         let duration = Number(MyPlanConstants.durationOptionGroups.minutes[durationValueGroups.minutes]);
         return {
             duration,
-            event_date: now
-        };
+            event_date: now,
+        }
+    }
+
+    _getFinalTextStrings = (selectedSport, filteredSessionType) => {
+        const { postSession, } = this.props;
+        let { isFormValid, step, } = this.state;
+        // setup variables
+        let selectedStartTime = this._getDateTimeDurationFromState().event_date;
+        let selectedDuration = this._getDateTimeDurationFromState().duration;
+        let selectedSessionType = filteredSessionType && filteredSessionType.length > 0 ? filteredSessionType[0].label.toLowerCase() : postSession.session_type === 1 ? 'training' : '';
+        // logic
+        let sportText = step === 0 || step === 1 ? 'activity type' : step === 2 ? `${selectedSport} ` : `${selectedSport} ${selectedSessionType}`;
+        let startTimeText = (step === 3 || step === 4) && !isFormValid ? 'time' : (step === 3 || step === 4) && isFormValid ? `${selectedStartTime.format('h:mm')}` : '';
+        let durationText = step === 3 && !isFormValid ? 'duration' : `${selectedDuration}`;
+        return {
+            durationText,
+            sportText,
+            startTimeText,
+        }
     }
 
     render = () => {
@@ -143,12 +167,9 @@ class SportScheduleBuilder extends Component {
         let filteredSport = postSession.sport_name || postSession.sport_name === 0 ? _.filter(teamSports, ['index', postSession.sport_name]) : postSession.strength_and_conditioning_type || postSession.strength_and_conditioning_type === 0 ? _.filter(strengthConditioningTypes, ['index', postSession.strength_and_conditioning_type]) : null;
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0].label.toLowerCase().replace(' training', '') : '';
         let filteredSessionType = postSession.session_type || postSession.session_type === 0 ? _.filter(sessionTypes, ['index', postSession.session_type]) : null;
-        let selectedSessionType = filteredSessionType && filteredSessionType.length > 0 ? filteredSessionType[0].label.toLowerCase() : postSession.session_type === 1 ? 'training' : '';
-        let selectedStartTime = isFormValid ? this._getDateTimeDurationFromState().event_date : '';
-        let selectedDuration = isFormValid ? this._getDateTimeDurationFromState().duration : '';
-        let sportText = step === 0 || step === 1 ? 'activity type' : step === 2 ? `${selectedSport} ` : `${selectedSport} ${selectedSessionType}`;
-        let startTimeText = (step === 3 || step === 4) && !isFormValid ? 'time' : (step === 3 || step === 4) && isFormValid ? `${selectedStartTime.format('h:mm')}` : '';
-        let durationText = step === 3 && !isFormValid ? 'duration' : `${selectedDuration}`;
+        let sportText = this._getFinalTextStrings(selectedSport, filteredSessionType).sportText;
+        let startTimeText = this._getFinalTextStrings(selectedSport, filteredSessionType).startTimeText;
+        let durationText = this._getFinalTextStrings(selectedSport, filteredSessionType).durationText;
         return (
             <View style={{flex: 1,}}>
                 <View style={{flexDirection: 'row'}}>
