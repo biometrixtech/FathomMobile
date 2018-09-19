@@ -146,7 +146,7 @@ class SportScheduleBuilder extends Component {
         let selectedSessionType = filteredSessionType && filteredSessionType.length > 0 ? filteredSessionType[0].label.toLowerCase() : postSession.session_type === 1 ? 'training' : '';
         let selectedStartTime = isFormValid ? this._getDateTimeDurationFromState().event_date : '';
         let selectedDuration = isFormValid ? this._getDateTimeDurationFromState().duration : '';
-        let sportText = step === 0 || step === 1 ? 'activity' : step === 2 ? `${selectedSport}...` : `${selectedSport} ${selectedSessionType}`;
+        let sportText = step === 0 || step === 1 ? 'activity type' : step === 2 ? `${selectedSport} ` : `${selectedSport} ${selectedSessionType}`;
         let startTimeText = (step === 3 || step === 4) && !isFormValid ? 'time' : (step === 3 || step === 4) && isFormValid ? `${selectedStartTime.format('h:mm')}` : '';
         let durationText = step === 3 && !isFormValid ? 'duration' : `${selectedDuration}`;
         return (
@@ -169,17 +169,30 @@ class SportScheduleBuilder extends Component {
                     </View>
                     <View style={{flex: 9,}}>
                         <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32), textAlign: 'center'}}>
-                            {`Today I ${step > 2 ? 'had' : 'did'}`}
+                            {'Today I did'}
                         </Text>
                         <Text style={{flexWrap: 'wrap', fontSize: AppFonts.scaleFont(32), lineHeight: AppFonts.scaleFont(32), textAlign: 'center',}}>
                             <Text
                                 robotoBold
                                 style={{
-                                    color:              step >= 3 ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent,
-                                    textDecorationLine: step >= 3 ? 'none' : 'underline',
+                                    color:              step >= 2 ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent,
+                                    textDecorationLine: step >= 2 ? 'none' : 'underline',
                                 }}
                             >
                                 {sportText}
+                                { step === 2 ?
+                                    <Text
+                                        robotoBold
+                                        style={{
+                                            color:              AppColors.primary.yellow.hundredPercent,
+                                            textDecorationLine: 'underline',
+                                        }}
+                                    >
+                                        {'type'}
+                                    </Text>
+                                    :
+                                    null
+                                }
                             </Text>
                             { step >= 3 ?
                                 <Text robotoLight style={{color: AppColors.zeplin.darkGrey,}}>{' at'}</Text>
