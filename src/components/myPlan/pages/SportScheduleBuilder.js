@@ -194,15 +194,19 @@ class SportScheduleBuilder extends Component {
                         </Text>
                         { step >= 3 ?
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center'}}>
-                                <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), textDecorationLine: 'underline',}}>
-                                    {startTimeText}
-                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? `${timeValueGroups.amPM === 0 ? 'AM' : 'PM'}` : ''}</Text>
-                                </Text>
-                                <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}}>{' for '}</Text>
-                                <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), textDecorationLine: 'underline',}}>
-                                    {durationText}
-                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'MIN' : ''}</Text>
-                                </Text>
+                                <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2,}}>
+                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), height: (AppFonts.scaleFont(32) + 5),}}>
+                                        {startTimeText}
+                                        <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? `${timeValueGroups.amPM === 0 ? 'AM' : 'PM'}` : ''}</Text>
+                                    </Text>
+                                </View>
+                                <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32), height: (AppFonts.scaleFont(32) + 5),}}>{' for '}</Text>
+                                <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2,}}>
+                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), height: (AppFonts.scaleFont(32) + 5),}}>
+                                        {durationText}
+                                        <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'MIN' : ''}</Text>
+                                    </Text>
+                                </View>
                             </View>
                             :
                             null
@@ -354,8 +358,8 @@ class SportScheduleBuilder extends Component {
                                                         activeItemColor={AppColors.zeplin.darkGrey}
                                                         activeItemHighlight={'#EBBA2D4D'}
                                                         dataSource={MyPlanConstants.timeOptionGroups.hours}
-                                                        highlightBorderWidth={0}
-                                                        highlightColor={''}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
                                                         selectedIndex={this.state.timeValueGroups.hours}
@@ -370,8 +374,8 @@ class SportScheduleBuilder extends Component {
                                                         activeItemColor={AppColors.zeplin.darkGrey}
                                                         activeItemHighlight={'#EBBA2D4D'}
                                                         dataSource={MyPlanConstants.timeOptionGroups.minutes}
-                                                        highlightBorderWidth={0}
-                                                        highlightColor={''}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
                                                         selectedIndex={this.state.timeValueGroups.minutes}
@@ -386,8 +390,8 @@ class SportScheduleBuilder extends Component {
                                                         activeItemColor={AppColors.zeplin.darkGrey}
                                                         activeItemHighlight={'#EBBA2D4D'}
                                                         dataSource={MyPlanConstants.timeOptionGroups.amPM}
-                                                        highlightBorderWidth={0}
-                                                        highlightColor={''}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
                                                         selectedIndex={this.state.timeValueGroups.amPM}
@@ -403,13 +407,28 @@ class SportScheduleBuilder extends Component {
                                             <View style={{flex: 5,}}>
                                                 <Text oswaldMedium style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{'DURATION'}</Text>
                                                 <Spacer size={10} />
-                                                <View style={{flexDirection: 'row',}}>
+                                                <View style={{flex: 1, flexDirection: 'row',}}>
+                                                    <WheelScrollPicker
+                                                        activeItemColor={AppColors.zeplin.darkGrey}
+                                                        activeItemHighlight={'#EBBA2D4D'}
+                                                        dataSource={[' ', ' ', ' ']}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
+                                                        itemColor={AppColors.primary.grey.fiftyPercent}
+                                                        itemHeight={AppFonts.scaleFont(18) + 10}
+                                                        scrollEnabled={false}
+                                                        selectedIndex={1}
+                                                        onValueChange={(data, selectedIndex) => null}
+                                                        wrapperBackground={AppColors.transparent}
+                                                        wrapperHeight={180}
+                                                        wrapperWidth={(AppSizes.screen.width / 8)}
+                                                    />
                                                     <WheelScrollPicker
                                                         activeItemColor={AppColors.zeplin.darkGrey}
                                                         activeItemHighlight={'#EBBA2D4D'}
                                                         dataSource={MyPlanConstants.durationOptionGroups.minutes}
-                                                        highlightBorderWidth={0}
-                                                        highlightColor={''}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
                                                         selectedIndex={this.state.durationValueGroups.minutes}
@@ -424,8 +443,8 @@ class SportScheduleBuilder extends Component {
                                                         activeItemColor={AppColors.zeplin.darkGrey}
                                                         activeItemHighlight={'#EBBA2D4D'}
                                                         dataSource={MyPlanConstants.durationOptionGroups.label}
-                                                        highlightBorderWidth={0}
-                                                        highlightColor={''}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
                                                         scrollEnabled={false}

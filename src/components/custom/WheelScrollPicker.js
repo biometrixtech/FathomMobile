@@ -30,7 +30,7 @@ import {
 
 // import Components
 import { Text, } from './';
-import { AppFonts, AppStyles, } from '../../constants/';
+import { AppColors, AppFonts, AppStyles, } from '../../constants/';
 
 // setup variables
 const deviceWidth = Dimensions.get('window').width;
@@ -84,10 +84,9 @@ class WheelScrollPicker extends Component {
             <View
                 key={index}
                 style={{
-                    alignItems:      'center',
-                    backgroundColor: isSelected ? this.props.activeItemHighlight : 'transparent',
-                    height:          this.props.itemHeight ? this.props.itemHeight : 30,
-                    justifyContent:  'center',
+                    alignItems:     'center',
+                    height:         this.props.itemHeight ? this.props.itemHeight : 30,
+                    justifyContent: 'center',
                 }}
             >
                 {item}
@@ -193,6 +192,7 @@ class WheelScrollPicker extends Component {
             }}>
                 <View
                     style={{
+                        backgroundColor:   AppColors.primary.yellow.hundredPercent,
                         borderBottomColor: this.props.highlightColor,
                         borderBottomWidth: this.props.highlightBorderWidth,
                         borderTopColor:    this.props.highlightColor,
