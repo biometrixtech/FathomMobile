@@ -79,13 +79,15 @@ class ReadinessSurvey extends Component {
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
 
-        let questionCounter = soreBodyParts.functional_strength_eligible ? 3 : 1;
+        const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
+        const isFirstFunctionalStrength = isFunctionalStrengthEligible && !soreBodyParts.current_sport_name && !soreBodyParts.current_position;
+        let questionCounter = isFirstFunctionalStrength ? 3 : 1;
 
         return(
             <View style={{flex: 1}}>
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
-                    <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: soreBodyParts.functional_strength_eligible ? 'flex-start' : 'center', width: AppSizes.screen.width}}>
-                        { soreBodyParts.functional_strength_eligible ?
+                    <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: isFirstFunctionalStrength ? 'flex-start' : 'center', width: AppSizes.screen.width}}>
+                        { isFirstFunctionalStrength ?
                             <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black}]}>{'Congrats!'}</Text>
                             :
                             <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black}]}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
@@ -93,7 +95,7 @@ class ReadinessSurvey extends Component {
                     </View>
                     <View>
                         <Spacer size={50} />
-                        { soreBodyParts.functional_strength_eligible ?
+                        { isFirstFunctionalStrength ?
                             <View>
                                 <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>{'You\'ve unlocked\nFunctional Strength!'}</Text>
                                 <Spacer size={50} />
@@ -132,7 +134,7 @@ class ReadinessSurvey extends Component {
                     <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
                         <Spacer size={100} />
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {questionCounter++}
+                            {questionCounter + 1}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {'How well did you sleep last night?'}
@@ -169,7 +171,7 @@ class ReadinessSurvey extends Component {
                                         this._scrollTo(i + 2);
                                     }
                                 }}
-                                index={i+3}
+                                index={i + questionCounter + 2}
                                 isPrevSoreness={true}
                                 surveyObject={dailyReadiness}
                             />
@@ -178,7 +180,7 @@ class ReadinessSurvey extends Component {
                     )}
                     <View onLayout={event => {this.myComponents[newSoreBodyParts ? newSoreBodyParts.length + 1 : 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {newSoreBodyParts && newSoreBodyParts.length > 0 ? newSoreBodyParts.length + 3 : '3'}
+                            {newSoreBodyParts && newSoreBodyParts.length > 0 ? (newSoreBodyParts.length - 1) + questionCounter + 3 : questionCounter + 2}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
