@@ -192,15 +192,13 @@ class WheelScrollPicker extends Component {
             }}>
                 <View
                     style={{
-                        backgroundColor:   AppColors.primary.yellow.hundredPercent,
-                        borderBottomColor: this.props.highlightColor,
-                        borderBottomWidth: this.props.highlightBorderWidth,
-                        borderTopColor:    this.props.highlightColor,
-                        borderTopWidth:    this.props.highlightBorderWidth,
-                        height:            this.props.itemHeight,
-                        position:          'absolute',
-                        top:               (this.props.wrapperHeight - this.props.itemHeight) / 2,
-                        width:             this.props.highlightWidth,
+                        backgroundColor: AppColors.primary.yellow.hundredPercent,
+                        borderColor:     this.props.highlightColor,
+                        borderWidth:     this.props.highlightBorderWidth,
+                        height:          this.props.itemHeight,
+                        position:        'absolute',
+                        top:             (this.props.wrapperHeight - this.props.itemHeight) / 2,
+                        width:           this.props.highlightWidth,
                     }}
                 />
                 <ScrollView

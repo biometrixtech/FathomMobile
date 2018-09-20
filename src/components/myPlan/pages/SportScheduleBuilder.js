@@ -11,7 +11,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, } from 'react-native';
+import { Platform, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -158,6 +158,7 @@ class SportScheduleBuilder extends Component {
     render = () => {
         const { handleFormChange, postSession, scrollTo, typicalSessions, } = this.props;
         const { isFormValid, step, timeValueGroups, } = this.state;
+        let underlineHeight = Platform.OS === 'ios' ? (AppFonts.scaleFont(32) + 0) : (AppFonts.scaleFont(32) + 5);
         let filteredTeamSports = _.filter(MyPlanConstants.teamSports, o => o.order && o.order > 0);
         let teamSports = _.orderBy(filteredTeamSports, ['order'], ['asc']);
         let filteredStrengthConditioningTypes = _.filter(MyPlanConstants.strengthConditioningTypes, o => o.order && o.order > 0);
@@ -229,14 +230,14 @@ class SportScheduleBuilder extends Component {
                         { step >= 3 ?
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center'}}>
                                 <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2,}}>
-                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), height: (AppFonts.scaleFont(32) + 5),}}>
+                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), height: underlineHeight,}}>
                                         {startTimeText}
                                         <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? `${timeValueGroups.amPM === 0 ? 'AM' : 'PM'}` : ''}</Text>
                                     </Text>
                                 </View>
                                 <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32), height: (AppFonts.scaleFont(32) + 5),}}>{' for '}</Text>
                                 <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2,}}>
-                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), height: (AppFonts.scaleFont(32) + 5),}}>
+                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), height: underlineHeight,}}>
                                         {durationText}
                                         <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'MIN' : ''}</Text>
                                     </Text>
