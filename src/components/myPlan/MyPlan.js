@@ -81,9 +81,12 @@ class MyPlan extends Component {
         super(props);
         this.state = {
             dailyReadiness: {
-                readiness:     0,
-                sleep_quality: 0,
-                soreness:      [],
+                current_position:          null,
+                current_sport_name:        null,
+                readiness:                 0,
+                sleep_quality:             0,
+                soreness:                  [],
+                wants_functional_strength: null,
             },
             isCompletedAMPMRecoveryModalOpen: true,
             isExerciseListRefreshing:         false,
@@ -288,6 +291,7 @@ class MyPlan extends Component {
         newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality;
         newDailyReadiness.readiness = newDailyReadiness.readiness;
         newDailyReadiness.soreness= newDailyReadiness.soreness.filter(u => u.severity && u.severity > 0);
+        // TODO: add logic to include wants_functional_strength, current_sport_name, and current_position
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
                 let newPrepareObject = Object.assign({}, this.state.prepare, {

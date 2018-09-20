@@ -80,13 +80,14 @@ class ReadinessSurvey extends Component {
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
 
         const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
-        const isFirstFunctionalStrength = isFunctionalStrengthEligible && !soreBodyParts.current_sport_name && !soreBodyParts.current_position;
+        const isFirstFunctionalStrength = isFunctionalStrengthEligible && (!soreBodyParts.current_sport_name || soreBodyParts.current_sport_name !== 0) && (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
+        let isSecondFunctionalStrength = isFunctionalStrengthEligible && (soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0) && (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
         let questionCounter = isFirstFunctionalStrength ? 3 : 1;
 
         return(
             <View style={{flex: 1}}>
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
-                    <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: isFirstFunctionalStrength ? 'flex-start' : 'center', width: AppSizes.screen.width}}>
+                    <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: 'center', width: AppSizes.screen.width}}>
                         { isFirstFunctionalStrength ?
                             <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black}]}>{'Congrats!'}</Text>
                             :
@@ -98,7 +99,56 @@ class ReadinessSurvey extends Component {
                             <Spacer size={50} />
                             <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>{'You\'ve unlocked\nFunctional Strength!'}</Text>
                             <Spacer size={50} />
-
+                            <View>
+                                <Spacer size={100} />
+                                <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
+                                    {'2'}
+                                </Text>
+                                <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                    {'Would you like to add functional strength to your training plan today?'}
+                                </Text>
+                                <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}]}>
+                                    {`(${soreBodyParts.completed_functional_strength_sessions}/2 completed in last 7 days)`}
+                                </Text>
+                                <Spacer size={10} />
+                                <Button
+                                    backgroundColor={dailyReadiness.wants_functional_strength ? AppColors.white : AppColors.primary.yellow.hundredPercent}
+                                    buttonStyle={{
+                                        alignSelf:    'center',
+                                        borderRadius: 5,
+                                        width:        AppSizes.screen.widthTwoThirds
+                                    }}
+                                    color={dailyReadiness.wants_functional_strength ? AppColors.zeplin.darkGrey : AppColors.white}
+                                    fontFamily={AppStyles.robotoMedium.fontFamily}
+                                    fontWeight={AppStyles.robotoMedium.fontWeight}
+                                    onPress={() => {
+                                        handleFormChange('wants_functional_strength', true);
+                                        // this._scrollTo(1);
+                                    }}
+                                    raised={false}
+                                    textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                                    title={'YES'}
+                                />
+                                <Spacer size={10} />
+                                <Button
+                                    backgroundColor={dailyReadiness.wants_functional_strength ? AppColors.white : AppColors.primary.yellow.hundredPercent}
+                                    buttonStyle={{
+                                        alignSelf:    'center',
+                                        borderRadius: 5,
+                                        width:        AppSizes.screen.widthTwoThirds
+                                    }}
+                                    color={dailyReadiness.wants_functional_strength ? AppColors.zeplin.darkGrey : AppColors.white}
+                                    fontFamily={AppStyles.robotoMedium.fontFamily}
+                                    fontWeight={AppStyles.robotoMedium.fontWeight}
+                                    onPress={() => {
+                                        handleFormChange('wants_functional_strength', false);
+                                        // this._scrollTo(1);
+                                    }}
+                                    raised={false}
+                                    textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                                    title={'NO'}
+                                />
+                            </View>
                             <Spacer size={50} />
                         </View>
                         :
@@ -160,6 +210,13 @@ class ReadinessSurvey extends Component {
                             })}
                         </View>
                     </View>
+                    { isSecondFunctionalStrength ?
+                        <View>
+                            <Text>{'HELLO'}</Text>
+                        </View>
+                        :
+                        null
+                    }
                     <Spacer size={100} />
                     { _.map(newSoreBodyParts, (bodyPart, i) =>
                         <View onLayout={event => {this.myComponents[i + 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}} key={i}>
