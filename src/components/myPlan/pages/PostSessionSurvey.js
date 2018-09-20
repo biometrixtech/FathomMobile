@@ -79,7 +79,7 @@ class PostSessionSurvey extends Component {
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
                     <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, width: AppSizes.screen.width}}>
                         <TabIcon
-                            containerStyle={[{alignSelf: 'flex-end'}, AppStyles.padding]}
+                            containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml + AppSizes.statusBarHeight),}]}
                             icon={'close'}
                             iconStyle={[{color: AppColors.black}]}
                             onPress={handleTogglePostSessionSurvey}
