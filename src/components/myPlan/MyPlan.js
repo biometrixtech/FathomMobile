@@ -1371,33 +1371,27 @@ class MyPlan extends Component {
     };
 
     _goToScrollviewPage = (pageIndex) => {
-        if(this.tabView && !this.state.isReadinessSurveyModalOpen && !this.state.isPostSessionSurveyModalOpen) {
+        // only scroll to page when we
+        // - HAVE a tabView
+        // - DO NOT HAVE: isReadinessSurveyModalOpen & isPostSessionSurveyModalOpen & loading
+        if(
+            this.tabView &&
+            !this.state.isReadinessSurveyModalOpen &&
+            !this.state.isPostSessionSurveyModalOpen &&
+            !this.state.loading
+        ) {
             setTimeout(() => {
                 this.tabView.goToPage(pageIndex);
             }, 300);
         }
     }
 
-    // _renderCustomTopBar = () => {
-    //     return(
-    //         <View>
-    //             <ScrollableTabBar
-    //                 locked
-    //                 renderTab={this.renderTab}
-    //                 style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderBottomWidth: 0,}}
-    //             />
-    //             <Alerts
-    //                 extraStyles={{paddingLeft: 20}}
-    //                 leftAlignText
-    //                 status={this.state.displayMessage ? this.state.networkMessage: 'help'}
-    //             />
-    //         </View>
-    //     )
-    // }
-
     render() {
+        // making sure we can only drag horizontally if our modals are closed and nothing is loading
+        let isScrollLocked = !this.state.isReadinessSurveyModalOpen && !this.state.isPostSessionSurveyModalOpen && !this.state.loading ? false : true;
         return (
             <ScrollableTabView
+                locked={isScrollLocked}
                 ref={tabView => { this.tabView = tabView; }}
                 renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderBottomWidth: 0,}} />}
                 style={{backgroundColor: AppColors.white}}
@@ -1412,7 +1406,6 @@ class MyPlan extends Component {
         );
     }
 }
-
 
 /* Export Component ==================================================================== */
 export default MyPlan;

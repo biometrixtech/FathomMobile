@@ -15,7 +15,6 @@
           }}
           wrapperBackground={AppColors.transparent}
           wrapperHeight={180}
-          wrapperWidth={(AppSizes.screen.width / 8)}
       />
   *
   */
@@ -30,7 +29,7 @@ import {
 
 // import Components
 import { Text, } from './';
-import { AppFonts, AppStyles, } from '../../constants/';
+import { AppColors, AppFonts, AppStyles, } from '../../constants/';
 
 // setup variables
 const deviceWidth = Dimensions.get('window').width;
@@ -84,10 +83,9 @@ class WheelScrollPicker extends Component {
             <View
                 key={index}
                 style={{
-                    alignItems:      'center',
-                    backgroundColor: isSelected ? this.props.activeItemHighlight : 'transparent',
-                    height:          this.props.itemHeight ? this.props.itemHeight : 30,
-                    justifyContent:  'center',
+                    alignItems:     'center',
+                    height:         this.props.itemHeight ? this.props.itemHeight : 30,
+                    justifyContent: 'center',
                 }}
             >
                 {item}
@@ -183,24 +181,23 @@ class WheelScrollPicker extends Component {
     render = () => {
         const { header, footer } = this.renderPlaceHolder();
         return (
-            <View style={{
-                alignSelf:       'center',
-                backgroundColor: this.props.wrapperBackground,
-                flex:            1,
-                height:          this.props.wrapperHeight,
-                overflow:        'hidden',
-                width:           this.props.wrapperWidth,
-            }}>
+            <View
+                style={{
+                    alignSelf:       'center',
+                    backgroundColor: this.props.wrapperBackground,
+                    flex:            1,
+                    height:          this.props.wrapperHeight,
+                }}
+            >
                 <View
                     style={{
-                        borderBottomColor: this.props.highlightColor,
-                        borderBottomWidth: this.props.highlightBorderWidth,
-                        borderTopColor:    this.props.highlightColor,
-                        borderTopWidth:    this.props.highlightBorderWidth,
-                        height:            this.props.itemHeight,
-                        position:          'absolute',
-                        top:               (this.props.wrapperHeight - this.props.itemHeight) / 2,
-                        width:             this.props.highlightWidth,
+                        backgroundColor: AppColors.primary.yellow.hundredPercent,
+                        borderColor:     this.props.highlightColor,
+                        borderWidth:     this.props.highlightBorderWidth,
+                        height:          this.props.itemHeight,
+                        position:        'absolute',
+                        top:             (this.props.wrapperHeight - this.props.itemHeight) / 2,
+                        width:           this.props.highlightWidth,
                     }}
                 />
                 <ScrollView
@@ -261,7 +258,7 @@ WheelScrollPicker.defaultProps = {
     scrollEnabled:        true,
     wrapperBackground:    '#FFFFFF',
     wrapperHeight:        180,
-    wrapperWidth:         150,
+    wrapperWidth:         (deviceWidth / 6),
 };
 
 /* Export Component ==================================================================== */

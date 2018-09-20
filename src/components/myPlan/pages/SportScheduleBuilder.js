@@ -11,7 +11,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, } from 'react-native';
+import { Platform, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -115,7 +115,13 @@ class SportScheduleBuilder extends Component {
     }
 
     _getDateTimeDurationFromState = () => {
-        let { durationValueGroups, timeValueGroups, } = this.state;
+        let { durationValueGroups, isFormValid, timeValueGroups, } = this.state;
+        if(!isFormValid) {
+            return {
+                duration:   '',
+                event_date: moment(),
+            }
+        }
         let now = moment();
         now = now.set('second', 0);
         now = now.set('millisecond', 0);
@@ -127,13 +133,32 @@ class SportScheduleBuilder extends Component {
         let duration = Number(MyPlanConstants.durationOptionGroups.minutes[durationValueGroups.minutes]);
         return {
             duration,
-            event_date: now
-        };
+            event_date: now,
+        }
+    }
+
+    _getFinalTextStrings = (selectedSport, filteredSessionType) => {
+        const { postSession, } = this.props;
+        let { isFormValid, step, } = this.state;
+        // setup variables
+        let selectedStartTime = this._getDateTimeDurationFromState().event_date;
+        let selectedDuration = this._getDateTimeDurationFromState().duration;
+        let selectedSessionType = filteredSessionType && filteredSessionType.length > 0 ? filteredSessionType[0].label.toLowerCase() : postSession.session_type === 1 ? 'training' : '';
+        // logic
+        let sportText = step === 0 || step === 1 ? 'activity type' : step === 2 ? `${selectedSport} ` : `${selectedSport} ${selectedSessionType}`;
+        let startTimeText = (step === 3 || step === 4) && !isFormValid ? 'time' : (step === 3 || step === 4) && isFormValid ? `${selectedStartTime.format('h:mm')}` : '';
+        let durationText = step === 3 && !isFormValid ? 'duration' : `${selectedDuration}`;
+        return {
+            durationText,
+            sportText,
+            startTimeText,
+        }
     }
 
     render = () => {
         const { handleFormChange, postSession, scrollTo, typicalSessions, } = this.props;
         const { isFormValid, step, timeValueGroups, } = this.state;
+        let underlinePadding = Platform.OS === 'ios' ? 2 : 8;
         let filteredTeamSports = _.filter(MyPlanConstants.teamSports, o => o.order && o.order > 0);
         let teamSports = _.orderBy(filteredTeamSports, ['order'], ['asc']);
         let filteredStrengthConditioningTypes = _.filter(MyPlanConstants.strengthConditioningTypes, o => o.order && o.order > 0);
@@ -143,12 +168,9 @@ class SportScheduleBuilder extends Component {
         let filteredSport = postSession.sport_name || postSession.sport_name === 0 ? _.filter(teamSports, ['index', postSession.sport_name]) : postSession.strength_and_conditioning_type || postSession.strength_and_conditioning_type === 0 ? _.filter(strengthConditioningTypes, ['index', postSession.strength_and_conditioning_type]) : null;
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0].label.toLowerCase().replace(' training', '') : '';
         let filteredSessionType = postSession.session_type || postSession.session_type === 0 ? _.filter(sessionTypes, ['index', postSession.session_type]) : null;
-        let selectedSessionType = filteredSessionType && filteredSessionType.length > 0 ? filteredSessionType[0].label.toLowerCase() : postSession.session_type === 1 ? 'training' : '';
-        let selectedStartTime = isFormValid ? this._getDateTimeDurationFromState().event_date : '';
-        let selectedDuration = isFormValid ? this._getDateTimeDurationFromState().duration : '';
-        let sportText = step === 0 || step === 1 ? 'activity' : step === 2 ? `${selectedSport}...` : `${selectedSport} ${selectedSessionType}`;
-        let startTimeText = (step === 3 || step === 4) && !isFormValid ? 'time' : (step === 3 || step === 4) && isFormValid ? `${selectedStartTime.format('h:mm')}` : '';
-        let durationText = step === 3 && !isFormValid ? 'duration' : `${selectedDuration}`;
+        let sportText = this._getFinalTextStrings(selectedSport, filteredSessionType).sportText;
+        let startTimeText = this._getFinalTextStrings(selectedSport, filteredSessionType).startTimeText;
+        let durationText = this._getFinalTextStrings(selectedSport, filteredSessionType).durationText;
         return (
             <View style={{flex: 1,}}>
                 <View style={{flexDirection: 'row'}}>
@@ -169,17 +191,30 @@ class SportScheduleBuilder extends Component {
                     </View>
                     <View style={{flex: 9,}}>
                         <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32), textAlign: 'center'}}>
-                            {`Today I ${step > 2 ? 'had' : 'did'}`}
+                            {'Today I did'}
                         </Text>
                         <Text style={{flexWrap: 'wrap', fontSize: AppFonts.scaleFont(32), lineHeight: AppFonts.scaleFont(32), textAlign: 'center',}}>
                             <Text
                                 robotoBold
                                 style={{
-                                    color:              step >= 3 ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent,
-                                    textDecorationLine: step >= 3 ? 'none' : 'underline',
+                                    color:              step >= 2 ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent,
+                                    textDecorationLine: step >= 2 ? 'none' : 'underline',
                                 }}
                             >
                                 {sportText}
+                                { step === 2 ?
+                                    <Text
+                                        robotoBold
+                                        style={{
+                                            color:              AppColors.primary.yellow.hundredPercent,
+                                            textDecorationLine: 'underline',
+                                        }}
+                                    >
+                                        {'type'}
+                                    </Text>
+                                    :
+                                    null
+                                }
                             </Text>
                             { step >= 3 ?
                                 <Text robotoLight style={{color: AppColors.zeplin.darkGrey,}}>{' at'}</Text>
@@ -194,15 +229,19 @@ class SportScheduleBuilder extends Component {
                         </Text>
                         { step >= 3 ?
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center'}}>
-                                <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), textDecorationLine: 'underline',}}>
-                                    {startTimeText}
-                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? `${timeValueGroups.amPM === 0 ? 'AM' : 'PM'}` : ''}</Text>
-                                </Text>
-                                <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}}>{' for '}</Text>
-                                <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32), textDecorationLine: 'underline',}}>
-                                    {durationText}
-                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'MIN' : ''}</Text>
-                                </Text>
+                                <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2, height: (AppFonts.scaleFont(32) + underlinePadding),}}>
+                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32),}}>
+                                        {startTimeText}
+                                        <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? `${timeValueGroups.amPM === 0 ? 'AM' : 'PM'}` : ''}</Text>
+                                    </Text>
+                                </View>
+                                <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32), height: (AppFonts.scaleFont(32) + 5),}}>{' for '}</Text>
+                                <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2, height: (AppFonts.scaleFont(32) + underlinePadding),}}>
+                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32),}}>
+                                        {durationText}
+                                        <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'MIN' : ''}</Text>
+                                    </Text>
+                                </View>
                             </View>
                             :
                             null
@@ -354,8 +393,8 @@ class SportScheduleBuilder extends Component {
                                                         activeItemColor={AppColors.zeplin.darkGrey}
                                                         activeItemHighlight={'#EBBA2D4D'}
                                                         dataSource={MyPlanConstants.timeOptionGroups.hours}
-                                                        highlightBorderWidth={0}
-                                                        highlightColor={''}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
                                                         selectedIndex={this.state.timeValueGroups.hours}
@@ -364,14 +403,13 @@ class SportScheduleBuilder extends Component {
                                                         }}
                                                         wrapperBackground={AppColors.transparent}
                                                         wrapperHeight={180}
-                                                        wrapperWidth={(AppSizes.screen.width / 8)}
                                                     />
                                                     <WheelScrollPicker
                                                         activeItemColor={AppColors.zeplin.darkGrey}
                                                         activeItemHighlight={'#EBBA2D4D'}
                                                         dataSource={MyPlanConstants.timeOptionGroups.minutes}
-                                                        highlightBorderWidth={0}
-                                                        highlightColor={''}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
                                                         selectedIndex={this.state.timeValueGroups.minutes}
@@ -380,14 +418,13 @@ class SportScheduleBuilder extends Component {
                                                         }}
                                                         wrapperBackground={AppColors.transparent}
                                                         wrapperHeight={180}
-                                                        wrapperWidth={(AppSizes.screen.width / 8)}
                                                     />
                                                     <WheelScrollPicker
                                                         activeItemColor={AppColors.zeplin.darkGrey}
                                                         activeItemHighlight={'#EBBA2D4D'}
                                                         dataSource={MyPlanConstants.timeOptionGroups.amPM}
-                                                        highlightBorderWidth={0}
-                                                        highlightColor={''}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
                                                         selectedIndex={this.state.timeValueGroups.amPM}
@@ -396,20 +433,33 @@ class SportScheduleBuilder extends Component {
                                                         }}
                                                         wrapperBackground={AppColors.transparent}
                                                         wrapperHeight={180}
-                                                        wrapperWidth={(AppSizes.screen.width / 8)}
                                                     />
                                                 </View>
                                             </View>
                                             <View style={{flex: 5,}}>
                                                 <Text oswaldMedium style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{'DURATION'}</Text>
                                                 <Spacer size={10} />
-                                                <View style={{flexDirection: 'row',}}>
+                                                <View style={{flex: 1, flexDirection: 'row',}}>
+                                                    <WheelScrollPicker
+                                                        activeItemColor={AppColors.zeplin.darkGrey}
+                                                        activeItemHighlight={'#EBBA2D4D'}
+                                                        dataSource={['', '', '']}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
+                                                        itemColor={AppColors.primary.grey.fiftyPercent}
+                                                        itemHeight={AppFonts.scaleFont(18) + 10}
+                                                        scrollEnabled={false}
+                                                        selectedIndex={1}
+                                                        onValueChange={(data, selectedIndex) => null}
+                                                        wrapperBackground={AppColors.transparent}
+                                                        wrapperHeight={180}
+                                                    />
                                                     <WheelScrollPicker
                                                         activeItemColor={AppColors.zeplin.darkGrey}
                                                         activeItemHighlight={'#EBBA2D4D'}
                                                         dataSource={MyPlanConstants.durationOptionGroups.minutes}
-                                                        highlightBorderWidth={0}
-                                                        highlightColor={''}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
                                                         selectedIndex={this.state.durationValueGroups.minutes}
@@ -418,14 +468,13 @@ class SportScheduleBuilder extends Component {
                                                         }}
                                                         wrapperBackground={AppColors.transparent}
                                                         wrapperHeight={180}
-                                                        wrapperWidth={(AppSizes.screen.width / 8)}
                                                     />
                                                     <WheelScrollPicker
                                                         activeItemColor={AppColors.zeplin.darkGrey}
                                                         activeItemHighlight={'#EBBA2D4D'}
                                                         dataSource={MyPlanConstants.durationOptionGroups.label}
-                                                        highlightBorderWidth={0}
-                                                        highlightColor={''}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
                                                         scrollEnabled={false}
@@ -435,7 +484,6 @@ class SportScheduleBuilder extends Component {
                                                         }}
                                                         wrapperBackground={AppColors.transparent}
                                                         wrapperHeight={180}
-                                                        wrapperWidth={(AppSizes.screen.width / 8)}
                                                     />
                                                 </View>
                                             </View>
