@@ -7,6 +7,7 @@
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handleReadinessSurveySubmit}
         soreBodyParts={this.state.soreBodyParts}
+        typicalSessions={this.props.plan.typicalSessions}
         user={user}
     />
  *
@@ -47,6 +48,28 @@ class ReadinessSurvey extends Component {
         }
     }
 
+    _getFunctionalStrengthOptions = session => {
+        let isSport = session.sport_name > 0 || session.sport_name === 0 ? true : false;
+        let isStrengthConditioning = session.strength_and_conditioning_type > 0 || session.strength_and_conditioning_type === 0;
+        let sessionName = isSport ?
+            _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name)
+            : isStrengthConditioning ?
+                _.find(MyPlanConstants.strengthConditioningTypes, o => o.index === session.strength_and_conditioning_type)
+                :
+                '';
+        sessionName = sessionName.label && isSport ?
+            sessionName.label
+            : sessionName.label && isStrengthConditioning ?
+                `${sessionName.label} TRAINING`
+                :
+                '';
+        return {
+            isSport,
+            isStrengthConditioning,
+            sessionName,
+        };
+    }
+
     render = () => {
         const {
             dailyReadiness,
@@ -54,9 +77,12 @@ class ReadinessSurvey extends Component {
             handleFormChange,
             handleFormSubmit,
             soreBodyParts,
+            typicalSessions,
             user,
         } = this.props;
+        console.log('dailyReadiness',dailyReadiness);
         console.log('soreBodyParts',soreBodyParts);
+        console.log('typicalSessions',typicalSessions);
         let split_afternoon = 12 // 24hr time to split the afternoon
         let split_evening = 17 // 24hr time to split the evening
         let hourOfDay = moment().get('hour');
@@ -75,15 +101,35 @@ class ReadinessSurvey extends Component {
             _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
             (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
         );
-        let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
-        let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
-        newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
 
+        let selectedSportPositions = dailyReadiness.current_sport_name !== null ? _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name).positions : [];
         const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
         const isFirstFunctionalStrength = isFunctionalStrengthEligible && (!soreBodyParts.current_sport_name || soreBodyParts.current_sport_name !== 0) && (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
         let isSecondFunctionalStrength = isFunctionalStrengthEligible && (soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0) && (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
-        let questionCounter = isFirstFunctionalStrength ? 3 : 1;
+        let isFunctionalStrengthTargetValid = dailyReadiness.current_sport_name !== null ?
+            dailyReadiness.current_sport_name !== null && dailyReadiness.current_position !== null
+            : dailyReadiness.current_sport_name === null ?
+                dailyReadiness.current_position !== null
+                :
+                false;
+        let isFunctionalStrengthValid = isFunctionalStrengthEligible && isFirstFunctionalStrength ?
+            dailyReadiness.wants_functional_strength !== null && isFunctionalStrengthTargetValid
+            : isFunctionalStrengthEligible && isSecondFunctionalStrength ?
+                dailyReadiness.wants_functional_strength !== null
+                :
+                true;
+        console.log('isFunctionalStrengthValid',isFunctionalStrengthValid);
+        let functionalStrengthTodaySubtext = isFunctionalStrengthEligible ?
+            `(${soreBodyParts.completed_functional_strength_sessions}/2 completed in last 7 days${soreBodyParts.completed_functional_strength_sessions === 2 ? ', but you can go for 3!': ''})`
+            :
+            '';
 
+        let isFormValid = isFunctionalStrengthValid && areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
+        let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
+        newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
+        let questionCounter = 0;
+        let scrollCounter = -1;
+        /*eslint no-return-assign: 0*/
         return(
             <View style={{flex: 1}}>
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
@@ -100,50 +146,159 @@ class ReadinessSurvey extends Component {
                             <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>{'You\'ve unlocked\nFunctional Strength!'}</Text>
                             <Spacer size={50} />
                             <View>
+                                <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
+                                    {questionCounter+=1}
+                                </Text>
+                                <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                    {'What activity would you like to target?'}
+                                </Text>
+                                <Spacer size={10} />
+                                { _.map(typicalSessions, (session, i) => {
+                                    let isSport = this._getFunctionalStrengthOptions(session).isSport;
+                                    let isStrengthConditioning = this._getFunctionalStrengthOptions(session).isStrengthConditioning;
+                                    let sessionName = this._getFunctionalStrengthOptions(session).sessionName;
+                                    let isSelected = false;
+                                    if(isSport) {
+                                        isSelected = dailyReadiness.current_sport_name === session.sport_name;
+                                    } else if(isStrengthConditioning) {
+                                        isSelected = dailyReadiness.current_sport_name === null && dailyReadiness.current_position === session.strength_and_conditioning_type;
+                                    }
+                                    return(
+                                        <View key={i}>
+                                            <Button
+                                                backgroundColor={isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                                                buttonStyle={{
+                                                    alignSelf:       'center',
+                                                    borderRadius:    5,
+                                                    paddingVertical: 5,
+                                                    width:           AppSizes.screen.widthTwoThirds,
+                                                }}
+                                                color={isSelected ? AppColors.white : AppColors.zeplin.darkGrey}
+                                                fontFamily={AppStyles.robotoMedium.fontFamily}
+                                                fontWeight={AppStyles.robotoMedium.fontWeight}
+                                                onPress={() => {
+                                                    if(isSport) {
+                                                        console.log('current_sport_name',session.sport_name);
+                                                        if(isSelected) {
+                                                            handleFormChange('current_sport_name', null);
+                                                            handleFormChange('current_position', null);
+                                                        } else {
+                                                            handleFormChange('current_sport_name', session.sport_name);
+                                                            handleFormChange('current_position', null);
+                                                        }
+                                                    } else if(isStrengthConditioning) {
+                                                        console.log('current_position',session.strength_and_conditioning_type);
+                                                        if(isSelected) {
+                                                            handleFormChange('current_sport_name', null);
+                                                            handleFormChange('current_position', null);
+                                                        } else {
+                                                            handleFormChange('current_sport_name', null);
+                                                            handleFormChange('current_position', session.strength_and_conditioning_type);
+                                                        }
+                                                    }
+                                                }}
+                                                outlined={isSelected ? false : true}
+                                                raised={false}
+                                                textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                                                title={sessionName.toUpperCase()}
+                                            />
+                                            <Spacer size={10} />
+                                        </View>
+                                    )
+                                })}
+                                { dailyReadiness.current_sport_name !== null ?
+                                    <View>
+                                        <Spacer size={70} />
+                                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                            {'What is your primary position in '}
+                                            <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                                {this._getFunctionalStrengthOptions({ sport_name: dailyReadiness.current_sport_name, }).sessionName.toLowerCase()}
+                                            </Text>
+                                            {'?'}
+                                        </Text>
+                                        <Spacer size={10} />
+                                        { _.map(selectedSportPositions, (position, i) => {
+                                            return(
+                                                <View key={i}>
+                                                    <Button
+                                                        backgroundColor={dailyReadiness.current_position === i ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                                                        buttonStyle={{
+                                                            alignSelf:       'center',
+                                                            borderRadius:    5,
+                                                            paddingVertical: 5,
+                                                            width:           AppSizes.screen.widthTwoThirds,
+                                                        }}
+                                                        color={dailyReadiness.current_position === i ? AppColors.white : AppColors.zeplin.darkGrey}
+                                                        fontFamily={AppStyles.robotoMedium.fontFamily}
+                                                        fontWeight={AppStyles.robotoMedium.fontWeight}
+                                                        onPress={() => {
+                                                            console.log('current_position',i);
+                                                            handleFormChange('current_position', i);
+                                                            this._scrollTo(scrollCounter+=1);
+                                                        }}
+                                                        outlined={dailyReadiness.current_position === i ? false : true}
+                                                        raised={false}
+                                                        textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                                                        title={position.toUpperCase()}
+                                                    />
+                                                    <Spacer size={10} />
+                                                </View>
+                                            )
+                                        })}
+                                    </View>
+                                    :
+                                    null
+                                }
+                            </View>
+                            <View onLayout={event => {this.myComponents[scrollCounter+=1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
                                 <Spacer size={100} />
                                 <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                                    {'2'}
+                                    {questionCounter+=1}
                                 </Text>
                                 <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                                     {'Would you like to add functional strength to your training plan today?'}
                                 </Text>
                                 <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}]}>
-                                    {`(${soreBodyParts.completed_functional_strength_sessions}/2 completed in last 7 days)`}
+                                    {functionalStrengthTodaySubtext}
                                 </Text>
                                 <Spacer size={10} />
                                 <Button
-                                    backgroundColor={dailyReadiness.wants_functional_strength ? AppColors.white : AppColors.primary.yellow.hundredPercent}
+                                    backgroundColor={dailyReadiness.wants_functional_strength ? AppColors.primary.yellow.hundredPercent : AppColors.white}
                                     buttonStyle={{
-                                        alignSelf:    'center',
-                                        borderRadius: 5,
-                                        width:        AppSizes.screen.widthTwoThirds
+                                        alignSelf:       'center',
+                                        borderRadius:    5,
+                                        paddingVertical: 5,
+                                        width:           AppSizes.screen.widthTwoThirds,
                                     }}
-                                    color={dailyReadiness.wants_functional_strength ? AppColors.zeplin.darkGrey : AppColors.white}
+                                    color={dailyReadiness.wants_functional_strength ? AppColors.white : AppColors.zeplin.darkGrey}
                                     fontFamily={AppStyles.robotoMedium.fontFamily}
                                     fontWeight={AppStyles.robotoMedium.fontWeight}
                                     onPress={() => {
                                         handleFormChange('wants_functional_strength', true);
-                                        // this._scrollTo(1);
+                                        this._scrollTo(scrollCounter+=1);
                                     }}
+                                    outlined={dailyReadiness.wants_functional_strength ? false : true}
                                     raised={false}
                                     textStyle={{ fontSize: AppFonts.scaleFont(18) }}
                                     title={'YES'}
                                 />
                                 <Spacer size={10} />
                                 <Button
-                                    backgroundColor={dailyReadiness.wants_functional_strength ? AppColors.white : AppColors.primary.yellow.hundredPercent}
+                                    backgroundColor={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? AppColors.white : AppColors.primary.yellow.hundredPercent}
                                     buttonStyle={{
-                                        alignSelf:    'center',
-                                        borderRadius: 5,
-                                        width:        AppSizes.screen.widthTwoThirds
+                                        alignSelf:       'center',
+                                        borderRadius:    5,
+                                        paddingVertical: 5,
+                                        width:           AppSizes.screen.widthTwoThirds,
                                     }}
-                                    color={dailyReadiness.wants_functional_strength ? AppColors.zeplin.darkGrey : AppColors.white}
+                                    color={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? AppColors.zeplin.darkGrey : AppColors.white}
                                     fontFamily={AppStyles.robotoMedium.fontFamily}
                                     fontWeight={AppStyles.robotoMedium.fontWeight}
                                     onPress={() => {
                                         handleFormChange('wants_functional_strength', false);
-                                        // this._scrollTo(1);
+                                        this._scrollTo(scrollCounter+=1);
                                     }}
+                                    outlined={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? true : false}
                                     raised={false}
                                     textStyle={{ fontSize: AppFonts.scaleFont(18) }}
                                     title={'NO'}
@@ -154,10 +309,10 @@ class ReadinessSurvey extends Component {
                         :
                         null
                     }
-                    <View>
+                    <View onLayout={event => {this.myComponents[scrollCounter+=1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
                         <Spacer size={50} />
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {questionCounter}
+                            {questionCounter+=1}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {'How mentally ready do you feel for today?'}
@@ -174,7 +329,7 @@ class ReadinessSurvey extends Component {
                                         sorenessPainMappingLength={MyPlanConstants.overallReadiness.length}
                                         updateStateAndForm={() => {
                                             handleFormChange('readiness', (key * 2));
-                                            this._scrollTo(0);
+                                            this._scrollTo(scrollCounter+=1);
                                         }}
                                         valueLabel={value}
                                     />
@@ -182,10 +337,10 @@ class ReadinessSurvey extends Component {
                             })}
                         </View>
                     </View>
-                    <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                    <View onLayout={event => {this.myComponents[scrollCounter+=1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
                         <Spacer size={100} />
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {questionCounter + 1}
+                            {questionCounter+=1}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {'How well did you sleep last night?'}
@@ -202,7 +357,7 @@ class ReadinessSurvey extends Component {
                                         sorenessPainMappingLength={MyPlanConstants.sleepQuality.length}
                                         updateStateAndForm={() => {
                                             handleFormChange('sleep_quality', (key * 2));
-                                            this._scrollTo(1);
+                                            this._scrollTo(scrollCounter+=1);
                                         }}
                                         valueLabel={value}
                                     />
@@ -211,34 +366,85 @@ class ReadinessSurvey extends Component {
                         </View>
                     </View>
                     { isSecondFunctionalStrength ?
-                        <View>
-                            <Text>{'HELLO'}</Text>
+                        <View onLayout={event => {this.myComponents[scrollCounter+=1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                            <Spacer size={100} />
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
+                                {questionCounter+=1}
+                            </Text>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                {'Would you like to add functional strength to your training plan today?'}
+                            </Text>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}]}>
+                                {functionalStrengthTodaySubtext}
+                            </Text>
+                            <Spacer size={10} />
+                            <Button
+                                backgroundColor={dailyReadiness.wants_functional_strength ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                                buttonStyle={{
+                                    alignSelf:       'center',
+                                    borderRadius:    5,
+                                    paddingVertical: 5,
+                                    width:           AppSizes.screen.widthTwoThirds,
+                                }}
+                                color={dailyReadiness.wants_functional_strength ? AppColors.white : AppColors.zeplin.darkGrey}
+                                fontFamily={AppStyles.robotoMedium.fontFamily}
+                                fontWeight={AppStyles.robotoMedium.fontWeight}
+                                onPress={() => {
+                                    handleFormChange('wants_functional_strength', true);
+                                    this._scrollTo(scrollCounter+=1);
+                                }}
+                                outlined={dailyReadiness.wants_functional_strength ? false : true}
+                                raised={false}
+                                textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                                title={'YES'}
+                            />
+                            <Spacer size={10} />
+                            <Button
+                                backgroundColor={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? AppColors.white : AppColors.primary.yellow.hundredPercent}
+                                buttonStyle={{
+                                    alignSelf:       'center',
+                                    borderRadius:    5,
+                                    paddingVertical: 5,
+                                    width:           AppSizes.screen.widthTwoThirds,
+                                }}
+                                color={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? AppColors.zeplin.darkGrey : AppColors.white}
+                                fontFamily={AppStyles.robotoMedium.fontFamily}
+                                fontWeight={AppStyles.robotoMedium.fontWeight}
+                                onPress={() => {
+                                    handleFormChange('wants_functional_strength', false);
+                                    this._scrollTo(scrollCounter+=1);
+                                }}
+                                outlined={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? true : false}
+                                raised={false}
+                                textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                                title={'NO'}
+                            />
                         </View>
                         :
                         null
                     }
                     <Spacer size={100} />
                     { _.map(newSoreBodyParts, (bodyPart, i) =>
-                        <View onLayout={event => {this.myComponents[i + 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}} key={i}>
+                        <View onLayout={event => {this.myComponents[scrollCounter+=1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}} key={i}>
                             <SoreBodyPart
                                 bodyPart={bodyPart}
                                 bodyPartSide={bodyPart.side}
                                 handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                     handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
                                     if(shouldScroll) {
-                                        this._scrollTo(i + 2);
+                                        this._scrollTo(scrollCounter+=1);
                                     }
                                 }}
-                                index={i + questionCounter + 2}
+                                index={questionCounter+=1}
                                 isPrevSoreness={true}
                                 surveyObject={dailyReadiness}
                             />
                             <Spacer size={100} />
                         </View>
                     )}
-                    <View onLayout={event => {this.myComponents[newSoreBodyParts ? newSoreBodyParts.length + 1 : 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
+                    <View onLayout={event => {this.myComponents[scrollCounter+=1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {newSoreBodyParts && newSoreBodyParts.length > 0 ? (newSoreBodyParts.length - 1) + questionCounter + 3 : questionCounter + 2}
+                            {questionCounter+=1}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
@@ -260,7 +466,7 @@ class ReadinessSurvey extends Component {
                                 borderRadius:    5,
                                 marginBottom:    AppSizes.padding,
                                 paddingVertical: AppSizes.paddingMed,
-                                width:           AppSizes.screen.widthTwoThirds
+                                width:           AppSizes.screen.widthTwoThirds,
                             }}
                             color={AppColors.white}
                             fontFamily={AppStyles.robotoMedium.fontFamily}
@@ -278,7 +484,7 @@ class ReadinessSurvey extends Component {
                                 borderRadius:    5,
                                 marginBottom:    AppSizes.padding,
                                 paddingVertical: AppSizes.paddingMed,
-                                width:           AppSizes.screen.widthTwoThirds
+                                width:           AppSizes.screen.widthTwoThirds,
                             }}
                             color={AppColors.zeplin.lightGrey}
                             fontFamily={AppStyles.robotoMedium.fontFamily}
@@ -301,9 +507,12 @@ ReadinessSurvey.propTypes = {
     handleFormChange:          PropTypes.func.isRequired,
     handleFormSubmit:          PropTypes.func.isRequired,
     soreBodyParts:             PropTypes.object.isRequired,
+    typicalSessions:           PropTypes.array,
     user:                      PropTypes.object.isRequired,
 };
-ReadinessSurvey.defaultProps = {};
+ReadinessSurvey.defaultProps = {
+    typicalSession: [],
+};
 ReadinessSurvey.componentName = 'ReadinessSurvey';
 
 /* Export Component ================================================================== */

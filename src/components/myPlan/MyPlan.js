@@ -451,7 +451,7 @@ class MyPlan extends Component {
     }
 
     _togglePostSessionSurveyModal = () => {
-        this.setState({ loading: true });
+        this.setState({ loading: true, });
         if (!this.state.isPostSessionSurveyModalOpen) {
             this.props.typicalSession(this.props.user.id)
                 .then(() => this.props.getSoreBodyParts())
@@ -489,6 +489,17 @@ class MyPlan extends Component {
                 loading:                      false,
                 postSession:                  newPostSession,
             });
+        }
+    }
+
+    _toggleReadinessSurvey = () => {
+        this.setState({ loading: true, });
+        let soreBodyParts = this.props.plan.soreBodyParts;
+        if(soreBodyParts.functional_strength_eligible && soreBodyParts.current_sport_name === null && soreBodyParts.current_position === null) {
+            this.props.typicalSession(this.props.user.id)
+                .then(() => this.setState({ isReadinessSurveyModalOpen: true, loading: false, }));
+        } else {
+            this.setState({ isReadinessSurveyModalOpen: true, loading: false, });
         }
     }
 
@@ -795,7 +806,7 @@ class MyPlan extends Component {
                                         fontFamily={AppStyles.robotoBold.fontFamily}
                                         fontWeight={AppStyles.robotoBold.fontWeight}
                                         outlined
-                                        onPress={() => this.setState({ isReadinessSurveyModalOpen: true })}
+                                        onPress={() => this._toggleReadinessSurvey()}
                                         textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                                         title={'Start'}
                                     />
@@ -911,8 +922,8 @@ class MyPlan extends Component {
                                         this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
                                             .then(() =>
                                                 this.setState({
-                                                    loading:            false,
-                                                    prepare:            Object.assign({}, this.state.prepare, {
+                                                    loading: false,
+                                                    prepare: Object.assign({}, this.state.prepare, {
                                                         finishedRecovery:          true,
                                                         isActiveRecoveryCollapsed: true,
                                                     }),
@@ -956,6 +967,7 @@ class MyPlan extends Component {
                                 handleFormChange={this._handleDailyReadinessFormChange}
                                 handleFormSubmit={this._handleReadinessSurveySubmit}
                                 soreBodyParts={this.props.plan.soreBodyParts}
+                                typicalSessions={this.props.plan.typicalSessions}
                                 user={this.props.user}
                             />
                             { this.state.loading ?
@@ -999,6 +1011,13 @@ class MyPlan extends Component {
                         </Modal>
                         :
                         null
+                }
+                { this.state.loading ?
+                    <ActivityIndicator
+                        color={AppColors.primary.yellow.hundredPercent}
+                        size={'large'}
+                        style={[AppStyles.activityIndicator]}
+                    /> : null
                 }
             </ScrollView>
         );
