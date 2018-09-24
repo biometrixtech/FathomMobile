@@ -1346,7 +1346,7 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                { !functionalStrength.completed ?
+                { isDailyReadinessSurveyCompleted && !functionalStrength.completed ?
                       <View>
                           <ListItem
                               containerStyle={{ borderBottomWidth: 0 }}
@@ -1490,7 +1490,7 @@ class MyPlan extends Component {
                         fontFamily={AppStyles.oswaldMedium.fontFamily}
                         fontWeight={AppStyles.oswaldMedium.fontWeight}
                         leftIcon={{
-                            color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
+                            color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
                             name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
                             size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
                         }}
