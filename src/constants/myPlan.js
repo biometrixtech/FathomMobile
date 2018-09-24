@@ -304,7 +304,7 @@ const teamSports = [
     { index: 10, order: 11, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], },
     { index: 11, order: null, label: 'Rowing', positions: false, },
     { index: 12, order: null, label: 'Rugby', positions: false, },
-    { index: 13, order: null, label: 'Running', positions: false, },
+    { index: 13, order: null, label: 'Running', positions: ['Long Distance', 'Sprinter'], },
     { index: 14, order: 15, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], },
     { index: 15, order: null, label: 'Swimming / Diving', positions: false, },
     { index: 16, order: 17, label: 'Tennis', positions: false, },
