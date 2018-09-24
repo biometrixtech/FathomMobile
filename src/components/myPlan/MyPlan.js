@@ -285,13 +285,19 @@ class MyPlan extends Component {
 
     _handleReadinessSurveySubmit = () => {
         this.setState({ loading: true });
-        let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+        let newDailyReadiness = {};
         newDailyReadiness.user_id = this.props.user.id;
         newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
-        newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality;
-        newDailyReadiness.readiness = newDailyReadiness.readiness;
-        newDailyReadiness.soreness= newDailyReadiness.soreness.filter(u => u.severity && u.severity > 0);
-        // TODO: add logic to include wants_functional_strength, current_sport_name, and current_position
+        newDailyReadiness.sleep_quality = this.state.dailyReadiness.sleep_quality;
+        newDailyReadiness.readiness = this.state.dailyReadiness.readiness;
+        newDailyReadiness.soreness = this.state.dailyReadiness.soreness.filter(u => u.severity && u.severity > 0);
+        newDailyReadiness.wants_functional_strength = this.state.dailyReadiness.wants_functional_strength;
+        if(this.state.dailyReadiness.current_sport_name === 0 || this.state.dailyReadiness.current_sport_name > 0) {
+            newDailyReadiness.current_sport_name = this.state.dailyReadiness.current_sport_name;
+        }
+        if(this.state.dailyReadiness.current_position === 0 || this.state.dailyReadiness.current_position > 0) {
+            newDailyReadiness.current_position = this.state.dailyReadiness.current_position;
+        }
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
                 let newPrepareObject = Object.assign({}, this.state.prepare, {

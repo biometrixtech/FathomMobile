@@ -80,9 +80,6 @@ class ReadinessSurvey extends Component {
             typicalSessions,
             user,
         } = this.props;
-        console.log('dailyReadiness',dailyReadiness);
-        console.log('soreBodyParts',soreBodyParts);
-        console.log('typicalSessions',typicalSessions);
         let split_afternoon = 12 // 24hr time to split the afternoon
         let split_evening = 17 // 24hr time to split the evening
         let hourOfDay = moment().get('hour');
@@ -101,7 +98,6 @@ class ReadinessSurvey extends Component {
             _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
             (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
         );
-
         let selectedSportPositions = dailyReadiness.current_sport_name !== null ? _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name).positions : [];
         const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
         const isFirstFunctionalStrength = isFunctionalStrengthEligible && (!soreBodyParts.current_sport_name || soreBodyParts.current_sport_name !== 0) && (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
@@ -118,17 +114,14 @@ class ReadinessSurvey extends Component {
                 dailyReadiness.wants_functional_strength !== null
                 :
                 true;
-        console.log('isFunctionalStrengthValid',isFunctionalStrengthValid);
         let functionalStrengthTodaySubtext = isFunctionalStrengthEligible ?
             `(${soreBodyParts.completed_functional_strength_sessions}/2 completed in last 7 days${soreBodyParts.completed_functional_strength_sessions === 2 ? ', but you can go for 3!': ''})`
             :
             '';
-
         let isFormValid = isFunctionalStrengthValid && areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         let questionCounter = 0;
-        let scrollCounter = -1;
         /*eslint no-return-assign: 0*/
         return(
             <View style={{flex: 1}}>
@@ -194,6 +187,7 @@ class ReadinessSurvey extends Component {
                                                         } else {
                                                             handleFormChange('current_sport_name', null);
                                                             handleFormChange('current_position', session.strength_and_conditioning_type);
+                                                            this._scrollTo(0);
                                                         }
                                                     }
                                                 }}
@@ -234,7 +228,7 @@ class ReadinessSurvey extends Component {
                                                         onPress={() => {
                                                             console.log('current_position',i);
                                                             handleFormChange('current_position', i);
-                                                            this._scrollTo(scrollCounter+=1);
+                                                            this._scrollTo(0);
                                                         }}
                                                         outlined={dailyReadiness.current_position === i ? false : true}
                                                         raised={false}
@@ -250,7 +244,7 @@ class ReadinessSurvey extends Component {
                                     null
                                 }
                             </View>
-                            <View onLayout={event => {this.myComponents[scrollCounter+=1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                            <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
                                 <Spacer size={100} />
                                 <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                                     {questionCounter+=1}
@@ -275,7 +269,7 @@ class ReadinessSurvey extends Component {
                                     fontWeight={AppStyles.robotoMedium.fontWeight}
                                     onPress={() => {
                                         handleFormChange('wants_functional_strength', true);
-                                        this._scrollTo(scrollCounter+=1);
+                                        this._scrollTo(1);
                                     }}
                                     outlined={dailyReadiness.wants_functional_strength ? false : true}
                                     raised={false}
@@ -296,7 +290,7 @@ class ReadinessSurvey extends Component {
                                     fontWeight={AppStyles.robotoMedium.fontWeight}
                                     onPress={() => {
                                         handleFormChange('wants_functional_strength', false);
-                                        this._scrollTo(scrollCounter+=1);
+                                        this._scrollTo(1);
                                     }}
                                     outlined={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? true : false}
                                     raised={false}
@@ -309,7 +303,7 @@ class ReadinessSurvey extends Component {
                         :
                         null
                     }
-                    <View onLayout={event => {this.myComponents[scrollCounter+=1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                    <View onLayout={event => {this.myComponents[isFirstFunctionalStrength ? 1 : 0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
                         <Spacer size={50} />
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                             {questionCounter+=1}
@@ -329,7 +323,7 @@ class ReadinessSurvey extends Component {
                                         sorenessPainMappingLength={MyPlanConstants.overallReadiness.length}
                                         updateStateAndForm={() => {
                                             handleFormChange('readiness', (key * 2));
-                                            this._scrollTo(scrollCounter+=1);
+                                            this._scrollTo(isFirstFunctionalStrength ? 2 : 1);
                                         }}
                                         valueLabel={value}
                                     />
@@ -337,7 +331,7 @@ class ReadinessSurvey extends Component {
                             })}
                         </View>
                     </View>
-                    <View onLayout={event => {this.myComponents[scrollCounter+=1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                    <View onLayout={event => {this.myComponents[isFirstFunctionalStrength ? 2 : 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
                         <Spacer size={100} />
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                             {questionCounter+=1}
@@ -357,7 +351,7 @@ class ReadinessSurvey extends Component {
                                         sorenessPainMappingLength={MyPlanConstants.sleepQuality.length}
                                         updateStateAndForm={() => {
                                             handleFormChange('sleep_quality', (key * 2));
-                                            this._scrollTo(scrollCounter+=1);
+                                            this._scrollTo(isFirstFunctionalStrength ? 3 : 2);
                                         }}
                                         valueLabel={value}
                                     />
@@ -366,7 +360,7 @@ class ReadinessSurvey extends Component {
                         </View>
                     </View>
                     { isSecondFunctionalStrength ?
-                        <View onLayout={event => {this.myComponents[scrollCounter+=1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                        <View onLayout={event => {this.myComponents[2] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
                             <Spacer size={100} />
                             <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                                 {questionCounter+=1}
@@ -391,7 +385,7 @@ class ReadinessSurvey extends Component {
                                 fontWeight={AppStyles.robotoMedium.fontWeight}
                                 onPress={() => {
                                     handleFormChange('wants_functional_strength', true);
-                                    this._scrollTo(scrollCounter+=1);
+                                    this._scrollTo(3);
                                 }}
                                 outlined={dailyReadiness.wants_functional_strength ? false : true}
                                 raised={false}
@@ -412,7 +406,7 @@ class ReadinessSurvey extends Component {
                                 fontWeight={AppStyles.robotoMedium.fontWeight}
                                 onPress={() => {
                                     handleFormChange('wants_functional_strength', false);
-                                    this._scrollTo(scrollCounter+=1);
+                                    this._scrollTo(3);
                                 }}
                                 outlined={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? true : false}
                                 raised={false}
@@ -425,26 +419,26 @@ class ReadinessSurvey extends Component {
                     }
                     <Spacer size={100} />
                     { _.map(newSoreBodyParts, (bodyPart, i) =>
-                        <View onLayout={event => {this.myComponents[scrollCounter+=1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}} key={i}>
+                        <View onLayout={event => {this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (i + 3) : (i + 2)] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}} key={i}>
                             <SoreBodyPart
                                 bodyPart={bodyPart}
                                 bodyPartSide={bodyPart.side}
                                 handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                     handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
                                     if(shouldScroll) {
-                                        this._scrollTo(scrollCounter+=1);
+                                        this._scrollTo(isFirstFunctionalStrength || isSecondFunctionalStrength ? (i + 4) : (i + 3));
                                     }
                                 }}
-                                index={questionCounter+=1}
+                                index={isFirstFunctionalStrength ? (i + 5) : isSecondFunctionalStrength ? (i + 4) : (i + 3)}
                                 isPrevSoreness={true}
                                 surveyObject={dailyReadiness}
                             />
                             <Spacer size={100} />
                         </View>
                     )}
-                    <View onLayout={event => {this.myComponents[scrollCounter+=1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
+                    <View onLayout={event => {this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (newSoreBodyParts.length + 3) : (newSoreBodyParts.length + 2)] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {questionCounter+=1}
+                            {isFirstFunctionalStrength ? (newSoreBodyParts.length + 5) : isSecondFunctionalStrength ? (newSoreBodyParts.length + 4) : (newSoreBodyParts.length + 3)}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
