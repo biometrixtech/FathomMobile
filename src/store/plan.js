@@ -10,9 +10,10 @@
  */
 
 export default {
-    completedExercises: [],
-    dailyPlan:          [],
-    postSession:        {},
-    soreBodyParts:      {},
-    typicalSessions:    [],
+    completedExercises:   [],
+    completedFSExercises: [],
+    dailyPlan:            [],
+    postSession:          {},
+    soreBodyParts:        {},
+    typicalSessions:      [],
 };

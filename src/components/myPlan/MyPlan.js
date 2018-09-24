@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import {
     ActivityIndicator,
+    Alert,
     AppState,
     BackHandler,
     Easing,
@@ -61,18 +62,21 @@ class MyPlan extends Component {
     static componentName = 'MyPlanView';
 
     static propTypes = {
-        ble:                     PropTypes.object.isRequired,
-        clearCompletedExercises: PropTypes.func.isRequired,
-        setCompletedExercises:   PropTypes.func.isRequired,
-        getSoreBodyParts:        PropTypes.func.isRequired,
-        noSessions:              PropTypes.func.isRequired,
-        notification:            PropTypes.bool.isRequired,
-        patchActiveRecovery:     PropTypes.func.isRequired,
-        plan:                    PropTypes.object.isRequired,
-        postReadinessSurvey:     PropTypes.func.isRequired,
-        postSessionSurvey:       PropTypes.func.isRequired,
-        typicalSession:          PropTypes.func.isRequired,
-        user:                    PropTypes.object.isRequired,
+        ble:                       PropTypes.object.isRequired,
+        clearCompletedExercises:   PropTypes.func.isRequired,
+        clearCompletedFSExercises: PropTypes.func.isRequired,
+        setCompletedExercises:     PropTypes.func.isRequired,
+        setCompletedFSExercises:   PropTypes.func.isRequired,
+        getSoreBodyParts:          PropTypes.func.isRequired,
+        noSessions:                PropTypes.func.isRequired,
+        notification:              PropTypes.bool.isRequired,
+        patchActiveRecovery:       PropTypes.func.isRequired,
+        patchFunctionalStrength:   PropTypes.func.isRequired,
+        plan:                      PropTypes.object.isRequired,
+        postReadinessSurvey:       PropTypes.func.isRequired,
+        postSessionSurvey:         PropTypes.func.isRequired,
+        typicalSession:            PropTypes.func.isRequired,
+        user:                      PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -90,6 +94,7 @@ class MyPlan extends Component {
             },
             isCompletedAMPMRecoveryModalOpen: true,
             isExerciseListRefreshing:         false,
+            isFunctionalStrengthCollapsed:    true,
             isPostSessionSurveyModalOpen:     false,
             isReadinessSurveyModalOpen:       false,
             isSelectedExerciseModalOpen:      false,
@@ -568,6 +573,54 @@ class MyPlan extends Component {
         this.setState({
             isSelectedExerciseModalOpen: false,
         });
+    }
+
+    _handleCompleteFSExercise = (exerciseId) => {
+        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedFSExercises);
+        if(newCompletedExercises && newCompletedExercises.indexOf(exerciseId) > -1) {
+            newCompletedExercises.splice(newCompletedExercises.indexOf(exerciseId), 1)
+        } else {
+            newCompletedExercises.push(exerciseId);
+        }
+        this.props.setCompletedFSExercises(newCompletedExercises);
+        this.setState({
+            isSelectedExerciseModalOpen: false,
+        });
+    }
+
+    _handleFunctionalStrengthFormSubmit = () => {
+        let functionalStrength = this.props.plan.dailyPlan[0].functional_strength_session;
+        let completedFSExercises = store.getState().plan.completedFSExercises;
+        let isFSCompletedValid = MyPlanConstants.isFSCompletedValid(functionalStrength, completedFSExercises);
+        if(isFSCompletedValid) {
+            this.setState({ loading: true });
+            this.props.patchFunctionalStrength(this.props.user.id, completedFSExercises)
+                .then(() => {
+                    this.props.clearCompletedFSExercises();
+                    this.setState({
+                        isFunctionalStrengthCollapsed: true,
+                        loading:                       false,
+                    });
+                })
+                .catch(() => {
+                    this.setState({ loading: false, });
+                })
+        } else {
+            Alert.alert(
+                'You\'re Not Done',
+                'Do all exercises in Warm-up, Dynamic Movement and Stability to complete Functional Strength.',
+                [
+                    {
+                        text: 'Continue',
+                    },
+                    {
+                        text:    'Done for Now',
+                        onPress: () => this.setState({ isFunctionalStrengthCollapsed: true, }),
+                    },
+                ],
+                { cancelable: true }
+            );
+        }
     }
 
     _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
@@ -1177,8 +1230,8 @@ class MyPlan extends Component {
                                         this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'post')
                                             .then(() =>
                                                 this.setState({
-                                                    loading:            false,
-                                                    recover:            Object.assign({}, this.state.recover, {
+                                                    loading: false,
+                                                    recover: Object.assign({}, this.state.recover, {
                                                         finished:                  !!completedExercises.length,
                                                         isActiveRecoveryCollapsed: true,
                                                     })
@@ -1247,11 +1300,22 @@ class MyPlan extends Component {
         let { plan } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
-        let trainingSessions = dailyPlanObj ? _.orderBy(dailyPlanObj.training_sessions, o => moment(o.event_date), ['asc']) : [];
+        let trainingSessions = dailyPlanObj ? dailyPlanObj.training_sessions : [];
+        let functionalStrengthArray = [];
+        let functionalStrength = dailyPlanObj && dailyPlanObj.functional_strength_eligible && dailyPlanObj.functional_strength_session ? dailyPlanObj.functional_strength_session : {};
+        if(functionalStrength.completed && functionalStrength.event_date) {
+            let newFunctionalStrength = _.cloneDeep(functionalStrength);
+            newFunctionalStrength.isFunctionalStrength = true;
+            functionalStrengthArray.push(newFunctionalStrength);
+        }
+        trainingSessions = trainingSessions.concat(functionalStrengthArray);
+        trainingSessions = _.orderBy(trainingSessions, o => moment(o.event_date), ['asc']);
         let filteredTrainingSessions = trainingSessions.length > 0 ?
             _.filter(trainingSessions, o => o.sport_name !== null || o.strength_and_conditioning_type !== null)
             :
             [];
+        let completedFSExercises = store.getState().plan.completedFSExercises;
+        let fsExerciseList = functionalStrength ? MyPlanConstants.cleanFSExerciseList(functionalStrength) : {};
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
@@ -1279,6 +1343,91 @@ class MyPlan extends Component {
                             </View>
                         </View>
                     </View>
+                    :
+                    null
+                }
+                { !functionalStrength.completed ?
+                      <View>
+                          <ListItem
+                              containerStyle={{ borderBottomWidth: 0 }}
+                              disabled={false}
+                              hideChevron={true}
+                              leftIcon={
+                                  <TabIcon
+                                      containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                      size={20}
+                                      color={AppColors.black}
+                                      icon={'fiber-manual-record'}
+                                  />
+                              }
+                              title={'FUNCTIONAL STRENGTH'}
+                              titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
+                          />
+                          <View style={{ flex: 1, flexDirection: 'row', }}>
+                              <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: this.state.isFunctionalStrengthCollapsed ? whenEnabledBorderColor : AppColors.white, }}/>
+                              <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
+                                  <View style={{ flexDirection: 'row' }}>
+                                      <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                          <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
+                                          <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'ANYTIME DURING THE DAY'}</Text>
+                                      </View>
+                                      <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: enabledBackgroundColor, borderColor: enabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                          <Text h7 oswaldMedium style={{ color: enabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
+                                          <View style={{ alignItems: 'center', flexDirection: 'row', flex: 1, }}>
+                                              <Text h1 oswaldMedium style={{ color: enabledDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{`${parseFloat(functionalStrength.minutes_duration).toFixed(1)}`}</Text>
+                                              <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
+                                                  <Text h7 oswaldMedium style={{ color: subtextColor, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
+                                              </View>
+                                          </View>
+                                      </View>
+                                  </View>
+                                  <Spacer size={this.state.isFunctionalStrengthCollapsed ? 12 : 20}/>
+                                  { this.state.isFunctionalStrengthCollapsed ?
+                                      <Button
+                                          backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                          color={AppColors.white}
+                                          containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
+                                          fontFamily={AppStyles.robotoBold.fontFamily}
+                                          fontWeight={AppStyles.robotoBold.fontWeight}
+                                          outlined
+                                          onPress={() => this.setState({ isFunctionalStrengthCollapsed: false, })}
+                                          textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                                          title={'Start'}
+                                      />
+                                      :
+                                      <Text
+                                          onPress={() => this.setState({ isFunctionalStrengthCollapsed: true, }) }
+                                          robotoBold
+                                          style={[AppStyles.textCenterAligned,
+                                              {
+                                                  color:              AppColors.secondary.blue.eightyPercent,
+                                                  fontSize:           AppFonts.scaleFont(14),
+                                                  marginRight:        10,
+                                                  textDecorationLine: 'none',
+                                              }
+                                          ]}
+                                      >
+                                          {'Hide Exercises ^'}
+                                      </Text>
+                                  }
+                              </View>
+                          </View>
+                      </View>
+                      :
+                      null
+                }
+                { functionalStrength && !functionalStrength.completed && !this.state.isFunctionalStrengthCollapsed ?
+                    <Exercises
+                        completedExercises={completedFSExercises}
+                        exerciseList={fsExerciseList}
+                        handleCompleteExercise={this._handleCompleteFSExercise}
+                        handleExerciseListRefresh={this._handleExerciseListRefresh}
+                        isExerciseListRefreshing={this.state.isExerciseListRefreshing}
+                        isFunctionalStrength={true}
+                        isLoading={this.state.loading}
+                        toggleCompletedAMPMRecoveryModal={() => this._handleFunctionalStrengthFormSubmit()}
+                        toggleSelectedExercise={this._toggleSelectedExercise}
+                    />
                     :
                     null
                 }
@@ -1329,7 +1478,7 @@ class MyPlan extends Component {
                         size:  AppFonts.scaleFont(30),
                     }}
                     textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
-                    title={'ADD SESSION'}
+                    title={'LOG COMPLETED ACTIVITY'}
                 />
                 <Spacer size={10} />
                 { (dailyPlanObj && dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
@@ -1354,7 +1503,7 @@ class MyPlan extends Component {
                             size:  AppFonts.scaleFont(30),
                         }}
                         textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
-                        title={'NO SESSIONS TODAY'}
+                        title={'LOG AN OFF DAY'}
                     />
                     :
                     null
@@ -1394,6 +1543,37 @@ class MyPlan extends Component {
                         size={'large'}
                         style={[AppStyles.activityIndicator]}
                     /> : null
+                }
+                {
+                    this.state.isSelectedExerciseModalOpen
+                        ?
+                        <Modal
+                            backdropOpacity={0.75}
+                            backdropPressToClose={true}
+                            coverScreen={true}
+                            isOpen={this.state.isSelectedExerciseModalOpen}
+                            onClosed={() => this._toggleSelectedExercise(false, false)}
+                            position={'center'}
+                            style={[AppStyles.containerCentered, {
+                                borderRadius: 4,
+                                height:       AppSizes.screen.heightThreeQuarters,
+                                padding:      AppSizes.paddingSml,
+                                width:        AppSizes.screen.width * 0.9,
+                            }]}
+                            swipeToClose={true}
+                        >
+                            { this.state.selectedExercise.library_id ?
+                                <SingleExerciseItem
+                                    exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
+                                    handleCompleteExercise={this._handleCompleteFSExercise}
+                                    selectedExercise={this.state.selectedExercise.library_id}
+                                />
+                                :
+                                null
+                            }
+                        </Modal>
+                        :
+                        null
                 }
             </ScrollView>
         );

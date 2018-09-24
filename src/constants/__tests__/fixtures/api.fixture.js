@@ -49,6 +49,7 @@ export default {
         ['post_sensor_data',      '/plans/1_0/session/sensor_data'], // POST
         ['typical_sessions',      '/plans/1_0/session/typical'], // POST
         ['no_sessions',           '/plans/1_0/session/no_sessions'], // POST
+        ['functional_strength',   '/plans/1_0/functional_strength'], // PATCH
         // sensor specific routes
         ['sensor_mobile_pair', '/users/1_0/user/{userId}/sensor_mobile_pair'], // CRUD
         // other routes

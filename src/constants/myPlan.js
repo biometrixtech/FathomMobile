@@ -200,6 +200,54 @@ function cleanExerciseList(recoveryObj) {
     };
 }
 
+
+
+const fsExerciseListOrder = [
+    {
+        index: 'warm_up',
+        title: 'WARM UP',
+    },
+    {
+        index: 'dynamic_movement',
+        title: 'DYNAMIC MOVEMENTS',
+    },
+    {
+        index: 'stability_work',
+        title: 'STABILITY',
+    },
+    {
+        index: 'victory_lap',
+        title: 'VICTORY LAP',
+    },
+];
+
+function cleanFSExerciseList(recoveryObj) {
+    let totalLength = 0;
+    let cleanedExerciseList = {};
+    _.map(fsExerciseListOrder, list => {
+        let exerciseArray = _.orderBy(recoveryObj[list.index], ['position_order'], ['asc']);
+        totalLength += exerciseArray.length;
+        cleanedExerciseList[list.title] = exerciseArray;
+    });
+    return {
+        cleanedExerciseList,
+        totalLength,
+    };
+}
+
+function isFSCompletedValid(functionalStrength, exerciseList) {
+    let warmUpExerciseList = functionalStrength.warm_up;
+    let intersectingWarmUpExercises = _.filter(warmUpExerciseList, o => exerciseList.includes(o.library_id));
+    let isWarmUpValid = intersectingWarmUpExercises.length === warmUpExerciseList.length;
+    let dynamicMovementExerciseList = functionalStrength.dynamic_movement;
+    let intersectingDynamicMovementExercises = _.filter(dynamicMovementExerciseList, o => exerciseList.includes(o.library_id));
+    let isDynamicMovementValid = intersectingDynamicMovementExercises.length === dynamicMovementExerciseList.length;
+    let stabilityExerciseList = functionalStrength.stability_work;
+    let intersectingStabilityExercises = _.filter(stabilityExerciseList, o => exerciseList.includes(o.library_id));
+    let isStabilityValid = intersectingStabilityExercises.length === stabilityExerciseList.length;
+    return isWarmUpValid && isDynamicMovementValid && isStabilityValid;
+}
+
 function cleanExercise(exercise) {
     let cleanedExercise = _.cloneDeep(exercise);
     cleanedExercise.library_id = exercise.library_id;
@@ -307,6 +355,11 @@ const durationOptionGroups = {
 };
 
 const cleanedPostSessionName = (postPracticeSurvey) => {
+    if(postPracticeSurvey.isFunctionalStrength) {
+        return {
+            fullName: 'FUNCTIONAL STRENGTH',
+        }
+    }
     let filteredSessionTypes = _.filter(availableSessionTypes, o => o.index === postPracticeSurvey.session_type);
     let selectedSessionType = filteredSessionTypes.length === 0 ? 'TRAINING' : filteredSessionTypes[0].label.toUpperCase();
     let filteredStrengthConditioningTypes = _.filter(strengthConditioningTypes, o => o.index === postPracticeSurvey.strength_and_conditioning_type);
@@ -324,8 +377,10 @@ export default {
     bodyPartMapping,
     cleanExercise,
     cleanExerciseList,
+    cleanFSExerciseList,
     cleanedPostSessionName,
     durationOptionGroups,
+    isFSCompletedValid,
     jointLevels,
     muscleLevels,
     overallReadiness,

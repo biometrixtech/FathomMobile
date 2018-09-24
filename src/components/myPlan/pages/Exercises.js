@@ -35,6 +35,7 @@ const Exercises = ({
     handleCompleteExercise,
     handleExerciseListRefresh,
     isExerciseListRefreshing,
+    isFunctionalStrength,
     isLoading,
     isPrep,
     toggleCompletedAMPMRecoveryModal,
@@ -70,7 +71,7 @@ const Exercises = ({
                     onPress={toggleCompletedAMPMRecoveryModal}
                     raised={false}
                     textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                    title={`${isPrep ? 'Prep' : 'Recovery'} Complete`}
+                    title={`${isPrep ? 'Prep ' : isFunctionalStrength ? '' : 'Recovery '}Complete`}
                 />
                 :
                 <Button
@@ -83,7 +84,7 @@ const Exercises = ({
                     outlined
                     raised={false}
                     textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                    title={`Check Boxes to Complete ${isPrep ? 'Prep' : 'Recovery'}`}
+                    title={`Check Boxes to Complete${isPrep ? ' Prep' : isFunctionalStrength ? '' : ' Recovery'}`}
                 />
             }
         </View>
@@ -111,13 +112,15 @@ Exercises.propTypes = {
     handleCompleteExercise:           PropTypes.func.isRequired,
     handleExerciseListRefresh:        PropTypes.func.isRequired,
     isExerciseListRefreshing:         PropTypes.bool.isRequired,
+    isFunctionalStrength:             PropTypes.bool,
     isLoading:                        PropTypes.bool.isRequired,
     isPrep:                           PropTypes.bool,
     toggleCompletedAMPMRecoveryModal: PropTypes.func.isRequired,
     toggleSelectedExercise:           PropTypes.func.isRequired,
 };
 Exercises.defaultProps = {
-    isPrep: false,
+    isFunctionalStrength: false,
+    isPrep:               false,
 };
 Exercises.componentName = 'Exercises';
 

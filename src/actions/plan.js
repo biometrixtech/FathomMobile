@@ -70,6 +70,16 @@ const clearCompletedExercises = () => {
     );
 };
 
+/**
+  * Clear Completed FS Exercises
+  */
+const clearCompletedFSExercises = () => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.CLEAR_COMPLETED_FS_EXERCISES,
+        })
+    );
+};
 
 /**
   * Set Completed Exercise
@@ -78,6 +88,18 @@ const setCompletedExercise = exercise => {
     return dispatch => Promise.resolve(
         dispatch({
             type: Actions.SET_COMPLETED_EXERCISES,
+            data: exercise,
+        })
+    );
+};
+
+/**
+  * Set Completed FS Exercise
+  */
+const setCompletedFSExercise = exercise => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.SET_COMPLETED_FS_EXERCISES,
             data: exercise,
         })
     );
@@ -247,14 +269,42 @@ const noSessions = (user_id) => {
         });
 };
 
+/**
+  * Patch Active Recovery
+  */
+const patchFunctionalStrength = (user_id, completed_exercises) => {
+    let bodyObj = {};
+    bodyObj.user_id = user_id;
+    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    bodyObj.completed_exercises = completed_exercises;
+    return dispatch => AppAPI.functional_strength.patch(false, bodyObj)
+        .then(myPlanData => {
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: myPlanData,
+            });
+            dispatch({
+                type: Actions.CLEAR_COMPLETED_FS_EXERCISES,
+            });
+            return Promise.resolve(myPlanData);
+        })
+        .catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+};
+
 export default {
     clearCompletedExercises,
+    clearCompletedFSExercises,
     clearMyPlanData,
     setCompletedExercise,
+    setCompletedFSExercise,
     getMyPlan,
     getSoreBodyParts,
     noSessions,
     patchActiveRecovery,
+    patchFunctionalStrength,
     postReadinessSurvey,
     postSessionSurvey,
     postSingleSensorData,

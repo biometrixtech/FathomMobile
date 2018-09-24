@@ -8,12 +8,15 @@ const MyPlan = ({
     Layout,
     ble,
     clearCompletedExercises,
+    clearCompletedFSExercises,
     setCompletedExercises,
+    setCompletedFSExercises,
     getMyPlan,
     getSoreBodyParts,
     noSessions,
     notification,
     patchActiveRecovery,
+    patchFunctionalStrength,
     plan,
     postReadinessSurvey,
     postSessionSurvey,
@@ -24,12 +27,15 @@ const MyPlan = ({
     <Layout
         ble={ble}
         clearCompletedExercises={clearCompletedExercises}
+        clearCompletedFSExercises={clearCompletedFSExercises}
         setCompletedExercises={setCompletedExercises}
+        setCompletedFSExercises={setCompletedFSExercises}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
         noSessions={noSessions}
         notification={notification}
         patchActiveRecovery={patchActiveRecovery}
+        patchFunctionalStrength={patchFunctionalStrength}
         plan={plan}
         postReadinessSurvey={postReadinessSurvey}
         postSessionSurvey={postSessionSurvey}
@@ -40,21 +46,24 @@ const MyPlan = ({
 );
 
 MyPlan.propTypes = {
-    Layout:                  PropTypes.func.isRequired,
-    ble:                     PropTypes.object.isRequired,
-    clearCompletedExercises: PropTypes.func.isRequired,
-    setCompletedExercises:   PropTypes.func.isRequired,
-    getMyPlan:               PropTypes.func.isRequired,
-    getSoreBodyParts:        PropTypes.func.isRequired,
-    noSessions:              PropTypes.func.isRequired,
-    notification:            PropTypes.bool.isRequired,
-    patchActiveRecovery:     PropTypes.func.isRequired,
-    plan:                    PropTypes.object.isRequired,
-    postReadinessSurvey:     PropTypes.func.isRequired,
-    postSessionSurvey:       PropTypes.func.isRequired,
-    scheduledMaintenance:    PropTypes.object,
-    typicalSession:          PropTypes.func.isRequired,
-    user:                    PropTypes.object.isRequired,
+    Layout:                    PropTypes.func.isRequired,
+    ble:                       PropTypes.object.isRequired,
+    clearCompletedExercises:   PropTypes.func.isRequired,
+    clearCompletedFSExercises: PropTypes.func.isRequired,
+    setCompletedExercises:     PropTypes.func.isRequired,
+    setCompletedFSExercises:   PropTypes.func.isRequired,
+    getMyPlan:                 PropTypes.func.isRequired,
+    getSoreBodyParts:          PropTypes.func.isRequired,
+    noSessions:                PropTypes.func.isRequired,
+    notification:              PropTypes.bool.isRequired,
+    patchActiveRecovery:       PropTypes.func.isRequired,
+    patchFunctionalStrength:   PropTypes.func.isRequired,
+    plan:                      PropTypes.object.isRequired,
+    postReadinessSurvey:       PropTypes.func.isRequired,
+    postSessionSurvey:         PropTypes.func.isRequired,
+    scheduledMaintenance:      PropTypes.object,
+    typicalSession:            PropTypes.func.isRequired,
+    user:                      PropTypes.object.isRequired,
 };
 
 MyPlan.defaultProps = {
@@ -70,15 +79,18 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    clearCompletedExercises: PlanActions.clearCompletedExercises,
-    setCompletedExercises:   PlanActions.setCompletedExercise,
-    getMyPlan:               PlanActions.getMyPlan,
-    getSoreBodyParts:        PlanActions.getSoreBodyParts,
-    noSessions:              PlanActions.noSessions,
-    patchActiveRecovery:     PlanActions.patchActiveRecovery,
-    postReadinessSurvey:     PlanActions.postReadinessSurvey,
-    postSessionSurvey:       PlanActions.postSessionSurvey,
-    typicalSession:          PlanActions.typicalSession,
+    clearCompletedExercises:   PlanActions.clearCompletedExercises,
+    clearCompletedFSExercises: PlanActions.clearCompletedFSExercises,
+    setCompletedExercises:     PlanActions.setCompletedExercise,
+    setCompletedFSExercises:   PlanActions.setCompletedFSExercise,
+    getMyPlan:                 PlanActions.getMyPlan,
+    getSoreBodyParts:          PlanActions.getSoreBodyParts,
+    noSessions:                PlanActions.noSessions,
+    patchActiveRecovery:       PlanActions.patchActiveRecovery,
+    patchFunctionalStrength:   PlanActions.patchFunctionalStrength,
+    postReadinessSurvey:       PlanActions.postReadinessSurvey,
+    postSessionSurvey:         PlanActions.postSessionSurvey,
+    typicalSession:            PlanActions.typicalSession,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyPlan);
