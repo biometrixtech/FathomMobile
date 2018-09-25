@@ -1346,7 +1346,7 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                { isDailyReadinessSurveyCompleted && !functionalStrength.completed ?
+                { isDailyReadinessSurveyCompleted && functionalStrength && !functionalStrength.completed ?
                       <View>
                           <ListItem
                               containerStyle={{ borderBottomWidth: 0 }}
