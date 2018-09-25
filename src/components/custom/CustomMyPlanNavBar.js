@@ -115,6 +115,12 @@ class CustomMyPlanNavBar extends Component {
         }
     }
 
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        if(!store.getState().network.connected) {
+            this.props.showDropdownAlert();
+        }
+    }
+
     componentWillUnmount = () => {
         this.handlerState.remove();
         this._handleClearInterval();

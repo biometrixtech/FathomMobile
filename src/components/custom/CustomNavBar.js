@@ -42,6 +42,12 @@ class CustomNavBar extends Component {
         }
     }
 
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        if(!store.getState().network.connected) {
+            this.props.showDropdownAlert();
+        }
+    }
+
     _renderLeft = () => {
         return (
             <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingXSml,}}>

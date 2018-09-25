@@ -37,6 +37,7 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 import { Roles, BLEConfig, AppColors, AppFonts, AppStyles, AppSizes } from '../../constants';
 import { bleUtils } from '../../constants/utils';
 import { ble as BLEActions } from '../../actions';
+import { store } from '../../store';
 
 // Components
 import { Button, Coach, FormLabel, ListItem, Pages, Spacer, TabIcon, Text, } from '../custom';
@@ -132,6 +133,12 @@ class BluetoothConnectView extends Component {
         this.handlerStop.remove();
         this.handlerState.remove();
         this.pages = null;
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        if(!store.getState().network.connected) {
+            this.props.showDropdownAlert();
+        }
     }
 
     _startBluetooth = () => {

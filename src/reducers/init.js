@@ -17,13 +17,6 @@ const initialState = Store;
 
 export default function initReducer(state = initialState, action) {
     switch (action.type) {
-    case Actions.UPDATE_CONNECTION:
-        return Object.assign({}, state, {
-            connectionInfo: {
-                connectionType: action.data.connectionType || state.connectionInfo.connectionType,
-                online:         action.data.online || state.connectionInfo.online,
-            }
-        });
     case Actions.UPDATE_SCHEDULED_MAINTENANCE:
         return Object.assign({}, state, {
             scheduledMaintenance: {

@@ -37,7 +37,6 @@ class Start extends Component {
 
     static propTypes = {
         authorizeUser:        PropTypes.func.isRequired,
-        connectionInfo:       PropTypes.object,
         email:                PropTypes.string,
         environment:          PropTypes.string,
         expires:              PropTypes.string,
@@ -53,7 +52,6 @@ class Start extends Component {
     }
 
     static defaultProps = {
-        connectionInfo:       null,
         email:                null,
         environment:          'PROD',
         expires:              null,
@@ -99,6 +97,12 @@ class Start extends Component {
                 }
             }
         }, 10);
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        if(!store.getState().network.connected) {
+            this.props.showDropdownAlert();
+        }
     }
 
     hideSplash = () => {

@@ -22,6 +22,7 @@ import { bleUtils } from '../../constants/utils';
 import { ListItem, TabIcon, } from '../custom';
 import { AppUtil } from '../../lib';
 import { ble as BLEActions, user as UserActions, } from '../../actions';
+import { store } from '../../store';
 
 // Components
 import { Animated, Alert, BackHandler, Easing, Platform, View, } from 'react-native';
@@ -55,6 +56,12 @@ class Settings extends Component {
     componentWillUnmount = () => {
         if (Platform.OS === 'android') {
             BackHandler.removeEventListener('hardwareBackPress');
+        }
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        if(!store.getState().network.connected) {
+            this.props.showDropdownAlert();
         }
     }
 

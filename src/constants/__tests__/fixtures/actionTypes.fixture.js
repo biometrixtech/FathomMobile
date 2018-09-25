@@ -65,6 +65,5 @@ export default {
     WIFI_SCAN:                    'WIFI_SCAN',
     WIFI:                         'WIFI',
     // OTHER
-    UPDATE_CONNECTION:            'UPDATE_CONNECTION',
     UPDATE_SCHEDULED_MAINTENANCE: 'UPDATE_SCHEDULED_MAINTENANCE',
 };

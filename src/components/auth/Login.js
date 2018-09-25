@@ -29,7 +29,6 @@ import {
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import Egg from 'react-native-egg';
-//import FormValidation from 'tcomb-form-native';
 import Modal from 'react-native-modalbox';
 
 // Consts and Libs
@@ -138,6 +137,12 @@ class Login extends Component {
             let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
             let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
             AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
+        }
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        if(!store.getState().network.connected) {
+            this.props.showDropdownAlert();
         }
     }
 

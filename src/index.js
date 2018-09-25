@@ -1,29 +1,20 @@
-/*
- * @Author: Vir Desai
- * @Date: 2018-04-30 13:21:21
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:06:59
- */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Provider } from 'react-redux';
+import { Provider, connect, } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
-import { NetInfo, Platform, PushNotificationIOS, } from 'react-native';
+import { NetInfo, Platform, PushNotificationIOS, View, } from 'react-native';
 
 // import components
-import { Actions } from './constants';
-import { AppUtil } from './lib';
+import { Actions, AppColors, AppSizes, AppStyles, ErrorMessages, } from './constants';
+import { AppUtil, } from './lib';
 import Routes from './routes';
+import { TabIcon, } from './components/custom';
 
 // import third-party libraries
-import { Router, Stack } from 'react-native-router-flux';
+import { Router, Stack, } from 'react-native-router-flux';
+import { NetworkMonitor } from 'react-native-redux-connectivity';
+import DropdownAlert from 'react-native-dropdownalert';
 import PushNotification from 'react-native-push-notification';
-
-// Hide StatusBar on Android as it overlaps tabs
-// if (Platform.OS === 'android') {
-//     StatusBar.setHidden(true);
-// }
 
 class Root extends Component {
     static propTypes = {
@@ -51,67 +42,46 @@ class Root extends Component {
             senderID:           Platform.OS === 'ios' ? null : '394820950629', // Both the Android and iOS senderID in Firebase
         });
 
-        /*
-         * NetInfo exposes info about online/offline status
-         */
-        // NetInfo.getConnectionInfo()
-        //     .then(connectionInfo => {
-        //         console.log(`Initial, type: ${connectionInfo.type}, effectiveType: ${connectionInfo.effectiveType}`);
-        //         this.props.store.dispatch({
-        //             type: Actions.UPDATE_CONNECTION,
-        //             data: { connectionType: connectionInfo.type }
-        //         });
-        //     });
-        // NetInfo.isConnected.fetch()
-        //     .then(isConnected => {
-        //         console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-        //         this.props.store.dispatch({
-        //             type: Actions.UPDATE_CONNECTION,
-        //             data: { online: isConnected }
-        //         });
-        //     });
-    }
-
-    componentWillMount = () => {
-        // NetInfo.addEventListener(
-        //     'connectionChange',
-        //     this._handleConnectivityChange
-        // );
-        // NetInfo.isConnected.addEventListener(
-        //     'connectionChange',
-        //     this._handleIsConnectedConnectivityChange
-        // );
-    }
-
-    componentWillUnmount = () => {
-        // NetInfo.removeEventListener(
-        //     'connectionChange',
-        //     this._handleConnectivityChange
-        // );
-        // NetInfo.isConnected.removeEventListener(
-        //     'connectionChange',
-        //     this._handleIsConnectedConnectivityChange
-        // );
+        this._networkMonitor = new NetworkMonitor(this.props.store);
+        this._dropdown = null;
     }
 
     componentDidMount = () => {
+        /*
+         * Maintenance Window
+         */
         AppUtil.getMaintenanceWindow();
     }
 
-    _handleConnectivityChange = (connectionInfo) => {
-        // console.log(`First change, type: ${connectionInfo.type}, effectiveType: ${connectionInfo.effectiveType}`);
-        // this.props.store.dispatch({
-        //     type: Actions.UPDATE_CONNECTION,
-        //     data: { connectionType: connectionInfo.type }
-        // });
+    componentWillMount = () => {
+        this._networkMonitor.start();
     }
 
-    _handleIsConnectedConnectivityChange = (isConnected) => {
-        // console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
-        // this.props.store.dispatch({
-        //     type: Actions.UPDATE_CONNECTION,
-        //     data: { online: isConnected }
-        // });
+    componentWillUnmount = () => {
+        this._networkMonitor.stop();
+    }
+
+    _showDropdownAlert = () => {
+        console.log('hi frm _showDropdownAlert', this._dropdown);
+        this._dropdown.alertWithType('custom', '', ErrorMessages.noInternetConnection);
+    }
+
+    _onCloseDropdown = (data) => {
+        console.log('data',data);
+        // data = {type, title, message, action}
+        // action means how the alert was closed.
+        // returns: automatic, programmatic, tap, pan or cancel
+    }
+
+    _renderDropdownImage = (props, side) => {
+        return(
+            <TabIcon
+                icon={side === 'cancel' ? 'close' : 'cloud-off'}
+                iconStyle={[{color: AppColors.white}]}
+                reverse={false}
+                type={side === 'cancel' ? 'material-community' : 'material'}
+            />
+        )
     }
 
     /**
@@ -159,20 +129,41 @@ class Root extends Component {
         });
     }
 
-    render = () => (
-        <Provider store={this.props.store}>
-            <PersistGate
-                loading={null}
-                persistor={this.props.persistor}
-            >
-                <Router>
-                    <Stack key={'root'}>
-                        {Routes}
-                    </Stack>
-                </Router>
-            </PersistGate>
-        </Provider>
-    );
+    render = () => {
+        const RouterWithRedux = connect()(Router);
+        return(
+            <View style={{flex: 1,}}>
+                <Provider store={this.props.store}>
+                    <PersistGate
+                        loading={null}
+                        persistor={this.props.persistor}
+                    >
+                        <RouterWithRedux
+                            showDropdownAlert={this._showDropdownAlert}
+                        >
+                            <Stack key={'root'}>
+                                {Routes}
+                            </Stack>
+                        </RouterWithRedux>
+                    </PersistGate>
+                </Provider>
+                <DropdownAlert
+                    closeInterval={0}
+                    containerStyle={{backgroundColor: AppColors.alerts.errorBackground,}}
+                    defaultContainer={{flexDirection: 'row', padding: AppSizes.paddingSml, paddingTop: AppSizes.statusBarHeight,}}
+                    defaultTextContainer={{flex: 1, padding: AppSizes.paddingSml,}}
+                    messageStyle={{...AppStyles.oswaldRegular, color: AppColors.white,}}
+                    onCancel={data => this._onCloseDropdown(data)}
+                    onClose={data => this._onCloseDropdown(data)}
+                    ref={ref => {this._dropdown = ref;}}
+                    renderCancel={props => this._renderDropdownImage(props, 'cancel')}
+                    renderImage={props => this._renderDropdownImage(props, 'left')}
+                    showCancel={true}
+                    useNativeDriver={true}
+                />
+            </View>
+        )
+    }
 }
 
 export default Root;
