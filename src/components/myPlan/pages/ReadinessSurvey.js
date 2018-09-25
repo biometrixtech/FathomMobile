@@ -101,7 +101,7 @@ class ReadinessSurvey extends Component {
         let selectedSportPositions = dailyReadiness.current_sport_name !== null ? _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name).positions : [];
         const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
         const isFirstFunctionalStrength = isFunctionalStrengthEligible && (!soreBodyParts.current_sport_name || soreBodyParts.current_sport_name !== 0) && (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
-        let isSecondFunctionalStrength = isFunctionalStrengthEligible && (soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0) && (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
+        let isSecondFunctionalStrength = isFunctionalStrengthEligible && (soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0 || soreBodyParts.current_sport_name === 0 || soreBodyParts.current_sport_name > 0) && (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
         let isFunctionalStrengthTargetValid = dailyReadiness.current_sport_name !== null ?
             dailyReadiness.current_sport_name !== null && dailyReadiness.current_position !== null
             : dailyReadiness.current_sport_name === null ?
