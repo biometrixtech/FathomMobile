@@ -41,7 +41,7 @@ export default {
         ['register_device', '/users/1_0/device/{device_uuid}'],
         // My Plan specific routes
         ['get_my_plan',           '/plans/1_0/daily_plan'], // POST
-        ['get_sore_body_parts',   '/plans/1_0/daily_readiness/previous'], // GET
+        ['get_sore_body_parts',   '/plans/1_0/daily_readiness/previous'], // POST
         ['post_readiness_survey', '/plans/1_0/daily_readiness'], // POST
         ['post_session_survey',   '/plans/1_0/session'], // POST
         ['active_recovery',       '/plans/1_0/active_recovery'], // PATCH

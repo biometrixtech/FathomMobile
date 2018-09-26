@@ -186,7 +186,9 @@ const postSessionSurvey = postSessionObj => {
   * Get Sore Body Parts Data
   */
 const getSoreBodyParts = user_id => {
-    return dispatch => AppAPI.get_sore_body_parts.get()
+    let bodyObj = {};
+    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    return dispatch => AppAPI.get_sore_body_parts.post(false, bodyObj)
         .then(soreBodyParts => {
             dispatch({
                 type: Actions.GET_SORE_BODY_PARTS,
