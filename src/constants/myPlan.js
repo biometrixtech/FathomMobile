@@ -262,7 +262,7 @@ function cleanExercise(exercise) {
     return cleanedExercise;
 }
 
-function scrollableTabViewPage(dailyPlanObj, disabled, index) {
+function scrollableTabViewPage(dailyPlanObj) {
     return Math.floor(dailyPlanObj.landing_screen);
 }
 
@@ -285,7 +285,7 @@ const availableSessionTypes = [
 const strengthConditioningTypes = [
     { index: 0, order: 1, label: 'Endurance', },
     { index: 1, order: 2, label: 'Power', },
-    { index: 2, order: 3, label: 'Speed', },
+    { index: 2, order: 3, label: 'Speed & Agility', },
     { index: 3, order: 4, label: 'Strength', },
     { index: 4, order: 5, label: 'Cross Training', },
 ];
@@ -296,19 +296,19 @@ const teamSports = [
     { index: 2, order: null, label: 'Softball', positions: false, },
     { index: 3, order: null, label: 'Cycling', positions: false, },
     { index: 4, order: null, label: 'Field Hockey', positions: false, },
-    { index: 5, order: 6, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], },
+    { index: 5, order: 4, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], },
     { index: 6, order: null, label: 'General Fitness', positions: false, },
     { index: 7, order: null, label: 'Golf', positions: false, },
     { index: 8, order: null, label: 'Gymnastics', positions: false, },
     { index: 9, order: null, label: 'Ice Hockey', positions: false, },
-    { index: 10, order: 11, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], },
+    { index: 10, order: 5, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], },
     { index: 11, order: null, label: 'Rowing', positions: false, },
     { index: 12, order: null, label: 'Rugby', positions: false, },
-    { index: 13, order: null, label: 'Running', positions: ['Long Distance', 'Sprinter'], },
-    { index: 14, order: 15, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], },
-    { index: 15, order: null, label: 'Swimming / Diving', positions: false, },
-    { index: 16, order: 17, label: 'Tennis', positions: false, },
-    { index: 17, order: null, label: 'Cross Country / Distance Running', positions: false, },
+    { index: 13, order: null, label: 'Diving', positions: false, },
+    { index: 14, order: 6, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], },
+    { index: 15, order: null, label: 'Swimming', positions: false, },
+    { index: 16, order: 7, label: 'Tennis', positions: false, },
+    { index: 17, order: 3, label: 'Distance Running', positions: false, },
     { index: 18, order: null, label: 'Sprints', positions: false, },
     { index: 19, order: null, label: 'Jumps', positions: false, },
     { index: 20, order: null, label: 'Throws', positions: false, },
