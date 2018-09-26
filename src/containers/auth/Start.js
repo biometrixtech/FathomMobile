@@ -13,8 +13,9 @@ const Start = ({
     expires,
     finalizeLogin,
     getUser,
-    jwt,
     getUserSensorData,
+    jwt,
+    network,
     onFormSubmit,
     password,
     registerDevice,
@@ -32,6 +33,7 @@ const Start = ({
         getUser={getUser}
         getUserSensorData={getUserSensorData}
         jwt={jwt}
+        network={network}
         onFormSubmit={onFormSubmit}
         password={password}
         registerDevice={registerDevice}
@@ -52,6 +54,7 @@ Start.propTypes = {
     getUser:              PropTypes.func.isRequired,
     getUserSensorData:    PropTypes.func.isRequired,
     jwt:                  PropTypes.string,
+    network:              PropTypes.object.isRequired,
     onFormSubmit:         PropTypes.func.isRequired,
     password:             PropTypes.string,
     registerDevice:       PropTypes.func.isRequired,
@@ -77,6 +80,7 @@ const mapStateToProps = state => ({
     email:                state.init.email || null,
     expires:              state.init.expires || null,
     jwt:                  state.init.jwt || null,
+    network:              state.network,
     password:             state.init.password || null,
     scheduledMaintenance: state.init.scheduledMaintenance || null,
     sessionToken:         state.init.session_token || null,

@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 
 // import third-party libraries
+import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
@@ -68,6 +69,7 @@ class MyPlan extends Component {
         setCompletedExercises:     PropTypes.func.isRequired,
         setCompletedFSExercises:   PropTypes.func.isRequired,
         getSoreBodyParts:          PropTypes.func.isRequired,
+        network:                   PropTypes.object.isRequired,
         noSessions:                PropTypes.func.isRequired,
         notification:              PropTypes.bool.isRequired,
         patchActiveRecovery:       PropTypes.func.isRequired,
@@ -207,11 +209,11 @@ class MyPlan extends Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.notification && nextProps.notification !== this.props.notification) {
+    componentWillReceiveProps = (nextProps) => {
+        if(nextProps.notification && nextProps.notification !== this.props.notification) {
             this._handleExerciseListRefresh(true);
         }
-        const areObjectsDifferent = _.isEqual(nextProps.plan.dailyPlan, this.props.plan.dailyPlan);
+        const areObjectsDifferent = _.isEqual(nextProps.plan, this.props.plan);
         if(
             !areObjectsDifferent &&
             this.props.plan.dailyPlan[0] &&
@@ -222,16 +224,12 @@ class MyPlan extends Component {
                 nextProps.plan.dailyPlan[0].pre_recovery_completed
             )
         ) {
-            let { recover, train } = this.state;
-            let { plan } = this.props;
-            let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-            let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery && !dailyPlanObj.post_recovery.completed ? dailyPlanObj.post_recovery : false;
-            let disabled = recoveryObj ?
-                train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted) || (recover.isActiveRecoveryCollapsed && recover.finished) || recoveryObj.completed
-                :
-                true;
-            this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(nextProps.plan.dailyPlan[0], disabled));
+            this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(nextProps.plan.dailyPlan[0]));
         }
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
     _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side) => {
@@ -1346,7 +1344,7 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                { isDailyReadinessSurveyCompleted && functionalStrength && !functionalStrength.completed ?
+                { isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
                       <View>
                           <ListItem
                               containerStyle={{ borderBottomWidth: 0 }}
@@ -1586,8 +1584,7 @@ class MyPlan extends Component {
         if(
             this.tabView &&
             !this.state.isReadinessSurveyModalOpen &&
-            !this.state.isPostSessionSurveyModalOpen &&
-            !this.state.loading
+            !this.state.isPostSessionSurveyModalOpen
         ) {
             setTimeout(() => {
                 this.tabView.goToPage(pageIndex);

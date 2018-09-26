@@ -87,6 +87,7 @@ class Login extends Component {
         environment:       PropTypes.string,
         finalizeLogin:     PropTypes.func.isRequired,
         getUserSensorData: PropTypes.func.isRequired,
+        network:           PropTypes.object.isRequired,
         onFormSubmit:      PropTypes.func,
         password:          PropTypes.string,
         registerDevice:    PropTypes.func.isRequired,
@@ -141,9 +142,7 @@ class Login extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
-        if(!store.getState().network.connected) {
-            this.props.showDropdownAlert();
-        }
+        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
     _focusNextField = (id) => {

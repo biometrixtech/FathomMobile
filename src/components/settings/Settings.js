@@ -22,7 +22,6 @@ import { bleUtils } from '../../constants/utils';
 import { ListItem, TabIcon, } from '../custom';
 import { AppUtil } from '../../lib';
 import { ble as BLEActions, user as UserActions, } from '../../actions';
-import { store } from '../../store';
 
 // Components
 import { Animated, Alert, BackHandler, Easing, Platform, View, } from 'react-native';
@@ -35,6 +34,7 @@ class Settings extends Component {
         deleteUserSensorData:           PropTypes.func.isRequired,
         deleteAllSingleSensorPractices: PropTypes.func.isRequired,
         logout:                         PropTypes.func.isRequired,
+        network:                        PropTypes.object.isRequired,
         user:                           PropTypes.object.isRequired,
     }
 
@@ -60,9 +60,7 @@ class Settings extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
-        if(!store.getState().network.connected) {
-            this.props.showDropdownAlert();
-        }
+        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
     _disconnectFromSingleSensor = () => {

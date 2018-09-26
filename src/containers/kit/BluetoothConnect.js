@@ -29,6 +29,7 @@ const BluetoothConnect = ({
     getUserSensorData,
     getWifiMacAddress,
     loginToAccessory,
+    network,
     postUserSensorData,
     setKitTime,
     startBluetooth,
@@ -51,6 +52,7 @@ const BluetoothConnect = ({
         getUserSensorData={getUserSensorData}
         getWifiMacAddress={getWifiMacAddress}
         loginToAccessory={loginToAccessory}
+        network={network}
         postUserSensorData={postUserSensorData}
         setKitTime={setKitTime}
         startBluetooth={startBluetooth}
@@ -76,6 +78,7 @@ BluetoothConnect.propTypes = {
     getUserSensorData:  PropTypes.func.isRequired,
     getWifiMacAddress:  PropTypes.func.isRequired,
     loginToAccessory:   PropTypes.func.isRequired,
+    network:            PropTypes.object.isRequired,
     postUserSensorData: PropTypes.func.isRequired,
     setKitTime:         PropTypes.func.isRequired,
     startBluetooth:     PropTypes.func.isRequired,
@@ -93,6 +96,7 @@ BluetoothConnect.defaultProps = {
 
 const mapStateToProps = state => ({
     bluetooth: state.ble || {},
+    network:   state.network,
     user:      state.user || {},
 });
 

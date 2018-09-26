@@ -57,70 +57,23 @@ const UTIL = {
         return uniqueId;
     },
 
-    getNetworkStatus: () => {
-        // if connection wifi || cellular
-            // ping our server (???)
-                // T -> status >= 500
-                    // T -> ping always available server
-                        // T -> ErrorMessages.serverUnavailable; !!!MSG!!!
-                        // F -> ErrorMessages.noInternetConnection; !!!MSG!!!
-                    // F -> we good!
-                // F -> ping always available server
-                    // T -> ErrorMessages.serverUnavailable; !!!MSG!!!
-                    // F -> ErrorMessages.noInternetConnection; !!!MSG!!!
-        // else -> ErrorMessages.noInternetConnection; !!!MSG!!!
-        return new Promise((resolve, reject) => {
-            const serverToTest = 'https://www.google.com/';
-            let currentState = store.getState();
-            let connectionInfo = currentState.init.connectionInfo;
-            let returnObj = {
-                connectionInfo: connectionInfo,
-                displayMessage: false,
-                message:        null,
-            };
-            console.log('connectionInfo',connectionInfo);
-            if(connectionInfo.online && (connectionInfo.connectionType === 'wifi' || connectionInfo.connectionType === 'cellular') ) {
-                InitActions.getMaintenanceWindow()
-                    .then(response => {
-                        console.log('RESPONSE+',response);
-                        if(response.status >= 500) {
-                            /*global fetch*/
-                            fetch(serverToTest)
-                                .then(res => {
-                                    if(res.status >= 400) {
-                                        returnObj.message = ErrorMessages.serverUnavailable;
-                                        returnObj.displayMessage = true;
-                                    }
-                                    return resolve(returnObj);
-                                })
-                                .catch(error => {
-                                    returnObj.message = ErrorMessages.noInternetConnection;
-                                    returnObj.displayMessage = true;
-                                    return resolve(returnObj);
-                                });
-                        }
-                    })
-                    .catch(err => {
-                        returnObj.displayMessage = true;
-                        /*global fetch*/
-                        fetch(serverToTest)
-                            .then(res => {
-                                if(res.status >= 400) {
-                                    returnObj.message = ErrorMessages.serverUnavailable;
-                                }
-                                return resolve(returnObj);
-                            })
-                            .catch(error => {
-                                returnObj.message = ErrorMessages.noInternetConnection;
-                                return resolve(returnObj);
-                            });
-                    });
-            }
-            // no internet
-            returnObj.message = ErrorMessages.noInternetConnection;
-            returnObj.displayMessage = true;
-            return resolve(returnObj);
-        });
+    getNetworkStatus: (prevProps, network, Actions) => {
+        const notConnectedTypes = ['none', 'unknown'];
+        const connectedTypes = ['wifi', 'cellular'];
+        const isNetworkDifferent = _.isEqual(prevProps.network, network);
+        if(
+            !isNetworkDifferent &&
+            !network.connected &&
+            notConnectedTypes.includes(network.connectionType)
+        ) {
+            Actions.currentParams.showDropdownAlert();
+        } else if(
+            !isNetworkDifferent &&
+            network.connected &&
+            connectedTypes.includes(network.connectionType)
+        ) {
+            Actions.currentParams.closeDropdownAlert();
+        }
     },
 
     getMaintenanceWindow: () => {

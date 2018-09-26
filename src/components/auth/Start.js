@@ -43,6 +43,7 @@ class Start extends Component {
         finalizeLogin:        PropTypes.func.isRequired,
         getUser:              PropTypes.func.isRequired,
         jwt:                  PropTypes.string,
+        network:              PropTypes.object.isRequired,
         onFormSubmit:         PropTypes.func,
         password:             PropTypes.string,
         registerDevice:       PropTypes.func.isRequired,
@@ -100,9 +101,7 @@ class Start extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
-        if(!store.getState().network.connected) {
-            this.props.showDropdownAlert();
-        }
+        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
     hideSplash = () => {

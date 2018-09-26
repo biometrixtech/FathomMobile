@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Provider, connect, } from 'react-redux';
+import { Provider, } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
 import { NetInfo, Platform, PushNotificationIOS, View, } from 'react-native';
 
@@ -62,15 +62,18 @@ class Root extends Component {
     }
 
     _showDropdownAlert = () => {
-        console.log('hi frm _showDropdownAlert', this._dropdown);
         this._dropdown.alertWithType('custom', '', ErrorMessages.noInternetConnection);
     }
 
+    _closeDropdownAlert = () => {
+        this._dropdown.close();
+    }
+
     _onCloseDropdown = (data) => {
-        console.log('data',data);
         // data = {type, title, message, action}
         // action means how the alert was closed.
         // returns: automatic, programmatic, tap, pan or cancel
+        console.log('_onCloseDropdown',data);
     }
 
     _renderDropdownImage = (props, side) => {
@@ -130,7 +133,6 @@ class Root extends Component {
     }
 
     render = () => {
-        const RouterWithRedux = connect()(Router);
         return(
             <View style={{flex: 1,}}>
                 <Provider store={this.props.store}>
@@ -138,13 +140,14 @@ class Root extends Component {
                         loading={null}
                         persistor={this.props.persistor}
                     >
-                        <RouterWithRedux
+                        <Router
+                            closeDropdownAlert={this._closeDropdownAlert}
                             showDropdownAlert={this._showDropdownAlert}
                         >
                             <Stack key={'root'}>
                                 {Routes}
                             </Stack>
-                        </RouterWithRedux>
+                        </Router>
                     </PersistGate>
                 </Provider>
                 <DropdownAlert
@@ -159,6 +162,8 @@ class Root extends Component {
                     renderCancel={props => this._renderDropdownImage(props, 'cancel')}
                     renderImage={props => this._renderDropdownImage(props, 'left')}
                     showCancel={true}
+                    translucent={Platform.OS === 'ios' ? false : true}
+                    updateStatusBar={Platform.OS === 'ios' ? true : false}
                     useNativeDriver={true}
                 />
             </View>

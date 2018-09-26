@@ -13,6 +13,7 @@ const MyPlan = ({
     setCompletedFSExercises,
     getMyPlan,
     getSoreBodyParts,
+    network,
     noSessions,
     notification,
     patchActiveRecovery,
@@ -32,6 +33,7 @@ const MyPlan = ({
         setCompletedFSExercises={setCompletedFSExercises}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
+        network={network}
         noSessions={noSessions}
         notification={notification}
         patchActiveRecovery={patchActiveRecovery}
@@ -54,6 +56,7 @@ MyPlan.propTypes = {
     setCompletedFSExercises:   PropTypes.func.isRequired,
     getMyPlan:                 PropTypes.func.isRequired,
     getSoreBodyParts:          PropTypes.func.isRequired,
+    network:                   PropTypes.object.isRequired,
     noSessions:                PropTypes.func.isRequired,
     notification:              PropTypes.bool.isRequired,
     patchActiveRecovery:       PropTypes.func.isRequired,
@@ -72,6 +75,7 @@ MyPlan.defaultProps = {
 
 const mapStateToProps = state => ({
     ble:                  state.ble,
+    network:              state.network,
     notification:         state.init.notification,
     plan:                 state.plan,
     scheduledMaintenance: state.init.scheduledMaintenance || null,

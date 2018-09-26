@@ -22,6 +22,7 @@ const Settings = ({
     deleteUserSensorData,
     deleteAllSingleSensorPractices,
     logout,
+    network,
     user,
 }) => (
     <Layout
@@ -30,6 +31,7 @@ const Settings = ({
         deleteUserSensorData={deleteUserSensorData}
         deleteAllSingleSensorPractices={deleteAllSingleSensorPractices}
         logout={logout}
+        network={network}
         user={user}
     />
 );
@@ -41,6 +43,7 @@ Settings.propTypes = {
     deleteUserSensorData:           PropTypes.func.isRequired,
     deleteAllSingleSensorPractices: PropTypes.func.isRequired,
     logout:                         PropTypes.func.isRequired,
+    network:                        PropTypes.object.isRequired,
     user:                           PropTypes.object.isRequired,
 };
 
@@ -49,6 +52,7 @@ Settings.defaultProps = {
 
 const mapStateToProps = state => ({
     accessoryData: state.ble.accessoryData || {},
+    network:       state.network,
     user:          state.user || {},
 });
 
