@@ -92,9 +92,9 @@ const mapDispatchToProps = {
     patchFunctionalStrength:   PlanActions.patchFunctionalStrength,
     postReadinessSurvey:       PlanActions.postReadinessSurvey,
     postSessionSurvey:         PlanActions.postSessionSurvey,
+    preReadiness:              PlanActions.preReadiness,
     setCompletedExercises:     PlanActions.setCompletedExercises,
     setCompletedFSExercises:   PlanActions.setCompletedFSExercises,
-    preReadiness:              PlanActions.typicalSession,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyPlan);
