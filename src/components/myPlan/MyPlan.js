@@ -66,8 +66,6 @@ class MyPlan extends Component {
         ble:                       PropTypes.object.isRequired,
         clearCompletedExercises:   PropTypes.func.isRequired,
         clearCompletedFSExercises: PropTypes.func.isRequired,
-        setCompletedExercises:     PropTypes.func.isRequired,
-        setCompletedFSExercises:   PropTypes.func.isRequired,
         getSoreBodyParts:          PropTypes.func.isRequired,
         network:                   PropTypes.object.isRequired,
         noSessions:                PropTypes.func.isRequired,
@@ -77,7 +75,9 @@ class MyPlan extends Component {
         plan:                      PropTypes.object.isRequired,
         postReadinessSurvey:       PropTypes.func.isRequired,
         postSessionSurvey:         PropTypes.func.isRequired,
-        typicalSession:            PropTypes.func.isRequired,
+        preReadiness:              PropTypes.func.isRequired,
+        setCompletedExercises:     PropTypes.func.isRequired,
+        setCompletedFSExercises:   PropTypes.func.isRequired,
         user:                      PropTypes.object.isRequired,
     }
 
@@ -462,7 +462,7 @@ class MyPlan extends Component {
     _togglePostSessionSurveyModal = () => {
         this.setState({ loading: true, });
         if (!this.state.isPostSessionSurveyModalOpen) {
-            this.props.typicalSession(this.props.user.id)
+            this.props.preReadiness(this.props.user.id)
                 .then(() => this.props.getSoreBodyParts())
                 .then(soreBodyParts => {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
@@ -505,7 +505,7 @@ class MyPlan extends Component {
         this.setState({ loading: true, });
         let soreBodyParts = this.props.plan.soreBodyParts;
         if(soreBodyParts.functional_strength_eligible && soreBodyParts.current_sport_name === null && soreBodyParts.current_position === null) {
-            this.props.typicalSession(this.props.user.id)
+            this.props.preReadiness(this.props.user.id)
                 .then(() => this.setState({ isReadinessSurveyModalOpen: true, loading: false, }));
         } else {
             this.setState({ isReadinessSurveyModalOpen: true, loading: false, });
@@ -606,7 +606,7 @@ class MyPlan extends Component {
         } else {
             Alert.alert(
                 'You\'re Not Done',
-                'Do all exercises in Warm-up, Dynamic Movement and Stability to complete Functional Strength.',
+                'Do all exercises in Warm-up, Dynamic Movements and Stability to complete Functional Strength.',
                 [
                     {
                         text: 'Continue',

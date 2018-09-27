@@ -84,7 +84,7 @@ const clearCompletedFSExercises = () => {
 /**
   * Set Completed Exercise
   */
-const setCompletedExercise = exercise => {
+const setCompletedExercises = exercise => {
     return dispatch => Promise.resolve(
         dispatch({
             type: Actions.SET_COMPLETED_EXERCISES,
@@ -96,7 +96,7 @@ const setCompletedExercise = exercise => {
 /**
   * Set Completed FS Exercise
   */
-const setCompletedFSExercise = exercise => {
+const setCompletedFSExercises = exercise => {
     return dispatch => Promise.resolve(
         dispatch({
             type: Actions.SET_COMPLETED_FS_EXERCISES,
@@ -230,9 +230,9 @@ const patchActiveRecovery = (user_id, completed_exercises, recovery_type) => {
 };
 
 /**
-  * Typical Sessions
+  * Pre Readiness
   */
-const typicalSession = (user_id) => {
+const preReadiness = (user_id) => {
     let bodyObj = {};
     bodyObj.user_id = user_id;
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
@@ -272,7 +272,7 @@ const noSessions = (user_id) => {
 };
 
 /**
-  * Patch Active Recovery
+  * Patch Functional Strength
   */
 const patchFunctionalStrength = (user_id, completed_exercises) => {
     let bodyObj = {};
@@ -300,8 +300,8 @@ export default {
     clearCompletedExercises,
     clearCompletedFSExercises,
     clearMyPlanData,
-    setCompletedExercise,
-    setCompletedFSExercise,
+    setCompletedExercises,
+    setCompletedFSExercises,
     getMyPlan,
     getSoreBodyParts,
     noSessions,
@@ -310,5 +310,5 @@ export default {
     postReadinessSurvey,
     postSessionSurvey,
     postSingleSensorData,
-    typicalSession,
+    preReadiness,
 };

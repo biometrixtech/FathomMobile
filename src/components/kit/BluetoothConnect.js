@@ -36,7 +36,7 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 // Consts and Libs
 import { AppUtil, } from '../../lib';
 import { Button, Coach, FormLabel, ListItem, Pages, Spacer, TabIcon, Text, } from '../custom';
-import { Roles, BLEConfig, AppColors, AppFonts, AppStyles, AppSizes } from '../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, BLEConfig, Roles,  } from '../../constants';
 import { bleUtils } from '../../constants/utils';
 import { ble as BLEActions } from '../../actions';
 import { store } from '../../store';

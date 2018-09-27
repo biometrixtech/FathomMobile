@@ -9,8 +9,6 @@ const MyPlan = ({
     ble,
     clearCompletedExercises,
     clearCompletedFSExercises,
-    setCompletedExercises,
-    setCompletedFSExercises,
     getMyPlan,
     getSoreBodyParts,
     network,
@@ -21,16 +19,16 @@ const MyPlan = ({
     plan,
     postReadinessSurvey,
     postSessionSurvey,
+    preReadiness,
     scheduledMaintenance,
-    typicalSession,
+    setCompletedExercises,
+    setCompletedFSExercises,
     user,
 }) => (
     <Layout
         ble={ble}
         clearCompletedExercises={clearCompletedExercises}
         clearCompletedFSExercises={clearCompletedFSExercises}
-        setCompletedExercises={setCompletedExercises}
-        setCompletedFSExercises={setCompletedFSExercises}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
         network={network}
@@ -41,8 +39,10 @@ const MyPlan = ({
         plan={plan}
         postReadinessSurvey={postReadinessSurvey}
         postSessionSurvey={postSessionSurvey}
+        preReadiness={preReadiness}
         scheduledMaintenance={scheduledMaintenance}
-        typicalSession={typicalSession}
+        setCompletedExercises={setCompletedExercises}
+        setCompletedFSExercises={setCompletedFSExercises}
         user={user}
     />
 );
@@ -52,8 +52,6 @@ MyPlan.propTypes = {
     ble:                       PropTypes.object.isRequired,
     clearCompletedExercises:   PropTypes.func.isRequired,
     clearCompletedFSExercises: PropTypes.func.isRequired,
-    setCompletedExercises:     PropTypes.func.isRequired,
-    setCompletedFSExercises:   PropTypes.func.isRequired,
     getMyPlan:                 PropTypes.func.isRequired,
     getSoreBodyParts:          PropTypes.func.isRequired,
     network:                   PropTypes.object.isRequired,
@@ -64,8 +62,10 @@ MyPlan.propTypes = {
     plan:                      PropTypes.object.isRequired,
     postReadinessSurvey:       PropTypes.func.isRequired,
     postSessionSurvey:         PropTypes.func.isRequired,
+    preReadiness:              PropTypes.func.isRequired,
     scheduledMaintenance:      PropTypes.object,
-    typicalSession:            PropTypes.func.isRequired,
+    setCompletedExercises:     PropTypes.func.isRequired,
+    setCompletedFSExercises:   PropTypes.func.isRequired,
     user:                      PropTypes.object.isRequired,
 };
 
@@ -85,8 +85,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
     clearCompletedExercises:   PlanActions.clearCompletedExercises,
     clearCompletedFSExercises: PlanActions.clearCompletedFSExercises,
-    setCompletedExercises:     PlanActions.setCompletedExercise,
-    setCompletedFSExercises:   PlanActions.setCompletedFSExercise,
     getMyPlan:                 PlanActions.getMyPlan,
     getSoreBodyParts:          PlanActions.getSoreBodyParts,
     noSessions:                PlanActions.noSessions,
@@ -94,7 +92,9 @@ const mapDispatchToProps = {
     patchFunctionalStrength:   PlanActions.patchFunctionalStrength,
     postReadinessSurvey:       PlanActions.postReadinessSurvey,
     postSessionSurvey:         PlanActions.postSessionSurvey,
-    typicalSession:            PlanActions.typicalSession,
+    setCompletedExercises:     PlanActions.setCompletedExercises,
+    setCompletedFSExercises:   PlanActions.setCompletedFSExercises,
+    preReadiness:              PlanActions.typicalSession,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyPlan);
