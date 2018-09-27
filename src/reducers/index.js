@@ -10,6 +10,9 @@ import init from './init';
 import plan from './plan';
 import user from './user';
 
+// import third-party libraries
+import { NetworkReducer } from 'react-native-redux-connectivity';
+
 const rehydrated = (state = false, action) => {
     switch (action.type) {
     case 'persist/REHYDRATE':
@@ -22,6 +25,7 @@ const rehydrated = (state = false, action) => {
 export default {
     ble,
     init,
+    network: NetworkReducer,
     plan,
     rehydrated,
     user

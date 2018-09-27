@@ -20,7 +20,7 @@ export default {
     // hostname: 'https://apis.production.fathomai.com', // deployment
     // hostname: 'https://apis.qa.fathomai.com', // qa
     hostname: 'https://apis.test.fathomai.com', // test
-    //hostname: 'https://apis.dev.fathomai.com', // development
+    // hostname: 'https://apis.dev.fathomai.com', // development
 
     // Map shortnames to the actual endpoints, so that we can
     // use them like so: AppAPI.ENDPOINT_NAME.METHOD()
@@ -41,7 +41,7 @@ export default {
         ['register_device', '/users/1_0/device/{device_uuid}'],
         // My Plan specific routes
         ['get_my_plan',           '/plans/1_0/daily_plan'], // POST
-        ['get_sore_body_parts',   '/plans/1_0/daily_readiness/previous'], // GET
+        ['get_sore_body_parts',   '/plans/1_0/daily_readiness/previous'], // POST
         ['post_readiness_survey', '/plans/1_0/daily_readiness'], // POST
         ['post_session_survey',   '/plans/1_0/session'], // POST
         ['active_recovery',       '/plans/1_0/active_recovery'], // PATCH
@@ -49,6 +49,7 @@ export default {
         ['post_sensor_data',      '/plans/1_0/session/sensor_data'], // POST
         ['typical_sessions',      '/plans/1_0/session/typical'], // POST
         ['no_sessions',           '/plans/1_0/session/no_sessions'], // POST
+        ['functional_strength',   '/plans/1_0/functional_strength'], // PATCH
         // sensor specific routes
         ['sensor_mobile_pair', '/users/1_0/user/{userId}/sensor_mobile_pair'], // CRUD
         // other routes

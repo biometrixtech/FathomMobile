@@ -8,14 +8,14 @@ const Start = ({
     Layout,
     authorizeUser,
     certificate,
-    connectionInfo,
     email,
     environment,
     expires,
     finalizeLogin,
     getUser,
-    jwt,
     getUserSensorData,
+    jwt,
+    network,
     onFormSubmit,
     password,
     registerDevice,
@@ -26,7 +26,6 @@ const Start = ({
     <Layout
         authorizeUser={authorizeUser}
         certificate={certificate}
-        connectionInfo={connectionInfo}
         email={email}
         environment={environment}
         expires={expires}
@@ -34,6 +33,7 @@ const Start = ({
         getUser={getUser}
         getUserSensorData={getUserSensorData}
         jwt={jwt}
+        network={network}
         onFormSubmit={onFormSubmit}
         password={password}
         registerDevice={registerDevice}
@@ -47,7 +47,6 @@ Start.propTypes = {
     Layout:               PropTypes.func.isRequired,
     authorizeUser:        PropTypes.func.isRequired,
     certificate:          PropTypes.object,
-    connectionInfo:       PropTypes.object,
     email:                PropTypes.string,
     environment:          PropTypes.string,
     expires:              PropTypes.string,
@@ -55,6 +54,7 @@ Start.propTypes = {
     getUser:              PropTypes.func.isRequired,
     getUserSensorData:    PropTypes.func.isRequired,
     jwt:                  PropTypes.string,
+    network:              PropTypes.object.isRequired,
     onFormSubmit:         PropTypes.func.isRequired,
     password:             PropTypes.string,
     registerDevice:       PropTypes.func.isRequired,
@@ -65,7 +65,6 @@ Start.propTypes = {
 
 Start.defaultProps = {
     certificate:          null,
-    connectionInfo:       null,
     environment:          'PROD',
     email:                null,
     expires:              null,
@@ -77,11 +76,11 @@ Start.defaultProps = {
 
 const mapStateToProps = state => ({
     certificate:          state.init.certificate || null,
-    connectionInfo:       state.init.connectionInfo || null,
     environment:          state.init.environment || 'PROD',
     email:                state.init.email || null,
     expires:              state.init.expires || null,
     jwt:                  state.init.jwt || null,
+    network:              state.network,
     password:             state.init.password || null,
     scheduledMaintenance: state.init.scheduledMaintenance || null,
     sessionToken:         state.init.session_token || null,

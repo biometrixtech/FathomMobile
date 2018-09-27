@@ -34,6 +34,7 @@ class Settings extends Component {
         deleteUserSensorData:           PropTypes.func.isRequired,
         deleteAllSingleSensorPractices: PropTypes.func.isRequired,
         logout:                         PropTypes.func.isRequired,
+        network:                        PropTypes.object.isRequired,
         user:                           PropTypes.object.isRequired,
     }
 
@@ -56,6 +57,10 @@ class Settings extends Component {
         if (Platform.OS === 'android') {
             BackHandler.removeEventListener('hardwareBackPress');
         }
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
     _disconnectFromSingleSensor = () => {

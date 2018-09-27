@@ -34,12 +34,12 @@ import Modal from 'react-native-modalbox';
 import Toast, { DURATION } from 'react-native-easy-toast';
 
 // Consts and Libs
-import { Roles, BLEConfig, AppColors, AppFonts, AppStyles, AppSizes } from '../../constants';
+import { AppUtil, } from '../../lib';
+import { Button, Coach, FormLabel, ListItem, Pages, Spacer, TabIcon, Text, } from '../custom';
+import { AppColors, AppFonts, AppSizes, AppStyles, BLEConfig, Roles,  } from '../../constants';
 import { bleUtils } from '../../constants/utils';
 import { ble as BLEActions } from '../../actions';
-
-// Components
-import { Button, Coach, FormLabel, ListItem, Pages, Spacer, TabIcon, Text, } from '../custom';
+import { store } from '../../store';
 
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
@@ -87,6 +87,7 @@ class BluetoothConnectView extends Component {
         getUserSensorData:  PropTypes.func.isRequired,
         getWifiMacAddress:  PropTypes.func.isRequired,
         loginToAccessory:   PropTypes.func.isRequired,
+        network:            PropTypes.object.isRequired,
         postUserSensorData: PropTypes.func.isRequired,
         setKitTime:         PropTypes.func.isRequired,
         startBluetooth:     PropTypes.func.isRequired,
@@ -132,6 +133,10 @@ class BluetoothConnectView extends Component {
         this.handlerStop.remove();
         this.handlerState.remove();
         this.pages = null;
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
     _startBluetooth = () => {

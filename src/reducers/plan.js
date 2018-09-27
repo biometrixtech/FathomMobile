@@ -25,6 +25,14 @@ export default function planReducer(state = initialState, action) {
         return Object.assign({}, state, {
             completedExercises: action.data,
         });
+    case Actions.CLEAR_COMPLETED_FS_EXERCISES:
+        return Object.assign({}, state, {
+            completedFSExercises: [],
+        });
+    case Actions.SET_COMPLETED_FS_EXERCISES:
+        return Object.assign({}, state, {
+            completedFSExercises: action.data,
+        });
     case Actions.GET_SORE_BODY_PARTS:
         return Object.assign({}, state, {
             soreBodyParts: action.data,
@@ -35,10 +43,11 @@ export default function planReducer(state = initialState, action) {
         });
     case Actions.CLEAR_MY_PLAN:
         return Object.assign({}, state, {
-            completedExercises: [],
-            dailyPlan:          [],
-            postSession:        {},
-            soreBodyParts:      {},
+            completedExercises:   [],
+            completedFSExercises: [],
+            dailyPlan:            [],
+            postSession:          {},
+            soreBodyParts:        {},
         });
     case Actions.SET_TYPICAL_SESSIONS:
         return Object.assign({}, state, {

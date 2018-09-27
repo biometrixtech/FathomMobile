@@ -37,13 +37,13 @@ class Start extends Component {
 
     static propTypes = {
         authorizeUser:        PropTypes.func.isRequired,
-        connectionInfo:       PropTypes.object,
         email:                PropTypes.string,
         environment:          PropTypes.string,
         expires:              PropTypes.string,
         finalizeLogin:        PropTypes.func.isRequired,
         getUser:              PropTypes.func.isRequired,
         jwt:                  PropTypes.string,
+        network:              PropTypes.object.isRequired,
         onFormSubmit:         PropTypes.func,
         password:             PropTypes.string,
         registerDevice:       PropTypes.func.isRequired,
@@ -53,7 +53,6 @@ class Start extends Component {
     }
 
     static defaultProps = {
-        connectionInfo:       null,
         email:                null,
         environment:          'PROD',
         expires:              null,
@@ -99,6 +98,10 @@ class Start extends Component {
                 }
             }
         }, 10);
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
     hideSplash = () => {

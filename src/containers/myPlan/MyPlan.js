@@ -8,53 +8,65 @@ const MyPlan = ({
     Layout,
     ble,
     clearCompletedExercises,
-    setCompletedExercises,
+    clearCompletedFSExercises,
     getMyPlan,
     getSoreBodyParts,
+    network,
     noSessions,
     notification,
     patchActiveRecovery,
+    patchFunctionalStrength,
     plan,
     postReadinessSurvey,
     postSessionSurvey,
+    preReadiness,
     scheduledMaintenance,
-    typicalSession,
+    setCompletedExercises,
+    setCompletedFSExercises,
     user,
 }) => (
     <Layout
         ble={ble}
         clearCompletedExercises={clearCompletedExercises}
-        setCompletedExercises={setCompletedExercises}
+        clearCompletedFSExercises={clearCompletedFSExercises}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
+        network={network}
         noSessions={noSessions}
         notification={notification}
         patchActiveRecovery={patchActiveRecovery}
+        patchFunctionalStrength={patchFunctionalStrength}
         plan={plan}
         postReadinessSurvey={postReadinessSurvey}
         postSessionSurvey={postSessionSurvey}
+        preReadiness={preReadiness}
         scheduledMaintenance={scheduledMaintenance}
-        typicalSession={typicalSession}
+        setCompletedExercises={setCompletedExercises}
+        setCompletedFSExercises={setCompletedFSExercises}
         user={user}
     />
 );
 
 MyPlan.propTypes = {
-    Layout:                  PropTypes.func.isRequired,
-    ble:                     PropTypes.object.isRequired,
-    clearCompletedExercises: PropTypes.func.isRequired,
-    setCompletedExercises:   PropTypes.func.isRequired,
-    getMyPlan:               PropTypes.func.isRequired,
-    getSoreBodyParts:        PropTypes.func.isRequired,
-    noSessions:              PropTypes.func.isRequired,
-    notification:            PropTypes.bool.isRequired,
-    patchActiveRecovery:     PropTypes.func.isRequired,
-    plan:                    PropTypes.object.isRequired,
-    postReadinessSurvey:     PropTypes.func.isRequired,
-    postSessionSurvey:       PropTypes.func.isRequired,
-    scheduledMaintenance:    PropTypes.object,
-    typicalSession:          PropTypes.func.isRequired,
-    user:                    PropTypes.object.isRequired,
+    Layout:                    PropTypes.func.isRequired,
+    ble:                       PropTypes.object.isRequired,
+    clearCompletedExercises:   PropTypes.func.isRequired,
+    clearCompletedFSExercises: PropTypes.func.isRequired,
+    getMyPlan:                 PropTypes.func.isRequired,
+    getSoreBodyParts:          PropTypes.func.isRequired,
+    network:                   PropTypes.object.isRequired,
+    noSessions:                PropTypes.func.isRequired,
+    notification:              PropTypes.bool.isRequired,
+    patchActiveRecovery:       PropTypes.func.isRequired,
+    patchFunctionalStrength:   PropTypes.func.isRequired,
+    plan:                      PropTypes.object.isRequired,
+    postReadinessSurvey:       PropTypes.func.isRequired,
+    postSessionSurvey:         PropTypes.func.isRequired,
+    preReadiness:              PropTypes.func.isRequired,
+    scheduledMaintenance:      PropTypes.object,
+    setCompletedExercises:     PropTypes.func.isRequired,
+    setCompletedFSExercises:   PropTypes.func.isRequired,
+    user:                      PropTypes.object.isRequired,
 };
 
 MyPlan.defaultProps = {
@@ -63,6 +75,7 @@ MyPlan.defaultProps = {
 
 const mapStateToProps = state => ({
     ble:                  state.ble,
+    network:              state.network,
     notification:         state.init.notification,
     plan:                 state.plan,
     scheduledMaintenance: state.init.scheduledMaintenance || null,
@@ -70,15 +83,18 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    clearCompletedExercises: PlanActions.clearCompletedExercises,
-    setCompletedExercises:   PlanActions.setCompletedExercise,
-    getMyPlan:               PlanActions.getMyPlan,
-    getSoreBodyParts:        PlanActions.getSoreBodyParts,
-    noSessions:              PlanActions.noSessions,
-    patchActiveRecovery:     PlanActions.patchActiveRecovery,
-    postReadinessSurvey:     PlanActions.postReadinessSurvey,
-    postSessionSurvey:       PlanActions.postSessionSurvey,
-    typicalSession:          PlanActions.typicalSession,
+    clearCompletedExercises:   PlanActions.clearCompletedExercises,
+    clearCompletedFSExercises: PlanActions.clearCompletedFSExercises,
+    getMyPlan:                 PlanActions.getMyPlan,
+    getSoreBodyParts:          PlanActions.getSoreBodyParts,
+    noSessions:                PlanActions.noSessions,
+    patchActiveRecovery:       PlanActions.patchActiveRecovery,
+    patchFunctionalStrength:   PlanActions.patchFunctionalStrength,
+    postReadinessSurvey:       PlanActions.postReadinessSurvey,
+    postSessionSurvey:         PlanActions.postSessionSurvey,
+    preReadiness:              PlanActions.preReadiness,
+    setCompletedExercises:     PlanActions.setCompletedExercises,
+    setCompletedFSExercises:   PlanActions.setCompletedFSExercises,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyPlan);

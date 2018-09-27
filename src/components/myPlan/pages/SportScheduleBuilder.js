@@ -100,15 +100,13 @@ class SportScheduleBuilder extends Component {
     _validateForm = () => {
         let { pickerScrollCount, } = this.state;
         if(pickerScrollCount > 0) {
-            let duration = this._getDateTimeDurationFromState().duration;
-            let event_date = `${this._getDateTimeDurationFromState().event_date.toISOString(true).split('.')[0]}Z`;
             this.setState(
                 {
                     isFormValid: true,
                 },
                 () => {
-                    this.props.handleFormChange('event_date', event_date);
-                    this.props.handleFormChange('duration', duration);
+                    this.props.handleFormChange('event_date', `${this._getDateTimeDurationFromState().event_date.toISOString(true).split('.')[0]}Z`);
+                    this.props.handleFormChange('duration', this._getDateTimeDurationFromState().duration);
                 },
             );
         }
@@ -119,7 +117,7 @@ class SportScheduleBuilder extends Component {
         if(!isFormValid) {
             return {
                 duration:   '',
-                event_date: moment(),
+                event_date: `${moment().toISOString(true).split('.')[0]}Z`,
             }
         }
         let now = moment();

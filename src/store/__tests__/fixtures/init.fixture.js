@@ -8,7 +8,6 @@
 /* eslint-disable no-process-env */
 export default {
     certificate:          null,
-    connectionInfo:       { connectionType: 'unknown', online: false },
     device:               null,
     email:                null,
     environment:          'TEST', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',

@@ -29,7 +29,6 @@ import {
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import Egg from 'react-native-egg';
-//import FormValidation from 'tcomb-form-native';
 import Modal from 'react-native-modalbox';
 
 // Consts and Libs
@@ -88,6 +87,7 @@ class Login extends Component {
         environment:       PropTypes.string,
         finalizeLogin:     PropTypes.func.isRequired,
         getUserSensorData: PropTypes.func.isRequired,
+        network:           PropTypes.object.isRequired,
         onFormSubmit:      PropTypes.func,
         password:          PropTypes.string,
         registerDevice:    PropTypes.func.isRequired,
@@ -139,6 +139,10 @@ class Login extends Component {
             let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
             AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
         }
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
     _focusNextField = (id) => {
