@@ -300,8 +300,6 @@ export default {
     clearCompletedExercises,
     clearCompletedFSExercises,
     clearMyPlanData,
-    setCompletedExercises,
-    setCompletedFSExercises,
     getMyPlan,
     getSoreBodyParts,
     noSessions,
@@ -311,4 +309,6 @@ export default {
     postSessionSurvey,
     postSingleSensorData,
     preReadiness,
+    setCompletedExercises,
+    setCompletedFSExercises,
 };
