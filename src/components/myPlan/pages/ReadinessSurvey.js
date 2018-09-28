@@ -14,7 +14,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ScrollView, TouchableOpacity, View, } from 'react-native';
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
@@ -26,6 +26,18 @@ import { AreasOfSoreness, ScaleButton, SoreBodyPart, } from './';
 // import third-party libraries
 import _ from 'lodash';
 import moment from 'moment';
+
+/* Styles ==================================================================== */
+const styles = StyleSheet.create({
+    pill: {
+        borderColor:     AppColors.zeplin.darkGrey,
+        borderRadius:    5,
+        borderWidth:     1,
+        marginVertical:  AppSizes.paddingXSml,
+        paddingVertical: AppSizes.paddingXSml,
+        width:           (AppSizes.screen.widthThreeQuarters / 2),
+    },
+});
 
 /* Component ==================================================================== */
 class ReadinessSurvey extends Component {
@@ -160,15 +172,15 @@ class ReadinessSurvey extends Component {
                                         <View key={i}>
                                             <Button
                                                 backgroundColor={isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                                                buttonStyle={{
+                                                buttonStyle={[styles.pill, {
                                                     alignSelf:       'center',
                                                     borderRadius:    5,
                                                     paddingVertical: 5,
                                                     width:           AppSizes.screen.widthTwoThirds,
-                                                }}
+                                                }]}
                                                 color={isSelected ? AppColors.white : AppColors.zeplin.darkGrey}
-                                                fontFamily={AppStyles.robotoMedium.fontFamily}
-                                                fontWeight={AppStyles.robotoMedium.fontWeight}
+                                                fontFamily={AppStyles.oswaldRegular.fontFamily}
+                                                fontWeight={AppStyles.oswaldRegular.fontWeight}
                                                 onPress={() => {
                                                     if(isSport) {
                                                         console.log('current_sport_name',session.sport_name);
@@ -193,7 +205,7 @@ class ReadinessSurvey extends Component {
                                                 }}
                                                 outlined={isSelected ? false : true}
                                                 raised={false}
-                                                textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                                                textStyle={{ fontSize: AppFonts.scaleFont(14), }}
                                                 title={sessionName.toUpperCase()}
                                             />
                                             <Spacer size={10} />

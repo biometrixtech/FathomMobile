@@ -1455,54 +1455,60 @@ class MyPlan extends Component {
                     })
                 }
                 <Spacer size={15} />
-                <Button
-                    backgroundColor={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                    buttonStyle={{justifyContent: 'space-between',}}
-                    color={isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText}
-                    containerViewStyle={{marginLeft: 22, marginRight: 22,}}
-                    fontFamily={AppStyles.oswaldMedium.fontFamily}
-                    fontWeight={AppStyles.oswaldMedium.fontWeight}
-                    leftIcon={{
-                        color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
-                        name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
-                        size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
-                    }}
-                    onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal() : null}
-                    outlined={isDailyReadinessSurveyCompleted ? false : true}
-                    raised={false}
-                    rightIcon={{
-                        color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
-                        name:  'chevron-right',
-                        size:  AppFonts.scaleFont(30),
-                    }}
-                    textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
-                    title={'LOG COMPLETED ACTIVITY'}
-                />
-                <Spacer size={10} />
-                { (dailyPlanObj && dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
-                    <Button
-                        backgroundColor={AppColors.white}
-                        buttonStyle={{justifyContent: 'space-between',}}
-                        color={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText}
-                        containerViewStyle={{marginLeft: 22, marginRight: 22,}}
-                        fontFamily={AppStyles.oswaldMedium.fontFamily}
-                        fontWeight={AppStyles.oswaldMedium.fontWeight}
-                        leftIcon={{
-                            color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
-                            name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
-                            size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
-                        }}
-                        onPress={() => isDailyReadinessSurveyCompleted ? this.props.noSessions(this.props.user.id) : null}
-                        outlined
-                        raised={false}
-                        rightIcon={{
-                            color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
-                            name:  'chevron-right',
-                            size:  AppFonts.scaleFont(30),
-                        }}
-                        textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
-                        title={'LOG AN OFF DAY'}
-                    />
+                { this.state.isFunctionalStrengthCollapsed ?
+                    <View>
+                        <Button
+                            backgroundColor={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                            buttonStyle={{justifyContent: 'space-between',}}
+                            color={isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText}
+                            containerViewStyle={{marginLeft: 22, marginRight: 22,}}
+                            fontFamily={AppStyles.oswaldMedium.fontFamily}
+                            fontWeight={AppStyles.oswaldMedium.fontWeight}
+                            leftIcon={{
+                                color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
+                                name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
+                                size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
+                            }}
+                            onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal() : null}
+                            outlined={isDailyReadinessSurveyCompleted ? false : true}
+                            raised={false}
+                            rightIcon={{
+                                color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
+                                name:  'chevron-right',
+                                size:  AppFonts.scaleFont(30),
+                            }}
+                            textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
+                            title={'LOG COMPLETED ACTIVITY'}
+                        />
+                        <Spacer size={10} />
+                        { (dailyPlanObj && dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
+                            <Button
+                                backgroundColor={AppColors.white}
+                                buttonStyle={{justifyContent: 'space-between',}}
+                                color={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText}
+                                containerViewStyle={{marginLeft: 22, marginRight: 22,}}
+                                fontFamily={AppStyles.oswaldMedium.fontFamily}
+                                fontWeight={AppStyles.oswaldMedium.fontWeight}
+                                leftIcon={{
+                                    color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
+                                    name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
+                                    size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
+                                }}
+                                onPress={() => isDailyReadinessSurveyCompleted ? this.props.noSessions(this.props.user.id) : null}
+                                outlined
+                                raised={false}
+                                rightIcon={{
+                                    color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
+                                    name:  'chevron-right',
+                                    size:  AppFonts.scaleFont(30),
+                                }}
+                                textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
+                                title={'LOG AN OFF DAY'}
+                            />
+                            :
+                            null
+                        }
+                    </View>
                     :
                     null
                 }
