@@ -314,22 +314,23 @@ class SportScheduleBuilder extends Component {
                                 <Text oswaldMedium style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{'TEAM SPORTS'}</Text>
                                 <Spacer size={7} />
                                 <View style={[AppStyles.containerCentered, {flexDirection: 'row', flexWrap: 'wrap',}]}>
-                                    { _.map(teamSports, sport =>
-                                        <Button
-                                            backgroundColor={AppColors.white}
-                                            buttonStyle={[styles.pill,]}
-                                            fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                            fontWeight={AppStyles.oswaldRegular.fontWeight}
-                                            key={sport.index}
-                                            onPress={() => {
-                                                this._nextStep(2);
-                                                handleFormChange('sport_name', sport.index);
-                                            }}
-                                            outlined
-                                            raised={false}
-                                            textStyle={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14) }}
-                                            title={sport.label.toUpperCase()}
-                                        />
+                                    { _.map(teamSports, (sport, i) =>
+                                        <View key={sport.index} style={[i % 2 === 0 ? {paddingLeft: AppSizes.paddingSml,} : {paddingRight: AppSizes.paddingSml,}, {alignItems: 'center', width: (AppSizes.screen.widthHalf - AppSizes.paddingSml),}]}>
+                                            <Button
+                                                backgroundColor={AppColors.white}
+                                                buttonStyle={[styles.pill, {width: (AppSizes.screen.widthHalf - AppSizes.paddingLrg),}]}
+                                                fontFamily={AppStyles.oswaldRegular.fontFamily}
+                                                fontWeight={AppStyles.oswaldRegular.fontWeight}
+                                                onPress={() => {
+                                                    this._nextStep(2);
+                                                    handleFormChange('sport_name', sport.index);
+                                                }}
+                                                outlined
+                                                raised={false}
+                                                textStyle={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14) }}
+                                                title={sport.label.toUpperCase()}
+                                            />
+                                        </View>
                                     )}
                                 </View>
                                 <Spacer size={12} />
@@ -337,22 +338,23 @@ class SportScheduleBuilder extends Component {
                                 <Spacer size={7} />
                                 <View style={[AppStyles.containerCentered, {flexDirection: 'row', flexWrap: 'wrap',}]}>
                                     { _.map(strengthConditioningTypes, (strengthConditioningType, i) =>
-                                        <Button
-                                            backgroundColor={AppColors.white}
-                                            buttonStyle={[styles.pill,]}
-                                            fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                            fontWeight={AppStyles.oswaldRegular.fontWeight}
-                                            key={strengthConditioningType.index}
-                                            onPress={() => {
-                                                this._nextStep(3);
-                                                handleFormChange('strength_and_conditioning_type', strengthConditioningType.index);
-                                                handleFormChange('session_type', 1);
-                                            }}
-                                            outlined
-                                            raised={false}
-                                            textStyle={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14) }}
-                                            title={strengthConditioningType.label.toUpperCase()}
-                                        />
+                                        <View key={strengthConditioningType.index} style={[i % 2 === 0 ? {paddingLeft: AppSizes.paddingSml,} : {paddingRight: AppSizes.paddingSml,}, {alignItems: 'center', width: (AppSizes.screen.widthHalf - AppSizes.paddingSml),}]}>
+                                            <Button
+                                                backgroundColor={AppColors.white}
+                                                buttonStyle={[styles.pill, {width: (AppSizes.screen.widthHalf - AppSizes.paddingLrg),}]}
+                                                fontFamily={AppStyles.oswaldRegular.fontFamily}
+                                                fontWeight={AppStyles.oswaldRegular.fontWeight}
+                                                onPress={() => {
+                                                    this._nextStep(3);
+                                                    handleFormChange('strength_and_conditioning_type', strengthConditioningType.index);
+                                                    handleFormChange('session_type', 1);
+                                                }}
+                                                outlined
+                                                raised={false}
+                                                textStyle={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14) }}
+                                                title={strengthConditioningType.label.toUpperCase()}
+                                            />
+                                        </View>
                                     )}
                                 </View>
                             </View>
