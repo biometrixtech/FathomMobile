@@ -69,16 +69,19 @@ class MyPlan extends Component {
         getSoreBodyParts:          PropTypes.func.isRequired,
         network:                   PropTypes.object.isRequired,
         noSessions:                PropTypes.func.isRequired,
-        notification:              PropTypes.bool.isRequired,
-        patchActiveRecovery:       PropTypes.func.isRequired,
-        patchFunctionalStrength:   PropTypes.func.isRequired,
-        plan:                      PropTypes.object.isRequired,
-        postReadinessSurvey:       PropTypes.func.isRequired,
-        postSessionSurvey:         PropTypes.func.isRequired,
-        preReadiness:              PropTypes.func.isRequired,
-        setCompletedExercises:     PropTypes.func.isRequired,
-        setCompletedFSExercises:   PropTypes.func.isRequired,
-        user:                      PropTypes.object.isRequired,
+        notification:              PropTypes.oneOfType([
+            PropTypes.bool,
+            PropTypes.string,
+        ]).isRequired,
+        patchActiveRecovery:     PropTypes.func.isRequired,
+        patchFunctionalStrength: PropTypes.func.isRequired,
+        plan:                    PropTypes.object.isRequired,
+        postReadinessSurvey:     PropTypes.func.isRequired,
+        postSessionSurvey:       PropTypes.func.isRequired,
+        preReadiness:            PropTypes.func.isRequired,
+        setCompletedExercises:   PropTypes.func.isRequired,
+        setCompletedFSExercises: PropTypes.func.isRequired,
+        user:                    PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -211,7 +214,7 @@ class MyPlan extends Component {
 
     componentWillReceiveProps = (nextProps) => {
         if(nextProps.notification && nextProps.notification !== this.props.notification) {
-            this._handleExerciseListRefresh(true);
+            this._handlePushNotification(nextProps.notification);
         }
         const areObjectsDifferent = _.isEqual(nextProps.plan, this.props.plan);
         if(
@@ -230,6 +233,12 @@ class MyPlan extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
+    }
+
+    _handlePushNotification = notification => {
+        const validNotifs = ['COMPLETE_ACTIVE_PREP', 'COMPLETE_ACTIVE_RECOVERY', 'COMPLETE_DAILY_READINESS', 'VIEW_PLAN',];
+        // TODO: handle our 4 possible notification enums, add a default that will do the same as 'VIEW_PLAN' (error cases)
+        // this._handleExerciseListRefresh(true);
     }
 
     _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side) => {

@@ -15,6 +15,7 @@ import { AppAPI, AppUtil } from '../lib';
 
 // import third-party libraries
 import _ from 'lodash';
+import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 
 /**
@@ -40,6 +41,7 @@ const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
                 dispatch({
                     type: Actions.NOTIFICATION_ADDRESSED
                 });
+                PushNotification.setApplicationIconBadgeNumber(0);
             }
             return Promise.resolve(myPlanData);
         }).catch(err => {

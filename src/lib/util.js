@@ -354,8 +354,6 @@ const UTIL = {
         inputStyle.textAlign = 'center';
         inputStyle.fontFamily = AppStyles.robotoBold.fontFamily;
         inputStyle.fontWeight = AppStyles.robotoBold.fontWeight;
-
-
         return inputStyle;
     }
 };
