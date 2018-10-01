@@ -316,6 +316,7 @@ class MyPlan extends Component {
                     isReadinessSurveyCompleted: true,
                 });
                 this.props.clearCompletedExercises();
+                this.props.clearCompletedFSExercises();
                 this.setState({
                     dailyReadiness: {
                         readiness:     0,
