@@ -72,7 +72,7 @@ class ReadinessSurvey extends Component {
         sessionName = sessionName.label && isSport ?
             sessionName.label
             : sessionName.label && isStrengthConditioning ?
-                `${sessionName.label} TRAINING`
+                `${sessionName.label.replace(' Training', '')} TRAINING`
                 :
                 '';
         return {
@@ -172,18 +172,17 @@ class ReadinessSurvey extends Component {
                                         <View key={i}>
                                             <Button
                                                 backgroundColor={isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                                                buttonStyle={[styles.pill, {
+                                                buttonStyle={{
                                                     alignSelf:       'center',
                                                     borderRadius:    5,
                                                     paddingVertical: 5,
                                                     width:           AppSizes.screen.widthTwoThirds,
-                                                }]}
+                                                }}
                                                 color={isSelected ? AppColors.white : AppColors.zeplin.darkGrey}
                                                 fontFamily={AppStyles.oswaldRegular.fontFamily}
                                                 fontWeight={AppStyles.oswaldRegular.fontWeight}
                                                 onPress={() => {
                                                     if(isSport) {
-                                                        console.log('current_sport_name',session.sport_name);
                                                         if(isSelected) {
                                                             handleFormChange('current_sport_name', null);
                                                             handleFormChange('current_position', null);
@@ -192,7 +191,6 @@ class ReadinessSurvey extends Component {
                                                             handleFormChange('current_position', null);
                                                         }
                                                     } else if(isStrengthConditioning) {
-                                                        console.log('current_position',session.strength_and_conditioning_type);
                                                         if(isSelected) {
                                                             handleFormChange('current_sport_name', null);
                                                             handleFormChange('current_position', null);
@@ -208,7 +206,7 @@ class ReadinessSurvey extends Component {
                                                 textStyle={{ fontSize: AppFonts.scaleFont(14), }}
                                                 title={sessionName.toUpperCase()}
                                             />
-                                            <Spacer size={10} />
+                                            <Spacer size={8} />
                                         </View>
                                     )
                                 })}
@@ -235,19 +233,18 @@ class ReadinessSurvey extends Component {
                                                             width:           AppSizes.screen.widthTwoThirds,
                                                         }}
                                                         color={dailyReadiness.current_position === i ? AppColors.white : AppColors.zeplin.darkGrey}
-                                                        fontFamily={AppStyles.robotoMedium.fontFamily}
-                                                        fontWeight={AppStyles.robotoMedium.fontWeight}
+                                                        fontFamily={AppStyles.oswaldRegular.fontFamily}
+                                                        fontWeight={AppStyles.oswaldRegular.fontWeight}
                                                         onPress={() => {
-                                                            console.log('current_position',i);
                                                             handleFormChange('current_position', i);
                                                             this._scrollTo(0);
                                                         }}
                                                         outlined={dailyReadiness.current_position === i ? false : true}
                                                         raised={false}
-                                                        textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                                                        textStyle={{ fontSize: AppFonts.scaleFont(14), }}
                                                         title={position.toUpperCase()}
                                                     />
-                                                    <Spacer size={10} />
+                                                    <Spacer size={8} />
                                                 </View>
                                             )
                                         })}
