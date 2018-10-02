@@ -8,12 +8,13 @@
 import { Alert, AsyncStorage } from 'react-native';
 
 // import third-party libraries
-import DeviceInfo from 'react-native-device-info';
-import uuidByString from 'uuid-by-string';
 import { AppColors, AppFonts, AppStyles } from '../constants';
 import { store } from '../store';
-import _ from 'lodash';
 import { Actions as DispatchActions, ErrorMessages, } from '../constants';
+import _ from 'lodash';
+import DeviceInfo from 'react-native-device-info';
+import PushNotification from 'react-native-push-notification';
+import uuidByString from 'uuid-by-string';
 
 import { init as InitActions, } from '../actions';
 
@@ -106,6 +107,13 @@ const UTIL = {
                 { cancelable: false }
             );
         }
+    },
+
+    updatePushNotificationFlag: () => {
+        store.dispatch({
+            type: DispatchActions.NOTIFICATION_ADDRESSED
+        });
+        PushNotification.setApplicationIconBadgeNumber(0);
     },
 
     /**

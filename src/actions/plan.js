@@ -21,7 +21,7 @@ import moment from 'moment';
 /**
   * Get My Plan Data
   */
-const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
+const getMyPlan = (userId, startDate, endDate) => {
     let currentState = store.getState();
     let myPlanObj = {};
     // Defaulting user id to whatever is in the store if nothing is sent for Push Notifications
@@ -37,12 +37,6 @@ const getMyPlan = (userId, startDate, endDate, updateNotificationFlag) => {
                 type: Actions.GET_MY_PLAN,
                 data: myPlanData,
             });
-            if(updateNotificationFlag) {
-                dispatch({
-                    type: Actions.NOTIFICATION_ADDRESSED
-                });
-                PushNotification.setApplicationIconBadgeNumber(0);
-            }
             return Promise.resolve(myPlanData);
         }).catch(err => {
             const error = AppAPI.handleError(err);
