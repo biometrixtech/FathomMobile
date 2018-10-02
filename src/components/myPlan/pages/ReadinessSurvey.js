@@ -115,7 +115,7 @@ class ReadinessSurvey extends Component {
         const isFirstFunctionalStrength = isFunctionalStrengthEligible && (!soreBodyParts.current_sport_name || soreBodyParts.current_sport_name !== 0) && (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
         let isSecondFunctionalStrength = isFunctionalStrengthEligible && (soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0 || soreBodyParts.current_sport_name === 0 || soreBodyParts.current_sport_name > 0) && (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
         let isFunctionalStrengthTargetValid = dailyReadiness.current_sport_name !== null ?
-            dailyReadiness.current_sport_name !== null && dailyReadiness.current_position !== null
+            dailyReadiness.current_sport_name !== null && (dailyReadiness.current_position !== null || !selectedSportPositions)
             : dailyReadiness.current_sport_name === null ?
                 dailyReadiness.current_position !== null
                 :
@@ -286,7 +286,7 @@ class ReadinessSurvey extends Component {
                                     }}
                                     outlined={dailyReadiness.wants_functional_strength ? false : true}
                                     raised={false}
-                                    textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                                    textStyle={{ fontSize: AppFonts.scaleFont(14), }}
                                     title={'YES'}
                                 />
                                 <Spacer size={10} />
@@ -307,7 +307,7 @@ class ReadinessSurvey extends Component {
                                     }}
                                     outlined={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? true : false}
                                     raised={false}
-                                    textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                                    textStyle={{ fontSize: AppFonts.scaleFont(14), }}
                                     title={'NO'}
                                 />
                             </View>
@@ -402,7 +402,7 @@ class ReadinessSurvey extends Component {
                                 }}
                                 outlined={dailyReadiness.wants_functional_strength ? false : true}
                                 raised={false}
-                                textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                                textStyle={{ fontSize: AppFonts.scaleFont(14), }}
                                 title={'YES'}
                             />
                             <Spacer size={10} />
@@ -423,7 +423,7 @@ class ReadinessSurvey extends Component {
                                 }}
                                 outlined={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? true : false}
                                 raised={false}
-                                textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                                textStyle={{ fontSize: AppFonts.scaleFont(14), }}
                                 title={'NO'}
                             />
                         </View>
@@ -480,7 +480,7 @@ class ReadinessSurvey extends Component {
                             fontWeight={AppStyles.robotoMedium.fontWeight}
                             onPress={handleFormSubmit}
                             raised={false}
-                            textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                            textStyle={{ fontSize: AppFonts.scaleFont(18), }}
                             title={'Continue'}
                         />
                         :
@@ -498,7 +498,7 @@ class ReadinessSurvey extends Component {
                             fontWeight={AppStyles.robotoMedium.fontWeight}
                             onPress={() => null}
                             outlined
-                            textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                            textStyle={{ fontSize: AppFonts.scaleFont(18), }}
                             title={'Select an Option'}
                         />
                     }
