@@ -62,7 +62,7 @@
    */
 //  UIImageView *launchScreenView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LaunchScreen"]]; // Image named "LaunchScreen"
 //  launchScreenView.frame = self.window.bounds;
-//  
+//
 //  launchScreenView.contentMode = UIViewContentModeScaleAspectFill;
 //  rootView.loadingView = launchScreenView;
 
