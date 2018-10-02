@@ -200,6 +200,54 @@ function cleanExerciseList(recoveryObj) {
     };
 }
 
+
+
+const fsExerciseListOrder = [
+    {
+        index: 'warm_up',
+        title: 'WARM UP',
+    },
+    {
+        index: 'dynamic_movement',
+        title: 'DYNAMIC MOVEMENTS',
+    },
+    {
+        index: 'stability_work',
+        title: 'STABILITY',
+    },
+    {
+        index: 'victory_lap',
+        title: 'VICTORY LAP',
+    },
+];
+
+function cleanFSExerciseList(recoveryObj) {
+    let totalLength = 0;
+    let cleanedExerciseList = {};
+    _.map(fsExerciseListOrder, list => {
+        let exerciseArray = _.orderBy(recoveryObj[list.index], ['position_order'], ['asc']);
+        totalLength += exerciseArray.length;
+        cleanedExerciseList[list.title] = exerciseArray;
+    });
+    return {
+        cleanedExerciseList,
+        totalLength,
+    };
+}
+
+function isFSCompletedValid(functionalStrength, exerciseList) {
+    let warmUpExerciseList = functionalStrength.warm_up;
+    let intersectingWarmUpExercises = _.filter(warmUpExerciseList, o => exerciseList.includes(o.library_id));
+    let isWarmUpValid = intersectingWarmUpExercises.length === warmUpExerciseList.length;
+    let dynamicMovementExerciseList = functionalStrength.dynamic_movement;
+    let intersectingDynamicMovementExercises = _.filter(dynamicMovementExerciseList, o => exerciseList.includes(o.library_id));
+    let isDynamicMovementValid = intersectingDynamicMovementExercises.length === dynamicMovementExerciseList.length;
+    let stabilityExerciseList = functionalStrength.stability_work;
+    let intersectingStabilityExercises = _.filter(stabilityExerciseList, o => exerciseList.includes(o.library_id));
+    let isStabilityValid = intersectingStabilityExercises.length === stabilityExerciseList.length;
+    return isWarmUpValid && isDynamicMovementValid && isStabilityValid;
+}
+
 function cleanExercise(exercise) {
     let cleanedExercise = _.cloneDeep(exercise);
     cleanedExercise.library_id = exercise.library_id;
@@ -214,7 +262,7 @@ function cleanExercise(exercise) {
     return cleanedExercise;
 }
 
-function scrollableTabViewPage(dailyPlanObj, disabled, index) {
+function scrollableTabViewPage(dailyPlanObj) {
     return Math.floor(dailyPlanObj.landing_screen);
 }
 
@@ -237,36 +285,36 @@ const availableSessionTypes = [
 const strengthConditioningTypes = [
     { index: 0, order: 1, label: 'Endurance', },
     { index: 1, order: 2, label: 'Power', },
-    { index: 2, order: 3, label: 'Speed', },
+    { index: 2, order: 3, label: 'Speed & Agility', },
     { index: 3, order: 4, label: 'Strength', },
     { index: 4, order: 5, label: 'Cross Training', },
 ];
 
 const teamSports = [
-    { index: 0, order: 1, label: 'Basketball', },
-    { index: 1, order: 2, label: 'Baseball', },
-    { index: 2, order: null, label: 'Softball', },
-    { index: 3, order: null, label: 'Cycling', },
-    { index: 4, order: null, label: 'Field Hockey', },
-    { index: 5, order: 6, label: 'Football', },
-    { index: 6, order: null, label: 'General Fitness', },
-    { index: 7, order: null, label: 'Golf', },
-    { index: 8, order: null, label: 'Gymnastics', },
-    { index: 9, order: null, label: 'Ice Hockey', },
-    { index: 10, order: 11, label: 'Lacrosse', },
-    { index: 11, order: null, label: 'Rowing', },
-    { index: 12, order: null, label: 'Rugby', },
-    { index: 13, order: null, label: 'Running', },
-    { index: 14, order: 15, label: 'Soccer', },
-    { index: 15, order: null, label: 'Swimming / Diving', },
-    { index: 16, order: 17, label: 'Tennis', },
-    { index: 17, order: null, label: 'Cross Country / Distance Running', },
-    { index: 18, order: null, label: 'Sprints', },
-    { index: 19, order: null, label: 'Jumps', },
-    { index: 20, order: null, label: 'Throws', },
-    { index: 21, order: null, label: 'Volleyball', },
-    { index: 22, order: null, label: 'Wrestling', },
-    { index: 23, order: null, label: 'Weightlifting', },
+    { index: 0, order: 1, label: 'Basketball', positions: ['Center', 'Forward', 'Guard'], },
+    { index: 1, order: 2, label: 'Baseball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], },
+    { index: 2, order: null, label: 'Softball', positions: false, },
+    { index: 3, order: null, label: 'Cycling', positions: false, },
+    { index: 4, order: null, label: 'Field Hockey', positions: false, },
+    { index: 5, order: 4, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], },
+    { index: 6, order: null, label: 'General Fitness', positions: false, },
+    { index: 7, order: null, label: 'Golf', positions: false, },
+    { index: 8, order: null, label: 'Gymnastics', positions: false, },
+    { index: 9, order: null, label: 'Ice Hockey', positions: false, },
+    { index: 10, order: 5, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], },
+    { index: 11, order: null, label: 'Rowing', positions: false, },
+    { index: 12, order: null, label: 'Rugby', positions: false, },
+    { index: 13, order: null, label: 'Diving', positions: false, },
+    { index: 14, order: 6, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], },
+    { index: 15, order: null, label: 'Swimming', positions: false, },
+    { index: 16, order: 7, label: 'Tennis', positions: false, },
+    { index: 17, order: 3, label: 'Distance Running', positions: false, },
+    { index: 18, order: null, label: 'Sprints', positions: false, },
+    { index: 19, order: null, label: 'Jumps', positions: false, },
+    { index: 20, order: null, label: 'Throws', positions: false, },
+    { index: 21, order: null, label: 'Volleyball', positions: false, },
+    { index: 22, order: null, label: 'Wrestling', positions: false, },
+    { index: 23, order: null, label: 'Weightlifting', positions: false, },
 ];
 
 const getTimeHours = () => {
@@ -307,6 +355,11 @@ const durationOptionGroups = {
 };
 
 const cleanedPostSessionName = (postPracticeSurvey) => {
+    if(postPracticeSurvey.isFunctionalStrength) {
+        return {
+            fullName: 'FUNCTIONAL STRENGTH',
+        }
+    }
     let filteredSessionTypes = _.filter(availableSessionTypes, o => o.index === postPracticeSurvey.session_type);
     let selectedSessionType = filteredSessionTypes.length === 0 ? 'TRAINING' : filteredSessionTypes[0].label.toUpperCase();
     let filteredStrengthConditioningTypes = _.filter(strengthConditioningTypes, o => o.index === postPracticeSurvey.strength_and_conditioning_type);
@@ -324,8 +377,10 @@ export default {
     bodyPartMapping,
     cleanExercise,
     cleanExerciseList,
+    cleanFSExerciseList,
     cleanedPostSessionName,
     durationOptionGroups,
+    isFSCompletedValid,
     jointLevels,
     muscleLevels,
     overallReadiness,

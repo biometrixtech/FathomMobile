@@ -19,6 +19,7 @@ const Login = ({
     environment,
     finalizeLogin,
     getUserSensorData,
+    network,
     onFormSubmit,
     password,
     registerDevice,
@@ -35,6 +36,7 @@ const Login = ({
         environment={environment}
         finalizeLogin={finalizeLogin}
         getUserSensorData={getUserSensorData}
+        network={network}
         onFormSubmit={onFormSubmit}
         password={password}
         registerDevice={registerDevice}
@@ -54,6 +56,7 @@ Login.propTypes = {
     environment:          PropTypes.string,
     finalizeLogin:        PropTypes.func.isRequired,
     getUserSensorData:    PropTypes.func.isRequired,
+    network:              PropTypes.object.isRequired,
     onFormSubmit:         PropTypes.func.isRequired,
     password:             PropTypes.string,
     registerDevice:       PropTypes.func.isRequired,
@@ -78,6 +81,7 @@ const mapStateToProps = state => ({
     device:               state.init.device || null,
     environment:          state.init.environment || 'PROD',
     email:                state.init.email || null,
+    network:              state.network,
     password:             state.init.password || null,
     scheduledMaintenance: state.init.scheduledMaintenance || null,
     token:                state.init.token || null,

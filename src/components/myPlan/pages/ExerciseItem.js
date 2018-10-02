@@ -10,7 +10,7 @@
     />
  *
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Image, TouchableOpacity, View, } from 'react-native';
 
@@ -19,72 +19,81 @@ import { AppColors, AppFonts, AppStyles, MyPlan } from '../../../constants';
 import { Checkbox, TabIcon, Text } from '../../custom';
 
 /* Component ==================================================================== */
-const ExerciseItem = ({
-    completedExercises,
-    exercise,
-    handleCompleteExercise,
-    isLastItem,
-    toggleSelectedExercise,
-}) => (
-    <View style={[{borderTopWidth: 1, borderTopColor: AppColors.zeplin.lightGrey, marginHorizontal: 10}]}>
-        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
-            <View style={[AppStyles.paddingVerticalXSml, {flex: 1, justifyContent: 'center',}]}>
-                <Checkbox
-                    checked={completedExercises.includes(exercise.library_id)}
-                    checkedColor={AppColors.primary.yellow.hundredPercent}
-                    checkedIcon={'check-square'}
-                    containerStyle={{backgroundColor: AppColors.white, borderWidth: 0, margin: 0, padding: 0, width: 30, }}
-                    onPress={() => handleCompleteExercise(exercise.library_id)}
-                    size={20}
-                />
+class ExerciseItem extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            displayName:    MyPlan.cleanExercise(this.props.exercise).displayName,
+            dosage:         MyPlan.cleanExercise(this.props.exercise).dosage,
+            imageThumbnail: {uri: MyPlan.cleanExercise(this.props.exercise).thumbnailUrl},
+        };
+    }
+
+    render = () => {
+        const { completedExercises, exercise, handleCompleteExercise, isLastItem, toggleSelectedExercise, } = this.props;
+        return(
+            <View style={[{borderTopWidth: 1, borderTopColor: AppColors.zeplin.lightGrey, marginHorizontal: 10}]}>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
+                    <View style={[AppStyles.paddingVerticalXSml, {flex: 1, justifyContent: 'center',}]}>
+                        <Checkbox
+                            checked={completedExercises.includes(exercise.library_id)}
+                            checkedColor={AppColors.primary.yellow.hundredPercent}
+                            checkedIcon={'check-square'}
+                            containerStyle={{backgroundColor: AppColors.white, borderWidth: 0, margin: 0, padding: 0, width: 30, }}
+                            onPress={() => handleCompleteExercise(exercise.library_id)}
+                            size={20}
+                        />
+                    </View>
+                    <TouchableOpacity
+                        onPress={() => toggleSelectedExercise(exercise, true)}
+                        style={[AppStyles.paddingHorizontalMed, {flex: 2, justifyContent: 'center',}]}
+                    >
+                        <Image
+                            onError={(e) => this.setState({ imageThumbnail: require('../../../../assets/images/standard/icon.png'), }) }
+                            resizeMode={'contain'}
+                            source={this.state.imageThumbnail}
+                            style={{height: 75, width: 75,}}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => toggleSelectedExercise(exercise, true)}
+                        style={[AppStyles.paddingVerticalXSml, {flex: 6, justifyContent: 'center',}]}
+                    >
+                        <Text
+                            p
+                            oswaldMedium
+                            style={{
+                                color:    completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black,
+                                flexWrap: 'wrap',
+                                fontSize: AppFonts.scaleFont(16),
+                            }}
+                        >
+                            {this.state.displayName}
+                        </Text>
+                        <Text
+                            p
+                            robotoBold
+                            style={{
+                                color:    completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.secondary.blue.hundredPercent,
+                                fontSize: AppFonts.scaleFont(15),
+                            }}
+                        >
+                            {this.state.dosage}
+                        </Text>
+                    </TouchableOpacity>
+                    <TabIcon
+                        color={completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black}
+                        containerStyle={[{flex: 1, justifyContent: 'center',}]}
+                        icon={'arrow-right'}
+                        onPress={() => toggleSelectedExercise(exercise, true)}
+                        size={18}
+                        type={'simple-line-icon'}
+                    />
+                </View>
             </View>
-            <TouchableOpacity
-                onPress={() => toggleSelectedExercise(exercise, true)}
-                style={[AppStyles.paddingHorizontalMed, {flex: 2, justifyContent: 'center',}]}
-            >
-                <Image
-                    resizeMode={'contain'}
-                    source={{uri: MyPlan.cleanExercise(exercise).thumbnailUrl}}
-                    style={{height: 75, width: 75,}}
-                />
-            </TouchableOpacity>
-            <TouchableOpacity
-                onPress={() => toggleSelectedExercise(exercise, true)}
-                style={[AppStyles.paddingVerticalXSml, {flex: 6, justifyContent: 'center',}]}
-            >
-                <Text
-                    p
-                    oswaldMedium
-                    style={{
-                        color:    completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black,
-                        flexWrap: 'wrap',
-                        fontSize: AppFonts.scaleFont(16),
-                    }}
-                >
-                    {MyPlan.cleanExercise(exercise).displayName}
-                </Text>
-                <Text
-                    p
-                    robotoBold
-                    style={{
-                        color:    completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.secondary.blue.hundredPercent,
-                        fontSize: AppFonts.scaleFont(15),
-                    }}
-                >
-                    {MyPlan.cleanExercise(exercise).dosage}
-                </Text>
-            </TouchableOpacity>
-            <TabIcon
-                color={completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black}
-                containerStyle={[{flex: 1, justifyContent: 'center',}]}
-                icon={'arrow-right'}
-                onPress={() => toggleSelectedExercise(exercise, true)}
-                size={18}
-                type={'simple-line-icon'}
-            />
-        </View>
-    </View>
-);
+        )
+    }
+}
 
 ExerciseItem.propTypes = {
     completedExercises:     PropTypes.array.isRequired,

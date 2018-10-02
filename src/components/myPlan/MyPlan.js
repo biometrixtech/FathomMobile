@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import {
     ActivityIndicator,
+    Alert,
     AppState,
     BackHandler,
     Easing,
@@ -16,6 +17,7 @@ import {
 } from 'react-native';
 
 // import third-party libraries
+import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
@@ -61,18 +63,22 @@ class MyPlan extends Component {
     static componentName = 'MyPlanView';
 
     static propTypes = {
-        ble:                     PropTypes.object.isRequired,
-        clearCompletedExercises: PropTypes.func.isRequired,
-        setCompletedExercises:   PropTypes.func.isRequired,
-        getSoreBodyParts:        PropTypes.func.isRequired,
-        noSessions:              PropTypes.func.isRequired,
-        notification:            PropTypes.bool.isRequired,
-        patchActiveRecovery:     PropTypes.func.isRequired,
-        plan:                    PropTypes.object.isRequired,
-        postReadinessSurvey:     PropTypes.func.isRequired,
-        postSessionSurvey:       PropTypes.func.isRequired,
-        typicalSession:          PropTypes.func.isRequired,
-        user:                    PropTypes.object.isRequired,
+        ble:                       PropTypes.object.isRequired,
+        clearCompletedExercises:   PropTypes.func.isRequired,
+        clearCompletedFSExercises: PropTypes.func.isRequired,
+        getSoreBodyParts:          PropTypes.func.isRequired,
+        network:                   PropTypes.object.isRequired,
+        noSessions:                PropTypes.func.isRequired,
+        notification:              PropTypes.bool.isRequired,
+        patchActiveRecovery:       PropTypes.func.isRequired,
+        patchFunctionalStrength:   PropTypes.func.isRequired,
+        plan:                      PropTypes.object.isRequired,
+        postReadinessSurvey:       PropTypes.func.isRequired,
+        postSessionSurvey:         PropTypes.func.isRequired,
+        preReadiness:              PropTypes.func.isRequired,
+        setCompletedExercises:     PropTypes.func.isRequired,
+        setCompletedFSExercises:   PropTypes.func.isRequired,
+        user:                      PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -81,12 +87,16 @@ class MyPlan extends Component {
         super(props);
         this.state = {
             dailyReadiness: {
-                readiness:     0,
-                sleep_quality: 0,
-                soreness:      [],
+                current_position:          null,
+                current_sport_name:        null,
+                readiness:                 0,
+                sleep_quality:             0,
+                soreness:                  [],
+                wants_functional_strength: null,
             },
             isCompletedAMPMRecoveryModalOpen: true,
             isExerciseListRefreshing:         false,
+            isFunctionalStrengthCollapsed:    true,
             isPostSessionSurveyModalOpen:     false,
             isReadinessSurveyModalOpen:       false,
             isSelectedExerciseModalOpen:      false,
@@ -199,11 +209,11 @@ class MyPlan extends Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.notification && nextProps.notification !== this.props.notification) {
+    componentWillReceiveProps = (nextProps) => {
+        if(nextProps.notification && nextProps.notification !== this.props.notification) {
             this._handleExerciseListRefresh(true);
         }
-        const areObjectsDifferent = _.isEqual(nextProps.plan.dailyPlan, this.props.plan.dailyPlan);
+        const areObjectsDifferent = _.isEqual(nextProps.plan, this.props.plan);
         if(
             !areObjectsDifferent &&
             this.props.plan.dailyPlan[0] &&
@@ -214,16 +224,12 @@ class MyPlan extends Component {
                 nextProps.plan.dailyPlan[0].pre_recovery_completed
             )
         ) {
-            let { recover, train } = this.state;
-            let { plan } = this.props;
-            let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-            let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery && !dailyPlanObj.post_recovery.completed ? dailyPlanObj.post_recovery : false;
-            let disabled = recoveryObj ?
-                train.postPracticeSurveys.some(survey => !survey.isPostPracticeSurveyCompleted) || (recover.isActiveRecoveryCollapsed && recover.finished) || recoveryObj.completed
-                :
-                true;
-            this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(nextProps.plan.dailyPlan[0], disabled));
+            this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(nextProps.plan.dailyPlan[0]));
         }
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
     _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side) => {
@@ -282,18 +288,26 @@ class MyPlan extends Component {
 
     _handleReadinessSurveySubmit = () => {
         this.setState({ loading: true });
-        let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+        let newDailyReadiness = {};
         newDailyReadiness.user_id = this.props.user.id;
         newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
-        newDailyReadiness.sleep_quality = newDailyReadiness.sleep_quality;
-        newDailyReadiness.readiness = newDailyReadiness.readiness;
-        newDailyReadiness.soreness= newDailyReadiness.soreness.filter(u => u.severity && u.severity > 0);
+        newDailyReadiness.sleep_quality = this.state.dailyReadiness.sleep_quality;
+        newDailyReadiness.readiness = this.state.dailyReadiness.readiness;
+        newDailyReadiness.soreness = this.state.dailyReadiness.soreness.filter(u => u.severity && u.severity > 0);
+        newDailyReadiness.wants_functional_strength = this.state.dailyReadiness.wants_functional_strength;
+        if(this.state.dailyReadiness.current_sport_name === 0 || this.state.dailyReadiness.current_sport_name > 0) {
+            newDailyReadiness.current_sport_name = this.state.dailyReadiness.current_sport_name;
+        }
+        if(this.state.dailyReadiness.current_position === 0 || this.state.dailyReadiness.current_position > 0) {
+            newDailyReadiness.current_position = this.state.dailyReadiness.current_position;
+        }
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
                 let newPrepareObject = Object.assign({}, this.state.prepare, {
                     isReadinessSurveyCompleted: true,
                 });
                 this.props.clearCompletedExercises();
+                this.props.clearCompletedFSExercises();
                 this.setState({
                     dailyReadiness: {
                         readiness:     0,
@@ -447,9 +461,9 @@ class MyPlan extends Component {
     }
 
     _togglePostSessionSurveyModal = () => {
-        this.setState({ loading: true });
+        this.setState({ loading: true, });
         if (!this.state.isPostSessionSurveyModalOpen) {
-            this.props.typicalSession(this.props.user.id)
+            this.props.preReadiness(this.props.user.id)
                 .then(() => this.props.getSoreBodyParts())
                 .then(soreBodyParts => {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
@@ -485,6 +499,17 @@ class MyPlan extends Component {
                 loading:                      false,
                 postSession:                  newPostSession,
             });
+        }
+    }
+
+    _toggleReadinessSurvey = () => {
+        this.setState({ loading: true, });
+        let soreBodyParts = this.props.plan.soreBodyParts;
+        if(soreBodyParts.functional_strength_eligible && soreBodyParts.current_sport_name === null && soreBodyParts.current_position === null) {
+            this.props.preReadiness(this.props.user.id)
+                .then(() => this.setState({ isReadinessSurveyModalOpen: true, loading: false, }));
+        } else {
+            this.setState({ isReadinessSurveyModalOpen: true, loading: false, });
         }
     }
 
@@ -547,6 +572,54 @@ class MyPlan extends Component {
         this.setState({
             isSelectedExerciseModalOpen: false,
         });
+    }
+
+    _handleCompleteFSExercise = (exerciseId) => {
+        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedFSExercises);
+        if(newCompletedExercises && newCompletedExercises.indexOf(exerciseId) > -1) {
+            newCompletedExercises.splice(newCompletedExercises.indexOf(exerciseId), 1)
+        } else {
+            newCompletedExercises.push(exerciseId);
+        }
+        this.props.setCompletedFSExercises(newCompletedExercises);
+        this.setState({
+            isSelectedExerciseModalOpen: false,
+        });
+    }
+
+    _handleFunctionalStrengthFormSubmit = () => {
+        let functionalStrength = this.props.plan.dailyPlan[0].functional_strength_session;
+        let completedFSExercises = store.getState().plan.completedFSExercises;
+        let isFSCompletedValid = MyPlanConstants.isFSCompletedValid(functionalStrength, completedFSExercises);
+        if(isFSCompletedValid) {
+            this.setState({ loading: true });
+            this.props.patchFunctionalStrength(this.props.user.id, completedFSExercises)
+                .then(() => {
+                    this.props.clearCompletedFSExercises();
+                    this.setState({
+                        isFunctionalStrengthCollapsed: true,
+                        loading:                       false,
+                    });
+                })
+                .catch(() => {
+                    this.setState({ loading: false, });
+                })
+        } else {
+            Alert.alert(
+                'You\'re Not Done',
+                'Do all exercises in Warm-up, Dynamic Movements and Stability to complete Functional Strength.',
+                [
+                    {
+                        text: 'Continue',
+                    },
+                    {
+                        text:    'Done for Now',
+                        onPress: () => this.setState({ isFunctionalStrengthCollapsed: true, }),
+                    },
+                ],
+                { cancelable: true }
+            );
+        }
     }
 
     _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
@@ -791,7 +864,7 @@ class MyPlan extends Component {
                                         fontFamily={AppStyles.robotoBold.fontFamily}
                                         fontWeight={AppStyles.robotoBold.fontWeight}
                                         outlined
-                                        onPress={() => this.setState({ isReadinessSurveyModalOpen: true })}
+                                        onPress={() => this._toggleReadinessSurvey()}
                                         textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                                         title={'Start'}
                                     />
@@ -907,8 +980,8 @@ class MyPlan extends Component {
                                         this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
                                             .then(() =>
                                                 this.setState({
-                                                    loading:            false,
-                                                    prepare:            Object.assign({}, this.state.prepare, {
+                                                    loading: false,
+                                                    prepare: Object.assign({}, this.state.prepare, {
                                                         finishedRecovery:          true,
                                                         isActiveRecoveryCollapsed: true,
                                                     }),
@@ -952,6 +1025,7 @@ class MyPlan extends Component {
                                 handleFormChange={this._handleDailyReadinessFormChange}
                                 handleFormSubmit={this._handleReadinessSurveySubmit}
                                 soreBodyParts={this.props.plan.soreBodyParts}
+                                typicalSessions={this.props.plan.typicalSessions}
                                 user={this.props.user}
                             />
                             { this.state.loading ?
@@ -995,6 +1069,13 @@ class MyPlan extends Component {
                         </Modal>
                         :
                         null
+                }
+                { this.state.loading ?
+                    <ActivityIndicator
+                        color={AppColors.primary.yellow.hundredPercent}
+                        size={'large'}
+                        style={[AppStyles.activityIndicator]}
+                    /> : null
                 }
             </ScrollView>
         );
@@ -1148,8 +1229,8 @@ class MyPlan extends Component {
                                         this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'post')
                                             .then(() =>
                                                 this.setState({
-                                                    loading:            false,
-                                                    recover:            Object.assign({}, this.state.recover, {
+                                                    loading: false,
+                                                    recover: Object.assign({}, this.state.recover, {
                                                         finished:                  !!completedExercises.length,
                                                         isActiveRecoveryCollapsed: true,
                                                     })
@@ -1218,11 +1299,22 @@ class MyPlan extends Component {
         let { plan } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
-        let trainingSessions = dailyPlanObj ? _.orderBy(dailyPlanObj.training_sessions, o => moment(o.event_date), ['asc']) : [];
+        let trainingSessions = dailyPlanObj ? dailyPlanObj.training_sessions : [];
+        let functionalStrengthArray = [];
+        let functionalStrength = dailyPlanObj && dailyPlanObj.functional_strength_eligible && dailyPlanObj.functional_strength_session ? dailyPlanObj.functional_strength_session : {};
+        if(functionalStrength.completed && functionalStrength.event_date) {
+            let newFunctionalStrength = _.cloneDeep(functionalStrength);
+            newFunctionalStrength.isFunctionalStrength = true;
+            functionalStrengthArray.push(newFunctionalStrength);
+        }
+        trainingSessions = trainingSessions.concat(functionalStrengthArray);
+        trainingSessions = _.orderBy(trainingSessions, o => moment(o.event_date), ['asc']);
         let filteredTrainingSessions = trainingSessions.length > 0 ?
             _.filter(trainingSessions, o => o.sport_name !== null || o.strength_and_conditioning_type !== null)
             :
             [];
+        let completedFSExercises = store.getState().plan.completedFSExercises;
+        let fsExerciseList = functionalStrength ? MyPlanConstants.cleanFSExerciseList(functionalStrength) : {};
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
@@ -1253,6 +1345,91 @@ class MyPlan extends Component {
                     :
                     null
                 }
+                { isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
+                      <View>
+                          <ListItem
+                              containerStyle={{ borderBottomWidth: 0 }}
+                              disabled={false}
+                              hideChevron={true}
+                              leftIcon={
+                                  <TabIcon
+                                      containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                      size={20}
+                                      color={AppColors.black}
+                                      icon={'fiber-manual-record'}
+                                  />
+                              }
+                              title={'FUNCTIONAL STRENGTH'}
+                              titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
+                          />
+                          <View style={{ flex: 1, flexDirection: 'row', }}>
+                              <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: this.state.isFunctionalStrengthCollapsed ? whenEnabledBorderColor : AppColors.white, }}/>
+                              <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
+                                  <View style={{ flexDirection: 'row' }}>
+                                      <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                          <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
+                                          <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'ANYTIME DURING THE DAY'}</Text>
+                                      </View>
+                                      <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: enabledBackgroundColor, borderColor: enabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                          <Text h7 oswaldMedium style={{ color: enabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
+                                          <View style={{ alignItems: 'center', flexDirection: 'row', flex: 1, }}>
+                                              <Text h1 oswaldMedium style={{ color: enabledDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{`${parseFloat(functionalStrength.minutes_duration).toFixed(1)}`}</Text>
+                                              <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
+                                                  <Text h7 oswaldMedium style={{ color: subtextColor, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
+                                              </View>
+                                          </View>
+                                      </View>
+                                  </View>
+                                  <Spacer size={this.state.isFunctionalStrengthCollapsed ? 12 : 20}/>
+                                  { this.state.isFunctionalStrengthCollapsed ?
+                                      <Button
+                                          backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                          color={AppColors.white}
+                                          containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
+                                          fontFamily={AppStyles.robotoBold.fontFamily}
+                                          fontWeight={AppStyles.robotoBold.fontWeight}
+                                          outlined
+                                          onPress={() => this.setState({ isFunctionalStrengthCollapsed: false, })}
+                                          textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                                          title={'Start'}
+                                      />
+                                      :
+                                      <Text
+                                          onPress={() => this.setState({ isFunctionalStrengthCollapsed: true, }) }
+                                          robotoBold
+                                          style={[AppStyles.textCenterAligned,
+                                              {
+                                                  color:              AppColors.secondary.blue.eightyPercent,
+                                                  fontSize:           AppFonts.scaleFont(14),
+                                                  marginRight:        10,
+                                                  textDecorationLine: 'none',
+                                              }
+                                          ]}
+                                      >
+                                          {'Hide Exercises ^'}
+                                      </Text>
+                                  }
+                              </View>
+                          </View>
+                      </View>
+                      :
+                      null
+                }
+                { functionalStrength && !functionalStrength.completed && !this.state.isFunctionalStrengthCollapsed ?
+                    <Exercises
+                        completedExercises={completedFSExercises}
+                        exerciseList={fsExerciseList}
+                        handleCompleteExercise={this._handleCompleteFSExercise}
+                        handleExerciseListRefresh={this._handleExerciseListRefresh}
+                        isExerciseListRefreshing={this.state.isExerciseListRefreshing}
+                        isFunctionalStrength={true}
+                        isLoading={this.state.loading}
+                        toggleCompletedAMPMRecoveryModal={() => this._handleFunctionalStrengthFormSubmit()}
+                        toggleSelectedExercise={this._toggleSelectedExercise}
+                    />
+                    :
+                    null
+                }
                 {
                     _.map(filteredTrainingSessions, (postPracticeSurvey, i) => {
                         let cleanedPostSessionName = MyPlanConstants.cleanedPostSessionName(postPracticeSurvey).fullName;
@@ -1279,54 +1456,60 @@ class MyPlan extends Component {
                     })
                 }
                 <Spacer size={15} />
-                <Button
-                    backgroundColor={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                    buttonStyle={{justifyContent: 'space-between',}}
-                    color={isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText}
-                    containerViewStyle={{marginLeft: 22, marginRight: 22,}}
-                    fontFamily={AppStyles.oswaldMedium.fontFamily}
-                    fontWeight={AppStyles.oswaldMedium.fontWeight}
-                    leftIcon={{
-                        color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
-                        name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
-                        size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
-                    }}
-                    onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal() : null}
-                    outlined={isDailyReadinessSurveyCompleted ? false : true}
-                    raised={false}
-                    rightIcon={{
-                        color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
-                        name:  'chevron-right',
-                        size:  AppFonts.scaleFont(30),
-                    }}
-                    textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
-                    title={'ADD SESSION'}
-                />
-                <Spacer size={10} />
-                { (dailyPlanObj && dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
-                    <Button
-                        backgroundColor={AppColors.white}
-                        buttonStyle={{justifyContent: 'space-between',}}
-                        color={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText}
-                        containerViewStyle={{marginLeft: 22, marginRight: 22,}}
-                        fontFamily={AppStyles.oswaldMedium.fontFamily}
-                        fontWeight={AppStyles.oswaldMedium.fontWeight}
-                        leftIcon={{
-                            color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
-                            name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
-                            size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
-                        }}
-                        onPress={() => isDailyReadinessSurveyCompleted ? this.props.noSessions(this.props.user.id) : null}
-                        outlined
-                        raised={false}
-                        rightIcon={{
-                            color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
-                            name:  'chevron-right',
-                            size:  AppFonts.scaleFont(30),
-                        }}
-                        textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
-                        title={'NO SESSIONS TODAY'}
-                    />
+                { this.state.isFunctionalStrengthCollapsed ?
+                    <View>
+                        <Button
+                            backgroundColor={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                            buttonStyle={{justifyContent: 'space-between',}}
+                            color={isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText}
+                            containerViewStyle={{marginLeft: 22, marginRight: 22,}}
+                            fontFamily={AppStyles.oswaldMedium.fontFamily}
+                            fontWeight={AppStyles.oswaldMedium.fontWeight}
+                            leftIcon={{
+                                color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
+                                name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
+                                size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
+                            }}
+                            onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal() : null}
+                            outlined={isDailyReadinessSurveyCompleted ? false : true}
+                            raised={false}
+                            rightIcon={{
+                                color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
+                                name:  'chevron-right',
+                                size:  AppFonts.scaleFont(30),
+                            }}
+                            textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
+                            title={'LOG COMPLETED ACTIVITY'}
+                        />
+                        <Spacer size={10} />
+                        { (dailyPlanObj && dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
+                            <Button
+                                backgroundColor={AppColors.white}
+                                buttonStyle={{justifyContent: 'space-between',}}
+                                color={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText}
+                                containerViewStyle={{marginLeft: 22, marginRight: 22,}}
+                                fontFamily={AppStyles.oswaldMedium.fontFamily}
+                                fontWeight={AppStyles.oswaldMedium.fontWeight}
+                                leftIcon={{
+                                    color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
+                                    name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
+                                    size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
+                                }}
+                                onPress={() => isDailyReadinessSurveyCompleted ? this.props.noSessions(this.props.user.id) : null}
+                                outlined
+                                raised={false}
+                                rightIcon={{
+                                    color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
+                                    name:  'chevron-right',
+                                    size:  AppFonts.scaleFont(30),
+                                }}
+                                textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
+                                title={'LOG AN OFF DAY'}
+                            />
+                            :
+                            null
+                        }
+                    </View>
                     :
                     null
                 }
@@ -1366,6 +1549,37 @@ class MyPlan extends Component {
                         style={[AppStyles.activityIndicator]}
                     /> : null
                 }
+                {
+                    this.state.isSelectedExerciseModalOpen
+                        ?
+                        <Modal
+                            backdropOpacity={0.75}
+                            backdropPressToClose={true}
+                            coverScreen={true}
+                            isOpen={this.state.isSelectedExerciseModalOpen}
+                            onClosed={() => this._toggleSelectedExercise(false, false)}
+                            position={'center'}
+                            style={[AppStyles.containerCentered, {
+                                borderRadius: 4,
+                                height:       AppSizes.screen.heightThreeQuarters,
+                                padding:      AppSizes.paddingSml,
+                                width:        AppSizes.screen.width * 0.9,
+                            }]}
+                            swipeToClose={true}
+                        >
+                            { this.state.selectedExercise.library_id ?
+                                <SingleExerciseItem
+                                    exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
+                                    handleCompleteExercise={this._handleCompleteFSExercise}
+                                    selectedExercise={this.state.selectedExercise.library_id}
+                                />
+                                :
+                                null
+                            }
+                        </Modal>
+                        :
+                        null
+                }
             </ScrollView>
         );
     };
@@ -1377,8 +1591,7 @@ class MyPlan extends Component {
         if(
             this.tabView &&
             !this.state.isReadinessSurveyModalOpen &&
-            !this.state.isPostSessionSurveyModalOpen &&
-            !this.state.loading
+            !this.state.isPostSessionSurveyModalOpen
         ) {
             setTimeout(() => {
                 this.tabView.goToPage(pageIndex);

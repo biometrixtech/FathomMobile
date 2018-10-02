@@ -10,6 +10,7 @@ const Onboarding = ({
     createUser,
     finalizeLogin,
     getUserSensorData,
+    network,
     onFormSubmit,
     registerDevice,
     updateUser,
@@ -20,6 +21,7 @@ const Onboarding = ({
         createUser={createUser}
         finalizeLogin={finalizeLogin}
         getUserSensorData={getUserSensorData}
+        network={network}
         onFormSubmit={onFormSubmit}
         registerDevice={registerDevice}
         updateUser={updateUser}
@@ -33,6 +35,7 @@ Onboarding.propTypes = {
     createUser:        PropTypes.func.isRequired,
     finalizeLogin:     PropTypes.func.isRequired,
     getUserSensorData: PropTypes.func.isRequired,
+    network:           PropTypes.object.isRequired,
     onFormSubmit:      PropTypes.func.isRequired,
     registerDevice:    PropTypes.func.isRequired,
     updateUser:        PropTypes.func.isRequired,
@@ -42,7 +45,8 @@ Onboarding.propTypes = {
 Onboarding.defaultProps = {};
 
 const mapStateToProps = state => ({
-    user: state.user,
+    network: state.network,
+    user:    state.user,
 });
 
 const mapDispatchToProps = {

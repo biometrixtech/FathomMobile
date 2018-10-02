@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Animated, Easing, Image, } from 'react-native';
+import { Animated, Easing, Image, View, Text, } from 'react-native';
 
 // import third-party libraries
 import { Actions, Router, Scene, Stack } from 'react-native-router-flux';
