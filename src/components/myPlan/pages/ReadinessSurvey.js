@@ -189,6 +189,10 @@ class ReadinessSurvey extends Component {
                                                         } else {
                                                             handleFormChange('current_sport_name', session.sport_name);
                                                             handleFormChange('current_position', null);
+                                                            let currentSportPositions = _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name).positions;
+                                                            if(!currentSportPositions) {
+                                                                this._scrollTo(0);
+                                                            }
                                                         }
                                                     } else if(isStrengthConditioning) {
                                                         if(isSelected) {
@@ -210,7 +214,7 @@ class ReadinessSurvey extends Component {
                                         </View>
                                     )
                                 })}
-                                { dailyReadiness.current_sport_name !== null ?
+                                { dailyReadiness.current_sport_name !== null && selectedSportPositions && selectedSportPositions.length > 0 ?
                                     <View>
                                         <Spacer size={70} />
                                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
