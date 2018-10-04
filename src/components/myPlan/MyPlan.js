@@ -1154,7 +1154,7 @@ class MyPlan extends Component {
         let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive ? whenEnabledBorderColor : isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
         return (
             <ScrollView
-                contentContainerStyle={{flexGrow: 1, justifyContent: 'center', backgroundColor: AppColors.white }}
+                contentContainerStyle={{flexGrow: 1, backgroundColor: AppColors.white }}
                 refreshControl={
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
