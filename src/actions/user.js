@@ -36,11 +36,11 @@ const getUser = (userId) => {
   * - Receives complete user data in return
   */
 const updateUser = (payload, userId) => {
-    return dispatch => AppAPI.update_user.put({userId}, payload)
+    return dispatch => AppAPI.update_user.patch({userId}, payload)
         .then(userData => {
             dispatch({
                 type:     Actions.LOGIN,
-                email:    payload.email,
+                email:    payload.personal_data.email,
                 password: payload.password,
             });
             dispatch({

@@ -31,14 +31,14 @@ export default {
     //    - AppAPI.favorites.patch()
     //    - AppAPI.blog.delete()
     endpoints: new Map([
-        ['create_user',     '/users/1_0/user'],
-        ['update_user',     '/users/1_0/user/{userId}'],
-        ['get_user',        '/users/1_0/user/{userId}'],
-        ['authorize',       '/users/1_0/user/{userId}/authorize'],
+        ['create_user',     '/users/2_0/user'],
+        ['update_user',     '/users/2_0/user/{userId}'],
+        ['get_user',        '/users/2_0/user/{userId}'],
+        ['authorize',       '/users/2_0/user/{userId}/authorize'],
         ['forgot_password', '/plans/1_0/misc/forgot_password'],
         ['reset_password',  '/plans/1_0/misc/confirm_forgot_password'],
-        ['login',           '/users/1_0/user/sign_in'], // If you change the key, update the reference below
-        ['register_device', '/users/1_0/device/{device_uuid}'],
+        ['login',           '/users/2_0/user/login'], // If you change the key, update the reference below
+        ['register_device', '/users/2_0/device/{device_uuid}'],
         // My Plan specific routes
         ['get_my_plan',           '/plans/1_0/daily_plan'], // POST
         ['get_sore_body_parts',   '/plans/1_0/daily_readiness/previous'], // POST
@@ -51,7 +51,7 @@ export default {
         ['no_sessions',           '/plans/1_0/session/no_sessions'], // POST
         ['functional_strength',   '/plans/1_0/functional_strength'], // PATCH
         // sensor specific routes
-        ['sensor_mobile_pair', '/users/1_0/user/{userId}/sensor_mobile_pair'], // CRUD
+        ['sensor_mobile_pair', '/users/2_0/user/{userId}/sensor_mobile_pair'], // CRUD
         // other routes
         ['maintenance_status', '/meta/1_0/maintenance'], // GET
     ]),

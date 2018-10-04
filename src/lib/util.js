@@ -14,6 +14,7 @@ import { Actions as DispatchActions, ErrorMessages, } from '../constants';
 import _ from 'lodash';
 import DeviceInfo from 'react-native-device-info';
 import PushNotification from 'react-native-push-notification';
+import moment from 'moment';
 import uuidByString from 'uuid-by-string';
 
 import { init as InitActions, } from '../actions';
@@ -114,6 +115,13 @@ const UTIL = {
             type: DispatchActions.NOTIFICATION_ADDRESSED
         });
         PushNotification.setApplicationIconBadgeNumber(0);
+    },
+
+    getFormattedTimezoneString: () => {
+        let now = moment().toISOString(true);
+        let lastIndex = now.lastIndexOf('+') > -1 ? now.lastIndexOf('+') : now.lastIndexOf('-');
+        let formattedTimezone = now.slice(lastIndex);
+        return formattedTimezone;
     },
 
     /**

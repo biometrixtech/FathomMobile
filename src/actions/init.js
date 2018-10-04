@@ -62,7 +62,8 @@ const getMaintenanceWindow = (updateReducer) => {
 const authorizeUser = (authorization, user, userCreds) => {
     let session_token = authorization.session_token;
     let userId = user.id;
-    return dispatch => AppAPI.authorize.post({ userId }, { session_token })
+    let formattedTimezone = AppUtil.getFormattedTimezoneString();
+    return dispatch => AppAPI.authorize.post({ userId }, { session_token, timezone: formattedTimezone })
         .then(response => {
             let decodedToken;
             let token = response.authorization.jwt;
@@ -260,7 +261,7 @@ const forgotPassword = (email) => {
 /**
   * POST Reset Password form data
   */
- const resetPassword = (resetPasswordData) => {
+const resetPassword = (resetPasswordData) => {
     return dispatch => AppAPI.reset_password.post(false, resetPasswordData)
         .then(result => {
             dispatch({

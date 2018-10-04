@@ -101,13 +101,13 @@ class UserAccountInfo extends Component {
                         />
                     </View>
                 </View>
-                <FormLabel labelStyle={{color: AppColors.black}}>{user.email.length > 0 ? 'E-mail Address' : ' '}</FormLabel>
+                <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.email.length > 0 ? 'E-mail Address' : ' '}</FormLabel>
                 <FormInput
                     autoCapitalize={'none'}
                     blurOnSubmit={ false }
                     containerStyle={{marginLeft: 0, paddingLeft: 10}}
                     editable={!isUpdatingUser}
-                    onChangeText={(text) => handleFormChange('email', text)}
+                    onChangeText={(text) => handleFormChange('personal_data.email', text)}
                     onSubmitEditing={() => {
                         this.focusNextField('phone_number');
                     }}
@@ -118,7 +118,7 @@ class UserAccountInfo extends Component {
                     textInputRef={input => {
                         this.inputs.email = input;
                     }}
-                    value={user.email}
+                    value={user.personal_data.email}
                 />
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.phone_number.length > 0 ? 'Phone Number (optional)' : ' '}</FormLabel>
                 <FormInput
