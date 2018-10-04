@@ -292,12 +292,37 @@ const patchFunctionalStrength = (user_id, completed_exercises) => {
         });
 };
 
+/**
+  * Mark Started Recovery - recovery_type of pre or post
+  */
+const markStartedRecovery = (user_id, recovery_type, newMyPlan) => {
+    let bodyObj = {};
+    bodyObj.user_id = user_id;
+    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    bodyObj.recovery_type = recovery_type;
+    return dispatch => AppAPI.active_recovery.post(false, bodyObj)
+        .then(response => {
+            let myPlanData = {};
+            myPlanData.daily_plans = newMyPlan;
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: myPlanData,
+            });
+            return Promise.resolve(response);
+        })
+        .catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+};
+
 export default {
     clearCompletedExercises,
     clearCompletedFSExercises,
     clearMyPlanData,
     getMyPlan,
     getSoreBodyParts,
+    markStartedRecovery,
     noSessions,
     patchActiveRecovery,
     patchFunctionalStrength,

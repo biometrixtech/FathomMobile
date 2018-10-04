@@ -67,6 +67,7 @@ class MyPlan extends Component {
         clearCompletedExercises:   PropTypes.func.isRequired,
         clearCompletedFSExercises: PropTypes.func.isRequired,
         getSoreBodyParts:          PropTypes.func.isRequired,
+        markStartedRecovery:       PropTypes.func.isRequired,
         network:                   PropTypes.object.isRequired,
         noSessions:                PropTypes.func.isRequired,
         notification:              PropTypes.oneOfType([
@@ -609,13 +610,32 @@ class MyPlan extends Component {
             });
     }
 
-    _handleCompleteExercise = (exerciseId) => {
+    _handleCompleteExercise = (exerciseId, recovery_type) => {
+        // add or remove exercise
         let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
         if(newCompletedExercises && newCompletedExercises.indexOf(exerciseId) > -1) {
             newCompletedExercises.splice(newCompletedExercises.indexOf(exerciseId), 1)
         } else {
             newCompletedExercises.push(exerciseId);
         }
+        // Mark Recovery as started, if logic passes
+        let clonedPlan = _.cloneDeep(this.props.plan);
+        let startDate = recovery_type === 'pre' ?
+            clonedPlan.dailyPlan[0].pre_recovery.start_date
+            : recovery_type === 'post' ?
+                clonedPlan.dailyPlan[0].post_recovery.start_date
+                :
+                true;
+        if(newCompletedExercises.length === 1 && !startDate) {
+            let newMyPlan =  _.cloneDeep(this.props.plan.dailyPlan);
+            if(recovery_type === 'pre') {
+                newMyPlan[0].pre_recovery.start_date = true;
+            } else if(recovery_type === 'post') {
+                newMyPlan[0].post_recovery.start_date = true;
+            }
+            this.props.markStartedRecovery(this.props.user.id, recovery_type, newMyPlan);
+        }
+        // continue by updating reducer and state
         this.props.setCompletedExercises(newCompletedExercises);
         this.setState({
             isSelectedExerciseModalOpen: false,
@@ -1018,7 +1038,7 @@ class MyPlan extends Component {
                                 <Exercises
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
-                                    handleCompleteExercise={this._handleCompleteExercise}
+                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'pre')}
                                     handleExerciseListRefresh={this._handleExerciseListRefresh}
                                     isExerciseListRefreshing={this.state.isExerciseListRefreshing}
                                     isLoading={this.state.loading}
@@ -1108,7 +1128,7 @@ class MyPlan extends Component {
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem
                                     exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={this._handleCompleteExercise}
+                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'pre')}
                                     selectedExercise={this.state.selectedExercise.library_id}
                                 />
                                 :
@@ -1268,7 +1288,7 @@ class MyPlan extends Component {
                                 <Exercises
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
-                                    handleCompleteExercise={this._handleCompleteExercise}
+                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'post')}
                                     handleExerciseListRefresh={this._handleExerciseListRefresh}
                                     isExerciseListRefreshing={this.state.isExerciseListRefreshing}
                                     isLoading={this.state.loading}
@@ -1329,7 +1349,7 @@ class MyPlan extends Component {
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem
                                     exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={this._handleCompleteExercise}
+                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'post')}
                                     selectedExercise={this.state.selectedExercise.library_id}
                                 />
                                 :
