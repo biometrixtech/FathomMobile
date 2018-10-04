@@ -345,8 +345,8 @@ const getUserSensorData = (userId) => {
         return AppAPI.get_user.get({userId})
             .then(result => {
                 let cleanedResult = {};
-                cleanedResult.sensor_pid = result.sensor_pid;
-                cleanedResult.mobile_udid = result.mobile_udid;
+                cleanedResult.sensor_pid = result.user.sensor_pid;
+                cleanedResult.mobile_udid = result.user.mobile_udid;
                 dispatch({
                     type: Actions.CONNECT_TO_ACCESSORY,
                     data: cleanedResult,

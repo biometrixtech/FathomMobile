@@ -9,6 +9,11 @@
  * API Config
  */
 
+// what {version} are we on?
+const metaAPIVersion = '/meta/1_0';
+const plansAPIVersion = '/plans/1_0';
+const usersAPIVersion = '/users/2_0';
+
 export default {
     APIs: {
         DEV:  'https://apis.dev.fathomai.com',
@@ -31,29 +36,27 @@ export default {
     //    - AppAPI.favorites.patch()
     //    - AppAPI.blog.delete()
     endpoints: new Map([
-        ['create_user',     '/users/2_0/user'],
-        ['update_user',     '/users/2_0/user/{userId}'],
-        ['get_user',        '/users/2_0/user/{userId}'],
-        ['authorize',       '/users/2_0/user/{userId}/authorize'],
-        ['forgot_password', '/plans/1_0/misc/forgot_password'],
-        ['reset_password',  '/plans/1_0/misc/confirm_forgot_password'],
-        ['login',           '/users/2_0/user/login'], // If you change the key, update the reference below
-        ['register_device', '/users/2_0/device/{device_uuid}'],
+        ['create_user',     `${usersAPIVersion}/user`],
+        ['update_user',     `${usersAPIVersion}/user/{userId}`],
+        ['get_user',        `${usersAPIVersion}/user/{userId}`],
+        ['authorize',       `${usersAPIVersion}/user/{userId}/authorize`],
+        ['forgot_password', `${plansAPIVersion}/misc/forgot_password`],
+        ['reset_password',  `${plansAPIVersion}/misc/confirm_forgot_password`],
+        ['login',           `${usersAPIVersion}/user/login`], // If you change the key, update the reference below
+        ['register_device', `${usersAPIVersion}/device/{device_uuid}`],
         // My Plan specific routes
-        ['get_my_plan',           '/plans/1_0/daily_plan'], // POST
-        ['get_sore_body_parts',   '/plans/1_0/daily_readiness/previous'], // POST
-        ['post_readiness_survey', '/plans/1_0/daily_readiness'], // POST
-        ['post_session_survey',   '/plans/1_0/session'], // POST
-        ['active_recovery',       '/plans/1_0/active_recovery'], // PATCH
-        ['clear_user_data',       '/plans/1_0/misc/clear_user_data'], // POST
-        ['post_sensor_data',      '/plans/1_0/session/sensor_data'], // POST
-        ['typical_sessions',      '/plans/1_0/session/typical'], // POST
-        ['no_sessions',           '/plans/1_0/session/no_sessions'], // POST
-        ['functional_strength',   '/plans/1_0/functional_strength'], // PATCH
-        // sensor specific routes
-        ['sensor_mobile_pair', '/users/2_0/user/{userId}/sensor_mobile_pair'], // CRUD
+        ['get_my_plan',           `${plansAPIVersion}/daily_plan`], // POST
+        ['get_sore_body_parts',   `${plansAPIVersion}/daily_readiness/previous`], // POST
+        ['post_readiness_survey', `${plansAPIVersion}/daily_readiness`], // POST
+        ['post_session_survey',   `${plansAPIVersion}/session`], // POST
+        ['active_recovery',       `${plansAPIVersion}/active_recovery`], // PATCH
+        ['clear_user_data',       `${plansAPIVersion}/misc/clear_user_data`], // POST
+        ['post_sensor_data',      `${plansAPIVersion}/session/sensor_data`], // POST
+        ['typical_sessions',      `${plansAPIVersion}/session/typical`], // POST
+        ['no_sessions',           `${plansAPIVersion}/session/no_sessions`], // POST
+        ['functional_strength',   `${plansAPIVersion}/functional_strength`], // PATCH
         // other routes
-        ['maintenance_status', '/meta/1_0/maintenance'], // GET
+        ['maintenance_status', `${metaAPIVersion}/maintenance`], // GET
     ]),
 
     // Which 'endpoint' key deals with our tokens?

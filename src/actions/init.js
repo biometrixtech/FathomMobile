@@ -73,7 +73,7 @@ const authorizeUser = (authorization, user, userCreds) => {
                 return Promise.reject('Token decode failed.');
             }
 
-            if (!decodedToken || !decodedToken.user_id) {
+            if (!decodedToken || !decodedToken.sub) {
                 return Promise.reject('Token decode failed.');
             }
 
@@ -201,7 +201,7 @@ const startLogin = (credentials, reload) => {
                     return reject('Token decode failed.');
                 }
 
-                if (!decodedToken || !decodedToken.user_id) {
+                if (!decodedToken || !decodedToken.sub) {
                     return reject('Token decode failed.');
                 }
 
