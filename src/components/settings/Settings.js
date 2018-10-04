@@ -210,6 +210,20 @@ class Settings extends Component {
         }
     }
 
+    _handleLogoutAlert = (err) => {
+        Alert.alert(
+            'Error!',
+            `Ooops! Something went wrong while trying to logout. Please try again. Error: ${err}`,
+            [
+                {
+                    text:  'OK',
+                    style: 'cancel'
+                },
+            ],
+            { cancelable: true }
+        )
+    }
+
     render = () => {
         const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
         // set animated values
@@ -269,7 +283,11 @@ class Settings extends Component {
                             size={24}
                         />
                     }
-                    onPress={() => this.props.logout().then(() => {Actions.start(); this.props.clearMyPlanData();})}
+                    onPress={() =>
+                        this.props.logout(this.props.user.id)
+                            .then(() => {Actions.start(); this.props.clearMyPlanData();})
+                            .catch(err => this._handleLogoutAlert(err))
+                    }
                     title={'LOGOUT'}
                     titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
                 />

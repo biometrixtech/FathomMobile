@@ -36,25 +36,26 @@ export default {
     //    - AppAPI.favorites.patch()
     //    - AppAPI.blog.delete()
     endpoints: new Map([
-        ['create_user',     `${usersAPIVersion}/user`],
-        ['update_user',     `${usersAPIVersion}/user/{userId}`],
-        ['get_user',        `${usersAPIVersion}/user/{userId}`],
         ['authorize',       `${usersAPIVersion}/user/{userId}/authorize`],
+        ['create_user',     `${usersAPIVersion}/user`],
         ['forgot_password', `${plansAPIVersion}/misc/forgot_password`],
-        ['reset_password',  `${plansAPIVersion}/misc/confirm_forgot_password`],
+        ['get_user',        `${usersAPIVersion}/user/{userId}`],
         ['login',           `${usersAPIVersion}/user/login`], // If you change the key, update the reference below
+        ['logout',          `${usersAPIVersion}/user/{user_id}/logout`], // POST
         ['register_device', `${usersAPIVersion}/device/{device_uuid}`],
+        ['reset_password',  `${plansAPIVersion}/misc/confirm_forgot_password`],
+        ['update_user',     `${usersAPIVersion}/user/{userId}`],
         // My Plan specific routes
-        ['get_my_plan',           `${plansAPIVersion}/daily_plan`], // POST
-        ['get_sore_body_parts',   `${plansAPIVersion}/daily_readiness/previous`], // POST
-        ['post_readiness_survey', `${plansAPIVersion}/daily_readiness`], // POST
-        ['post_session_survey',   `${plansAPIVersion}/session`], // POST
         ['active_recovery',       `${plansAPIVersion}/active_recovery`], // PATCH
         ['clear_user_data',       `${plansAPIVersion}/misc/clear_user_data`], // POST
-        ['post_sensor_data',      `${plansAPIVersion}/session/sensor_data`], // POST
-        ['typical_sessions',      `${plansAPIVersion}/session/typical`], // POST
-        ['no_sessions',           `${plansAPIVersion}/session/no_sessions`], // POST
         ['functional_strength',   `${plansAPIVersion}/functional_strength`], // PATCH
+        ['get_my_plan',           `${plansAPIVersion}/daily_plan`], // POST
+        ['get_sore_body_parts',   `${plansAPIVersion}/daily_readiness/previous`], // POST
+        ['no_sessions',           `${plansAPIVersion}/session/no_sessions`], // POST
+        ['post_readiness_survey', `${plansAPIVersion}/daily_readiness`], // POST
+        ['post_sensor_data',      `${plansAPIVersion}/session/sensor_data`], // POST
+        ['post_session_survey',   `${plansAPIVersion}/session`], // POST
+        ['typical_sessions',      `${plansAPIVersion}/session/typical`], // POST
         // other routes
         ['maintenance_status', `${metaAPIVersion}/maintenance`], // GET
     ]),

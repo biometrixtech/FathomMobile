@@ -226,12 +226,21 @@ const startLogin = (credentials, reload) => {
 /**
   * Logout
   */
-const logout = () => {
-    return dispatch => Promise.resolve(
-        dispatch({
-            type: Actions.LOGOUT
-        })
-    );
+const logout = user_id => {
+    return dispatch => new Promise((resolve, reject) => {
+        return AppAPI.logout.post({ user_id })
+            .then(() => {
+                return resolve(
+                    dispatch({
+                        type: Actions.LOGOUT
+                    })
+                );
+            })
+            .catch(err => {
+                console.log('err',err);
+                return reject(err);
+            });
+    });
 };
 
 /**
