@@ -11,6 +11,7 @@ const MyPlan = ({
     clearCompletedFSExercises,
     getMyPlan,
     getSoreBodyParts,
+    markStartedRecovery,
     network,
     noSessions,
     notification,
@@ -31,6 +32,7 @@ const MyPlan = ({
         clearCompletedFSExercises={clearCompletedFSExercises}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
+        markStartedRecovery={markStartedRecovery}
         network={network}
         noSessions={noSessions}
         notification={notification}
@@ -54,19 +56,23 @@ MyPlan.propTypes = {
     clearCompletedFSExercises: PropTypes.func.isRequired,
     getMyPlan:                 PropTypes.func.isRequired,
     getSoreBodyParts:          PropTypes.func.isRequired,
+    markStartedRecovery:       PropTypes.func.isRequired,
     network:                   PropTypes.object.isRequired,
     noSessions:                PropTypes.func.isRequired,
-    notification:              PropTypes.bool.isRequired,
-    patchActiveRecovery:       PropTypes.func.isRequired,
-    patchFunctionalStrength:   PropTypes.func.isRequired,
-    plan:                      PropTypes.object.isRequired,
-    postReadinessSurvey:       PropTypes.func.isRequired,
-    postSessionSurvey:         PropTypes.func.isRequired,
-    preReadiness:              PropTypes.func.isRequired,
-    scheduledMaintenance:      PropTypes.object,
-    setCompletedExercises:     PropTypes.func.isRequired,
-    setCompletedFSExercises:   PropTypes.func.isRequired,
-    user:                      PropTypes.object.isRequired,
+    notification:              PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.string,
+    ]).isRequired,
+    patchActiveRecovery:     PropTypes.func.isRequired,
+    patchFunctionalStrength: PropTypes.func.isRequired,
+    plan:                    PropTypes.object.isRequired,
+    postReadinessSurvey:     PropTypes.func.isRequired,
+    postSessionSurvey:       PropTypes.func.isRequired,
+    preReadiness:            PropTypes.func.isRequired,
+    scheduledMaintenance:    PropTypes.object,
+    setCompletedExercises:   PropTypes.func.isRequired,
+    setCompletedFSExercises: PropTypes.func.isRequired,
+    user:                    PropTypes.object.isRequired,
 };
 
 MyPlan.defaultProps = {
@@ -87,6 +93,7 @@ const mapDispatchToProps = {
     clearCompletedFSExercises: PlanActions.clearCompletedFSExercises,
     getMyPlan:                 PlanActions.getMyPlan,
     getSoreBodyParts:          PlanActions.getSoreBodyParts,
+    markStartedRecovery:       PlanActions.markStartedRecovery,
     noSessions:                PlanActions.noSessions,
     patchActiveRecovery:       PlanActions.patchActiveRecovery,
     patchFunctionalStrength:   PlanActions.patchFunctionalStrength,

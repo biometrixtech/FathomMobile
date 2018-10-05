@@ -114,9 +114,14 @@ class Root extends Component {
         //             : notification.finish()
         //         )
         //     : null;
-        // if we ever get a notification, we need to address it regardless or any boolean
+        PushNotification.getApplicationIconBadgeNumber(numBadges => {
+            let newNumBadges = numBadges + 1;
+            PushNotification.setApplicationIconBadgeNumber(newNumBadges);
+        });
+        let pnCallToAction = Platform.OS === 'ios' ? notification.data.biometrix.call_to_action : JSON.parse(notification.biometrix).call_to_action;
         this.props.store.dispatch({
-            type: Actions.NOTIFICATION_RECEIVED
+            type: Actions.NOTIFICATION_RECEIVED,
+            data: pnCallToAction,
         });
         return Platform.OS === 'ios' ?
             notification.finish(PushNotificationIOS.FetchResult.NoData)

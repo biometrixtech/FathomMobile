@@ -342,11 +342,11 @@ const connectToAccessory = (data) => {
 
 const getUserSensorData = (userId) => {
     return dispatch => new Promise((resolve, reject) => {
-        return AppAPI.sensor_mobile_pair.get({ userId })
+        return AppAPI.get_user.get({userId})
             .then(result => {
                 let cleanedResult = {};
-                cleanedResult.sensor_pid = result.sensor_pid;
-                cleanedResult.mobile_udid = result.mobile_udid;
+                cleanedResult.sensor_pid = result.user.sensor_pid;
+                cleanedResult.mobile_udid = result.user.mobile_udid;
                 dispatch({
                     type: Actions.CONNECT_TO_ACCESSORY,
                     data: cleanedResult,
@@ -371,7 +371,7 @@ const postUserSensorData = (userId) => {
         let dataObj = {};
         dataObj.sensor_pid = currentState.ble.accessoryData.id;
         dataObj.mobile_udid = uniqueId;
-        return AppAPI.sensor_mobile_pair.post({ userId }, dataObj)
+        return AppAPI.update_user.patch({ userId }, dataObj)
             .then(result => {
                 let cleanedResult = {};
                 cleanedResult.sensor_pid = result.sensor_pid;
@@ -396,7 +396,11 @@ const deleteUserSensorData = () => {
         let currentState = store.getState();
         // get user id
         let userId = currentState.user.id;
-        return AppAPI.sensor_mobile_pair.delete({ userId })
+        // build object to submit
+        let dataObj = {};
+        dataObj.sensor_pid = null;
+        dataObj.mobile_udid = null;
+        return AppAPI.update_user.patch({ userId }, dataObj)
             .then(result => {
                 dispatch({
                     type: Actions.BLUETOOTH_DISCONNECT
