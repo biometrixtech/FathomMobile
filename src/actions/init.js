@@ -238,7 +238,12 @@ const logout = user_id => {
             })
             .catch(err => {
                 console.log('err',err);
-                return reject(err);
+                // return reject(err);
+                return resolve(
+                    dispatch({
+                        type: Actions.LOGOUT
+                    })
+                );
             });
     });
 };

@@ -213,7 +213,7 @@ class Settings extends Component {
     _handleLogoutAlert = (err) => {
         Alert.alert(
             'Error!',
-            `Ooops! Something went wrong while trying to logout. Please try again. Error: ${err}`,
+            'Ooops! Something went wrong while trying to logout. Please try again.',
             [
                 {
                     text:  'OK',
