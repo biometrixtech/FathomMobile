@@ -41,6 +41,7 @@
 		5A406FAD29B24D039B4CF246 /* Roboto-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E401DD776A5D481E93A30FD9 /* Roboto-LightItalic.ttf */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		63EC966BA0534094931D90AE /* Oswald-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8A63D6E29732455FAAA822FE /* Oswald-Regular.ttf */; };
+		72DC998C2167C303001553ED /* libRCTGoogleAnalyticsBridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DC99622167C2DA001553ED /* libRCTGoogleAnalyticsBridge.a */; };
 		75884C08269B4F0BAB9B13BD /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E26B7E1A16864A6AA55DD0DC /* Roboto-BoldItalic.ttf */; };
 		7C3C0AF41E9B3B04008B335E /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C3C0AD51E9B3AE6008B335E /* libART.a */; };
 		7C8F52081E8C8D440065704A /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8F52061E8C8D440065704A /* Fabric.framework */; };
@@ -304,6 +305,13 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
+		72DC99612167C2DA001553ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 72DC99522167C2DA001553ED /* RCTGoogleAnalyticsBridge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A79185C61C30694E001236A6;
+			remoteInfo = RCTGoogleAnalyticsBridge;
+		};
 		78C398B81ACF4ADC00677621 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */;
@@ -509,6 +517,7 @@
 		6017545335F543FE90A2ADDF /* Roboto-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Thin.ttf"; path = "../assets/fonts/Roboto-Thin.ttf"; sourceTree = "<group>"; };
 		621FED576505468EB9CFE175 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		62A8EA882B184930825FDE66 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
+		72DC99522167C2DA001553ED /* RCTGoogleAnalyticsBridge.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGoogleAnalyticsBridge.xcodeproj; path = "../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/RCTGoogleAnalyticsBridge.xcodeproj"; sourceTree = "<group>"; };
 		76BC50C5ED02443CB1D32E96 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		77AD4564A1F9412BAC91743C /* libRCTVideo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTVideo.a; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -560,6 +569,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C97D70C51E2377B200C3C793 /* libsqlite3.0.tbd in Frameworks */,
+				C97D70C31E2377A300C3C793 /* libz.tbd in Frameworks */,
+				72DC998C2167C303001553ED /* libRCTGoogleAnalyticsBridge.a in Frameworks */,
 				F5A0F672211A04EF003721C4 /* libRCTVideo.a in Frameworks */,
 				F59A84C320FD41F100505DE2 /* libRCTPushNotification.a in Frameworks */,
 				F59B579420F5AA0300D23D70 /* libBVLinearGradient.a in Frameworks */,
@@ -570,9 +582,7 @@
 				F543BC7C1F2999240096364F /* libBleManager.a in Frameworks */,
 				7C3C0AF41E9B3B04008B335E /* libART.a in Frameworks */,
 				C97D70A31E23777B00C3C793 /* CoreData.framework in Frameworks */,
-				C97D70C51E2377B200C3C793 /* libsqlite3.0.tbd in Frameworks */,
 				7C8F52091E8C8D440065704A /* Crashlytics.framework in Frameworks */,
-				C97D70C31E2377A300C3C793 /* libz.tbd in Frameworks */,
 				C97D70C11E23779800C3C793 /* SystemConfiguration.framework in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
@@ -763,6 +773,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		72DC99532167C2DA001553ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				72DC99622167C2DA001553ED /* libRCTGoogleAnalyticsBridge.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		78C398B11ACF4ADC00677621 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -793,6 +811,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				72DC99522167C2DA001553ED /* RCTGoogleAnalyticsBridge.xcodeproj */,
 				F59A848820FD41A700505DE2 /* RCTPushNotification.xcodeproj */,
 				7C3C0AD01E9B3AE6008B335E /* ART.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
@@ -1050,6 +1069,10 @@
 				{
 					ProductGroup = 00C302B61ABCB90400DB3ED1 /* Products */;
 					ProjectRef = 00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */;
+				},
+				{
+					ProductGroup = 72DC99532167C2DA001553ED /* Products */;
+					ProjectRef = 72DC99522167C2DA001553ED /* RCTGoogleAnalyticsBridge.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302BC1ABCB91800DB3ED1 /* Products */;
@@ -1332,6 +1355,13 @@
 			fileType = archive.ar;
 			path = libRCTAnimation.a;
 			remoteRef = 5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		72DC99622167C2DA001553ED /* libRCTGoogleAnalyticsBridge.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTGoogleAnalyticsBridge.a;
+			remoteRef = 72DC99612167C2DA001553ED /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		78C398B91ACF4ADC00677621 /* libRCTLinking.a */ = {
