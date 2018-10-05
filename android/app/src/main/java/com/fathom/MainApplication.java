@@ -43,7 +43,7 @@ public class MainApplication extends Application implements ReactApplication {
           new FabricPackage(),
           new VectorIconsPackage(),
           new BleManagerPackage(),
-          new GoogleAnalyticsBridgePackage(),
+          new GoogleAnalyticsBridgePackage()
       );
     }
 
