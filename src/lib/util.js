@@ -8,12 +8,14 @@
 import { Alert, AsyncStorage } from 'react-native';
 
 // import third-party libraries
-import DeviceInfo from 'react-native-device-info';
-import uuidByString from 'uuid-by-string';
 import { AppColors, AppFonts, AppStyles } from '../constants';
 import { store } from '../store';
-import _ from 'lodash';
 import { Actions as DispatchActions, ErrorMessages, } from '../constants';
+import _ from 'lodash';
+import DeviceInfo from 'react-native-device-info';
+import PushNotification from 'react-native-push-notification';
+import moment from 'moment';
+import uuidByString from 'uuid-by-string';
 
 import { init as InitActions, } from '../actions';
 
@@ -106,6 +108,20 @@ const UTIL = {
                 { cancelable: false }
             );
         }
+    },
+
+    updatePushNotificationFlag: () => {
+        store.dispatch({
+            type: DispatchActions.NOTIFICATION_ADDRESSED
+        });
+        PushNotification.setApplicationIconBadgeNumber(0);
+    },
+
+    getFormattedTimezoneString: () => {
+        let now = moment().toISOString(true);
+        let lastIndex = now.lastIndexOf('+') > -1 ? now.lastIndexOf('+') : now.lastIndexOf('-');
+        let formattedTimezone = now.slice(lastIndex);
+        return formattedTimezone;
     },
 
     /**
@@ -354,8 +370,6 @@ const UTIL = {
         inputStyle.textAlign = 'center';
         inputStyle.fontFamily = AppStyles.robotoBold.fontFamily;
         inputStyle.fontWeight = AppStyles.robotoBold.fontWeight;
-
-
         return inputStyle;
     }
 };

@@ -115,7 +115,6 @@ class Onboarding extends Component {
                     // agreed_privacy_policy: false, // boolean
                     cleared_to_play:   false, // boolean
                     onboarding_status: user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    email:             user.personal_data && user.personal_data.email ? user.personal_data.email : '',
                     password:          '',
                     biometric_data:    {
                         height: {
@@ -140,6 +139,7 @@ class Onboarding extends Component {
                         account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                         account_type:   'free', // 'paid', 'free'
                         birth_date:     user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'YYYY-MM-DD').format('MM/DD/YYYY') : '',
+                        email:          user.personal_data && user.personal_data.email ? user.personal_data.email : '',
                         first_name:     user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
                         last_name:      user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
                         phone_number:   user.personal_data && user.personal_data.phone_number ? user.personal_data.phone_number : '',
@@ -398,7 +398,6 @@ class Onboarding extends Component {
         });
         // only submit required fields
         let userObj = {};
-        userObj.email = newUser.email;
         userObj.password = newUser.password;
         userObj.role = newUser.role;
         userObj.system_type = newUser.system_type;
@@ -414,6 +413,7 @@ class Onboarding extends Component {
         userObj.biometric_data.mass.lb = +(parseFloat(newUser.biometric_data.mass.lb).toFixed(2)) + 0.1;
         userObj.biometric_data.sex = newUser.biometric_data.sex;
         userObj.personal_data = {};
+        userObj.personal_data.email = newUser.email;
         userObj.personal_data.birth_date = newUser.personal_data.birth_date;
         userObj.personal_data.first_name = newUser.personal_data.first_name;
         userObj.personal_data.last_name = newUser.personal_data.last_name;
@@ -446,11 +446,11 @@ class Onboarding extends Component {
 
     _handleLoginFinalize = (userObj) => {
         let credentials = {
-            Email:    userObj.email,
+            Email:    userObj.personal_data.email,
             Password: userObj.password,
         };
         return this.props.onFormSubmit({
-            email:    userObj.email,
+            email:    userObj.personal_data.email,
             password: userObj.password,
         }, false)
             .then(response => {
@@ -473,7 +473,7 @@ class Onboarding extends Component {
             .then(response => {
                 let { authorization, user } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
-                    .then(() => this.props.finalizeLogin(user, {Email: userObj.email, Password: userObj.password}, authorization.jwt));
+                    .then(() => this.props.finalizeLogin(user, {Email: userObj.personal_data.email, Password: userObj.password}, authorization.jwt));
             })
             .then(() => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },

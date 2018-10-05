@@ -33,7 +33,7 @@ const onboardingUtils = {
             let newError = 'Your First and Last Name are required';
             errorsArray.push(newError);
             isValid = false;
-        } else if( !this.isEmailValid(user.email).isValid ) {
+        } else if( !this.isEmailValid(user.personal_data.email).isValid ) {
             let newError = 'Your Email must be a valid email format';
             errorsArray.push(newError);
             isValid = false;
@@ -292,7 +292,7 @@ const onboardingUtils = {
             && upperCaseLettersRegex.test(user.password)
             && lowerCaseLettersRegex.test(user.password)
         ) { count = count + 1; }
-        if( this.isEmailValid(user.email) ) { count = count + 1; }
+        if( this.isEmailValid(user.personal_data.email) ) { count = count + 1; }
         if(user.personal_data.zip_code.length > 0) { count = count + 1; }
         if(user.personal_data.birth_date.length > 0) { count = count + 1; }
         if(user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) { count = count + 1; }

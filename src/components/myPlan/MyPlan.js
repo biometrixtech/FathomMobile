@@ -67,18 +67,22 @@ class MyPlan extends Component {
         clearCompletedExercises:   PropTypes.func.isRequired,
         clearCompletedFSExercises: PropTypes.func.isRequired,
         getSoreBodyParts:          PropTypes.func.isRequired,
+        markStartedRecovery:       PropTypes.func.isRequired,
         network:                   PropTypes.object.isRequired,
         noSessions:                PropTypes.func.isRequired,
-        notification:              PropTypes.bool.isRequired,
-        patchActiveRecovery:       PropTypes.func.isRequired,
-        patchFunctionalStrength:   PropTypes.func.isRequired,
-        plan:                      PropTypes.object.isRequired,
-        postReadinessSurvey:       PropTypes.func.isRequired,
-        postSessionSurvey:         PropTypes.func.isRequired,
-        preReadiness:              PropTypes.func.isRequired,
-        setCompletedExercises:     PropTypes.func.isRequired,
-        setCompletedFSExercises:   PropTypes.func.isRequired,
-        user:                      PropTypes.object.isRequired,
+        notification:              PropTypes.oneOfType([
+            PropTypes.bool,
+            PropTypes.string,
+        ]).isRequired,
+        patchActiveRecovery:     PropTypes.func.isRequired,
+        patchFunctionalStrength: PropTypes.func.isRequired,
+        plan:                    PropTypes.object.isRequired,
+        postReadinessSurvey:     PropTypes.func.isRequired,
+        postSessionSurvey:       PropTypes.func.isRequired,
+        preReadiness:            PropTypes.func.isRequired,
+        setCompletedExercises:   PropTypes.func.isRequired,
+        setCompletedFSExercises: PropTypes.func.isRequired,
+        user:                    PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -199,19 +203,24 @@ class MyPlan extends Component {
         if (Platform.OS === 'android') {
             BackHandler.removeEventListener('hardwareBackPress');
         }
+        AppState.removeEventListener('change', this._handleAppStateChange);
     }
 
     componentDidMount = async () => {
+        AppState.addEventListener('change', this._handleAppStateChange);
         if(!this.props.scheduledMaintenance.addressed) {
             let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
             let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
             AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
         }
+        if(this.props.notification) {
+            this._handlePushNotification(this.props);
+        }
     }
 
     componentWillReceiveProps = (nextProps) => {
         if(nextProps.notification && nextProps.notification !== this.props.notification) {
-            this._handleExerciseListRefresh(true);
+            this._handlePushNotification(nextProps);
         }
         const areObjectsDifferent = _.isEqual(nextProps.plan, this.props.plan);
         if(
@@ -230,6 +239,46 @@ class MyPlan extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
+    }
+
+    _handleAppStateChange = (nextAppState) => {
+        if(nextAppState === 'active' && this.props.notification) {
+            this._handlePushNotification(this.props);
+        }
+    }
+
+    _handlePushNotification = props => {
+        let dailyPlan = props.plan.dailyPlan[0];
+        const validNotifs = ['COMPLETE_ACTIVE_PREP', 'COMPLETE_ACTIVE_RECOVERY', 'COMPLETE_DAILY_READINESS', 'VIEW_PLAN',];
+        if(props.notification === 'COMPLETE_ACTIVE_PREP' && !dailyPlan.pre_recovery_completed) {
+            // go to screen 0 & open active prep
+            this._goToScrollviewPage(0, () => {
+                let newPrepareFormFields = _.update( this.state.prepare, 'isActiveRecoveryCollapsed', () => false);
+                this.setState({
+                    prepare: newPrepareFormFields,
+                });
+                AppUtil.updatePushNotificationFlag();
+            });
+        } else if(props.notification === 'COMPLETE_ACTIVE_RECOVERY' && !dailyPlan.post_recovery.completed) {
+            // go to screen 2 & open active recovery
+            this._goToScrollviewPage(2, () => {
+                let newRecoverFormFields = _.update( this.state.recover, 'isActiveRecoveryCollapsed', () => false);
+                this.setState({
+                    recover: newRecoverFormFields,
+                });
+                AppUtil.updatePushNotificationFlag();
+            });
+        } else if(props.notification === 'COMPLETE_DAILY_READINESS' && !dailyPlan.daily_readiness_survey_completed) {
+            // go to screen 0 & open daily_readiness
+            this._goToScrollviewPage(0, () => {
+                this.setState({ isReadinessSurveyModalOpen: true, });
+                AppUtil.updatePushNotificationFlag();
+            });
+        } else if(props.notification === 'VIEW_PLAN' || !validNotifs.includes(props.notification)) {
+            // added catch in case of view plan or other message, do what we did in the past
+            this._handleExerciseListRefresh();
+            AppUtil.updatePushNotificationFlag();
+        }
     }
 
     _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side) => {
@@ -513,12 +562,12 @@ class MyPlan extends Component {
         }
     }
 
-    _handleExerciseListRefresh = (updateNotificationFlag) => {
+    _handleExerciseListRefresh = () => {
         this.setState({
             isExerciseListRefreshing: true
         });
         let userId = this.props.user.id;
-        this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'), false, updateNotificationFlag)
+        this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
             .then(response => {
                 const dailyPlanObj = response.daily_plans && response.daily_plans[0] ? response.daily_plans[0] : false;
                 let newRecover = _.cloneDeep(this.state.recover);
@@ -561,13 +610,32 @@ class MyPlan extends Component {
             });
     }
 
-    _handleCompleteExercise = (exerciseId) => {
+    _handleCompleteExercise = (exerciseId, recovery_type) => {
+        // add or remove exercise
         let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
         if(newCompletedExercises && newCompletedExercises.indexOf(exerciseId) > -1) {
             newCompletedExercises.splice(newCompletedExercises.indexOf(exerciseId), 1)
         } else {
             newCompletedExercises.push(exerciseId);
         }
+        // Mark Recovery as started, if logic passes
+        let clonedPlan = _.cloneDeep(this.props.plan);
+        let startDate = recovery_type === 'pre' ?
+            clonedPlan.dailyPlan[0].pre_recovery.start_date
+            : recovery_type === 'post' ?
+                clonedPlan.dailyPlan[0].post_recovery.start_date
+                :
+                true;
+        if(newCompletedExercises.length === 1 && !startDate) {
+            let newMyPlan =  _.cloneDeep(this.props.plan.dailyPlan);
+            if(recovery_type === 'pre') {
+                newMyPlan[0].pre_recovery.start_date = true;
+            } else if(recovery_type === 'post') {
+                newMyPlan[0].post_recovery.start_date = true;
+            }
+            this.props.markStartedRecovery(this.props.user.id, recovery_type, newMyPlan);
+        }
+        // continue by updating reducer and state
         this.props.setCompletedExercises(newCompletedExercises);
         this.setState({
             isSelectedExerciseModalOpen: false,
@@ -970,7 +1038,7 @@ class MyPlan extends Component {
                                 <Exercises
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
-                                    handleCompleteExercise={this._handleCompleteExercise}
+                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'pre')}
                                     handleExerciseListRefresh={this._handleExerciseListRefresh}
                                     isExerciseListRefreshing={this.state.isExerciseListRefreshing}
                                     isLoading={this.state.loading}
@@ -1060,7 +1128,7 @@ class MyPlan extends Component {
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem
                                     exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={this._handleCompleteExercise}
+                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'pre')}
                                     selectedExercise={this.state.selectedExercise.library_id}
                                 />
                                 :
@@ -1220,7 +1288,7 @@ class MyPlan extends Component {
                                 <Exercises
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
-                                    handleCompleteExercise={this._handleCompleteExercise}
+                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'post')}
                                     handleExerciseListRefresh={this._handleExerciseListRefresh}
                                     isExerciseListRefreshing={this.state.isExerciseListRefreshing}
                                     isLoading={this.state.loading}
@@ -1281,7 +1349,7 @@ class MyPlan extends Component {
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem
                                     exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={this._handleCompleteExercise}
+                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'post')}
                                     selectedExercise={this.state.selectedExercise.library_id}
                                 />
                                 :
@@ -1584,7 +1652,7 @@ class MyPlan extends Component {
         );
     };
 
-    _goToScrollviewPage = (pageIndex) => {
+    _goToScrollviewPage = (pageIndex, callback) => {
         // only scroll to page when we
         // - HAVE a tabView
         // - DO NOT HAVE: isReadinessSurveyModalOpen & isPostSessionSurveyModalOpen & loading
@@ -1595,6 +1663,9 @@ class MyPlan extends Component {
         ) {
             setTimeout(() => {
                 this.tabView.goToPage(pageIndex);
+                if(callback) {
+                    callback();
+                }
             }, 300);
         }
     }
