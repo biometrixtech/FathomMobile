@@ -11,6 +11,7 @@ const MyPlan = ({
     clearCompletedFSExercises,
     getMyPlan,
     getSoreBodyParts,
+    markStartedFunctionalStrength,
     markStartedRecovery,
     network,
     noSessions,
@@ -32,6 +33,7 @@ const MyPlan = ({
         clearCompletedFSExercises={clearCompletedFSExercises}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
+        markStartedFunctionalStrength={markStartedFunctionalStrength}
         markStartedRecovery={markStartedRecovery}
         network={network}
         noSessions={noSessions}
@@ -50,16 +52,17 @@ const MyPlan = ({
 );
 
 MyPlan.propTypes = {
-    Layout:                    PropTypes.func.isRequired,
-    ble:                       PropTypes.object.isRequired,
-    clearCompletedExercises:   PropTypes.func.isRequired,
-    clearCompletedFSExercises: PropTypes.func.isRequired,
-    getMyPlan:                 PropTypes.func.isRequired,
-    getSoreBodyParts:          PropTypes.func.isRequired,
-    markStartedRecovery:       PropTypes.func.isRequired,
-    network:                   PropTypes.object.isRequired,
-    noSessions:                PropTypes.func.isRequired,
-    notification:              PropTypes.oneOfType([
+    Layout:                        PropTypes.func.isRequired,
+    ble:                           PropTypes.object.isRequired,
+    clearCompletedExercises:       PropTypes.func.isRequired,
+    clearCompletedFSExercises:     PropTypes.func.isRequired,
+    getMyPlan:                     PropTypes.func.isRequired,
+    getSoreBodyParts:              PropTypes.func.isRequired,
+    markStartedFunctionalStrength: PropTypes.func.isRequired,
+    markStartedRecovery:           PropTypes.func.isRequired,
+    network:                       PropTypes.object.isRequired,
+    noSessions:                    PropTypes.func.isRequired,
+    notification:                  PropTypes.oneOfType([
         PropTypes.bool,
         PropTypes.string,
     ]).isRequired,
@@ -89,19 +92,20 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    clearCompletedExercises:   PlanActions.clearCompletedExercises,
-    clearCompletedFSExercises: PlanActions.clearCompletedFSExercises,
-    getMyPlan:                 PlanActions.getMyPlan,
-    getSoreBodyParts:          PlanActions.getSoreBodyParts,
-    markStartedRecovery:       PlanActions.markStartedRecovery,
-    noSessions:                PlanActions.noSessions,
-    patchActiveRecovery:       PlanActions.patchActiveRecovery,
-    patchFunctionalStrength:   PlanActions.patchFunctionalStrength,
-    postReadinessSurvey:       PlanActions.postReadinessSurvey,
-    postSessionSurvey:         PlanActions.postSessionSurvey,
-    preReadiness:              PlanActions.preReadiness,
-    setCompletedExercises:     PlanActions.setCompletedExercises,
-    setCompletedFSExercises:   PlanActions.setCompletedFSExercises,
+    clearCompletedExercises:       PlanActions.clearCompletedExercises,
+    clearCompletedFSExercises:     PlanActions.clearCompletedFSExercises,
+    getMyPlan:                     PlanActions.getMyPlan,
+    getSoreBodyParts:              PlanActions.getSoreBodyParts,
+    markStartedFunctionalStrength: PlanActions.markStartedFunctionalStrength,
+    markStartedRecovery:           PlanActions.markStartedRecovery,
+    noSessions:                    PlanActions.noSessions,
+    patchActiveRecovery:           PlanActions.patchActiveRecovery,
+    patchFunctionalStrength:       PlanActions.patchFunctionalStrength,
+    postReadinessSurvey:           PlanActions.postReadinessSurvey,
+    postSessionSurvey:             PlanActions.postSessionSurvey,
+    preReadiness:                  PlanActions.preReadiness,
+    setCompletedExercises:         PlanActions.setCompletedExercises,
+    setCompletedFSExercises:       PlanActions.setCompletedFSExercises,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyPlan);

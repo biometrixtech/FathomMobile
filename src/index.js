@@ -11,7 +11,7 @@ import Routes from './routes';
 import { TabIcon, } from './components/custom';
 
 // import third-party libraries
-import { Router, Stack, } from 'react-native-router-flux';
+import { Actions as RouterActions, Router, Stack, } from 'react-native-router-flux';
 import { NetworkMonitor } from 'react-native-redux-connectivity';
 import DropdownAlert from 'react-native-dropdownalert';
 import PushNotification from 'react-native-push-notification';

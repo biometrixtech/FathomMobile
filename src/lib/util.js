@@ -59,6 +59,10 @@ const UTIL = {
         return uniqueId;
     },
 
+    getAppBuildNumber: () => {
+        return DeviceInfo.getBuildNumber();
+    },
+
     getNetworkStatus: (prevProps, network, Actions) => {
         const notConnectedTypes = ['none', 'unknown'];
         const connectedTypes = ['wifi', 'cellular'];

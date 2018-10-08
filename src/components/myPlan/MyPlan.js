@@ -18,6 +18,7 @@ import {
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
+import { GoogleAnalyticsTracker, } from 'react-native-google-analytics-bridge';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
@@ -58,19 +59,23 @@ const enabledBorderColor = AppColors.zeplin.darkBlue;
 const enabledDescriptionColor = AppColors.primary.yellow.hundredPercent;
 const subtextColor = AppColors.white;
 
+// setup GA Tracker
+const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
+
 /* Component ==================================================================== */
 class MyPlan extends Component {
     static componentName = 'MyPlanView';
 
     static propTypes = {
-        ble:                       PropTypes.object.isRequired,
-        clearCompletedExercises:   PropTypes.func.isRequired,
-        clearCompletedFSExercises: PropTypes.func.isRequired,
-        getSoreBodyParts:          PropTypes.func.isRequired,
-        markStartedRecovery:       PropTypes.func.isRequired,
-        network:                   PropTypes.object.isRequired,
-        noSessions:                PropTypes.func.isRequired,
-        notification:              PropTypes.oneOfType([
+        ble:                           PropTypes.object.isRequired,
+        clearCompletedExercises:       PropTypes.func.isRequired,
+        clearCompletedFSExercises:     PropTypes.func.isRequired,
+        getSoreBodyParts:              PropTypes.func.isRequired,
+        markStartedFunctionalStrength: PropTypes.func.isRequired,
+        markStartedRecovery:           PropTypes.func.isRequired,
+        network:                       PropTypes.object.isRequired,
+        noSessions:                    PropTypes.func.isRequired,
+        notification:                  PropTypes.oneOfType([
             PropTypes.bool,
             PropTypes.string,
         ]).isRequired,
@@ -216,6 +221,10 @@ class MyPlan extends Component {
         if(this.props.notification) {
             this._handlePushNotification(this.props);
         }
+        // set GA variables
+        GATracker.setUser(this.props.user.id);
+        GATracker.setAppVersion(AppUtil.getAppBuildNumber());
+        GATracker.setAppName(`Fathom-${store.getState().init.environment}`);
     }
 
     componentWillReceiveProps = (nextProps) => {
@@ -643,12 +652,22 @@ class MyPlan extends Component {
     }
 
     _handleCompleteFSExercise = (exerciseId) => {
+        // add or remove exercise
         let newCompletedExercises = _.cloneDeep(store.getState().plan.completedFSExercises);
         if(newCompletedExercises && newCompletedExercises.indexOf(exerciseId) > -1) {
             newCompletedExercises.splice(newCompletedExercises.indexOf(exerciseId), 1)
         } else {
             newCompletedExercises.push(exerciseId);
         }
+        // Mark FS as started, if logic passes
+        let clonedPlan = _.cloneDeep(this.props.plan);
+        let startDate = clonedPlan.dailyPlan[0].functional_strength_session && clonedPlan.dailyPlan[0].functional_strength_session.start_date;
+        if(newCompletedExercises.length === 1 && !startDate) {
+            let newMyPlan =  _.cloneDeep(this.props.plan.dailyPlan);
+            newMyPlan[0].functional_strength_session.start_date = true;
+            this.props.markStartedFunctionalStrength(this.props.user.id, newMyPlan);
+        }
+        // continue by updating reducer and state
         this.props.setCompletedFSExercises(newCompletedExercises);
         this.setState({
             isSelectedExerciseModalOpen: false,
@@ -1002,7 +1021,7 @@ class MyPlan extends Component {
                                         outlined
                                         onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed })}) }
                                         textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                                        title={'Start'}
+                                        title={completedExercises.length > 0 ? 'Continue' : 'Start'}
                                     />
                                 </View>
                             </View>
@@ -1251,7 +1270,7 @@ class MyPlan extends Component {
                                         outlined
                                         onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) })}
                                         textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                                        title={'Start'}
+                                        title={completedExercises.length > 0 ? 'Continue' : 'Start'}
                                     />
                                 </View>
                             </View>
@@ -1459,7 +1478,7 @@ class MyPlan extends Component {
                                           outlined
                                           onPress={() => this.setState({ isFunctionalStrengthCollapsed: false, })}
                                           textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                                          title={'Start'}
+                                          title={completedFSExercises.length > 0 ? 'Continue' : 'Start'}
                                       />
                                       :
                                       <Text
@@ -1483,7 +1502,7 @@ class MyPlan extends Component {
                       :
                       null
                 }
-                { functionalStrength && !functionalStrength.completed && !this.state.isFunctionalStrengthCollapsed ?
+                { functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed && !this.state.isFunctionalStrengthCollapsed ?
                     <Exercises
                         completedExercises={completedFSExercises}
                         exerciseList={fsExerciseList}
@@ -1527,24 +1546,51 @@ class MyPlan extends Component {
                 { this.state.isFunctionalStrengthCollapsed ?
                     <View>
                         <Button
-                            backgroundColor={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                            backgroundColor={
+                                isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                    AppColors.primary.yellow.hundredPercent
+                                    :
+                                    AppColors.white
+                            }
                             buttonStyle={{justifyContent: 'space-between',}}
-                            color={isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText}
+                            color={
+                                isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
+                                    AppColors.primary.yellow.hundredPercent
+                                    : isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                        AppColors.white
+                                        :
+                                        AppColors.zeplin.greyText
+                            }
                             containerViewStyle={{marginLeft: 22, marginRight: 22,}}
                             fontFamily={AppStyles.oswaldMedium.fontFamily}
                             fontWeight={AppStyles.oswaldMedium.fontWeight}
                             leftIcon={{
-                                color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
-                                name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
-                                size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
+                                color: isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
+                                    AppColors.primary.yellow.hundredPercent
+                                    : isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                        AppColors.white
+                                        :
+                                        AppColors.zeplin.greyText,
+                                name: isDailyReadinessSurveyCompleted ? 'add' : 'lock',
+                                size: isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
                             }}
                             onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal() : null}
-                            outlined={isDailyReadinessSurveyCompleted ? false : true}
+                            outlined={
+                                isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                    false
+                                    :
+                                    true
+                            }
                             raised={false}
                             rightIcon={{
-                                color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
-                                name:  'chevron-right',
-                                size:  AppFonts.scaleFont(30),
+                                color: isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
+                                    AppColors.primary.yellow.hundredPercent
+                                    : isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                        AppColors.white
+                                        :
+                                        AppColors.zeplin.greyText,
+                                name: 'chevron-right',
+                                size: AppFonts.scaleFont(30),
                             }}
                             textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
                             title={'LOG COMPLETED ACTIVITY'}
@@ -1670,12 +1716,19 @@ class MyPlan extends Component {
         }
     }
 
+    _onChangeTab = tabLocation => {
+        const currentScreenName = tabLocation.i === 0 ? 'PREPARE' : tabLocation.i === 1 ? 'TRAIN' : tabLocation.i === 2 ? 'RECOVER' : '';
+        // const fromScreenName = tabLocation.from === 0 ? 'PREPARE' : tabLocation.from === 1 ? 'TRAIN' : tabLocation.from === 2 ? 'RECOVER' : '';
+        GATracker.trackScreenView(currentScreenName);
+    }
+
     render() {
         // making sure we can only drag horizontally if our modals are closed and nothing is loading
         let isScrollLocked = !this.state.isReadinessSurveyModalOpen && !this.state.isPostSessionSurveyModalOpen && !this.state.loading ? false : true;
         return (
             <ScrollableTabView
                 locked={isScrollLocked}
+                onChangeTab={tabLocation => this._onChangeTab(tabLocation)}
                 ref={tabView => { this.tabView = tabView; }}
                 renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderBottomWidth: 0,}} />}
                 style={{backgroundColor: AppColors.white}}
