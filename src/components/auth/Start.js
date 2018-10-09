@@ -162,12 +162,11 @@ class Start extends Component {
             .then(() => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
-                // TODO: FIX BELOW!
-                // if(userObj.onboarding_status && userObj.onboarding_status.includes('account_setup')) {
+                if(userObj.onboarding_status && userObj.onboarding_status.includes('account_setup')) {
                     this._routeToMyPlan();
-                // } else {
-                //     this._routeToOnboarding();
-                // }
+                } else {
+                    this._routeToOnboarding();
+                }
                 this.hideSplash();
             })).catch((err) => {
                 this.hideSplash();
