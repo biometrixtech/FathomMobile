@@ -46,9 +46,9 @@ export default {
         ['reset_password',  `${plansAPIVersion}/misc/confirm_forgot_password`],
         ['update_user',     `${usersAPIVersion}/user/{userId}`],
         // My Plan specific routes
-        ['active_recovery',       `${plansAPIVersion}/active_recovery`], // PATCH
+        ['active_recovery',       `${plansAPIVersion}/active_recovery`], // POST/PATCH
         ['clear_user_data',       `${plansAPIVersion}/misc/clear_user_data`], // POST
-        ['functional_strength',   `${plansAPIVersion}/functional_strength`], // PATCH
+        ['functional_strength',   `${plansAPIVersion}/functional_strength`], // POST/PATCH
         ['get_my_plan',           `${plansAPIVersion}/daily_plan`], // POST
         ['get_sore_body_parts',   `${plansAPIVersion}/daily_readiness/previous`], // POST
         ['no_sessions',           `${plansAPIVersion}/session/no_sessions`], // POST

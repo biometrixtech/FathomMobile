@@ -140,9 +140,13 @@ class ReadinessSurvey extends Component {
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
                     <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: 'center', width: AppSizes.screen.width}}>
                         { isFirstFunctionalStrength ?
-                            <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black}]}>{'Congrats!'}</Text>
+                            <View style={{textAlign: 'center',}}>
+                                <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, {color: AppColors.black, paddingTop: AppSizes.paddingXLrg,}]}>{`Congrats, ${user.personal_data.first_name}!`}</Text>
+                                <Spacer size={10} />
+                                <Text oswaldBold style={[AppStyles.paddingHorizontalMed, {color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(24), paddingBottom: AppSizes.paddingXLrg, textAlign: 'center',}]}>{'You\'ve unlocked\nFunctional Strength'}</Text>
+                            </View>
                             :
-                            <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black}]}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
+                            <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black,}]}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
                         }
                     </View>
                     { isFirstFunctionalStrength ?
