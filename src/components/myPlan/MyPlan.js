@@ -1718,8 +1718,8 @@ class MyPlan extends Component {
 
     _onChangeTab = tabLocation => {
         const currentScreenName = tabLocation.i === 0 ? 'PREPARE' : tabLocation.i === 1 ? 'TRAIN' : tabLocation.i === 2 ? 'RECOVER' : '';
-        // const fromScreenName = tabLocation.from === 0 ? 'PREPARE' : tabLocation.from === 1 ? 'TRAIN' : tabLocation.from === 2 ? 'RECOVER' : '';
-        GATracker.trackScreenView(currentScreenName);
+        const fromScreenName = tabLocation.from === 0 ? 'PREPARE' : tabLocation.from === 1 ? 'TRAIN' : tabLocation.from === 2 ? 'RECOVER' : '';
+        GATracker.trackScreenView(currentScreenName, { from: fromScreenName, });
     }
 
     render() {
