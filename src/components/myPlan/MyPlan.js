@@ -223,7 +223,7 @@ class MyPlan extends Component {
         }
         // set GA variables
         GATracker.setUser(this.props.user.id);
-        GATracker.setAppVersion(AppUtil.getAppBuildNumber());
+        GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
         GATracker.setAppName(`Fathom-${store.getState().init.environment}`);
     }
 
@@ -1547,7 +1547,7 @@ class MyPlan extends Component {
                     <View>
                         <Button
                             backgroundColor={
-                                isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
                                     AppColors.primary.yellow.hundredPercent
                                     :
                                     AppColors.white
@@ -1556,7 +1556,7 @@ class MyPlan extends Component {
                             color={
                                 isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
                                     AppColors.primary.yellow.hundredPercent
-                                    : isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                    : isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
                                         AppColors.white
                                         :
                                         AppColors.zeplin.greyText
@@ -1567,7 +1567,7 @@ class MyPlan extends Component {
                             leftIcon={{
                                 color: isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
                                     AppColors.primary.yellow.hundredPercent
-                                    : isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                    : isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
                                         AppColors.white
                                         :
                                         AppColors.zeplin.greyText,
@@ -1576,7 +1576,7 @@ class MyPlan extends Component {
                             }}
                             onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal() : null}
                             outlined={
-                                isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
                                     false
                                     :
                                     true
@@ -1585,7 +1585,7 @@ class MyPlan extends Component {
                             rightIcon={{
                                 color: isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
                                     AppColors.primary.yellow.hundredPercent
-                                    : isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                    : isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
                                         AppColors.white
                                         :
                                         AppColors.zeplin.greyText,
