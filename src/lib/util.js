@@ -128,6 +128,20 @@ const UTIL = {
         return formattedTimezone;
     },
 
+    handleAPIErrorAlert: (message, header = 'Error!') => {
+        Alert.alert(
+            header,
+            message,
+            [
+                {
+                    style: 'cancel',
+                    text:  'OK',
+                },
+            ],
+            { cancelable: false }
+        );
+    },
+
     /**
       * AsyncStorage save data
       * key -> index of data
