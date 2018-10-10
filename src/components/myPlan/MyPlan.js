@@ -196,11 +196,13 @@ class MyPlan extends Component {
                             newDailyReadiness.soreness = [];
                             this.setState({ dailyReadiness: newDailyReadiness });
                             SplashScreen.hide();
+                            AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
                         });
                 }
             })
             .catch(error => {
                 SplashScreen.hide();
+                AppUtil.handleAPIErrorAlert(ErrorMessages.getMyPlan);
             });
     }
 
@@ -223,7 +225,7 @@ class MyPlan extends Component {
         }
         // set GA variables
         GATracker.setUser(this.props.user.id);
-        GATracker.setAppVersion(AppUtil.getAppBuildNumber());
+        GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
         GATracker.setAppName(`Fathom-${store.getState().init.environment}`);
     }
 
@@ -382,6 +384,7 @@ class MyPlan extends Component {
                 this.setState({
                     loading: false,
                 });
+                AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey);
             });
     }
 
@@ -445,6 +448,7 @@ class MyPlan extends Component {
                     loading: false,
                 });
                 console.log('error',error);
+                AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey);
             });
     }
 
@@ -541,6 +545,7 @@ class MyPlan extends Component {
                         loading:                      false,
                         postSession:                  newDailyReadiness,
                     });
+                    AppUtil.handleAPIErrorAlert(ErrorMessages.preReadiness);
                 });
         } else {
             let newPostSession = _.cloneDeep(this.state.postSession);
@@ -565,7 +570,11 @@ class MyPlan extends Component {
         let soreBodyParts = this.props.plan.soreBodyParts;
         if(soreBodyParts.functional_strength_eligible && soreBodyParts.current_sport_name === null && soreBodyParts.current_position === null) {
             this.props.preReadiness(this.props.user.id)
-                .then(() => this.setState({ isReadinessSurveyModalOpen: true, loading: false, }));
+                .then(() => this.setState({ isReadinessSurveyModalOpen: true, loading: false, }))
+                .catch(() => {
+                    this.setState({ loading: false, });
+                    AppUtil.handleAPIErrorAlert(ErrorMessages.preReadiness);
+                });
         } else {
             this.setState({ isReadinessSurveyModalOpen: true, loading: false, });
         }
@@ -609,6 +618,7 @@ class MyPlan extends Component {
                         let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
                         newDailyReadiness.soreness = [];
                         this.setState({ dailyReadiness: newDailyReadiness });
+                        AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
                     });
             })
             .catch(error => {
@@ -690,6 +700,7 @@ class MyPlan extends Component {
                 })
                 .catch(() => {
                     this.setState({ loading: false, });
+                    AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
                 })
         } else {
             Alert.alert(
@@ -1076,7 +1087,8 @@ class MyPlan extends Component {
                                             )
                                             .catch(() => {
                                                 this.setState({ loading: false });
-                                            })
+                                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
+                                            });
                                     }}
                                     toggleSelectedExercise={this._toggleSelectedExercise}
                                 />
@@ -1325,7 +1337,8 @@ class MyPlan extends Component {
                                             )
                                             .catch(() => {
                                                 this.setState({ loading: false });
-                                            })
+                                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
+                                            });
                                     }}
                                     toggleSelectedExercise={this._toggleSelectedExercise}
                                 />
@@ -1547,7 +1560,7 @@ class MyPlan extends Component {
                     <View>
                         <Button
                             backgroundColor={
-                                isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
                                     AppColors.primary.yellow.hundredPercent
                                     :
                                     AppColors.white
@@ -1556,7 +1569,7 @@ class MyPlan extends Component {
                             color={
                                 isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
                                     AppColors.primary.yellow.hundredPercent
-                                    : isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                    : isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
                                         AppColors.white
                                         :
                                         AppColors.zeplin.greyText
@@ -1567,7 +1580,7 @@ class MyPlan extends Component {
                             leftIcon={{
                                 color: isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
                                     AppColors.primary.yellow.hundredPercent
-                                    : isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                    : isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
                                         AppColors.white
                                         :
                                         AppColors.zeplin.greyText,
@@ -1576,7 +1589,7 @@ class MyPlan extends Component {
                             }}
                             onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal() : null}
                             outlined={
-                                isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
                                     false
                                     :
                                     true
@@ -1585,7 +1598,7 @@ class MyPlan extends Component {
                             rightIcon={{
                                 color: isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
                                     AppColors.primary.yellow.hundredPercent
-                                    : isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed ?
+                                    : isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
                                         AppColors.white
                                         :
                                         AppColors.zeplin.greyText,
@@ -1609,7 +1622,7 @@ class MyPlan extends Component {
                                     name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
                                     size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
                                 }}
-                                onPress={() => isDailyReadinessSurveyCompleted ? this.props.noSessions(this.props.user.id) : null}
+                                onPress={() => isDailyReadinessSurveyCompleted ? this.props.noSessions(this.props.user.id).catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)) : null}
                                 outlined
                                 raised={false}
                                 rightIcon={{

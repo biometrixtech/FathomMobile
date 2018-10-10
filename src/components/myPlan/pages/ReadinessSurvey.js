@@ -45,10 +45,14 @@ class ReadinessSurvey extends Component {
         super(props);
         this.scrollViewRef = {};
         this.myComponents = [];
+        this.positionsComponents = [];
     }
 
-    _scrollTo = (index) => {
+    _scrollTo = (index, scrollToPositions) => {
         let myComponentsLocation = this.myComponents[index];
+        if(scrollToPositions) {
+            myComponentsLocation = this.positionsComponents[index];
+        }
         if(myComponentsLocation) {
             _.delay(() => {
                 this.scrollViewRef.scrollTo({
@@ -112,8 +116,15 @@ class ReadinessSurvey extends Component {
         );
         let selectedSportPositions = dailyReadiness.current_sport_name !== null ? _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name).positions : [];
         const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
-        const isFirstFunctionalStrength = isFunctionalStrengthEligible && (!soreBodyParts.current_sport_name || soreBodyParts.current_sport_name !== 0) && (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
-        let isSecondFunctionalStrength = isFunctionalStrengthEligible && (soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0 || soreBodyParts.current_sport_name === 0 || soreBodyParts.current_sport_name > 0) && (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
+        const isFirstFunctionalStrength = isFunctionalStrengthEligible &&
+            (!soreBodyParts.current_sport_name && soreBodyParts.current_sport_name !== 0) &&
+            (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
+        const isSecondFunctionalStrength = isFunctionalStrengthEligible &&
+            (
+                soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0 ||
+                soreBodyParts.current_sport_name === 0 || soreBodyParts.current_sport_name > 0
+            ) &&
+            (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
         let isFunctionalStrengthTargetValid = dailyReadiness.current_sport_name !== null ?
             dailyReadiness.current_sport_name !== null && (dailyReadiness.current_position !== null || !selectedSportPositions)
             : dailyReadiness.current_sport_name === null ?
@@ -196,6 +207,8 @@ class ReadinessSurvey extends Component {
                                                             let currentSportPositions = _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name).positions;
                                                             if(!currentSportPositions) {
                                                                 this._scrollTo(0);
+                                                            } else {
+                                                                this._scrollTo(0, true);
                                                             }
                                                         }
                                                     } else if(isStrengthConditioning) {
@@ -218,48 +231,50 @@ class ReadinessSurvey extends Component {
                                         </View>
                                     )
                                 })}
-                                { dailyReadiness.current_sport_name !== null && selectedSportPositions && selectedSportPositions.length > 0 ?
-                                    <View>
-                                        <Spacer size={70} />
-                                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                            {'What is your primary position in '}
-                                            <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                                {this._getFunctionalStrengthOptions({ sport_name: dailyReadiness.current_sport_name, }).sessionName.toLowerCase()}
+                                <View onLayout={event => {this.positionsComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                                    { dailyReadiness.current_sport_name !== null && selectedSportPositions && selectedSportPositions.length > 0 ?
+                                        <View>
+                                            <Spacer size={70} />
+                                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                                {'What is your primary position in '}
+                                                <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                                    {this._getFunctionalStrengthOptions({ sport_name: dailyReadiness.current_sport_name, }).sessionName.toLowerCase()}
+                                                </Text>
+                                                {'?'}
                                             </Text>
-                                            {'?'}
-                                        </Text>
-                                        <Spacer size={10} />
-                                        { _.map(selectedSportPositions, (position, i) => {
-                                            return(
-                                                <View key={i}>
-                                                    <Button
-                                                        backgroundColor={dailyReadiness.current_position === i ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                                                        buttonStyle={{
-                                                            alignSelf:       'center',
-                                                            borderRadius:    5,
-                                                            paddingVertical: 5,
-                                                            width:           AppSizes.screen.widthTwoThirds,
-                                                        }}
-                                                        color={dailyReadiness.current_position === i ? AppColors.white : AppColors.zeplin.darkGrey}
-                                                        fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                                        fontWeight={AppStyles.oswaldRegular.fontWeight}
-                                                        onPress={() => {
-                                                            handleFormChange('current_position', i);
-                                                            this._scrollTo(0);
-                                                        }}
-                                                        outlined={dailyReadiness.current_position === i ? false : true}
-                                                        raised={false}
-                                                        textStyle={{ fontSize: AppFonts.scaleFont(14), }}
-                                                        title={position.toUpperCase()}
-                                                    />
-                                                    <Spacer size={8} />
-                                                </View>
-                                            )
-                                        })}
-                                    </View>
-                                    :
-                                    null
-                                }
+                                            <Spacer size={10} />
+                                            { _.map(selectedSportPositions, (position, i) => {
+                                                return(
+                                                    <View key={i}>
+                                                        <Button
+                                                            backgroundColor={dailyReadiness.current_position === i ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                                                            buttonStyle={{
+                                                                alignSelf:       'center',
+                                                                borderRadius:    5,
+                                                                paddingVertical: 5,
+                                                                width:           AppSizes.screen.widthTwoThirds,
+                                                            }}
+                                                            color={dailyReadiness.current_position === i ? AppColors.white : AppColors.zeplin.darkGrey}
+                                                            fontFamily={AppStyles.oswaldRegular.fontFamily}
+                                                            fontWeight={AppStyles.oswaldRegular.fontWeight}
+                                                            onPress={() => {
+                                                                handleFormChange('current_position', i);
+                                                                this._scrollTo(0);
+                                                            }}
+                                                            outlined={dailyReadiness.current_position === i ? false : true}
+                                                            raised={false}
+                                                            textStyle={{ fontSize: AppFonts.scaleFont(14), }}
+                                                            title={position.toUpperCase()}
+                                                        />
+                                                        <Spacer size={8} />
+                                                    </View>
+                                                )
+                                            })}
+                                        </View>
+                                        :
+                                        null
+                                    }
+                                </View>
                             </View>
                             <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
                                 <Spacer size={100} />
