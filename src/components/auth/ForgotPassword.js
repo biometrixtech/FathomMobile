@@ -75,7 +75,7 @@ class ForgotPassword extends Component {
     forgotPassword = () => {
         // Get email
         const credentials = this.state.form_values;
- 
+
         // close keyboard
         Keyboard.dismiss();
 
@@ -103,13 +103,13 @@ class ForgotPassword extends Component {
                     const error = AppAPI.handleError(err);
 
                     if(error.includes('UserNotFoundException')) {
-                        this.setState({ resultMsg: {error: 'The email address you provided was not found.'} });    
+                        this.setState({ resultMsg: {error: 'The email address you provided was not found.'} });
                     }
                     else if(error.includes('LimitExceededException')) {
-                        this.setState({ resultMsg: {error: 'Reset limit exceeded.  Please try again after some time.'} });    
+                        this.setState({ resultMsg: {error: 'Reset limit exceeded.  Please try again after some time.'} });
                     }
                     else if(error.includes('You must specify an endpoint')) {
-                        this.setState({ resultMsg: {error: 'Sorry, we are currently unable to process your request. Please try again after some time.'} });    
+                        this.setState({ resultMsg: {error: 'Sorry, we are currently unable to process your request. Please try again after some time.'} });
                     }
                     else{
                         this.setState({ resultMsg: { error } });
@@ -126,9 +126,7 @@ class ForgotPassword extends Component {
         return errorsArray;
     }
 
-
     _handleFormChange = (name, value) => {
-
         let newFormFields = _.update( this.state.form_values, name, () => value);
         this.setState({
             ['form_values']: newFormFields,
@@ -150,7 +148,7 @@ class ForgotPassword extends Component {
     }
 
     _routeToResetPassword = (email) => {
-        
+
         Actions.resetPassword();
     }
 
@@ -195,14 +193,14 @@ class ForgotPassword extends Component {
                                 this.inputs.email = input;
                             }}
                             value={this.state.form_values.email}
-                        
+
                         />
                         <Spacer size={10} />
                         {<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : this._routeToResetPassword}>
                             <View>
-                                <Text 
+                                <Text
                                     p
-                                    robotoRegular 
+                                    robotoRegular
                                     onPress={this._routeToResetPassword}
                                     style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, textDecorationLine: 'none',}]}>{'or enter your verification code'}
                                 </Text>
