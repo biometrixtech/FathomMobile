@@ -61,6 +61,9 @@ import ResendEmailComponent from '../components/onboarding/ResendEmail';
 import ChangeEmailContainer from '../containers/onboarding/ChangeEmail';
 import ChangeEmailComponent from '../components/onboarding/ChangeEmail';
 
+import SensorOnboardingContainer from '../containers/onboarding/SensorOnboarding';
+import SensorOnboardingComponent from '../components/onboarding/SensorOnboarding';
+
 const transitionConfig = () => {
     return {
         transitionSpec: {
@@ -125,6 +128,12 @@ const Index = (
                 panHandlers={null}
                 renderLeftButton={null}
                 title={'RESET EMAIL'}
+            />
+            <Scene
+                Layout={SensorOnboardingComponent}
+                component={SensorOnboardingContainer}
+                hideNavBar={true}
+                key={'sensorOnboarding'}
             />
             <Scene
                 Layout={OnboardingComponent}

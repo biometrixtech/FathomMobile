@@ -163,7 +163,7 @@ class Start extends Component {
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
                 // TODO: FIX BELOW!
-                Actions.accountDetails();
+                Actions.sensorOnboarding();
                 // if(userObj.onboarding_status && userObj.onboarding_status.includes('account_setup')) {
                 //     this._routeToMyPlan();
                 // } else {
