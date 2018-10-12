@@ -52,6 +52,18 @@ import MyPlanComponent from '../components/myPlan/MyPlan';
 import OnboardingContainer from '../containers/onboarding/Onboarding';
 import OnboardingComponent from '../components/onboarding/Onboarding';
 
+import AccountDetailsContainer from '../containers/onboarding/AccountDetails';
+import AccountDetailsComponent from '../components/onboarding/AccountDetails';
+
+import ResendEmailContainer from '../containers/onboarding/ResendEmail';
+import ResendEmailComponent from '../components/onboarding/ResendEmail';
+
+import ChangeEmailContainer from '../containers/onboarding/ChangeEmail';
+import ChangeEmailComponent from '../components/onboarding/ChangeEmail';
+
+import SensorOnboardingContainer from '../containers/onboarding/SensorOnboarding';
+import SensorOnboardingComponent from '../components/onboarding/SensorOnboarding';
+
 const transitionConfig = () => {
     return {
         transitionSpec: {
@@ -88,6 +100,40 @@ const Index = (
                 initial={true}
                 key={'start'}
                 panHandlers={null}
+            />
+            <Scene
+                Layout={AccountDetailsComponent}
+                component={AccountDetailsContainer}
+                hideNavBar={true}
+                key={'accountDetails'}
+            />
+            <Scene
+                Layout={ResendEmailComponent}
+                component={ResendEmailContainer}
+                hideNavBar={false}
+                key={'resendEmail'}
+                navBar={CustomNavBar}
+                onLeft={() => Actions.accountDetails()}
+                panHandlers={null}
+                renderLeftButton={null}
+                title={'EMAIL VERIFICATION'}
+            />
+            <Scene
+                Layout={ChangeEmailComponent}
+                component={ChangeEmailContainer}
+                hideNavBar={false}
+                key={'changeEmail'}
+                navBar={CustomNavBar}
+                onLeft={() => Actions.accountDetails()}
+                panHandlers={null}
+                renderLeftButton={null}
+                title={'RESET EMAIL'}
+            />
+            <Scene
+                Layout={SensorOnboardingComponent}
+                component={SensorOnboardingContainer}
+                hideNavBar={true}
+                key={'sensorOnboarding'}
             />
             <Scene
                 Layout={OnboardingComponent}

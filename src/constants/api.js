@@ -11,7 +11,7 @@
 
 // what {version} are we on?
 const metaAPIVersion = '/meta/1_0';
-const plansAPIVersion = '/plans/1_0';
+const plansAPIVersion = '/plans/2_0';
 const usersAPIVersion = '/users/2_0';
 
 export default {
@@ -38,12 +38,12 @@ export default {
     endpoints: new Map([
         ['authorize',       `${usersAPIVersion}/user/{userId}/authorize`],
         ['create_user',     `${usersAPIVersion}/user`],
-        ['forgot_password', `${plansAPIVersion}/misc/forgot_password`],
+        ['forgot_password', `${usersAPIVersion}/user/forgot_password`],
         ['get_user',        `${usersAPIVersion}/user/{userId}`],
         ['login',           `${usersAPIVersion}/user/login`], // If you change the key, update the reference below
         ['logout',          `${usersAPIVersion}/user/{user_id}/logout`], // POST
         ['register_device', `${usersAPIVersion}/device/{device_uuid}`],
-        ['reset_password',  `${plansAPIVersion}/misc/confirm_forgot_password`],
+        ['reset_password',  `${usersAPIVersion}/user/reset_password`],
         ['update_user',     `${usersAPIVersion}/user/{userId}`],
         // My Plan specific routes
         ['active_recovery',       `${plansAPIVersion}/active_recovery`], // POST/PATCH

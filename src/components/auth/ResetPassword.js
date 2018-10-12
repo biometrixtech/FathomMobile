@@ -3,19 +3,18 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-    Keyboard, View, StyleSheet, TouchableOpacity
-} from 'react-native';
+import { Keyboard, View, StyleSheet, TouchableOpacity, } from 'react-native';
 
-import { Actions } from 'react-native-router-flux';
+// import third-party libraries
+import _ from 'lodash';
 
 // Consts and Libs
-import { AppAPI } from '../../lib';
-import { onboardingUtils } from '../../constants/utils';
-import { AppColors, AppFonts, AppSizes, AppStyles } from '../../constants';
-import _ from 'lodash';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
+import { AppAPI, AppUtil, } from '../../lib';
+import { onboardingUtils, } from '../../constants/utils';
+
 // Components
-import { Alerts, FormInput, Text, ProgressBar } from '../custom';
+import { Alerts, FormInput, ProgressBar, Spacer, Text, } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -141,24 +140,25 @@ class ResetPassword extends Component {
                         success={this.state.resultMsg.success}
                         error={this.state.resultMsg.error}
                     />
-                    <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(20)}]}>
-                        {'Set Your Password'}
+                    <Spacer size={20} />
+                    <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20),}]}>
+                        {'Set New Password'}
                     </Text>
-
+                    <Spacer size={20} />
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, { fontSize: AppFonts.scaleFont(15) }]}>
-                                {'You should receive a verification code by email.  Please retrieve that code and enter your new password.'}
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
+                                {'You should receive a verification code by email. Please retrieve that code and enter your new password.'}
                             </Text>
                         </View>
                     </View>
+                    <Spacer size={20} />
                     <View style={[AppStyles.containerCentered]}>
-
                         <FormInput
                             autoCapitalize={'none'}
                             blurOnSubmit={ false }
                             clearButtonMode = 'while-editing'
-                            inputStyle = {[{textAlign: 'center', width: AppSizes.screen.widthThreeQuarters,paddingTop: 25}]}
+                            inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'email-address'}
                             onChangeText={(text) => this._handleFormChange('Email', text)}
                             onSubmitEditing={() => {
@@ -176,7 +176,7 @@ class ResetPassword extends Component {
                             autoCapitalize={'none'}
                             blurOnSubmit={ false }
                             clearButtonMode = 'while-editing'
-                            inputStyle = {[{textAlign: 'center', width: AppSizes.screen.widthThreeQuarters,paddingTop: 25}]}
+                            inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'default'}
                             onChangeText={(text) => this._handleFormChange('VerificationCode', text)}
                             onSubmitEditing={() => {
@@ -194,7 +194,7 @@ class ResetPassword extends Component {
                             autoCapitalize={'none'}
                             blurOnSubmit={ false }
                             clearButtonMode = 'while-editing'
-                            inputStyle = {[{textAlign: 'center', width: AppSizes.screen.widthThreeQuarters,paddingTop: 25}]}
+                            inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'default'}
                             onChangeText={(text) => this._handleFormChange('NewPassword', text)}
                             onSubmitEditing={() => {
@@ -203,6 +203,7 @@ class ResetPassword extends Component {
                             placeholder={'new password'}
                             placeholderTextColor={AppColors.primary.yellow.hundredPercent}
                             returnKeyType={'next'}
+                            secureTextEntry={true}
                             textInputRef={input => {
                                 this.inputs.new_password = input;
                             }}
@@ -212,12 +213,14 @@ class ResetPassword extends Component {
                             autoCapitalize={'none'}
                             blurOnSubmit={ true }
                             clearButtonMode = 'while-editing'
-                            inputStyle = {[{textAlign: 'center', width: AppSizes.screen.widthThreeQuarters,paddingTop: 25}]}
+                            inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'default'}
                             onChangeText={(text) => this._handleFormChange('ConfirmPassword', text)}
-                            placeholder={'confirm password'}
+                            onSubmitEditing={() => this._handleFormSubmit()}
+                            placeholder={'confirm new password'}
                             placeholderTextColor={AppColors.primary.yellow.hundredPercent}
                             returnKeyType={'done'}
+                            secureTextEntry={true}
                             textInputRef={input => {
                                 this.inputs.confirm_password = input;
                             }}
@@ -227,7 +230,7 @@ class ResetPassword extends Component {
                     </View>
                 </View>
                 <TouchableOpacity onPress={() => this._handleFormSubmit()} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
-                    <Text robotoBold style={[AppStyles.nextButtonText, { fontSize: AppFonts.scaleFont(16) }]}>Confirm</Text>
+                    <Text robotoBold style={[AppStyles.nextButtonText, {fontSize: AppFonts.scaleFont(16),}]}>Confirm</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -310,8 +313,7 @@ class ResetPassword extends Component {
         }
     }
 
-    _loginUser(userData){
-        console.log(userData);
+    _loginUser(userData) {
         this.props.onSubmitSuccess({
             email:    userData.Email,
             password: userData.NewPassword,
@@ -337,14 +339,10 @@ class ResetPassword extends Component {
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
                     .then(() => this.props.finalizeLogin(user, userData, authorization));
             })
-            .then(() => this.setState({
+            .then(res => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, () => {
-                if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
-                    Actions.myPlan();
-                } else {
-                    Actions.onboarding();
-                }
+                AppUtil.routeOnLogin(res);
             })).catch((err) => {
                 console.log('err',err);
                 const error = AppAPI.handleError(err);

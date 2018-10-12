@@ -31,7 +31,7 @@
 
 
 #ifdef DEBUG
-  jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.106:8081/index.bundle?platform=ios&dev=true"];
+  jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.102:8081/index.bundle?platform=ios&dev=true"];
 //  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 
 #else
@@ -62,7 +62,7 @@
    */
 //  UIImageView *launchScreenView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LaunchScreen"]]; // Image named "LaunchScreen"
 //  launchScreenView.frame = self.window.bounds;
-//  
+//
 //  launchScreenView.contentMode = UIViewContentModeScaleAspectFill;
 //  rootView.loadingView = launchScreenView;
 

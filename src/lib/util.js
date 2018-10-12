@@ -8,10 +8,11 @@
 import { Alert, AsyncStorage } from 'react-native';
 
 // import third-party libraries
-import { AppColors, AppFonts, AppStyles } from '../constants';
-import { store } from '../store';
-import { Actions as DispatchActions, ErrorMessages, } from '../constants';
 import _ from 'lodash';
+import { Actions as DispatchActions, } from '../constants';
+import { Actions as RouterActions, } from 'react-native-router-flux';
+import { AppColors, AppStyles } from '../constants';
+import { store } from '../store';
 import DeviceInfo from 'react-native-device-info';
 import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
@@ -140,6 +141,25 @@ const UTIL = {
             ],
             { cancelable: false }
         );
+    },
+
+    routeOnLogin: (userObj) => {
+        // WARNING: WORK IN PROGRESS
+        /*
+         * Items to look at
+         *  - email_verified
+         *  - onboarding_status
+         */
+        // if(!userObj.email_verified) {
+        //     RouterActions.accountDetails();
+        // } else {
+        //     RouterActions.myPlan();
+        // }
+        if(userObj.onboarding_status && userObj.onboarding_status.includes('account_setup')) {
+            RouterActions.myPlan();
+        } else {
+            RouterActions.onboarding();
+        }
     },
 
     /**
