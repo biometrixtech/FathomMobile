@@ -339,10 +339,10 @@ class ResetPassword extends Component {
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
                     .then(() => this.props.finalizeLogin(user, userData, authorization));
             })
-            .then(() => this.setState({
+            .then(res => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, () => {
-                AppUtil.routeOnLogin(this.props.user);
+                AppUtil.routeOnLogin(res);
             })).catch((err) => {
                 console.log('err',err);
                 const error = AppAPI.handleError(err);

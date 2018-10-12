@@ -150,16 +150,16 @@ const UTIL = {
          *  - email_verified
          *  - onboarding_status
          */
-        if(!userObj.email_verified) {
-            RouterActions.accountDetails();
-        } else {
-            RouterActions.myPlan();
-        }
-        // if(userObj.onboarding_status && userObj.onboarding_status.includes('account_setup')) {
-        //     RouterActions.myPlan();
+        // if(!userObj.email_verified) {
+        //     RouterActions.accountDetails();
         // } else {
-        //     RouterActions.onboarding();
+        //     RouterActions.myPlan();
         // }
+        if(userObj.onboarding_status && userObj.onboarding_status.includes('account_setup')) {
+            RouterActions.myPlan();
+        } else {
+            RouterActions.onboarding();
+        }
     },
 
     /**
