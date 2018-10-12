@@ -162,13 +162,7 @@ class Start extends Component {
             .then(() => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {
-                // TODO: FIX BELOW!
-                Actions.sensorOnboarding();
-                // if(userObj.onboarding_status && userObj.onboarding_status.includes('account_setup')) {
-                //     this._routeToMyPlan();
-                // } else {
-                //     this._routeToOnboarding();
-                // }
+                AppUtil.routeOnLogin(userObj);
                 this.hideSplash();
             })).catch((err) => {
                 this.hideSplash();

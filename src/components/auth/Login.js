@@ -242,11 +242,7 @@ class Login extends Component {
                     .then(() => this.setState({
                         resultMsg: { success: 'SUCCESS, NOW LOADING YOUR DATA!!' },
                     }, () => {
-                        if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
-                            Actions.myPlan();
-                        } else {
-                            Actions.onboarding();
-                        }
+                        AppUtil.routeOnLogin(this.props.user);
                     })).catch((err) => {
                         console.log('err',err);
                         const error = AppAPI.handleError(err);
@@ -340,15 +336,15 @@ class Login extends Component {
                         title={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? 'Logging in...' : 'Login'}
                     />
                     <Spacer size={12} />
-                    {/*<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
+                    <TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
                         <Text
                             onPress={this._routeToForgotPassword}
                             robotoRegular
-                            style={[AppStyles.textCenterAligned, {color: AppColors.white, textDecorationLine: 'none', fontSize: AppFonts.scaleFont(15),}]}
+                            style={[AppStyles.textCenterAligned, {color: AppColors.white, opacity: 0.75, textDecorationLine: 'none', fontSize: AppFonts.scaleFont(15),}]}
                         >
                             {'forgot password'}
                         </Text>
-                    </TouchableOpacity>*/}
+                    </TouchableOpacity>
                 </View>
 
                 <Modal

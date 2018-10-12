@@ -10,6 +10,7 @@ import { Actions, } from 'react-native-router-flux';
 
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppStyles, AppSizes, } from '../../constants';
+import { AppUtil, } from '../../lib';
 
 // Components
 import { Spacer, TabIcon, Text, } from '../custom/';
@@ -33,14 +34,6 @@ class AccountDetails extends Component {
     }
 
     static defaultProps = {}
-
-    _handleNextButtonClicked = () => {
-        if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
-            Actions.myPlan();
-        } else {
-            Actions.onboarding();
-        }
-    }
 
     _handleResendButtonClicked = () => {
         // TODO: API CALL HERE FIRST
@@ -77,7 +70,7 @@ class AccountDetails extends Component {
                         <TabIcon
                             color={isEmailVerified ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.lightGrey}
                             icon={'arrow-right-circle'}
-                            onPress={() => isEmailVerified ? this._handleNextButtonClicked() : null}
+                            onPress={() => isEmailVerified ? AppUtil.routeOnLogin(this.props.user) : null}
                             size={44}
                             type={'simple-line-icon'}
                         />

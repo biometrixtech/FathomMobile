@@ -252,7 +252,7 @@ const logout = user_id => {
   * POST Forgot Password Email
   */
 const forgotPassword = (email) => {
-    return dispatch => AppAPI.forgot_password.post(false, email)
+    return dispatch => AppAPI.forgot_password.post(false, { personal_data: email })
         .then(result => {
             dispatch({
                 type:         Actions.FORGOT_PASSWORD_SUCCESS,
@@ -275,8 +275,9 @@ const forgotPassword = (email) => {
 /**
   * POST Reset Password form data
   */
-const resetPassword = (resetPasswordData) => {
-    return dispatch => AppAPI.reset_password.post(false, resetPasswordData)
+const resetPassword = dataObj => {
+    let payload = { personal_data: {email: dataObj.email}, confirmation_code: dataObj.confirmation_code, password: dataObj.password };
+    return dispatch => AppAPI.reset_password.post(false,  payload)
         .then(result => {
             dispatch({
                 type: Actions.RESET_PASSWORD_SUCCESS,

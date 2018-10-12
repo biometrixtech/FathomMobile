@@ -3,19 +3,18 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-    Keyboard, View, StyleSheet, TouchableOpacity
-} from 'react-native';
+import { Keyboard, View, StyleSheet, TouchableOpacity, } from 'react-native';
 
-import { Actions } from 'react-native-router-flux';
+import _ from 'lodash';
+import { Actions, } from 'react-native-router-flux';
 
 // Consts and Libs
-import { AppAPI } from '../../lib';
-import { onboardingUtils } from '../../constants/utils';
-import { AppColors, AppFonts, AppSizes, AppStyles } from '../../constants';
-import _ from 'lodash';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
+import { AppAPI, } from '../../lib';
+import { onboardingUtils, } from '../../constants/utils';
+
 // Components
-import { Alerts, FormInput, ProgressBar, Spacer, Text } from '../custom';
+import { Alerts, FormInput, ProgressBar, Spacer, Text, } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -52,7 +51,6 @@ class ForgotPassword extends Component {
                 success: '',
                 error:   '',
             },
-
             form_values: {
                 email: '',
             },
@@ -104,14 +102,11 @@ class ForgotPassword extends Component {
 
                     if(error.includes('UserNotFoundException')) {
                         this.setState({ resultMsg: {error: 'The email address you provided was not found.'} });
-                    }
-                    else if(error.includes('LimitExceededException')) {
+                    } else if(error.includes('LimitExceededException')) {
                         this.setState({ resultMsg: {error: 'Reset limit exceeded.  Please try again after some time.'} });
-                    }
-                    else if(error.includes('You must specify an endpoint')) {
+                    } else if(error.includes('You must specify an endpoint')) {
                         this.setState({ resultMsg: {error: 'Sorry, we are currently unable to process your request. Please try again after some time.'} });
-                    }
-                    else{
+                    } else{
                         this.setState({ resultMsg: { error } });
                     }
                 });
@@ -136,25 +131,19 @@ class ForgotPassword extends Component {
     _handleFormSubmit = () => {
         // validation
         let errorsArray = this._validateForm();
-        if (errorsArray.length === 0)
-        {
+        if (errorsArray.length === 0) {
             this.forgotPassword();
-        }
-        else
-        {
+        } else {
             let newErrorFields = _.update( this.state.resultMsg, 'error', () => errorsArray);
             this.setState({ resultMsg: newErrorFields });
         }
     }
 
     _routeToResetPassword = (email) => {
-
         Actions.resetPassword();
     }
 
-
     render = () => {
-
         return (
             <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: AppColors.white}}>
                 <View >
@@ -167,25 +156,28 @@ class ForgotPassword extends Component {
                         success={this.state.resultMsg.success}
                         error={this.state.resultMsg.error}
                     />
-                    <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(20)}]}>
+                    <Spacer size={20} />
+                    <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20),}]}>
                         {'Reset Your Password'}
                     </Text>
-
+                    <Spacer size={20} />
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, { fontSize: AppFonts.scaleFont(15) }]}>
-                                {'Enter your email to receive a verification code to reset your password.'}
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
+                                {'Enter your email to receive a 6-digit pin to create a new password.'}
                             </Text>
                         </View>
                     </View>
+                    <Spacer size={20} />
                     <View style={[AppStyles.containerCentered]}>
                         <FormInput
                             autoCapitalize={'none'}
                             blurOnSubmit={ true }
                             clearButtonMode = 'while-editing'
-                            inputStyle = {[{textAlign: 'center', width: AppSizes.screen.widthThreeQuarters,}]}
+                            inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'email-address'}
                             onChangeText={(text) => this._handleFormChange('email', text)}
+                            onSubmitEditing={() => this._handleFormSubmit()}
                             placeholder={'email'}
                             placeholderTextColor={AppColors.primary.yellow.hundredPercent}
                             returnKeyType={'done'}
@@ -193,16 +185,14 @@ class ForgotPassword extends Component {
                                 this.inputs.email = input;
                             }}
                             value={this.state.form_values.email}
-
                         />
-                        <Spacer size={10} />
+                        <Spacer size={20} />
                         {<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : this._routeToResetPassword}>
                             <View>
                                 <Text
-                                    p
                                     robotoRegular
                                     onPress={this._routeToResetPassword}
-                                    style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, textDecorationLine: 'none',}]}>{'or enter your verification code'}
+                                    style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, textDecorationLine: 'none', fontSize: AppFonts.scaleFont(15),}]}>{'or enter your reset pin.'}
                                 </Text>
                             </View>
                         </TouchableOpacity>}

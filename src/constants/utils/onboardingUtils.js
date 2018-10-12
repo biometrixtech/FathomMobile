@@ -65,7 +65,7 @@ const onboardingUtils = {
             && (user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0)
             && (user.biometric_data.mass.lb.length > 0 || user.biometric_data.mass.lb > 0)
             && possibleInjuryStatuses.includes(user.injury_status)
-            && possibleSystemTypes.includes(user.system_type)
+            && (possibleSystemTypes.includes(user.system_type) || !user.system_type)
             && possibleGenders.includes(user.biometric_data.sex)
         ) {
             errorsArray = [];
