@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-const SensorOnboarding = ({
+const Tutorial = ({
     Layout,
     user,
 }) => (
@@ -11,11 +11,11 @@ const SensorOnboarding = ({
     />
 );
 
-SensorOnboarding.propTypes = {
+Tutorial.propTypes = {
     user: PropTypes.object.isRequired,
 };
 
-SensorOnboarding.defaultProps = {};
+Tutorial.defaultProps = {};
 
 const mapStateToProps = state => ({
     user: state.user,
@@ -23,4 +23,4 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {};
 
-export default connect(mapStateToProps, mapDispatchToProps)(SensorOnboarding);
+export default connect(mapStateToProps, mapDispatchToProps)(Tutorial);

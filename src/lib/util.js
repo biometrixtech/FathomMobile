@@ -155,6 +155,7 @@ const UTIL = {
         // } else {
         //     RouterActions.myPlan();
         // }
+        // RouterActions.tutorial({step: 'tutorial'});
         if(userObj.onboarding_status && userObj.onboarding_status.includes('account_setup')) {
             RouterActions.myPlan();
         } else {
