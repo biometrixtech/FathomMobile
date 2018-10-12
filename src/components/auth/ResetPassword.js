@@ -148,7 +148,7 @@ class ResetPassword extends Component {
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
                             <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
-                                {'You should receive a 6-digit pin by email. Please retreive that pin and enter your new password.'}
+                                {'You should receive a verification code by email. Please retrieve that code and enter your new password.'}
                             </Text>
                         </View>
                     </View>

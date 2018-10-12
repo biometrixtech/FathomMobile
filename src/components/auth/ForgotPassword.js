@@ -164,7 +164,7 @@ class ForgotPassword extends Component {
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
                             <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
-                                {'Enter your email to receive a 6-digit pin to create a new password.'}
+                                {'Enter your email to receive a verification code to create a new password.'}
                             </Text>
                         </View>
                     </View>
