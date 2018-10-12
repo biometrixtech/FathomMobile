@@ -182,7 +182,7 @@ class ResetPassword extends Component {
                             onSubmitEditing={() => {
                                 this._focusNextField('new_password');
                             }}
-                            placeholder={'6-digit pin'}
+                            placeholder={'verification code'}
                             placeholderTextColor={AppColors.primary.yellow.hundredPercent}
                             returnKeyType={'next'}
                             textInputRef={input => {

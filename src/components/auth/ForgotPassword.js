@@ -192,7 +192,7 @@ class ForgotPassword extends Component {
                                 <Text
                                     robotoRegular
                                     onPress={this._routeToResetPassword}
-                                    style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, textDecorationLine: 'none', fontSize: AppFonts.scaleFont(15),}]}>{'or enter your reset pin.'}
+                                    style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, textDecorationLine: 'none', fontSize: AppFonts.scaleFont(15),}]}>{'or enter your verification code.'}
                                 </Text>
                             </View>
                         </TouchableOpacity>}
