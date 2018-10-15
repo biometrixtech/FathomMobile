@@ -1541,7 +1541,7 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                {
+                { this.state.isFunctionalStrengthCollapsed ?
                     _.map(filteredTrainingSessions, (postPracticeSurvey, i) => {
                         let cleanedPostSessionName = MyPlanConstants.cleanedPostSessionName(postPracticeSurvey).fullName;
                         return(
@@ -1565,6 +1565,8 @@ class MyPlan extends Component {
                             </View>
                         );
                     })
+                    :
+                    null
                 }
                 <Spacer size={15} />
                 { this.state.isFunctionalStrengthCollapsed ?
