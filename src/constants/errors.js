@@ -85,5 +85,6 @@ export default {
     patchFunctionalStrength: 'There was an error saving your plan specific data. Please try again!',
     patchActiveRecovery:     'There was an error saving your plan specific data. Please try again!',
     noSessions:              'There was an error saving your plan specific data. Please try again!',
+    updatingUser:            'There was an error updating your account specific data. Please try again!',
 
 };
