@@ -51,6 +51,8 @@ class Root extends Component {
          * Maintenance Window
          */
         AppUtil.getMaintenanceWindow();
+        // clear PN flag
+        AppUtil.updatePushNotificationFlag();
     }
 
     componentWillMount = () => {

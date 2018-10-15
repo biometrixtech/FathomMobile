@@ -163,8 +163,6 @@ class ReadinessSurvey extends Component {
                     { isFirstFunctionalStrength ?
                         <View>
                             <Spacer size={50} />
-                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>{'You\'ve unlocked\nFunctional Strength!'}</Text>
-                            <Spacer size={50} />
                             <View>
                                 <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                                     {questionCounter+=1}

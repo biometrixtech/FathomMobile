@@ -171,7 +171,7 @@ class MyPlan extends Component {
                             isActiveRecoveryCollapsed: response.daily_plans[0].post_recovery && !response.daily_plans[0].pre_recovery ? false : true,
                         }),
                         train: Object.assign({}, this.state.train, {
-                            completedPostPracticeSurvey: postPracticeSurveys[0].isPostPracticeSurveyCompleted,
+                            completedPostPracticeSurvey: postPracticeSurveys[0] ? postPracticeSurveys[0].isPostPracticeSurveyCompleted : {},
                             postPracticeSurveys
                         }),
                     });
@@ -1415,8 +1415,19 @@ class MyPlan extends Component {
             [];
         let completedFSExercises = store.getState().plan.completedFSExercises;
         let fsExerciseList = functionalStrength ? MyPlanConstants.cleanFSExerciseList(functionalStrength) : {};
+        let logActivityButtonOutlined = (isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed) || (!isDailyReadinessSurveyCompleted) ? true : false;
+        let logActivityButtonBackgroundColor = logActivityButtonOutlined ?
+            AppColors.white
+            :
+            AppColors.primary.yellow.hundredPercent;
+        let logActivityButtonColor = logActivityButtonOutlined && !isDailyReadinessSurveyCompleted ?
+            AppColors.zeplin.greyText
+            : logActivityButtonOutlined && isDailyReadinessSurveyCompleted ?
+                AppColors.primary.yellow.hundredPercent
+                :
+                AppColors.white;
         return (
-            <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white }} tabLabel={tabs[index]}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white, }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
                 { (dailyPlanObj && !dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
                     <View>
@@ -1559,54 +1570,24 @@ class MyPlan extends Component {
                 { this.state.isFunctionalStrengthCollapsed ?
                     <View>
                         <Button
-                            backgroundColor={
-                                isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
-                                    AppColors.primary.yellow.hundredPercent
-                                    :
-                                    AppColors.white
-                            }
+                            backgroundColor={logActivityButtonBackgroundColor}
                             buttonStyle={{justifyContent: 'space-between',}}
-                            color={
-                                (isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed) ||
-                                (isDailyReadinessSurveyCompleted && dailyPlanObj && !dailyPlanObj.functional_strength_eligible)  ?
-                                    AppColors.primary.yellow.hundredPercent
-                                    : isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0)?
-                                        AppColors.white
-                                        :
-                                        AppColors.zeplin.greyText
-                            }
+                            color={logActivityButtonColor}
                             containerViewStyle={{marginLeft: 22, marginRight: 22,}}
                             fontFamily={AppStyles.oswaldMedium.fontFamily}
                             fontWeight={AppStyles.oswaldMedium.fontWeight}
                             leftIcon={{
-                                color: (isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed) ||
-                                    (isDailyReadinessSurveyCompleted && dailyPlanObj && !dailyPlanObj.functional_strength_eligible) ?
-                                    AppColors.primary.yellow.hundredPercent
-                                    : isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
-                                        AppColors.white
-                                        :
-                                        AppColors.zeplin.greyText,
-                                name: isDailyReadinessSurveyCompleted ? 'add' : 'lock',
-                                size: isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
+                                color: logActivityButtonColor,
+                                name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
+                                size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
                             }}
                             onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal() : null}
-                            outlined={
-                                isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
-                                    false
-                                    :
-                                    true
-                            }
+                            outlined={logActivityButtonOutlined}
                             raised={false}
                             rightIcon={{
-                                color: (isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed) ||
-                                    (isDailyReadinessSurveyCompleted && dailyPlanObj && !dailyPlanObj.functional_strength_eligible) ?
-                                    AppColors.primary.yellow.hundredPercent
-                                    : isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
-                                        AppColors.white
-                                        :
-                                        AppColors.zeplin.greyText,
-                                name: 'chevron-right',
-                                size: AppFonts.scaleFont(30),
+                                color: logActivityButtonColor,
+                                name:  'chevron-right',
+                                size:  AppFonts.scaleFont(30),
                             }}
                             textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
                             title={'LOG COMPLETED ACTIVITY'}
