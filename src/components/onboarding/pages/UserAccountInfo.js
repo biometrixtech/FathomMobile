@@ -101,25 +101,31 @@ class UserAccountInfo extends Component {
                         />
                     </View>
                 </View>
-                <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.email.length > 0 ? 'E-mail Address' : ' '}</FormLabel>
-                <FormInput
-                    autoCapitalize={'none'}
-                    blurOnSubmit={ false }
-                    containerStyle={{marginLeft: 0, paddingLeft: 10}}
-                    editable={!isUpdatingUser}
-                    onChangeText={(text) => handleFormChange('personal_data.email', text)}
-                    onSubmitEditing={() => {
-                        this.focusNextField('phone_number');
-                    }}
-                    keyboardType={'email-address'}
-                    placeholder={'E-mail Address'}
-                    placeholderTextColor={AppColors.zeplin.lightGrey}
-                    returnKeyType={'next'}
-                    textInputRef={input => {
-                        this.inputs.email = input;
-                    }}
-                    value={user.personal_data.email}
-                />
+                {!isUpdatingUser ?
+                    <View>
+                        <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.email.length > 0 ? 'E-mail Address' : ' '}</FormLabel>
+                        <FormInput
+                            autoCapitalize={'none'}
+                            blurOnSubmit={ false }
+                            containerStyle={{marginLeft: 0, paddingLeft: 10}}
+                            editable={!isUpdatingUser}
+                            onChangeText={(text) => handleFormChange('personal_data.email', text)}
+                            onSubmitEditing={() => {
+                                this.focusNextField('phone_number');
+                            }}
+                            keyboardType={'email-address'}
+                            placeholder={'E-mail Address'}
+                            placeholderTextColor={AppColors.zeplin.lightGrey}
+                            returnKeyType={'next'}
+                            textInputRef={input => {
+                                this.inputs.email = input;
+                            }}
+                            value={user.personal_data.email}
+                        />
+                    </View>
+                    :
+                    null
+                }
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.phone_number.length > 0 ? 'Phone Number (optional)' : ' '}</FormLabel>
                 <FormInput
                     blurOnSubmit={ false }
@@ -138,32 +144,38 @@ class UserAccountInfo extends Component {
                     }}
                     value={user.personal_data.phone_number}
                 />
-                <FormLabel labelStyle={{color: AppColors.black}}>{user.password.length > 0 ? 'Password' : ' '}</FormLabel>
-                <View style={[{flexDirection: 'row',}]}>
-                    <FormInput
-                        blurOnSubmit={ true }
-                        containerStyle={{marginLeft: 0, paddingLeft: 10}}
-                        onChangeText={(text) => handleFormChange('password', text)}
-                        onSubmitEditing={() => {
-                            setAccordionSection(0, 1);
-                        }}
-                        placeholder={'Password'}
-                        placeholderTextColor={AppColors.zeplin.lightGrey}
-                        returnKeyType={'done'}
-                        secureTextEntry={isPasswordSecure}
-                        textInputRef={input => {
-                            this.inputs.password = input;
-                        }}
-                        value={user.password}
-                    />
-                    <TabIcon
-                        color={AppColors.zeplin.lightGrey}
-                        containerStyle={[{height: '100%', position: 'absolute', right: 10, top: 0,}]}
-                        icon={isPasswordSecure ? 'visibility' : 'visibility-off'}
-                        onPress={toggleShowPassword}
-                        size={24}
-                    />
-                </View>
+                {!isUpdatingUser ?
+                    <View>
+                        <FormLabel labelStyle={{color: AppColors.black}}>{user.password.length > 0 ? 'Password' : ' '}</FormLabel>
+                        <View style={[{flexDirection: 'row',}]}>
+                            <FormInput
+                                blurOnSubmit={ true }
+                                containerStyle={{marginLeft: 0, paddingLeft: 10}}
+                                onChangeText={(text) => handleFormChange('password', text)}
+                                onSubmitEditing={() => {
+                                    setAccordionSection(0, 1);
+                                }}
+                                placeholder={'Password'}
+                                placeholderTextColor={AppColors.zeplin.lightGrey}
+                                returnKeyType={'done'}
+                                secureTextEntry={isPasswordSecure}
+                                textInputRef={input => {
+                                    this.inputs.password = input;
+                                }}
+                                value={user.password}
+                            />
+                            <TabIcon
+                                color={AppColors.zeplin.lightGrey}
+                                containerStyle={[{height: '100%', position: 'absolute', right: 10, top: 0,}]}
+                                icon={isPasswordSecure ? 'visibility' : 'visibility-off'}
+                                onPress={toggleShowPassword}
+                                size={24}
+                            />
+                        </View>
+                    </View>
+                    :
+                    null
+                }
                 <Spacer size={40} />
                 <Text
                     oswaldRegular

@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, View, } from 'react-native';
+import { ActivityIndicator, Image, Platform, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -24,7 +24,8 @@ class Tutorial extends Component {
     static componentName = 'Tutorial';
 
     static propTypes = {
-        user: PropTypes.object.isRequired,
+        updateUser: PropTypes.func.isRequired,
+        user:       PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -32,6 +33,7 @@ class Tutorial extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            loading:        false,
             showSkipButton: false,
             slides:         onboardingUtils.getTutorialSlides(),
             uniqueValue:    0,
@@ -68,14 +70,18 @@ class Tutorial extends Component {
     }
 
     _onDone = () => {
-        // TODO: add logic here to maybe update user to know we've completed this process
-        /*
-        this.props.updateUser(XYZ)
-            .then(userRes => AppUtil.routeOnLogin(userRes))
-            .catch(err => AppUtil.handleAPIErrorAlert(ErrorMessages.updatingUser)); // alert with error
-        */
-        // TODO: remove navigation below below
-        Actions.settings();
+        this.setState({ loading: true, });
+        let payload = {};
+        payload.onboarding_status = 'tutorial-tutorial';
+        this.props.updateUser(payload, this.props.user.id)
+            .then(userRes => {
+                this.setState({ loading: false, });
+                AppUtil.routeOnLogin(userRes);
+            })
+            .catch(err => {
+                this.setState({ loading: false, });
+                AppUtil.handleAPIErrorAlert(ErrorMessages.updatingUser);
+            });
     }
 
     _onSkip = () => {
@@ -214,20 +220,29 @@ class Tutorial extends Component {
     render = () => {
         // render page
         return(
-            <AppIntroSlider
-                activeDotStyle={{backgroundColor: AppColors.zeplin.darkGrey}}
-                buttonTextStyle={{color: AppColors.zeplin.darkGrey,}}
-                doneLabel={'done'}
-                dotStyle={{backgroundColor: AppColors.zeplin.lightGrey}}
-                nextLabel={'next'}
-                onDone={this._onDone}
-                onSkip={this._onSkip}
-                onSlideChange={(index, lastIndex) => this._handleVideoPlayback(index, lastIndex, this.state.slides)}
-                renderItem={this._renderItem}
-                showSkipButton={this.state.showSkipButton}
-                skipLabel={'skip'}
-                slides={this.state.slides}
-            />
+            <View style={{flex: 1,}}>
+                <AppIntroSlider
+                    activeDotStyle={{backgroundColor: AppColors.zeplin.darkGrey}}
+                    buttonTextStyle={{color: AppColors.zeplin.darkGrey,}}
+                    doneLabel={'done'}
+                    dotStyle={{backgroundColor: AppColors.zeplin.lightGrey}}
+                    nextLabel={'next'}
+                    onDone={this._onDone}
+                    onSkip={this._onSkip}
+                    onSlideChange={(index, lastIndex) => this._handleVideoPlayback(index, lastIndex, this.state.slides)}
+                    renderItem={this._renderItem}
+                    showSkipButton={this.state.showSkipButton}
+                    skipLabel={'skip'}
+                    slides={this.state.slides}
+                />
+                { this.state.loading ?
+                    <ActivityIndicator
+                        color={AppColors.primary.yellow.hundredPercent}
+                        size={'large'}
+                        style={[AppStyles.activityIndicator]}
+                    /> : null
+                }
+            </View>
         )
     }
 }

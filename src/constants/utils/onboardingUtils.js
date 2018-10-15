@@ -37,7 +37,7 @@ const onboardingUtils = {
             let newError = 'Your Email must be a valid email format';
             errorsArray.push(newError);
             isValid = false;
-        } else if( !this.isPasswordValid(user.password).isValid ) {
+        } else if( !this.isPasswordValid(user.password).isValid && user.id ) {
             let newError = this.getPasswordRules();
             errorsArray.push(newError);
             isValid = false;

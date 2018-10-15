@@ -398,14 +398,18 @@ class Onboarding extends Component {
         });
         // only submit required fields
         let userObj = {};
-        userObj.password = newUser.password;
+        if(!this.props.user.id) {
+            userObj.password = newUser.password;
+        }
         userObj.role = newUser.role;
         if(newUser.system_type) {
             userObj.system_type = newUser.system_type;
         }
         userObj.injury_status = newUser.injury_status;
         userObj.cleared_to_play = clearedToPlay;
-        userObj.onboarding_status = newUser.onboarding_status.includes('account_setup') ? newUser.onboarding_status : newUser.onboarding_status.concat(['account_setup']);
+        if(!newUser.onboarding_status.includes('account_setup')) {
+            userObj.onboarding_status = 'account_setup';
+        }
         userObj.biometric_data = {};
         userObj.biometric_data.height = {};
         userObj.biometric_data.height.m = +(onboardingUtils.inchesToMeters(parseFloat(newUser.biometric_data.height.in))) + 0.1;
@@ -415,7 +419,9 @@ class Onboarding extends Component {
         userObj.biometric_data.mass.lb = +(parseFloat(newUser.biometric_data.mass.lb).toFixed(2)) + 0.1;
         userObj.biometric_data.sex = newUser.biometric_data.sex;
         userObj.personal_data = {};
-        userObj.personal_data.email = newUser.personal_data.email;
+        if(!this.props.user.id) {
+            userObj.personal_data.email = newUser.personal_data.email;
+        }
         userObj.personal_data.birth_date = newUser.personal_data.birth_date;
         userObj.personal_data.first_name = newUser.personal_data.first_name;
         userObj.personal_data.last_name = newUser.personal_data.last_name;
