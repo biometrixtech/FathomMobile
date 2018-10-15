@@ -7,6 +7,7 @@ import { Image, Platform, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
+import _ from 'lodash';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Video from 'react-native-video';
 
@@ -173,26 +174,96 @@ class Tutorial extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            uniqueValue: 0,
+            showSkipButton: false,
+            slides:         EMPTY_SLIDES,
+            uniqueValue:    0,
         }
+        this._players = {};
     }
 
     componentDidMount = () => {
-        // this seems to be needed to "refresh" the page to get new router information :(
-        this.setState({ uniqueValue: this.state.uniqueValue + 1, });
+        // NOTE: this seems to be needed to 'refresh' the page to get new router information :(
+        this.setState(
+            {
+                uniqueValue: this.state.uniqueValue + 1,
+            },
+            () => {
+                // setup constants
+                const step = Actions.currentParams.step;
+                const slides = step === 'single-sensor' ?
+                    SINGLE_SENSOR_SLIDES.slides
+                    : step === 'educational' ?
+                        VALUE_EDUCATION_SLIDES.slides
+                        : step === 'tutorial' ?
+                            TUTORIAL_SLIDES.slides
+                            :
+                            EMPTY_SLIDES.slides;
+                const showSkipButton = step === 'single-sensor' ?
+                    SINGLE_SENSOR_SLIDES.showSkipButton
+                    : step === 'educational' ?
+                        VALUE_EDUCATION_SLIDES.showSkipButton
+                        : step === 'tutorial' ?
+                            TUTORIAL_SLIDES.showSkipButton
+                            :
+                            EMPTY_SLIDES.showSkipButton;
+                let videoPlaybackOptions = {};
+                _.map(slides, slide => {
+                    if(slide.videoLink) {
+                        videoPlaybackOptions[slide.key] = {};
+                        videoPlaybackOptions[slide.key].paused = true;
+                    }
+                });
+                this.setState({
+                    ...this.state,
+                    showSkipButton,
+                    slides,
+                    videoPlaybackOptions,
+                });
+            },
+        );
     }
 
     _onDone = () => {
         // TODO: add logic here to maybe update user to know we've completed this process
+        // AppUtil.routeOnLogin(this.props.user);
         Actions.settings();
     }
 
     _routeToNextPage = () => {
         // TODO: add logic here to where to go next
+        // AppUtil.routeOnLogin(this.props.user);
         Actions.myPlan();
     }
 
+    _handleVideoPlayback = (index, lastIndex, slides) => {
+        // if we have a video on this slide, we want to:
+        // (1) start this video
+        // (2) pause and restart the previous video
+        const currentSlide = slides[index];
+        const lastSlide = slides[lastIndex];
+        let newVideoPlaybackOptions = _.cloneDeep(this.state.videoPlaybackOptions);
+        if(newVideoPlaybackOptions[currentSlide.key]) {
+            newVideoPlaybackOptions[currentSlide.key].paused = false;
+        }
+        if(newVideoPlaybackOptions[lastSlide.key]) {
+            newVideoPlaybackOptions[lastSlide.key].paused = true;
+        }
+        this.setState(
+            {
+                ...this.state,
+                videoPlaybackOptions: newVideoPlaybackOptions,
+            },
+            () => {
+                if(this._players[lastSlide.key]) {
+                    this._players[lastSlide.key].seek(0);
+                }
+            },
+        );
+    }
+
     _renderItem = props => {
+        // setup variables
+        const videoPlaybackOptions = this.state.videoPlaybackOptions[props.key];
         const style = {
             backgroundColor: props.backgroundColor ? props.backgroundColor : AppColors.white,
             flex:            1,
@@ -201,6 +272,7 @@ class Tutorial extends Component {
             paddingTop:      props.topSpacer,
             width:           props.width,
         }
+        // render item
         return(
             <View style={[style, AppStyles.containerCentered]}>
                 <View style={{flex: props.videoLink ? 0 : props.image ? 4 : 0, overflow: 'hidden',}}>
@@ -270,7 +342,8 @@ class Tutorial extends Component {
                 { props.videoLink ?
                     <View style={{flex: 8,}}>
                         <Video
-                            paused={false}
+                            paused={videoPlaybackOptions.paused}
+                            ref={ref => {this._players[props.key] = ref;}}
                             repeat={true}
                             resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
                             source={{uri: props.videoLink}}
@@ -292,24 +365,6 @@ class Tutorial extends Component {
     }
 
     render = () => {
-        // setup constants
-        const step = Actions.currentParams.step;
-        const slides = step === 'single-sensor' ?
-            SINGLE_SENSOR_SLIDES.slides
-            : step === 'educational' ?
-                VALUE_EDUCATION_SLIDES.slides
-                : step === 'tutorial' ?
-                    TUTORIAL_SLIDES.slides
-                    :
-                    EMPTY_SLIDES.slides;
-        const showSkipButton = step === 'single-sensor' ?
-            SINGLE_SENSOR_SLIDES.showSkipButton
-            : step === 'educational' ?
-                VALUE_EDUCATION_SLIDES.showSkipButton
-                : step === 'tutorial' ?
-                    TUTORIAL_SLIDES.showSkipButton
-                    :
-                    EMPTY_SLIDES.showSkipButton;
         // render page
         return(
             <AppIntroSlider
@@ -320,10 +375,11 @@ class Tutorial extends Component {
                 nextLabel={'next'}
                 onDone={this._onDone}
                 onSkip={this._routeToNextPage}
+                onSlideChange={(index, lastIndex) => this._handleVideoPlayback(index, lastIndex, this.state.slides)}
                 renderItem={this._renderItem}
-                showSkipButton={showSkipButton}
+                showSkipButton={this.state.showSkipButton}
                 skipLabel={'skip'}
-                slides={slides}
+                slides={this.state.slides}
             />
         )
     }
