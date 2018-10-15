@@ -149,18 +149,35 @@ const UTIL = {
          * Items to look at
          *  - email_verified
          *  - onboarding_status
+         * Steps:
+         * 1. Download App
+         * 2. Select Create Account
+         * 3. Value Proposition Screens (WILL BE ADDED LATER)
+         * 4. Onboarding
+         * 5. App Tutorial Screen: simple, similar to single sensor
+         * 6. ** Sensor tutorial
          */
-        // if(!userObj.email_verified) {
-        //     RouterActions.accountDetails();
-        // } else {
-        //     RouterActions.myPlan();
+        RouterActions.tutorial({step: 'tutorial'});
+        // if(userObj) {
+        //     // TODO: HANDLE FOR DISABLED ACCOUNTS & ACCOUNTS WHO HAVEN'T VERIFIED THEIR EMAIL YET
+        //     // if(!userObj.email_verified) {
+        //     //     RouterActions.accountDetails();
+        //     // }
+        //     // TODO: uncomment below when educational content is in
+        //     // if(!userObj.onboarding_status.includes('educational')) {
+        //     //   RouterActions.tutorial({step: 'educational'});
+        //     // } else
+        //     if(!userObj.onboarding_status.includes('account_setup')) {
+        //         RouterActions.onboarding();
+        //     } else if(!userObj.onboarding_status.includes('tutorial')) {
+        //         RouterActions.tutorial({step: 'tutorial'});
+        //     // TODO: uncomment below when single-sensor information is ready
+        //     // } else if(!userObj.onboarding_status.includes('single-sensor')) {
+        //     //     RouterActions.tutorial({step: 'single-sensor'});
+        //     } else {
+        //         RouterActions.myPlan();
+        //     }
         // }
-        // RouterActions.tutorial({step: 'tutorial'});
-        if(userObj.onboarding_status && userObj.onboarding_status.includes('account_setup')) {
-            RouterActions.myPlan();
-        } else {
-            RouterActions.onboarding();
-        }
     },
 
     /**
