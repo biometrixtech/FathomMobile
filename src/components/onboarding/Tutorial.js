@@ -340,7 +340,7 @@ class Tutorial extends Component {
                     }
                 </View>
                 { props.videoLink ?
-                    <View style={{flex: 8,}}>
+                    <View style={{flex: 8, paddingVertical: Platform.OS === 'ios' ? 0 : AppSizes.padding,}}>
                         <Video
                             paused={videoPlaybackOptions.paused}
                             ref={ref => {this._players[props.key] = ref;}}
