@@ -1567,9 +1567,10 @@ class MyPlan extends Component {
                             }
                             buttonStyle={{justifyContent: 'space-between',}}
                             color={
-                                isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
+                                (isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed) ||
+                                (isDailyReadinessSurveyCompleted && dailyPlanObj && !dailyPlanObj.functional_strength_eligible)  ?
                                     AppColors.primary.yellow.hundredPercent
-                                    : isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
+                                    : isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0)?
                                         AppColors.white
                                         :
                                         AppColors.zeplin.greyText
@@ -1578,7 +1579,8 @@ class MyPlan extends Component {
                             fontFamily={AppStyles.oswaldMedium.fontFamily}
                             fontWeight={AppStyles.oswaldMedium.fontWeight}
                             leftIcon={{
-                                color: isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
+                                color: (isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed) ||
+                                    (isDailyReadinessSurveyCompleted && dailyPlanObj && !dailyPlanObj.functional_strength_eligible) ?
                                     AppColors.primary.yellow.hundredPercent
                                     : isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
                                         AppColors.white
@@ -1596,7 +1598,8 @@ class MyPlan extends Component {
                             }
                             raised={false}
                             rightIcon={{
-                                color: isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
+                                color: (isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed) ||
+                                    (isDailyReadinessSurveyCompleted && dailyPlanObj && !dailyPlanObj.functional_strength_eligible) ?
                                     AppColors.primary.yellow.hundredPercent
                                     : isDailyReadinessSurveyCompleted && ((functionalStrength && Object.keys(functionalStrength).length > 0 && functionalStrength.completed) || filteredTrainingSessions && filteredTrainingSessions.length > 0) ?
                                         AppColors.white
