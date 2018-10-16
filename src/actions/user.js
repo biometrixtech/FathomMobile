@@ -40,8 +40,8 @@ const updateUser = (payload, userId) => {
         .then(userData => {
             dispatch({
                 type:     Actions.LOGIN,
-                email:    payload.personal_data.email,
-                password: payload.password,
+                email:    userData.user.personal_data.email || store.getState().init.email,
+                password: userData.user.password || store.getState().init.password,
             });
             dispatch({
                 type: Actions.USER_REPLACE,

@@ -72,11 +72,11 @@ class Tutorial extends Component {
     _onDone = () => {
         this.setState({ loading: true, });
         let payload = {};
-        payload.onboarding_status = 'tutorial-tutorial';
+        payload.onboarding_status = ['tutorial-tutorial'];
         this.props.updateUser(payload, this.props.user.id)
             .then(userRes => {
                 this.setState({ loading: false, });
-                AppUtil.routeOnLogin(userRes);
+                AppUtil.routeOnLogin(userRes.user);
             })
             .catch(err => {
                 this.setState({ loading: false, });

@@ -408,7 +408,7 @@ class Onboarding extends Component {
         userObj.injury_status = newUser.injury_status;
         userObj.cleared_to_play = clearedToPlay;
         if(!newUser.onboarding_status.includes('account_setup')) {
-            userObj.onboarding_status = 'account_setup';
+            userObj.onboarding_status = ['account_setup'];
         }
         userObj.biometric_data = {};
         userObj.biometric_data.height = {};
@@ -435,7 +435,7 @@ class Onboarding extends Component {
                 return this.props.updateUser(userObj, this.props.user.id)
                     .then(response => {
                         this.setState({ loading: false });
-                        return Actions.myPlan();
+                        return AppUtil.routeOnLogin(response.user);
                     })
                     .catch(err => {
                         const error = AppAPI.handleError(err);
@@ -483,11 +483,11 @@ class Onboarding extends Component {
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
                     .then(() => this.props.finalizeLogin(user, {Email: userObj.personal_data.email, Password: userObj.password}, authorization.jwt));
             })
-            .then(() => this.setState({
+            .then(userRes => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, () => {
                 this.setState({ loading: false });
-                return Actions.myPlan();
+                return AppUtil.routeOnLogin(userRes);
             })).catch((err) => {
                 console.log('err',err);
                 const error = AppAPI.handleError(err);
