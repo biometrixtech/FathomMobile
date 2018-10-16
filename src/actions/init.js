@@ -205,6 +205,14 @@ const startLogin = (credentials, reload) => {
                     return reject('Token decode failed.');
                 }
 
+                // update accessory details
+                let cleanedResult = {};
+                cleanedResult.sensor_pid = response.user.sensor_pid;
+                cleanedResult.mobile_udid = response.user.mobile_udid;
+                dispatch({
+                    type: Actions.CONNECT_TO_ACCESSORY,
+                    data: cleanedResult,
+                });
                 // we need to add this here incase we make a call and need jwt in the header
                 dispatch({
                     type:     Actions.LOGIN,

@@ -26,6 +26,13 @@ const getUser = (userId) => {
                 type: Actions.USER_REPLACE,
                 data: userData,
             });
+            let cleanedResult = {};
+            cleanedResult.sensor_pid = userData.user.sensor_pid;
+            cleanedResult.mobile_udid = userData.user.mobile_udid;
+            dispatch({
+                type: Actions.CONNECT_TO_ACCESSORY,
+                data: cleanedResult,
+            });
             return Promise.resolve(userData);
         })
         .catch(err => Promise.reject(err));

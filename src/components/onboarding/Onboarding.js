@@ -82,15 +82,14 @@ class Onboarding extends Component {
     static componentName = 'Onboarding';
 
     static propTypes = {
-        authorizeUser:     PropTypes.func.isRequired,
-        createUser:        PropTypes.func.isRequired,
-        finalizeLogin:     PropTypes.func.isRequired,
-        getUserSensorData: PropTypes.func.isRequired,
-        network:           PropTypes.object.isRequired,
-        onFormSubmit:      PropTypes.func.isRequired,
-        registerDevice:    PropTypes.func.isRequired,
-        updateUser:        PropTypes.func.isRequired,
-        user:              PropTypes.object.isRequired,
+        authorizeUser:  PropTypes.func.isRequired,
+        createUser:     PropTypes.func.isRequired,
+        finalizeLogin:  PropTypes.func.isRequired,
+        network:        PropTypes.object.isRequired,
+        onFormSubmit:   PropTypes.func.isRequired,
+        registerDevice: PropTypes.func.isRequired,
+        updateUser:     PropTypes.func.isRequired,
+        user:           PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -472,11 +471,6 @@ class Onboarding extends Component {
                         return Promise.resolve(returnObj);
                     })
                     .catch(err => Promise.reject('Unexpected response authorization'))
-            })
-            .then(response => {
-                return this.props.getUserSensorData(response.user.id)
-                    .then(res => Promise.resolve(response))
-                    .catch(err => Promise.reject(err));
             })
             .then(response => {
                 let { authorization, user } = response;

@@ -46,22 +46,31 @@ class ReadinessSurvey extends Component {
         this.scrollViewRef = {};
         this.myComponents = [];
         this.positionsComponents = [];
+        this.state = {
+            counter: 0,
+        }
     }
 
     _scrollTo = (index, scrollToPositions) => {
-        let myComponentsLocation = this.myComponents[index];
-        if(scrollToPositions) {
-            myComponentsLocation = this.positionsComponents[index];
-        }
-        if(myComponentsLocation) {
-            _.delay(() => {
-                this.scrollViewRef.scrollTo({
-                    x:        myComponentsLocation.x,
-                    y:        myComponentsLocation.y,
-                    animated: true,
-                });
-            }, 500);
-        }
+        this.setState(
+            { counter: this.state.counter + 1, },
+            () => {
+                let myComponentsLocation = this.myComponents[index];
+                if(scrollToPositions) {
+                    myComponentsLocation = this.positionsComponents[index];
+                }
+                if(myComponentsLocation) {
+                    _.delay(() => {
+                        console.log('SCROLLINGGGG+++++');
+                        this.scrollViewRef.scrollTo({
+                            x:        myComponentsLocation.x,
+                            y:        myComponentsLocation.y,
+                            animated: true,
+                        });
+                    }, 500);
+                }
+            },
+        );
     }
 
     _getFunctionalStrengthOptions = session => {
@@ -87,6 +96,7 @@ class ReadinessSurvey extends Component {
     }
 
     render = () => {
+        console.log('HI', this.state.counter);
         const {
             dailyReadiness,
             handleAreaOfSorenessClick,
@@ -145,6 +155,13 @@ class ReadinessSurvey extends Component {
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         let questionCounter = 0;
+
+        // console.log('scrollViewRef',this.scrollViewRef);
+        // console.log('myComponents',this.myComponents[0],this.myComponents[1],this.myComponents[2],this.myComponents);
+        // console.log('positionsComponents',this.positionsComponents[0]);
+        console.log('view positions',this.myComponents[0],this.positionsComponents[0]);
+        console.log('myComponents',this.myComponents[1]);
+
         /*eslint no-return-assign: 0*/
         return(
             <View style={{flex: 1}}>
@@ -203,10 +220,10 @@ class ReadinessSurvey extends Component {
                                                             handleFormChange('current_sport_name', session.sport_name);
                                                             handleFormChange('current_position', null);
                                                             let currentSportPositions = _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name).positions;
-                                                            if(!currentSportPositions) {
-                                                                this._scrollTo(0);
-                                                            } else {
+                                                            if(currentSportPositions && currentSportPositions.length > 0) {
                                                                 this._scrollTo(0, true);
+                                                            } else {
+                                                                this._scrollTo(0);
                                                             }
                                                         }
                                                     } else if(isStrengthConditioning) {
@@ -229,7 +246,7 @@ class ReadinessSurvey extends Component {
                                         </View>
                                     )
                                 })}
-                                <View onLayout={event => {this.positionsComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                                <View style={{backgroundColor: 'red', flex: 1, flexGrow: 1,}} onLayout={event => {this.positionsComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
                                     { dailyReadiness.current_sport_name !== null && selectedSportPositions && selectedSportPositions.length > 0 ?
                                         <View>
                                             <Spacer size={70} />

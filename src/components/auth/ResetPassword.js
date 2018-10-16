@@ -330,11 +330,6 @@ class ResetPassword extends Component {
                 .catch(err => Promise.reject('Unexpected response authorization'))
         })
             .then(response => {
-                return this.props.getUserSensorData(response.user.id)
-                    .then(res => Promise.resolve(response))
-                    .catch(err => Promise.reject(err));
-            })
-            .then(response => {
                 let { authorization, user } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
                     .then(() => this.props.finalizeLogin(user, userData, authorization));

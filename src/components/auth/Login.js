@@ -80,20 +80,19 @@ class Login extends Component {
     static componentName = 'Login';
 
     static propTypes = {
-        authorizeUser:     PropTypes.func.isRequired,
-        certificate:       PropTypes.object,
-        device:            PropTypes.object,
-        email:             PropTypes.string,
-        environment:       PropTypes.string,
-        finalizeLogin:     PropTypes.func.isRequired,
-        getUserSensorData: PropTypes.func.isRequired,
-        network:           PropTypes.object.isRequired,
-        onFormSubmit:      PropTypes.func,
-        password:          PropTypes.string,
-        registerDevice:    PropTypes.func.isRequired,
-        setEnvironment:    PropTypes.func,
-        token:             PropTypes.string,
-        user:              PropTypes.object.isRequired,
+        authorizeUser:  PropTypes.func.isRequired,
+        certificate:    PropTypes.object,
+        device:         PropTypes.object,
+        email:          PropTypes.string,
+        environment:    PropTypes.string,
+        finalizeLogin:  PropTypes.func.isRequired,
+        network:        PropTypes.object.isRequired,
+        onFormSubmit:   PropTypes.func,
+        password:       PropTypes.string,
+        registerDevice: PropTypes.func.isRequired,
+        setEnvironment: PropTypes.func,
+        token:          PropTypes.string,
+        user:           PropTypes.object.isRequired,
     }
 
     static defaultProps = {
@@ -205,12 +204,10 @@ class Login extends Component {
 
                 /**
                   * - if jwt valid
-                  *   - getUserSensorData(user.id)
                   *     - registerDevice (user, userCreds, token, resolve, reject)
                   *       - finalizeLogin (user, userCreds, token, resolve, reject)
                   * - else if jwt not valid
                   *   - authorizeUser (authorization, user, userCreds, resolve, reject)
-                  *     - getUserSensorData(user.id)
                   *       - registerDevice (user, userCreds, token, resolve, reject)
                   *         - finalizeLogin (user, userCreds, token, resolve, reject)
                   */
@@ -229,11 +226,6 @@ class Login extends Component {
                         })
                         .catch(err => Promise.reject('Unexpected response authorization'))
                 })
-                    .then(response => {
-                        return this.props.getUserSensorData(response.user.id)
-                            .then(res => Promise.resolve(response))
-                            .catch(err => Promise.reject(err));
-                    })
                     .then(response => {
                         let { authorization, user } = response;
                         return this.props.registerDevice(this.props.certificate, this.props.device, user)

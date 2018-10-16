@@ -5,13 +5,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { ble, init } from '../../actions';
+import { init } from '../../actions';
 
 const ResetPassword = ({
     Layout,
     authorizeUser,
     finalizeLogin,
-    getUserSensorData,
     onFormSubmit,
     onSubmitSuccess,
     email,
@@ -25,7 +24,6 @@ const ResetPassword = ({
     <Layout
         authorizeUser={authorizeUser}
         finalizeLogin={finalizeLogin}
-        getUserSensorData={getUserSensorData}
         onFormSubmit={onFormSubmit}
         onSubmitSuccess={onSubmitSuccess}
         email={email}
@@ -51,7 +49,7 @@ ResetPassword.propTypes = {
     registerDevice:   PropTypes.func.isRequired,
     setEnvironment:   PropTypes.func.isRequired,
     verificationCode: PropTypes.string,
-    
+
 };
 
 ResetPassword.defaultProps = {
@@ -60,7 +58,7 @@ ResetPassword.defaultProps = {
     loading:          false,
     newPassword:      null,
     verificationCode: null,
-    
+
 };
 
 const mapStateToProps = state => ({
@@ -72,13 +70,12 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    authorizeUser:     init.authorizeUser,
-    finalizeLogin:     init.finalizeLogin,
-    getUserSensorData: ble.getUserSensorData,
-    onFormSubmit:      init.resetPassword,
-    onSubmitSuccess:   init.startLogin,
-    registerDevice:    init.registerDevice,
-    setEnvironment:    init.setEnvironment,
+    authorizeUser:   init.authorizeUser,
+    finalizeLogin:   init.finalizeLogin,
+    onFormSubmit:    init.resetPassword,
+    onSubmitSuccess: init.startLogin,
+    registerDevice:  init.registerDevice,
+    setEnvironment:  init.setEnvironment,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ResetPassword);
