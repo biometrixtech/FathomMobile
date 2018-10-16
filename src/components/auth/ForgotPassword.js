@@ -92,7 +92,7 @@ class ForgotPassword extends Component {
                     email: credentials.email,
                 }).then(() => {
                     this.setState({
-                        resultMsg: { success: 'A verification code has been sent to your email.' },
+                        resultMsg: { success: 'A pin has been sent to your email.' },
                     }, () => {
                         setTimeout(() => {
                             this._routeToResetPassword('reset-button');
@@ -163,7 +163,7 @@ class ForgotPassword extends Component {
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
                             <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
-                                {'Enter your email to receive a verification code to create a new password.'}
+                                {'Enter your email to receive a pin to create a new password.'}
                             </Text>
                         </View>
                     </View>
@@ -197,7 +197,7 @@ class ForgotPassword extends Component {
                                         robotoRegular
                                         style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15), textDecorationLine: 'underline',}]}
                                     >
-                                        {'enter your verification code'}
+                                        {'enter your pin'}
                                     </Text>
                                 </Text>
                             </View>
