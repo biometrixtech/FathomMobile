@@ -163,7 +163,7 @@ class ForgotPassword extends Component {
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
                             <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
-                                {'Enter your email to receive a pin to create a new password.'}
+                                {'Enter your email to receive a 6-digit pin to create a new password.'}
                             </Text>
                         </View>
                     </View>
@@ -197,7 +197,7 @@ class ForgotPassword extends Component {
                                         robotoRegular
                                         style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15), textDecorationLine: 'underline',}]}
                                     >
-                                        {'enter your pin'}
+                                        {'enter your 6-digit pin'}
                                     </Text>
                                 </Text>
                             </View>

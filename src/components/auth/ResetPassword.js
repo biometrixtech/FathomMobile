@@ -157,7 +157,7 @@ class ResetPassword extends Component {
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
                             <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
-                                {'You should receive a pin by email. Please retrieve that code and enter your new password.'}
+                                {'You should receive a 6-digit pin by email. Please retrieve that pin and enter your new password.'}
                             </Text>
                         </View>
                     </View>
@@ -191,7 +191,7 @@ class ResetPassword extends Component {
                             onSubmitEditing={() => {
                                 this._focusNextField('new_password');
                             }}
-                            placeholder={'pin'}
+                            placeholder={'6-digit pin'}
                             placeholderTextColor={AppColors.primary.yellow.hundredPercent}
                             returnKeyType={'next'}
                             textInputRef={input => {
