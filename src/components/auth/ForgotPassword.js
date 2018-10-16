@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Keyboard, View, StyleSheet, TouchableOpacity, } from 'react-native';
 
+// import third-party libraries
 import _ from 'lodash';
 import { Actions, } from 'react-native-router-flux';
 
@@ -94,7 +95,7 @@ class ForgotPassword extends Component {
                         resultMsg: { success: 'A verification code has been sent to your email.' },
                     }, () => {
                         setTimeout(() => {
-                            this._routeToResetPassword();
+                            this._routeToResetPassword('reset-button');
                         }, 1000);
                     });
                 }).catch((err) => {
@@ -139,8 +140,8 @@ class ForgotPassword extends Component {
         }
     }
 
-    _routeToResetPassword = (email) => {
-        Actions.resetPassword();
+    _routeToResetPassword = (from_button) => {
+        Actions.resetPassword({ from_button, });
     }
 
     render = () => {
@@ -152,8 +153,6 @@ class ForgotPassword extends Component {
                         totalSteps={3}
                     />
                     <Alerts
-                        status={this.state.resultMsg.status}
-                        success={this.state.resultMsg.success}
                         error={this.state.resultMsg.error}
                     />
                     <Spacer size={20} />
@@ -187,12 +186,19 @@ class ForgotPassword extends Component {
                             value={this.state.form_values.email}
                         />
                         <Spacer size={20} />
-                        {<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : this._routeToResetPassword}>
+                        {<TouchableOpacity onPress={() => this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : this._routeToResetPassword('link')}>
                             <View>
                                 <Text
                                     robotoRegular
-                                    onPress={this._routeToResetPassword}
-                                    style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, textDecorationLine: 'none', fontSize: AppFonts.scaleFont(15),}]}>{'or enter your verification code.'}
+                                    style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15), textDecorationLine: 'none',}]}
+                                >
+                                    {'or '}
+                                    <Text
+                                        robotoRegular
+                                        style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15), textDecorationLine: 'underline',}]}
+                                    >
+                                        {'enter your verification code'}
+                                    </Text>
                                 </Text>
                             </View>
                         </TouchableOpacity>}

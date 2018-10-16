@@ -177,7 +177,7 @@ const Index = (
                 hideNavBar={false}
                 key={'resetPassword'}
                 navBar={CustomNavBar}
-                onLeft={() => Actions.login()}
+                onLeft={() => Actions.forgotPassword()}
                 panHandlers={null}
                 title={'FORGOT PASSWORD'}
             />

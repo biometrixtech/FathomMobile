@@ -46,31 +46,23 @@ class ReadinessSurvey extends Component {
         this.scrollViewRef = {};
         this.myComponents = [];
         this.positionsComponents = [];
-        this.state = {
-            counter: 0,
-        }
     }
 
     _scrollTo = (index, scrollToPositions) => {
-        this.setState(
-            { counter: this.state.counter + 1, },
-            () => {
-                let myComponentsLocation = this.myComponents[index];
-                if(scrollToPositions) {
-                    myComponentsLocation = this.positionsComponents[index];
-                }
-                if(myComponentsLocation) {
-                    _.delay(() => {
-                        console.log('SCROLLINGGGG+++++');
-                        this.scrollViewRef.scrollTo({
-                            x:        myComponentsLocation.x,
-                            y:        myComponentsLocation.y,
-                            animated: true,
-                        });
-                    }, 500);
-                }
-            },
-        );
+        let myComponentsLocation = this.myComponents[index];
+        if(scrollToPositions) {
+            myComponentsLocation = this.positionsComponents[index];
+        }
+        if(myComponentsLocation) {
+            _.delay(() => {
+                console.log('SCROLLINGGGG+++++');
+                this.scrollViewRef.scrollTo({
+                    x:        myComponentsLocation.x,
+                    y:        myComponentsLocation.y,
+                    animated: true,
+                });
+            }, 500);
+        }
     }
 
     _getFunctionalStrengthOptions = session => {
@@ -95,8 +87,12 @@ class ReadinessSurvey extends Component {
         };
     }
 
+    componentDidUpdate(prevProps) {
+        console.log('prevProps',prevProps);
+    }
+
     render = () => {
-        console.log('HI', this.state.counter);
+        console.log('HI');
         const {
             dailyReadiness,
             handleAreaOfSorenessClick,

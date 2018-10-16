@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { Keyboard, View, StyleSheet, TouchableOpacity, } from 'react-native';
 
 // import third-party libraries
+import { Actions, } from 'react-native-router-flux';
 import _ from 'lodash';
 
 // Consts and Libs
@@ -73,11 +74,19 @@ class ResetPassword extends Component {
 
     componentDidMount = () => {
         if (this.props.email !== null) {
-            this.setState({
-                form_values: {
-                    Email: this.props.email,
-                },
-            });
+            let newFormValues = _.update( this.state.form_values, 'Email', () => this.props.email);
+            this.setState(
+                { form_values: newFormValues, },
+                () => {
+                    let newSuccessMsg = this.props.email !== null && Actions.currentParams.from_button === 'reset-button' ? 'EMAIL SENT! CHECK YOUR INBOX' : '';
+                    let newResultMsgs = _.update( this.state.resultMsg, 'success', () => newSuccessMsg);
+                    newResultMsgs = _.update( this.state.resultMsg, 'error', () => '');
+                    newResultMsgs = _.update( this.state.resultMsg, 'status', () => '');
+                    this.setState({
+                        ['resultMsg']: newResultMsgs,
+                    });
+                }
+            );
         }
     }
 
@@ -292,10 +301,16 @@ class ResetPassword extends Component {
     }
 
     _handleFormChange = (name, value) => {
-
         let newFormFields = _.update( this.state.form_values, name, () => value);
         this.setState({
             ['form_values']: newFormFields,
+        });
+        // also clear error messages when typing
+        let newResultMsgs = _.update( this.state.resultMsg, 'success', () => '');
+        newResultMsgs = _.update( this.state.resultMsg, 'error', () => '');
+        newResultMsgs = _.update( this.state.resultMsg, 'status', () => '');
+        this.setState({
+            ['resultMsg']: newResultMsgs,
         });
     }
 
