@@ -52,7 +52,7 @@ class Root extends Component {
          */
         AppUtil.getMaintenanceWindow();
         // clear PN flag
-        AppUtil.updatePushNotificationFlag();
+        PushNotification.setApplicationIconBadgeNumber(0);
     }
 
     componentWillMount = () => {
