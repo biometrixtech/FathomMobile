@@ -125,7 +125,7 @@ class ResetPassword extends Component {
                 }).catch((err) => {
                     const error = AppAPI.handleError(err);
                     if(error.includes('ExpiredCodeException')) {
-                        this.setState({ resultMsg: {error: 'The pin you are using has expired.  Please request a new pin.'} });
+                        this.setState({ resultMsg: {error: 'The PIN you are using has expired.  Please request a new PIN.'} });
                     }
                     else{
                         this.setState({ resultMsg: { error } });
@@ -157,7 +157,7 @@ class ResetPassword extends Component {
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
                             <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
-                                {'You should receive a 6-digit pin by email. Please retrieve that pin and enter your new password.'}
+                                {'You should receive a 6-digit PIN by email. Please retrieve that PIN and enter your new password.'}
                             </Text>
                         </View>
                     </View>
@@ -191,7 +191,7 @@ class ResetPassword extends Component {
                             onSubmitEditing={() => {
                                 this._focusNextField('new_password');
                             }}
-                            placeholder={'6-digit pin'}
+                            placeholder={'6-digit PIN'}
                             placeholderTextColor={AppColors.primary.yellow.hundredPercent}
                             returnKeyType={'next'}
                             textInputRef={input => {
@@ -256,7 +256,7 @@ class ResetPassword extends Component {
         }
         else
         {
-            errorsArray.push('Please enter a valid pin')
+            errorsArray.push('Please enter a valid PIN')
         }
         return {
             errorsArray,
