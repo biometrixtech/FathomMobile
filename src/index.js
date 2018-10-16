@@ -51,6 +51,8 @@ class Root extends Component {
          * Maintenance Window
          */
         AppUtil.getMaintenanceWindow();
+        // clear PN flag
+        PushNotification.setApplicationIconBadgeNumber(0);
     }
 
     componentWillMount = () => {
@@ -114,10 +116,10 @@ class Root extends Component {
         //             : notification.finish()
         //         )
         //     : null;
-        PushNotification.getApplicationIconBadgeNumber(numBadges => {
-            let newNumBadges = numBadges + 1;
-            PushNotification.setApplicationIconBadgeNumber(newNumBadges);
-        });
+        // PushNotification.getApplicationIconBadgeNumber(numBadges => {
+        //     let newNumBadges = numBadges + 1;
+        //     PushNotification.setApplicationIconBadgeNumber(newNumBadges);
+        // });
         let pnCallToAction = Platform.OS === 'ios' ? notification.data.biometrix.call_to_action : JSON.parse(notification.biometrix).call_to_action;
         this.props.store.dispatch({
             type: Actions.NOTIFICATION_RECEIVED,

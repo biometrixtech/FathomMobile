@@ -26,6 +26,13 @@ const getUser = (userId) => {
                 type: Actions.USER_REPLACE,
                 data: userData,
             });
+            let cleanedResult = {};
+            cleanedResult.sensor_pid = userData.user.sensor_pid;
+            cleanedResult.mobile_udid = userData.user.mobile_udid;
+            dispatch({
+                type: Actions.CONNECT_TO_ACCESSORY,
+                data: cleanedResult,
+            });
             return Promise.resolve(userData);
         })
         .catch(err => Promise.reject(err));
@@ -40,8 +47,8 @@ const updateUser = (payload, userId) => {
         .then(userData => {
             dispatch({
                 type:     Actions.LOGIN,
-                email:    payload.personal_data.email,
-                password: payload.password,
+                email:    userData.user.personal_data.email || store.getState().init.email,
+                password: userData.user.password || store.getState().init.password,
             });
             dispatch({
                 type: Actions.USER_REPLACE,

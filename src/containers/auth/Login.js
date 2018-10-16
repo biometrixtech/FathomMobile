@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { ble, init, } from '../../actions';
+import { init, } from '../../actions';
 
 const Login = ({
     Layout,
@@ -18,7 +18,6 @@ const Login = ({
     email,
     environment,
     finalizeLogin,
-    getUserSensorData,
     network,
     onFormSubmit,
     password,
@@ -35,7 +34,6 @@ const Login = ({
         email={email}
         environment={environment}
         finalizeLogin={finalizeLogin}
-        getUserSensorData={getUserSensorData}
         network={network}
         onFormSubmit={onFormSubmit}
         password={password}
@@ -55,7 +53,6 @@ Login.propTypes = {
     email:                PropTypes.string,
     environment:          PropTypes.string,
     finalizeLogin:        PropTypes.func.isRequired,
-    getUserSensorData:    PropTypes.func.isRequired,
     network:              PropTypes.object.isRequired,
     onFormSubmit:         PropTypes.func.isRequired,
     password:             PropTypes.string,
@@ -89,12 +86,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    authorizeUser:     init.authorizeUser,
-    finalizeLogin:     init.finalizeLogin,
-    getUserSensorData: ble.getUserSensorData,
-    onFormSubmit:      init.startLogin,
-    registerDevice:    init.registerDevice,
-    setEnvironment:    init.setEnvironment,
+    authorizeUser:  init.authorizeUser,
+    finalizeLogin:  init.finalizeLogin,
+    onFormSubmit:   init.startLogin,
+    registerDevice: init.registerDevice,
+    setEnvironment: init.setEnvironment,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

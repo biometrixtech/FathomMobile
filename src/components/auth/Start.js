@@ -151,14 +151,9 @@ class Start extends Component {
                     authorization.expires = response.authorization.expires;
                     authorization.jwt = response.authorization.jwt;
                 }
-                return this.props.getUserSensorData(userObj.id)
-                    .then(res => Promise.resolve())
-                    .catch(err => Promise.reject(err));
+                return this.props.registerDevice(this.props.certificate, this.props.device, userObj);
             })
-            .then(() => this.props.registerDevice(this.props.certificate, this.props.device, userObj))
-            .then(() => {
-                return this.props.finalizeLogin(userObj, credentials, authorization)
-            })
+            .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
             .then(() => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, (response) => {

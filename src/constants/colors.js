@@ -106,6 +106,7 @@ const zeplin = {
     greyText:       '#B2B2B2', // 178, 178, 178
     lightGrey:      '#D5D5D5', // 213, 213, 213
     shadow:         '#e4e4e4',
+    success:        '#5EB123',
 }
 
 const alerts = {

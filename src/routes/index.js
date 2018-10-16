@@ -9,7 +9,7 @@ import React from 'react';
 import { Animated, Easing, Image, View, Text, } from 'react-native';
 
 // import third-party libraries
-import { Actions, Router, Scene, Stack } from 'react-native-router-flux';
+import { ActionConst, Actions, Router, Scene, Stack } from 'react-native-router-flux';
 
 // Consts, Libs, and Utils
 import { AppColors, AppSizes, AppStyles, } from '../constants';
@@ -61,8 +61,8 @@ import ResendEmailComponent from '../components/onboarding/ResendEmail';
 import ChangeEmailContainer from '../containers/onboarding/ChangeEmail';
 import ChangeEmailComponent from '../components/onboarding/ChangeEmail';
 
-import SensorOnboardingContainer from '../containers/onboarding/SensorOnboarding';
-import SensorOnboardingComponent from '../components/onboarding/SensorOnboarding';
+import TutorialContainer from '../containers/onboarding/Tutorial';
+import TutorialComponent from '../components/onboarding/Tutorial';
 
 const transitionConfig = () => {
     return {
@@ -130,10 +130,11 @@ const Index = (
                 title={'RESET EMAIL'}
             />
             <Scene
-                Layout={SensorOnboardingComponent}
-                component={SensorOnboardingContainer}
+                Layout={TutorialComponent}
+                component={TutorialContainer}
                 hideNavBar={true}
-                key={'sensorOnboarding'}
+                key={'tutorial'}
+                panHandlers={null}
             />
             <Scene
                 Layout={OnboardingComponent}
@@ -176,7 +177,7 @@ const Index = (
                 hideNavBar={false}
                 key={'resetPassword'}
                 navBar={CustomNavBar}
-                onLeft={() => Actions.login()}
+                onLeft={() => Actions.forgotPassword()}
                 panHandlers={null}
                 title={'FORGOT PASSWORD'}
             />

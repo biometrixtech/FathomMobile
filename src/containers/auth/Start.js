@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { ble, init, user as UserActions } from '../../actions';
+import { init, user as UserActions } from '../../actions';
 
 const Start = ({
     Layout,
@@ -13,7 +13,6 @@ const Start = ({
     expires,
     finalizeLogin,
     getUser,
-    getUserSensorData,
     jwt,
     network,
     onFormSubmit,
@@ -31,7 +30,6 @@ const Start = ({
         expires={expires}
         finalizeLogin={finalizeLogin}
         getUser={getUser}
-        getUserSensorData={getUserSensorData}
         jwt={jwt}
         network={network}
         onFormSubmit={onFormSubmit}
@@ -52,7 +50,6 @@ Start.propTypes = {
     expires:              PropTypes.string,
     finalizeLogin:        PropTypes.func.isRequired,
     getUser:              PropTypes.func.isRequired,
-    getUserSensorData:    PropTypes.func.isRequired,
     jwt:                  PropTypes.string,
     network:              PropTypes.object.isRequired,
     onFormSubmit:         PropTypes.func.isRequired,
@@ -88,12 +85,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    authorizeUser:     init.authorizeUser,
-    finalizeLogin:     init.finalizeLogin,
-    getUser:           UserActions.getUser,
-    getUserSensorData: ble.getUserSensorData,
-    onFormSubmit:      init.startLogin,
-    registerDevice:    init.registerDevice,
+    authorizeUser:  init.authorizeUser,
+    finalizeLogin:  init.finalizeLogin,
+    getUser:        UserActions.getUser,
+    onFormSubmit:   init.startLogin,
+    registerDevice: init.registerDevice,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Start);

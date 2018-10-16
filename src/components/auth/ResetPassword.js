@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { Keyboard, View, StyleSheet, TouchableOpacity, } from 'react-native';
 
 // import third-party libraries
+import { Actions, } from 'react-native-router-flux';
 import _ from 'lodash';
 
 // Consts and Libs
@@ -73,11 +74,19 @@ class ResetPassword extends Component {
 
     componentDidMount = () => {
         if (this.props.email !== null) {
-            this.setState({
-                form_values: {
-                    Email: this.props.email,
-                },
-            });
+            let newFormValues = _.update( this.state.form_values, 'Email', () => this.props.email);
+            this.setState(
+                { form_values: newFormValues, },
+                () => {
+                    let newSuccessMsg = this.props.email !== null && Actions.currentParams.from_button === 'reset-button' ? 'EMAIL SENT! CHECK YOUR INBOX' : '';
+                    let newResultMsgs = _.update( this.state.resultMsg, 'success', () => newSuccessMsg);
+                    newResultMsgs = _.update( this.state.resultMsg, 'error', () => '');
+                    newResultMsgs = _.update( this.state.resultMsg, 'status', () => '');
+                    this.setState({
+                        ['resultMsg']: newResultMsgs,
+                    });
+                }
+            );
         }
     }
 
@@ -116,7 +125,7 @@ class ResetPassword extends Component {
                 }).catch((err) => {
                     const error = AppAPI.handleError(err);
                     if(error.includes('ExpiredCodeException')) {
-                        this.setState({ resultMsg: {error: 'The verification code you are using has expired.  Please request a new verification code.'} });
+                        this.setState({ resultMsg: {error: 'The PIN you are using has expired.  Please request a new PIN.'} });
                     }
                     else{
                         this.setState({ resultMsg: { error } });
@@ -148,7 +157,7 @@ class ResetPassword extends Component {
                     <View style={[AppStyles.containerCentered]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
                             <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
-                                {'You should receive a verification code by email. Please retrieve that code and enter your new password.'}
+                                {'You should receive a 6-digit PIN by email. Please retrieve that PIN and enter your new password.'}
                             </Text>
                         </View>
                     </View>
@@ -182,7 +191,7 @@ class ResetPassword extends Component {
                             onSubmitEditing={() => {
                                 this._focusNextField('new_password');
                             }}
-                            placeholder={'verification code'}
+                            placeholder={'6-digit PIN'}
                             placeholderTextColor={AppColors.primary.yellow.hundredPercent}
                             returnKeyType={'next'}
                             textInputRef={input => {
@@ -247,7 +256,7 @@ class ResetPassword extends Component {
         }
         else
         {
-            errorsArray.push('Please enter a valid verification code')
+            errorsArray.push('Please enter a valid PIN')
         }
         return {
             errorsArray,
@@ -292,10 +301,16 @@ class ResetPassword extends Component {
     }
 
     _handleFormChange = (name, value) => {
-
         let newFormFields = _.update( this.state.form_values, name, () => value);
         this.setState({
             ['form_values']: newFormFields,
+        });
+        // also clear error messages when typing
+        let newResultMsgs = _.update( this.state.resultMsg, 'success', () => '');
+        newResultMsgs = _.update( this.state.resultMsg, 'error', () => '');
+        newResultMsgs = _.update( this.state.resultMsg, 'status', () => '');
+        this.setState({
+            ['resultMsg']: newResultMsgs,
         });
     }
 
@@ -329,11 +344,6 @@ class ResetPassword extends Component {
                 })
                 .catch(err => Promise.reject('Unexpected response authorization'))
         })
-            .then(response => {
-                return this.props.getUserSensorData(response.user.id)
-                    .then(res => Promise.resolve(response))
-                    .catch(err => Promise.reject(err));
-            })
             .then(response => {
                 let { authorization, user } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
