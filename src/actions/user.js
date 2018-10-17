@@ -26,6 +26,13 @@ const getUser = (userId) => {
                 type: Actions.USER_REPLACE,
                 data: userData,
             });
+            let cleanedResult = {};
+            cleanedResult.sensor_pid = userData.user.sensor_pid;
+            cleanedResult.mobile_udid = userData.user.mobile_udid;
+            dispatch({
+                type: Actions.CONNECT_TO_ACCESSORY,
+                data: cleanedResult,
+            });
             return Promise.resolve(userData);
         })
         .catch(err => Promise.reject(err));
@@ -36,12 +43,12 @@ const getUser = (userId) => {
   * - Receives complete user data in return
   */
 const updateUser = (payload, userId) => {
-    return dispatch => AppAPI.update_user.put({userId}, payload)
+    return dispatch => AppAPI.update_user.patch({userId}, payload)
         .then(userData => {
             dispatch({
                 type:     Actions.LOGIN,
-                email:    payload.email,
-                password: payload.password,
+                email:    userData.user.personal_data.email || store.getState().init.email,
+                password: userData.user.password || store.getState().init.password,
             });
             dispatch({
                 type: Actions.USER_REPLACE,

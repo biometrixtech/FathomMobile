@@ -11,7 +11,7 @@ import Routes from './routes';
 import { TabIcon, } from './components/custom';
 
 // import third-party libraries
-import { Router, Stack, } from 'react-native-router-flux';
+import { Actions as RouterActions, Router, Stack, } from 'react-native-router-flux';
 import { NetworkMonitor } from 'react-native-redux-connectivity';
 import DropdownAlert from 'react-native-dropdownalert';
 import PushNotification from 'react-native-push-notification';
@@ -51,6 +51,8 @@ class Root extends Component {
          * Maintenance Window
          */
         AppUtil.getMaintenanceWindow();
+        // clear PN flag
+        PushNotification.setApplicationIconBadgeNumber(0);
     }
 
     componentWillMount = () => {
@@ -114,9 +116,14 @@ class Root extends Component {
         //             : notification.finish()
         //         )
         //     : null;
-        // if we ever get a notification, we need to address it regardless or any boolean
+        // PushNotification.getApplicationIconBadgeNumber(numBadges => {
+        //     let newNumBadges = numBadges + 1;
+        //     PushNotification.setApplicationIconBadgeNumber(newNumBadges);
+        // });
+        let pnCallToAction = Platform.OS === 'ios' ? notification.data.biometrix.call_to_action : JSON.parse(notification.biometrix).call_to_action;
         this.props.store.dispatch({
-            type: Actions.NOTIFICATION_RECEIVED
+            type: Actions.NOTIFICATION_RECEIVED,
+            data: pnCallToAction,
         });
         return Platform.OS === 'ios' ?
             notification.finish(PushNotificationIOS.FetchResult.NoData)

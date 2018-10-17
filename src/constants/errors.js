@@ -75,4 +75,16 @@ export default {
         retreivalError:  'BRING SENSOR BACK IN RANGE TO CONTINUE SYNCING',
         serverError:     'SYNC SUCCESSFUL, CONNECT TO INTERNET TO COMPLETE',
     },
+
+    // API errors
+    getMyPlan:               'There was an error getting your plan specific data. Please try again!',
+    getSoreBodyParts:        'There was an error getting your plan specific data. Please try again!',
+    postReadinessSurvey:     'There was an error saving your plan specific data. Please try again!',
+    postSessionSurvey:       'There was an error saving your plan specific data. Please try again!',
+    preReadiness:            'There was an error getting your plan specific data. Please try again!',
+    patchFunctionalStrength: 'There was an error saving your plan specific data. Please try again!',
+    patchActiveRecovery:     'There was an error saving your plan specific data. Please try again!',
+    noSessions:              'There was an error saving your plan specific data. Please try again!',
+    updatingUser:            'There was an error updating your account specific data. Please try again!',
+
 };

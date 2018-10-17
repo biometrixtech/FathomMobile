@@ -80,20 +80,19 @@ class Login extends Component {
     static componentName = 'Login';
 
     static propTypes = {
-        authorizeUser:     PropTypes.func.isRequired,
-        certificate:       PropTypes.object,
-        device:            PropTypes.object,
-        email:             PropTypes.string,
-        environment:       PropTypes.string,
-        finalizeLogin:     PropTypes.func.isRequired,
-        getUserSensorData: PropTypes.func.isRequired,
-        network:           PropTypes.object.isRequired,
-        onFormSubmit:      PropTypes.func,
-        password:          PropTypes.string,
-        registerDevice:    PropTypes.func.isRequired,
-        setEnvironment:    PropTypes.func,
-        token:             PropTypes.string,
-        user:              PropTypes.object.isRequired,
+        authorizeUser:  PropTypes.func.isRequired,
+        certificate:    PropTypes.object,
+        device:         PropTypes.object,
+        email:          PropTypes.string,
+        environment:    PropTypes.string,
+        finalizeLogin:  PropTypes.func.isRequired,
+        network:        PropTypes.object.isRequired,
+        onFormSubmit:   PropTypes.func,
+        password:       PropTypes.string,
+        registerDevice: PropTypes.func.isRequired,
+        setEnvironment: PropTypes.func,
+        token:          PropTypes.string,
+        user:           PropTypes.object.isRequired,
     }
 
     static defaultProps = {
@@ -205,12 +204,10 @@ class Login extends Component {
 
                 /**
                   * - if jwt valid
-                  *   - getUserSensorData(user.id)
                   *     - registerDevice (user, userCreds, token, resolve, reject)
                   *       - finalizeLogin (user, userCreds, token, resolve, reject)
                   * - else if jwt not valid
                   *   - authorizeUser (authorization, user, userCreds, resolve, reject)
-                  *     - getUserSensorData(user.id)
                   *       - registerDevice (user, userCreds, token, resolve, reject)
                   *         - finalizeLogin (user, userCreds, token, resolve, reject)
                   */
@@ -230,11 +227,6 @@ class Login extends Component {
                         .catch(err => Promise.reject('Unexpected response authorization'))
                 })
                     .then(response => {
-                        return this.props.getUserSensorData(response.user.id)
-                            .then(res => Promise.resolve(response))
-                            .catch(err => Promise.reject(err));
-                    })
-                    .then(response => {
                         let { authorization, user } = response;
                         return this.props.registerDevice(this.props.certificate, this.props.device, user)
                             .then(() => this.props.finalizeLogin(user, credentials, authorization));
@@ -242,11 +234,7 @@ class Login extends Component {
                     .then(() => this.setState({
                         resultMsg: { success: 'SUCCESS, NOW LOADING YOUR DATA!!' },
                     }, () => {
-                        if(this.props.user.onboarding_status && this.props.user.onboarding_status.includes('account_setup')) {
-                            Actions.myPlan();
-                        } else {
-                            Actions.onboarding();
-                        }
+                        AppUtil.routeOnLogin(this.props.user);
                     })).catch((err) => {
                         console.log('err',err);
                         const error = AppAPI.handleError(err);
@@ -340,15 +328,15 @@ class Login extends Component {
                         title={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? 'Logging in...' : 'Login'}
                     />
                     <Spacer size={12} />
-                    {/*<TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
+                    <TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
                         <Text
                             onPress={this._routeToForgotPassword}
                             robotoRegular
-                            style={[AppStyles.textCenterAligned, {color: AppColors.white, textDecorationLine: 'none', fontSize: AppFonts.scaleFont(15),}]}
+                            style={[AppStyles.textCenterAligned, {color: AppColors.white, opacity: 0.75, textDecorationLine: 'none', fontSize: AppFonts.scaleFont(15),}]}
                         >
                             {'forgot password'}
                         </Text>
-                    </TouchableOpacity>*/}
+                    </TouchableOpacity>
                 </View>
 
                 <Modal

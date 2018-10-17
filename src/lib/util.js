@@ -8,12 +8,15 @@
 import { Alert, AsyncStorage } from 'react-native';
 
 // import third-party libraries
-import DeviceInfo from 'react-native-device-info';
-import uuidByString from 'uuid-by-string';
-import { AppColors, AppFonts, AppStyles } from '../constants';
-import { store } from '../store';
 import _ from 'lodash';
-import { Actions as DispatchActions, ErrorMessages, } from '../constants';
+import { Actions as DispatchActions, } from '../constants';
+import { Actions as RouterActions, } from 'react-native-router-flux';
+import { AppColors, AppStyles } from '../constants';
+import { store } from '../store';
+import DeviceInfo from 'react-native-device-info';
+import PushNotification from 'react-native-push-notification';
+import moment from 'moment';
+import uuidByString from 'uuid-by-string';
 
 import { init as InitActions, } from '../actions';
 
@@ -55,6 +58,10 @@ const UTIL = {
         }
         uniqueId = uniqueId.toLowerCase();
         return uniqueId;
+    },
+
+    getAppBuildNumber: () => {
+        return DeviceInfo.getBuildNumber();
     },
 
     getNetworkStatus: (prevProps, network, Actions) => {
@@ -105,6 +112,70 @@ const UTIL = {
                 ],
                 { cancelable: false }
             );
+        }
+    },
+
+    updatePushNotificationFlag: () => {
+        store.dispatch({
+            type: DispatchActions.NOTIFICATION_ADDRESSED
+        });
+        PushNotification.setApplicationIconBadgeNumber(0);
+    },
+
+    getFormattedTimezoneString: () => {
+        let now = moment().toISOString(true);
+        let lastIndex = now.lastIndexOf('+') > -1 ? now.lastIndexOf('+') : now.lastIndexOf('-');
+        let formattedTimezone = now.slice(lastIndex);
+        return formattedTimezone;
+    },
+
+    handleAPIErrorAlert: (message, header = 'Error!') => {
+        Alert.alert(
+            header,
+            message,
+            [
+                {
+                    style: 'cancel',
+                    text:  'OK',
+                },
+            ],
+            { cancelable: false }
+        );
+    },
+
+    routeOnLogin: (userObj) => {
+        // WARNING: WORK IN PROGRESS
+        /*
+         * Items to look at
+         *  - email_verified
+         *  - onboarding_status
+         * Steps:
+         * 1. Download App
+         * 2. Select Create Account
+         * 3. Value Proposition Screens (WILL BE ADDED LATER)
+         * 4. Onboarding
+         * 5. App Tutorial Screen: simple, similar to single sensor
+         * 6. ** Sensor tutorial
+         */
+        if(userObj) {
+            // TODO: HANDLE FOR DISABLED ACCOUNTS & ACCOUNTS WHO HAVEN'T VERIFIED THEIR EMAIL YET
+            // if(!userObj.email_verified) {
+            //     RouterActions.accountDetails();
+            // }
+            // TODO: uncomment below when educational content is in
+            // if(!userObj.onboarding_status.includes('educational')) {
+            //   RouterActions.tutorial({step: 'educational-tutorial'});
+            // } else
+            if(!userObj.onboarding_status.includes('account_setup')) {
+                RouterActions.onboarding();
+            } else if(!userObj.onboarding_status.includes('tutorial-tutorial')) {
+                RouterActions.tutorial({step: 'tutorial'});
+            // TODO: uncomment below when single-sensor information is ready
+            // } else if(!userObj.onboarding_status.includes('single-sensor-tutorial')) {
+            //     RouterActions.tutorial({step: 'single-sensor'});
+            } else {
+                RouterActions.myPlan();
+            }
         }
     },
 
@@ -354,8 +425,6 @@ const UTIL = {
         inputStyle.textAlign = 'center';
         inputStyle.fontFamily = AppStyles.robotoBold.fontFamily;
         inputStyle.fontWeight = AppStyles.robotoBold.fontWeight;
-
-
         return inputStyle;
     }
 };

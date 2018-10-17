@@ -82,15 +82,14 @@ class Onboarding extends Component {
     static componentName = 'Onboarding';
 
     static propTypes = {
-        authorizeUser:     PropTypes.func.isRequired,
-        createUser:        PropTypes.func.isRequired,
-        finalizeLogin:     PropTypes.func.isRequired,
-        getUserSensorData: PropTypes.func.isRequired,
-        network:           PropTypes.object.isRequired,
-        onFormSubmit:      PropTypes.func.isRequired,
-        registerDevice:    PropTypes.func.isRequired,
-        updateUser:        PropTypes.func.isRequired,
-        user:              PropTypes.object.isRequired,
+        authorizeUser:  PropTypes.func.isRequired,
+        createUser:     PropTypes.func.isRequired,
+        finalizeLogin:  PropTypes.func.isRequired,
+        network:        PropTypes.object.isRequired,
+        onFormSubmit:   PropTypes.func.isRequired,
+        registerDevice: PropTypes.func.isRequired,
+        updateUser:     PropTypes.func.isRequired,
+        user:           PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -115,7 +114,6 @@ class Onboarding extends Component {
                     // agreed_privacy_policy: false, // boolean
                     cleared_to_play:   false, // boolean
                     onboarding_status: user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    email:             user.personal_data && user.personal_data.email ? user.personal_data.email : '',
                     password:          '',
                     biometric_data:    {
                         height: {
@@ -140,13 +138,14 @@ class Onboarding extends Component {
                         account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                         account_type:   'free', // 'paid', 'free'
                         birth_date:     user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'YYYY-MM-DD').format('MM/DD/YYYY') : '',
+                        email:          user.personal_data && user.personal_data.email ? user.personal_data.email : '',
                         first_name:     user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
                         last_name:      user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
                         phone_number:   user.personal_data && user.personal_data.phone_number ? user.personal_data.phone_number : '',
                         zip_code:       user.personal_data && user.personal_data.zip_code ? user.personal_data.zip_code : '',
                     },
                     role:                           'athlete',
-                    system_type:                    '1-sensor',
+                    // system_type:                    '1-sensor', // '1-sensor', '3-sensor'
                     injury_status:                  user.injury_status? user.injury_status : '',
                     injuries:                       {}, // COMING SOON
                     training_groups:                [], // COMING SOON
@@ -398,13 +397,18 @@ class Onboarding extends Component {
         });
         // only submit required fields
         let userObj = {};
-        userObj.email = newUser.email;
-        userObj.password = newUser.password;
+        if(!this.props.user.id) {
+            userObj.password = newUser.password;
+        }
         userObj.role = newUser.role;
-        userObj.system_type = newUser.system_type;
+        if(newUser.system_type) {
+            userObj.system_type = newUser.system_type;
+        }
         userObj.injury_status = newUser.injury_status;
         userObj.cleared_to_play = clearedToPlay;
-        userObj.onboarding_status = ['account_setup'];
+        if(!newUser.onboarding_status.includes('account_setup')) {
+            userObj.onboarding_status = ['account_setup'];
+        }
         userObj.biometric_data = {};
         userObj.biometric_data.height = {};
         userObj.biometric_data.height.m = +(onboardingUtils.inchesToMeters(parseFloat(newUser.biometric_data.height.in))) + 0.1;
@@ -414,6 +418,9 @@ class Onboarding extends Component {
         userObj.biometric_data.mass.lb = +(parseFloat(newUser.biometric_data.mass.lb).toFixed(2)) + 0.1;
         userObj.biometric_data.sex = newUser.biometric_data.sex;
         userObj.personal_data = {};
+        if(!this.props.user.id) {
+            userObj.personal_data.email = newUser.personal_data.email;
+        }
         userObj.personal_data.birth_date = newUser.personal_data.birth_date;
         userObj.personal_data.first_name = newUser.personal_data.first_name;
         userObj.personal_data.last_name = newUser.personal_data.last_name;
@@ -427,7 +434,7 @@ class Onboarding extends Component {
                 return this.props.updateUser(userObj, this.props.user.id)
                     .then(response => {
                         this.setState({ loading: false });
-                        return Actions.myPlan();
+                        return AppUtil.routeOnLogin(response.user);
                     })
                     .catch(err => {
                         const error = AppAPI.handleError(err);
@@ -446,11 +453,11 @@ class Onboarding extends Component {
 
     _handleLoginFinalize = (userObj) => {
         let credentials = {
-            Email:    userObj.email,
+            Email:    userObj.personal_data.email,
             Password: userObj.password,
         };
         return this.props.onFormSubmit({
-            email:    userObj.email,
+            email:    userObj.personal_data.email,
             password: userObj.password,
         }, false)
             .then(response => {
@@ -466,20 +473,15 @@ class Onboarding extends Component {
                     .catch(err => Promise.reject('Unexpected response authorization'))
             })
             .then(response => {
-                return this.props.getUserSensorData(response.user.id)
-                    .then(res => Promise.resolve(response))
-                    .catch(err => Promise.reject(err));
-            })
-            .then(response => {
                 let { authorization, user } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
-                    .then(() => this.props.finalizeLogin(user, {Email: userObj.email, Password: userObj.password}, authorization.jwt));
+                    .then(() => this.props.finalizeLogin(user, {Email: userObj.personal_data.email, Password: userObj.password}, authorization.jwt));
             })
-            .then(() => this.setState({
+            .then(userRes => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, () => {
                 this.setState({ loading: false });
-                return Actions.myPlan();
+                return AppUtil.routeOnLogin(userRes);
             })).catch((err) => {
                 console.log('err',err);
                 const error = AppAPI.handleError(err);

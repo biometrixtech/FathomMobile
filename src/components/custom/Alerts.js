@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     msg: {
         paddingVertical:   10,
         paddingHorizontal: 10,
-        backgroundColor:   AppColors.alerts.successBackground,
+        backgroundColor:   AppColors.zeplin.success,
     },
     msg_text: {
         ...AppFonts.oswaldMedium,

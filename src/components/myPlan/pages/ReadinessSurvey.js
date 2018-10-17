@@ -45,10 +45,18 @@ class ReadinessSurvey extends Component {
         super(props);
         this.scrollViewRef = {};
         this.myComponents = [];
+        this.positionsComponents = [];
+        this.headerComponent = {};
     }
 
-    _scrollTo = (index) => {
+    _scrollTo = (index, scrollToPositions, isFromFS) => {
         let myComponentsLocation = this.myComponents[index];
+        if(scrollToPositions) {
+            myComponentsLocation = this.positionsComponents[index];
+        }
+        if(isFromFS && this.headerComponent) {
+            myComponentsLocation.y = myComponentsLocation.y + this.headerComponent.height;
+        }
         if(myComponentsLocation) {
             _.delay(() => {
                 this.scrollViewRef.scrollTo({
@@ -112,8 +120,15 @@ class ReadinessSurvey extends Component {
         );
         let selectedSportPositions = dailyReadiness.current_sport_name !== null ? _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name).positions : [];
         const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
-        const isFirstFunctionalStrength = isFunctionalStrengthEligible && (!soreBodyParts.current_sport_name || soreBodyParts.current_sport_name !== 0) && (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
-        let isSecondFunctionalStrength = isFunctionalStrengthEligible && (soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0 || soreBodyParts.current_sport_name === 0 || soreBodyParts.current_sport_name > 0) && (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
+        const isFirstFunctionalStrength = isFunctionalStrengthEligible &&
+            (!soreBodyParts.current_sport_name && soreBodyParts.current_sport_name !== 0) &&
+            (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
+        const isSecondFunctionalStrength = isFunctionalStrengthEligible &&
+            (
+                soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0 ||
+                soreBodyParts.current_sport_name === 0 || soreBodyParts.current_sport_name > 0
+            ) &&
+            (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
         let isFunctionalStrengthTargetValid = dailyReadiness.current_sport_name !== null ?
             dailyReadiness.current_sport_name !== null && (dailyReadiness.current_position !== null || !selectedSportPositions)
             : dailyReadiness.current_sport_name === null ?
@@ -136,19 +151,21 @@ class ReadinessSurvey extends Component {
         let questionCounter = 0;
         /*eslint no-return-assign: 0*/
         return(
-            <View style={{flex: 1}}>
+            <View style={{flex: 1,}}>
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
-                    <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: 'center', width: AppSizes.screen.width}}>
+                    <View onLayout={event => {this.headerComponent = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,}}} style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: 'center', width: AppSizes.screen.width}}>
                         { isFirstFunctionalStrength ?
-                            <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black}]}>{'Congrats!'}</Text>
+                            <View style={{textAlign: 'center',}}>
+                                <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, {color: AppColors.black, paddingTop: AppSizes.paddingXLrg,}]}>{`Congrats, ${user.personal_data.first_name}!`}</Text>
+                                <Spacer size={10} />
+                                <Text oswaldBold style={[AppStyles.paddingHorizontalMed, {color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(24), paddingBottom: AppSizes.paddingXLrg, textAlign: 'center',}]}>{'You\'ve unlocked\nFunctional Strength'}</Text>
+                            </View>
                             :
-                            <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black}]}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
+                            <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black,}]}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
                         }
                     </View>
                     { isFirstFunctionalStrength ?
                         <View>
-                            <Spacer size={50} />
-                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>{'You\'ve unlocked\nFunctional Strength!'}</Text>
                             <Spacer size={50} />
                             <View>
                                 <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
@@ -190,7 +207,9 @@ class ReadinessSurvey extends Component {
                                                             handleFormChange('current_sport_name', session.sport_name);
                                                             handleFormChange('current_position', null);
                                                             let currentSportPositions = _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name).positions;
-                                                            if(!currentSportPositions) {
+                                                            if(currentSportPositions && currentSportPositions.length > 0) {
+                                                                this._scrollTo(0, true, true);
+                                                            } else {
                                                                 this._scrollTo(0);
                                                             }
                                                         }
@@ -201,7 +220,7 @@ class ReadinessSurvey extends Component {
                                                         } else {
                                                             handleFormChange('current_sport_name', null);
                                                             handleFormChange('current_position', session.strength_and_conditioning_type);
-                                                            this._scrollTo(0);
+                                                            this._scrollTo(0, false, true);
                                                         }
                                                     }
                                                 }}
@@ -214,6 +233,8 @@ class ReadinessSurvey extends Component {
                                         </View>
                                     )
                                 })}
+                            </View>
+                            <View onLayout={event => {this.positionsComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
                                 { dailyReadiness.current_sport_name !== null && selectedSportPositions && selectedSportPositions.length > 0 ?
                                     <View>
                                         <Spacer size={70} />
@@ -241,7 +262,7 @@ class ReadinessSurvey extends Component {
                                                         fontWeight={AppStyles.oswaldRegular.fontWeight}
                                                         onPress={() => {
                                                             handleFormChange('current_position', i);
-                                                            this._scrollTo(0);
+                                                            this._scrollTo(0, false, true);
                                                         }}
                                                         outlined={dailyReadiness.current_position === i ? false : true}
                                                         raised={false}

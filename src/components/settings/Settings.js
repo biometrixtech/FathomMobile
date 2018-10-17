@@ -13,14 +13,14 @@ import PropTypes from 'prop-types';
 
 
 // import third-party libraries
-import { Actions } from 'react-native-router-flux';
-import Toast, { DURATION } from 'react-native-easy-toast';
+import { Actions, } from 'react-native-router-flux';
+import Toast, { DURATION, } from 'react-native-easy-toast';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles } from '../../constants';
-import { bleUtils } from '../../constants/utils';
+import { AppColors, AppSizes, AppStyles, UserAccount, } from '../../constants';
+import { bleUtils, } from '../../constants/utils';
 import { ListItem, TabIcon, } from '../custom';
-import { AppUtil } from '../../lib';
+import { AppUtil, } from '../../lib';
 import { ble as BLEActions, user as UserActions, } from '../../actions';
 
 // Components
@@ -210,8 +210,25 @@ class Settings extends Component {
         }
     }
 
+    _handleLogoutAlert = (err) => {
+        Alert.alert(
+            'Error!',
+            'Ooops! Something went wrong while trying to logout. Please try again.',
+            [
+                {
+                    text:  'OK',
+                    style: 'cancel'
+                },
+            ],
+            { cancelable: true }
+        )
+    }
+
     render = () => {
         const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
+        const userObj = this.props.user ? this.props.user : false;
+        const possibleSystemTypes = userObj ? UserAccount.possibleSystemTypes.map(systemTypes => systemTypes.value) : false; // ['1-sensor', '3-sensor'];
+        const userHasSensorSystem = possibleSystemTypes ? possibleSystemTypes.includes(userObj.system_type) : false;
         // set animated values
         const spinValue = new Animated.Value(0);
         // First set up animation
@@ -233,32 +250,36 @@ class Settings extends Component {
         });
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
-                <ListItem
-                    chevronColor={AppColors.black}
-                    containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
-                    leftIcon={ this.state.isUnpairing ?
-                        <Animated.View
-                            style={{transform: [{rotate: spin}],}}
-                        >
+                { userHasSensorSystem ?
+                    <ListItem
+                        chevronColor={AppColors.black}
+                        containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
+                        leftIcon={ this.state.isUnpairing ?
+                            <Animated.View
+                                style={{transform: [{rotate: spin}],}}
+                            >
+                                <TabIcon
+                                    color={AppColors.black}
+                                    icon={'loading'}
+                                    size={24}
+                                    type={'material-community'}
+                                />
+                            </Animated.View>
+                            :
                             <TabIcon
                                 color={AppColors.black}
-                                icon={'loading'}
+                                icon={'bluetooth'}
                                 size={24}
-                                type={'material-community'}
                             />
-                        </Animated.View>
-                        :
-                        <TabIcon
-                            color={AppColors.black}
-                            icon={'bluetooth'}
-                            size={24}
-                        />
-                    }
-                    onPress={() => this.props.accessoryData.sensor_pid ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()
-                    }
-                    title={this.props.accessoryData.sensor_pid ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
-                    titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
-                />
+                        }
+                        onPress={() => this.props.accessoryData.sensor_pid ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()
+                        }
+                        title={this.props.accessoryData.sensor_pid ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
+                        titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
+                    />
+                    :
+                    null
+                }
                 <ListItem
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
@@ -269,7 +290,11 @@ class Settings extends Component {
                             size={24}
                         />
                     }
-                    onPress={() => this.props.logout().then(() => {Actions.start(); this.props.clearMyPlanData();})}
+                    onPress={() =>
+                        this.props.logout(this.props.user.id)
+                            .then(() => {Actions.start(); this.props.clearMyPlanData();})
+                            .catch(err => this._handleLogoutAlert(err))
+                    }
                     title={'LOGOUT'}
                     titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
                 />
@@ -283,7 +308,9 @@ class Settings extends Component {
                     /maria[+]mvp@fathomai.com/g.test(userEmail) ||
                     /mazen[+]mvp@fathomai.com/g.test(userEmail) ||
                     /melissa[+]mvp@fathomai.com/g.test(userEmail) ||
-                    /paul[+]mvp@fathomai.com/g.test(userEmail) ?
+                    /paul[+]mvp@fathomai.com/g.test(userEmail) ||
+                    /dipesh@fathomai.com/g.test(userEmail) ||
+                    /mazen@fathomai.com/g.test(userEmail) ?
                         <ListItem
                             chevronColor={AppColors.black}
                             containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}

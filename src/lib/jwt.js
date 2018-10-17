@@ -34,8 +34,8 @@ export default class JWT {
 
         // Let's try logging in
         return AppAPI[APIConfig.tokenKey].post(null, {
-            email:    this.apiCredentials.email,
-            password: this.apiCredentials.password,
+            personal_data: { email: this.apiCredentials.email },
+            password:      this.apiCredentials.password,
         }).then(async (res) => {
             if (!res.authorization || !res.authorization.jwt) {
                 return reject(res);
@@ -44,7 +44,6 @@ export default class JWT {
 
             const tokenIsNowValid = this.tokenIsValid ? this.tokenIsValid(jwt,res.user.id) : null;
             if (!tokenIsNowValid) { return reject(res); }
-
             return resolve(res);
         }).catch(err => reject(err));
     });
@@ -78,7 +77,7 @@ export default class JWT {
         //     return false;
         // }
 
-        if (userId && decodedToken.user_id !== userId) {
+        if (userId && decodedToken.sub !== userId) {
             return false; // Token is for another user
         }
 

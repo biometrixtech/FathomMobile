@@ -39,7 +39,7 @@ export default function initReducer(state = initialState, action) {
         });
     case Actions.NOTIFICATION_RECEIVED:
         return Object.assign({}, state, {
-            notification: true,
+            notification: action.data,
         });
     case Actions.NOTIFICATION_ADDRESSED:
         return Object.assign({}, state, {
@@ -60,9 +60,7 @@ export default function initReducer(state = initialState, action) {
         });
     case Actions.LOGOUT:
         return Object.assign({}, initialState, {
-            certificate: state.certificate,
-            device:      state.device,
-            environment: state.environment,
+            token: state.token,
         });
     case Actions.SIGN_UP_SUCCESS:
     case Actions.SIGN_UP_FAILURE:

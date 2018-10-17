@@ -62,7 +62,8 @@ const getMaintenanceWindow = (updateReducer) => {
 const authorizeUser = (authorization, user, userCreds) => {
     let session_token = authorization.session_token;
     let userId = user.id;
-    return dispatch => AppAPI.authorize.post({ userId }, { session_token })
+    let formattedTimezone = AppUtil.getFormattedTimezoneString();
+    return dispatch => AppAPI.authorize.post({ userId }, { session_token, timezone: formattedTimezone })
         .then(response => {
             let decodedToken;
             let token = response.authorization.jwt;
@@ -72,7 +73,7 @@ const authorizeUser = (authorization, user, userCreds) => {
                 return Promise.reject('Token decode failed.');
             }
 
-            if (!decodedToken || !decodedToken.user_id) {
+            if (!decodedToken || !decodedToken.sub) {
                 return Promise.reject('Token decode failed.');
             }
 
@@ -200,10 +201,18 @@ const startLogin = (credentials, reload) => {
                     return reject('Token decode failed.');
                 }
 
-                if (!decodedToken || !decodedToken.user_id) {
+                if (!decodedToken || !decodedToken.sub) {
                     return reject('Token decode failed.');
                 }
 
+                // update accessory details
+                let cleanedResult = {};
+                cleanedResult.sensor_pid = response.user.sensor_pid;
+                cleanedResult.mobile_udid = response.user.mobile_udid;
+                dispatch({
+                    type: Actions.CONNECT_TO_ACCESSORY,
+                    data: cleanedResult,
+                });
                 // we need to add this here incase we make a call and need jwt in the header
                 dispatch({
                     type:     Actions.LOGIN,
@@ -225,19 +234,33 @@ const startLogin = (credentials, reload) => {
 /**
   * Logout
   */
-const logout = () => {
-    return dispatch => Promise.resolve(
-        dispatch({
-            type: Actions.LOGOUT
-        })
-    );
+const logout = user_id => {
+    return dispatch => new Promise((resolve, reject) => {
+        return AppAPI.logout.post({ user_id })
+            .then(() => {
+                return resolve(
+                    dispatch({
+                        type: Actions.LOGOUT
+                    })
+                );
+            })
+            .catch(err => {
+                console.log('err',err);
+                // return reject(err);
+                return resolve(
+                    dispatch({
+                        type: Actions.LOGOUT
+                    })
+                );
+            });
+    });
 };
 
 /**
   * POST Forgot Password Email
   */
 const forgotPassword = (email) => {
-    return dispatch => AppAPI.forgot_password.post(false, email)
+    return dispatch => AppAPI.forgot_password.post(false, { personal_data: email })
         .then(result => {
             dispatch({
                 type:         Actions.FORGOT_PASSWORD_SUCCESS,
@@ -260,8 +283,9 @@ const forgotPassword = (email) => {
 /**
   * POST Reset Password form data
   */
- const resetPassword = (resetPasswordData) => {
-    return dispatch => AppAPI.reset_password.post(false, resetPasswordData)
+const resetPassword = dataObj => {
+    let payload = { personal_data: {email: dataObj.email}, confirmation_code: dataObj.confirmation_code, password: dataObj.password };
+    return dispatch => AppAPI.reset_password.post(false,  payload)
         .then(result => {
             dispatch({
                 type: Actions.RESET_PASSWORD_SUCCESS,
