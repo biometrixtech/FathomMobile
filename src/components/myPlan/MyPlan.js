@@ -29,7 +29,7 @@ import moment from 'moment';
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants/';
 import { store } from '../../store';
-import { AppUtil, } from '../../lib';
+import { AppUtil, PlanLogic, } from '../../lib';
 
 // Components
 import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
@@ -259,37 +259,18 @@ class MyPlan extends Component {
     }
 
     _handlePushNotification = props => {
-        let dailyPlan = props.plan.dailyPlan[0];
-        const validNotifs = ['COMPLETE_ACTIVE_PREP', 'COMPLETE_ACTIVE_RECOVERY', 'COMPLETE_DAILY_READINESS', 'VIEW_PLAN',];
-        if(props.notification === 'COMPLETE_ACTIVE_PREP' && !dailyPlan.pre_recovery_completed) {
-            // go to screen 0 & open active prep
-            this._goToScrollviewPage(0, () => {
-                let newPrepareFormFields = _.update( this.state.prepare, 'isActiveRecoveryCollapsed', () => false);
-                this.setState({
-                    prepare: newPrepareFormFields,
-                });
-                AppUtil.updatePushNotificationFlag();
+        const logicObj = PlanLogic.handlePushNotification(props, this.state);
+        this._goToScrollviewPage(logicObj.page, () => {
+            this.setState({
+                [logicObj.stateName]: logicObj.newStateFields,
             });
-        } else if(props.notification === 'COMPLETE_ACTIVE_RECOVERY' && !dailyPlan.post_recovery.completed) {
-            // go to screen 2 & open active recovery
-            this._goToScrollviewPage(2, () => {
-                let newRecoverFormFields = _.update( this.state.recover, 'isActiveRecoveryCollapsed', () => false);
-                this.setState({
-                    recover: newRecoverFormFields,
-                });
+            if(logicObj.updateExerciseList) {
+                this._handleExerciseListRefresh();
+            }
+            if(logicObj.updatePushNotificationFlag) {
                 AppUtil.updatePushNotificationFlag();
-            });
-        } else if(props.notification === 'COMPLETE_DAILY_READINESS' && !dailyPlan.daily_readiness_survey_completed) {
-            // go to screen 0 & open daily_readiness
-            this._goToScrollviewPage(0, () => {
-                this.setState({ isReadinessSurveyModalOpen: true, });
-                AppUtil.updatePushNotificationFlag();
-            });
-        } else if(props.notification === 'VIEW_PLAN' || !validNotifs.includes(props.notification)) {
-            // added catch in case of view plan or other message, do what we did in the past
-            this._handleExerciseListRefresh();
-            AppUtil.updatePushNotificationFlag();
-        }
+            }
+        });
     }
 
     _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side) => {
