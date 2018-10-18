@@ -5,31 +5,17 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ImageBackground, Platform, TouchableOpacity, View } from 'react-native';
 
 // import third-party libraries
-import { Actions } from 'react-native-router-flux';
+import { Actions, } from 'react-native-router-flux';
 import _ from 'lodash';
 import SplashScreen from 'react-native-splash-screen';
-import moment from 'moment';
 
 // Consts and Libs
-import { AppAPI, AppUtil } from '../../lib/';
-import {
-    Actions as DispatchActions,
-    AppColors,
-    AppSizes,
-    AppStyles,
-    AppFonts,
-    ErrorMessages,
-} from '../../constants';
-import { store } from '../../store';
-import { Alerts, Button, Spacer, Text } from '../custom';
-
-/* Styles ==================================================================== */
-const styles = StyleSheet.create({
-
-});
+import { AppAPI, AppUtil, } from '../../lib/';
+import { AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, } from '../../constants';
+import { Alerts, Button, Spacer, Text, } from '../custom';
 
 /* Component ==================================================================== */
 class Start extends Component {
@@ -87,7 +73,7 @@ class Start extends Component {
                 this.props.sessionToken &&
                 this.props.expires
             ) {
-                Promise.resolve(this.login());
+                this.login();
             } else {
                 this.hideSplash();
                 // check if we have a maintenance window to alert the user on
@@ -154,16 +140,17 @@ class Start extends Component {
                 return this.props.registerDevice(this.props.certificate, this.props.device, userObj);
             })
             .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
-            .then(() => this.setState({
-                resultMsg: { success: 'Success, now loading your data!' },
-            }, (response) => {
+            .then(() => {
                 AppUtil.routeOnLogin(userObj);
-                this.hideSplash();
-            })).catch((err) => {
+                setTimeout(() => {
+                    SplashScreen.hide();
+                }, 100);
+            })
+            .catch((err) => {
                 this.hideSplash();
                 const error = AppAPI.handleError(err);
                 console.log('err',error);
-                this._routeToLogin();
+                // this._routeToLogin();
             });
     }
 
