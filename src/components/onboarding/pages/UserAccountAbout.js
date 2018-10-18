@@ -99,7 +99,6 @@ class UserAccountAbout extends Component {
                     }}
                     date={user.personal_data.birth_date || ''}
                     format={'MM/DD/YYYY'}
-                    maxDate={new Date()}
                     mode={'date'}
                     onDateChange={date => handleFormChange('personal_data.birth_date', date)}
                     placeholder={'Date of Birth'}
@@ -135,7 +134,7 @@ class UserAccountAbout extends Component {
                     onChangeText={text => handleFormChange('personal_data.zip_code', text)}
                     placeholder={'Zip Code'}
                     placeholderTextColor={AppColors.zeplin.lightGrey}
-                    returnKeyType={'next'}
+                    returnKeyType={'done'}
                     textInputRef={input => {
                         this.inputs.zip_code = input;
                     }}

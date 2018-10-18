@@ -22,10 +22,9 @@ const onboardingUtils = {
         }
     },
 
-    isUserAccountInformationValid(user) {
+    isUserAccountInformationValid(user, isUpdatingUser) {
         let errorsArray = [];
         let isValid;
-
         if(
             user.personal_data.first_name.length === 0
             || user.personal_data.last_name.length === 0
@@ -37,7 +36,7 @@ const onboardingUtils = {
             let newError = 'Your Email must be a valid email format';
             errorsArray.push(newError);
             isValid = false;
-        } else if( !this.isPasswordValid(user.password).isValid && user.id ) {
+        } else if( !isUpdatingUser && !this.isPasswordValid(user.password).isValid ) {
             let newError = this.getPasswordRules();
             errorsArray.push(newError);
             isValid = false;
@@ -420,41 +419,81 @@ const onboardingUtils = {
             slides:         [
                 {
                     backgroundColor: AppColors.white,
+                    icon:            {color: AppColors.primary.yellow.hundredPercent, goToPage: 1, icon: 'arrow-right-circle', type: 'simple-line-icon',},
                     key:             'tutorial-0',
-                    title:           'App Tutorial',
+                    title:           'Welcome to Sustainable Training',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},
                 },
                 {
-                    backgroundColor: AppColors.white,
+                    backgroundColor: AppColors.primary.yellow.hundredPercent,
+                    buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-1',
-                    text:            'Every morning tell us how you feel so we can design your daily recovery plan',
-                    title:           'Readiness Survey',
-                    videoLink:       'https://s3.amazonaws.com/onboarding-content/readiness.mp4',
+                    text:            'Start every morning with a simple survey to tell us how you feel!',
+                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
+                    title:           'It all starts with You!',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
                 },
                 {
                     backgroundColor: AppColors.white,
                     key:             'tutorial-2',
-                    text:            'Access your recovery plan before and after training',
-                    title:           'Prep & Recover',
-                    videoLink:       'https://s3.amazonaws.com/onboarding-content/prep.mp4',
+                    title:           'It starts with you!',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
+                    videoLink:       'https://s3.amazonaws.com/onboarding-content/readiness.mp4',
                 },
                 {
-                    backgroundColor: AppColors.white,
+                    backgroundColor: AppColors.zeplin.navyBlue,
+                    buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-3',
-                    text:            'Log your activity & soreness so we canupdate your recovery plan',
-                    title:           'Train',
-                    videoLink:       'https://s3.amazonaws.com/onboarding-content/train.mp4',
+                    text:            'We use this info to design active prep to best prepare your body for activity!',
+                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
+                    title:           'We\'ll design your perfect prep!',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
                 },
                 {
                     backgroundColor: AppColors.white,
                     key:             'tutorial-4',
-                    text:            'Recover well and often to unlock functional strength',
-                    title:           'Functional Strength',
+                    title:           'Your perfect prep',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
+                    videoLink:       'https://s3.amazonaws.com/onboarding-content/prep.mp4',
+                },
+                {
+                    backgroundColor: AppColors.zeplin.navyBlue,
+                    buttonTextStyle: {color: AppColors.white,},
+                    key:             'tutorial-5',
+                    text:            'After training, log your soreness & activity to design your recovery.',
+                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
+                    title:           'We\'ll Create an Optimal Recovery!',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
+                },
+                {
+                    backgroundColor: AppColors.white,
+                    key:             'tutorial-6',
+                    title:           'Optimal Recovery',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
+                    videoLink:       'https://s3.amazonaws.com/onboarding-content/train.mp4',
+                },
+                {
+                    backgroundColor: AppColors.primary.yellow.hundredPercent,
+                    buttonTextStyle: {color: AppColors.white,},
+                    key:             'tutorial-7',
+                    text:            'Prep & Recover regularly to unlock personalized functional strength to increase athletic resilience',
+                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
+                    title:           'You can Unlock Functional Strength!',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
+                },
+                {
+                    backgroundColor: AppColors.white,
+                    key:             'tutorial-8',
+                    title:           'Unlock Functional Strength',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
                     videoLink:       'https://s3.amazonaws.com/onboarding-content/fs.mp4',
                 },
                 {
                     backgroundColor: AppColors.white,
-                    key:             'tutorial-5',
+                    icon:            {color: AppColors.primary.yellow.hundredPercent, goToPage: false, icon: 'arrow-right-circle', type: 'simple-line-icon',},
+                    key:             'tutorial-9',
                     title:           'You\'re ready to use the app!',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},
                 },
             ],
         };

@@ -17,7 +17,7 @@ import { AppUtil, } from '../../lib';
 import { onboardingUtils, } from '../../constants/utils';
 
 // Components
-import { Spacer, Text, } from '../custom/';
+import { Spacer, TabIcon, Text, } from '../custom/';
 
 /* Component ==================================================================== */
 class Tutorial extends Component {
@@ -33,12 +33,16 @@ class Tutorial extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading:        false,
-            showSkipButton: false,
-            slides:         onboardingUtils.getTutorialSlides(),
-            uniqueValue:    0,
+            activeDotStyle:  {backgroundColor: AppColors.zeplin.darkGrey,},
+            buttonTextStyle: {color: AppColors.zeplin.darkGrey,},
+            dotStyle:        {backgroundColor: AppColors.zeplin.lightGrey,},
+            loading:         false,
+            showSkipButton:  false,
+            slides:          onboardingUtils.getTutorialSlides(),
+            uniqueValue:     0,
         }
         this._players = {};
+        this._appIntroSlider = {};
     }
 
     componentDidMount = () => {
@@ -69,6 +73,14 @@ class Tutorial extends Component {
         );
     }
 
+    _handleIconClick = goToPage => {
+        if(goToPage) {
+            this._appIntroSlider.goToSlide(goToPage);
+        } else {
+            this._onDone();
+        }
+    }
+
     _onDone = () => {
         this.setState({ loading: true, });
         let payload = {};
@@ -86,6 +98,12 @@ class Tutorial extends Component {
 
     _onSkip = () => {
         Actions.myPlan();
+    }
+
+    _onSlideChange = (index, lastIndex, slides) => {
+        this._handleVideoPlayback(index, lastIndex, slides);
+        let newButtonTextStyle = slides[index].buttonTextStyle;
+        this.setState({ buttonTextStyle: newButtonTextStyle || {color: AppColors.zeplin.darkGrey,}, });
     }
 
     _handleVideoPlayback = (index, lastIndex, slides) => {
@@ -118,12 +136,13 @@ class Tutorial extends Component {
         // setup variables
         const videoPlaybackOptions = this.state.videoPlaybackOptions[props.key];
         const style = {
-            backgroundColor: props.backgroundColor ? props.backgroundColor : AppColors.white,
-            flex:            1,
-            height:          props.height,
-            paddingBottom:   props.bottomSpacer,
-            paddingTop:      props.topSpacer,
-            width:           props.width,
+            backgroundColor:   props.backgroundColor ? props.backgroundColor : AppColors.white,
+            flex:              1,
+            height:            props.height,
+            paddingBottom:     props.bottomSpacer,
+            paddingHorizontal: AppSizes.paddingLrg,
+            paddingTop:        props.topSpacer,
+            width:             props.width,
         }
         // render item
         return(
@@ -158,10 +177,10 @@ class Tutorial extends Component {
                             null
                     }
                 </View>
-                <View style={{flex: props.videoLink ? 2 : props.image ? 5 : 9, justifyContent: props.image ? 'flex-start' : 'center', paddingTop: props.image ? AppSizes.padding : 0, width: AppSizes.screen.widthTwoThirds,}}>
+                <View style={{flex: props.videoLink ? 1 : props.image ? 5 : 9, justifyContent: props.image ? 'flex-start' : 'center', paddingTop: props.image ? AppSizes.padding : 0,}}>
                     <Text
                         oswaldMedium
-                        style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(28),}]}
+                        style={props.titleStyle ? [props.titleStyle] : [AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(28),}]}
                     >
                         {props.title}
                     </Text>
@@ -191,9 +210,22 @@ class Tutorial extends Component {
                         :
                         null
                     }
+                    { props.icon ?
+                        <TabIcon
+                            containerStyle={[{paddingVertical: AppSizes.paddingLrg,}]}
+                            icon={props.icon.icon}
+                            iconStyle={[{color: props.icon.color,}]}
+                            onPress={() => this._handleIconClick(props.icon.goToPage)}
+                            reverse={false}
+                            size={45}
+                            type={props.icon.type}
+                        />
+                        :
+                        null
+                    }
                 </View>
                 { props.videoLink ?
-                    <View style={{flex: 8, paddingVertical: Platform.OS === 'ios' ? 0 : AppSizes.padding,}}>
+                    <View style={{flex: 9, paddingVertical: Platform.OS === 'ios' ? 0 : AppSizes.padding,}}>
                         <Video
                             paused={videoPlaybackOptions.paused}
                             ref={ref => {this._players[props.key] = ref;}}
@@ -222,15 +254,18 @@ class Tutorial extends Component {
         return(
             <View style={{flex: 1,}}>
                 <AppIntroSlider
-                    activeDotStyle={{backgroundColor: AppColors.zeplin.darkGrey}}
-                    buttonTextStyle={{color: AppColors.zeplin.darkGrey,}}
+                    activeDotStyle={this.state.activeDotStyle}
+                    buttonTextStyle={this.state.buttonTextStyle}
                     doneLabel={'done'}
-                    dotStyle={{backgroundColor: AppColors.zeplin.lightGrey}}
+                    dotStyle={this.state.dotStyle}
                     nextLabel={'next'}
                     onDone={this._onDone}
                     onSkip={this._onSkip}
-                    onSlideChange={(index, lastIndex) => this._handleVideoPlayback(index, lastIndex, this.state.slides)}
+                    onSlideChange={(index, lastIndex) => this._onSlideChange(index, lastIndex, this.state.slides)}
+                    prevLabel={'back'}
+                    ref={ref => {this._appIntroSlider = ref;}}
                     renderItem={this._renderItem}
+                    showPrevButton={true}
                     showSkipButton={this.state.showSkipButton}
                     skipLabel={'skip'}
                     slides={this.state.slides}
