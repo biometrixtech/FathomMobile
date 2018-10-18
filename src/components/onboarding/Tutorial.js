@@ -177,7 +177,7 @@ class Tutorial extends Component {
                             null
                     }
                 </View>
-                <View style={{flex: props.videoLink ? 2 : props.image ? 5 : 9, justifyContent: props.image ? 'flex-start' : 'center', paddingTop: props.image ? AppSizes.padding : 0,}}>
+                <View style={{flex: props.videoLink ? 1 : props.image ? 5 : 9, justifyContent: props.image ? 'flex-start' : 'center', paddingTop: props.image ? AppSizes.padding : 0,}}>
                     <Text
                         oswaldMedium
                         style={props.titleStyle ? [props.titleStyle] : [AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(28),}]}
@@ -225,7 +225,7 @@ class Tutorial extends Component {
                     }
                 </View>
                 { props.videoLink ?
-                    <View style={{flex: 8, paddingVertical: Platform.OS === 'ios' ? 0 : AppSizes.padding,}}>
+                    <View style={{flex: 9, paddingVertical: Platform.OS === 'ios' ? 0 : AppSizes.padding,}}>
                         <Video
                             paused={videoPlaybackOptions.paused}
                             ref={ref => {this._players[props.key] = ref;}}

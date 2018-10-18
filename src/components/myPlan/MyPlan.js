@@ -40,6 +40,7 @@ const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
 const highSorenessMessage = 'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.';
 const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Active recovery is low-impact this morning so let\'s pick up with post practice recovery!';
 const lowSorenessPostMessage = 'Looks like you\'re all clear! Active recovery is low-impact for now so let\'s pick up tomorrow or after the next practice you log!';
+const errorInARAPMessage = '\nWhoops...\nWe hit an error generating your plan. Please swipe down to refresh.';
 
 const whenEnabledBackgroundColor = AppColors.white;
 const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
@@ -1107,7 +1108,12 @@ class MyPlan extends Component {
                             </View>
                         </View>
                     :
-                    null
+                    <View style={{ flex: 1, flexDirection: 'row', }}>
+                        <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                        <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: AppFonts.scaleFont(18), }]}>{errorInARAPMessage}</Text>
+                        </View>
+                    </View>
                 }
                 {
                     this.state.isReadinessSurveyModalOpen
@@ -1358,7 +1364,12 @@ class MyPlan extends Component {
                             </View>
                         </View>
                     :
-                    null
+                    <View style={{ flex: 1, flexDirection: 'row', }}>
+                        <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                        <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: AppFonts.scaleFont(18), }]}>{errorInARAPMessage}</Text>
+                        </View>
+                    </View>
                 }
                 {
                     this.state.isSelectedExerciseModalOpen
