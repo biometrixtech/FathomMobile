@@ -22,10 +22,9 @@ const onboardingUtils = {
         }
     },
 
-    isUserAccountInformationValid(user) {
+    isUserAccountInformationValid(user, isUpdatingUser) {
         let errorsArray = [];
         let isValid;
-
         if(
             user.personal_data.first_name.length === 0
             || user.personal_data.last_name.length === 0
@@ -37,7 +36,7 @@ const onboardingUtils = {
             let newError = 'Your Email must be a valid email format';
             errorsArray.push(newError);
             isValid = false;
-        } else if( !this.isPasswordValid(user.password).isValid && user.id ) {
+        } else if( !isUpdatingUser && !this.isPasswordValid(user.password).isValid ) {
             let newError = this.getPasswordRules();
             errorsArray.push(newError);
             isValid = false;

@@ -5,31 +5,17 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ImageBackground, Platform, TouchableOpacity, View } from 'react-native';
 
 // import third-party libraries
-import { Actions } from 'react-native-router-flux';
+import { Actions, } from 'react-native-router-flux';
 import _ from 'lodash';
 import SplashScreen from 'react-native-splash-screen';
-import moment from 'moment';
 
 // Consts and Libs
-import { AppAPI, AppUtil } from '../../lib/';
-import {
-    Actions as DispatchActions,
-    AppColors,
-    AppSizes,
-    AppStyles,
-    AppFonts,
-    ErrorMessages,
-} from '../../constants';
-import { store } from '../../store';
-import { Alerts, Button, Spacer, Text } from '../custom';
-
-/* Styles ==================================================================== */
-const styles = StyleSheet.create({
-
-});
+import { AppAPI, AppUtil, } from '../../lib/';
+import { AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, } from '../../constants';
+import { Alerts, Button, Spacer, Text, } from '../custom';
 
 /* Component ==================================================================== */
 class Start extends Component {

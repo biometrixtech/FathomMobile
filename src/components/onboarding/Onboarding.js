@@ -206,10 +206,14 @@ class Onboarding extends Component {
           * This let's us change arbitrarily nested objects with one pass
           */
         let newFormFields = _.update( this.state.form_fields.user, name, () => value);
+        let newResultMsgFields = _.update( this.state.resultMsg, 'error', () => []);
+        newResultMsgFields = _.update( this.state.resultMsg, 'status', () => '');
+        newResultMsgFields = _.update( this.state.resultMsg, 'success', () => '');
         let errorsArray = this._validateForm();
         this.setState({
-            ['form_fields.user']: newFormFields,
-            isFormValid:          errorsArray.length === 0 ? true : false,
+            form_fields: { user: newFormFields, },
+            isFormValid: errorsArray.length === 0 ? true : false,
+            resultMsg:   newResultMsgFields,
         });
         if(name === 'role') {
             this._nextStep();
@@ -254,12 +258,13 @@ class Onboarding extends Component {
     }
 
     _validateForm = () => {
+        let isUpdatingUser = this.props.user.id ? true : false
         const { form_fields, step } = this.state;
         let errorsArray = [];
         if(step === 1) { // select a user role
             errorsArray = errorsArray.concat(onboardingUtils.isUserRoleValid(form_fields.user.role).errorsArray);
         } else if(step === 2) { // enter user information
-            errorsArray = errorsArray.concat(onboardingUtils.isUserAccountInformationValid(form_fields.user).errorsArray);
+            errorsArray = errorsArray.concat(onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray);
             errorsArray = errorsArray.concat(onboardingUtils.isUserAboutValid(form_fields.user).errorsArray);
             // errorsArray = errorsArray.concat(onboardingUtils.areSportsValid(form_fields.user.sports).errorsArray);
         } else if(step === 3) { // sport(s) schedule
@@ -534,7 +539,7 @@ class Onboarding extends Component {
                 <UserAccount
                     componentStep={2}
                     currentStep={step}
-                    error={this.state.resultMsg.error}
+                    error={resultMsg.error}
                     handleFormChange={this._handleUserFormChange}
                     handleFormSubmit={this._handleFormSubmit}
                     heightPressed={this._heightPressed}
