@@ -9,7 +9,7 @@
 import { Image } from 'react-native';
 
 // const & libs
-import { Actions } from './';
+import { Actions , AppColors, } from './';
 import { store } from '../store';
 
 // import third-party libraries
@@ -253,7 +253,7 @@ function cleanExercise(exercise) {
     cleanedExercise.library_id = exercise.library_id;
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
-    cleanedExercise.dosage = `${exercise.sets_assigned}x ${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : exercise.unit_of_measure === 'yards' ? 'yards' : ''}`;
+    cleanedExercise.dosage = `${exercise.sets_assigned}x${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : exercise.unit_of_measure === 'yards' ? 'yards' : ''}${exercise.bilateral ? ' per side' : ''}`;
     cleanedExercise.imageUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.gif`;
     cleanedExercise.thumbnailUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.png`;
     cleanedExercise.videoUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.mp4`;
@@ -372,6 +372,22 @@ const cleanedPostSessionName = (postPracticeSurvey) => {
     }
 };
 
+const exerciseListButtonStyles = (isPrep, completedExercises, isFSCompleteValid, isFunctionalStrength) => {
+    let buttonTitle = completedExercises.length > 0 ? `${isPrep ? 'Prep ' : 'Recovery '}Complete` : `Check Boxes to Complete${isPrep ? ' Prep' : ' Recovery'}`;
+    let isButtonDisabled = completedExercises.length > 0 ? false : true;
+    let isButtonOutlined = isButtonDisabled || completedExercises.length === 0 ? true : false;
+    let buttonDisabledStyle = {backgroundColor: AppColors.white,};
+    let buttonColor = completedExercises.length > 0 ? AppColors.white : AppColors.primary.yellow.hundredPercent;
+    let buttonBackgroundColor = completedExercises.length > 0 ? AppColors.primary.yellow.hundredPercent : AppColors.white;
+    if(isFunctionalStrength) {
+        buttonTitle = completedExercises.length > 0 ? 'Complete' : 'Check Boxes to Complete';
+        isButtonOutlined = isFSCompleteValid ? false : true;
+        buttonColor = isFSCompleteValid ? AppColors.white : AppColors.primary.yellow.hundredPercent;
+        buttonBackgroundColor = isFSCompleteValid ? AppColors.primary.yellow.hundredPercent : AppColors.white;
+    }
+    return { buttonTitle, isButtonDisabled, isButtonOutlined, buttonDisabledStyle, buttonColor, buttonBackgroundColor, }
+};
+
 export default {
     availableSessionTypes,
     bodyPartMapping,
@@ -380,6 +396,7 @@ export default {
     cleanFSExerciseList,
     cleanedPostSessionName,
     durationOptionGroups,
+    exerciseListButtonStyles,
     isFSCompletedValid,
     jointLevels,
     muscleLevels,

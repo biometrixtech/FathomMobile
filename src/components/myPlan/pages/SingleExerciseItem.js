@@ -28,7 +28,7 @@ const SingleExerciseItem = ({
 }) => (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
         { exercise.videoUrl.length > 0 ?
-            <View style={Platform.OS === 'ios' ? {flex: 1,} : {flex: 1, paddingLeft: AppSizes.paddingMed}}>
+            <View style={{flex: 1,}}>
                 <Video
                     paused={false}
                     repeat={true}

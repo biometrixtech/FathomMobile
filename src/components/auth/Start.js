@@ -87,7 +87,7 @@ class Start extends Component {
                 this.props.sessionToken &&
                 this.props.expires
             ) {
-                Promise.resolve(this.login());
+                this.login();
             } else {
                 this.hideSplash();
                 // check if we have a maintenance window to alert the user on
@@ -154,16 +154,17 @@ class Start extends Component {
                 return this.props.registerDevice(this.props.certificate, this.props.device, userObj);
             })
             .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
-            .then(() => this.setState({
-                resultMsg: { success: 'Success, now loading your data!' },
-            }, (response) => {
+            .then(() => {
                 AppUtil.routeOnLogin(userObj);
-                this.hideSplash();
-            })).catch((err) => {
+                setTimeout(() => {
+                    SplashScreen.hide();
+                }, 100);
+            })
+            .catch((err) => {
                 this.hideSplash();
                 const error = AppAPI.handleError(err);
                 console.log('err',error);
-                this._routeToLogin();
+                // this._routeToLogin();
             });
     }
 

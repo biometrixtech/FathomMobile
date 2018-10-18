@@ -3,9 +3,9 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#4099FF</item>
+        <item name="colorPrimary">@color/fathomYellow</item>
         <!-- Details color -->
-        <item name="colorAccent">#4099FF</item>
+        <item name="colorAccent">@color/white</item>
         <!--<item name="android:clipChildren">false</item>-->
     </style>
 
@@ -15,7 +15,7 @@
     </style>
 
     <style name="GoldAccent" parent="ThemeOverlay.AppCompat.Light">
-        <item name="colorAccent">#EBBA2D</item>
+        <item name="colorAccent">@color/fathomYellow</item>
     </style>
 
 </resources>

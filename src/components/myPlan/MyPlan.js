@@ -704,14 +704,14 @@ class MyPlan extends Component {
                 })
         } else {
             Alert.alert(
-                'You\'re Not Done',
-                'Do all exercises in Warm-up, Dynamic Movements and Stability to complete Functional Strength.',
+                'Are You Done?',
+                'Please complete all exercises in Warm-up, Dynamic Movements and Stability to finish Functional Strength.',
                 [
                     {
-                        text: 'Continue',
+                        text: 'Finish Now',
                     },
                     {
-                        text:    'Done for Now',
+                        text:    'Finish Later',
                         onPress: () => this.setState({ isFunctionalStrengthCollapsed: true, }),
                     },
                 ],
@@ -905,7 +905,7 @@ class MyPlan extends Component {
         let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive ? whenEnabledBorderColor : isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
         return (
             <ScrollView
-                contentContainerStyle={{flexGrow: 1, backgroundColor: AppColors.white}}
+                contentContainerStyle={{ backgroundColor: AppColors.white, }}
                 refreshControl={
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
@@ -1205,7 +1205,7 @@ class MyPlan extends Component {
         let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive ? whenEnabledBorderColor : isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
         return (
             <ScrollView
-                contentContainerStyle={{flexGrow: 1, backgroundColor: AppColors.white }}
+                contentContainerStyle={{ backgroundColor: AppColors.white, }}
                 refreshControl={
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
@@ -1426,8 +1426,9 @@ class MyPlan extends Component {
                 AppColors.primary.yellow.hundredPercent
                 :
                 AppColors.white;
+        let isFSCompletedValid = functionalStrength && completedFSExercises ? MyPlanConstants.isFSCompletedValid(functionalStrength, completedFSExercises) : false;
         return (
-            <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white, }} tabLabel={tabs[index]}>
+            <ScrollView contentContainerStyle={{ backgroundColor: AppColors.white, }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
                 { (dailyPlanObj && !dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
                     <View>
@@ -1533,6 +1534,7 @@ class MyPlan extends Component {
                         handleCompleteExercise={this._handleCompleteFSExercise}
                         handleExerciseListRefresh={this._handleExerciseListRefresh}
                         isExerciseListRefreshing={this.state.isExerciseListRefreshing}
+                        isFSCompletedValid={isFSCompletedValid}
                         isFunctionalStrength={true}
                         isLoading={this.state.loading}
                         toggleCompletedAMPMRecoveryModal={() => this._handleFunctionalStrengthFormSubmit()}
