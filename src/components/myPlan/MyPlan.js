@@ -734,11 +734,8 @@ class MyPlan extends Component {
         const textStyle = AppStyles.tabHeaders;
         const fontSize = isTabActive ? AppFonts.scaleFont(20) : AppFonts.scaleFont(16);
         let { page0, page1, page2 } = this.state;
-
         let flag = dailyPlanObj && page === dailyPlanObj.nav_bar_indicator ? true : false;
-
         let currentPage = this.tabView ? this.tabView.state.currentPage : 0;
-
         let page0Width = currentPage === 0 ? AppSizes.screen.widthThreeQuarters : currentPage === 1 ? AppSizes.screen.widthQuarter : 0;
         let page1Width = currentPage === 0 || currentPage === 2 ? AppSizes.screen.widthQuarter : AppSizes.screen.widthHalf;
         let page2Width = currentPage === 2 ? AppSizes.screen.widthThreeQuarters : currentPage === 1 ? AppSizes.screen.widthQuarter : 0;
@@ -752,23 +749,12 @@ class MyPlan extends Component {
         let iconSize = 10;
         let iconLeftPadding = 2;
         let iconBottomPadding = textBorderWidth;
-        let textWrapperStyle = isTabActive ?
-            {
-                borderBottomWidth: textBorderWidth,
-                borderBottomColor: AppColors.primary.yellow.hundredPercent,
-                marginLeft:        iconSize + iconLeftPadding,
-                paddingHorizontal: AppSizes.paddingXSml,
-                textAlign:         'center',
-            }
-            :
-            {};
         let extraIconContainerStyle = isTabActive ?
             {
                 marginBottom: iconBottomPadding,
             }
             :
             {};
-
         return <TouchableWithoutFeedback
             key={`${name}_${page}`}
             accessible={true}
@@ -779,9 +765,7 @@ class MyPlan extends Component {
         >
             <View style={[page === 0 ? page0Styles : page === 1 ? page1Styles : page2Styles]}>
                 <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
-                    <View
-                        style={[textWrapperStyle,]}
-                    >
+                    <View>
                         <Text
                             onLayout={event =>
                                 this.setState({

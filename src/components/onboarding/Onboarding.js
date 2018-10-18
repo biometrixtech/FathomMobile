@@ -122,7 +122,7 @@ class Onboarding extends Component {
                                 : user.biometric_data && user.biometric_data.height.m ?
                                     onboardingUtils.metersToInches(user.biometric_data.height.m).toString()
                                     :
-                                    '60'
+                                    ''
                         },
                         mass: {
                             lb: user.biometric_data && user.biometric_data.mass.lb ?
