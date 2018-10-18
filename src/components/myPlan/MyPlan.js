@@ -1426,7 +1426,7 @@ class MyPlan extends Component {
                 AppColors.primary.yellow.hundredPercent
                 :
                 AppColors.white;
-        let isFSCompletedValid = functionalStrength && completedFSExercises ? MyPlanConstants.isFSCompletedValid(functionalStrength, completedFSExercises) : false;
+        let isFSCompletedValid = functionalStrength && Object.keys(functionalStrength).length > 0 && completedFSExercises ? MyPlanConstants.isFSCompletedValid(functionalStrength, completedFSExercises) : false;
         return (
             <ScrollView contentContainerStyle={{ backgroundColor: AppColors.white, }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
