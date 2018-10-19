@@ -5,16 +5,16 @@ import { PlanLogic, } from '../';
 
 const helperFunctions = {
 
-    getPushNotificationHelperProps: (notificationString) => {
+    getPushNotificationHelperProps: (notificationString, preRecoveryCompleted, postRecoveryCompleted, isReadinessSurveyCompleted) => {
         let pushNotificationHelperProps = {};
         pushNotificationHelperProps.notification = notificationString;
         pushNotificationHelperProps.plan = {};
         pushNotificationHelperProps.plan.dailyPlan = [];
         pushNotificationHelperProps.plan.dailyPlan[0] = {};
-        pushNotificationHelperProps.plan.dailyPlan[0].pre_recovery_completed = false;
+        pushNotificationHelperProps.plan.dailyPlan[0].pre_recovery_completed = preRecoveryCompleted;
         pushNotificationHelperProps.plan.dailyPlan[0].post_recovery = {};
-        pushNotificationHelperProps.plan.dailyPlan[0].post_recovery.completed = false;
-        pushNotificationHelperProps.plan.dailyPlan[0].daily_readiness_survey_completed = false;
+        pushNotificationHelperProps.plan.dailyPlan[0].post_recovery.completed = postRecoveryCompleted;
+        pushNotificationHelperProps.plan.dailyPlan[0].daily_readiness_survey_completed = isReadinessSurveyCompleted;
         return pushNotificationHelperProps;
     },
 
@@ -84,29 +84,71 @@ const helperFunctions = {
 
 };
 
-it('Active Prep Push Notification Result', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP');
+it('Active Prep Push Notification Result - FFF', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, false, false);
     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
     let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
 });
 
-it('Active Recovery Push Notification Result', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY');
+it('Active Prep Push Notification Result - FFT', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, false, true);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Prep Push Notification Result - FTT', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, true, true);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Prep Push Notification Result - FTF', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, true, false);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Prep Push Notification Result - TFF', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, false, false);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Prep Push Notification Result - TTF', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, true, false);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Prep Push Notification Result - TTT', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, true, true);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+/*it('Active Recovery Push Notification Result', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, false, false);
     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
     let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
 });
 
 it('Daily Readiness Push Notification Result', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_DAILY_READINESS');
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_DAILY_READINESS', false, false, false);
     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_DAILY_READINESS', helperProps);
     let expectedResult = helperFunctions.getPushNotificationReadinessExpectedResult();
     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
 });
 
 it('View Plan Push Notification Result', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('VIEW_PLAN');
+    let helperProps = helperFunctions.getPushNotificationHelperProps('VIEW_PLAN', false, false, false);
     let helperState = helperFunctions.getPushNotificationHelperState('VIEW_PLAN', helperProps);
     let expectedResult = helperFunctions.getPushNotificationPlanExpectedResult();
     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
@@ -114,8 +156,8 @@ it('View Plan Push Notification Result', () => {
 
 it('Error State Push Notification Result', () => {
     // error condition should still return plan result to simulate everything is fine
-    let helperProps = helperFunctions.getPushNotificationHelperProps('FATHOM_BREAK');
+    let helperProps = helperFunctions.getPushNotificationHelperProps('FATHOM_BREAK', false, false, false);
     let helperState = helperFunctions.getPushNotificationHelperState('FATHOM_BREAK', helperProps);
     let expectedResult = helperFunctions.getPushNotificationPlanExpectedResult();
     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
+});*/
