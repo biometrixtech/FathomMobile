@@ -82,17 +82,6 @@ const helperFunctions = {
         return expectedResult;
     },
 
-    getPushNotificationExtraExpectedResult: () => {
-        let expectedResult = {
-            newStateFields:             '',
-            page:                       0,
-            stateName:                  '',
-            updateExerciseList:         true,
-            updatePushNotificationFlag: true
-        };
-        return expectedResult;
-    },
-
 };
 
 it('handlePushNotification', () => {
@@ -124,8 +113,9 @@ it('handlePushNotification', () => {
 });
 
 it('handlePushNotification', () => {
+    // error condition should still return plan result to simulate everything is fine
     let helperProps = helperFunctions.getPushNotificationHelperProps('FATHOM_BREAK');
     let helperState = helperFunctions.getPushNotificationHelperState('FATHOM_BREAK', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationExtraExpectedResult();
+    let expectedResult = helperFunctions.getPushNotificationPlanExpectedResult();
     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
 });
