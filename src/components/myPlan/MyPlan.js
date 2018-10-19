@@ -262,9 +262,11 @@ class MyPlan extends Component {
     _handlePushNotification = props => {
         const pushNotificationUpdate = PlanLogic.handlePushNotification(props, this.state);
         this._goToScrollviewPage(pushNotificationUpdate.page, () => {
-            this.setState({
-                [pushNotificationUpdate.stateName]: pushNotificationUpdate.newStateFields,
-            });
+            if(pushNotificationUpdate.stateName !== '' || pushNotificationUpdate.newStateFields !== '') {
+                this.setState({
+                    [pushNotificationUpdate.stateName]: pushNotificationUpdate.newStateFields,
+                });
+            }
             if(pushNotificationUpdate.updateExerciseList) {
                 this._handleExerciseListRefresh();
             }
