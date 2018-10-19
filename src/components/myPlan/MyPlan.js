@@ -40,6 +40,7 @@ const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
 const highSorenessMessage = 'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.';
 const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Active recovery is low-impact this morning so let\'s pick up with post practice recovery!';
 const lowSorenessPostMessage = 'Looks like you\'re all clear! Active recovery is low-impact for now so let\'s pick up tomorrow or after the next practice you log!';
+const errorInARAPMessage = '\nWhoops... Give us a second.\nSwipe down to refresh.';
 
 const whenEnabledBackgroundColor = AppColors.white;
 const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
@@ -685,14 +686,14 @@ class MyPlan extends Component {
                 })
         } else {
             Alert.alert(
-                'You\'re Not Done',
-                'Do all exercises in Warm-up, Dynamic Movements and Stability to complete Functional Strength.',
+                'Are You Done?',
+                'Please complete all exercises in Warm-up, Dynamic Movements and Stability to finish Functional Strength.',
                 [
                     {
-                        text: 'Continue',
+                        text: 'Finish Now',
                     },
                     {
-                        text:    'Done for Now',
+                        text:    'Finish Later',
                         onPress: () => this.setState({ isFunctionalStrengthCollapsed: true, }),
                     },
                 ],
@@ -714,11 +715,8 @@ class MyPlan extends Component {
         const textStyle = AppStyles.tabHeaders;
         const fontSize = isTabActive ? AppFonts.scaleFont(20) : AppFonts.scaleFont(16);
         let { page0, page1, page2 } = this.state;
-
         let flag = dailyPlanObj && page === dailyPlanObj.nav_bar_indicator ? true : false;
-
         let currentPage = this.tabView ? this.tabView.state.currentPage : 0;
-
         let page0Width = currentPage === 0 ? AppSizes.screen.widthThreeQuarters : currentPage === 1 ? AppSizes.screen.widthQuarter : 0;
         let page1Width = currentPage === 0 || currentPage === 2 ? AppSizes.screen.widthQuarter : AppSizes.screen.widthHalf;
         let page2Width = currentPage === 2 ? AppSizes.screen.widthThreeQuarters : currentPage === 1 ? AppSizes.screen.widthQuarter : 0;
@@ -732,23 +730,12 @@ class MyPlan extends Component {
         let iconSize = 10;
         let iconLeftPadding = 2;
         let iconBottomPadding = textBorderWidth;
-        let textWrapperStyle = isTabActive ?
-            {
-                borderBottomWidth: textBorderWidth,
-                borderBottomColor: AppColors.primary.yellow.hundredPercent,
-                marginLeft:        iconSize + iconLeftPadding,
-                paddingHorizontal: AppSizes.paddingXSml,
-                textAlign:         'center',
-            }
-            :
-            {};
         let extraIconContainerStyle = isTabActive ?
             {
                 marginBottom: iconBottomPadding,
             }
             :
             {};
-
         return <TouchableWithoutFeedback
             key={`${name}_${page}`}
             accessible={true}
@@ -759,9 +746,7 @@ class MyPlan extends Component {
         >
             <View style={[page === 0 ? page0Styles : page === 1 ? page1Styles : page2Styles]}>
                 <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
-                    <View
-                        style={[textWrapperStyle,]}
-                    >
+                    <View>
                         <Text
                             onLayout={event =>
                                 this.setState({
@@ -886,7 +871,7 @@ class MyPlan extends Component {
         let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive ? whenEnabledBorderColor : isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
         return (
             <ScrollView
-                contentContainerStyle={{flexGrow: 1, backgroundColor: AppColors.white}}
+                contentContainerStyle={{ backgroundColor: AppColors.white, }}
                 refreshControl={
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
@@ -1088,7 +1073,12 @@ class MyPlan extends Component {
                             </View>
                         </View>
                     :
-                    null
+                    <View style={{ flex: 1, flexDirection: 'row', }}>
+                        <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                        <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: AppFonts.scaleFont(18), }]}>{errorInARAPMessage}</Text>
+                        </View>
+                    </View>
                 }
                 {
                     this.state.isReadinessSurveyModalOpen
@@ -1186,7 +1176,7 @@ class MyPlan extends Component {
         let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive ? whenEnabledBorderColor : isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
         return (
             <ScrollView
-                contentContainerStyle={{flexGrow: 1, backgroundColor: AppColors.white }}
+                contentContainerStyle={{ backgroundColor: AppColors.white, }}
                 refreshControl={
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
@@ -1339,7 +1329,12 @@ class MyPlan extends Component {
                             </View>
                         </View>
                     :
-                    null
+                    <View style={{ flex: 1, flexDirection: 'row', }}>
+                        <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                        <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: AppFonts.scaleFont(18), }]}>{errorInARAPMessage}</Text>
+                        </View>
+                    </View>
                 }
                 {
                     this.state.isSelectedExerciseModalOpen
@@ -1407,8 +1402,9 @@ class MyPlan extends Component {
                 AppColors.primary.yellow.hundredPercent
                 :
                 AppColors.white;
+        let isFSCompletedValid = functionalStrength && Object.keys(functionalStrength).length > 0 && completedFSExercises ? MyPlanConstants.isFSCompletedValid(functionalStrength, completedFSExercises) : false;
         return (
-            <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: AppColors.white, }} tabLabel={tabs[index]}>
+            <ScrollView contentContainerStyle={{ backgroundColor: AppColors.white, }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
                 { (dailyPlanObj && !dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
                     <View>
@@ -1514,6 +1510,7 @@ class MyPlan extends Component {
                         handleCompleteExercise={this._handleCompleteFSExercise}
                         handleExerciseListRefresh={this._handleExerciseListRefresh}
                         isExerciseListRefreshing={this.state.isExerciseListRefreshing}
+                        isFSCompletedValid={isFSCompletedValid}
                         isFunctionalStrength={true}
                         isLoading={this.state.loading}
                         toggleCompletedAMPMRecoveryModal={() => this._handleFunctionalStrengthFormSubmit()}

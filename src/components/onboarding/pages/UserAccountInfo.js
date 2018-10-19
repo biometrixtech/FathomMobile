@@ -179,7 +179,7 @@ class UserAccountInfo extends Component {
                 <Spacer size={40} />
                 <Text
                     oswaldRegular
-                    onPress={() => onboardingUtils.isUserAccountInformationValid(user).isValid ? setAccordionSection(0, 1) : updateErrorMessage()}
+                    onPress={() => onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid ? setAccordionSection(0, 1) : updateErrorMessage()}
                     style={[AppStyles.continueButton,
                         {
                             fontSize:      AppFonts.scaleFont(16),

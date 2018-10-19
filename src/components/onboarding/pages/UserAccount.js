@@ -72,10 +72,10 @@ class UserAccount extends Component {
     }
 
     _renderHeader = (section) => {
-        const { user } = this.props;
+        const { isUpdatingUser, user, } = this.props;
         let isFormValid = false;
         if (section.index === 1) {
-            isFormValid = onboardingUtils.isUserAccountInformationValid(user).isValid;
+            isFormValid = onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid;
         } else if (section.index === 2) {
             isFormValid = onboardingUtils.isUserAboutValid(user).isValid;
         } else if (section.index === 3) {
@@ -141,12 +141,13 @@ class UserAccount extends Component {
     };
 
     _renderContent = (section) => {
+        let errorMsg = this.props.error && this.props.error.length > 0 ? this.props.error : this.state.coachContent && this.state.coachContent.length > 0 ? this.state.coachContent : '';
         return(
             <View>
                 <View style={{marginLeft: 10, borderLeftWidth: 1, borderColor: AppColors.border,}}>
                     <Alerts
                         leftAlignText
-                        error={this.props.error && this.props.error.length > 0 ? this.props.error : this.state.coachContent}
+                        error={errorMsg}
                     />
                     {section.content}
                 </View>
@@ -204,12 +205,12 @@ class UserAccount extends Component {
     };
 
     _setAccordionSection = (section, nextStep) => {
-        const { user } = this.props;
+        const { isUpdatingUser, user, } = this.props;
         let errorsArray = [];
         if(nextStep) {
             // Validation to make sure we can go to the next step
             if(section === 0) {
-                errorsArray = onboardingUtils.isUserAccountInformationValid(user).errorsArray;
+                errorsArray = onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).errorsArray;
             } else if(section === 1) {
                 errorsArray = onboardingUtils.isUserAboutValid(user).errorsArray;
             } else if(section === 2) {
@@ -229,7 +230,7 @@ class UserAccount extends Component {
             }
         } else {
             let coachesMessage = '';
-            errorsArray = errorsArray.concat(onboardingUtils.isUserAccountInformationValid(user).errorsArray);
+            errorsArray = errorsArray.concat(onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).errorsArray);
             errorsArray = errorsArray.concat(onboardingUtils.isUserAboutValid(user).errorsArray);
             if(section === 1) {
                 coachesMessage = 'The ACCOUNT INFORMATION section has invalid fields. Please complete first and try agian.';
@@ -257,7 +258,7 @@ class UserAccount extends Component {
 
     _updateErrorMessage = (isAbout) => {
         this.scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
-        let coachesMessage = isAbout ? onboardingUtils.isUserAboutValid(this.props.user).errorsArray : onboardingUtils.isUserAccountInformationValid(this.props.user).errorsArray;
+        let coachesMessage = isAbout ? onboardingUtils.isUserAboutValid(this.props.user).errorsArray : onboardingUtils.isUserAccountInformationValid(this.props.user, this.props.isUpdatingUser).errorsArray;
         this.setState({
             coachContent: coachesMessage,
             isFormValid:  false,
@@ -278,7 +279,7 @@ class UserAccount extends Component {
         const SECTIONS = [
             {
                 content: <UserAccountInfo
-                    handleFormChange={handleFormChange}
+                    handleFormChange={(name, text) => this.setState({ coachContent: '', }, () => handleFormChange(name, text))}
                     isPasswordSecure={this.state.isPasswordSecure}
                     isUpdatingUser={isUpdatingUser}
                     setAccordionSection={this._setAccordionSection}
@@ -324,6 +325,7 @@ class UserAccount extends Component {
                             renderContent={this._renderContent}
                             renderHeader={this._renderHeader}
                             sections={SECTIONS}
+                            underlayColor={AppColors.transparent}
                         />
                         { this.state.accordionSection === false ?
                             <View style={{marginLeft: 10, borderLeftWidth: 1, borderColor: AppColors.border,}}>
