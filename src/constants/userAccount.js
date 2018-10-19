@@ -197,7 +197,7 @@ const possibleGenders = [
     },
     {
         label: 'Intersex',
-        value: 'intersex',
+        value: 'other',
     },
 ];
 
