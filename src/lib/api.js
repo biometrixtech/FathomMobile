@@ -260,7 +260,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                 // Only continue if the header is successful
                 if (rawRes && /20[012]/.test(`${rawRes.status}`)) { return jsonRes; }
 
-                throw jsonRes;
+                throw rawRes.status === 404 ? { message: ErrorMessages.emailNotFound, } : jsonRes;
             })
             .then(res => {
                 debug(res, `API Response #${requestNum} from ${thisUrl}`);
@@ -324,6 +324,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                 } catch (error) {
                     console.log(handleError(error));
                 }
+
                 return reject(err);
             });
     });

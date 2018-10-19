@@ -77,6 +77,7 @@ export default {
     },
 
     // API errors
+    emailNotFound:           'Email not found, please try again',
     getMyPlan:               'There was an error getting your plan specific data. Please try again!',
     getSoreBodyParts:        'There was an error getting your plan specific data. Please try again!',
     postReadinessSurvey:     'There was an error saving your plan specific data. Please try again!',
