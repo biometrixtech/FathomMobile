@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:30:58
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-14 12:50:12
+ * @Last Modified time: 2018-10-21 18:26:26
  */
 
 /**
@@ -22,9 +22,9 @@ export default {
         PROD: 'https://apis.production.fathomai.com'
     },
     // The URL we're connecting to
-    // hostname: 'https://apis.production.fathomai.com', // deployment
+    hostname: 'https://apis.production.fathomai.com', // deployment
     // hostname: 'https://apis.qa.fathomai.com', // qa
-    hostname: 'https://apis.test.fathomai.com', // test
+    // hostname: 'https://apis.test.fathomai.com', // test
     // hostname: 'https://apis.dev.fathomai.com', // development
 
     // Map shortnames to the actual endpoints, so that we can
