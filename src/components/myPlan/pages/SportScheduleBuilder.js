@@ -311,7 +311,7 @@ class SportScheduleBuilder extends Component {
                         </View>
                         : step === 1 ?
                             <View style={[AppStyles.containerCentered,]}>
-                                <Text oswaldMedium style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{'TEAM SPORTS'}</Text>
+                                <Text oswaldMedium style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{'SPORT TRAINING'}</Text>
                                 <Spacer size={7} />
                                 <View style={[AppStyles.containerCentered, {flexDirection: 'row', flexWrap: 'wrap',}]}>
                                     { _.map(teamSports, (sport, i) =>
