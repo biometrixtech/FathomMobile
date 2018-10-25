@@ -916,9 +916,9 @@ class MyPlan extends Component {
                                             <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
                                             <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'EARLY IN\nTHE DAY'}</Text>
                                         </View>
-                                        <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: readinessSurveyBackgroundColor, borderColor: readinessSurveyBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                            <Text h7 oswaldMedium style={{ color: readinessSurveyHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHY'}</Text>
-                                            <Text oswaldMedium style={{ color: readinessSurveyDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'PERSONALIZE\nYOUR PLAN'}</Text>
+                                        <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                            <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHY'}</Text>
+                                            <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'PERSONALIZE\nYOUR PLAN'}</Text>
                                         </View>
                                     </View>
                                     <Spacer size={12}/>
@@ -929,9 +929,21 @@ class MyPlan extends Component {
                                         color={AppColors.white}
                                         fontFamily={AppStyles.robotoBold.fontFamily}
                                         fontWeight={AppStyles.robotoBold.fontWeight}
+                                        leftIcon={{
+                                            color: AppColors.primary.yellow.hundredPercent,
+                                            name:  'chevron-right',
+                                            size:  AppFonts.scaleFont(24),
+                                            style: {flex: 1,},
+                                        }}
                                         outlined
                                         onPress={() => this._toggleReadinessSurvey()}
-                                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                                        rightIcon={{
+                                            color: AppColors.white,
+                                            name:  'chevron-right',
+                                            size:  AppFonts.scaleFont(24),
+                                            style: {flex: 1,},
+                                        }}
+                                        textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                         title={'Start'}
                                     />
                                 </View>

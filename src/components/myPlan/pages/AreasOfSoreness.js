@@ -2,11 +2,13 @@
  * AreasOfSoreness
  *
     <AreasOfSoreness
-        handleAreaOfSorenessClick={handleAreaOfSorenessClick}
+        handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
         handleFormChange={handleFormChange}
+        ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
+        scrollToBottom={this._scrollToBottom}
         soreBodyParts={soreBodyParts}
-        soreBodyPartsState={soreBodyPartsState}
-        surveyObject={surveyObject}
+        soreBodyPartsState={dailyReadiness.soreness} || {postSession.soreness}
+        surveyObject={dailyReadiness} || {postSession}
     />
  *
  */
@@ -16,7 +18,7 @@ import { TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Spacer, SVGImage, Text, } from '../../custom';
+import { Button, Spacer, SVGImage, Text, } from '../../custom';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -34,7 +36,7 @@ class AreasOfSoreness extends Component {
     }
 
     render = () => {
-        const { handleAreaOfSorenessClick, handleFormChange, soreBodyParts, soreBodyPartsState, surveyObject, } = this.props;
+        const { handleAreaOfSorenessClick, handleFormChange, scrollToBottom, soreBodyParts, soreBodyPartsState, surveyObject, } = this.props;
         let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, (u, i) => _.findIndex(soreBodyParts, o => o.body_part === i) === -1);
         let newBodyPartMap = _.filter(filteredBodyPartMap, o => {
             let itemStateFiltered = _.filter(soreBodyParts.body_parts, {body_part: o.index});
@@ -46,6 +48,37 @@ class AreasOfSoreness extends Component {
         let groupedNewBodyPartMap = _.groupBy(newBodyPartMap, 'location');
         return(
             <View>
+                <Spacer size={30} />
+                <Button
+                    backgroundColor={!this.state.isAllGood ? AppColors.white : AppColors.primary.yellow.hundredPercent}
+                    buttonStyle={{
+                        alignSelf:       'center',
+                        borderRadius:    5,
+                        paddingVertical: 5,
+                        width:           AppSizes.screen.widthTwoThirds,
+                    }}
+                    color={!this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.white}
+                    fontFamily={AppStyles.robotoMedium.fontFamily}
+                    fontWeight={AppStyles.robotoMedium.fontWeight}
+                    onPress={() => {
+                        this.setState({
+                            isAllGood: !this.state.isAllGood,
+                        }, () => {
+                            handleAreaOfSorenessClick(false, true);
+                            if(this.state.isAllGood) {
+                                scrollToBottom();
+                            }
+                        });
+                    }}
+                    outlined={true}
+                    raised={false}
+                    textStyle={{ fontSize: AppFonts.scaleFont(14), }}
+                    title={'NO, ALL GOOD'}
+                />
+                <Spacer size={30} />
+                <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(12),}]}>{'OR'}</Text>
+                <Spacer size={30} />
+                <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}>{'Tap to select body part(s)'}</Text>
                 {_.map(groupedNewBodyPartMap, (object, key) => {
                     let bodyPartMap = _.orderBy(object, ['order'], ['asc']);
                     return(
@@ -116,32 +149,6 @@ class AreasOfSoreness extends Component {
                         </View>
                     )
                 })}
-                <TouchableOpacity
-                    style={[AppStyles.allGoodBtn, {
-                        backgroundColor: AppColors.white,
-                        borderColor:     this.state.isAllGood ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                    }]}
-                    onPress={() => {
-                        this.setState({
-                            isAllGood: !this.state.isAllGood,
-                        }, () => {
-                            handleAreaOfSorenessClick(false, true);
-                        });
-                    }}
-                >
-                    <Text
-                        oswaldRegular
-                        style={[
-                            AppStyles.textCenterAligned,
-                            {
-                                color:    this.state.isAllGood ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                fontSize: AppFonts.scaleFont(18),
-                            }
-                        ]}
-                    >
-                        {'NO, ALL GOOD'}
-                    </Text>
-                </TouchableOpacity>
                 <Spacer size={50} />
                 {_.map(areaOfSorenessClicked, (area, i) => {
                     return(

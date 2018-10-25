@@ -68,6 +68,12 @@ class ReadinessSurvey extends Component {
         }
     }
 
+    _scrollToBottom = () => {
+        _.delay(() => {
+            this.scrollViewRef.scrollToEnd({ animated: true, });
+        }, 500);
+    }
+
     _getFunctionalStrengthOptions = session => {
         let isSport = session.sport_name > 0 || session.sport_name === 0 ? true : false;
         let isStrengthConditioning = session.strength_and_conditioning_type > 0 || session.strength_and_conditioning_type === 0;
@@ -475,12 +481,13 @@ class ReadinessSurvey extends Component {
                             {isFirstFunctionalStrength ? (newSoreBodyParts.length + 5) : isSecondFunctionalStrength ? (newSoreBodyParts.length + 4) : (newSoreBodyParts.length + 3)}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
+                            {`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' '}pain or soreness?`}
                         </Text>
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
                             handleFormChange={handleFormChange}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
+                            scrollToBottom={this._scrollToBottom}
                             soreBodyParts={soreBodyParts}
                             soreBodyPartsState={dailyReadiness.soreness}
                             surveyObject={dailyReadiness}
@@ -502,7 +509,7 @@ class ReadinessSurvey extends Component {
                             onPress={handleFormSubmit}
                             raised={false}
                             textStyle={{ fontSize: AppFonts.scaleFont(18), }}
-                            title={'Continue'}
+                            title={'Submit'}
                         />
                         :
                         <Button
