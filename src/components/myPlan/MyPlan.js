@@ -40,7 +40,7 @@ const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
 const highSorenessMessage = 'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.';
 const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Active recovery is low-impact this morning so let\'s pick up with post practice recovery!';
 const lowSorenessPostMessage = 'Looks like you\'re all clear! Active recovery is low-impact for now so let\'s pick up tomorrow or after the next practice you log!';
-const errorInARAPMessage = '\nWhoops... Give us a second.\nSwipe down to refresh.';
+const errorInARAPMessage = '\nPlease Swipe Down to Refresh!';
 
 const whenEnabledBackgroundColor = AppColors.white;
 const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
