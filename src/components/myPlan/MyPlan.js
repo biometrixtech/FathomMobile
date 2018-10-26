@@ -1746,10 +1746,13 @@ class MyPlan extends Component {
         // only scroll to page when we
         // - HAVE a tabView
         // - DO NOT HAVE: isReadinessSurveyModalOpen & isPostSessionSurveyModalOpen & loading
-        if(
+        if(!pageIndex && callback) {
+            callback();
+        } else if(
             this.tabView &&
             !this.state.isReadinessSurveyModalOpen &&
-            !this.state.isPostSessionSurveyModalOpen
+            !this.state.isPostSessionSurveyModalOpen &&
+            pageIndex
         ) {
             setTimeout(() => {
                 this.tabView.goToPage(pageIndex);
