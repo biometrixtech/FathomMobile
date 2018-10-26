@@ -272,7 +272,7 @@ class Settings extends Component {
                                 size={24}
                             />
                         }
-                        onPress={() => this.props.accessoryData.sensor_pid ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()
+                        onPress={() => this.props.accessoryData.sensor_pid !== 'None' ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()
                         }
                         title={this.props.accessoryData.sensor_pid !== 'None' ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
                         titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
