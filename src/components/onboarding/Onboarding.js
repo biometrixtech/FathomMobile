@@ -114,7 +114,7 @@ class Onboarding extends Component {
                     // agreed_privacy_policy: false, // boolean
                     cleared_to_play:   false, // boolean
                     onboarding_status: user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    password:          '',
+                    password:          'Fathom 123!',
                     biometric_data:    {
                         height: {
                             in: user.biometric_data && user.biometric_data.height.ft_in ?
@@ -132,21 +132,21 @@ class Onboarding extends Component {
                                     :
                                     ''
                         },
-                        sex: user.biometric_data && user.biometric_data.sex ? user.biometric_data.sex : '',
+                        sex: 'male',//user.biometric_data && user.biometric_data.sex ? user.biometric_data.sex : '',
                     },
                     personal_data: {
                         account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                         account_type:   'free', // 'paid', 'free'
-                        birth_date:     user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'YYYY-MM-DD').format('MM/DD/YYYY') : '',
-                        email:          user.personal_data && user.personal_data.email ? user.personal_data.email : '',
-                        first_name:     user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
-                        last_name:      user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
-                        phone_number:   user.personal_data && user.personal_data.phone_number ? user.personal_data.phone_number : '',
-                        zip_code:       user.personal_data && user.personal_data.zip_code ? user.personal_data.zip_code : '',
+                        birth_date:     moment('1989-01-10', 'YYYY-MM-DD').format('MM/DD/YYYY'),//user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'YYYY-MM-DD').format('MM/DD/YYYY') : '',
+                        email:          'mazen+testing@fathomai.com',//user.personal_data && user.personal_data.email ? user.personal_data.email : '',
+                        first_name:     'Mazen M',//user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
+                        last_name:      'Von Chami',//user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
+                        phone_number:   '6319889681',//user.personal_data && user.personal_data.phone_number ? user.personal_data.phone_number : '',
+                        zip_code:       '27701',//user.personal_data && user.personal_data.zip_code ? user.personal_data.zip_code : '',
                     },
                     role:                           'athlete',
                     // system_type:                    '1-sensor', // '1-sensor', '3-sensor'
-                    injury_status:                  user.injury_status? user.injury_status : '',
+                    injury_status:                  'healthy',//user.injury_status? user.injury_status : '',
                     injuries:                       {}, // COMING SOON
                     training_groups:                [], // COMING SOON
                     training_schedule:              {},
@@ -380,17 +380,35 @@ class Onboarding extends Component {
         this.setState({
             ['resultMsg.error']: errorsArray,
         });
+
         if(newUser.injury_status === 'returning_from_injury' || newUser.injury_status === 'returning_from_acute_injury') {
             Alert.alert(
                 '',
                 'You must be cleared for running by a doctor before using the Fathom system',
                 [
-                    {text: 'Cleared', onPress: () => this._handleOnboardingFieldSetup(newUser, true, errorsArray)},
-                    {text: 'Not Cleared', onPress: () => this._handleOnboardingFieldSetup(newUser, false, errorsArray)},
+                    {text: 'Cleared', onPress: () => this._handlePasswordSpacesCheck(newUser, true, errorsArray)},
+                    {text: 'Not Cleared', onPress: () => this._handlePasswordSpacesCheck(newUser, false, errorsArray)},
                 ],
             );
         } else {
-            this._handleOnboardingFieldSetup(newUser, false, errorsArray);
+            this._handlePasswordSpacesCheck(newUser, false, errorsArray);
+        }
+    }
+
+    _handlePasswordSpacesCheck = (newUser, clearedToPlay, errorsArray) => {
+        const passwordHasWhiteSpaces = onboardingUtils.hasWhiteSpaces(newUser.password);
+        if(passwordHasWhiteSpaces) {
+            Alert.alert(
+                '',
+                'Your Password has a whitespace, is this intended?',
+                [
+                    {text: 'Yes, Continue', onPress: () => this._handleOnboardingFieldSetup(newUser, clearedToPlay, errorsArray)},
+                    {text: 'No, Let me fix it', style: 'cancel'},
+                ],
+                { cancelable: true }
+            );
+        } else {
+            this._handleOnboardingFieldSetup(newUser, clearedToPlay, errorsArray);
         }
     }
 
@@ -424,11 +442,11 @@ class Onboarding extends Component {
         userObj.biometric_data.sex = newUser.biometric_data.sex;
         userObj.personal_data = {};
         if(!this.props.user.id) {
-            userObj.personal_data.email = newUser.personal_data.email;
+            userObj.personal_data.email = _.toLower(newUser.personal_data.email);
         }
         userObj.personal_data.birth_date = newUser.personal_data.birth_date;
-        userObj.personal_data.first_name = newUser.personal_data.first_name;
-        userObj.personal_data.last_name = newUser.personal_data.last_name;
+        userObj.personal_data.first_name = _.trim(newUser.personal_data.first_name);
+        userObj.personal_data.last_name = _.trim(newUser.personal_data.last_name);
         userObj.personal_data.phone_number = newUser.personal_data.phone_number;
         userObj.personal_data.account_type = newUser.personal_data.account_type;
         userObj.personal_data.account_status = newUser.personal_data.account_status;
