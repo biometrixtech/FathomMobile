@@ -15,6 +15,8 @@ import Store from '../store/init';
 
 const initialState = Store;
 
+import moment from 'moment';
+
 export default function initReducer(state = initialState, action) {
     switch (action.type) {
     case Actions.UPDATE_SCHEDULED_MAINTENANCE:
@@ -71,6 +73,10 @@ export default function initReducer(state = initialState, action) {
     case Actions.FORGOT_PASSWORD_FAILURE:
     case Actions.RESET_PASSWORD_SUCCESS:
     case Actions.RESET_PASSWORD_FAILURE:
+    case Actions.UPDATE_LAST_OPENED:
+        return Object.assign({}, state, {
+            lastOpened: moment().toISOString(true).substring(0, moment().toISOString(true).indexOf('T')),
+        });
     default:
         return state;
     }

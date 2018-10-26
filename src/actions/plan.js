@@ -11,17 +11,21 @@
 
 import { Actions } from '../constants';
 import { store } from '../store';
-import { AppAPI, AppUtil } from '../lib';
+import { AppAPI, } from '../lib';
 
 // import third-party libraries
 import _ from 'lodash';
-import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 
 /**
   * Get My Plan Data
   */
 const getMyPlan = (userId, startDate, endDate) => {
+    // update last opened flag
+    store.dispatch({
+        type: Actions.UPDATE_LAST_OPENED,
+    });
+    // continue logic
     let currentState = store.getState();
     let myPlanObj = {};
     // Defaulting user id to whatever is in the store if nothing is sent for Push Notifications
