@@ -5,7 +5,7 @@
  * @Last Modified time: 2018-07-12 19:02:12
  */
 
- /**
+/**
  * App Theme - Sizes
  */
 import { Dimensions, Platform } from 'react-native';

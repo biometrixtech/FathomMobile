@@ -55,11 +55,11 @@ class AreasOfSoreness extends Component {
                         alignSelf:       'center',
                         borderRadius:    5,
                         paddingVertical: 5,
-                        width:           AppSizes.screen.widthTwoThirds,
+                        width:           AppSizes.screen.widthHalf,
                     }}
                     color={!this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.white}
-                    fontFamily={AppStyles.robotoMedium.fontFamily}
-                    fontWeight={AppStyles.robotoMedium.fontWeight}
+                    fontFamily={AppStyles.oswaldRegular.fontFamily}
+                    fontWeight={AppStyles.oswaldRegular.fontWeight}
                     onPress={() => {
                         this.setState({
                             isAllGood: !this.state.isAllGood,
@@ -76,7 +76,7 @@ class AreasOfSoreness extends Component {
                     title={'NO, ALL GOOD'}
                 />
                 <Spacer size={30} />
-                <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(12),}]}>{'OR'}</Text>
+                <Text oswaldSemiBold style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{'OR'}</Text>
                 <Spacer size={30} />
                 <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}>{'Tap to select body part(s)'}</Text>
                 {_.map(groupedNewBodyPartMap, (object, key) => {
@@ -84,7 +84,7 @@ class AreasOfSoreness extends Component {
                     return(
                         <View key={key}>
                             <Text
-                                oswaldMedium
+                                oswaldSemiBold
                                 style={[
                                     AppStyles.textCenterAligned,
                                     {
