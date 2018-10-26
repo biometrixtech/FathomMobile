@@ -74,7 +74,7 @@ const helperFunctions = {
     getPushNotificationPlanExpectedResult: () => {
         let expectedResult = {
             newStateFields:             '',
-            page:                       0,
+            page:                       null,
             stateName:                  '',
             updateExerciseList:         true,
             updatePushNotificationFlag: true
