@@ -55,11 +55,11 @@ class AreasOfSoreness extends Component {
                         alignSelf:       'center',
                         borderRadius:    5,
                         paddingVertical: 5,
-                        width:           AppSizes.screen.widthHalf,
+                        width:           AppSizes.screen.widthTwoThirds,
                     }}
                     color={!this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.white}
-                    fontFamily={AppStyles.oswaldRegular.fontFamily}
-                    fontWeight={AppStyles.oswaldRegular.fontWeight}
+                    fontFamily={AppStyles.oswaldMedium.fontFamily}
+                    fontWeight={AppStyles.oswaldMedium.fontWeight}
                     onPress={() => {
                         this.setState({
                             isAllGood: !this.state.isAllGood,
@@ -72,7 +72,7 @@ class AreasOfSoreness extends Component {
                     }}
                     outlined={true}
                     raised={false}
-                    textStyle={{ fontSize: AppFonts.scaleFont(14), }}
+                    textStyle={{ fontSize: AppFonts.scaleFont(18), }}
                     title={'NO, ALL GOOD'}
                 />
                 <Spacer size={30} />

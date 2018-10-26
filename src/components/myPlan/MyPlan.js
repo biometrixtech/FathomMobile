@@ -1434,15 +1434,15 @@ class MyPlan extends Component {
             [];
         let completedFSExercises = store.getState().plan.completedFSExercises;
         let fsExerciseList = functionalStrength ? MyPlanConstants.cleanFSExerciseList(functionalStrength) : {};
-        let offDaySelected = dailyPlanObj && !dailyPlanObj.sessions_planned;
+        let offDaySelected = dailyPlanObj && !dailyPlanObj.sessions_planned || filteredTrainingSessions.length > 0;
         let logActivityButtonOutlined = (isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed) || (!isDailyReadinessSurveyCompleted) ? true : false;
-        let logActivityButtonBackgroundColor = offDaySelected ?
+        let logActivityButtonBackgroundColor = offDaySelected && functionalStrength.completed ?
             AppColors.primary.yellow.hundredPercent
             : logActivityButtonOutlined ?
                 AppColors.white
                 :
                 AppColors.primary.yellow.hundredPercent;
-        let logActivityButtonColor = offDaySelected ?
+        let logActivityButtonColor = offDaySelected && functionalStrength.completed ?
             AppColors.white
             : logActivityButtonOutlined && !isDailyReadinessSurveyCompleted ?
                 AppColors.zeplin.greyText
