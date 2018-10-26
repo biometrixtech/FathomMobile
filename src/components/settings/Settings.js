@@ -303,6 +303,7 @@ class Settings extends Component {
                     /amina[+]mvp@fathomai.com/g.test(userEmail) ||
                     /chrisp[+]mvp@fathomai.com/g.test(userEmail) ||
                     /chrisp[+]droidtest@fathomai.com/g.test(userEmail) ||
+                    /chrisp[+]test3@fathomai.com/g.test(userEmail) ||
                     /dipesh[+]mvp@fathomai.com/g.test(userEmail) ||
                     /gabby[+]mvp@fathomai.com/g.test(userEmail) ||
                     /ivonna[+]mvp@fathomai.com/g.test(userEmail) ||
