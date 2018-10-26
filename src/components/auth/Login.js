@@ -214,18 +214,7 @@ class Login extends Component {
                 return this.props.onFormSubmit({
                     email:    credentials.email,
                     password: credentials.password,
-                }, false).then(response => {
-                    let { authorization, user } = response;
-                    return this.props.authorizeUser(authorization, user, credentials)
-                        .then(res => {
-                            let returnObj = {};
-                            returnObj.user = user;
-                            returnObj.authorization = res.authorization;
-                            returnObj.authorization.session_token = authorization.session_token;
-                            return Promise.resolve(returnObj);
-                        })
-                        .catch(err => Promise.reject('Unexpected response authorization'))
-                })
+                }, false)
                     .then(response => {
                         let { authorization, user } = response;
                         return this.props.registerDevice(this.props.certificate, this.props.device, user)
