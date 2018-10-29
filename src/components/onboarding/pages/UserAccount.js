@@ -267,6 +267,17 @@ class UserAccount extends Component {
         });
     };
 
+    _clearCoachContent = (string, callback) => {
+        if(this.state.coachContent === '') {
+            callback();
+        } else {
+            this.setState(
+                { coachContent: string, },
+                () => callback()
+            );
+        }
+    }
+
     render = () => {
         const {
             componentStep,
@@ -281,7 +292,8 @@ class UserAccount extends Component {
         const SECTIONS = [
             {
                 content: <UserAccountInfo
-                    handleFormChange={(name, text) => this.setState({ coachContent: '', }, () => handleFormChange(name, text))}
+                    clearCoachContent={this._clearCoachContent}
+                    handleFormChange={handleFormChange}
                     isPasswordSecure={this.state.isPasswordSecure}
                     isUpdatingUser={isUpdatingUser}
                     setAccordionSection={this._setAccordionSection}
@@ -295,7 +307,8 @@ class UserAccount extends Component {
             },
             {
                 content: <UserAccountAbout
-                    handleFormChange={(name, text) => this.setState({ coachContent: '', }, () => handleFormChange(name, text))}
+                    clearCoachContent={this._clearCoachContent}
+                    handleFormChange={handleFormChange}
                     heightPressed={heightPressed}
                     setAccordionSection={handleFormSubmit}
                     updateErrorMessage={this._updateErrorMessage}

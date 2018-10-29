@@ -2,13 +2,14 @@
  * UserAccountInfo
  *
     <UserAccountInfo
-        handleClick={this._handleUserFormChange}
+        clearCoachContent={this._clearCoachContent}
+        handleFormChange={handleFormChange}
         isPasswordSecure={this.state.isPasswordSecure}
         isUpdatingUser={isUpdatingUser}
         setAccordionSection={this._setAccordionSection}
         toggleShowPassword={this._toggleShowPassword}
         updateErrorMessage={this._updateErrorMessage}
-        user={form_fields.user}
+        user={user}
     />
  *
  */
@@ -50,6 +51,7 @@ class UserAccountInfo extends Component {
 
     render = () => {
         const {
+            clearCoachContent,
             handleFormChange,
             isPasswordSecure,
             isUpdatingUser,
@@ -66,7 +68,7 @@ class UserAccountInfo extends Component {
                         <FormInput
                             blurOnSubmit={ false }
                             containerStyle={{marginLeft: 0, marginRight: 0, paddingLeft: 10}}
-                            onChangeText={(text) => handleFormChange('personal_data.first_name', text)}
+                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.first_name', text))}
                             onSubmitEditing={() => {
                                 this.focusNextField('last_name');
                             }}
@@ -84,7 +86,7 @@ class UserAccountInfo extends Component {
                         <FormInput
                             blurOnSubmit={ false }
                             containerStyle={{marginLeft: 0, paddingLeft: 10}}
-                            onChangeText={(text) => handleFormChange('personal_data.last_name', text)}
+                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.last_name', text))}
                             onSubmitEditing={() =>
                                 isUpdatingUser ?
                                     this.focusNextField('phone_number')
@@ -109,7 +111,7 @@ class UserAccountInfo extends Component {
                             blurOnSubmit={ false }
                             containerStyle={{marginLeft: 0, paddingLeft: 10}}
                             editable={!isUpdatingUser}
-                            onChangeText={(text) => handleFormChange('personal_data.email', text)}
+                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.email', text))}
                             onSubmitEditing={() => {
                                 this.focusNextField('phone_number');
                             }}
@@ -132,7 +134,7 @@ class UserAccountInfo extends Component {
                     containerStyle={{marginLeft: 0, paddingLeft: 10}}
                     keyboardType={'number-pad'}
                     maxLength={10}
-                    onChangeText={(text) => handleFormChange('personal_data.phone_number', text)}
+                    onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.phone_number', text))}
                     onSubmitEditing={() => {
                         this.focusNextField('password');
                     }}
@@ -151,7 +153,7 @@ class UserAccountInfo extends Component {
                             <FormInput
                                 blurOnSubmit={ true }
                                 containerStyle={{marginLeft: 0, paddingLeft: 10}}
-                                onChangeText={(text) => handleFormChange('password', text)}
+                                onChangeText={(text) => clearCoachContent('', () => handleFormChange('password', text))}
                                 onSubmitEditing={() => {
                                     setAccordionSection(0, 1);
                                 }}
