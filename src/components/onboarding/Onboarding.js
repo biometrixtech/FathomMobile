@@ -114,7 +114,7 @@ class Onboarding extends Component {
                     // agreed_privacy_policy: false, // boolean
                     cleared_to_play:   false, // boolean
                     onboarding_status: user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    password:          'Fathom 123!',
+                    password:          '',
                     biometric_data:    {
                         height: {
                             in: user.biometric_data && user.biometric_data.height.ft_in ?
@@ -132,21 +132,21 @@ class Onboarding extends Component {
                                     :
                                     ''
                         },
-                        sex: 'male',//user.biometric_data && user.biometric_data.sex ? user.biometric_data.sex : '',
+                        sex: user.biometric_data && user.biometric_data.sex ? user.biometric_data.sex : '',
                     },
                     personal_data: {
                         account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                         account_type:   'free', // 'paid', 'free'
-                        birth_date:     moment('1989-01-10', 'YYYY-MM-DD').format('MM/DD/YYYY'),//user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'YYYY-MM-DD').format('MM/DD/YYYY') : '',
-                        email:          'mazen+testing@fathomai.com',//user.personal_data && user.personal_data.email ? user.personal_data.email : '',
-                        first_name:     'Mazen M',//user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
-                        last_name:      'Von Chami',//user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
-                        phone_number:   '6319889681',//user.personal_data && user.personal_data.phone_number ? user.personal_data.phone_number : '',
-                        zip_code:       '27701',//user.personal_data && user.personal_data.zip_code ? user.personal_data.zip_code : '',
+                        birth_date:     user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'YYYY-MM-DD').format('MM/DD/YYYY') : '',
+                        email:          user.personal_data && user.personal_data.email ? user.personal_data.email : '',
+                        first_name:     user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
+                        last_name:      user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
+                        phone_number:   user.personal_data && user.personal_data.phone_number ? user.personal_data.phone_number : '',
+                        zip_code:       user.personal_data && user.personal_data.zip_code ? user.personal_data.zip_code : '',
                     },
                     role:                           'athlete',
                     // system_type:                    '1-sensor', // '1-sensor', '3-sensor'
-                    injury_status:                  'healthy',//user.injury_status? user.injury_status : '',
+                    injury_status:                  user.injury_status ? user.injury_status : '',
                     injuries:                       {}, // COMING SOON
                     training_groups:                [], // COMING SOON
                     training_schedule:              {},
