@@ -2,9 +2,10 @@
  * UserAccountAbout
  *
     <UserAccountAbout
+        clearCoachContent={this._clearCoachContent}
         handleFormChange={handleFormChange}
         heightPressed={heightPressed}
-        setAccordionSection={this._setAccordionSection}
+        setAccordionSection={handleFormSubmit}
         updateErrorMessage={this._updateErrorMessage}
         user={user}
     />
@@ -79,6 +80,7 @@ class UserAccountAbout extends Component {
 
     render = () => {
         const {
+            clearCoachContent,
             handleFormChange,
             heightPressed,
             setAccordionSection,
@@ -100,7 +102,7 @@ class UserAccountAbout extends Component {
                     date={user.personal_data.birth_date || ''}
                     format={'MM/DD/YYYY'}
                     mode={'date'}
-                    onDateChange={date => handleFormChange('personal_data.birth_date', date)}
+                    onDateChange={date => clearCoachContent('', () => handleFormChange('personal_data.birth_date', date))}
                     placeholder={'Date of Birth'}
                     ref={input => {
                         this.inputs.birth_date = input;
@@ -112,7 +114,7 @@ class UserAccountAbout extends Component {
                 <RNPickerSelect
                     hideIcon={true}
                     items={UserAccountConstants.possibleInjuryStatuses}
-                    onValueChange={value => value ? handleFormChange('injury_status', value) : null}
+                    onValueChange={value => value ? clearCoachContent('', () => handleFormChange('injury_status', value)) : null}
                     placeholder={{
                         label: 'Health Status',
                         value: null,
@@ -131,7 +133,7 @@ class UserAccountAbout extends Component {
                     containerStyle={{marginLeft: 0, paddingLeft: 10}}
                     keyboardType={'number-pad'}
                     maxLength={5}
-                    onChangeText={text => handleFormChange('personal_data.zip_code', text)}
+                    onChangeText={text => clearCoachContent('', () => handleFormChange('personal_data.zip_code', text))}
                     placeholder={'Zip Code'}
                     placeholderTextColor={AppColors.zeplin.lightGrey}
                     returnKeyType={'done'}
@@ -144,7 +146,7 @@ class UserAccountAbout extends Component {
                 <RNPickerSelect
                     hideIcon={true}
                     items={UserAccountConstants.heights}
-                    onValueChange={value => value ? handleFormChange('biometric_data.height.in', value) : null}
+                    onValueChange={value => value ? clearCoachContent('', () => handleFormChange('biometric_data.height.in', value)) : null}
                     placeholder={{
                         label: 'Height',
                         value: null,
@@ -169,7 +171,7 @@ class UserAccountAbout extends Component {
                     blurOnSubmit={ true }
                     containerStyle={{marginLeft: 0, paddingLeft: 10}}
                     keyboardType={'number-pad'}
-                    onChangeText={text => handleFormChange('biometric_data.mass.lb', text)}
+                    onChangeText={text => clearCoachContent('', () => handleFormChange('biometric_data.mass.lb', text))}
                     placeholder={'Weight (lbs)'}
                     placeholderTextColor={AppColors.zeplin.lightGrey}
                     returnKeyType={'done'}
@@ -182,7 +184,7 @@ class UserAccountAbout extends Component {
                 <RNPickerSelect
                     hideIcon={true}
                     items={UserAccountConstants.possibleGenders}
-                    onValueChange={value => value ? handleFormChange('biometric_data.sex', value) : null}
+                    onValueChange={value => value ? clearCoachContent('', () => handleFormChange('biometric_data.sex', value)) : null}
                     placeholder={{
                         label: 'Sex',
                         value: null,
@@ -200,7 +202,7 @@ class UserAccountAbout extends Component {
                     disabled={true}
                     hideIcon={true}
                     items={UserAccountConstants.possibleSystemTypes}
-                    onValueChange={value => handleFormChange('system_type', value)}
+                    onValueChange={value => clearCoachContent('', () => handleFormChange('system_type', value))}
                     placeholder={{
                         label: 'Select a System Type...',
                         value: null,

@@ -272,9 +272,9 @@ class Settings extends Component {
                                 size={24}
                             />
                         }
-                        onPress={() => this.props.accessoryData.sensor_pid ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()
+                        onPress={() => this.props.accessoryData.sensor_pid !== 'None' ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()
                         }
-                        title={this.props.accessoryData.sensor_pid ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
+                        title={this.props.accessoryData.sensor_pid !== 'None' ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
                         titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
                     />
                     :
@@ -302,6 +302,8 @@ class Settings extends Component {
                     /hello[+]demo[1-5]@fathomai.com/g.test(userEmail) ||
                     /amina[+]mvp@fathomai.com/g.test(userEmail) ||
                     /chrisp[+]mvp@fathomai.com/g.test(userEmail) ||
+                    /chrisp[+]droidtest@fathomai.com/g.test(userEmail) ||
+                    /chrisp[+]test3@fathomai.com/g.test(userEmail) ||
                     /dipesh[+]mvp@fathomai.com/g.test(userEmail) ||
                     /gabby[+]mvp@fathomai.com/g.test(userEmail) ||
                     /ivonna[+]mvp@fathomai.com/g.test(userEmail) ||

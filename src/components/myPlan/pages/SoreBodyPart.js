@@ -85,14 +85,15 @@ class SoreBodyPart extends Component {
                     </View>
                     :
                     <Text oswaldLight style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(18),}]}>
-                        {'I FEEL'}
+                        {'MY'}
                         <Text oswaldMedium style={{fontSize: AppFonts.scaleFont(18),}}>
-                            {` ${bodyPartName === 'abdominals' ? bodyPartName.slice(0, -1).toUpperCase() : bodyPartName.toUpperCase()}...`}
+                            {` ${bodyPartName === 'abdominals' ? bodyPartName.slice(0, -1).toUpperCase() : bodyPartName.toUpperCase()}`}
                         </Text>
+                        {' FEELS...'}
                     </Text>
                 }
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding,}}>
-                    { isPrevSoreness ?
+                    { isPrevSoreness || bodyPartMap.bilateral ?
                         <View>
                             <TabIcon
                                 containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
@@ -158,7 +159,7 @@ class SoreBodyPart extends Component {
                                     }
                                 ]}
                             >
-                                {'SORENESS'}
+                                {'SORE'}
                             </Text>
                         </View>
                     }
@@ -193,7 +194,7 @@ class SoreBodyPart extends Component {
                                     }
                                 ]}
                             >
-                                {'PAIN'}
+                                {'PAINFUL'}
                             </Text>
                         </View>
                     }
