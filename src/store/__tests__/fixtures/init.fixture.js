@@ -13,6 +13,7 @@ export default {
     environment:          'TEST', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
     expires:              null,
     jwt:                  null,
+    lastOpened:           null,
     notification:         false,
     password:             null,
     session_token:        null,

@@ -23,6 +23,7 @@ class Start extends Component {
 
     static propTypes = {
         authorizeUser:        PropTypes.func.isRequired,
+        device:               PropTypes.object,
         email:                PropTypes.string,
         environment:          PropTypes.string,
         expires:              PropTypes.string,
@@ -127,15 +128,17 @@ class Start extends Component {
             session_token: this.props.sessionToken,
         };
         let userObj = _.cloneDeep(this.props.user);
-        return this.props.getUser(userObj.id)
-            .then(res => {
-                userObj = _.cloneDeep(res.user);
-                return this.props.authorizeUser(authorization, res.user, credentials);
+        return this.props.authorizeUser(authorization, userObj, credentials)
+            .then(authorizationResponse => {
+                if(authorizationResponse && authorizationResponse.authorization) {
+                    authorization.expires = authorizationResponse.authorization.expires;
+                    authorization.jwt = authorizationResponse.authorization.jwt;
+                }
+                return this.props.getUser(userObj.id);
             })
             .then(response => {
-                if(response && response.authorization) {
-                    authorization.expires = response.authorization.expires;
-                    authorization.jwt = response.authorization.jwt;
+                if(this.props.certificate && this.props.certificate.id && this.props.device && this.props.device.id) {
+                    return true;
                 }
                 return this.props.registerDevice(this.props.certificate, this.props.device, userObj);
             })

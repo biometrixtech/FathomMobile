@@ -23,11 +23,12 @@ const onboardingUtils = {
     },
 
     isUserAccountInformationValid(user, isUpdatingUser) {
+        const phoneNumberRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
         let errorsArray = [];
         let isValid;
         if(
-            user.personal_data.first_name.length === 0
-            || user.personal_data.last_name.length === 0
+            user.personal_data.first_name.length === 0 ||
+            user.personal_data.last_name.length === 0
         ) {
             let newError = 'Your First and Last Name are required';
             errorsArray.push(newError);
@@ -38,6 +39,13 @@ const onboardingUtils = {
             isValid = false;
         } else if( !isUpdatingUser && !this.isPasswordValid(user.password).isValid ) {
             let newError = this.getPasswordRules();
+            errorsArray.push(newError);
+            isValid = false;
+        } else if(
+            user.personal_data.phone_number.length > 0 &&
+            !phoneNumberRegex.test(user.personal_data.phone_number)
+        ) {
+            let newError = 'Your Phone Number must be a valid format (1234567890)';
             errorsArray.push(newError);
             isValid = false;
         } else {
@@ -58,19 +66,26 @@ const onboardingUtils = {
         const possibleInjuryStatuses = UserAccount.possibleInjuryStatuses.map(injuryStatus => injuryStatus.value); // ['healthy', 'healthy_chronically_injured', 'returning_from_injury'];
         const possibleGenders = UserAccount.possibleGenders.map(gender => gender.value); // ['male', 'female', 'other'];
         if(
-            user.personal_data.birth_date.length > 0
-            // && user.personal_data.phone_number.length === 10
-            && user.personal_data.zip_code.length > 0
-            && (user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0)
-            && (user.biometric_data.mass.lb.length > 0 || user.biometric_data.mass.lb > 0)
-            && possibleInjuryStatuses.includes(user.injury_status)
-            && (possibleSystemTypes.includes(user.system_type) || !user.system_type)
-            && possibleGenders.includes(user.biometric_data.sex)
+            user.personal_data.birth_date.length > 0 &&
+            (user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) &&
+            possibleInjuryStatuses.includes(user.injury_status) &&
+            (possibleSystemTypes.includes(user.system_type) || !user.system_type) &&
+            possibleGenders.includes(user.biometric_data.sex)
         ) {
             errorsArray = [];
             isValid = true;
         } else {
             const newError = 'You\'re still missing some required fields. Please check your inputs and try again';
+            errorsArray.push(newError);
+            isValid = false;
+        }
+        if(user.personal_data.zip_code.length !== 5) {
+            const newError = 'Please enter a valid Zip Code';
+            errorsArray.push(newError);
+            isValid = false;
+        }
+        if((user.biometric_data.mass.lb.length === 0 || user.biometric_data.mass.lb === 0)) {
+            const newError = 'Please enter a valid Weight';
             errorsArray.push(newError);
             isValid = false;
         }
@@ -325,17 +340,20 @@ const onboardingUtils = {
         // Password Validation
         // - 8-16 characters
         // - Must include uppercase letter, lowercase letter, and a number
+        // - NOT include spaces
         const numbersRegex = /[0-9]/g;
         const upperCaseLettersRegex = /[A-Z]/g;
         const lowerCaseLettersRegex = /[a-z]/g;
         let isValid = true;
         let errorsArray = []
-        if (!password || password.length < 8
-            || password.length > 16
-            || !numbersRegex.test(password)
-            || !upperCaseLettersRegex.test(password)
-            || !lowerCaseLettersRegex.test(password))
-        {
+        if (
+            !password ||
+            password.length < 8 ||
+            password.length > 16 ||
+            !numbersRegex.test(password) ||
+            !upperCaseLettersRegex.test(password) ||
+            !lowerCaseLettersRegex.test(password)
+        ) {
             isValid = false;
             errorsArray.push('Your password must be 8-16 characters, include an uppercase letter, a lowercase letter, and a number')
         }
@@ -347,6 +365,10 @@ const onboardingUtils = {
 
     getPasswordRules() {
         return 'Your password must be 8-16 characters, include an uppercase letter, a lowercase letter, and a number';
+    },
+
+    hasWhiteSpaces(str) {
+        return str.indexOf(' ') >= 0;
     },
 
     getTutorialSlides(page) {
@@ -428,15 +450,15 @@ const onboardingUtils = {
                     backgroundColor: AppColors.primary.yellow.hundredPercent,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-1',
-                    text:            'Start every morning with a simple survey to tell us how you feel!',
+                    text:            'Start every morning with a simple survey to tell us how your body feels.',
                     textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
-                    title:           'It all starts with You!',
+                    title:           'Listen to your body',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
                 },
                 {
                     backgroundColor: AppColors.white,
                     key:             'tutorial-2',
-                    title:           'It starts with you!',
+                    title:           'Daily Readiness Survey',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
                     videoLink:       'https://s3.amazonaws.com/onboarding-content/readiness.mp4',
                 },
@@ -444,15 +466,15 @@ const onboardingUtils = {
                     backgroundColor: AppColors.zeplin.navyBlue,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-3',
-                    text:            'We use this info to design active prep to best prepare your body for activity!',
+                    text:            'Informed by your body\'s needs, Active Prep helps you prepare for training and reduce injury risk.',
                     textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
-                    title:           'We\'ll design your perfect prep!',
+                    title:           'Prep your body for exercise',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
                 },
                 {
                     backgroundColor: AppColors.white,
                     key:             'tutorial-4',
-                    title:           'Your perfect prep',
+                    title:           'Active Prep',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
                     videoLink:       'https://s3.amazonaws.com/onboarding-content/prep.mp4',
                 },
@@ -460,15 +482,15 @@ const onboardingUtils = {
                     backgroundColor: AppColors.zeplin.navyBlue,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-5',
-                    text:            'After training, log your soreness & activity to design your recovery.',
+                    text:            'After training, log your soreness & activity for a personalized, restorative Recovery.',
                     textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
-                    title:           'We\'ll Create an Optimal Recovery!',
+                    title:           'Recover intentionally',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
                 },
                 {
                     backgroundColor: AppColors.white,
                     key:             'tutorial-6',
-                    title:           'Optimal Recovery',
+                    title:           'Train & Active Recovery',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
                     videoLink:       'https://s3.amazonaws.com/onboarding-content/train.mp4',
                 },
@@ -476,15 +498,15 @@ const onboardingUtils = {
                     backgroundColor: AppColors.primary.yellow.hundredPercent,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-7',
-                    text:            'Prep & Recover regularly to unlock personalized functional strength to increase athletic resilience',
+                    text:            'Prep & Recover regularly to unlock personalized Functional Strength.',
                     textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
-                    title:           'You can Unlock Functional Strength!',
+                    title:           'Increase resilience with Functional Strength ',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
                 },
                 {
                     backgroundColor: AppColors.white,
                     key:             'tutorial-8',
-                    title:           'Unlock Functional Strength',
+                    title:           'Functional Strength',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
                     videoLink:       'https://s3.amazonaws.com/onboarding-content/fs.mp4',
                 },

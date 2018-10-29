@@ -230,12 +230,14 @@ class UserAccount extends Component {
             }
         } else {
             let coachesMessage = '';
-            errorsArray = errorsArray.concat(onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).errorsArray);
-            errorsArray = errorsArray.concat(onboardingUtils.isUserAboutValid(user).errorsArray);
-            if(section === 1) {
+            let isAccountInfoValid = onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser);
+            let isAccountAboutValid = onboardingUtils.isUserAboutValid(user);
+            if(section === 1 && !isAccountInfoValid.isValid) {
                 coachesMessage = 'The ACCOUNT INFORMATION section has invalid fields. Please complete first and try agian.';
-            } else if(section === 2) {
+                errorsArray = errorsArray.concat(isAccountInfoValid.errorsArray);
+            } else if(section === 2 && !isAccountAboutValid.isValid) {
                 coachesMessage = 'The TELL US ABOUT YOU section has invalid fields. Please complete first and try agian.';
+                errorsArray = errorsArray.concat(isAccountAboutValid.errorsArray);
             }
             if(errorsArray.length > 0) {
                 this.setState({
@@ -265,6 +267,17 @@ class UserAccount extends Component {
         });
     };
 
+    _clearCoachContent = (string, callback) => {
+        if(this.state.coachContent === '') {
+            callback();
+        } else {
+            this.setState(
+                { coachContent: string, },
+                () => callback()
+            );
+        }
+    }
+
     render = () => {
         const {
             componentStep,
@@ -279,7 +292,8 @@ class UserAccount extends Component {
         const SECTIONS = [
             {
                 content: <UserAccountInfo
-                    handleFormChange={(name, text) => this.setState({ coachContent: '', }, () => handleFormChange(name, text))}
+                    clearCoachContent={this._clearCoachContent}
+                    handleFormChange={handleFormChange}
                     isPasswordSecure={this.state.isPasswordSecure}
                     isUpdatingUser={isUpdatingUser}
                     setAccordionSection={this._setAccordionSection}
@@ -293,6 +307,7 @@ class UserAccount extends Component {
             },
             {
                 content: <UserAccountAbout
+                    clearCoachContent={this._clearCoachContent}
                     handleFormChange={handleFormChange}
                     heightPressed={heightPressed}
                     setAccordionSection={handleFormSubmit}

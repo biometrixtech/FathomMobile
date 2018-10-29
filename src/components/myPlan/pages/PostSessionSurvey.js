@@ -47,6 +47,12 @@ class PostSessionSurvey extends Component {
         }
     }
 
+    _scrollToBottom = () => {
+        _.delay(() => {
+            this.scrollViewRef.scrollToEnd({ animated: true, });
+        }, 500);
+    }
+
     render = () => {
         const {
             handleAreaOfSorenessClick,
@@ -190,12 +196,13 @@ class PostSessionSurvey extends Component {
                             {newSoreBodyParts.length > 0 ? newSoreBodyParts.length + 2 : '3'}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
+                            {`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' '}pain or soreness?`}
                         </Text>
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, false, isAllGood)}
                             handleFormChange={handleFormChange}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
+                            scrollToBottom={this._scrollToBottom}
                             soreBodyParts={soreBodyParts}
                             soreBodyPartsState={postSession.soreness}
                             surveyObject={postSession}
@@ -217,7 +224,7 @@ class PostSessionSurvey extends Component {
                             onPress={handleFormSubmit}
                             raised={false}
                             textStyle={{ fontSize: AppFonts.scaleFont(18) }}
-                            title={'Continue'}
+                            title={'Submit'}
                         />
                         :
                         <Button

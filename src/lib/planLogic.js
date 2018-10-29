@@ -39,6 +39,7 @@ const PlanLogic = {
             pushNotificationUpdate.updatePushNotificationFlag = true;
         } else if(props.notification === 'VIEW_PLAN' || !validNotifs.includes(props.notification)) {
             // added catch in case of view plan or other message, do what we did in the past
+            pushNotificationUpdate.page = null;
             pushNotificationUpdate.updateExerciseList = true;
             pushNotificationUpdate.updatePushNotificationFlag = true;
         }

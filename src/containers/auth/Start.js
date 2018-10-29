@@ -8,6 +8,7 @@ const Start = ({
     Layout,
     authorizeUser,
     certificate,
+    device,
     email,
     environment,
     expires,
@@ -25,6 +26,7 @@ const Start = ({
     <Layout
         authorizeUser={authorizeUser}
         certificate={certificate}
+        device={device}
         email={email}
         environment={environment}
         expires={expires}
@@ -45,6 +47,7 @@ Start.propTypes = {
     Layout:               PropTypes.func.isRequired,
     authorizeUser:        PropTypes.func.isRequired,
     certificate:          PropTypes.object,
+    device:               PropTypes.object,
     email:                PropTypes.string,
     environment:          PropTypes.string,
     expires:              PropTypes.string,
@@ -62,6 +65,7 @@ Start.propTypes = {
 
 Start.defaultProps = {
     certificate:          null,
+    device:               null,
     environment:          'PROD',
     email:                null,
     expires:              null,
@@ -73,6 +77,7 @@ Start.defaultProps = {
 
 const mapStateToProps = state => ({
     certificate:          state.init.certificate || null,
+    device:               state.init.device || null,
     environment:          state.init.environment || 'PROD',
     email:                state.init.email || null,
     expires:              state.init.expires || null,

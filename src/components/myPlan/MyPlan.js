@@ -37,28 +37,33 @@ import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } fro
 
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
-const highSorenessMessage = 'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.';
-const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Active recovery is low-impact this morning so let\'s pick up with post practice recovery!';
-const lowSorenessPostMessage = 'Looks like you\'re all clear! Active recovery is low-impact for now so let\'s pick up tomorrow or after the next practice you log!';
-const errorInARAPMessage = '\nWhoops... Give us a second.\nSwipe down to refresh.';
 
-const whenEnabledBackgroundColor = AppColors.white;
-const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
-const whenEnabledBorderColor = AppColors.zeplin.lightGrey;
-const whenEnabledDescriptionColor = AppColors.zeplin.darkGrey;
-const whenDisabledBackgroundColor = AppColors.white;
-const whenDisabledHeaderColor = AppColors.zeplin.greyText;
-const whenDisabledBorderColor = AppColors.zeplin.greyText;
-const whenDisabledDescriptionColor = AppColors.zeplin.greyText;
+// text constants
+const activeRecoveryDisabledText = 'Log an activity to receive your\nactive recovery.';
+const errorInARAPMessage = '\nPlease Swipe Down to Refresh!';
+const highSorenessMessage = 'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.';
+const lowSorenessPostMessage = 'Looks like you\'re all clear! Active recovery is low-impact for now so let\'s pick up tomorrow or after the next practice you log!';
+const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Active recovery is low-impact this morning so let\'s pick up with post practice recovery!';
+const offDayLoggedText = 'Make the most of your training by resting well today: hydrate, eat well and sleep early.';
+
+// styles
 const disabledBackgroundColor = AppColors.white;
-const disabledHeaderColor = AppColors.zeplin.greyText;
 const disabledBorderColor = AppColors.zeplin.greyText;
 const disabledDescriptionColor = AppColors.zeplin.greyText;
+const disabledHeaderColor = AppColors.zeplin.greyText;
 const enabledBackgroundColor = AppColors.zeplin.darkBlue;
-const enabledHeaderColor = AppColors.white;
 const enabledBorderColor = AppColors.zeplin.darkBlue;
 const enabledDescriptionColor = AppColors.primary.yellow.hundredPercent;
-const subtextColor = AppColors.white;
+const enabledHeaderColor = AppColors.white;
+const subtextColor = AppColors.zeplin.greyText;
+const whenDisabledBackgroundColor = AppColors.white;
+const whenDisabledBorderColor = AppColors.zeplin.greyText;
+const whenDisabledDescriptionColor = AppColors.zeplin.greyText;
+const whenDisabledHeaderColor = AppColors.zeplin.greyText;
+const whenEnabledBackgroundColor = AppColors.white;
+const whenEnabledBorderColor = AppColors.zeplin.lightGrey;
+const whenEnabledDescriptionColor = AppColors.zeplin.darkGrey;
+const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
 
 // setup GA Tracker
 const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
@@ -68,10 +73,14 @@ class MyPlan extends Component {
     static componentName = 'MyPlanView';
 
     static propTypes = {
-        ble:                           PropTypes.object.isRequired,
-        clearCompletedExercises:       PropTypes.func.isRequired,
-        clearCompletedFSExercises:     PropTypes.func.isRequired,
-        getSoreBodyParts:              PropTypes.func.isRequired,
+        ble:                       PropTypes.object.isRequired,
+        clearCompletedExercises:   PropTypes.func.isRequired,
+        clearCompletedFSExercises: PropTypes.func.isRequired,
+        getSoreBodyParts:          PropTypes.func.isRequired,
+        lastOpened:                PropTypes.oneOfType([
+            PropTypes.bool,
+            PropTypes.string,
+        ]),
         markStartedFunctionalStrength: PropTypes.func.isRequired,
         markStartedRecovery:           PropTypes.func.isRequired,
         network:                       PropTypes.object.isRequired,
@@ -126,7 +135,7 @@ class MyPlan extends Component {
             prepare: {
                 finishedRecovery:           props.plan && props.plan.dailyPlan[0] && props.plan.dailyPlan[0].pre_recovery_completed ? true : false,
                 isActiveRecoveryCollapsed:  true,
-                isReadinessSurveyCollapsed: true,
+                isReadinessSurveyCollapsed: false,
                 isReadinessSurveyCompleted: false,
             },
             recover: {
@@ -147,64 +156,66 @@ class MyPlan extends Component {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => true);
         }
-        // when we arrive, load MyPlan
-        let userId = this.props.user.id;
-        this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
-            .then(response => {
-                if(response.daily_plans[0].daily_readiness_survey_completed) {
-                    let postPracticeSurveys = response.daily_plans[0].training_sessions.map(session => session.post_session_survey
-                        ? {
-                            isPostPracticeSurveyCollapsed: true,
-                            isPostPracticeSurveyCompleted: true,
-                        } : {
-                            isPostPracticeSurveyCollapsed: false,
-                            isPostPracticeSurveyCompleted: false,
-                        }
-                    );
-                    this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(response.daily_plans[0]));
-                    this.setState({
-                        prepare: Object.assign({}, this.state.prepare, {
-                            finishedRecovery:           response.daily_plans[0].pre_recovery_completed || this.state.prepare.finishedRecovery,
-                            isActiveRecoveryCollapsed:  response.daily_plans[0].pre_recovery_completed || this.state.prepare.isActiveRecoveryCollapsed,
-                            isReadinessSurveyCollapsed: true,
-                        }),
-                        recover: Object.assign({}, this.state.recover, {
-                            isActiveRecoveryCollapsed: response.daily_plans[0].post_recovery && !response.daily_plans[0].pre_recovery ? false : true,
-                        }),
-                        train: Object.assign({}, this.state.train, {
-                            completedPostPracticeSurvey: postPracticeSurveys[0] ? postPracticeSurveys[0].isPostPracticeSurveyCompleted : {},
-                            postPracticeSurveys
-                        }),
-                    });
-                    SplashScreen.hide();
-                } else {
-                    this.setState({
-                        prepare: Object.assign({}, this.state.prepare, {
-                            isActiveRecoveryCollapsed:  true,
-                            isReadinessSurveyCollapsed: false,
-                        })
-                    });
-                    this.props.getSoreBodyParts()
-                        .then(soreBodyParts => {
-                            let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                            newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
-                            this.setState({ dailyReadiness: newDailyReadiness });
-                            SplashScreen.hide();
-                        })
-                        .catch(err => {
-                            // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
-                            let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                            newDailyReadiness.soreness = [];
-                            this.setState({ dailyReadiness: newDailyReadiness });
-                            SplashScreen.hide();
-                            AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
+        // when we arrive, load MyPlan, if it hasn't been loaded today yet
+        if(this.props.lastOpened !== moment().format('YYYY-MM-DD')) {
+            let userId = this.props.user.id;
+            this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
+                .then(response => {
+                    if(response.daily_plans[0].daily_readiness_survey_completed) {
+                        let postPracticeSurveys = response.daily_plans[0].training_sessions.map(session => session.post_session_survey
+                            ? {
+                                isPostPracticeSurveyCollapsed: true,
+                                isPostPracticeSurveyCompleted: true,
+                            } : {
+                                isPostPracticeSurveyCollapsed: false,
+                                isPostPracticeSurveyCompleted: false,
+                            }
+                        );
+                        this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(response.daily_plans[0]));
+                        this.setState({
+                            prepare: Object.assign({}, this.state.prepare, {
+                                finishedRecovery:           response.daily_plans[0].pre_recovery_completed || this.state.prepare.finishedRecovery,
+                                isActiveRecoveryCollapsed:  response.daily_plans[0].pre_recovery_completed || this.state.prepare.isActiveRecoveryCollapsed,
+                                isReadinessSurveyCollapsed: true,
+                            }),
+                            recover: Object.assign({}, this.state.recover, {
+                                isActiveRecoveryCollapsed: response.daily_plans[0].post_recovery && !response.daily_plans[0].pre_recovery ? false : true,
+                            }),
+                            train: Object.assign({}, this.state.train, {
+                                completedPostPracticeSurvey: postPracticeSurveys[0] ? postPracticeSurveys[0].isPostPracticeSurveyCompleted : {},
+                                postPracticeSurveys
+                            }),
                         });
-                }
-            })
-            .catch(error => {
-                SplashScreen.hide();
-                AppUtil.handleAPIErrorAlert(ErrorMessages.getMyPlan);
-            });
+                        SplashScreen.hide();
+                    } else {
+                        this.setState({
+                            prepare: Object.assign({}, this.state.prepare, {
+                                isActiveRecoveryCollapsed:  true,
+                                isReadinessSurveyCollapsed: false,
+                            })
+                        });
+                        this.props.getSoreBodyParts()
+                            .then(soreBodyParts => {
+                                let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+                                newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
+                                this.setState({ dailyReadiness: newDailyReadiness });
+                                SplashScreen.hide();
+                            })
+                            .catch(err => {
+                                // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
+                                let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+                                newDailyReadiness.soreness = [];
+                                this.setState({ dailyReadiness: newDailyReadiness });
+                                SplashScreen.hide();
+                                AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
+                            });
+                    }
+                })
+                .catch(error => {
+                    SplashScreen.hide();
+                    AppUtil.handleAPIErrorAlert(ErrorMessages.getMyPlan);
+                });
+        }
     }
 
     componentWillUnmount = () => {
@@ -854,23 +865,19 @@ class MyPlan extends Component {
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed  ? true : false;
-        let readinessSurveyBackgroundColor = isDailyReadinessSurveyCompleted ? disabledBackgroundColor : enabledBackgroundColor;
-        let readinessSurveyDescriptionColor = isDailyReadinessSurveyCompleted ? disabledDescriptionColor : enabledDescriptionColor;
-        let readinessSurveyHeaderColor = isDailyReadinessSurveyCompleted ? disabledHeaderColor : enabledHeaderColor;
-        let readinessSurveyBorderColor = isDailyReadinessSurveyCompleted ? disabledBorderColor : enabledBorderColor;
-        let activeRecoveryBackgroundColor = disabled ? disabledBackgroundColor : isActive ? enabledBackgroundColor : isCompleted ? enabledBackgroundColor : disabledBackgroundColor;
-        let activeRecoveryDescriptionColor = disabled ? disabledDescriptionColor : isActive ? enabledDescriptionColor : isCompleted ? enabledDescriptionColor : disabledDescriptionColor;
-        let activeRecoveryHeaderColor = disabled ? disabledHeaderColor : isActive ? enabledHeaderColor : isCompleted ? enabledHeaderColor : disabledHeaderColor;
-        let activeRecoveryBorderColor = disabled ? disabledBorderColor : isActive ? enabledBorderColor : isCompleted ? enabledBorderColor : disabledBorderColor;
-        let activeRecoveryActiveTimeBackgroundColor = disabled ? disabledBackgroundColor : isActive ? enabledBackgroundColor : isCompleted ? whenEnabledBackgroundColor : disabledBackgroundColor;
-        let activeRecoveryActiveTimeDescriptionColor = disabled ? disabledDescriptionColor : isActive ? enabledDescriptionColor : isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
-        let activeRecoveryActiveTimeHeaderColor = disabled ? disabledHeaderColor : isActive ? enabledHeaderColor : isCompleted ? whenEnabledHeaderColor : disabledHeaderColor;
-        let activeRecoveryActiveTimeBorderColor = disabled ? disabledBorderColor : isActive ? enabledBorderColor : isCompleted ? whenEnabledBorderColor : disabledBorderColor;
-        let activeRecoveryActiveTimeSubtextColor = disabled ? disabledDescriptionColor : isActive ? subtextColor : isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
-        let activeRecoveryWhenBackgroundColor = disabled ? whenDisabledBackgroundColor : isActive ? whenEnabledBackgroundColor : isCompleted ? whenEnabledBackgroundColor : whenDisabledBackgroundColor;
-        let activeRecoveryWhenDescriptionColor = disabled ? whenDisabledDescriptionColor : isActive ? whenEnabledDescriptionColor : isCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
-        let activeRecoveryWhenHeaderColor = disabled ? whenDisabledHeaderColor : isActive ? whenEnabledHeaderColor : isCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor;
-        let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive ? whenEnabledBorderColor : isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
+        let activeRecoveryBackgroundColor = disabled ? disabledBackgroundColor : isActive || isCompleted ? whenEnabledBackgroundColor : disabledBackgroundColor;
+        let activeRecoveryDescriptionColor = disabled ? disabledDescriptionColor : isActive || isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
+        let activeRecoveryHeaderColor = disabled ? disabledHeaderColor : isActive || isCompleted ? whenEnabledHeaderColor : disabledHeaderColor;
+        let activeRecoveryBorderColor = disabled ? disabledBorderColor : isActive || isCompleted ? whenEnabledBorderColor : disabledBorderColor;
+        let activeRecoveryActiveTimeBackgroundColor = disabled ? disabledBackgroundColor : isActive || isCompleted ? whenEnabledBackgroundColor : disabledBackgroundColor;
+        let activeRecoveryActiveTimeDescriptionColor = disabled ? disabledDescriptionColor : isActive || isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
+        let activeRecoveryActiveTimeHeaderColor = disabled ? disabledHeaderColor : isActive || isCompleted ? whenEnabledHeaderColor : disabledHeaderColor;
+        let activeRecoveryActiveTimeBorderColor = disabled ? disabledBorderColor : isActive || isCompleted ? whenEnabledBorderColor : disabledBorderColor;
+        let activeRecoveryActiveTimeSubtextColor = disabled ? disabledDescriptionColor : isActive || isCompleted ? whenEnabledBorderColor : disabledDescriptionColor;
+        let activeRecoveryWhenBackgroundColor = disabled ? whenDisabledBackgroundColor : isActive || isCompleted ? whenEnabledBackgroundColor : whenDisabledBackgroundColor;
+        let activeRecoveryWhenDescriptionColor = disabled ? whenDisabledDescriptionColor : isActive || isCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
+        let activeRecoveryWhenHeaderColor = disabled ? whenDisabledHeaderColor : isActive || isCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor;
+        let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive || isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
         return (
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}
@@ -916,9 +923,9 @@ class MyPlan extends Component {
                                             <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
                                             <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'EARLY IN\nTHE DAY'}</Text>
                                         </View>
-                                        <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: readinessSurveyBackgroundColor, borderColor: readinessSurveyBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                            <Text h7 oswaldMedium style={{ color: readinessSurveyHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHY'}</Text>
-                                            <Text oswaldMedium style={{ color: readinessSurveyDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'PERSONALIZE\nYOUR PLAN'}</Text>
+                                        <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                            <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHY'}</Text>
+                                            <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'PERSONALIZE\nYOUR PLAN'}</Text>
                                         </View>
                                     </View>
                                     <Spacer size={12}/>
@@ -929,9 +936,21 @@ class MyPlan extends Component {
                                         color={AppColors.white}
                                         fontFamily={AppStyles.robotoBold.fontFamily}
                                         fontWeight={AppStyles.robotoBold.fontWeight}
+                                        leftIcon={{
+                                            color: AppColors.primary.yellow.hundredPercent,
+                                            name:  'chevron-right',
+                                            size:  AppFonts.scaleFont(24),
+                                            style: {flex: 1,},
+                                        }}
                                         outlined
                                         onPress={() => this._toggleReadinessSurvey()}
-                                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                                        rightIcon={{
+                                            color: AppColors.white,
+                                            name:  'chevron-right',
+                                            size:  AppFonts.scaleFont(24),
+                                            style: {flex: 1,},
+                                        }}
+                                        textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                         title={'Start'}
                                     />
                                 </View>
@@ -997,9 +1016,21 @@ class MyPlan extends Component {
                                         color={AppColors.white}
                                         fontFamily={AppStyles.robotoBold.fontFamily}
                                         fontWeight={AppStyles.robotoBold.fontWeight}
+                                        leftIcon={{
+                                            color: AppColors.primary.yellow.hundredPercent,
+                                            name:  'chevron-right',
+                                            size:  AppFonts.scaleFont(24),
+                                            style: {flex: 1,},
+                                        }}
                                         outlined
                                         onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed })}) }
-                                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                                        rightIcon={{
+                                            color: AppColors.white,
+                                            name:  'chevron-right',
+                                            size:  AppFonts.scaleFont(24),
+                                            style: {flex: 1,},
+                                        }}
+                                        textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                         title={completedExercises.length > 0 ? 'Continue' : 'Start'}
                                     />
                                 </View>
@@ -1163,19 +1194,19 @@ class MyPlan extends Component {
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed ? true : false;
-        let activeRecoveryBackgroundColor = disabled ? disabledBackgroundColor : isActive ? enabledBackgroundColor : isCompleted ? enabledBackgroundColor : disabledBackgroundColor;
-        let activeRecoveryDescriptionColor = disabled ? disabledDescriptionColor : isActive ? enabledDescriptionColor : isCompleted ? enabledDescriptionColor : disabledDescriptionColor;
-        let activeRecoveryHeaderColor = disabled ? disabledHeaderColor : isActive ? enabledHeaderColor : isCompleted ? enabledHeaderColor : disabledHeaderColor;
-        let activeRecoveryBorderColor = disabled ? disabledBorderColor : isActive ? enabledBorderColor : isCompleted ? enabledBorderColor : disabledBorderColor;
-        let activeRecoveryActiveTimeBackgroundColor = disabled ? disabledBackgroundColor : isActive ? enabledBackgroundColor : isCompleted ? whenEnabledBackgroundColor : disabledBackgroundColor;
-        let activeRecoveryActiveTimeDescriptionColor = disabled ? disabledDescriptionColor : isActive ? enabledDescriptionColor : isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
-        let activeRecoveryActiveTimeHeaderColor = disabled ? disabledHeaderColor : isActive ? enabledHeaderColor : isCompleted ? whenEnabledHeaderColor : disabledHeaderColor;
-        let activeRecoveryActiveTimeBorderColor = disabled ? disabledBorderColor : isActive ? enabledBorderColor : isCompleted ? whenEnabledBorderColor : disabledBorderColor;
+        let activeRecoveryBackgroundColor = disabled ? disabledBackgroundColor : isActive || isCompleted ? whenEnabledBackgroundColor : disabledBackgroundColor;
+        let activeRecoveryDescriptionColor = disabled ? disabledDescriptionColor : isActive || isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
+        let activeRecoveryHeaderColor = disabled ? disabledHeaderColor : isActive || isCompleted ? whenEnabledHeaderColor : disabledHeaderColor;
+        let activeRecoveryBorderColor = disabled ? disabledBorderColor : isActive || isCompleted ? whenEnabledBorderColor : disabledBorderColor;
+        let activeRecoveryActiveTimeBackgroundColor = disabled ? disabledBackgroundColor : isActive || isCompleted ? whenEnabledBackgroundColor : disabledBackgroundColor;
+        let activeRecoveryActiveTimeDescriptionColor = disabled ? disabledDescriptionColor : isActive || isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
+        let activeRecoveryActiveTimeHeaderColor = disabled ? disabledHeaderColor : isActive || isCompleted ? whenEnabledHeaderColor : disabledHeaderColor;
+        let activeRecoveryActiveTimeBorderColor = disabled ? disabledBorderColor : isActive || isCompleted ? whenEnabledBorderColor : disabledBorderColor;
         let activeRecoveryActiveTimeSubtextColor = disabled ? disabledDescriptionColor : isActive ? subtextColor : isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
-        let activeRecoveryWhenBackgroundColor = disabled ? whenDisabledBackgroundColor : isActive ? whenEnabledBackgroundColor : isCompleted ? whenEnabledBackgroundColor : whenDisabledBackgroundColor;
-        let activeRecoveryWhenDescriptionColor = disabled ? whenDisabledDescriptionColor : isActive ? whenEnabledDescriptionColor : isCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
-        let activeRecoveryWhenHeaderColor = disabled ? whenDisabledHeaderColor : isActive ? whenEnabledHeaderColor : isCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor;
-        let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive ? whenEnabledBorderColor : isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
+        let activeRecoveryWhenBackgroundColor = disabled ? whenDisabledBackgroundColor : isActive || isCompleted ? whenEnabledBackgroundColor : whenDisabledBackgroundColor;
+        let activeRecoveryWhenDescriptionColor = disabled ? whenDisabledDescriptionColor : isActive || isCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
+        let activeRecoveryWhenHeaderColor = disabled ? whenDisabledHeaderColor : isActive || isCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor;
+        let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive || isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
         return (
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}
@@ -1210,18 +1241,22 @@ class MyPlan extends Component {
                 {
                     /* eslint-disable indent */
                     disabled ?
-                        <View style={{ flex: 1, flexDirection: 'row', }}>
-                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                            <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                {
-                                    this.renderActiveRecoveryBlocks(
-                                        false,
-                                        {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                        {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
-                                        true
-                                    )
-                                }
+                        <View>
+                            <View style={{ flex: 1, flexDirection: 'row', }}>
+                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                                <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
+                                    {
+                                        this.renderActiveRecoveryBlocks(
+                                            false,
+                                            {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
+                                            {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
+                                            true
+                                        )
+                                    }
+                                </View>
                             </View>
+                            <Spacer size={35}/>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}>{activeRecoveryDisabledText}</Text>
                         </View>
                     : isActive ?
                         exerciseList.totalLength === 0 ?
@@ -1252,9 +1287,21 @@ class MyPlan extends Component {
                                         containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
                                         fontFamily={AppStyles.robotoBold.fontFamily}
                                         fontWeight={AppStyles.robotoBold.fontWeight}
+                                        leftIcon={{
+                                            color: AppColors.primary.yellow.hundredPercent,
+                                            name:  'chevron-right',
+                                            size:  AppFonts.scaleFont(24),
+                                            style: {flex: 1,},
+                                        }}
                                         outlined
                                         onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) })}
-                                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                                        rightIcon={{
+                                            color: AppColors.white,
+                                            name:  'chevron-right',
+                                            size:  AppFonts.scaleFont(24),
+                                            style: {flex: 1,},
+                                        }}
+                                        textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                         title={completedExercises.length > 0 ? 'Continue' : 'Start'}
                                     />
                                 </View>
@@ -1393,18 +1440,30 @@ class MyPlan extends Component {
             [];
         let completedFSExercises = store.getState().plan.completedFSExercises;
         let fsExerciseList = functionalStrength ? MyPlanConstants.cleanFSExerciseList(functionalStrength) : {};
+        let offDaySelected = dailyPlanObj && !dailyPlanObj.sessions_planned || filteredTrainingSessions.length > 0;
         let logActivityButtonOutlined = (isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed) || (!isDailyReadinessSurveyCompleted) ? true : false;
-        let logActivityButtonBackgroundColor = logActivityButtonOutlined ?
-            AppColors.white
-            :
-            AppColors.primary.yellow.hundredPercent;
-        let logActivityButtonColor = logActivityButtonOutlined && !isDailyReadinessSurveyCompleted ?
-            AppColors.zeplin.greyText
-            : logActivityButtonOutlined && isDailyReadinessSurveyCompleted ?
-                AppColors.primary.yellow.hundredPercent
+        let logActivityButtonBackgroundColor = offDaySelected && functionalStrength.completed ?
+            AppColors.primary.yellow.hundredPercent
+            : logActivityButtonOutlined ?
+                AppColors.white
                 :
-                AppColors.white;
+                AppColors.primary.yellow.hundredPercent;
+        let logActivityButtonColor = offDaySelected && functionalStrength.completed ?
+            AppColors.white
+            : logActivityButtonOutlined && !isDailyReadinessSurveyCompleted ?
+                AppColors.zeplin.greyText
+                : logActivityButtonOutlined && isDailyReadinessSurveyCompleted ?
+                    AppColors.primary.yellow.hundredPercent
+                    :
+                    AppColors.white;
         let isFSCompletedValid = functionalStrength && Object.keys(functionalStrength).length > 0 && completedFSExercises ? MyPlanConstants.isFSCompletedValid(functionalStrength, completedFSExercises) : false;
+        let logActivityRightIconColor = isDailyReadinessSurveyCompleted ?
+                completedFSExercises.length > 0 ?
+                    AppColors.primary.yellow.hundredPercent
+                    :
+                    AppColors.white
+            :
+            AppColors.zeplin.greyText;
         return (
             <ScrollView contentContainerStyle={{ backgroundColor: AppColors.white, }} tabLabel={tabs[index]}>
                 <Spacer size={30} />
@@ -1428,7 +1487,7 @@ class MyPlan extends Component {
                         <View style={{ flexDirection: 'row', }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
                             <View style={{ flex: 1, margin: 20, }}>
-                                <Text robotoRegular style={{fontSize: AppFonts.scaleFont(16),}}>{'Make the most of your training by resting well today: hydrate, eat well, sleep early, and do your recomended active recovery.'}</Text>
+                                <Text robotoRegular style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(16),}]}>{offDayLoggedText}</Text>
                             </View>
                         </View>
                     </View>
@@ -1460,10 +1519,10 @@ class MyPlan extends Component {
                                           <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
                                           <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'ANYTIME DURING THE DAY'}</Text>
                                       </View>
-                                      <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: enabledBackgroundColor, borderColor: enabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                          <Text h7 oswaldMedium style={{ color: enabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
+                                      <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                                          <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
                                           <View style={{ alignItems: 'center', flexDirection: 'row', flex: 1, }}>
-                                              <Text h1 oswaldMedium style={{ color: enabledDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{`${parseFloat(functionalStrength.minutes_duration).toFixed(1)}`}</Text>
+                                              <Text h1 oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{`${parseFloat(functionalStrength.minutes_duration).toFixed(1)}`}</Text>
                                               <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
                                                   <Text h7 oswaldMedium style={{ color: subtextColor, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
                                               </View>
@@ -1478,9 +1537,21 @@ class MyPlan extends Component {
                                           containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
                                           fontFamily={AppStyles.robotoBold.fontFamily}
                                           fontWeight={AppStyles.robotoBold.fontWeight}
+                                          leftIcon={{
+                                              color: AppColors.primary.yellow.hundredPercent,
+                                              name:  'chevron-right',
+                                              size:  AppFonts.scaleFont(24),
+                                              style: {flex: 1,},
+                                          }}
                                           outlined
                                           onPress={() => this.setState({ isFunctionalStrengthCollapsed: false, })}
-                                          textStyle={{ fontSize: AppFonts.scaleFont(16) }}
+                                          rightIcon={{
+                                              color: AppColors.white,
+                                              name:  'chevron-right',
+                                              size:  AppFonts.scaleFont(24),
+                                              style: {flex: 1,},
+                                          }}
+                                          textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                           title={completedFSExercises.length > 0 ? 'Continue' : 'Start'}
                                       />
                                       :
@@ -1567,7 +1638,7 @@ class MyPlan extends Component {
                             outlined={logActivityButtonOutlined}
                             raised={false}
                             rightIcon={{
-                                color: logActivityButtonColor,
+                                color: logActivityRightIconColor,
                                 name:  'chevron-right',
                                 size:  AppFonts.scaleFont(30),
                             }}
@@ -1575,7 +1646,7 @@ class MyPlan extends Component {
                             title={'LOG COMPLETED ACTIVITY'}
                         />
                         <Spacer size={10} />
-                        { (dailyPlanObj && dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
+                        { !offDaySelected ?
                             <Button
                                 backgroundColor={AppColors.white}
                                 buttonStyle={{justifyContent: 'space-between',}}
@@ -1592,12 +1663,12 @@ class MyPlan extends Component {
                                 outlined
                                 raised={false}
                                 rightIcon={{
-                                    color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
+                                    color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
                                     name:  'chevron-right',
                                     size:  AppFonts.scaleFont(30),
                                 }}
                                 textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
-                                title={'LOG AN OFF DAY'}
+                                title={'OFF DAY'}
                             />
                             :
                             null
@@ -1681,10 +1752,13 @@ class MyPlan extends Component {
         // only scroll to page when we
         // - HAVE a tabView
         // - DO NOT HAVE: isReadinessSurveyModalOpen & isPostSessionSurveyModalOpen & loading
-        if(
+        if(!pageIndex && callback) {
+            callback();
+        } else if(
             this.tabView &&
             !this.state.isReadinessSurveyModalOpen &&
-            !this.state.isPostSessionSurveyModalOpen
+            !this.state.isPostSessionSurveyModalOpen &&
+            pageIndex
         ) {
             setTimeout(() => {
                 this.tabView.goToPage(pageIndex);
