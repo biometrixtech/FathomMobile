@@ -93,7 +93,112 @@ const helperFunctions = {
         return expectedResult;
     },
 
+    getDailyReadinessDefaultState: () => {
+        let dailyReadinessDefaultState = {
+            current_position:          null,
+            current_sport_name:        null,
+            readiness:                 0,
+            sleep_quality:             0,
+            soreness:                  [],
+            wants_functional_strength: null,
+        };
+        return dailyReadinessDefaultState;
+    },
+
+    getPostSessionDefaultState: () => {
+        let postSessionState = {
+            RPE:                            0,
+            description:                    '',
+            duration:                       0,
+            event_date:                     null,
+            session_type:                   null,
+            soreness:                       [],
+            sport_name:                     null, // this exists for session_type = 0,2,3,6
+            strength_and_conditioning_type: null, // this only exists for session_type=1
+        };
+        return postSessionState;
+    },
+
+    getDailyReadinessReadinessInputExpectedResult: key => {
+        let expectedResult = {
+            current_position:          null,
+            current_sport_name:        null,
+            readiness:                 (key * 2),
+            sleep_quality:             0,
+            soreness:                  [],
+            wants_functional_strength: null,
+        };
+        return expectedResult;
+    },
+
+    getDailyReadinessSleepQualityInputExpectedResult: key => {
+        let expectedResult = {
+            current_position:          null,
+            current_sport_name:        null,
+            readiness:                 0,
+            sleep_quality:             (key * 2),
+            soreness:                  [],
+            wants_functional_strength: null,
+        };
+        return expectedResult;
+    },
+
+    getDailyReadinessFSInputExpectedResult: wantsFS => {
+        let expectedResult = {
+            current_position:          null,
+            current_sport_name:        null,
+            readiness:                 0,
+            sleep_quality:             0,
+            soreness:                  [],
+            wants_functional_strength: wantsFS,
+        };
+        return expectedResult;
+    },
+
 };
+
+it('Daily Readiness Form Change - Readiness Input', () => {
+    let key = 3;
+    let expectedResult = helperFunctions.getDailyReadinessReadinessInputExpectedResult(key);
+    let value = (key * 2);
+    let dailyReadinessDefaultState = helperFunctions.getDailyReadinessDefaultState();
+    expect(PlanLogic.handleDailyReadinessFormChange('readiness', value, false, false, false, dailyReadinessDefaultState)).toEqual(expectedResult);
+});
+
+it('Daily Readiness Form Change - Sleep Quality Input', () => {
+    let key = 3;
+    let expectedResult = helperFunctions.getDailyReadinessSleepQualityInputExpectedResult(key);
+    let value = (key * 2);
+    let dailyReadinessDefaultState = helperFunctions.getDailyReadinessDefaultState();
+    expect(PlanLogic.handleDailyReadinessFormChange('sleep_quality', value, false, false, false, dailyReadinessDefaultState)).toEqual(expectedResult);
+});
+
+it('Daily Readiness Form Change - Wants FS Input - T', () => {
+    let value = true;
+    let expectedResult = helperFunctions.getDailyReadinessFSInputExpectedResult(value);
+    let dailyReadinessDefaultState = helperFunctions.getDailyReadinessDefaultState();
+    expect(PlanLogic.handleDailyReadinessFormChange('wants_functional_strength', value, false, false, false, dailyReadinessDefaultState)).toEqual(expectedResult);
+});
+
+it('Daily Readiness Form Change - Wants FS Input - F', () => {
+    let value = false;
+    let expectedResult = helperFunctions.getDailyReadinessFSInputExpectedResult(value);
+    let dailyReadinessDefaultState = helperFunctions.getDailyReadinessDefaultState();
+    expect(PlanLogic.handleDailyReadinessFormChange('wants_functional_strength', value, false, false, false, dailyReadinessDefaultState)).toEqual(expectedResult);
+});
+
+// TODO: dailyReadiness- soreness
+// TODO: dailyReadiness- current_position
+// TODO: dailyReadiness- current_sport_name
+
+// TODO: postSession- RPE
+// TODO: postSession- description
+// TODO: postSession- duration
+// TODO: postSession- event_date
+// TODO: postSession- session_type
+// TODO: postSession- soreness
+// TODO: postSession- sport_name
+// TODO: postSession- strength_and_conditioning_type
 
 it('Active Prep Push Notification Result - FFF', () => {
     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, false, false);

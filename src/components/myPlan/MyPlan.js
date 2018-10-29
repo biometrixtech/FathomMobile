@@ -288,6 +288,7 @@ class MyPlan extends Component {
     }
 
     _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side) => {
+        console.log(name, value, isPain, bodyPart, side, this.state.dailyReadiness);
         const newFormFields = PlanLogic.handleDailyReadinessFormChange(name, value, isPain, bodyPart, side, this.state.dailyReadiness);
         this.setState({
             dailyReadiness: newFormFields
@@ -295,6 +296,7 @@ class MyPlan extends Component {
     }
 
     _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side) => {
+        console.log(name, value, isPain, bodyPart, side);
         const newFormFields = PlanLogic.handlePostSessionFormChange(name, value, isPain, bodyPart, side, this.state.postSession);
         this.setState({
             postSession: newFormFields

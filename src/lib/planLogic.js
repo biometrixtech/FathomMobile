@@ -75,6 +75,8 @@ const PlanLogic = {
         return newFormFields;
     },
 
+    // TODO: COMBINE BOTH FUNCTIONS ABOVE AND BELOW
+
     /**
       * Updates to the state when the post session form is changed
       */
