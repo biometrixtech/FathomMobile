@@ -1,9 +1,6 @@
 // import third-party libraries
 import _ from 'lodash';
 
-// Consts and Libs
-import { AppUtil, } from './';
-
 const PlanLogic = {
 
     /**
@@ -45,6 +42,68 @@ const PlanLogic = {
         }
         // return
         return pushNotificationUpdate;
+    },
+
+    /**
+      * Updates to the state when the daily readiness form is changed
+      */
+    handleDailyReadinessFormChange: (name, value, isPain, bodyPart, side, dailyReadiness) => {
+        // setup varibles
+        let newFormFields;
+        // logic
+        if(name === 'soreness' && bodyPart) {
+            let newSorenessFields = _.cloneDeep(dailyReadiness.soreness);
+            if(_.findIndex(dailyReadiness.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
+                // body part already exists
+                let sorenessIndex = [_.findIndex(dailyReadiness.soreness, (o) => o.body_part === bodyPart && o.side === side)];
+                newSorenessFields[sorenessIndex].pain = isPain;
+                newSorenessFields[sorenessIndex].severity = value;
+            } else {
+                // doesn't exist, create new object
+                let newSorenessPart = {};
+                newSorenessPart.body_part = bodyPart;
+                newSorenessPart.pain = isPain;
+                newSorenessPart.severity = value;
+                newSorenessPart.side = side ? side : 0;
+                newSorenessFields.push(newSorenessPart);
+            }
+            newFormFields = _.update( dailyReadiness, 'soreness', () => newSorenessFields);
+        } else {
+            newFormFields = _.update( dailyReadiness, name, () => value);
+        }
+        // return
+        return newFormFields;
+    },
+
+    /**
+      * Updates to the state when the post session form is changed
+      */
+    handlePostSessionFormChange: (name, value, isPain, bodyPart, side, postSession) => {
+        // setup varibles
+        let newFormFields;
+        // logic
+        if(name === 'soreness' && bodyPart) {
+            let newSorenessFields = _.cloneDeep(postSession.soreness);
+            if(_.findIndex(postSession.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
+                // body part already exists
+                let sorenessIndex = [_.findIndex(postSession.soreness, (o) => o.body_part === bodyPart && o.side === side)];
+                newSorenessFields[sorenessIndex].pain = isPain;
+                newSorenessFields[sorenessIndex].severity = value;
+            } else {
+                // doesn't exist, create new object
+                let newSorenessPart = {};
+                newSorenessPart.body_part = bodyPart;
+                newSorenessPart.pain = isPain;
+                newSorenessPart.severity = value;
+                newSorenessPart.side = side ? side : 0;
+                newSorenessFields.push(newSorenessPart);
+            }
+            newFormFields = _.update( postSession, 'soreness', () => newSorenessFields);
+        } else {
+            newFormFields = _.update( postSession, name, () => value);
+        }
+        // return
+        return newFormFields;
     },
 
 };
