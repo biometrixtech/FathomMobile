@@ -749,12 +749,14 @@ class MyPlan extends Component {
             }
             :
             {};
+        // making sure we can only drag horizontally if our modals are closed and nothing is loading
+        let isScrollLocked = !this.state.isReadinessSurveyModalOpen && !this.state.isPostSessionSurveyModalOpen && !this.state.loading ? false : true;
         return <TouchableWithoutFeedback
             key={`${name}_${page}`}
             accessible={true}
             accessibilityLabel={name}
             accessibilityTraits='button'
-            onPress={() => onPressHandler(page)}
+            onPress={() => isScrollLocked ? null : onPressHandler(page)}
             onLayout={onLayoutHandler}
         >
             <View style={[page === 0 ? page0Styles : page === 1 ? page1Styles : page2Styles]}>
@@ -1758,6 +1760,7 @@ class MyPlan extends Component {
             this.tabView &&
             !this.state.isReadinessSurveyModalOpen &&
             !this.state.isPostSessionSurveyModalOpen &&
+            !this.state.loading &&
             pageIndex
         ) {
             setTimeout(() => {
