@@ -277,9 +277,9 @@ const sessionTypes = {
 };
 
 const availableSessionTypes = [
-    { index: 0, order: 1, label: 'Practice', },
-    { index: 2, order: 2, label: 'Competition', },
-    { index: 6, order: 3, label: 'Training', },
+    { index: 0, order: 1, label: 'Practice', ignoreSelection: true, },
+    { index: 2, order: 2, label: 'Competition', ignoreSelection: false, },
+    { index: 6, order: 3, label: 'Training', ignoreSelection: false, },
 ];
 
 const strengthConditioningTypes = [
