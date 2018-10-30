@@ -126,8 +126,9 @@ class ResetPassword extends Component {
                     const error = AppAPI.handleError(err);
                     if(error.includes('ExpiredCodeException')) {
                         this.setState({ resultMsg: {error: 'The PIN you are using has expired.  Please request a new PIN.'} });
-                    }
-                    else{
+                    } else if(error.includes('CodeMismatchException')) {
+                        this.setState({ resultMsg: {error: 'Invalid 6-digit PIN provided, please try again.'} });
+                    } else {
                         this.setState({ resultMsg: { error } });
                     }
                 });
@@ -225,7 +226,6 @@ class ResetPassword extends Component {
                             inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'default'}
                             onChangeText={(text) => this._handleFormChange('ConfirmPassword', text)}
-                            onSubmitEditing={() => this._handleFormSubmit()}
                             placeholder={'confirm new password'}
                             placeholderTextColor={AppColors.primary.yellow.hundredPercent}
                             returnKeyType={'done'}

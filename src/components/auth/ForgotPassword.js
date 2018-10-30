@@ -176,7 +176,6 @@ class ForgotPassword extends Component {
                             inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'email-address'}
                             onChangeText={(text) => this._handleFormChange('email', text)}
-                            onSubmitEditing={() => this._handleFormSubmit()}
                             placeholder={'email'}
                             placeholderTextColor={AppColors.primary.yellow.hundredPercent}
                             returnKeyType={'done'}
