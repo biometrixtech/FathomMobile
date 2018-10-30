@@ -271,20 +271,34 @@ class MyPlan extends Component {
     }
 
     _handlePushNotification = props => {
-        const pushNotificationUpdate = PlanLogic.handlePushNotification(props, this.state);
-        this._goToScrollviewPage(pushNotificationUpdate.page, () => {
-            if(pushNotificationUpdate.stateName !== '' || pushNotificationUpdate.newStateFields !== '') {
-                this.setState({
-                    [pushNotificationUpdate.stateName]: pushNotificationUpdate.newStateFields,
+        // need to update our state to clear all 'open' items
+        this.setState(
+            {
+                ...this.state,
+                isPostSessionSurveyModalOpen: false,
+                isReadinessSurveyModalOpen:   false,
+                isSelectedExerciseModalOpen:  false,
+                loading:                      false,
+                selectedExercise:             {},
+            },
+            () => {
+                // continue current logic
+                const pushNotificationUpdate = PlanLogic.handlePushNotification(props, this.state);
+                this._goToScrollviewPage(pushNotificationUpdate.page, () => {
+                    if(pushNotificationUpdate.stateName !== '' || pushNotificationUpdate.newStateFields !== '') {
+                        this.setState({
+                            [pushNotificationUpdate.stateName]: pushNotificationUpdate.newStateFields,
+                        });
+                    }
+                    if(pushNotificationUpdate.updateExerciseList) {
+                        this._handleExerciseListRefresh();
+                    }
+                    if(pushNotificationUpdate.updatePushNotificationFlag) {
+                        AppUtil.updatePushNotificationFlag();
+                    }
                 });
             }
-            if(pushNotificationUpdate.updateExerciseList) {
-                this._handleExerciseListRefresh();
-            }
-            if(pushNotificationUpdate.updatePushNotificationFlag) {
-                AppUtil.updatePushNotificationFlag();
-            }
-        });
+        );
     }
 
     _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side) => {
