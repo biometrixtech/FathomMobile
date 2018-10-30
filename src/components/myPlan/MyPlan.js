@@ -157,7 +157,7 @@ class MyPlan extends Component {
             BackHandler.addEventListener('hardwareBackPress', () => true);
         }
         // when we arrive, load MyPlan, if it hasn't been loaded today yet
-        if(this.props.lastOpened !== moment().format('YYYY-MM-DD')) {
+        if(moment(this.props.lastOpened).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')) {
             let userId = this.props.user.id;
             this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
                 .then(response => {

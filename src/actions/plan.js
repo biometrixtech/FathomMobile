@@ -25,6 +25,10 @@ const getMyPlan = (userId, startDate, endDate) => {
     store.dispatch({
         type: Actions.UPDATE_LAST_OPENED,
     });
+    // clear MyPlan to default plan
+    store.dispatch({
+        type: Actions.CLEAR_MY_PLAN,
+    });
     // continue logic
     let currentState = store.getState();
     let myPlanObj = {};

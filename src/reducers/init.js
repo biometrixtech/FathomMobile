@@ -75,7 +75,7 @@ export default function initReducer(state = initialState, action) {
     case Actions.RESET_PASSWORD_FAILURE:
     case Actions.UPDATE_LAST_OPENED:
         return Object.assign({}, state, {
-            lastOpened: moment().toISOString(true).substring(0, moment().toISOString(true).indexOf('T')),
+            lastOpened: moment().format(),
         });
     default:
         return state;
