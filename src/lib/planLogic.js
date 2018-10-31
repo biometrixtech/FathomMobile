@@ -1,9 +1,6 @@
 // import third-party libraries
 import _ from 'lodash';
 
-// Consts and Libs
-import { AppUtil, } from './';
-
 const PlanLogic = {
 
     /**
@@ -45,6 +42,37 @@ const PlanLogic = {
         }
         // return
         return pushNotificationUpdate;
+    },
+
+    /**
+      * Updates to the state when the daily readiness & post session form is changed
+      */
+    handleDailyReadinessAndPostSessionFormChange: (name, value, isPain, bodyPart, side, state) => {
+        // setup varibles
+        let newFormFields;
+        // logic
+        if(name === 'soreness' && bodyPart) {
+            let newSorenessFields = _.cloneDeep(state.soreness);
+            if(_.findIndex(state.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
+                // body part already exists
+                let sorenessIndex = [_.findIndex(state.soreness, (o) => o.body_part === bodyPart && o.side === side)];
+                newSorenessFields[sorenessIndex].pain = isPain;
+                newSorenessFields[sorenessIndex].severity = value;
+            } else {
+                // doesn't exist, create new object
+                let newSorenessPart = {};
+                newSorenessPart.body_part = bodyPart;
+                newSorenessPart.pain = isPain;
+                newSorenessPart.severity = value;
+                newSorenessPart.side = side ? side : 0;
+                newSorenessFields.push(newSorenessPart);
+            }
+            newFormFields = _.update( state, 'soreness', () => newSorenessFields);
+        } else {
+            newFormFields = _.update( state, name, () => value);
+        }
+        // return
+        return newFormFields;
     },
 
 };

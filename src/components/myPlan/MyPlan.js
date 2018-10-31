@@ -304,54 +304,14 @@ class MyPlan extends Component {
     }
 
     _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side) => {
-        let newFormFields;
-        if(name === 'soreness' && bodyPart) {
-            let newSorenessFields = _.cloneDeep(this.state.dailyReadiness.soreness);
-            if(_.findIndex(this.state.dailyReadiness.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
-                // body part already exists
-                let sorenessIndex = [_.findIndex(this.state.dailyReadiness.soreness, (o) => o.body_part === bodyPart && o.side === side)];
-                newSorenessFields[sorenessIndex].pain = isPain;
-                newSorenessFields[sorenessIndex].severity = value;
-            } else {
-                // doesn't exist, create new object
-                let newSorenessPart = {};
-                newSorenessPart.body_part = bodyPart;
-                newSorenessPart.pain = isPain;
-                newSorenessPart.severity = value;
-                newSorenessPart.side = side ? side : 0;
-                newSorenessFields.push(newSorenessPart);
-            }
-            newFormFields = _.update( this.state.dailyReadiness, 'soreness', () => newSorenessFields);
-        } else {
-            newFormFields = _.update( this.state.dailyReadiness, name, () => value);
-        }
+        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.dailyReadiness);
         this.setState({
             dailyReadiness: newFormFields
         });
     }
 
     _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side) => {
-        let newFormFields;
-        if(name === 'soreness' && bodyPart) {
-            let newSorenessFields = _.cloneDeep(this.state.postSession.soreness);
-            if(_.findIndex(this.state.postSession.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
-                // body part already exists
-                let sorenessIndex = [_.findIndex(this.state.postSession.soreness, (o) => o.body_part === bodyPart && o.side === side)];
-                newSorenessFields[sorenessIndex].pain = isPain;
-                newSorenessFields[sorenessIndex].severity = value;
-            } else {
-                // doesn't exist, create new object
-                let newSorenessPart = {};
-                newSorenessPart.body_part = bodyPart;
-                newSorenessPart.pain = isPain;
-                newSorenessPart.severity = value;
-                newSorenessPart.side = side ? side : 0;
-                newSorenessFields.push(newSorenessPart);
-            }
-            newFormFields = _.update( this.state.postSession, 'soreness', () => newSorenessFields);
-        } else {
-            newFormFields = _.update( this.state.postSession, name, () => value);
-        }
+        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.postSession);
         this.setState({
             postSession: newFormFields
         });
