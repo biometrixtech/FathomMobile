@@ -20,15 +20,17 @@ import moment from 'moment';
 /**
   * Get My Plan Data
   */
-const getMyPlan = (userId, startDate, endDate) => {
+const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
     // update last opened flag
     store.dispatch({
         type: Actions.UPDATE_LAST_OPENED,
     });
-    // clear MyPlan to default plan
-    store.dispatch({
-        type: Actions.CLEAR_MY_PLAN,
-    });
+    if(clearMyPlan) {
+        // clear MyPlan to default plan
+        store.dispatch({
+            type: Actions.CLEAR_MY_PLAN,
+        });
+    }
     // continue logic
     let currentState = store.getState();
     let myPlanObj = {};

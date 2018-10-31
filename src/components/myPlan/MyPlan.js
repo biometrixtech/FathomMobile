@@ -159,7 +159,7 @@ class MyPlan extends Component {
         // when we arrive, load MyPlan, if it hasn't been loaded today yet
         if(moment(this.props.lastOpened).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')) {
             let userId = this.props.user.id;
-            this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
+            this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'), false, true)
                 .then(response => {
                     if(response.daily_plans[0].daily_readiness_survey_completed) {
                         let postPracticeSurveys = response.daily_plans[0].training_sessions.map(session => session.post_session_survey
