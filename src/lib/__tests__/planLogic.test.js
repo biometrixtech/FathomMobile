@@ -155,6 +155,30 @@ const helperFunctions = {
         return expectedResult;
     },
 
+    getDailyReadinessCurrentPositionInputExpectedResult: value => {
+        let expectedResult = {
+            current_position:          value,
+            current_sport_name:        null,
+            readiness:                 0,
+            sleep_quality:             0,
+            soreness:                  [],
+            wants_functional_strength: null,
+        };
+        return expectedResult;
+    },
+
+    getDailyReadinessCurrentSportNameInputExpectedResult: value => {
+        let expectedResult = {
+            current_position:          null,
+            current_sport_name:        value,
+            readiness:                 0,
+            sleep_quality:             0,
+            soreness:                  [],
+            wants_functional_strength: null,
+        };
+        return expectedResult;
+    },
+
 };
 
 it('Daily Readiness Form Change - Readiness Input', () => {
@@ -187,9 +211,21 @@ it('Daily Readiness Form Change - Wants FS Input - F', () => {
     expect(PlanLogic.handleDailyReadinessFormChange('wants_functional_strength', value, false, false, false, dailyReadinessDefaultState)).toEqual(expectedResult);
 });
 
+it('Daily Readiness Form Change - Current Position Input', () => {
+    let value = 0;
+    let expectedResult = helperFunctions.getDailyReadinessCurrentPositionInputExpectedResult(value);
+    let dailyReadinessDefaultState = helperFunctions.getDailyReadinessDefaultState();
+    expect(PlanLogic.handleDailyReadinessFormChange('current_position', value, false, false, false, dailyReadinessDefaultState)).toEqual(expectedResult);
+});
+
+it('Daily Readiness Form Change - Current Sport Name Input', () => {
+    let value = 0;
+    let expectedResult = helperFunctions.getDailyReadinessCurrentSportNameInputExpectedResult(value);
+    let dailyReadinessDefaultState = helperFunctions.getDailyReadinessDefaultState();
+    expect(PlanLogic.handleDailyReadinessFormChange('current_sport_name', value, false, false, false, dailyReadinessDefaultState)).toEqual(expectedResult);
+});
+
 // TODO: dailyReadiness- soreness
-// TODO: dailyReadiness- current_position
-// TODO: dailyReadiness- current_sport_name
 
 // TODO: postSession- RPE
 // TODO: postSession- description
