@@ -73,6 +73,7 @@ export default {
         sessions_planned:       true,
         training_sessions:      [],
     }],
+    lastOpened:      { date: '', userId: '' },
     postSession:     {},
     soreBodyParts:   {},
     typicalSessions: [],

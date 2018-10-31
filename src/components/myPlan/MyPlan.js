@@ -73,14 +73,11 @@ class MyPlan extends Component {
     static componentName = 'MyPlanView';
 
     static propTypes = {
-        ble:                       PropTypes.object.isRequired,
-        clearCompletedExercises:   PropTypes.func.isRequired,
-        clearCompletedFSExercises: PropTypes.func.isRequired,
-        getSoreBodyParts:          PropTypes.func.isRequired,
-        lastOpened:                PropTypes.oneOfType([
-            PropTypes.bool,
-            PropTypes.string,
-        ]),
+        ble:                           PropTypes.object.isRequired,
+        clearCompletedExercises:       PropTypes.func.isRequired,
+        clearCompletedFSExercises:     PropTypes.func.isRequired,
+        getSoreBodyParts:              PropTypes.func.isRequired,
+        lastOpened:                    PropTypes.object.isRequired,
         markStartedFunctionalStrength: PropTypes.func.isRequired,
         markStartedRecovery:           PropTypes.func.isRequired,
         network:                       PropTypes.object.isRequired,
@@ -157,9 +154,10 @@ class MyPlan extends Component {
             BackHandler.addEventListener('hardwareBackPress', () => true);
         }
         // when we arrive, load MyPlan, if it hasn't been loaded today yet
-        if(moment(this.props.lastOpened).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')) {
-            let userId = this.props.user.id;
-            this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'), false, true)
+        let userId = this.props.user.id;
+        let clearMyPlan = this.props.lastOpened.userId !== this.props.user.id ? true : false;
+        if(!this.props.lastOpened.date || clearMyPlan || moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')) {
+            this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                 .then(response => {
                     if(response.daily_plans[0].daily_readiness_survey_completed) {
                         let postPracticeSurveys = response.daily_plans[0].training_sessions.map(session => session.post_session_survey
@@ -215,6 +213,10 @@ class MyPlan extends Component {
                     SplashScreen.hide();
                     AppUtil.handleAPIErrorAlert(ErrorMessages.getMyPlan);
                 });
+        } else {
+            setTimeout(() => {
+                this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(this.props.plan.dailyPlan[0]));
+            }, 500);
         }
     }
 
