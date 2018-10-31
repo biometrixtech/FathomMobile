@@ -23,7 +23,6 @@ const onboardingUtils = {
     },
 
     isUserAccountInformationValid(user, isUpdatingUser) {
-        const phoneNumberRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
         let errorsArray = [];
         let isValid;
         if(
@@ -43,7 +42,7 @@ const onboardingUtils = {
             isValid = false;
         } else if(
             user.personal_data.phone_number.length > 0 &&
-            !phoneNumberRegex.test(user.personal_data.phone_number)
+            !this.isPhoneNumberValid(user.personal_data.phone_number)
         ) {
             let newError = 'Your Phone Number must be a valid format (1234567890)';
             errorsArray.push(newError);
@@ -322,6 +321,11 @@ const onboardingUtils = {
         return 12;
     },
 
+    isPhoneNumberValid(phoneNumber) {
+        const phoneNumberRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+        return phoneNumberRegex.test(phoneNumber);
+    },
+
     isEmailValid(email) {
         const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         let isValid = emailRegex.test(email);
@@ -336,7 +340,7 @@ const onboardingUtils = {
         };
     },
 
-    isPasswordValid(password){
+    isPasswordValid(password) {
         // Password Validation
         // - 8-16 characters
         // - Must include uppercase letter, lowercase letter, and a number

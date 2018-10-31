@@ -4,15 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-    ActivityIndicator,
-    Alert,
-    BackHandler,
-    Platform,
-    StyleSheet,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { ActivityIndicator, Alert, BackHandler, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
@@ -22,31 +14,13 @@ import Modal from 'react-native-modalbox';
 import moment from 'moment';
 
 // Consts, Libs, and Utils
-import { AppAPI, AppUtil, } from '../../lib/';
-import {
-    APIConfig,
-    AppColors,
-    AppStyles,
-    AppSizes,
-    UserAccount as UserAccountConstants,
-} from '../../constants';
+import { AppAPI, AppUtil, } from '../../lib';
+import { APIConfig, AppColors, AppStyles, AppSizes, UserAccount as UserAccountConstants, } from '../../constants';
 import { onboardingUtils } from '../../constants/utils';
 
 // Components
-import {
-    Alerts,
-    ProgressBar,
-    Text,
-    WebViewPage,
-} from '../custom/';
-import {
-    UserAccount,
-    UserActivities,
-    UserClearedQuestion,
-    UserRole,
-    UserSportSchedule,
-    UserWorkoutQuestion,
-} from './pages/';
+import { Alerts, ProgressBar, Text, WebViewPage, } from '../custom/';
+import { UserAccount, UserActivities, UserClearedQuestion, UserRole, UserSportSchedule, UserWorkoutQuestion, } from './pages/';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
