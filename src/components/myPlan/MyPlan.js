@@ -409,55 +409,7 @@ class MyPlan extends Component {
 
     _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood) => {
         let stateObject = isDailyReadiness ? this.state.dailyReadiness : this.state.postSession;
-        let newSorenessFields = _.cloneDeep(stateObject.soreness);
-        if(!areaClicked && isAllGood) {
-            let soreBodyParts = _.intersectionBy(stateObject.soreness, this.props.plan.soreBodyParts.body_parts, 'body_part');
-            newSorenessFields = soreBodyParts;
-        } else {
-            if(_.findIndex(stateObject.soreness, o => o.body_part === areaClicked.index) > -1) {
-                // body part already exists
-                if(areaClicked.bilateral) {
-                    // add other side
-                    let currentSelectedSide = _.filter(newSorenessFields, o => o.body_part === areaClicked.index);
-                    if(currentSelectedSide.length === 1) {
-                        currentSelectedSide = currentSelectedSide[0].side;
-                        let newMissingSideSorenessPart = {};
-                        newMissingSideSorenessPart.body_part = areaClicked.index;
-                        newMissingSideSorenessPart.pain = false;
-                        newMissingSideSorenessPart.severity = null;
-                        newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
-                        newSorenessFields.push(newMissingSideSorenessPart);
-                    } else {
-                        newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
-                    }
-                } else {
-                    newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
-                }
-            } else {
-                // doesn't exist, create new object
-                if(areaClicked.bilateral) {
-                    let newLeftSorenessPart = {};
-                    newLeftSorenessPart.body_part = areaClicked.index;
-                    newLeftSorenessPart.pain = false;
-                    newLeftSorenessPart.severity = null;
-                    newLeftSorenessPart.side = 1;
-                    newSorenessFields.push(newLeftSorenessPart);
-                    let newRightSorenessPart = {};
-                    newRightSorenessPart.body_part = areaClicked.index;
-                    newRightSorenessPart.pain = false;
-                    newRightSorenessPart.severity = null;
-                    newRightSorenessPart.side = 2;
-                    newSorenessFields.push(newRightSorenessPart);
-                } else {
-                    let newSorenessPart = {};
-                    newSorenessPart.body_part = areaClicked.index;
-                    newSorenessPart.pain = false;
-                    newSorenessPart.severity = null;
-                    newSorenessPart.side = 0;
-                    newSorenessFields.push(newSorenessPart);
-                }
-            }
-        }
+        let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isAllGood, this.props.plan.soreBodyParts);
         let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);
         if (isDailyReadiness) {
             this.setState({
