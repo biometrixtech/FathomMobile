@@ -45,17 +45,17 @@ const PlanLogic = {
     },
 
     /**
-      * Updates to the state when the daily readiness form is changed
+      * Updates to the state when the daily readiness & post session form is changed
       */
-    handleDailyReadinessFormChange: (name, value, isPain, bodyPart, side, dailyReadiness) => {
+    handleDailyReadinessAndPostSessionFormChange: (name, value, isPain, bodyPart, side, state) => {
         // setup varibles
         let newFormFields;
         // logic
         if(name === 'soreness' && bodyPart) {
-            let newSorenessFields = _.cloneDeep(dailyReadiness.soreness);
-            if(_.findIndex(dailyReadiness.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
+            let newSorenessFields = _.cloneDeep(state.soreness);
+            if(_.findIndex(state.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
                 // body part already exists
-                let sorenessIndex = [_.findIndex(dailyReadiness.soreness, (o) => o.body_part === bodyPart && o.side === side)];
+                let sorenessIndex = [_.findIndex(state.soreness, (o) => o.body_part === bodyPart && o.side === side)];
                 newSorenessFields[sorenessIndex].pain = isPain;
                 newSorenessFields[sorenessIndex].severity = value;
             } else {
@@ -67,42 +67,9 @@ const PlanLogic = {
                 newSorenessPart.side = side ? side : 0;
                 newSorenessFields.push(newSorenessPart);
             }
-            newFormFields = _.update( dailyReadiness, 'soreness', () => newSorenessFields);
+            newFormFields = _.update( state, 'soreness', () => newSorenessFields);
         } else {
-            newFormFields = _.update( dailyReadiness, name, () => value);
-        }
-        // return
-        return newFormFields;
-    },
-
-    // TODO: COMBINE BOTH FUNCTIONS ABOVE AND BELOW
-
-    /**
-      * Updates to the state when the post session form is changed
-      */
-    handlePostSessionFormChange: (name, value, isPain, bodyPart, side, postSession) => {
-        // setup varibles
-        let newFormFields;
-        // logic
-        if(name === 'soreness' && bodyPart) {
-            let newSorenessFields = _.cloneDeep(postSession.soreness);
-            if(_.findIndex(postSession.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
-                // body part already exists
-                let sorenessIndex = [_.findIndex(postSession.soreness, (o) => o.body_part === bodyPart && o.side === side)];
-                newSorenessFields[sorenessIndex].pain = isPain;
-                newSorenessFields[sorenessIndex].severity = value;
-            } else {
-                // doesn't exist, create new object
-                let newSorenessPart = {};
-                newSorenessPart.body_part = bodyPart;
-                newSorenessPart.pain = isPain;
-                newSorenessPart.severity = value;
-                newSorenessPart.side = side ? side : 0;
-                newSorenessFields.push(newSorenessPart);
-            }
-            newFormFields = _.update( postSession, 'soreness', () => newSorenessFields);
-        } else {
-            newFormFields = _.update( postSession, name, () => value);
+            newFormFields = _.update( state, name, () => value);
         }
         // return
         return newFormFields;
