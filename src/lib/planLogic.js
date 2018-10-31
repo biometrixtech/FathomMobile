@@ -78,7 +78,7 @@ const PlanLogic = {
     /**
       * Updates to the state when the area of soreness is clicked on daily readiness & post session forms
       */
-    handleAreaOfSorenessClick: (stateObject, areaClicked, isDailyReadiness, isAllGood, soreBodyPartsPlan) => {
+    handleAreaOfSorenessClick: (stateObject, areaClicked, isAllGood, soreBodyPartsPlan) => {
         // setup varibles
         let newSorenessFields = _.cloneDeep(stateObject.soreness);
         // logic

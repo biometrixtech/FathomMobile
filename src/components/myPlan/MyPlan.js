@@ -409,7 +409,12 @@ class MyPlan extends Component {
 
     _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood) => {
         let stateObject = isDailyReadiness ? this.state.dailyReadiness : this.state.postSession;
-        let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isDailyReadiness, isAllGood, this.props.plan.soreBodyParts);
+        console.log('stateObject',stateObject);
+        console.log('areaClicked',areaClicked);
+        console.log('isAllGood',isAllGood);
+        console.log('this.props.plan.soreBodyParts',this.props.plan.soreBodyParts);
+        let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isAllGood, this.props.plan.soreBodyParts);
+        console.log('newSorenessFields',newSorenessFields);
         let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);
         if (isDailyReadiness) {
             this.setState({
