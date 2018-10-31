@@ -45,7 +45,7 @@ const PlanLogic = {
     },
 
     /**
-      * Updates to the state when the daily readiness & post session form is changed
+      * Updates to the state when the daily readiness & post session forms are changed
       */
     handleDailyReadinessAndPostSessionFormChange: (name, value, isPain, bodyPart, side, state) => {
         // setup varibles
@@ -73,6 +73,65 @@ const PlanLogic = {
         }
         // return
         return newFormFields;
+    },
+
+    /**
+      * Updates to the state when the area of soreness is clicked on daily readiness & post session forms
+      */
+    handleAreaOfSorenessClick: (stateObject, areaClicked, isAllGood, soreBodyPartsPlan) => {
+        // setup varibles
+        let newSorenessFields = _.cloneDeep(stateObject.soreness);
+        // logic
+        if(!areaClicked && isAllGood) {
+            let soreBodyParts = _.intersectionBy(stateObject.soreness, soreBodyPartsPlan.body_parts, 'body_part');
+            newSorenessFields = soreBodyParts;
+        } else {
+            if(_.findIndex(stateObject.soreness, o => o.body_part === areaClicked.index) > -1) {
+                // body part already exists
+                if(areaClicked.bilateral) {
+                    // add other side
+                    let currentSelectedSide = _.filter(newSorenessFields, o => o.body_part === areaClicked.index);
+                    if(currentSelectedSide.length === 1) {
+                        currentSelectedSide = currentSelectedSide[0].side;
+                        let newMissingSideSorenessPart = {};
+                        newMissingSideSorenessPart.body_part = areaClicked.index;
+                        newMissingSideSorenessPart.pain = false;
+                        newMissingSideSorenessPart.severity = null;
+                        newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
+                        newSorenessFields.push(newMissingSideSorenessPart);
+                    } else {
+                        newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
+                    }
+                } else {
+                    newSorenessFields = _.filter(newSorenessFields, o => o.body_part !== areaClicked.index);
+                }
+            } else {
+                // doesn't exist, create new object
+                if(areaClicked.bilateral) {
+                    let newLeftSorenessPart = {};
+                    newLeftSorenessPart.body_part = areaClicked.index;
+                    newLeftSorenessPart.pain = false;
+                    newLeftSorenessPart.severity = null;
+                    newLeftSorenessPart.side = 1;
+                    newSorenessFields.push(newLeftSorenessPart);
+                    let newRightSorenessPart = {};
+                    newRightSorenessPart.body_part = areaClicked.index;
+                    newRightSorenessPart.pain = false;
+                    newRightSorenessPart.severity = null;
+                    newRightSorenessPart.side = 2;
+                    newSorenessFields.push(newRightSorenessPart);
+                } else {
+                    let newSorenessPart = {};
+                    newSorenessPart.body_part = areaClicked.index;
+                    newSorenessPart.pain = false;
+                    newSorenessPart.severity = null;
+                    newSorenessPart.side = 0;
+                    newSorenessFields.push(newSorenessPart);
+                }
+            }
+        }
+        // return
+        return newSorenessFields;
     },
 
 };

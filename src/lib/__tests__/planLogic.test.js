@@ -345,7 +345,7 @@ const helperFunctions = {
             event_date:   null,
             session_type: null,
             soreness:     [
-                {body_part: bodyPartIndex, pain: true, severity: null, side: side}
+                { body_part: bodyPartIndex, pain: true, severity: null, side: side }
             ],
             sport_name:                     null,
             strength_and_conditioning_type: null,
@@ -353,7 +353,135 @@ const helperFunctions = {
         return expectedResult;
     },
 
+    getAreaOfSorenessAddingNonBilateralBodyPartExpectedResult: bodyPartIndex => {
+        let expectedResult = [];
+        return expectedResult;
+    },
+
+    getAreaOfSorenessAddingNonBilateralBodyPartStateObject: bodyPartIndex => {
+        let expectedResult = {
+            soreness: [
+                { body_part: bodyPartIndex, pain: false, severity: null, side: 0 }
+            ],
+        };
+        return expectedResult;
+    },
+
+    getAreaOfSorenessNonBilateralAreaClicked: () => {
+        let nonBilateralAreaClicked = {
+            bilateral:    false,
+            group:        'muscle',
+            helping_verb: 'are',
+            image:        {0: 'Abs.svg',},
+            index:        3,
+            label:        'Abdominals',
+            location:     'front',
+            order:        1
+        };
+        return nonBilateralAreaClicked;
+    },
+
+    getAreaOfSorenessAddingBilateralBodyPartExpectedResult: bodyPartIndex => {
+        let expectedResult = [
+            { body_part: bodyPartIndex, pain: false, severity: null, side: 1 },
+            { body_part: bodyPartIndex, pain: false, severity: null, side: 2 },
+        ];
+        return expectedResult;
+    },
+
+    getAreaOfSorenessAddingBilateralBodyPartStateObject: bodyPartIndex => {
+        let expectedResult = {
+            soreness: [],
+        };
+        return expectedResult;
+    },
+
+    getAreaOfSorenessBilateralAreaClicked: () => {
+        let bilateralAreaClicked = {
+            bilateral:    true,
+            group:        'joint',
+            helping_verb: 'is',
+            image:        {0: 'Knee.svg', 1: 'L_Knee.svg', 2: 'R_Knee.svg'},
+            index:        7,
+            label:        'knee',
+            location:     'front',
+            order:        7
+        };
+        return bilateralAreaClicked;
+    },
+
+    getAreaOfSorenessRemovingNonBilateralBodyPartExpectedResult: bodyPartIndex => {
+        let expectedResult = [];
+        return expectedResult;
+    },
+
+    getAreaOfSorenessRemovingNonBilateralBodyPartStateObject: bodyPartIndex => {
+        let expectedResult = {
+            soreness: [
+                { body_part: bodyPartIndex, pain: false, severity: null, side: 0 }
+            ],
+        };
+        return expectedResult;
+    },
+
+    getAreaOfSorenessRemovingBilateralBodyPartExpectedResult: bodyPartIndex => {
+        let expectedResult = [];
+        return expectedResult;
+    },
+
+    getAreaOfSorenessRemovingBilateralBodyPartStateObject: bodyPartIndex => {
+        let expectedResult = {
+            soreness: [
+                { body_part: bodyPartIndex, pain: false, severity: null, side: 1 },
+                { body_part: bodyPartIndex, pain: false, severity: null, side: 2 }
+            ],
+        };
+        return expectedResult;
+    },
+
 };
+
+it('Area Of Soreness Clicked - Adding Bilateral Body Part', () => {
+    let bodyPartIndex = 7;
+    let expectedResult = helperFunctions.getAreaOfSorenessAddingBilateralBodyPartExpectedResult(bodyPartIndex);
+    let stateObject = helperFunctions.getAreaOfSorenessAddingBilateralBodyPartStateObject(bodyPartIndex);
+    let areaClicked = helperFunctions.getAreaOfSorenessBilateralAreaClicked();
+    let soreBodyPartsPlan = {body_parts: []};
+    expect(PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, false, soreBodyPartsPlan)).toEqual(expectedResult);
+});
+
+it('Area Of Soreness Clicked - Adding Non-Bilateral Body Part', () => {
+    let bodyPartIndex = 3;
+    let expectedResult = helperFunctions.getAreaOfSorenessAddingNonBilateralBodyPartExpectedResult(bodyPartIndex);
+    let stateObject = helperFunctions.getAreaOfSorenessAddingNonBilateralBodyPartStateObject(bodyPartIndex);
+    let areaClicked = helperFunctions.getAreaOfSorenessNonBilateralAreaClicked();
+    let soreBodyPartsPlan = {body_parts: []};
+    expect(PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, false, soreBodyPartsPlan)).toEqual(expectedResult);
+});
+
+it('Area Of Soreness Clicked - Removing Bilateral Body Part', () => {
+    let bodyPartIndex = 7;
+    let expectedResult = helperFunctions.getAreaOfSorenessRemovingBilateralBodyPartExpectedResult(bodyPartIndex);
+    let stateObject = helperFunctions.getAreaOfSorenessRemovingBilateralBodyPartStateObject(bodyPartIndex);
+    let areaClicked = helperFunctions.getAreaOfSorenessBilateralAreaClicked();
+    let soreBodyPartsPlan = {body_parts: []};
+    expect(PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, false, soreBodyPartsPlan)).toEqual(expectedResult);
+});
+
+it('Area Of Soreness Clicked - Removing Non-Bilateral Body Part', () => {
+    let bodyPartIndex = 3;
+    let expectedResult = helperFunctions.getAreaOfSorenessRemovingNonBilateralBodyPartExpectedResult(bodyPartIndex);
+    let stateObject = helperFunctions.getAreaOfSorenessRemovingNonBilateralBodyPartStateObject(bodyPartIndex);
+    let areaClicked = helperFunctions.getAreaOfSorenessNonBilateralAreaClicked();
+    let soreBodyPartsPlan = {body_parts: []};
+    expect(PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, false, soreBodyPartsPlan)).toEqual(expectedResult);
+});
+
+it('Area Of Soreness Clicked - No, All Good Button Clicked', () => {
+    let stateObject = {soreness: []};
+    let soreBodyPartsPlan = {body_parts: []};
+    expect(PlanLogic.handleAreaOfSorenessClick(stateObject, false, true, soreBodyPartsPlan)).toEqual([]);
+});
 
 it('Daily Readiness Form Change - Readiness Input', () => {
     let key = 3;
@@ -498,7 +626,7 @@ it('Post Session Form Change - Sport Name Input', () => {
     expect(PlanLogic.handleDailyReadinessAndPostSessionFormChange('sport_name', sportName, false, false, false, postSessionDefaultState)).toEqual(expectedResult);
 });
 
-it('Post Session Form Change - Sport Name Input', () => {
+it('Post Session Form Change - Strength and Conditioning Type Input', () => {
     let strengthConditioningType = 2;
     let expectedResult = helperFunctions.getPostSessionStrengthAndConditioningTypeInputExpectedResult(strengthConditioningType);
     let postSessionDefaultState = helperFunctions.getPostSessionDefaultState();
