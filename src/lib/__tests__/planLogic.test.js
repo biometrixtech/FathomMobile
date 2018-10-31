@@ -498,7 +498,7 @@ it('Post Session Form Change - Sport Name Input', () => {
     expect(PlanLogic.handleDailyReadinessAndPostSessionFormChange('sport_name', sportName, false, false, false, postSessionDefaultState)).toEqual(expectedResult);
 });
 
-it('Post Session Form Change - Sport Name Input', () => {
+it('Post Session Form Change - Strength and Conditioning Type Input', () => {
     let strengthConditioningType = 2;
     let expectedResult = helperFunctions.getPostSessionStrengthAndConditioningTypeInputExpectedResult(strengthConditioningType);
     let postSessionDefaultState = helperFunctions.getPostSessionDefaultState();
