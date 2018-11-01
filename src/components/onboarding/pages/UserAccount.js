@@ -284,7 +284,6 @@ class UserAccount extends Component {
             currentStep,
             handleFormChange,
             handleFormSubmit,
-            heightPressed,
             isUpdatingUser,
             user,
         } = this.props;
@@ -309,7 +308,6 @@ class UserAccount extends Component {
                 content: <UserAccountAbout
                     clearCoachContent={this._clearCoachContent}
                     handleFormChange={handleFormChange}
-                    heightPressed={heightPressed}
                     setAccordionSection={handleFormSubmit}
                     updateErrorMessage={this._updateErrorMessage}
                     user={user}
@@ -318,16 +316,6 @@ class UserAccount extends Component {
                 index:    2,
                 subtitle: 'Now, let\'s understand how you train and how we can help you to get better!',
             },
-            /*{
-                content: <UserSports
-                    addAnotherSport={this._addAnotherSport}
-                    handleFormChange={this._handleSportsFormChange}
-                    removeSport={this._removeSport}
-                    sports={user.sports}
-                />,
-                header: 'TRAINING DETAILS',
-                index:  3,
-            },*/
         ];
         return (
             <View style={{flex: 1}}>
@@ -374,7 +362,6 @@ UserAccount.propTypes = {
         PropTypes.string,
     ]),
     handleFormChange: PropTypes.func.isRequired,
-    heightPressed:    PropTypes.func.isRequired,
     isUpdatingUser:   PropTypes.bool.isRequired,
     user:             PropTypes.object.isRequired,
 };

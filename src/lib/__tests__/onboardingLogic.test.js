@@ -3,9 +3,6 @@ import 'react-native';
 
 import { onboardingUtils } from '../../constants/utils';
 
-
-const helperFunctions = {};
-
 it('Password Validation - Empty String', () => {
     let passwordString = '';
     expect(onboardingUtils.isPasswordValid(passwordString).isValid).toEqual(false);
