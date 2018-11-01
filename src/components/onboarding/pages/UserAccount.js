@@ -78,8 +78,6 @@ class UserAccount extends Component {
             isFormValid = onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid;
         } else if (section.index === 2) {
             isFormValid = onboardingUtils.isUserAboutValid(user).isValid;
-        } else if (section.index === 3) {
-            isFormValid = onboardingUtils.areSportsValid(user.sports).isValid;
         }
         return(
             <View>
@@ -170,40 +168,6 @@ class UserAccount extends Component {
         }
     };
 
-    _addAnotherSport = (index) => {
-        const { handleFormChange, user } = this.props;
-        const sportValidation = onboardingUtils.isSportValid(user.sports[index]);
-        if(sportValidation.isValid) {
-            this.setState({ coachContent: '' });
-            const newSportArray = {
-                competition_level:  '',
-                end_date:           '', // 'MM/DD/YYYY' or 'current'
-                name:               '',
-                positions:          [],
-                season_end_month:   '',
-                season_start_month: '',
-                start_date:         '',
-            };
-            let newSportsArray = _.cloneDeep(user.sports);
-            newSportsArray.push(newSportArray);
-            handleFormChange('sports', newSportsArray);
-        } else {
-            this.setState({ coachContent: 'Please make sure to fill out all the sports related information before trying to add a new one!' });
-        }
-    };
-
-    _removeSport = (index) => {
-        const { handleFormChange, user } = this.props;
-        if(index > 0) {
-            this.setState({ coachContent: '' });
-            let newSportsArray = _.cloneDeep(user.sports);
-            newSportsArray.splice(index, 1);
-            handleFormChange('sports', newSportsArray);
-        } else {
-            this.setState({ coachContent: 'You cannot remove your first sport, at least one sport is required!' });
-        }
-    };
-
     _setAccordionSection = (section, nextStep) => {
         const { isUpdatingUser, user, } = this.props;
         let errorsArray = [];
@@ -213,8 +177,6 @@ class UserAccount extends Component {
                 errorsArray = onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).errorsArray;
             } else if(section === 1) {
                 errorsArray = onboardingUtils.isUserAboutValid(user).errorsArray;
-            } else if(section === 2) {
-                errorsArray = onboardingUtils.areSportsValid(user.sports).errorsArray;
             }
             if(errorsArray.length > 0) {
                 this.setState({
