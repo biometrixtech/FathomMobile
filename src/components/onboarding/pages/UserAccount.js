@@ -153,21 +153,6 @@ class UserAccount extends Component {
         )
     };
 
-    _handleSportsFormChange = (i, name, value) => {
-        this.setState({ coachContent: '' });
-        const { handleFormChange, user } = this.props;
-        let newSportsArray = _.cloneDeep(user.sports);
-        newSportsArray[i][name] = value;
-        handleFormChange('sports', newSportsArray);
-        if(name === 'name') {
-            let newTrainingScheduleArray = user.training_schedule;
-            newTrainingScheduleArray[value] = {};
-            newTrainingScheduleArray[value].practice = {days_of_week: '', duration_minutes: ''};
-            newTrainingScheduleArray[value].competition = {days_of_week: ''};
-            handleFormChange('training_schedule', newTrainingScheduleArray);
-        }
-    };
-
     _setAccordionSection = (section, nextStep) => {
         const { isUpdatingUser, user, } = this.props;
         let errorsArray = [];
