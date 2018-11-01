@@ -110,7 +110,7 @@ class Onboarding extends Component {
                     personal_data: {
                         account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                         account_type:   'free', // 'paid', 'free'
-                        birth_date:     user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'YYYY-MM-DD').format('MM/DD/YYYY') : '',
+                        birth_date:     user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'MM/DD/YYYY').format('MM/DD/YYYY') : '',
                         email:          user.personal_data && user.personal_data.email ? user.personal_data.email : '',
                         first_name:     user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
                         last_name:      user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
@@ -142,9 +142,9 @@ class Onboarding extends Component {
                 status:  '',
                 success: '',
             },
-            step:                2, // TODO: UPDATE THIS VALUE BACK TO '1'
-            totalSteps:          1,
-            loading:             false,
+            step:       2, // TODO: UPDATE THIS VALUE BACK TO '1'
+            totalSteps: 1,
+            loading:    false,
         };
     }
 

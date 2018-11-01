@@ -122,7 +122,7 @@ it('Inches to Meters Validation - 50 (string) in', () => {
 });
 
 it('Inches to Meters Validation - 7A2 (string) in', () => {
-    let inches = '7A2';
+    let inches = '7A2'; // JS will trim this string to only grab items prior to the first non-number
     let expectedResult = '0.18';
     expect(onboardingUtils.inchesToMeters(inches)).toEqual(expectedResult);
 });
@@ -146,7 +146,7 @@ it('Lbs to Kgs Validation - 200 (string) in', () => {
 });
 
 it('Lbs to Kgs Validation - 25BB0 (string) in', () => {
-    let lbs = '25BB0';
+    let lbs = '25BB0'; // JS will trim this string to only grab items prior to the first non-number
     let expectedResult = '11.34';
     expect(onboardingUtils.lbsToKgs(lbs)).toEqual(expectedResult);
 });
@@ -170,7 +170,7 @@ it('Meters to Inches Validation - 50 (string) in', () => {
 });
 
 it('Meters to Inches Validation - 7A2 (string) in', () => {
-    let meters = '7A2';
+    let meters = '7A2'; // JS will trim this string to only grab items prior to the first non-number
     let expectedResult = '275.59';
     expect(onboardingUtils.metersToInches(meters)).toEqual(expectedResult);
 });
@@ -194,7 +194,7 @@ it('Kgs to Lbs Validation - 50 (string) in', () => {
 });
 
 it('Kgs to Lbs Validation - 25BB0 (string) in', () => {
-    let kgs = '25BB0';
+    let kgs = '25BB0'; // JS will trim this string to only grab items prior to the first non-number
     let expectedResult = '55.12';
     expect(onboardingUtils.kgsToLbs(kgs)).toEqual(expectedResult);
 });
