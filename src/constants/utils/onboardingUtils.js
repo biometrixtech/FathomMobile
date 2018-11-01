@@ -1,26 +1,8 @@
+// import third-party libraries
 import _ from 'lodash';
 import { AppColors, AppFonts, AppSizes, AppStyles, UserAccount, } from '../';
 
 const onboardingUtils = {
-
-    isUserRoleValid(role) {
-        let errorsArray = [];
-        let isValid;
-        const possibleRoles = ['athlete', 'manager', 'subject', 'consumer']; // , 'admin', 'super_admin', 'biometrix_admin'
-        if(
-            !possibleRoles.includes(role)
-        ) {
-            const newError = 'Please select a valid item from the list below!';
-            errorsArray.push(newError);
-            isValid = false;
-        } else {
-            isValid = true;
-        }
-        return {
-            errorsArray,
-            isValid,
-        }
-    },
 
     isUserAccountInformationValid(user, isUpdatingUser) {
         let errorsArray = [];
@@ -92,181 +74,6 @@ const onboardingUtils = {
             errorsArray,
             isValid,
         }
-    },
-
-    areSportsValid(sports) {
-        let errorsArray = [];
-        let isValid;
-        sports.map((sport, index) => {
-            const sportValidation = this.isSportValid(sport);
-            isValid = sportValidation.isValid;
-            if(sportValidation.error.length > 0) {
-                errorsArray.push(sportValidation.error);
-            }
-        });
-        return {
-            errorsArray,
-            isValid,
-        }
-    },
-
-    isSportValid(sport) {
-        const possibleSports = UserAccount.sports.map(sportConst => sportConst.value); // ['basketball', 'baseball_softball', 'cross_country', 'cycling', 'field_hockey', 'general_fitness', 'golf', 'gymnastics', 'ice_hockey', 'lacrosse', 'rowing', 'rugby', 'running', 'soccer', 'swimming_diving', 'tennis', 'track_and_field', 'volleyball', 'wrestling', 'weightlifting'];
-        // unsure if we want all of the positions from all sports from UserAccount constants or not
-        const possiblePositions = possibleSports.reduce((totalPositions, currentSport) => {
-            return _.union(totalPositions, UserAccount.positions[currentSport] ? UserAccount.positions[currentSport].map(position => position.value) : []);
-        },[]); // ['forward', 'guard', 'center', 'pitcher', 'catcher', 'infielder', 'outfielder', 'distance-runner', 'goalie', 'fullback', 'golfer', 'gymnast', 'defensemen', 'wing', 'defender', 'attackers', 'rower', 'midfielder', 'distance', 'sprint', 'diver', 'long-distance', 'jumping', 'throwing', 'hitter', 'setter', 'libero', 'blocker', 'wrestler'];
-        const possibleCompetitionLevels  = UserAccount.levelsOfPlay.map(levelOfPlay => levelOfPlay.value) // ['recreational_challenge', 'high_school', 'club_travel', 'development_league', 'ncaa_division_iii', 'ncaa_division_ii', 'ncaa_division_i', 'professional'];
-        let error = '';
-        let isValid;
-        if(
-            possibleSports.includes(sport.name)
-            && sport.positions.length > 0
-            && sport.positions.map(position => possiblePositions.includes(position))
-            && possibleCompetitionLevels.includes(sport.competition_level)
-            && sport.end_date.length > 0
-            && sport.season_end_month.length > 0
-            && sport.season_start_month.length > 0
-            && sport.start_date.length > 0
-        ) {
-            error = '';
-            isValid = true;
-        } else {
-            error = 'You\'re still missing some required fields in your Sport(s) section. Please check your inputs and try again';
-            isValid = false;
-        }
-        return {
-            error,
-            isValid,
-        }
-    },
-
-    areTrainingSchedulesValid(training_schedule) {
-        let errorsArray = [];
-        let isValid;
-        Object.keys(training_schedule).map((sport, index) => {
-            let sportSchedule = training_schedule[sport];
-            if(
-                sportSchedule.competition.days_of_week.length > 0
-                && sportSchedule.practice.days_of_week.length > 0
-                && sportSchedule.practice.duration_minutes > 0
-            ) {
-                isValid = true;
-            } else {
-                errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
-            }
-        });
-        isValid = errorsArray.length > 0 ? false : true;
-        return {
-            errorsArray,
-            isValid,
-        }
-    },
-
-    isWorkoutOutsidePracticeValid(value) {
-        let errorsArray = [];
-        let isValid;
-        if(value === true || value === false) {
-            isValid = true;
-        } else {
-            isValid = false;
-            errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
-        }
-        return {
-            errorsArray,
-            isValid,
-        }
-    },
-
-    isActivitiesValid(training_strength_conditioning) {
-        let errorsArray = [];
-        let isValid;
-        if(
-            training_strength_conditioning.activities.length > 0
-            && training_strength_conditioning.days.length > 0
-            && training_strength_conditioning.durations > 0
-            && training_strength_conditioning.totalDurations.length > 0
-        ) {
-            isValid = true;
-        } else {
-            isValid = false;
-            errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
-        }
-        return {
-            errorsArray,
-            isValid,
-        }
-    },
-
-    isUserClearedValid(user) {
-        let errorsArray = [];
-        let isValid;
-        if(
-            user.agreed_terms_of_use
-            && user.agreed_privacy_policy
-        ) {
-            isValid = true;
-        } else {
-            isValid = false;
-            errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
-        }
-        return {
-            errorsArray,
-            isValid,
-        }
-    },
-
-    formatPhoneNumber(s) {
-        let s2 = (''+s).replace(/\D/g, '');
-        let m = s2.match(/^(\d{3})(\d{3})(\d{4})$/);
-        return (!m) ? null : '(' + m[1] + ') ' + m[2] + '-' + m[3];
-    },
-
-    /**
-     * Converts an integer into words.
-     * If number is decimal, the decimals will be removed.
-     * @example toWords(12) => 'twelve'
-     * @param {number|string} number
-     * @param {boolean} [asOrdinal] - Deprecated, use toWordsOrdinal() instead!
-     * @returns {string}
-     */
-    numToWords(number) {
-        let words;
-        let num = parseInt(number, 10);
-        if (!isFinite(num)) {
-            throw new TypeError('Not a finite number: ' + number + ' (' + typeof number + ')');
-        }
-        words = this.generateWords(num);
-        return words;
-    },
-
-    generateWords(number) {
-        const LESS_THAN_TWENTY = [
-            'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
-            'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
-        ];
-        let remainder,word;
-        let words = arguments[1];
-        // We’re done
-        if (number === 0) {
-            return !words ? 'zero' : words.join(' ').replace(/,$/, '');
-        }
-        // First run
-        if (!words) {
-            words = [];
-        }
-        // If negative, prepend “minus”
-        if (number < 0) {
-            words.push('minus');
-            number = Math.abs(number);
-        }
-        if (number < 20) {
-            remainder = 0;
-            word = LESS_THAN_TWENTY[number];
-
-        }
-        words.push(word);
-        return this.generateWords(remainder, words);
     },
 
     inchesToMeters(inches) {
@@ -564,6 +371,204 @@ const onboardingUtils = {
                     :
                     EMPTY_SLIDES;
     },
+
+    /* START - UNUSED FUNCTIONS */
+
+    isUserRoleValid(role) {
+        let errorsArray = [];
+        let isValid;
+        const possibleRoles = ['athlete', 'manager', 'subject', 'consumer']; // , 'admin', 'super_admin', 'biometrix_admin'
+        if(
+            !possibleRoles.includes(role)
+        ) {
+            const newError = 'Please select a valid item from the list below!';
+            errorsArray.push(newError);
+            isValid = false;
+        } else {
+            isValid = true;
+        }
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
+    areSportsValid(sports) {
+        let errorsArray = [];
+        let isValid;
+        sports.map((sport, index) => {
+            const sportValidation = this.isSportValid(sport);
+            isValid = sportValidation.isValid;
+            if(sportValidation.error.length > 0) {
+                errorsArray.push(sportValidation.error);
+            }
+        });
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
+    isSportValid(sport) {
+        const possibleSports = UserAccount.sports.map(sportConst => sportConst.value); // ['basketball', 'baseball_softball', 'cross_country', 'cycling', 'field_hockey', 'general_fitness', 'golf', 'gymnastics', 'ice_hockey', 'lacrosse', 'rowing', 'rugby', 'running', 'soccer', 'swimming_diving', 'tennis', 'track_and_field', 'volleyball', 'wrestling', 'weightlifting'];
+        // unsure if we want all of the positions from all sports from UserAccount constants or not
+        const possiblePositions = possibleSports.reduce((totalPositions, currentSport) => {
+            return _.union(totalPositions, UserAccount.positions[currentSport] ? UserAccount.positions[currentSport].map(position => position.value) : []);
+        },[]); // ['forward', 'guard', 'center', 'pitcher', 'catcher', 'infielder', 'outfielder', 'distance-runner', 'goalie', 'fullback', 'golfer', 'gymnast', 'defensemen', 'wing', 'defender', 'attackers', 'rower', 'midfielder', 'distance', 'sprint', 'diver', 'long-distance', 'jumping', 'throwing', 'hitter', 'setter', 'libero', 'blocker', 'wrestler'];
+        const possibleCompetitionLevels  = UserAccount.levelsOfPlay.map(levelOfPlay => levelOfPlay.value) // ['recreational_challenge', 'high_school', 'club_travel', 'development_league', 'ncaa_division_iii', 'ncaa_division_ii', 'ncaa_division_i', 'professional'];
+        let error = '';
+        let isValid;
+        if(
+            possibleSports.includes(sport.name)
+            && sport.positions.length > 0
+            && sport.positions.map(position => possiblePositions.includes(position))
+            && possibleCompetitionLevels.includes(sport.competition_level)
+            && sport.end_date.length > 0
+            && sport.season_end_month.length > 0
+            && sport.season_start_month.length > 0
+            && sport.start_date.length > 0
+        ) {
+            error = '';
+            isValid = true;
+        } else {
+            error = 'You\'re still missing some required fields in your Sport(s) section. Please check your inputs and try again';
+            isValid = false;
+        }
+        return {
+            error,
+            isValid,
+        }
+    },
+
+    areTrainingSchedulesValid(training_schedule) {
+        let errorsArray = [];
+        let isValid;
+        Object.keys(training_schedule).map((sport, index) => {
+            let sportSchedule = training_schedule[sport];
+            if(
+                sportSchedule.competition.days_of_week.length > 0
+                && sportSchedule.practice.days_of_week.length > 0
+                && sportSchedule.practice.duration_minutes > 0
+            ) {
+                isValid = true;
+            } else {
+                errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
+            }
+        });
+        isValid = errorsArray.length > 0 ? false : true;
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
+    isWorkoutOutsidePracticeValid(value) {
+        let errorsArray = [];
+        let isValid;
+        if(value === true || value === false) {
+            isValid = true;
+        } else {
+            isValid = false;
+            errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
+        }
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
+    isActivitiesValid(training_strength_conditioning) {
+        let errorsArray = [];
+        let isValid;
+        if(
+            training_strength_conditioning.activities.length > 0
+            && training_strength_conditioning.days.length > 0
+            && training_strength_conditioning.durations > 0
+            && training_strength_conditioning.totalDurations.length > 0
+        ) {
+            isValid = true;
+        } else {
+            isValid = false;
+            errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
+        }
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
+    isUserClearedValid(user) {
+        let errorsArray = [];
+        let isValid;
+        if(
+            user.agreed_terms_of_use
+            && user.agreed_privacy_policy
+        ) {
+            isValid = true;
+        } else {
+            isValid = false;
+            errorsArray.push('You\'re still missing some information. Please check your inputs and try again');
+        }
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
+    formatPhoneNumber(s) {
+        let s2 = (''+s).replace(/\D/g, '');
+        let m = s2.match(/^(\d{3})(\d{3})(\d{4})$/);
+        return (!m) ? null : '(' + m[1] + ') ' + m[2] + '-' + m[3];
+    },
+
+    /**
+     * Converts an integer into words.
+     * If number is decimal, the decimals will be removed.
+     * @example toWords(12) => 'twelve'
+     * @param {number|string} number
+     * @param {boolean} [asOrdinal] - Deprecated, use toWordsOrdinal() instead!
+     * @returns {string}
+     */
+    numToWords(number) {
+        let words;
+        let num = parseInt(number, 10);
+        if (!isFinite(num)) {
+            throw new TypeError('Not a finite number: ' + number + ' (' + typeof number + ')');
+        }
+        words = this.generateWords(num);
+        return words;
+    },
+
+    generateWords(number) {
+        const LESS_THAN_TWENTY = [
+            'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+            'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
+        ];
+        let remainder,word;
+        let words = arguments[1];
+        // We’re done
+        if (number === 0) {
+            return !words ? 'zero' : words.join(' ').replace(/,$/, '');
+        }
+        // First run
+        if (!words) {
+            words = [];
+        }
+        // If negative, prepend “minus”
+        if (number < 0) {
+            words.push('minus');
+            number = Math.abs(number);
+        }
+        if (number < 20) {
+            remainder = 0;
+            word = LESS_THAN_TWENTY[number];
+
+        }
+        words.push(word);
+        return this.generateWords(remainder, words);
+    },
+
+    /* END - UNUSED FUNCTIONS */
 
 }
 
