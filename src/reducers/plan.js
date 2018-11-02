@@ -15,6 +15,8 @@ import Store from '../store/plan';
 
 const initialState = Store;
 
+import moment from 'moment';
+
 export default function planReducer(state = initialState, action) {
     switch (action.type) {
     case Actions.CLEAR_COMPLETED_EXERCISES:
@@ -42,13 +44,7 @@ export default function planReducer(state = initialState, action) {
             dailyPlan: action.data.daily_plans,
         });
     case Actions.CLEAR_MY_PLAN:
-        return Object.assign({}, state, {
-            completedExercises:   [],
-            completedFSExercises: [],
-            dailyPlan:            [],
-            postSession:          {},
-            soreBodyParts:        {},
-        });
+        return initialState;
     case Actions.SET_TYPICAL_SESSIONS:
         return Object.assign({}, state, {
             typicalSessions: action.data,
@@ -57,6 +53,13 @@ export default function planReducer(state = initialState, action) {
         return Object.assign({}, state, {});
     case Actions.POST_SESSION_SURVEY:
         return Object.assign({}, state, {});
+    case Actions.UPDATE_LAST_OPENED:
+        return Object.assign({}, state, {
+            lastOpened: {
+                date:   state.lastOpened.date || moment().format(),
+                userId: action.userId || state.lastOpened.userId,
+            },
+        });
     default:
         return state;
     }
