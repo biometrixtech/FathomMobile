@@ -294,7 +294,7 @@ class MyPlan extends Component {
     }
 
     _handleAppStateChange = (nextAppState) => {
-        if(nextAppState === 'active' && this.props.notification) {
+        if(nextAppState === 'active') {
             this._handleEnteringApp(false, () => this._handlePushNotification(this.props));
         }
     }
