@@ -153,6 +153,10 @@ class MyPlan extends Component {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => true);
         }
+        this._handleEnteringApp(true);
+    }
+
+    _handleEnteringApp = (hideSplashScreen, callback) => {
         // when we arrive, load MyPlan, if it hasn't been loaded today yet
         let userId = this.props.user.id;
         let clearMyPlan = this.props.lastOpened.userId !== this.props.user.id ? true : false;
@@ -184,7 +188,12 @@ class MyPlan extends Component {
                                 postPracticeSurveys
                             }),
                         });
-                        SplashScreen.hide();
+                        if(hideSplashScreen) {
+                            SplashScreen.hide();
+                        }
+                        if(callback) {
+                            callback();
+                        }
                     } else {
                         this.setState({
                             prepare: Object.assign({}, this.state.prepare, {
@@ -197,25 +206,43 @@ class MyPlan extends Component {
                                 let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
                                 newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
                                 this.setState({ dailyReadiness: newDailyReadiness });
-                                SplashScreen.hide();
+                                if(hideSplashScreen) {
+                                    SplashScreen.hide();
+                                }
+                                if(callback) {
+                                    callback();
+                                }
                             })
                             .catch(err => {
                                 // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
                                 let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
                                 newDailyReadiness.soreness = [];
                                 this.setState({ dailyReadiness: newDailyReadiness });
-                                SplashScreen.hide();
+                                if(hideSplashScreen) {
+                                    SplashScreen.hide();
+                                }
+                                if(callback) {
+                                    callback();
+                                }
                                 AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
                             });
                     }
                 })
                 .catch(error => {
-                    SplashScreen.hide();
+                    if(hideSplashScreen) {
+                        SplashScreen.hide();
+                    }
+                    if(callback) {
+                        callback();
+                    }
                     AppUtil.handleAPIErrorAlert(ErrorMessages.getMyPlan);
                 });
         } else {
             setTimeout(() => {
                 this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(this.props.plan.dailyPlan[0]));
+                if(callback) {
+                    callback();
+                }
             }, 500);
         }
     }
@@ -268,7 +295,7 @@ class MyPlan extends Component {
 
     _handleAppStateChange = (nextAppState) => {
         if(nextAppState === 'active' && this.props.notification) {
-            this._handlePushNotification(this.props);
+            this._handleEnteringApp(false, () => this._handlePushNotification(this.props));
         }
     }
 
