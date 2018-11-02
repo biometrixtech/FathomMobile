@@ -15,7 +15,7 @@ import { AppAPI, AppUtil, } from '../../lib';
 import { onboardingUtils, } from '../../constants/utils';
 
 // Components
-import { Alerts, FormInput, ProgressBar, Spacer, Text, } from '../custom';
+import { Alerts, Button, FormInput, ProgressBar, Spacer, Text, } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -126,8 +126,9 @@ class ResetPassword extends Component {
                     const error = AppAPI.handleError(err);
                     if(error.includes('ExpiredCodeException')) {
                         this.setState({ resultMsg: {error: 'The PIN you are using has expired.  Please request a new PIN.'} });
-                    }
-                    else{
+                    } else if(error.includes('CodeMismatchException')) {
+                        this.setState({ resultMsg: {error: 'Invalid 6-digit PIN provided, please try again.'} });
+                    } else {
                         this.setState({ resultMsg: { error } });
                     }
                 });
@@ -225,7 +226,6 @@ class ResetPassword extends Component {
                             inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'default'}
                             onChangeText={(text) => this._handleFormChange('ConfirmPassword', text)}
-                            onSubmitEditing={() => this._handleFormSubmit()}
                             placeholder={'confirm new password'}
                             placeholderTextColor={AppColors.primary.yellow.hundredPercent}
                             returnKeyType={'done'}
@@ -238,9 +238,18 @@ class ResetPassword extends Component {
 
                     </View>
                 </View>
-                <TouchableOpacity onPress={() => this._handleFormSubmit()} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
-                    <Text robotoBold style={[AppStyles.nextButtonText, {fontSize: AppFonts.scaleFont(16),}]}>Confirm</Text>
-                </TouchableOpacity>
+                <Button
+                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                    buttonStyle={{borderRadius: 0, paddingVertical: 20,}}
+                    containerViewStyle={{marginLeft: 0, width: '100%',}}
+                    color={AppColors.white}
+                    fontFamily={AppStyles.robotoBold.fontFamily}
+                    fontWeight={AppStyles.robotoBold.fontWeight}
+                    onPress={() => this._handleFormSubmit()}
+                    raised={false}
+                    textStyle={{ fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                    title={'Confirm'}
+                />
             </View>
         );
     }

@@ -26,12 +26,12 @@ const bodyPartMapping = [
     {index: 3, order: 1, label: 'Abdominals', location: 'front', group: 'muscle', image: {0: 'Abs.svg'}, bilateral: false, helping_verb: 'are'},
     {index: 4, order: 3, label: 'Hip', location: 'front', group: 'joint', image: {0: 'Hip.svg', 1: 'L_Hip.svg', 2: 'R_Hip.svg'}, bilateral: true, helping_verb: 'is'},
     {index: 5, order: 2, label: 'Groin', location: 'front', group: 'muscle', image: {0: 'Groin.svg', 1: 'L_Groin.svg', 2: 'R_Groin.svg'}, bilateral: true, helping_verb: 'is'},
-    {index: 6, order: 5, label: 'Quads', location: 'front', group: 'muscle', image: {0: 'Quad.svg', 1: 'L_Quad.svg', 2: 'R_Quad.svg'}, bilateral: true, helping_verb: 'are'},
-    {index: 7, order: 7, label: 'Knee', location: 'front', group: 'joint', image: {0: 'Knee.svg', 1: 'L_Knee.svg', 2: 'R_Knee.svg'}, bilateral: true, helping_verb: 'is'},
-    {index: 8, order: 4, label: 'Shin', location: 'front', group: 'muscle', image: {0: 'Shin.svg', 1: 'L_Shin.svg', 2: 'R_Shin.svg'}, bilateral: true, helping_verb: 'is'},
+    {index: 6, order: 4, label: 'Quads', location: 'front', group: 'muscle', image: {0: 'Quad.svg', 1: 'L_Quad.svg', 2: 'R_Quad.svg'}, bilateral: true, helping_verb: 'are'},
+    {index: 7, order: 6, label: 'Knee', location: 'front', group: 'joint', image: {0: 'Knee.svg', 1: 'L_Knee.svg', 2: 'R_Knee.svg'}, bilateral: true, helping_verb: 'is'},
+    {index: 8, order: 7, label: 'Shin', location: 'front', group: 'muscle', image: {0: 'Shin.svg', 1: 'L_Shin.svg', 2: 'R_Shin.svg'}, bilateral: true, helping_verb: 'is'},
     {index: 9, order: 8, label: 'Ankle', location: 'front', group: 'joint', image: {0: 'Ankle.svg', 1: 'L_Ankle.svg', 2: 'R_Ankle.svg'}, bilateral: true, helping_verb: 'is'},
     {index: 10, order: 9, label: 'Foot', location: 'front', group: 'joint', image: {0: 'Foot.svg', 1: 'L_Foot.svg', 2: 'R_Foot.svg'}, bilateral: true, helping_verb: 'is'},
-    {index: 11, order: 6, label: 'IT Band', location: 'front', group: 'muscle', image: {0: 'ITBand.svg', 1: 'L_ITBand.svg', 2: 'R_ITBand.svg'}, bilateral: true, helping_verb: 'is'},
+    {index: 11, order: 5, label: 'IT Band', location: 'front', group: 'muscle', image: {0: 'ITBand.svg', 1: 'L_ITBand.svg', 2: 'R_ITBand.svg'}, bilateral: true, helping_verb: 'is'},
     {index: 12, order: 11, label: 'Lower Back', location: 'back', group: 'joint', image: {0: 'LowBack.svg'}, bilateral: false, helping_verb: 'is'},
     {index: 13, order: null, label: 'General', location: '', group: '', image: {}, bilateral: false, helping_verb: ''},
     {index: 14, order: 12, label: 'Glutes', location: 'back', group: 'muscle', image: {0: 'Glute.svg', 1: 'L_Glute.svg', 2: 'R_Glute.svg'}, bilateral: true, helping_verb: 'are'},
@@ -255,8 +255,10 @@ function cleanExercise(exercise) {
     cleanedExercise.displayName = `${exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
     cleanedExercise.dosage = `${exercise.sets_assigned}x${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : exercise.unit_of_measure === 'yards' ? 'yards' : ''}${exercise.bilateral ? ' per side' : ''}`;
     cleanedExercise.imageUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.gif`;
-    cleanedExercise.thumbnailUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.png`;
-    cleanedExercise.videoUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.mp4`;
+    cleanedExercise.thumbnailUrl = `https://dd4o7zw7l62dt.cloudfront.net/${exercise.library_id}.png`;
+    // cleanedExercise.thumbnailUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.png`;
+    cleanedExercise.videoUrl = `https://dd4o7zw7l62dt.cloudfront.net/${exercise.library_id}.mp4`;
+    // cleanedExercise.videoUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.mp4`;
     cleanedExercise.localImageUrl = exercise.localImageUrl;
     cleanedExercise.youtubeId = exercise.youtube_id && exercise.youtube_id.length > 0 ? `https://www.youtube.com/embed/${exercise.youtube_id}?version=3&playlist=${exercise.youtube_id}&rel=0&autoplay=1&showinfo=0&playsinline=1&loop=1&controls=0&modestbranding=1` : false;
     return cleanedExercise;
@@ -277,9 +279,9 @@ const sessionTypes = {
 };
 
 const availableSessionTypes = [
-    { index: 0, order: 1, label: 'Practice', },
-    { index: 2, order: 2, label: 'Competition', },
-    { index: 6, order: 3, label: 'Training', },
+    { index: 0, order: 1, label: 'Practice', ignoreSelection: true, },
+    { index: 2, order: 2, label: 'Competition', ignoreSelection: false, },
+    { index: 6, order: 3, label: 'Training', ignoreSelection: false, },
 ];
 
 const strengthConditioningTypes = [

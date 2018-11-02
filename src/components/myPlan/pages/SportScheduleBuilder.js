@@ -169,6 +169,8 @@ class SportScheduleBuilder extends Component {
         let sportText = this._getFinalTextStrings(selectedSport, filteredSessionType).sportText;
         let startTimeText = this._getFinalTextStrings(selectedSport, filteredSessionType).startTimeText;
         let durationText = this._getFinalTextStrings(selectedSport, filteredSessionType).durationText;
+        let isSport = postSession.sport_name > 0 || postSession.sport_name === 0 ? true : false;
+        let filteredSportSessionTypes = isSport ? _.filter(sessionTypes, type => !type.ignoreSelection) : sessionTypes;
         return (
             <View style={{flex: 1,}}>
                 <View style={{flexDirection: 'row'}}>
@@ -363,7 +365,7 @@ class SportScheduleBuilder extends Component {
                                     <Text oswaldMedium style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{`${selectedSport.toUpperCase()} SESSION TYPE`}</Text>
                                     <Spacer size={7} />
                                     <View style={[AppStyles.containerCentered, {flexDirection: 'row', flexWrap: 'wrap',}]}>
-                                        { _.map(sessionTypes, (session, i) =>
+                                        { _.map(filteredSportSessionTypes, (session, i) =>
                                             <Button
                                                 backgroundColor={AppColors.white}
                                                 buttonStyle={[styles.pill, {width: (AppSizes.screen.width * 0.75)}]}

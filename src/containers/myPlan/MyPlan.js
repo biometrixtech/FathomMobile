@@ -54,16 +54,13 @@ const MyPlan = ({
 );
 
 MyPlan.propTypes = {
-    Layout:                    PropTypes.func.isRequired,
-    ble:                       PropTypes.object.isRequired,
-    clearCompletedExercises:   PropTypes.func.isRequired,
-    clearCompletedFSExercises: PropTypes.func.isRequired,
-    getMyPlan:                 PropTypes.func.isRequired,
-    getSoreBodyParts:          PropTypes.func.isRequired,
-    lastOpened:                PropTypes.oneOfType([
-        PropTypes.bool,
-        PropTypes.string,
-    ]),
+    Layout:                        PropTypes.func.isRequired,
+    ble:                           PropTypes.object.isRequired,
+    clearCompletedExercises:       PropTypes.func.isRequired,
+    clearCompletedFSExercises:     PropTypes.func.isRequired,
+    getMyPlan:                     PropTypes.func.isRequired,
+    getSoreBodyParts:              PropTypes.func.isRequired,
+    lastOpened:                    PropTypes.object.isRequired,
     markStartedFunctionalStrength: PropTypes.func.isRequired,
     markStartedRecovery:           PropTypes.func.isRequired,
     network:                       PropTypes.object.isRequired,
@@ -90,7 +87,7 @@ MyPlan.defaultProps = {
 
 const mapStateToProps = state => ({
     ble:                  state.ble,
-    lastOpened:           state.init.lastOpened,
+    lastOpened:           state.plan.lastOpened,
     network:              state.network,
     notification:         state.init.notification,
     plan:                 state.plan,
