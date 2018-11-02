@@ -439,7 +439,39 @@ const helperFunctions = {
         return expectedResult;
     },
 
+    getFunctionalStrengthOptionsSession: (sport_name, strength_and_conditioning_type) => {
+        return { sport_name, strength_and_conditioning_type };
+    },
+
+    getFunctionalStrengthOptionsExpectedResult: (isSport, isStrengthConditioning, sessionName) => {
+        return { isSport, isStrengthConditioning, sessionName };
+    },
+
 };
+
+it('Functional Strength Options - Sport - Soccer', () => {
+    let session = helperFunctions.getFunctionalStrengthOptionsSession(14, null);
+    let expectedResult = helperFunctions.getFunctionalStrengthOptionsExpectedResult(true, false, 'Soccer');
+    expect(PlanLogic.handleFunctionalStrengthOptions(session)).toEqual(expectedResult);
+});
+
+it('Functional Strength Options - Sport - Basketball', () => {
+    let session = helperFunctions.getFunctionalStrengthOptionsSession(0, null);
+    let expectedResult = helperFunctions.getFunctionalStrengthOptionsExpectedResult(true, false, 'Basketball');
+    expect(PlanLogic.handleFunctionalStrengthOptions(session)).toEqual(expectedResult);
+});
+
+it('Functional Strength Options - Strength & Conditioning - Strength', () => {
+    let session = helperFunctions.getFunctionalStrengthOptionsSession(null, 3);
+    let expectedResult = helperFunctions.getFunctionalStrengthOptionsExpectedResult(false, true, 'Strength TRAINING');
+    expect(PlanLogic.handleFunctionalStrengthOptions(session)).toEqual(expectedResult);
+});
+
+it('Functional Strength Options - Strength & Conditioning - Endurance', () => {
+    let session = helperFunctions.getFunctionalStrengthOptionsSession(null, 0);
+    let expectedResult = helperFunctions.getFunctionalStrengthOptionsExpectedResult(false, true, 'Endurance TRAINING');
+    expect(PlanLogic.handleFunctionalStrengthOptions(session)).toEqual(expectedResult);
+});
 
 it('Area Of Soreness Clicked - Adding Bilateral Body Part', () => {
     let bodyPartIndex = 7;

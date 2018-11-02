@@ -19,6 +19,7 @@ import { Image, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-na
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
 import { Button, FathomSlider, Spacer, Text, } from '../../custom';
+import { PlanLogic, } from '../../../lib';
 
 // Components
 import { AreasOfSoreness, ScaleButton, SoreBodyPart, } from './';
@@ -72,28 +73,6 @@ class ReadinessSurvey extends Component {
         _.delay(() => {
             this.scrollViewRef.scrollToEnd({ animated: true, });
         }, 500);
-    }
-
-    _getFunctionalStrengthOptions = session => {
-        let isSport = session.sport_name > 0 || session.sport_name === 0 ? true : false;
-        let isStrengthConditioning = session.strength_and_conditioning_type > 0 || session.strength_and_conditioning_type === 0;
-        let sessionName = isSport ?
-            _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name)
-            : isStrengthConditioning ?
-                _.find(MyPlanConstants.strengthConditioningTypes, o => o.index === session.strength_and_conditioning_type)
-                :
-                '';
-        sessionName = sessionName.label && isSport ?
-            sessionName.label
-            : sessionName.label && isStrengthConditioning ?
-                `${sessionName.label.replace(' Training', '')} TRAINING`
-                :
-                '';
-        return {
-            isSport,
-            isStrengthConditioning,
-            sessionName,
-        };
     }
 
     render = () => {
@@ -182,9 +161,9 @@ class ReadinessSurvey extends Component {
                                 </Text>
                                 <Spacer size={10} />
                                 { _.map(typicalSessions, (session, i) => {
-                                    let isSport = this._getFunctionalStrengthOptions(session).isSport;
-                                    let isStrengthConditioning = this._getFunctionalStrengthOptions(session).isStrengthConditioning;
-                                    let sessionName = this._getFunctionalStrengthOptions(session).sessionName;
+                                    let isSport = PlanLogic.handleFunctionalStrengthOptions(session).isSport;
+                                    let isStrengthConditioning = PlanLogic.handleFunctionalStrengthOptions(session).isStrengthConditioning;
+                                    let sessionName = PlanLogic.handleFunctionalStrengthOptions(session).sessionName;
                                     let isSelected = false;
                                     if(isSport) {
                                         isSelected = dailyReadiness.current_sport_name === session.sport_name;
@@ -247,7 +226,7 @@ class ReadinessSurvey extends Component {
                                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                                             {'What is your primary position in '}
                                             <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                                {this._getFunctionalStrengthOptions({ sport_name: dailyReadiness.current_sport_name, }).sessionName.toLowerCase()}
+                                                {PlanLogic.handleFunctionalStrengthOptions({ sport_name: dailyReadiness.current_sport_name, }).sessionName.toLowerCase()}
                                             </Text>
                                             {'?'}
                                         </Text>

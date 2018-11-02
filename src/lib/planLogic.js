@@ -1,6 +1,9 @@
 // import third-party libraries
 import _ from 'lodash';
 
+// Consts and Libs
+import { MyPlan as MyPlanConstants, } from '../constants';
+
 const PlanLogic = {
 
     /**
@@ -132,6 +135,31 @@ const PlanLogic = {
         }
         // return
         return newSorenessFields;
+    },
+
+    /**
+      * Cleaning of Functional Strength clickable options
+      */
+    handleFunctionalStrengthOptions: session => {
+        let isSport = session.sport_name > 0 || session.sport_name === 0 ? true : false;
+        let isStrengthConditioning = session.strength_and_conditioning_type > 0 || session.strength_and_conditioning_type === 0;
+        let sessionName = isSport ?
+            _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name)
+            : isStrengthConditioning ?
+                _.find(MyPlanConstants.strengthConditioningTypes, o => o.index === session.strength_and_conditioning_type)
+                :
+                '';
+        sessionName = sessionName.label && isSport ?
+            sessionName.label
+            : sessionName.label && isStrengthConditioning ?
+                `${sessionName.label.replace(' Training', '')} TRAINING`
+                :
+                '';
+        return {
+            isSport,
+            isStrengthConditioning,
+            sessionName,
+        };
     },
 
 };
