@@ -16,6 +16,7 @@ import { Platform, StyleSheet, View, } from 'react-native';
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
 import { Button, Spacer, TabIcon, Text, WheelScrollPicker, } from '../../custom';
+import { PlanLogic, } from '../../../lib';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -105,51 +106,10 @@ class SportScheduleBuilder extends Component {
                     isFormValid: true,
                 },
                 () => {
-                    this.props.handleFormChange('event_date', `${this._getDateTimeDurationFromState().event_date.toISOString(true).split('.')[0]}Z`);
-                    this.props.handleFormChange('duration', this._getDateTimeDurationFromState().duration);
+                    this.props.handleFormChange('event_date', `${PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, this.state.isFormValid, this.state.timeValueGroups).event_date.toISOString(true).split('.')[0]}Z`);
+                    this.props.handleFormChange('duration', PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, this.state.isFormValid, this.state.timeValueGroups).duration);
                 },
             );
-        }
-    }
-
-    _getDateTimeDurationFromState = () => {
-        let { durationValueGroups, isFormValid, timeValueGroups, } = this.state;
-        if(!isFormValid) {
-            return {
-                duration:   '',
-                event_date: `${moment().toISOString(true).split('.')[0]}Z`,
-            }
-        }
-        let now = moment();
-        now = now.set('second', 0);
-        now = now.set('millisecond', 0);
-        let hoursIn24 = timeValueGroups.amPM === 0 ? (timeValueGroups.hours + 1) : ((timeValueGroups.hours + 1) + 12);
-        hoursIn24 = hoursIn24 === 12 ? 0 : hoursIn24;
-        hoursIn24 = hoursIn24 === 24 ? 12 : hoursIn24;
-        now = now.set('hour', hoursIn24);
-        now = now.set('minute', Number(MyPlanConstants.timeOptionGroups.minutes[timeValueGroups.minutes]));
-        let duration = Number(MyPlanConstants.durationOptionGroups.minutes[durationValueGroups.minutes]);
-        return {
-            duration,
-            event_date: now,
-        }
-    }
-
-    _getFinalTextStrings = (selectedSport, filteredSessionType) => {
-        const { postSession, } = this.props;
-        let { isFormValid, step, } = this.state;
-        // setup variables
-        let selectedStartTime = this._getDateTimeDurationFromState().event_date;
-        let selectedDuration = this._getDateTimeDurationFromState().duration;
-        let selectedSessionType = filteredSessionType && filteredSessionType.length > 0 ? filteredSessionType[0].label.toLowerCase() : postSession.session_type === 1 ? 'training' : '';
-        // logic
-        let sportText = step === 0 || step === 1 ? 'activity type' : step === 2 ? `${selectedSport} ` : `${selectedSport} ${selectedSessionType}`;
-        let startTimeText = (step === 3 || step === 4) && !isFormValid ? 'time' : (step === 3 || step === 4) && isFormValid ? `${selectedStartTime.format('h:mm')}` : '';
-        let durationText = step === 3 && !isFormValid ? 'duration' : `${selectedDuration}`;
-        return {
-            durationText,
-            sportText,
-            startTimeText,
         }
     }
 
@@ -166,9 +126,11 @@ class SportScheduleBuilder extends Component {
         let filteredSport = postSession.sport_name || postSession.sport_name === 0 ? _.filter(teamSports, ['index', postSession.sport_name]) : postSession.strength_and_conditioning_type || postSession.strength_and_conditioning_type === 0 ? _.filter(strengthConditioningTypes, ['index', postSession.strength_and_conditioning_type]) : null;
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0].label.toLowerCase().replace(' training', '') : '';
         let filteredSessionType = postSession.session_type || postSession.session_type === 0 ? _.filter(sessionTypes, ['index', postSession.session_type]) : null;
-        let sportText = this._getFinalTextStrings(selectedSport, filteredSessionType).sportText;
-        let startTimeText = this._getFinalTextStrings(selectedSport, filteredSessionType).startTimeText;
-        let durationText = this._getFinalTextStrings(selectedSport, filteredSessionType).durationText;
+        let selectedStartTime = PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, isFormValid, this.state.timeValueGroups).event_date;
+        let selectedDuration = PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, isFormValid, this.state.timeValueGroups).duration;
+        let sportText = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, this.props.postSession, this.state.isFormValid, this.state.step, selectedStartTime, selectedDuration).sportText;
+        let startTimeText = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, this.props.postSession, this.state.isFormValid, this.state.step, selectedStartTime, selectedDuration).startTimeText;
+        let durationText = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, this.props.postSession, this.state.isFormValid, this.state.step, selectedStartTime, selectedDuration).durationText;
         return (
             <View style={{flex: 1,}}>
                 <View style={{flexDirection: 'row'}}>
