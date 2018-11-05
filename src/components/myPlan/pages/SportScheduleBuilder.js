@@ -20,7 +20,6 @@ import { PlanLogic, } from '../../../lib';
 
 // import third-party libraries
 import _ from 'lodash';
-import moment from 'moment';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
