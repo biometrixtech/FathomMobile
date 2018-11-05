@@ -76,7 +76,7 @@ class AreasOfSoreness extends Component {
                     title={'NO, ALL GOOD'}
                 />
                 <Spacer size={30} />
-                <Text oswaldSemiBold style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{'OR'}</Text>
+                <Text oswaldRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{'OR'}</Text>
                 <Spacer size={30} />
                 <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}>{'Tap to select body part(s)'}</Text>
                 {_.map(groupedNewBodyPartMap, (object, key) => {
@@ -84,7 +84,7 @@ class AreasOfSoreness extends Component {
                     return(
                         <View key={key}>
                             <Text
-                                oswaldSemiBold
+                                oswaldMedium
                                 style={[
                                     AppStyles.textCenterAligned,
                                     {

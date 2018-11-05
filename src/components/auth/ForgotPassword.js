@@ -15,7 +15,7 @@ import { AppAPI, } from '../../lib';
 import { onboardingUtils, } from '../../constants/utils';
 
 // Components
-import { Alerts, FormInput, ProgressBar, Spacer, Text, } from '../custom';
+import { Alerts, Button, FormInput, ProgressBar, Spacer, Text, } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -176,7 +176,6 @@ class ForgotPassword extends Component {
                             inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'email-address'}
                             onChangeText={(text) => this._handleFormChange('email', text)}
-                            onSubmitEditing={() => this._handleFormSubmit()}
                             placeholder={'email'}
                             placeholderTextColor={AppColors.primary.yellow.hundredPercent}
                             returnKeyType={'done'}
@@ -204,9 +203,18 @@ class ForgotPassword extends Component {
                         </TouchableOpacity>}
                     </View>
                 </View>
-                <TouchableOpacity onPress={() => this._handleFormSubmit()} style={[AppStyles.nextButtonWrapper, {margin: 0}]}>
-                    <Text robotoBold style={[AppStyles.nextButtonText, { fontSize: AppFonts.scaleFont(16) }]}>Reset</Text>
-                </TouchableOpacity>
+                <Button
+                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                    buttonStyle={{borderRadius: 0, paddingVertical: 20,}}
+                    containerViewStyle={{marginLeft: 0, width: '100%',}}
+                    color={AppColors.white}
+                    fontFamily={AppStyles.robotoBold.fontFamily}
+                    fontWeight={AppStyles.robotoBold.fontWeight}
+                    onPress={() => this._handleFormSubmit()}
+                    raised={false}
+                    textStyle={{ fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                    title={'Reset'}
+                />
             </View>
         );
     }

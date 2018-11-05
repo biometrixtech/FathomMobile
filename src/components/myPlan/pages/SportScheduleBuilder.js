@@ -131,6 +131,8 @@ class SportScheduleBuilder extends Component {
         let sportText = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, this.props.postSession, this.state.isFormValid, this.state.step, selectedStartTime, selectedDuration).sportText;
         let startTimeText = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, this.props.postSession, this.state.isFormValid, this.state.step, selectedStartTime, selectedDuration).startTimeText;
         let durationText = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, this.props.postSession, this.state.isFormValid, this.state.step, selectedStartTime, selectedDuration).durationText;
+        let isSport = postSession.sport_name > 0 || postSession.sport_name === 0 ? true : false;
+        let filteredSportSessionTypes = isSport ? _.filter(sessionTypes, type => !type.ignoreSelection) : sessionTypes;
         return (
             <View style={{flex: 1,}}>
                 <View style={{flexDirection: 'row'}}>
@@ -325,7 +327,7 @@ class SportScheduleBuilder extends Component {
                                     <Text oswaldMedium style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{`${selectedSport.toUpperCase()} SESSION TYPE`}</Text>
                                     <Spacer size={7} />
                                     <View style={[AppStyles.containerCentered, {flexDirection: 'row', flexWrap: 'wrap',}]}>
-                                        { _.map(sessionTypes, (session, i) =>
+                                        { _.map(filteredSportSessionTypes, (session, i) =>
                                             <Button
                                                 backgroundColor={AppColors.white}
                                                 buttonStyle={[styles.pill, {width: (AppSizes.screen.width * 0.75)}]}

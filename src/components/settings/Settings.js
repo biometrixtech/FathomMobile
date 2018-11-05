@@ -292,7 +292,7 @@ class Settings extends Component {
                     }
                     onPress={() =>
                         this.props.logout(this.props.user.id)
-                            .then(() => {Actions.start(); this.props.clearMyPlanData();})
+                            .then(() => {Actions.start();})
                             .catch(err => this._handleLogoutAlert(err))
                     }
                     title={'LOGOUT'}

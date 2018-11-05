@@ -73,14 +73,11 @@ class MyPlan extends Component {
     static componentName = 'MyPlanView';
 
     static propTypes = {
-        ble:                       PropTypes.object.isRequired,
-        clearCompletedExercises:   PropTypes.func.isRequired,
-        clearCompletedFSExercises: PropTypes.func.isRequired,
-        getSoreBodyParts:          PropTypes.func.isRequired,
-        lastOpened:                PropTypes.oneOfType([
-            PropTypes.bool,
-            PropTypes.string,
-        ]),
+        ble:                           PropTypes.object.isRequired,
+        clearCompletedExercises:       PropTypes.func.isRequired,
+        clearCompletedFSExercises:     PropTypes.func.isRequired,
+        getSoreBodyParts:              PropTypes.func.isRequired,
+        lastOpened:                    PropTypes.object.isRequired,
         markStartedFunctionalStrength: PropTypes.func.isRequired,
         markStartedRecovery:           PropTypes.func.isRequired,
         network:                       PropTypes.object.isRequired,
@@ -156,10 +153,15 @@ class MyPlan extends Component {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => true);
         }
+        this._handleEnteringApp(true);
+    }
+
+    _handleEnteringApp = (hideSplashScreen, callback) => {
         // when we arrive, load MyPlan, if it hasn't been loaded today yet
-        if(this.props.lastOpened !== moment().format('YYYY-MM-DD')) {
-            let userId = this.props.user.id;
-            this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
+        let userId = this.props.user.id;
+        let clearMyPlan = this.props.lastOpened.userId !== this.props.user.id ? true : false;
+        if(!this.props.lastOpened.date || clearMyPlan || moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')) {
+            this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                 .then(response => {
                     if(response.daily_plans[0].daily_readiness_survey_completed) {
                         let postPracticeSurveys = response.daily_plans[0].training_sessions.map(session => session.post_session_survey
@@ -186,7 +188,12 @@ class MyPlan extends Component {
                                 postPracticeSurveys
                             }),
                         });
-                        SplashScreen.hide();
+                        if(hideSplashScreen) {
+                            SplashScreen.hide();
+                        }
+                        if(callback) {
+                            callback();
+                        }
                     } else {
                         this.setState({
                             prepare: Object.assign({}, this.state.prepare, {
@@ -199,22 +206,44 @@ class MyPlan extends Component {
                                 let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
                                 newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
                                 this.setState({ dailyReadiness: newDailyReadiness });
-                                SplashScreen.hide();
+                                if(hideSplashScreen) {
+                                    SplashScreen.hide();
+                                }
+                                if(callback) {
+                                    callback();
+                                }
                             })
                             .catch(err => {
                                 // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
                                 let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
                                 newDailyReadiness.soreness = [];
                                 this.setState({ dailyReadiness: newDailyReadiness });
-                                SplashScreen.hide();
+                                if(hideSplashScreen) {
+                                    SplashScreen.hide();
+                                }
+                                if(callback) {
+                                    callback();
+                                }
                                 AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
                             });
                     }
                 })
                 .catch(error => {
-                    SplashScreen.hide();
+                    if(hideSplashScreen) {
+                        SplashScreen.hide();
+                    }
+                    if(callback) {
+                        callback();
+                    }
                     AppUtil.handleAPIErrorAlert(ErrorMessages.getMyPlan);
                 });
+        } else {
+            setTimeout(() => {
+                this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(this.props.plan.dailyPlan[0]));
+                if(callback) {
+                    callback();
+                }
+            }, 500);
         }
     }
 
@@ -265,26 +294,40 @@ class MyPlan extends Component {
     }
 
     _handleAppStateChange = (nextAppState) => {
-        if(nextAppState === 'active' && this.props.notification) {
-            this._handlePushNotification(this.props);
+        if(nextAppState === 'active') {
+            this._handleEnteringApp(false, () => this._handlePushNotification(this.props));
         }
     }
 
     _handlePushNotification = props => {
-        const pushNotificationUpdate = PlanLogic.handlePushNotification(props, this.state);
-        this._goToScrollviewPage(pushNotificationUpdate.page, () => {
-            if(pushNotificationUpdate.stateName !== '' || pushNotificationUpdate.newStateFields !== '') {
-                this.setState({
-                    [pushNotificationUpdate.stateName]: pushNotificationUpdate.newStateFields,
+        // need to update our state to clear all 'open' items
+        this.setState(
+            {
+                ...this.state,
+                isPostSessionSurveyModalOpen: false,
+                isReadinessSurveyModalOpen:   false,
+                isSelectedExerciseModalOpen:  false,
+                loading:                      false,
+                selectedExercise:             {},
+            },
+            () => {
+                // continue current logic
+                const pushNotificationUpdate = PlanLogic.handlePushNotification(props, this.state);
+                this._goToScrollviewPage(pushNotificationUpdate.page, () => {
+                    if(pushNotificationUpdate.stateName !== '' || pushNotificationUpdate.newStateFields !== '') {
+                        this.setState({
+                            [pushNotificationUpdate.stateName]: pushNotificationUpdate.newStateFields,
+                        });
+                    }
+                    if(pushNotificationUpdate.updateExerciseList) {
+                        this._handleExerciseListRefresh();
+                    }
+                    if(pushNotificationUpdate.updatePushNotificationFlag) {
+                        AppUtil.updatePushNotificationFlag();
+                    }
                 });
             }
-            if(pushNotificationUpdate.updateExerciseList) {
-                this._handleExerciseListRefresh();
-            }
-            if(pushNotificationUpdate.updatePushNotificationFlag) {
-                AppUtil.updatePushNotificationFlag();
-            }
-        });
+        );
     }
 
     _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side) => {
@@ -661,12 +704,14 @@ class MyPlan extends Component {
             }
             :
             {};
+        // making sure we can only drag horizontally if our modals are closed and nothing is loading
+        let isScrollLocked = !this.state.isReadinessSurveyModalOpen && !this.state.isPostSessionSurveyModalOpen && !this.state.loading ? false : true;
         return <TouchableWithoutFeedback
             key={`${name}_${page}`}
             accessible={true}
             accessibilityLabel={name}
             accessibilityTraits='button'
-            onPress={() => onPressHandler(page)}
+            onPress={() => isScrollLocked ? null : onPressHandler(page)}
             onLayout={onLayoutHandler}
         >
             <View style={[page === 0 ? page0Styles : page === 1 ? page1Styles : page2Styles]}>
@@ -1670,6 +1715,7 @@ class MyPlan extends Component {
             this.tabView &&
             !this.state.isReadinessSurveyModalOpen &&
             !this.state.isPostSessionSurveyModalOpen &&
+            !this.state.loading &&
             pageIndex
         ) {
             setTimeout(() => {
