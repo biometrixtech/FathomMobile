@@ -161,9 +161,10 @@ class ReadinessSurvey extends Component {
                                 </Text>
                                 <Spacer size={10} />
                                 { _.map(typicalSessions, (session, i) => {
-                                    let isSport = PlanLogic.handleFunctionalStrengthOptions(session).isSport;
-                                    let isStrengthConditioning = PlanLogic.handleFunctionalStrengthOptions(session).isStrengthConditioning;
-                                    let sessionName = PlanLogic.handleFunctionalStrengthOptions(session).sessionName;
+                                    let FSOptions = PlanLogic.handleFunctionalStrengthOptions(session);
+                                    let isSport = FSOptions.isSport;
+                                    let isStrengthConditioning = FSOptions.isStrengthConditioning;
+                                    let sessionName = FSOptions.sessionName;
                                     let isSelected = false;
                                     if(isSport) {
                                         isSelected = dailyReadiness.current_sport_name === session.sport_name;

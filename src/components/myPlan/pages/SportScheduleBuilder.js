@@ -105,8 +105,9 @@ class SportScheduleBuilder extends Component {
                     isFormValid: true,
                 },
                 () => {
-                    this.props.handleFormChange('event_date', `${PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, this.state.isFormValid, this.state.timeValueGroups).event_date.toISOString(true).split('.')[0]}Z`);
-                    this.props.handleFormChange('duration', PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, this.state.isFormValid, this.state.timeValueGroups).duration);
+                    let dateTimeDurationFromState = PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, this.state.isFormValid, this.state.timeValueGroups);
+                    this.props.handleFormChange('event_date', `${dateTimeDurationFromState.event_date.toISOString(true).split('.')[0]}Z`);
+                    this.props.handleFormChange('duration', dateTimeDurationFromState.duration);
                 },
             );
         }
@@ -125,11 +126,13 @@ class SportScheduleBuilder extends Component {
         let filteredSport = postSession.sport_name || postSession.sport_name === 0 ? _.filter(teamSports, ['index', postSession.sport_name]) : postSession.strength_and_conditioning_type || postSession.strength_and_conditioning_type === 0 ? _.filter(strengthConditioningTypes, ['index', postSession.strength_and_conditioning_type]) : null;
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0].label.toLowerCase().replace(' training', '') : '';
         let filteredSessionType = postSession.session_type || postSession.session_type === 0 ? _.filter(sessionTypes, ['index', postSession.session_type]) : null;
-        let selectedStartTime = PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, isFormValid, this.state.timeValueGroups).event_date;
-        let selectedDuration = PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, isFormValid, this.state.timeValueGroups).duration;
-        let sportText = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, this.props.postSession, this.state.isFormValid, this.state.step, selectedStartTime, selectedDuration).sportText;
-        let startTimeText = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, this.props.postSession, this.state.isFormValid, this.state.step, selectedStartTime, selectedDuration).startTimeText;
-        let durationText = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, this.props.postSession, this.state.isFormValid, this.state.step, selectedStartTime, selectedDuration).durationText;
+        let dateTimeDurationFromState = PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, isFormValid, this.state.timeValueGroups);
+        let selectedStartTime = dateTimeDurationFromState.event_date;
+        let selectedDuration = dateTimeDurationFromState.duration;
+        let getFinalSportTextString = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, this.props.postSession, this.state.isFormValid, this.state.step, selectedStartTime, selectedDuration);
+        let sportText = getFinalSportTextString.sportText;
+        let startTimeText = getFinalSportTextString.startTimeText;
+        let durationText = getFinalSportTextString.durationText;
         let isSport = postSession.sport_name > 0 || postSession.sport_name === 0 ? true : false;
         let filteredSportSessionTypes = isSport ? _.filter(sessionTypes, type => !type.ignoreSelection) : sessionTypes;
         return (
