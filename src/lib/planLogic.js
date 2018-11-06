@@ -1,10 +1,15 @@
 // import third-party libraries
 import _ from 'lodash';
+import moment from 'moment';
+
+// Consts and Libs
+import { MyPlan as MyPlanConstants, } from '../constants';
 
 const PlanLogic = {
 
     /**
       * Takes care of the different possible PNs that can come in
+      * - MyPlan
       */
     handlePushNotification: (props, state) => {
         // setup varibles
@@ -46,6 +51,7 @@ const PlanLogic = {
 
     /**
       * Updates to the state when the daily readiness & post session forms are changed
+      * - MyPlan
       */
     handleDailyReadinessAndPostSessionFormChange: (name, value, isPain, bodyPart, side, state) => {
         // setup varibles
@@ -77,6 +83,7 @@ const PlanLogic = {
 
     /**
       * Updates to the state when the area of soreness is clicked on daily readiness & post session forms
+      * - MyPlan
       */
     handleAreaOfSorenessClick: (stateObject, areaClicked, isAllGood, soreBodyPartsPlan) => {
         // setup varibles
@@ -132,6 +139,74 @@ const PlanLogic = {
         }
         // return
         return newSorenessFields;
+    },
+
+    /**
+      * Cleaning of Functional Strength clickable options
+      * - ReadinessSurvey
+      */
+    handleFunctionalStrengthOptions: session => {
+        let isSport = session.sport_name > 0 || session.sport_name === 0 ? true : false;
+        let isStrengthConditioning = session.strength_and_conditioning_type > 0 || session.strength_and_conditioning_type === 0;
+        let sessionName = isSport ?
+            _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name)
+            : isStrengthConditioning ?
+                _.find(MyPlanConstants.strengthConditioningTypes, o => o.index === session.strength_and_conditioning_type)
+                :
+                '';
+        sessionName = sessionName.label && isSport ?
+            sessionName.label
+            : sessionName.label && isStrengthConditioning ?
+                `${sessionName.label.replace(' Training', '')} TRAINING`
+                :
+                '';
+        return {
+            isSport,
+            isStrengthConditioning,
+            sessionName,
+        };
+    },
+
+    /**
+      * Cleaning of Date and Time Duration from State
+      * - SportScheduleBuilder
+      */
+    handleGetDateTimeDurationFromState: (durationValueGroups, isFormValid, timeValueGroups) => {
+        if(!isFormValid) {
+            return {
+                duration:   '',
+                event_date: `${moment().toISOString(true).split('.')[0]}Z`,
+            }
+        }
+        let now = moment();
+        now = now.set('second', 0);
+        now = now.set('millisecond', 0);
+        let hoursIn24 = timeValueGroups.amPM === 0 ? (timeValueGroups.hours + 1) : ((timeValueGroups.hours + 1) + 12);
+        hoursIn24 = hoursIn24 === 12 ? 0 : hoursIn24;
+        hoursIn24 = hoursIn24 === 24 ? 12 : hoursIn24;
+        now = now.set('hour', hoursIn24);
+        now = now.set('minute', Number(MyPlanConstants.timeOptionGroups.minutes[timeValueGroups.minutes]));
+        let duration = Number(MyPlanConstants.durationOptionGroups.minutes[durationValueGroups.minutes]);
+        return {
+            duration,
+            event_date: now,
+        };
+    },
+
+    /**
+      * Cleaning of Sport Text String
+      * - SportScheduleBuilder
+      */
+    handleGetFinalSportTextString: (selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration) => {
+        let selectedSessionType = filteredSessionType && filteredSessionType.length > 0 ? filteredSessionType[0].label.toLowerCase() : postSession.session_type === 1 ? 'training' : '';
+        let sportText = step === 0 || step === 1 ? 'activity type' : step === 2 ? `${selectedSport} ` : `${selectedSport} ${selectedSessionType}`;
+        let startTimeText = (step === 3 || step === 4) && !isFormValid ? 'time' : (step === 3 || step === 4) && isFormValid ? `${selectedStartTime.format('h:mm')}` : '';
+        let durationText = step === 3 && !isFormValid ? 'duration' : `${selectedDuration}`;
+        return {
+            durationText,
+            sportText,
+            startTimeText,
+        }
     },
 
 };
