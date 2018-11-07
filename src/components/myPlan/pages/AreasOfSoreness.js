@@ -2,6 +2,7 @@
  * AreasOfSoreness
  *
     <AreasOfSoreness
+        getScrollPositions={{scrollViewYPosition: 0, wrapperViewPosition: 0,}}
         handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
         handleFormChange={handleFormChange}
         ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
@@ -24,15 +25,15 @@ import { Button, Spacer, SVGImage, Text, } from '../../custom';
 
 // import third-party libraries
 import _ from 'lodash';
-import Tooltip from 'react-native-walkthrough-tooltip';
+import Tips from 'react-native-tips';
 
 // Components
 import { SoreBodyPart, } from './';
 
-const TooltipContent = ({ handleTooltipClose, }) => (
+const TooltipContent = ({ handleTooltipClose, text, }) => (
     <View style={{padding: AppSizes.padding,}}>
         <Text robotoLight style={{color: AppColors.black, fontSize: AppFonts.scaleFont(15),}}>
-            {MyPlanConstants.allGoodBodyPartMessage()}
+            {text}
         </Text>
         <TouchableOpacity
             onPress={handleTooltipClose}
@@ -73,7 +74,7 @@ class AreasOfSoreness extends Component {
     }
 
     render = () => {
-        const { handleAreaOfSorenessClick, handleFormChange, scrollToBottom, soreBodyParts, soreBodyPartsState, surveyObject, toggleSlideUpPanel, user, } = this.props;
+        const { getScrollPositions, handleAreaOfSorenessClick, handleFormChange, scrollToBottom, soreBodyParts, soreBodyPartsState, surveyObject, toggleSlideUpPanel, user, } = this.props;
         let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, (u, i) => _.findIndex(soreBodyParts, o => o.body_part === i) === -1);
         let newBodyPartMap = _.filter(filteredBodyPartMap, o => {
             let itemStateFiltered = _.filter(soreBodyParts.body_parts, {body_part: o.index});
@@ -83,15 +84,23 @@ class AreasOfSoreness extends Component {
         });
         let areaOfSorenessClicked = _.filter(soreBodyPartsState, bodyPartState => _.findIndex(soreBodyParts.body_parts, bodyPartProp => bodyPartProp.body_part === bodyPartState.body_part && bodyPartProp.side === bodyPartState.side) === -1);
         let groupedNewBodyPartMap = _.groupBy(newBodyPartMap, 'location');
+        let showTipBelow = getScrollPositions.wrapperViewPosition && getScrollPositions.scrollViewYPosition > getScrollPositions.wrapperViewPosition.y;
         return(
             <View>
                 <Spacer size={30} />
-                <Tooltip
-                    animated
-                    content={<TooltipContent handleTooltipClose={() => this._handleTooltipClose()} />}
-                    contentStyle={{backgroundColor: AppColors.primary.white.hundredPercent,}}
-                    isVisible={this.state.isAllGoodTooltipOpen}
-                    placement={'auto'}
+                <Tips
+                    content={<TooltipContent handleTooltipClose={() => this._handleTooltipClose()} text={MyPlanConstants.allGoodBodyPartMessage()} />}
+                    position={showTipBelow ? 'bottom' : 'top'}
+                    style={{backgroundColor: AppColors.primary.white.hundredPercent, shadowOpacity: 0,}}
+                    tooltipArrowStyle={[
+                        showTipBelow ?
+                            {borderBottomColor: AppColors.primary.white.hundredPercent,}
+                            :
+                            {borderTopColor: AppColors.primary.white.hundredPercent,},
+                        {shadowColor: AppColors.primary.white.hundredPercent, shadowOpacity: 0,}
+                    ]}
+                    tooltipContainerStyle={{backgroundColor: AppColors.primary.white.hundredPercent, borderRadius: 5, shadowOpacity: 0,}}
+                    visible={this.state.isAllGoodTooltipOpen}
                 >
                     <TouchableOpacity
                         onPress={() => {
@@ -130,7 +139,7 @@ class AreasOfSoreness extends Component {
                             {'NO, ALL GOOD'}
                         </Text>
                     </TouchableOpacity>
-                </Tooltip>
+                </Tips>
                 <Spacer size={30} />
                 <Text oswaldRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{'OR'}</Text>
                 <Spacer size={30} />

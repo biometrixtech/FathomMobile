@@ -48,6 +48,7 @@ class ReadinessSurvey extends Component {
         this.state = {
             isSlideUpPanelExpanded: true,
             isSlideUpPanelOpen:     false,
+            scrollViewYPosition:    0,
         };
         this.scrollViewRef = {};
         this.myComponents = [];
@@ -80,18 +81,15 @@ class ReadinessSurvey extends Component {
         }, 500);
     }
 
-    // TODO: REMOVE
-    componentDidMount = () => {
-        _.delay(() => {
-            this._toggleSlideUpPanel(false);
-        }, 1000);
-    }
-
     _toggleSlideUpPanel = (isExpanded = true) => {
         this.setState({
             isSlideUpPanelExpanded: isExpanded,
             isSlideUpPanelOpen:     !this.state.isSlideUpPanelOpen,
         });
+    }
+
+    _handleScrollViewScroll = event => {
+        this.setState({ scrollViewYPosition: event.nativeEvent.contentOffset.y, });
     }
 
     render = () => {
@@ -157,7 +155,11 @@ class ReadinessSurvey extends Component {
         /*eslint no-return-assign: 0*/
         return(
             <View style={{flex: 1,}}>
-                <ScrollView ref={ref => {this.scrollViewRef = ref}}>
+                <ScrollView
+                    onScroll={this._handleScrollViewScroll}
+                    ref={ref => {this.scrollViewRef = ref}}
+                    scrollEventThrottle={10}
+                >
                     <View onLayout={event => {this.headerComponent = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,}}} style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: 'center', width: AppSizes.screen.width}}>
                         { isFirstFunctionalStrength ?
                             <View style={{textAlign: 'center',}}>
@@ -485,6 +487,7 @@ class ReadinessSurvey extends Component {
                             {`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' '}pain or soreness?`}
                         </Text>
                         <AreasOfSoreness
+                            getScrollPositions={{scrollViewYPosition: this.state.scrollViewYPosition, wrapperViewPosition: this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (newSoreBodyParts.length + 3) : (newSoreBodyParts.length + 2)]}}
                             handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
                             handleFormChange={handleFormChange}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
