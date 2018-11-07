@@ -24,7 +24,7 @@ const getUser = (userId) => {
         .then(userData => {
             dispatch({
                 type: Actions.USER_REPLACE,
-                data: userData,
+                data: userData.user,
             });
             let cleanedResult = {};
             cleanedResult.sensor_pid = userData.user.sensor_pid;

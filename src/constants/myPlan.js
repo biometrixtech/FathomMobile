@@ -391,7 +391,36 @@ const exerciseListButtonStyles = (isPrep, completedExercises, isFSCompleteValid,
     return { buttonTitle, isButtonDisabled, isButtonOutlined, buttonDisabledStyle, buttonColor, buttonBackgroundColor, }
 };
 
+const allGoodBodyPartMessage = () => {
+    return 'Issues that seem small, mean a lot to us. Always over-communicate so you receive a plan specifically for your body\'s needs.';
+};
+
+const painSorenessMessage = () => {
+    return {
+        boldStrs: ['Soreness', 'Pain'],
+        str:      'Soreness is a normal response to training that can involve some discomfort. If something feels abnormal or unfamiliar, mark it as Pain.',
+    };
+};
+
+const sorenessVSPainMessage = () => {
+    return {
+        header:   'SORENESS vs. PAIN:',
+        lessText: 'Soreness is a normal response to training that can involve some discomfort.\n\nIf something feels abnormal or unfamiliar, mark it as pain.',
+        moreText: [
+            {
+                boldText: 'Soreness is expected after training.',
+                body:     'Levels of soreness can vary between mild and extreme but it usually isn\'t a sign of injury. If soreness persists beyond 3 days, improve your wellness practices: rest, refuel, recover.',
+            },
+            {
+                boldText: 'Pain is a sign of something abnormal.',
+                body:     'If you felt anything troubling that limited your training, has been lingering for some time, or just doesn\'t feel right, treat that as pain. In addition to improving your wellness practices, you may want to modify your activity levels as well.',
+            },
+        ],
+    }
+};
+
 export default {
+    allGoodBodyPartMessage,
     availableSessionTypes,
     bodyPartMapping,
     cleanExercise,
@@ -404,11 +433,13 @@ export default {
     jointLevels,
     muscleLevels,
     overallReadiness,
+    painSorenessMessage,
     postSessionFeel,
     scrollableTabViewPage,
     sessionTypes,
     sleepQuality,
     sorenessPainScaleMapping,
+    sorenessVSPainMessage,
     strengthConditioningTypes,
     teamSports,
     timeOptionGroups,

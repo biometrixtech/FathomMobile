@@ -8,6 +8,7 @@
         index={i+3}
         isPrevSoreness={true}
         surveyObject={dailyReadiness}
+        toggleSlideUpPanel={this._toggleSlideUpPanel}
     />
  *
  */
@@ -34,7 +35,7 @@ class SoreBodyPart extends Component {
     }
 
     render = () => {
-        const { bodyPart, bodyPartSide, handleFormChange, index, isPrevSoreness, surveyObject, } = this.props;
+        const { bodyPart, bodyPartSide, handleFormChange, index, isPrevSoreness, surveyObject, toggleSlideUpPanel, } = this.props;
         let bodyPartSorenessIndex = _.findIndex(surveyObject.soreness, o => (o.body_part === bodyPart.body_part || o.body_part === bodyPart.index) && o.side === bodyPartSide);
         let bodyPartMap = bodyPart.body_part ? MyPlanConstants.bodyPartMapping[bodyPart.body_part] : MyPlanConstants.bodyPartMapping[bodyPart.index];
         let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
@@ -232,7 +233,13 @@ class SoreBodyPart extends Component {
                             )
                         })
                         :
-                        null
+                        <Text
+                            onPress={() => toggleSlideUpPanel(false)}
+                            robotoLight
+                            style={{color: AppColors.primary.yellow.hundredPercent, textDecorationLine: 'underline',}}
+                        >
+                            {'What\'s the difference?'}
+                        </Text>
                     }
                 </View>
             </View>

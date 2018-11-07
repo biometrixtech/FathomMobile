@@ -18,7 +18,7 @@ import { Image, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-na
 
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
-import { Button, FathomSlider, Spacer, Text, } from '../../custom';
+import { Button, FathomSlider, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
 // Components
@@ -26,6 +26,7 @@ import { AreasOfSoreness, ScaleButton, SoreBodyPart, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
+import SlidingUpPanel from 'rn-sliding-up-panel';
 import moment from 'moment';
 
 /* Styles ==================================================================== */
@@ -44,6 +45,10 @@ const styles = StyleSheet.create({
 class ReadinessSurvey extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            isSlideUpPanelExpanded: true,
+            isSlideUpPanelOpen:     false,
+        };
         this.scrollViewRef = {};
         this.myComponents = [];
         this.positionsComponents = [];
@@ -73,6 +78,20 @@ class ReadinessSurvey extends Component {
         _.delay(() => {
             this.scrollViewRef.scrollToEnd({ animated: true, });
         }, 500);
+    }
+
+    // TODO: REMOVE
+    componentDidMount = () => {
+        _.delay(() => {
+            this._toggleSlideUpPanel(false);
+        }, 1000);
+    }
+
+    _toggleSlideUpPanel = (isExpanded = true) => {
+        this.setState({
+            isSlideUpPanelExpanded: isExpanded,
+            isSlideUpPanelOpen:     !this.state.isSlideUpPanelOpen,
+        });
     }
 
     render = () => {
@@ -134,6 +153,7 @@ class ReadinessSurvey extends Component {
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         let questionCounter = 0;
+        let sorenessVSPainMessage = MyPlanConstants.sorenessVSPainMessage();
         /*eslint no-return-assign: 0*/
         return(
             <View style={{flex: 1,}}>
@@ -452,6 +472,7 @@ class ReadinessSurvey extends Component {
                                 index={isFirstFunctionalStrength ? (i + 5) : isSecondFunctionalStrength ? (i + 4) : (i + 3)}
                                 isPrevSoreness={true}
                                 surveyObject={dailyReadiness}
+                                toggleSlideUpPanel={this._toggleSlideUpPanel}
                             />
                             <Spacer size={100} />
                         </View>
@@ -471,46 +492,105 @@ class ReadinessSurvey extends Component {
                             soreBodyParts={soreBodyParts}
                             soreBodyPartsState={dailyReadiness.soreness}
                             surveyObject={dailyReadiness}
+                            toggleSlideUpPanel={this._toggleSlideUpPanel}
+                            user={user}
                         />
                     </View>
-                    { isFormValid ?
-                        <Button
-                            backgroundColor={AppColors.primary.yellow.hundredPercent}
-                            buttonStyle={{
-                                alignSelf:       'center',
-                                borderRadius:    5,
-                                marginBottom:    AppSizes.padding,
-                                paddingVertical: AppSizes.paddingMed,
-                                width:           AppSizes.screen.widthTwoThirds,
-                            }}
-                            color={AppColors.white}
-                            fontFamily={AppStyles.robotoMedium.fontFamily}
-                            fontWeight={AppStyles.robotoMedium.fontWeight}
-                            onPress={handleFormSubmit}
-                            raised={false}
-                            textStyle={{ fontSize: AppFonts.scaleFont(18), }}
-                            title={'Submit'}
-                        />
-                        :
-                        <Button
-                            backgroundColor={AppColors.white}
-                            buttonStyle={{
-                                alignSelf:       'center',
-                                borderRadius:    5,
-                                marginBottom:    AppSizes.padding,
-                                paddingVertical: AppSizes.paddingMed,
-                                width:           AppSizes.screen.widthTwoThirds,
-                            }}
-                            color={AppColors.zeplin.lightGrey}
-                            fontFamily={AppStyles.robotoMedium.fontFamily}
-                            fontWeight={AppStyles.robotoMedium.fontWeight}
-                            onPress={() => null}
-                            outlined
-                            textStyle={{ fontSize: AppFonts.scaleFont(18), }}
-                            title={'Select an Option'}
-                        />
-                    }
+                    <Button
+                        backgroundColor={isFormValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                        buttonStyle={{
+                            alignSelf:       'center',
+                            borderRadius:    5,
+                            marginBottom:    AppSizes.padding,
+                            paddingVertical: AppSizes.paddingMed,
+                            width:           AppSizes.screen.widthTwoThirds,
+                        }}
+                        color={isFormValid ? AppColors.white : AppColors.zeplin.lightGrey}
+                        fontFamily={AppStyles.robotoMedium.fontFamily}
+                        fontWeight={AppStyles.robotoMedium.fontWeight}
+                        onPress={() => isFormValid ? handleFormSubmit() : null}
+                        outlined
+                        textStyle={{ fontSize: AppFonts.scaleFont(18), }}
+                        title={isFormValid ? 'Submit' : 'Select an Option'}
+                    />
                 </ScrollView>
+                <SlidingUpPanel
+                    allowDragging={false}
+                    onRequestClose={() => console.log('HIIIII')}
+                    visible={this.state.isSlideUpPanelOpen}
+
+                    startCollapsed={true}
+                >
+                    <View style={{flex: 1, flexDirection: 'column',}}>
+                        <View style={{flex: 1,}} />
+                        <View style={{backgroundColor: AppColors.white,}}>
+                            <View style={{backgroundColor: AppColors.primary.white.hundredPercent, flexDirection: 'row', padding: AppSizes.padding,}}>
+                                <Text oswaldRegular style={{color: AppColors.black, flex: 9, fontSize: AppFonts.scaleFont(22),}}>{sorenessVSPainMessage.header}</Text>
+                                <TabIcon
+                                    containerStyle={[{flex: 1,}]}
+                                    icon={'close'}
+                                    iconStyle={[{color: AppColors.black}]}
+                                    onPress={() => this._toggleSlideUpPanel()}
+                                    reverse={false}
+                                    size={30}
+                                    type={'material-community'}
+                                />
+                            </View>
+                            <View style={{padding: AppSizes.paddingLrg,}}>
+                                <Text robotoRegular style={{color: AppColors.black, fontSize: AppFonts.scaleFont(14),}}>{sorenessVSPainMessage.lessText}</Text>
+                                <Spacer size={30} />
+                                { this.state.isSlideUpPanelExpanded ?
+                                    <View>
+                                        <Text robotoMedium style={{color: AppColors.black, fontSize: AppFonts.scaleFont(18),}}>{sorenessVSPainMessage.moreText[0].boldText}</Text>
+                                        <Text robotoRegular style={{color: AppColors.black, fontSize: AppFonts.scaleFont(14),}}>{sorenessVSPainMessage.moreText[0].body}</Text>
+                                        <Spacer size={20} />
+                                        <Text robotoMedium style={{color: AppColors.black, fontSize: AppFonts.scaleFont(18),}}>{sorenessVSPainMessage.moreText[1].boldText}</Text>
+                                        <Text robotoRegular style={{color: AppColors.black, fontSize: AppFonts.scaleFont(14),}}>{sorenessVSPainMessage.moreText[1].body}</Text>
+                                        <Spacer size={20} />
+                                        <TouchableOpacity
+                                            onPress={() => this._toggleSlideUpPanel()}
+                                            style={{alignSelf: 'flex-end',}}
+                                        >
+                                            <Text
+                                                robotoMedium
+                                                style={{
+                                                    color:    AppColors.primary.yellow.hundredPercent,
+                                                    fontSize: AppFonts.scaleFont(15),
+                                                }}
+                                            >
+                                                {'GOT IT'}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    :
+                                    <View style={{flexDirection: 'row', justifyContent: 'center',}}>
+                                        <Text
+                                            onPress={() => this.setState({ isSlideUpPanelExpanded: true, })}
+                                            robotoBold
+                                            style={{
+                                                color:              AppColors.primary.yellow.hundredPercent,
+                                                fontSize:           AppFonts.scaleFont(12),
+                                                textAlign:          'center',
+                                                textDecorationLine: 'none',
+                                            }}
+                                        >
+                                            {'LEARN MORE'}
+                                        </Text>
+                                        <Spacer size={10} />
+                                        <TabIcon
+                                            icon={'chevron-down'}
+                                            iconStyle={[{color: AppColors.primary.yellow.hundredPercent}]}
+                                            onPress={() => this.setState({ isSlideUpPanelExpanded: true, })}
+                                            reverse={false}
+                                            size={AppFonts.scaleFont(12)}
+                                            type={'material-community'}
+                                        />
+                                    </View>
+                                }
+                            </View>
+                        </View>
+                    </View>
+                </SlidingUpPanel>
             </View>
         )
     }
@@ -525,9 +605,11 @@ ReadinessSurvey.propTypes = {
     typicalSessions:           PropTypes.array,
     user:                      PropTypes.object.isRequired,
 };
+
 ReadinessSurvey.defaultProps = {
     typicalSession: [],
 };
+
 ReadinessSurvey.componentName = 'ReadinessSurvey';
 
 /* Export Component ================================================================== */

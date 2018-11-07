@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-04-23 03:54:00 
+ * @Author: Vir Desai
+ * @Date: 2018-04-23 03:54:00
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-06-28 11:19:19
  */
@@ -16,7 +16,11 @@ export default {
     // users:                 [],
     // selectedTrainingGroup: {},
     // weekOffset:            0,
-    loading: false,
+    loading:             false,
+    firstTimeExperience: {
+        allGoodBodyPartTooltip: false,
+        sorenessPainTooltip:    false,
+    },
     // statsStartDate:        `${date.getFullYear()}-${AppUtil.formatDate(date.getMonth()+1)}-${AppUtil.formatDate(date.getDate())}`,
     // statsEndDate:          `${date.getFullYear()}-${AppUtil.formatDate(date.getMonth()+1)}-${AppUtil.formatDate(date.getDate())}`,
     // selectedStats:         {

@@ -9,6 +9,8 @@
         soreBodyParts={soreBodyParts}
         soreBodyPartsState={dailyReadiness.soreness} || {postSession.soreness}
         surveyObject={dailyReadiness} || {postSession}
+        toggleSlideUpPanel={this._toggleSlideUpPanel}
+        user={user}
     />
  *
  */
@@ -22,21 +24,56 @@ import { Button, Spacer, SVGImage, Text, } from '../../custom';
 
 // import third-party libraries
 import _ from 'lodash';
+import Tooltip from 'react-native-walkthrough-tooltip';
 
 // Components
 import { SoreBodyPart, } from './';
+
+const TooltipContent = ({ handleTooltipClose, }) => (
+    <View style={{padding: AppSizes.padding,}}>
+        <Text robotoLight style={{color: AppColors.black, fontSize: AppFonts.scaleFont(15),}}>
+            {MyPlanConstants.allGoodBodyPartMessage()}
+        </Text>
+        <TouchableOpacity
+            onPress={handleTooltipClose}
+            style={{alignSelf: 'flex-end',}}
+        >
+            <Text
+                robotoMedium
+                style={{
+                    color:    AppColors.primary.yellow.hundredPercent,
+                    fontSize: AppFonts.scaleFont(15),
+                }}
+            >
+                {'GOT IT'}
+            </Text>
+        </TouchableOpacity>
+    </View>
+);
 
 /* Component ==================================================================== */
 class AreasOfSoreness extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isAllGood: false,
+            isAllGood:            false,
+            isAllGoodTooltipOpen: false,
         };
+        this.allGoodBtnRef = null;
+    }
+
+    _handleTooltipClose = () => {
+        this.setState(
+            { isAllGoodTooltipOpen: false, },
+            () => {
+                // TODO: UPDATE REDUCER
+                this.props.scrollToBottom();
+            }
+        );
     }
 
     render = () => {
-        const { handleAreaOfSorenessClick, handleFormChange, scrollToBottom, soreBodyParts, soreBodyPartsState, surveyObject, } = this.props;
+        const { handleAreaOfSorenessClick, handleFormChange, scrollToBottom, soreBodyParts, soreBodyPartsState, surveyObject, toggleSlideUpPanel, user, } = this.props;
         let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, (u, i) => _.findIndex(soreBodyParts, o => o.body_part === i) === -1);
         let newBodyPartMap = _.filter(filteredBodyPartMap, o => {
             let itemStateFiltered = _.filter(soreBodyParts.body_parts, {body_part: o.index});
@@ -49,32 +86,51 @@ class AreasOfSoreness extends Component {
         return(
             <View>
                 <Spacer size={30} />
-                <Button
-                    backgroundColor={!this.state.isAllGood ? AppColors.white : AppColors.primary.yellow.hundredPercent}
-                    buttonStyle={{
-                        alignSelf:       'center',
-                        borderRadius:    5,
-                        paddingVertical: 5,
-                        width:           AppSizes.screen.widthTwoThirds,
-                    }}
-                    color={!this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.white}
-                    fontFamily={AppStyles.oswaldMedium.fontFamily}
-                    fontWeight={AppStyles.oswaldMedium.fontWeight}
-                    onPress={() => {
-                        this.setState({
-                            isAllGood: !this.state.isAllGood,
-                        }, () => {
-                            handleAreaOfSorenessClick(false, true);
-                            if(this.state.isAllGood) {
-                                scrollToBottom();
+                <Tooltip
+                    animated
+                    content={<TooltipContent handleTooltipClose={() => this._handleTooltipClose()} />}
+                    contentStyle={{backgroundColor: AppColors.primary.white.hundredPercent,}}
+                    isVisible={this.state.isAllGoodTooltipOpen}
+                    placement={'auto'}
+                >
+                    <TouchableOpacity
+                        onPress={() => {
+                            if(!this.state.isAllGoodTooltipOpen) {
+                                this.setState({
+                                    isAllGood: !this.state.isAllGood,
+                                }, () => {
+                                    if(!user.firstTimeExperience.allGoodBodyPartTooltip && this.state.isAllGood) {
+                                        this.setState({ isAllGoodTooltipOpen: true, });
+                                    }
+                                    if(user.firstTimeExperience.allGoodBodyPartTooltip) {
+                                        scrollToBottom();
+                                    }
+                                    handleAreaOfSorenessClick(false, true);
+                                });
                             }
-                        });
-                    }}
-                    outlined={true}
-                    raised={false}
-                    textStyle={{ fontSize: AppFonts.scaleFont(18), }}
-                    title={'NO, ALL GOOD'}
-                />
+                        }}
+                        style={{
+                            alignSelf:       'center',
+                            backgroundColor: !this.state.isAllGood ? AppColors.white : AppColors.primary.yellow.hundredPercent,
+                            borderColor:     !this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent,
+                            borderRadius:    5,
+                            borderWidth:     1,
+                            paddingVertical: 5,
+                            width:           AppSizes.screen.widthTwoThirds,
+                        }}
+                    >
+                        <Text
+                            oswaldMedium
+                            style={{
+                                color:     !this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.white,
+                                fontSize:  AppFonts.scaleFont(18),
+                                textAlign: 'center',
+                            }}
+                        >
+                            {'NO, ALL GOOD'}
+                        </Text>
+                    </TouchableOpacity>
+                </Tooltip>
                 <Spacer size={30} />
                 <Text oswaldRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{'OR'}</Text>
                 <Spacer size={30} />
@@ -99,6 +155,7 @@ class AreasOfSoreness extends Component {
                             </Text>
                             <View style={[AppStyles.row, AppStyles.containerCentered, {flexWrap: 'wrap'}]}>
                                 {_.map(bodyPartMap, (body, index) => {
+                                    // TODO: REFACTOR / UNIT TEST
                                     let isSelected = false;
                                     _.map(areaOfSorenessClicked, area => {
                                         if(area.body_part === body.index) {
@@ -127,11 +184,10 @@ class AreasOfSoreness extends Component {
                                             activeOpacity={0.5}
                                             key={`AreasOfSoreness0${index}`}
                                             onPress={() => {
-                                                this.setState({
-                                                    isAllGood: false,
-                                                }, () => {
-                                                    handleAreaOfSorenessClick(body);
-                                                });
+                                                this.setState(
+                                                    { isAllGood: false, },
+                                                    () => handleAreaOfSorenessClick(body)
+                                                );
                                             }}
                                             style={[AppStyles.paddingSml]}
                                         >
@@ -158,6 +214,7 @@ class AreasOfSoreness extends Component {
                                 bodyPartSide={area.side}
                                 handleFormChange={handleFormChange}
                                 surveyObject={surveyObject}
+                                toggleSlideUpPanel={toggleSlideUpPanel}
                             />
                         </View>
                     )
