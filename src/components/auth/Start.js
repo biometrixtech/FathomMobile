@@ -104,6 +104,10 @@ class Start extends Component {
         Actions.onboarding();
     }
 
+    _routeToAccountType = () => {
+        Actions.accountType();
+    }
+
     _routeToMyPlan = () => {
         Actions.myPlan();
     }
@@ -200,7 +204,7 @@ class Start extends Component {
                         disabled={this.state.displayMessage}
                         fontFamily={AppStyles.robotoBold.fontFamily}
                         fontWeight={AppStyles.robotoBold.fontWeight}
-                        onPress={this._routeToOnboarding}
+                        onPress={this._routeToAccountType}
                         textColor={AppColors.primary.yellow.hundredPercent}
                         textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                         title={'Create Account'}

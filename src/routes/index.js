@@ -31,6 +31,12 @@ import ResetPasswordComponent from '../components/auth/ResetPassword';
 import StartContainer from '../containers/auth/Start';
 import StartComponent from '../components/auth/Start';
 
+import AccountTypeContainer from '../containers/auth/AccountType';
+import AccountTypeComponent from '../components/auth/AccountType';
+
+import InviteCodeContainer from '../containers/auth/InviteCode';
+import InviteCodeComponent from '../components/auth/InviteCode';
+
 import SettingsContainer from '../containers/settings/Settings';
 import SettingsComponent from '../components/settings/Settings';
 
@@ -152,6 +158,20 @@ const Index = (
                 component={LoginContainer}
                 hideNavBar={true}
                 key={'login'}
+                panHandlers={null}
+            />
+            <Scene
+                Layout={AccountTypeComponent}
+                component={AccountTypeContainer}
+                hideNavBar={true}
+                key={'accountType'}
+                panHandlers={null}
+            />
+            <Scene
+                Layout={InviteCodeComponent}
+                component={InviteCodeContainer}
+                hideNavBar={true}
+                key={'inviteCode'}
                 panHandlers={null}
             />
             {/*<Scene

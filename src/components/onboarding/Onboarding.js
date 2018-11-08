@@ -85,6 +85,7 @@ class Onboarding extends Component {
                 user: {
                     // agreed_terms_of_use:   false, // boolean
                     // agreed_privacy_policy: false, // boolean
+                    account_code:      '',
                     cleared_to_play:   false, // boolean
                     onboarding_status: user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
                     password:          '',
@@ -162,6 +163,9 @@ class Onboarding extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
+        if(Actions.currentParams.accountCode !== this.state.form_fields.user.account_code) {
+            this._handleUserFormChange('account_code', Actions.currentParams.accountCode);
+        }
     }
 
     _toggleTermsWebView = () => {
@@ -327,6 +331,9 @@ class Onboarding extends Component {
         userObj.personal_data.account_type = newUser.personal_data.account_type;
         userObj.personal_data.account_status = newUser.personal_data.account_status;
         userObj.personal_data.zip_code = newUser.personal_data.zip_code;
+        if(newUser.account_code && newUser.account_code.length > 0) {
+            userObj.account_code = newUser.account_code;
+        }
         // create or update, if no errors
         if(errorsArray.length === 0) {
             if(this.props.user.id) {

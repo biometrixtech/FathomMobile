@@ -81,6 +81,15 @@ const userJoinAccount = (userId, payload) => {
 };
 
 /**
+  * Check Account Code
+  */
+const checkAccountCode = (account_code) => {
+    return dispatch => AppAPI.check_account_code.get({account_code})
+        .then(userData => Promise.resolve(userData))
+        .catch(err => Promise.reject(err));
+};
+
+/**
   * Update First Time User Experience Reducer
   */
 const updateFirstTimeExperience = firstTimeExperience => {
@@ -348,6 +357,7 @@ const selectGraph = (selectedGraphIndex) => {
 };
 
 export default {
+    checkAccountCode,
     clearUserData,
     createTrainingGroup,
     createUser,
