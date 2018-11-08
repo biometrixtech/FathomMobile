@@ -206,7 +206,42 @@ const PlanLogic = {
             durationText,
             sportText,
             startTimeText,
+        };
+    },
+
+    /**
+      * Data for Areas of Soreness Body Part
+      * - AreasOfSoreness
+      */
+    handleAreasOfSorenessBodyPart: (areaOfSorenessClicked, body, soreBodyParts) => {
+        let isSelected = false;
+        _.map(areaOfSorenessClicked, area => {
+            if(area.body_part === body.index) {
+                isSelected = true;
+            }
+        });
+        let bodyImage = body.image[0] || body.image[2];
+        let bodyIndexInState = _.findIndex(soreBodyParts.body_parts, a => a.body_part === body.index);
+        if(body.bilateral && bodyIndexInState > -1) {
+            let newBodyImageIndex = soreBodyParts.body_parts[bodyIndexInState].side === 1 ? 2 : 1;
+            bodyImage = body.image[newBodyImageIndex];
         }
+        let mainBodyPartName = (
+            body.label.slice(-1) === 's' && body.bilateral
+        ) ?
+            body.label === 'Achilles' ?
+                body.label.toUpperCase()
+                : body.label === 'Calves' ?
+                    'CALF'
+                    :
+                    body.label.slice(0, -1).toUpperCase()
+            :
+            body.label.toUpperCase();
+        return {
+            bodyImage,
+            isSelected,
+            mainBodyPartName,
+        };
     },
 
 };
