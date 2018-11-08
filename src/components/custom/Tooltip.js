@@ -9,9 +9,9 @@ import PropTypes from 'prop-types';
 import { AppColors, AppSizes, } from '../../constants';
 
 // import tooltip helpers
-import { ScreenWidth, ScreenHeight, isIOS } from './tooltip-helpers/helpers';
-import Triangle from './tooltip-helpers/Triangle';
-import getTooltipCoordinate from './tooltip-helpers/getTooltipCoordinate';
+import { ScreenWidth, ScreenHeight, isIOS } from './helpers/helpers';
+import Triangle from './helpers/Triangle';
+import getTooltipCoordinate from './helpers/getTooltipCoordinate';
 
 const ViewPropTypes = RNViewPropTypes || View.propTypes;
 

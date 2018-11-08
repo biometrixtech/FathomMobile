@@ -13,7 +13,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { ble, init, } from '../../actions';
+import { ble, init, user as userActions, } from '../../actions';
 
 const Settings = ({
     Layout,
@@ -23,6 +23,7 @@ const Settings = ({
     logout,
     network,
     user,
+    userJoinAccount,
 }) => (
     <Layout
         accessoryData={accessoryData}
@@ -31,6 +32,7 @@ const Settings = ({
         logout={logout}
         network={network}
         user={user}
+        userJoinAccount={userJoinAccount}
     />
 );
 
@@ -42,6 +44,7 @@ Settings.propTypes = {
     logout:                         PropTypes.func.isRequired,
     network:                        PropTypes.object.isRequired,
     user:                           PropTypes.object.isRequired,
+    userJoinAccount:                PropTypes.func.isRequired,
 };
 
 Settings.defaultProps = {
@@ -57,6 +60,7 @@ const mapDispatchToProps = {
     deleteUserSensorData:           ble.deleteUserSensorData,
     deleteAllSingleSensorPractices: ble.deleteAllSingleSensorPractices,
     logout:                         init.logout,
+    userJoinAccount:                userActions.userJoinAccount,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);

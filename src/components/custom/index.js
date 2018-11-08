@@ -26,6 +26,7 @@ import List from './List';
 import ListItem from './ListItem';
 import Pages from './Pages';
 import ProgressBar from './ProgressBar';
+import ProgressCircle from './CustomProgressCircle';
 import RadioButton from './RadioButton';
 import Spacer from './Spacer';
 import SVGImage from './SVGImage';
@@ -53,6 +54,7 @@ export {
     ListItem,
     Pages,
     ProgressBar,
+    ProgressCircle,
     RadioButton,
     Spacer,
     SVGImage,

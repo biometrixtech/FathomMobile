@@ -72,6 +72,15 @@ const createUser = (payload) => {
 };
 
 /**
+  * User Join Account
+  */
+const userJoinAccount = (userId, payload) => {
+    return dispatch => AppAPI.join_account.post({userId}, payload)
+        .then(userData => Promise.resolve(userData))
+        .catch(err => Promise.reject(err));
+};
+
+/**
   * Update First Time User Experience Reducer
   */
 const updateFirstTimeExperience = firstTimeExperience => {
@@ -360,5 +369,6 @@ export default {
     teamSelect,
     updateFirstTimeExperience,
     updateUser,
+    userJoinAccount,
     userSelect,
 };
