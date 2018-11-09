@@ -56,7 +56,7 @@ export default function planReducer(state = initialState, action) {
     case Actions.UPDATE_LAST_OPENED:
         return Object.assign({}, state, {
             lastOpened: {
-                date:   state.lastOpened.date || moment().format(),
+                date:   action.date || state.lastOpened.date || moment().format(),
                 userId: action.userId || state.lastOpened.userId,
             },
         });
