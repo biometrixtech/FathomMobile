@@ -90,7 +90,8 @@ const JoinATeamModal = ({
                     :
                     <View style={[AppStyles.containerCentered]}>
                         <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20),}]}>{'ENTER INVITE CODE'}</Text>
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{'to join Fathom as a part of a team'}</Text>
+                        <Spacer size={10} />
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}>{'to join Fathom as a part of\na team'}</Text>
                         <Spacer size={resultMsg.error.length > 0 ? 20 : 0} />
                         <Alerts
                             status={resultMsg.status}
@@ -110,6 +111,8 @@ const JoinATeamModal = ({
                             returnKeyType={'done'}
                             value={code}
                         />
+                        <Spacer size={10} />
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(12), opacity: 0.5,}]}>{'case sensitive'}</Text>
                         <Spacer size={30} />
                         <Button
                             backgroundColor={AppColors.primary.yellow.hundredPercent}
