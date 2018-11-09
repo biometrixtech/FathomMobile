@@ -226,6 +226,7 @@ class PostSessionSurvey extends Component {
                             soreBodyPartsState={postSession.soreness}
                             surveyObject={postSession}
                             toggleSlideUpPanel={this._toggleSlideUpPanel}
+                            user={user}
                         />
                     </View>
                     <Button
