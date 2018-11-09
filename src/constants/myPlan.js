@@ -396,10 +396,11 @@ const allGoodBodyPartMessage = () => {
 };
 
 const painSorenessMessage = () => {
-    return {
-        boldStrs: ['Soreness', 'Pain'],
-        str:      'Soreness is a normal response to training that can involve some discomfort. If something feels abnormal or unfamiliar, mark it as Pain.',
-    };
+    return [
+        'Soreness',
+        ' is a normal response to training that can involve some discomfort. If something feels abnormal or unfamiliar, mark it as ',
+        'Pain.',
+    ];
 };
 
 const sorenessVSPainMessage = () => {

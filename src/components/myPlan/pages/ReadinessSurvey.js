@@ -6,6 +6,7 @@
         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handleReadinessSurveySubmit}
+        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
         soreBodyParts={this.state.soreBodyParts}
         typicalSessions={this.props.plan.typicalSessions}
         user={user}
@@ -22,11 +23,10 @@ import { Button, FathomSlider, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
 // Components
-import { AreasOfSoreness, ScaleButton, SoreBodyPart, } from './';
+import { AreasOfSoreness, ScaleButton, SlideUpPanel, SoreBodyPart, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
-import SlidingUpPanel from 'rn-sliding-up-panel';
 import moment from 'moment';
 
 /* Styles ==================================================================== */
@@ -93,6 +93,7 @@ class ReadinessSurvey extends Component {
             handleAreaOfSorenessClick,
             handleFormChange,
             handleFormSubmit,
+            handleUpdateFirstTimeExperience,
             soreBodyParts,
             typicalSessions,
             user,
@@ -146,7 +147,6 @@ class ReadinessSurvey extends Component {
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         let questionCounter = 0;
-        let sorenessVSPainMessage = MyPlanConstants.sorenessVSPainMessage();
         /*eslint no-return-assign: 0*/
         return(
             <View style={{flex: 1,}}>
@@ -456,12 +456,14 @@ class ReadinessSurvey extends Component {
                             <SoreBodyPart
                                 bodyPart={bodyPart}
                                 bodyPartSide={bodyPart.side}
+                                firstTimeExperience={user.firstTimeExperience}
                                 handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                     handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
                                     if(shouldScroll) {
                                         this._scrollTo(isFirstFunctionalStrength || isSecondFunctionalStrength ? (i + 4) : (i + 3));
                                     }
                                 }}
+                                handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
                                 index={isFirstFunctionalStrength ? (i + 5) : isSecondFunctionalStrength ? (i + 4) : (i + 3)}
                                 isPrevSoreness={true}
                                 surveyObject={dailyReadiness}
@@ -480,6 +482,7 @@ class ReadinessSurvey extends Component {
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
                             handleFormChange={handleFormChange}
+                            handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
                             scrollToBottom={this._scrollToBottom}
                             soreBodyParts={soreBodyParts}
@@ -507,83 +510,12 @@ class ReadinessSurvey extends Component {
                         title={isFormValid ? 'Submit' : 'Select an Option'}
                     />
                 </ScrollView>
-                <SlidingUpPanel
-                    allowDragging={false}
-                    onRequestClose={() => console.log('HIIIII')}
-                    visible={this.state.isSlideUpPanelOpen}
-
-                    startCollapsed={true}
-                >
-                    <View style={{flex: 1, flexDirection: 'column',}}>
-                        <View style={{flex: 1,}} />
-                        <View style={{backgroundColor: AppColors.white,}}>
-                            <View style={{backgroundColor: AppColors.primary.white.hundredPercent, flexDirection: 'row', padding: AppSizes.padding,}}>
-                                <Text oswaldRegular style={{color: AppColors.black, flex: 9, fontSize: AppFonts.scaleFont(22),}}>{sorenessVSPainMessage.header}</Text>
-                                <TabIcon
-                                    containerStyle={[{flex: 1,}]}
-                                    icon={'close'}
-                                    iconStyle={[{color: AppColors.black}]}
-                                    onPress={() => this._toggleSlideUpPanel()}
-                                    reverse={false}
-                                    size={30}
-                                    type={'material-community'}
-                                />
-                            </View>
-                            <View style={{padding: AppSizes.paddingLrg,}}>
-                                <Text robotoRegular style={{color: AppColors.black, fontSize: AppFonts.scaleFont(14),}}>{sorenessVSPainMessage.lessText}</Text>
-                                <Spacer size={30} />
-                                { this.state.isSlideUpPanelExpanded ?
-                                    <View>
-                                        <Text robotoMedium style={{color: AppColors.black, fontSize: AppFonts.scaleFont(18),}}>{sorenessVSPainMessage.moreText[0].boldText}</Text>
-                                        <Text robotoRegular style={{color: AppColors.black, fontSize: AppFonts.scaleFont(14),}}>{sorenessVSPainMessage.moreText[0].body}</Text>
-                                        <Spacer size={20} />
-                                        <Text robotoMedium style={{color: AppColors.black, fontSize: AppFonts.scaleFont(18),}}>{sorenessVSPainMessage.moreText[1].boldText}</Text>
-                                        <Text robotoRegular style={{color: AppColors.black, fontSize: AppFonts.scaleFont(14),}}>{sorenessVSPainMessage.moreText[1].body}</Text>
-                                        <Spacer size={20} />
-                                        <TouchableOpacity
-                                            onPress={() => this._toggleSlideUpPanel()}
-                                            style={{alignSelf: 'flex-end',}}
-                                        >
-                                            <Text
-                                                robotoMedium
-                                                style={{
-                                                    color:    AppColors.primary.yellow.hundredPercent,
-                                                    fontSize: AppFonts.scaleFont(15),
-                                                }}
-                                            >
-                                                {'GOT IT'}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                    :
-                                    <View style={{flexDirection: 'row', justifyContent: 'center',}}>
-                                        <Text
-                                            onPress={() => this.setState({ isSlideUpPanelExpanded: true, })}
-                                            robotoBold
-                                            style={{
-                                                color:              AppColors.primary.yellow.hundredPercent,
-                                                fontSize:           AppFonts.scaleFont(12),
-                                                textAlign:          'center',
-                                                textDecorationLine: 'none',
-                                            }}
-                                        >
-                                            {'LEARN MORE'}
-                                        </Text>
-                                        <Spacer size={10} />
-                                        <TabIcon
-                                            icon={'chevron-down'}
-                                            iconStyle={[{color: AppColors.primary.yellow.hundredPercent}]}
-                                            onPress={() => this.setState({ isSlideUpPanelExpanded: true, })}
-                                            reverse={false}
-                                            size={AppFonts.scaleFont(12)}
-                                            type={'material-community'}
-                                        />
-                                    </View>
-                                }
-                            </View>
-                        </View>
-                    </View>
-                </SlidingUpPanel>
+                <SlideUpPanel
+                    expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
+                    isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
+                    isSlideUpPanelExpanded={this.state.isSlideUpPanelExpanded}
+                    toggleSlideUpPanel={() => this._toggleSlideUpPanel()}
+                />
             </View>
         )
     }

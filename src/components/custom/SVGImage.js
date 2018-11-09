@@ -9,6 +9,8 @@
  * SVGImage
  *
     <SVGImage
+        firstTimeExperience={firstTimeExperience}
+        handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
         image={bodyPartMap.image[0] ? bodyPartMap.image[0] : bodyPartMap.image[2]}
         selected={true}
         style={{width: 100, height: 100}}
@@ -17,26 +19,61 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, StyleSheet, View, } from 'react-native';
+import { Image, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { Text, } from './';
+import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
+import { Spacer, Text, } from './';
+
+// import third-party libraries
+import Tooltip from 'react-native-walkthrough-tooltip';
+
+const TooltipContent = ({ handleTooltipClose, text, }) => (
+    <View style={{padding: AppSizes.padding,}}>
+        <Text robotoLight style={{color: AppColors.black, fontSize: AppFonts.scaleFont(15),}}>
+            {text}
+        </Text>
+        <Spacer size={20} />
+        <TouchableOpacity
+            onPress={handleTooltipClose}
+            style={{alignSelf: 'flex-end',}}
+        >
+            <Text
+                robotoMedium
+                style={{
+                    color:    AppColors.primary.yellow.hundredPercent,
+                    fontSize: AppFonts.scaleFont(15),
+                }}
+            >
+                {'GOT IT'}
+            </Text>
+        </TouchableOpacity>
+    </View>
+);
 
 /* Component ==================================================================== */
 class SVGImage extends Component {
     static propTypes = {
-        image:       PropTypes.string.isRequired,
-        overlay:     PropTypes.bool,
-        overlayText: PropTypes.string,
-        selected:    PropTypes.bool,
-        style:       PropTypes.object.isRequired,
+        firstTimeExperience:             PropTypes.object.isRequired,
+        handleUpdateFirstTimeExperience: PropTypes.func.isRequired,
+        image:                           PropTypes.string.isRequired,
+        overlay:                         PropTypes.bool,
+        overlayText:                     PropTypes.string,
+        selected:                        PropTypes.bool,
+        style:                           PropTypes.object.isRequired,
     }
 
     static defaultProps = {
         overlay:     false,
         overlayText: null,
         selected:    false,
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            isTooltipOpen: false,
+        };
     }
 
     imageString = () => {
@@ -126,56 +163,77 @@ class SVGImage extends Component {
         return imageName;
     }
 
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        if(this.props.selected !== prevProps.selected && this.props.selected && !this.props.firstTimeExperience.allGoodBodyPartTooltip) {
+            this.setState({ isTooltipOpen: true, });
+        }
+    }
+
     render = () => (
-        <View style={{
-            alignItems:     'center',
-            borderColor:    this.props.selected ? AppColors.primary.yellow.hundredPercent : AppColors.white,
-            borderRadius:   AppSizes.screen.widthQuarter + 5,
-            borderWidth:    Platform.OS === 'ios' ? 5 : 6,
-            height:         AppSizes.screen.widthQuarter + 5,
-            justifyContent: 'center',
-            overflow:       'hidden',
-            width:          AppSizes.screen.widthQuarter + 5,
-        }}>
-            <Image
-                resizeMode={'contain'}
-                source={this.imageString()}
-                style={this.props.style}
-            />
-            { this.props.selected && this.props.overlay ?
-                <View
-                    style={{
-                        ...StyleSheet.absoluteFillObject,
-                        alignItems:      'center',
-                        backgroundColor: 'rgba(43, 43, 43, 0.5)',
-                        borderRadius:    AppSizes.screen.widthQuarter + 5,
-                        flex:            1,
-                        height:          '100%',
-                        justifyContent:  'center',
-                        width:           '100%',
-                    }}
-                >
-                    { this.props.overlayText ?
-                        <Text
-                            oswaldRegular
-                            style={[
-                                AppStyles.textCenterAligned,
-                                {
-                                    color:    AppColors.white,
-                                    fontSize: AppFonts.scaleFont(15),
-                                }
-                            ]}
-                        >
-                            {this.props.overlayText}
-                        </Text>
-                        :
-                        null
-                    }
-                </View>
-                :
-                null
+        <Tooltip
+            animated
+            content={
+                <TooltipContent
+                    handleTooltipClose={() => this.setState(
+                        { isTooltipOpen: false, },
+                        () => this.props.handleUpdateFirstTimeExperience('allGoodBodyPartTooltip', true)
+                    )}
+                    text={MyPlanConstants.allGoodBodyPartMessage()}
+                />
             }
-        </View>
+            isVisible={this.state.isTooltipOpen}
+            tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
+        >
+            <View style={{
+                alignItems:     'center',
+                borderColor:    this.props.selected ? AppColors.primary.yellow.hundredPercent : AppColors.white,
+                borderRadius:   AppSizes.screen.widthQuarter + 5,
+                borderWidth:    Platform.OS === 'ios' ? 5 : 6,
+                height:         AppSizes.screen.widthQuarter + 5,
+                justifyContent: 'center',
+                overflow:       'hidden',
+                width:          AppSizes.screen.widthQuarter + 5,
+            }}>
+                <Image
+                    resizeMode={'contain'}
+                    source={this.imageString()}
+                    style={this.props.style}
+                />
+                { this.props.selected && this.props.overlay ?
+                    <View
+                        style={{
+                            ...StyleSheet.absoluteFillObject,
+                            alignItems:      'center',
+                            backgroundColor: 'rgba(43, 43, 43, 0.5)',
+                            borderRadius:    AppSizes.screen.widthQuarter + 5,
+                            flex:            1,
+                            height:          '100%',
+                            justifyContent:  'center',
+                            width:           '100%',
+                        }}
+                    >
+                        { this.props.overlayText ?
+                            <Text
+                                oswaldRegular
+                                style={[
+                                    AppStyles.textCenterAligned,
+                                    {
+                                        color:    AppColors.white,
+                                        fontSize: AppFonts.scaleFont(15),
+                                    }
+                                ]}
+                            >
+                                {this.props.overlayText}
+                            </Text>
+                            :
+                            null
+                        }
+                    </View>
+                    :
+                    null
+                }
+            </View>
+        </Tooltip>
     );
 }
 

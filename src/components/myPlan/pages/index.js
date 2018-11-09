@@ -9,6 +9,7 @@ import PostSessionSurvey from './PostSessionSurvey';
 import ReadinessSurvey from './ReadinessSurvey';
 import ScaleButton from './ScaleButton';
 import SingleExerciseItem from './SingleExerciseItem';
+import SlideUpPanel from './SlideUpPanel';
 import SoreBodyPart from './SoreBodyPart';
 import SportScheduleBuilder from './SportScheduleBuilder';
 
@@ -20,6 +21,7 @@ export {
     ReadinessSurvey,
     ScaleButton,
     SingleExerciseItem,
+    SlideUpPanel,
     SoreBodyPart,
     SportScheduleBuilder,
 };

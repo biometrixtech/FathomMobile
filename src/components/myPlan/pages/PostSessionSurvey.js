@@ -6,9 +6,11 @@
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handlePostSessionSurveySubmit}
         handleTogglePostSessionSurvey={this._handleTogglePostSessionSurvey}
+        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
         postSession={this.state.postSession}
         soreBodyParts={this.state.soreBodyParts}
         typicalSessions={this.props.plan.typicalSessions}
+        user={user}
     />
  *
  */
@@ -21,7 +23,7 @@ import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants, AppFonts, } 
 import { Button, FathomSlider, Spacer, TabIcon, Text, } from '../../custom';
 
 // Components
-import { AreasOfSoreness, ScaleButton, SoreBodyPart, SportScheduleBuilder, } from './';
+import { AreasOfSoreness, ScaleButton, SlideUpPanel, SoreBodyPart, SportScheduleBuilder, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -30,6 +32,10 @@ import _ from 'lodash';
 class PostSessionSurvey extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            isSlideUpPanelExpanded: true,
+            isSlideUpPanelOpen:     false,
+        };
         this.scrollViewRef = {};
         this.myComponents = [];
     }
@@ -53,15 +59,24 @@ class PostSessionSurvey extends Component {
         }, 500);
     }
 
+    _toggleSlideUpPanel = (isExpanded = true) => {
+        this.setState({
+            isSlideUpPanelExpanded: isExpanded,
+            isSlideUpPanelOpen:     !this.state.isSlideUpPanelOpen,
+        });
+    }
+
     render = () => {
         const {
             handleAreaOfSorenessClick,
             handleFormChange,
             handleFormSubmit,
             handleTogglePostSessionSurvey,
+            handleUpdateFirstTimeExperience,
             postSession,
             soreBodyParts,
             typicalSessions,
+            user,
         } = this.props;
         let filteredAreasOfSoreness = _.filter(postSession.soreness, o => {
             let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
@@ -178,15 +193,18 @@ class PostSessionSurvey extends Component {
                             <SoreBodyPart
                                 bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
                                 bodyPartSide={bodyPart.side}
+                                firstTimeExperience={user.firstTimeExperience}
                                 handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                     handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
                                     if(shouldScroll) {
                                         this._scrollTo(i + 2);
                                     }
                                 }}
+                                handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
                                 index={i+2}
                                 isPrevSoreness={true}
                                 surveyObject={postSession}
+                                toggleSlideUpPanel={this._toggleSlideUpPanel}
                             />
                             <Spacer size={100} />
                         </View>
@@ -201,51 +219,39 @@ class PostSessionSurvey extends Component {
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, false, isAllGood)}
                             handleFormChange={handleFormChange}
+                            handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
                             scrollToBottom={this._scrollToBottom}
                             soreBodyParts={soreBodyParts}
                             soreBodyPartsState={postSession.soreness}
                             surveyObject={postSession}
+                            toggleSlideUpPanel={this._toggleSlideUpPanel}
                         />
                     </View>
-                    { isFormValid ?
-                        <Button
-                            backgroundColor={AppColors.primary.yellow.hundredPercent}
-                            buttonStyle={{
-                                alignSelf:       'center',
-                                borderRadius:    5,
-                                marginBottom:    AppSizes.padding,
-                                paddingVertical: AppSizes.paddingMed,
-                                width:           AppSizes.screen.widthTwoThirds
-                            }}
-                            color={AppColors.white}
-                            fontFamily={AppStyles.robotoMedium.fontFamily}
-                            fontWeight={AppStyles.robotoMedium.fontWeight}
-                            onPress={handleFormSubmit}
-                            raised={false}
-                            textStyle={{ fontSize: AppFonts.scaleFont(18) }}
-                            title={'Submit'}
-                        />
-                        :
-                        <Button
-                            backgroundColor={AppColors.white}
-                            buttonStyle={{
-                                alignSelf:       'center',
-                                borderRadius:    5,
-                                marginBottom:    AppSizes.padding,
-                                paddingVertical: AppSizes.paddingMed,
-                                width:           AppSizes.screen.widthTwoThirds
-                            }}
-                            color={AppColors.zeplin.lightGrey}
-                            fontFamily={AppStyles.robotoMedium.fontFamily}
-                            fontWeight={AppStyles.robotoMedium.fontWeight}
-                            onPress={() => null}
-                            outlined
-                            textStyle={{ fontSize: AppFonts.scaleFont(18) }}
-                            title={'Select an Option'}
-                        />
-                    }
+                    <Button
+                        backgroundColor={isFormValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                        buttonStyle={{
+                            alignSelf:       'center',
+                            borderRadius:    5,
+                            marginBottom:    AppSizes.padding,
+                            paddingVertical: AppSizes.paddingMed,
+                            width:           AppSizes.screen.widthTwoThirds
+                        }}
+                        color={isFormValid ? AppColors.white : AppColors.zeplin.lightGrey}
+                        fontFamily={AppStyles.robotoMedium.fontFamily}
+                        fontWeight={AppStyles.robotoMedium.fontWeight}
+                        onPress={() => isFormValid ? handleFormSubmit : null}
+                        outlined
+                        textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                        title={isFormValid ? 'Submit' : 'Select an Option'}
+                    />
                 </ScrollView>
+                <SlideUpPanel
+                    expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
+                    isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
+                    isSlideUpPanelExpanded={this.state.isSlideUpPanelExpanded}
+                    toggleSlideUpPanel={() => this._toggleSlideUpPanel()}
+                />
             </View>
         )
     }
@@ -259,6 +265,7 @@ PostSessionSurvey.propTypes = {
     postSession:                   PropTypes.object.isRequired,
     soreBodyParts:                 PropTypes.object.isRequired,
     typicalSessions:               PropTypes.array.isRequired,
+    user:                          PropTypes.object.isRequired,
 };
 PostSessionSurvey.defaultProps = {};
 PostSessionSurvey.componentName = 'PostSessionSurvey';

@@ -4,6 +4,7 @@
     <AreasOfSoreness
         handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
         handleFormChange={handleFormChange}
+        handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
         ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
         scrollToBottom={this._scrollToBottom}
         soreBodyParts={soreBodyParts}
@@ -20,11 +21,12 @@ import { TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, Spacer, SVGImage, Text, Tooltip, } from '../../custom';
+import { Button, Spacer, SVGImage, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
 // import third-party libraries
 import _ from 'lodash';
+import Tooltip from 'react-native-walkthrough-tooltip';
 
 // Components
 import { SoreBodyPart, } from './';
@@ -34,6 +36,7 @@ const TooltipContent = ({ handleTooltipClose, text, }) => (
         <Text robotoLight style={{color: AppColors.black, fontSize: AppFonts.scaleFont(15),}}>
             {text}
         </Text>
+        <Spacer size={20} />
         <TouchableOpacity
             onPress={handleTooltipClose}
             style={{alignSelf: 'flex-end',}}
@@ -56,19 +59,17 @@ class AreasOfSoreness extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isAllGood:             false,
-            isAllGoodTooltipOpen:  false,
-            isBodyPartTooltipOpen: false,
+            isAllGood:            false,
+            isAllGoodTooltipOpen: false,
         };
-        this.allGoodBtnRef = null;
     }
 
-    _handleTooltipClose = () => {
+    _handleTooltipClose = callback => {
         this.setState(
             { isAllGoodTooltipOpen: false, },
             () => {
-                // TODO: UPDATE REDUCER
                 this.props.scrollToBottom();
+                callback();
             }
         );
     }
@@ -77,6 +78,7 @@ class AreasOfSoreness extends Component {
         const {
             handleAreaOfSorenessClick,
             handleFormChange,
+            handleUpdateFirstTimeExperience,
             scrollToBottom,
             soreBodyParts,
             soreBodyPartsState,
@@ -97,8 +99,17 @@ class AreasOfSoreness extends Component {
             <View>
                 <Spacer size={30} />
                 <Tooltip
-                    popover={<TooltipContent handleTooltipClose={() => this._handleTooltipClose()} text={MyPlanConstants.allGoodBodyPartMessage()} />}
-                    visible={this.state.isAllGoodTooltipOpen}
+                    animated
+                    content={
+                        <TooltipContent
+                            handleTooltipClose={() => this._handleTooltipClose(() => {
+                                handleUpdateFirstTimeExperience('allGoodBodyPartTooltip', true);
+                            })}
+                            text={MyPlanConstants.allGoodBodyPartMessage()}
+                        />
+                    }
+                    isVisible={this.state.isAllGoodTooltipOpen}
+                    tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
                 >
                     <TouchableOpacity
                         onPress={() => {
@@ -176,6 +187,8 @@ class AreasOfSoreness extends Component {
                                             style={[AppStyles.paddingSml]}
                                         >
                                             <SVGImage
+                                                firstTimeExperience={user.firstTimeExperience}
+                                                handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
                                                 image={areasOfSorenessBodyPart.bodyImage}
                                                 overlay={true}
                                                 overlayText={areasOfSorenessBodyPart.mainBodyPartName}
@@ -196,7 +209,9 @@ class AreasOfSoreness extends Component {
                             <SoreBodyPart
                                 bodyPart={MyPlanConstants.bodyPartMapping[area.body_part]}
                                 bodyPartSide={area.side}
+                                firstTimeExperience={user.firstTimeExperience}
                                 handleFormChange={handleFormChange}
+                                handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
                                 surveyObject={surveyObject}
                                 toggleSlideUpPanel={toggleSlideUpPanel}
                             />
@@ -214,6 +229,7 @@ AreasOfSoreness.propTypes = {
     soreBodyParts:             PropTypes.object.isRequired,
     soreBodyPartsState:        PropTypes.array.isRequired,
     surveyObject:              PropTypes.object,
+    user:                      PropTypes.object.isRequired,
 };
 AreasOfSoreness.defaultProps = {};
 AreasOfSoreness.componentName = 'AreasOfSoreness';
