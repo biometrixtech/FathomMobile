@@ -182,6 +182,7 @@ class SVGImage extends Component {
                 />
             }
             isVisible={this.state.isTooltipOpen}
+            onClose={() => {}}
             tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
         >
             <View style={{

@@ -109,6 +109,7 @@ class AreasOfSoreness extends Component {
                         />
                     }
                     isVisible={this.state.isAllGoodTooltipOpen}
+                    onClose={() => {}}
                     tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
                 >
                     <TouchableOpacity
@@ -149,10 +150,11 @@ class AreasOfSoreness extends Component {
                         </Text>
                     </TouchableOpacity>
                 </Tooltip>
-                <Spacer size={30} />
+                <Spacer size={25} />
                 <Text oswaldRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{'OR'}</Text>
-                <Spacer size={30} />
+                <Spacer size={5} />
                 <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}>{'Tap to select body part(s)'}</Text>
+                <Spacer size={30} />
                 {_.map(groupedNewBodyPartMap, (object, key) => {
                     let bodyPartMap = _.orderBy(object, ['order'], ['asc']);
                     return(
@@ -162,15 +164,14 @@ class AreasOfSoreness extends Component {
                                 style={[
                                     AppStyles.textCenterAligned,
                                     {
-                                        color:         AppColors.zeplin.darkGrey,
-                                        fontSize:      AppFonts.scaleFont(18),
-                                        paddingBottom: AppSizes.paddingSml,
-                                        paddingTop:    AppSizes.padding,
+                                        color:    AppColors.zeplin.darkGrey,
+                                        fontSize: AppFonts.scaleFont(18),
                                     }
                                 ]}
                             >
                                 {key.length > 0 ? key.toUpperCase() : 'OTHER'}
                             </Text>
+                            <Spacer size={5} />
                             <View style={[AppStyles.row, AppStyles.containerCentered, {flexWrap: 'wrap'}]}>
                                 {_.map(bodyPartMap, (body, index) => {
                                     let areasOfSorenessBodyPart = PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, body, soreBodyParts);

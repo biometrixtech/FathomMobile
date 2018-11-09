@@ -11,7 +11,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, View, } from 'react-native';
+import { Platform, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import SlidingUpPanel from 'rn-sliding-up-panel';
@@ -43,7 +43,7 @@ const SlideUpPanel = ({
                         containerStyle={[{flex: 1,}]}
                         icon={'close'}
                         iconStyle={[{color: AppColors.black}]}
-                        onPress={() => toggleSlideUpPanel()}
+                        onPress={() => toggleSlideUpPanel(false)}
                         reverse={false}
                         size={30}
                         type={'material-community'}
@@ -61,7 +61,7 @@ const SlideUpPanel = ({
                             <Text robotoRegular style={{color: AppColors.black, fontSize: AppFonts.scaleFont(14),}}>{sorenessVSPainMessage.moreText[1].body}</Text>
                             <Spacer size={20} />
                             <TouchableOpacity
-                                onPress={() => toggleSlideUpPanel()}
+                                onPress={() => toggleSlideUpPanel(false)}
                                 style={{alignSelf: 'flex-end',}}
                             >
                                 <Text
@@ -100,6 +100,7 @@ const SlideUpPanel = ({
                             />
                         </View>
                     }
+                    <Spacer size={Platform.OS === 'ios' ? 0 : 30} />
                 </View>
             </View>
         </View>

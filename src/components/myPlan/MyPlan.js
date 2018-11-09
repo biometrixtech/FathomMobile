@@ -85,7 +85,7 @@ class MyPlan extends Component {
         notification:                  PropTypes.oneOfType([
             PropTypes.bool,
             PropTypes.string,
-        ]).isRequired,
+        ]),
         patchActiveRecovery:       PropTypes.func.isRequired,
         patchFunctionalStrength:   PropTypes.func.isRequired,
         plan:                      PropTypes.object.isRequired,

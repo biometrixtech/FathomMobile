@@ -214,7 +214,7 @@ class PostSessionSurvey extends Component {
                             {newSoreBodyParts.length > 0 ? newSoreBodyParts.length + 2 : '3'}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' '}pain or soreness?`}
+                            {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
                         </Text>
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, false, isAllGood)}
@@ -251,7 +251,7 @@ class PostSessionSurvey extends Component {
                     expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
                     isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
                     isSlideUpPanelExpanded={this.state.isSlideUpPanelExpanded}
-                    toggleSlideUpPanel={() => this._toggleSlideUpPanel()}
+                    toggleSlideUpPanel={isExpanded => this._toggleSlideUpPanel(isExpanded)}
                 />
             </View>
         )
