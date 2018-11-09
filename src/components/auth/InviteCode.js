@@ -141,14 +141,13 @@ class InviteCode extends Component {
                             size={26}
                             type={'simple-line-icon'}
                         />
-                        <View style={{flex: 2,}}>
-                            <Image
-                                resizeMode={'contain'}
-                                source={require('../../../assets/images/standard/fathom_logo_color_stacked.png')}
-                                style={styles.mainLogo}
-                            />
-                        </View>
-                        <View style={[AppStyles.containerCentered, {flex: 8,}]}>
+                        <Image
+                            resizeMode={'contain'}
+                            source={require('../../../assets/images/standard/fathom_logo_color_stacked.png')}
+                            style={styles.mainLogo}
+                        />
+                        <View style={[AppStyles.containerCentered,]}>
+                            <Spacer size={this.state.resultMsg.error.length > 0 ? 0 : 20} />
                             <Alerts
                                 status={this.state.resultMsg.status}
                                 success={this.state.resultMsg.success}
