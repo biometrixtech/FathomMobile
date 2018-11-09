@@ -332,7 +332,7 @@ class Onboarding extends Component {
         userObj.personal_data.account_status = newUser.personal_data.account_status;
         userObj.personal_data.zip_code = newUser.personal_data.zip_code;
         if(newUser.account_code && newUser.account_code.length > 0) {
-            userObj.account_code = newUser.account_code;
+            userObj.account_code = newUser.account_code.toUpperCase();
         }
         // create or update, if no errors
         if(errorsArray.length === 0) {
