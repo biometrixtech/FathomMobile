@@ -183,9 +183,6 @@ class SoreBodyPart extends Component {
                                                 type:  this.state.type === 'all-good' ? '' : 'all-good',
                                                 value: null,
                                             }, () => {
-                                                if(bodyPartGroup !== 'joint' && this.state.type === 'all-good' && !firstTimeExperience.sorenessPainTooltip) {
-                                                    this.setState({ isToolTipOpen: true, });
-                                                }
                                                 handleFormChange('soreness', 0, this.state.type === 'pain', bodyPartMap.index, bodyPartSide, true);
                                             });
                                         }
