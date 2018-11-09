@@ -237,7 +237,7 @@ class PostSessionSurvey extends Component {
                         color={isFormValid ? AppColors.white : AppColors.zeplin.lightGrey}
                         fontFamily={AppStyles.robotoMedium.fontFamily}
                         fontWeight={AppStyles.robotoMedium.fontWeight}
-                        onPress={() => isFormValid ? handleFormSubmit : null}
+                        onPress={() => isFormValid ? handleFormSubmit() : null}
                         outlined
                         textStyle={{ fontSize: AppFonts.scaleFont(18) }}
                         title={isFormValid ? 'Submit' : 'Select an Option'}
