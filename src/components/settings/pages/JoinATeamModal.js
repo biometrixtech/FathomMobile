@@ -47,9 +47,9 @@ const JoinATeamModal = ({
     >
         <View style={[AppStyles.containerCentered, AppStyles.paddingVerticalSml, {backgroundColor: AppColors.white, width: (AppSizes.screen.width * 0.9),}]}>
             <TabIcon
-                containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml + AppSizes.statusBarHeight),}]}
+                containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml),}]}
                 icon={'close'}
-                iconStyle={[{color: AppColors.black}]}
+                iconStyle={[{color: AppColors.black, opacity: 0.5,}]}
                 onPress={isFormSubmitting ? null : handleToggleModal}
                 reverse={false}
                 size={30}
@@ -105,7 +105,7 @@ const JoinATeamModal = ({
                             inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,paddingTop: 25}]}
                             keyboardType={'default'}
                             onChangeText={(text) => handleFormChange('code', text)}
-                            placeholder={'CODE'}
+                            placeholder={'code'}
                             placeholderTextColor={AppColors.primary.yellow.hundredPercent}
                             returnKeyType={'done'}
                             value={code}
