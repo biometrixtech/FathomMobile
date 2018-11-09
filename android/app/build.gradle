@@ -125,7 +125,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 12
-        versionName "2.2.6-beta.2"
+        versionName "2.2.6-beta.3"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
