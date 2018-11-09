@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
         width:  AppSizes.screen.width,
     },
     mainLogo: {
-        width: AppSizes.screen.widthThird,
+        alignSelf: 'center',
+        width:     AppSizes.screen.widthThird,
     },
 });
 
@@ -35,7 +36,7 @@ const AccountType = ({}) => (
         source={require('../../../assets/images/standard/start.png')}
         style={[AppStyles.containerCentered, styles.imageBackground]}
     >
-        <View style={[AppStyles.containerCentered, styles.imageBackground, styles.contentWrapper]}>
+        <View style={[styles.imageBackground, styles.contentWrapper]}>
             <TabIcon
                 containerStyle={[{position: 'absolute', top: (20 + AppSizes.statusBarHeight), left: 10}]}
                 icon={'arrow-left'}
@@ -50,7 +51,7 @@ const AccountType = ({}) => (
                 source={require('../../../assets/images/standard/fathom_logo_color_stacked.png')}
                 style={styles.mainLogo}
             />
-            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), opacity: 0.5,}}>{'Choose account type:'}</Text>
+            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.white, fontSize: AppFonts.scaleFont(15), opacity: 0.5,}]}>{'Choose account type:'}</Text>
             <Spacer size={15} />
             <TouchableHighlight onPress={() => Actions.inviteCode()}>
                 <View style={[AppStyles.containerCentered]}>

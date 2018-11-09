@@ -27,7 +27,8 @@ const styles = StyleSheet.create({
         width:  AppSizes.screen.width,
     },
     mainLogo: {
-        width: AppSizes.screen.widthThird,
+        alignSelf: 'center',
+        width:     AppSizes.screen.widthThird,
     },
 });
 
@@ -130,7 +131,7 @@ class InviteCode extends Component {
                     source={require('../../../assets/images/standard/start.png')}
                     style={[AppStyles.containerCentered, styles.imageBackground]}
                 >
-                    <View style={[AppStyles.containerCentered, styles.imageBackground, styles.contentWrapper]}>
+                    <View style={[styles.imageBackground, styles.contentWrapper,]}>
                         <TabIcon
                             containerStyle={[{position: 'absolute', top: (20 + AppSizes.statusBarHeight), left: 10}]}
                             icon={'arrow-left'}
@@ -140,48 +141,52 @@ class InviteCode extends Component {
                             size={26}
                             type={'simple-line-icon'}
                         />
-                        <Image
-                            resizeMode={'contain'}
-                            source={require('../../../assets/images/standard/fathom_logo_color_stacked.png')}
-                            style={styles.mainLogo}
-                        />
-                        <Alerts
-                            status={this.state.resultMsg.status}
-                            success={this.state.resultMsg.success}
-                            error={this.state.resultMsg.error}
-                        />
-                        <Spacer size={this.state.resultMsg.error.length > 0 ? 15 : 0} />
-                        <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20),}}>{'ENTER INVITE CODE'}</Text>
-                        <Spacer size={5} />
-                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), opacity: 0.8,}}>{'to join Fathom as a part of a team'}</Text>
-                        <Spacer size={20} />
-                        <FormInput
-                            autoCapitalize={'none'}
-                            blurOnSubmit={true}
-                            clearButtonMode={'while-editing'}
-                            inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,paddingTop: 25}]}
-                            keyboardType={'default'}
-                            onChangeText={(text) => this._handleFormChange('code', text)}
-                            placeholder={'CODE'}
-                            placeholderTextColor={AppColors.primary.yellow.hundredPercent}
-                            returnKeyType={'done'}
-                            value={this.state.form_values.code}
-                        />
-                        <Spacer size={40} />
-                        <Button
-                            backgroundColor={AppColors.white}
-                            buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {borderRadius: 0, justifyContent: 'center', width: '85%',}]}
-                            containerViewStyle={{ alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf, }}
-                            fontFamily={AppStyles.robotoBold.fontFamily}
-                            fontWeight={AppStyles.robotoBold.fontWeight}
-                            onPress={() => this._handleFormSubmit()}
-                            raised={false}
-                            textColor={AppColors.primary.yellow.hundredPercent}
-                            textStyle={{ fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%', }}
-                            title={'Join'}
-                        />
-                        <Spacer size={20} />
-                        <Text onPress={() => Actions.onboarding()} robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), opacity: 0.7, textDecorationLine: 'none',}}>{'I do not have an invite code.'}</Text>
+                        <View style={{flex: 2,}}>
+                            <Image
+                                resizeMode={'contain'}
+                                source={require('../../../assets/images/standard/fathom_logo_color_stacked.png')}
+                                style={styles.mainLogo}
+                            />
+                        </View>
+                        <View style={[AppStyles.containerCentered, {flex: 8,}]}>
+                            <Alerts
+                                status={this.state.resultMsg.status}
+                                success={this.state.resultMsg.success}
+                                error={this.state.resultMsg.error}
+                            />
+                            <Spacer size={this.state.resultMsg.error.length > 0 ? 15 : 0} />
+                            <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20),}}>{'ENTER INVITE CODE'}</Text>
+                            <Spacer size={5} />
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), opacity: 0.8,}}>{'to join Fathom as a part of a team'}</Text>
+                            <Spacer size={20} />
+                            <FormInput
+                                autoCapitalize={'none'}
+                                blurOnSubmit={true}
+                                clearButtonMode={'while-editing'}
+                                inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,paddingTop: 25}]}
+                                keyboardType={'default'}
+                                onChangeText={(text) => this._handleFormChange('code', text)}
+                                placeholder={'CODE'}
+                                placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                                returnKeyType={'done'}
+                                value={this.state.form_values.code}
+                            />
+                            <Spacer size={40} />
+                            <Button
+                                backgroundColor={AppColors.white}
+                                buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {borderRadius: 0, justifyContent: 'center', width: '85%',}]}
+                                containerViewStyle={{ alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf, }}
+                                fontFamily={AppStyles.robotoBold.fontFamily}
+                                fontWeight={AppStyles.robotoBold.fontWeight}
+                                onPress={() => this._handleFormSubmit()}
+                                raised={false}
+                                textColor={AppColors.primary.yellow.hundredPercent}
+                                textStyle={{ fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%', }}
+                                title={'Join'}
+                            />
+                            <Spacer size={20} />
+                            <Text onPress={() => Actions.onboarding()} robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), opacity: 0.7, textDecorationLine: 'none',}}>{'I do not have an invite code.'}</Text>
+                        </View>
                     </View>
                 </ImageBackground>
                 <Modal
