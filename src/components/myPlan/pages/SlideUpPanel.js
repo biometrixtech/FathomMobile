@@ -43,7 +43,7 @@ const SlideUpPanel = ({
                         containerStyle={[{flex: 1,}]}
                         icon={'close'}
                         iconStyle={[{color: AppColors.black}]}
-                        onPress={() => toggleSlideUpPanel(false)}
+                        onPress={() => toggleSlideUpPanel(isSlideUpPanelExpanded ? true : false)}
                         reverse={false}
                         size={30}
                         type={'material-community'}
@@ -61,7 +61,7 @@ const SlideUpPanel = ({
                             <Text robotoRegular style={{color: AppColors.black, fontSize: AppFonts.scaleFont(14),}}>{sorenessVSPainMessage.moreText[1].body}</Text>
                             <Spacer size={20} />
                             <TouchableOpacity
-                                onPress={() => toggleSlideUpPanel(false)}
+                                onPress={() => toggleSlideUpPanel(isSlideUpPanelExpanded ? true : false)}
                                 style={{alignSelf: 'flex-end',}}
                             >
                                 <Text
@@ -76,9 +76,11 @@ const SlideUpPanel = ({
                             </TouchableOpacity>
                         </View>
                         :
-                        <View style={{flexDirection: 'row', justifyContent: 'center',}}>
+                        <TouchableOpacity
+                            onPress={() => expandSlideUpPanel()}
+                            style={{alignSelf: 'center', flexDirection: 'row', justifyContent: 'center', paddingVertical: AppSizes.paddingMed, width: AppSizes.screen.widthHalf,}}
+                        >
                             <Text
-                                onPress={() => expandSlideUpPanel()}
                                 robotoBold
                                 style={{
                                     color:              AppColors.primary.yellow.hundredPercent,
@@ -98,7 +100,7 @@ const SlideUpPanel = ({
                                 size={AppFonts.scaleFont(12)}
                                 type={'material-community'}
                             />
-                        </View>
+                        </TouchableOpacity>
                     }
                     <Spacer size={Platform.OS === 'ios' ? 0 : 30} />
                 </View>

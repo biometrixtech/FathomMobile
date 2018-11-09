@@ -98,20 +98,16 @@ class PostSessionSurvey extends Component {
         return (
             <View style={{flex: 1}}>
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
-                    <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, width: AppSizes.screen.width}}>
-                        <TabIcon
-                            containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml + AppSizes.statusBarHeight),}]}
-                            icon={'close'}
-                            iconStyle={[{color: AppColors.black}]}
-                            onPress={handleTogglePostSessionSurvey}
-                            reverse={false}
-                            size={30}
-                            type={'material-community'}
-                        />
-                        <Text oswaldRegular style={[AppStyles.h1, AppStyles.paddingVerticalSml, {color: AppColors.black, paddingTop: 0, alignSelf: 'center', textAlign: 'center'}]}>{'HOW WAS YOUR WORKOUT?'}</Text>
-                    </View>
+                    <TabIcon
+                        containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml + AppSizes.statusBarHeight),}]}
+                        icon={'close'}
+                        iconStyle={[{color: AppColors.black}]}
+                        onPress={handleTogglePostSessionSurvey}
+                        reverse={false}
+                        size={30}
+                        type={'material-community'}
+                    />
                     <View>
-                        <Spacer size={50} />
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                             {'1'}
                         </Text>
@@ -128,7 +124,7 @@ class PostSessionSurvey extends Component {
                             typicalSessions={typicalSessions}
                         />
                     </View>
-                    <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                    <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: (event.nativeEvent.layout.y + 75)}}}>
                         <Spacer size={100} />
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                             {'2'}
