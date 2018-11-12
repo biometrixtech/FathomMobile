@@ -60,7 +60,7 @@ class AccountType extends Component {
                             source={require('../../../assets/images/standard/fathom_logo_color_stacked.png')}
                             style={styles.mainLogo}
                         />
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.white, fontSize: AppFonts.scaleFont(15), opacity: 0.5,}]}>{'Choose account type:'}</Text>
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.white, fontSize: AppFonts.scaleFont(15),}]}>{'Choose account type:'}</Text>
                         <Spacer size={15} />
                         <TouchableHighlight onPress={() => Actions.inviteCode()}>
                             <View style={[AppStyles.containerCentered]}>
