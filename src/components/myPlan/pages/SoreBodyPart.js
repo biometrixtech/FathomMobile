@@ -20,12 +20,12 @@ import { TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { FathomSlider, SVGImage, Spacer, TabIcon, Text, } from '../../custom';
+import { FathomSlider, SVGImage, Spacer, TabIcon, Text, Tooltip, } from '../../custom';
 import { ScaleButton } from './';
 
 // import third-party libraries
 import _ from 'lodash';
-import Tooltip from 'react-native-walkthrough-tooltip';
+// import Tooltip from 'react-native-walkthrough-tooltip';
 
 const TooltipContent = ({ handleTooltipClose, text, toggleSlideUpPanel, }) => (
     <View style={{padding: AppSizes.padding,}}>

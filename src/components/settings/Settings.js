@@ -147,6 +147,7 @@ class Settings extends Component {
                     text:    'Yes',
                     onPress: () => {
                         return UserActions.clearUserData()
+                            .then(res => this.refs.toast.show('Your account has been reset!', (DURATION.LENGTH_SHORT * 2)))
                             .catch(err => this._alertResetError(err));
                     }
                 },

@@ -32,6 +32,7 @@ import Spacer from './Spacer';
 import SVGImage from './SVGImage';
 import TabIcon from './TabIcon';
 import Text from './Text';
+import Tooltip from './Tooltip';
 import WebViewPage from './WebViewPage';
 import WheelScrollPicker from './WheelScrollPicker';
 
@@ -59,6 +60,7 @@ export {
     SVGImage,
     TabIcon,
     Text,
+    Tooltip,
     WebViewPage,
     WheelScrollPicker,
 };
