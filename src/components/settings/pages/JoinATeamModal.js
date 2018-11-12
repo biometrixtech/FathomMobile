@@ -76,7 +76,6 @@ const JoinATeamModal = ({
                             <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}>{'Return to App'}</Text>
                             <Spacer size={10} />
                             <TabIcon
-                                containerStyle={[{paddingVertical: AppSizes.paddingLrg,}]}
                                 icon={'arrow-right-circle'}
                                 iconStyle={[{color: AppColors.primary.yellow.hundredPercent,}]}
                                 onPress={isFormSubmitting ? null : handleToggleModal}
@@ -84,6 +83,7 @@ const JoinATeamModal = ({
                                 size={45}
                                 type={'simple-line-icon'}
                             />
+                            <Spacer size={50} />
                         </View>
                         :
                         <View style={[AppStyles.containerCentered]}>
