@@ -4,11 +4,14 @@
     <AreasOfSoreness
         handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
         handleFormChange={handleFormChange}
+        handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
         ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
         scrollToBottom={this._scrollToBottom}
         soreBodyParts={soreBodyParts}
         soreBodyPartsState={dailyReadiness.soreness} || {postSession.soreness}
         surveyObject={dailyReadiness} || {postSession}
+        toggleSlideUpPanel={this._toggleSlideUpPanel}
+        user={user}
     />
  *
  */
@@ -18,7 +21,8 @@ import { TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, Spacer, SVGImage, Text, } from '../../custom';
+import { Button, Spacer, SVGImage, Text, Tooltip, } from '../../custom';
+import { PlanLogic, } from '../../../lib';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -26,17 +30,61 @@ import _ from 'lodash';
 // Components
 import { SoreBodyPart, } from './';
 
+const TooltipContent = ({ handleTooltipClose, text, }) => (
+    <View style={{padding: AppSizes.padding,}}>
+        <Text robotoLight style={{color: AppColors.black, fontSize: AppFonts.scaleFont(15),}}>
+            {text}
+        </Text>
+        <Spacer size={20} />
+        <TouchableOpacity
+            onPress={handleTooltipClose}
+            style={{alignSelf: 'flex-end',}}
+        >
+            <Text
+                robotoMedium
+                style={{
+                    color:    AppColors.primary.yellow.hundredPercent,
+                    fontSize: AppFonts.scaleFont(15),
+                }}
+            >
+                {'GOT IT'}
+            </Text>
+        </TouchableOpacity>
+    </View>
+);
+
 /* Component ==================================================================== */
 class AreasOfSoreness extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isAllGood: false,
+            isAllGood:            false,
+            isAllGoodTooltipOpen: false,
         };
     }
 
+    _handleTooltipClose = callback => {
+        this.setState(
+            { isAllGoodTooltipOpen: false, },
+            () => {
+                this.props.scrollToBottom();
+                callback();
+            }
+        );
+    }
+
     render = () => {
-        const { handleAreaOfSorenessClick, handleFormChange, scrollToBottom, soreBodyParts, soreBodyPartsState, surveyObject, } = this.props;
+        const {
+            handleAreaOfSorenessClick,
+            handleFormChange,
+            handleUpdateFirstTimeExperience,
+            scrollToBottom,
+            soreBodyParts,
+            soreBodyPartsState,
+            surveyObject,
+            toggleSlideUpPanel,
+            user,
+        } = this.props;
         let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, (u, i) => _.findIndex(soreBodyParts, o => o.body_part === i) === -1);
         let newBodyPartMap = _.filter(filteredBodyPartMap, o => {
             let itemStateFiltered = _.filter(soreBodyParts.body_parts, {body_part: o.index});
@@ -49,36 +97,63 @@ class AreasOfSoreness extends Component {
         return(
             <View>
                 <Spacer size={30} />
-                <Button
-                    backgroundColor={!this.state.isAllGood ? AppColors.white : AppColors.primary.yellow.hundredPercent}
-                    buttonStyle={{
-                        alignSelf:       'center',
-                        borderRadius:    5,
-                        paddingVertical: 5,
-                        width:           AppSizes.screen.widthTwoThirds,
-                    }}
-                    color={!this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.white}
-                    fontFamily={AppStyles.oswaldMedium.fontFamily}
-                    fontWeight={AppStyles.oswaldMedium.fontWeight}
-                    onPress={() => {
-                        this.setState({
-                            isAllGood: !this.state.isAllGood,
-                        }, () => {
-                            handleAreaOfSorenessClick(false, true);
-                            if(this.state.isAllGood) {
-                                scrollToBottom();
+                <Tooltip
+                    animated
+                    content={
+                        <TooltipContent
+                            handleTooltipClose={() => this._handleTooltipClose(() => {
+                                handleUpdateFirstTimeExperience('allGoodBodyPartTooltip', true);
+                            })}
+                            text={MyPlanConstants.allGoodBodyPartMessage()}
+                        />
+                    }
+                    isVisible={this.state.isAllGoodTooltipOpen}
+                    onClose={() => {}}
+                    tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
+                >
+                    <TouchableOpacity
+                        onPress={() => {
+                            if(!this.state.isAllGoodTooltipOpen) {
+                                this.setState({
+                                    isAllGood: !this.state.isAllGood,
+                                }, () => {
+                                    if(!user.firstTimeExperience.allGoodBodyPartTooltip && this.state.isAllGood) {
+                                        this.setState({ isAllGoodTooltipOpen: true, });
+                                    }
+                                    if(user.firstTimeExperience.allGoodBodyPartTooltip) {
+                                        scrollToBottom();
+                                    }
+                                    handleAreaOfSorenessClick(false, true);
+                                });
                             }
-                        });
-                    }}
-                    outlined={true}
-                    raised={false}
-                    textStyle={{ fontSize: AppFonts.scaleFont(18), }}
-                    title={'NO, ALL GOOD'}
-                />
-                <Spacer size={30} />
+                        }}
+                        style={{
+                            alignSelf:       'center',
+                            backgroundColor: !this.state.isAllGood ? AppColors.white : AppColors.primary.yellow.hundredPercent,
+                            borderColor:     !this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent,
+                            borderRadius:    5,
+                            borderWidth:     1,
+                            paddingVertical: 5,
+                            width:           AppSizes.screen.widthTwoThirds,
+                        }}
+                    >
+                        <Text
+                            oswaldMedium
+                            style={{
+                                color:     !this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.white,
+                                fontSize:  AppFonts.scaleFont(18),
+                                textAlign: 'center',
+                            }}
+                        >
+                            {'NO, ALL GOOD'}
+                        </Text>
+                    </TouchableOpacity>
+                </Tooltip>
+                <Spacer size={25} />
                 <Text oswaldRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{'OR'}</Text>
-                <Spacer size={30} />
+                <Spacer size={5} />
                 <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}>{'Tap to select body part(s)'}</Text>
+                <Spacer size={30} />
                 {_.map(groupedNewBodyPartMap, (object, key) => {
                     let bodyPartMap = _.orderBy(object, ['order'], ['asc']);
                     return(
@@ -88,58 +163,36 @@ class AreasOfSoreness extends Component {
                                 style={[
                                     AppStyles.textCenterAligned,
                                     {
-                                        color:         AppColors.zeplin.darkGrey,
-                                        fontSize:      AppFonts.scaleFont(18),
-                                        paddingBottom: AppSizes.paddingSml,
-                                        paddingTop:    AppSizes.padding,
+                                        color:    AppColors.zeplin.darkGrey,
+                                        fontSize: AppFonts.scaleFont(18),
                                     }
                                 ]}
                             >
                                 {key.length > 0 ? key.toUpperCase() : 'OTHER'}
                             </Text>
+                            <Spacer size={5} />
                             <View style={[AppStyles.row, AppStyles.containerCentered, {flexWrap: 'wrap'}]}>
                                 {_.map(bodyPartMap, (body, index) => {
-                                    let isSelected = false;
-                                    _.map(areaOfSorenessClicked, area => {
-                                        if(area.body_part === body.index) {
-                                            isSelected = true;
-                                        }
-                                    });
-                                    let bodyImage = body.image[0] || body.image[2];
-                                    let bodyIndexInState = _.findIndex(soreBodyParts.body_parts, a => a.body_part === body.index);
-                                    if(body.bilateral && bodyIndexInState > -1) {
-                                        let newBodyImageIndex = soreBodyParts.body_parts[bodyIndexInState].side === 1 ? 2 : 1;
-                                        bodyImage = body.image[newBodyImageIndex];
-                                    }
-                                    let mainBodyPartName = (
-                                        body.label.slice(-1) === 's' && body.bilateral
-                                    ) ?
-                                        body.label === 'Achilles' ?
-                                            body.label.toUpperCase()
-                                            : body.label === 'Calves' ?
-                                                'CALF'
-                                                :
-                                                body.label.slice(0, -1).toUpperCase()
-                                        :
-                                        body.label.toUpperCase();
+                                    let areasOfSorenessBodyPart = PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, body, soreBodyParts);
                                     return(
                                         <TouchableOpacity
                                             activeOpacity={0.5}
-                                            key={`AreasOfSoreness0${index}`}
+                                            key={`AreasOfSoreness-${index}`}
                                             onPress={() => {
-                                                this.setState({
-                                                    isAllGood: false,
-                                                }, () => {
-                                                    handleAreaOfSorenessClick(body);
-                                                });
+                                                this.setState(
+                                                    { isAllGood: false, },
+                                                    () => handleAreaOfSorenessClick(body)
+                                                );
                                             }}
                                             style={[AppStyles.paddingSml]}
                                         >
                                             <SVGImage
-                                                image={bodyImage}
+                                                firstTimeExperience={user.firstTimeExperience}
+                                                handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
+                                                image={areasOfSorenessBodyPart.bodyImage}
                                                 overlay={true}
-                                                overlayText={mainBodyPartName}
-                                                selected={isSelected}
+                                                overlayText={areasOfSorenessBodyPart.mainBodyPartName}
+                                                selected={areasOfSorenessBodyPart.isSelected}
                                                 style={{width: 100, height: 100}}
                                             />
                                         </TouchableOpacity>
@@ -156,8 +209,11 @@ class AreasOfSoreness extends Component {
                             <SoreBodyPart
                                 bodyPart={MyPlanConstants.bodyPartMapping[area.body_part]}
                                 bodyPartSide={area.side}
+                                firstTimeExperience={user.firstTimeExperience}
                                 handleFormChange={handleFormChange}
+                                handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
                                 surveyObject={surveyObject}
+                                toggleSlideUpPanel={toggleSlideUpPanel}
                             />
                         </View>
                     )
@@ -173,6 +229,7 @@ AreasOfSoreness.propTypes = {
     soreBodyParts:             PropTypes.object.isRequired,
     soreBodyPartsState:        PropTypes.array.isRequired,
     surveyObject:              PropTypes.object,
+    user:                      PropTypes.object.isRequired,
 };
 AreasOfSoreness.defaultProps = {};
 AreasOfSoreness.componentName = 'AreasOfSoreness';

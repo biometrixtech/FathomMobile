@@ -85,16 +85,17 @@ class MyPlan extends Component {
         notification:                  PropTypes.oneOfType([
             PropTypes.bool,
             PropTypes.string,
-        ]).isRequired,
-        patchActiveRecovery:     PropTypes.func.isRequired,
-        patchFunctionalStrength: PropTypes.func.isRequired,
-        plan:                    PropTypes.object.isRequired,
-        postReadinessSurvey:     PropTypes.func.isRequired,
-        postSessionSurvey:       PropTypes.func.isRequired,
-        preReadiness:            PropTypes.func.isRequired,
-        setCompletedExercises:   PropTypes.func.isRequired,
-        setCompletedFSExercises: PropTypes.func.isRequired,
-        user:                    PropTypes.object.isRequired,
+        ]),
+        patchActiveRecovery:       PropTypes.func.isRequired,
+        patchFunctionalStrength:   PropTypes.func.isRequired,
+        plan:                      PropTypes.object.isRequired,
+        postReadinessSurvey:       PropTypes.func.isRequired,
+        postSessionSurvey:         PropTypes.func.isRequired,
+        preReadiness:              PropTypes.func.isRequired,
+        setCompletedExercises:     PropTypes.func.isRequired,
+        setCompletedFSExercises:   PropTypes.func.isRequired,
+        updateFirstTimeExperience: PropTypes.func.isRequired,
+        user:                      PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -294,8 +295,11 @@ class MyPlan extends Component {
     }
 
     _handleAppStateChange = (nextAppState) => {
-        if(nextAppState === 'active') {
+        if(nextAppState === 'active' && this.props.notification) {
             this._handleEnteringApp(false, () => this._handlePushNotification(this.props));
+        }
+        if(nextAppState === 'active') {
+            this._handleEnteringApp(false);
         }
     }
 
@@ -463,6 +467,13 @@ class MyPlan extends Component {
                 postSession: newFormFields,
             });
         }
+    }
+
+    _handleUpdateFirstTimeExperience = (name, value) => {
+        let newFirstTimeExperienceObj = _.cloneDeep(this.props.user.firstTimeExperience);
+        newFirstTimeExperienceObj = _.update( newFirstTimeExperienceObj, name, () => value);
+        // don't need to do anything here, just update the reducer
+        this.props.updateFirstTimeExperience(newFirstTimeExperienceObj);
     }
 
     _toggleCompletedAMPMRecoveryModal = () => {
@@ -1032,15 +1043,19 @@ class MyPlan extends Component {
                                     toggleCompletedAMPMRecoveryModal={() => {
                                         this.setState({ loading: true });
                                         this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
-                                            .then(() =>
-                                                this.setState({
-                                                    loading: false,
-                                                    prepare: Object.assign({}, this.state.prepare, {
-                                                        finishedRecovery:          true,
-                                                        isActiveRecoveryCollapsed: true,
-                                                    }),
-                                                })
-                                            )
+                                            .then(res => {
+                                                let newDailyPlanObj = store.getState().plan.dailyPlan[0];
+                                                this.setState(
+                                                    {
+                                                        loading: false,
+                                                        prepare: Object.assign({}, this.state.prepare, {
+                                                            finishedRecovery:          true,
+                                                            isActiveRecoveryCollapsed: true,
+                                                        }),
+                                                    },
+                                                    () => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(newDailyPlanObj)),
+                                                )
+                                            })
                                             .catch(() => {
                                                 this.setState({ loading: false });
                                                 AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
@@ -1084,6 +1099,7 @@ class MyPlan extends Component {
                                 handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                                 handleFormChange={this._handleDailyReadinessFormChange}
                                 handleFormSubmit={this._handleReadinessSurveySubmit}
+                                handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                                 soreBodyParts={this.props.plan.soreBodyParts}
                                 typicalSessions={this.props.plan.typicalSessions}
                                 user={this.props.user}
@@ -1378,7 +1394,7 @@ class MyPlan extends Component {
     };
 
     renderTrain = (index) => {
-        let { plan } = this.props;
+        let { plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
         let trainingSessions = dailyPlanObj ? dailyPlanObj.training_sessions : [];
@@ -1648,9 +1664,11 @@ class MyPlan extends Component {
                                 handleFormChange={this._handlePostSessionFormChange}
                                 handleFormSubmit={this._handlePostSessionSurveySubmit}
                                 handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
+                                handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                                 postSession={this.state.postSession}
                                 soreBodyParts={this.props.plan.soreBodyParts}
                                 typicalSessions={this.props.plan.typicalSessions}
+                                user={user}
                             />
                             { this.state.loading ?
                                 <ActivityIndicator

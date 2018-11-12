@@ -6,9 +6,11 @@
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handlePostSessionSurveySubmit}
         handleTogglePostSessionSurvey={this._handleTogglePostSessionSurvey}
+        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
         postSession={this.state.postSession}
         soreBodyParts={this.state.soreBodyParts}
         typicalSessions={this.props.plan.typicalSessions}
+        user={user}
     />
  *
  */
@@ -21,7 +23,7 @@ import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants, AppFonts, } 
 import { Button, FathomSlider, Spacer, TabIcon, Text, } from '../../custom';
 
 // Components
-import { AreasOfSoreness, ScaleButton, SoreBodyPart, SportScheduleBuilder, } from './';
+import { AreasOfSoreness, ScaleButton, SlideUpPanel, SoreBodyPart, SportScheduleBuilder, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -30,6 +32,10 @@ import _ from 'lodash';
 class PostSessionSurvey extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            isSlideUpPanelExpanded: true,
+            isSlideUpPanelOpen:     false,
+        };
         this.scrollViewRef = {};
         this.myComponents = [];
     }
@@ -53,15 +59,24 @@ class PostSessionSurvey extends Component {
         }, 500);
     }
 
+    _toggleSlideUpPanel = (isExpanded = true) => {
+        this.setState({
+            isSlideUpPanelExpanded: isExpanded,
+            isSlideUpPanelOpen:     !this.state.isSlideUpPanelOpen,
+        });
+    }
+
     render = () => {
         const {
             handleAreaOfSorenessClick,
             handleFormChange,
             handleFormSubmit,
             handleTogglePostSessionSurvey,
+            handleUpdateFirstTimeExperience,
             postSession,
             soreBodyParts,
             typicalSessions,
+            user,
         } = this.props;
         let filteredAreasOfSoreness = _.filter(postSession.soreness, o => {
             let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
@@ -83,20 +98,16 @@ class PostSessionSurvey extends Component {
         return (
             <View style={{flex: 1}}>
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
-                    <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, width: AppSizes.screen.width}}>
-                        <TabIcon
-                            containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml + AppSizes.statusBarHeight),}]}
-                            icon={'close'}
-                            iconStyle={[{color: AppColors.black}]}
-                            onPress={handleTogglePostSessionSurvey}
-                            reverse={false}
-                            size={30}
-                            type={'material-community'}
-                        />
-                        <Text oswaldRegular style={[AppStyles.h1, AppStyles.paddingVerticalSml, {color: AppColors.black, paddingTop: 0, alignSelf: 'center', textAlign: 'center'}]}>{'HOW WAS YOUR WORKOUT?'}</Text>
-                    </View>
+                    <TabIcon
+                        containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml + AppSizes.statusBarHeight),}]}
+                        icon={'close'}
+                        iconStyle={[{color: AppColors.black}]}
+                        onPress={handleTogglePostSessionSurvey}
+                        reverse={false}
+                        size={30}
+                        type={'material-community'}
+                    />
                     <View>
-                        <Spacer size={50} />
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                             {'1'}
                         </Text>
@@ -113,7 +124,7 @@ class PostSessionSurvey extends Component {
                             typicalSessions={typicalSessions}
                         />
                     </View>
-                    <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                    <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: (event.nativeEvent.layout.y + 75)}}}>
                         <Spacer size={100} />
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                             {'2'}
@@ -178,74 +189,66 @@ class PostSessionSurvey extends Component {
                             <SoreBodyPart
                                 bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
                                 bodyPartSide={bodyPart.side}
+                                firstTimeExperience={user.firstTimeExperience}
                                 handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                     handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
                                     if(shouldScroll) {
                                         this._scrollTo(i + 2);
                                     }
                                 }}
-                                index={i+2}
+                                handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
+                                index={i+3}
                                 isPrevSoreness={true}
                                 surveyObject={postSession}
+                                toggleSlideUpPanel={this._toggleSlideUpPanel}
                             />
                             <Spacer size={100} />
                         </View>
                     )}
                     <View onLayout={event => {this.myComponents[newSoreBodyParts ? newSoreBodyParts.length + 1 : 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {newSoreBodyParts.length > 0 ? newSoreBodyParts.length + 2 : '3'}
+                            {newSoreBodyParts.length > 0 ? newSoreBodyParts.length + 3 : '3'}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' '}pain or soreness?`}
+                            {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
                         </Text>
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, false, isAllGood)}
                             handleFormChange={handleFormChange}
+                            handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
                             scrollToBottom={this._scrollToBottom}
                             soreBodyParts={soreBodyParts}
                             soreBodyPartsState={postSession.soreness}
                             surveyObject={postSession}
+                            toggleSlideUpPanel={this._toggleSlideUpPanel}
+                            user={user}
                         />
                     </View>
-                    { isFormValid ?
-                        <Button
-                            backgroundColor={AppColors.primary.yellow.hundredPercent}
-                            buttonStyle={{
-                                alignSelf:       'center',
-                                borderRadius:    5,
-                                marginBottom:    AppSizes.padding,
-                                paddingVertical: AppSizes.paddingMed,
-                                width:           AppSizes.screen.widthTwoThirds
-                            }}
-                            color={AppColors.white}
-                            fontFamily={AppStyles.robotoMedium.fontFamily}
-                            fontWeight={AppStyles.robotoMedium.fontWeight}
-                            onPress={handleFormSubmit}
-                            raised={false}
-                            textStyle={{ fontSize: AppFonts.scaleFont(18) }}
-                            title={'Submit'}
-                        />
-                        :
-                        <Button
-                            backgroundColor={AppColors.white}
-                            buttonStyle={{
-                                alignSelf:       'center',
-                                borderRadius:    5,
-                                marginBottom:    AppSizes.padding,
-                                paddingVertical: AppSizes.paddingMed,
-                                width:           AppSizes.screen.widthTwoThirds
-                            }}
-                            color={AppColors.zeplin.lightGrey}
-                            fontFamily={AppStyles.robotoMedium.fontFamily}
-                            fontWeight={AppStyles.robotoMedium.fontWeight}
-                            onPress={() => null}
-                            outlined
-                            textStyle={{ fontSize: AppFonts.scaleFont(18) }}
-                            title={'Select an Option'}
-                        />
-                    }
+                    <Button
+                        backgroundColor={isFormValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                        buttonStyle={{
+                            alignSelf:       'center',
+                            borderRadius:    5,
+                            marginBottom:    AppSizes.padding,
+                            paddingVertical: AppSizes.paddingMed,
+                            width:           AppSizes.screen.widthTwoThirds
+                        }}
+                        color={isFormValid ? AppColors.white : AppColors.zeplin.lightGrey}
+                        fontFamily={AppStyles.robotoMedium.fontFamily}
+                        fontWeight={AppStyles.robotoMedium.fontWeight}
+                        onPress={() => isFormValid ? handleFormSubmit() : null}
+                        outlined
+                        textStyle={{ fontSize: AppFonts.scaleFont(18) }}
+                        title={isFormValid ? 'Submit' : 'Select an Option'}
+                    />
                 </ScrollView>
+                <SlideUpPanel
+                    expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
+                    isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
+                    isSlideUpPanelExpanded={this.state.isSlideUpPanelExpanded}
+                    toggleSlideUpPanel={isExpanded => this._toggleSlideUpPanel(isExpanded)}
+                />
             </View>
         )
     }
@@ -259,6 +262,7 @@ PostSessionSurvey.propTypes = {
     postSession:                   PropTypes.object.isRequired,
     soreBodyParts:                 PropTypes.object.isRequired,
     typicalSessions:               PropTypes.array.isRequired,
+    user:                          PropTypes.object.isRequired,
 };
 PostSessionSurvey.defaultProps = {};
 PostSessionSurvey.componentName = 'PostSessionSurvey';

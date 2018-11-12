@@ -36,15 +36,17 @@ export default {
     //    - AppAPI.favorites.patch()
     //    - AppAPI.blog.delete()
     endpoints: new Map([
-        ['authorize',       `${usersAPIVersion}/user/{userId}/authorize`],
-        ['create_user',     `${usersAPIVersion}/user`],
-        ['forgot_password', `${usersAPIVersion}/user/forgot_password`],
-        ['get_user',        `${usersAPIVersion}/user/{userId}`],
-        ['login',           `${usersAPIVersion}/user/login`], // If you change the key, update the reference below
-        ['logout',          `${usersAPIVersion}/user/{user_id}/logout`], // POST
-        ['register_device', `${usersAPIVersion}/device/{device_uuid}`],
-        ['reset_password',  `${usersAPIVersion}/user/reset_password`],
-        ['update_user',     `${usersAPIVersion}/user/{userId}`],
+        ['authorize',          `${usersAPIVersion}/user/{userId}/authorize`],
+        ['check_account_code', `${usersAPIVersion}/account`], // GET
+        ['create_user',        `${usersAPIVersion}/user`],
+        ['forgot_password',    `${usersAPIVersion}/user/forgot_password`],
+        ['get_user',           `${usersAPIVersion}/user/{userId}`],
+        ['join_account',       `${usersAPIVersion}/user/{userId}/join_account`], // POST
+        ['login',              `${usersAPIVersion}/user/login`], // If you change the key, update the reference below
+        ['logout',             `${usersAPIVersion}/user/{user_id}/logout`], // POST
+        ['register_device',    `${usersAPIVersion}/device/{device_uuid}`],
+        ['reset_password',     `${usersAPIVersion}/user/reset_password`],
+        ['update_user',        `${usersAPIVersion}/user/{userId}`],
         // My Plan specific routes
         ['active_recovery',       `${plansAPIVersion}/active_recovery`], // POST/PATCH
         ['clear_user_data',       `${plansAPIVersion}/misc/clear_user_data`], // POST

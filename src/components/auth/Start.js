@@ -104,6 +104,10 @@ class Start extends Component {
         Actions.onboarding();
     }
 
+    _routeToAccountType = () => {
+        Actions.accountType();
+    }
+
     _routeToMyPlan = () => {
         Actions.myPlan();
     }
@@ -200,14 +204,14 @@ class Start extends Component {
                         disabled={this.state.displayMessage}
                         fontFamily={AppStyles.robotoBold.fontFamily}
                         fontWeight={AppStyles.robotoBold.fontWeight}
-                        onPress={this._routeToOnboarding}
+                        onPress={() => this._routeToAccountType()}
                         textColor={AppColors.primary.yellow.hundredPercent}
                         textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                         title={'Create Account'}
                     />
                 </ImageBackground>
                 <TouchableOpacity
-                    onPress={this.state.displayMessage ? null : this._routeToLogin}
+                    onPress={this.state.displayMessage ? null : () => this._routeToLogin()}
                     style={[AppStyles.containerCentered, {backgroundColor: AppColors.primary.grey.twentyPercent, height: AppSizes.screen.heightOneThird, width: AppSizes.screen.width,}]}
                 >
                     <Text h5 oswaldMedium style={[AppStyles.paddingBottom, {color: AppColors.black, fontSize: AppFonts.scaleFont(24)}]}>{'ALREADY A MEMBER?'}</Text>

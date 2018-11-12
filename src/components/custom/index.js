@@ -26,11 +26,13 @@ import List from './List';
 import ListItem from './ListItem';
 import Pages from './Pages';
 import ProgressBar from './ProgressBar';
+import ProgressCircle from './CustomProgressCircle';
 import RadioButton from './RadioButton';
 import Spacer from './Spacer';
 import SVGImage from './SVGImage';
 import TabIcon from './TabIcon';
 import Text from './Text';
+import Tooltip from './Tooltip';
 import WebViewPage from './WebViewPage';
 import WheelScrollPicker from './WheelScrollPicker';
 
@@ -52,11 +54,13 @@ export {
     ListItem,
     Pages,
     ProgressBar,
+    ProgressCircle,
     RadioButton,
     Spacer,
     SVGImage,
     TabIcon,
     Text,
+    Tooltip,
     WebViewPage,
     WheelScrollPicker,
 };

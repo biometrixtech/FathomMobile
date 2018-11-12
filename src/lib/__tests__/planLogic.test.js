@@ -502,7 +502,69 @@ const helperFunctions = {
         };
     },
 
+    handleAreasOfSorenessBodyPartExpectedResult: (bodyImage, isSelected, mainBodyPartName) => {
+        return {
+            bodyImage,
+            isSelected,
+            mainBodyPartName,
+        };
+    },
+
+    handleSoreBodyParts: bodyPartIndex => {
+        return {
+            body_parts: [
+                {
+                    body_part: bodyPartIndex,
+                    side:      0,
+                }
+            ]
+        };
+    },
+
+    getAreaOfSorenessAddingNonBilateralBodyPart: bodyPartIndex => {
+        return [
+            {
+                body_part: bodyPartIndex,
+                pain:      false,
+                severity:  null,
+                side:      0
+            }
+        ];
+    },
+
 };
+
+it('Areas of Soreness Body Part - NOT Selected Joint (Knee)', () => {
+    let areaOfSorenessClicked = [];
+    let kneeBodyParts = helperFunctions.getAreaOfSorenessBilateralAreaClicked();
+    let soreBodyParts = helperFunctions.handleSoreBodyParts(18);
+    let expectedResult = helperFunctions.handleAreasOfSorenessBodyPartExpectedResult('Knee.svg', false, 'KNEE');
+    expect(PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, kneeBodyParts, soreBodyParts)).toEqual(expectedResult);
+});
+
+it('Areas of Soreness Body Part - Selected Joint (Knee)', () => {
+    let areaOfSorenessClicked = helperFunctions.getAreaOfSorenessAddingBilateralBodyPartExpectedResult(7);
+    let kneeBodyParts = helperFunctions.getAreaOfSorenessBilateralAreaClicked();
+    let soreBodyParts = helperFunctions.handleSoreBodyParts(18);
+    let expectedResult = helperFunctions.handleAreasOfSorenessBodyPartExpectedResult('Knee.svg', true, 'KNEE');
+    expect(PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, kneeBodyParts, soreBodyParts)).toEqual(expectedResult);
+});
+
+it('Areas of Soreness Body Part - NOT Selected Muscle (Abs)', () => {
+    let areaOfSorenessClicked = [];
+    let absBodyParts = helperFunctions.getAreaOfSorenessNonBilateralAreaClicked();
+    let soreBodyParts = helperFunctions.handleSoreBodyParts(3);
+    let expectedResult = helperFunctions.handleAreasOfSorenessBodyPartExpectedResult('Abs.svg', false, 'ABDOMINALS');
+    expect(PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, absBodyParts, soreBodyParts)).toEqual(expectedResult);
+});
+
+it('Areas of Soreness Body Part - Selected Muscle (Abs)', () => {
+    let areaOfSorenessClicked = helperFunctions.getAreaOfSorenessAddingNonBilateralBodyPart(3);
+    let absBodyParts = helperFunctions.getAreaOfSorenessNonBilateralAreaClicked();
+    let soreBodyParts = helperFunctions.handleSoreBodyParts(3);
+    let expectedResult = helperFunctions.handleAreasOfSorenessBodyPartExpectedResult('Abs.svg', true, 'ABDOMINALS');
+    expect(PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, absBodyParts, soreBodyParts)).toEqual(expectedResult);
+});
 
 it('Sport Schedule Builder Cleaning of Sport Text - Selected Recent Sport - Pool Sports Competition', () => {
     let selectedSport = 'pool sports';
