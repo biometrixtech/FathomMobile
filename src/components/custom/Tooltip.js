@@ -1,4 +1,4 @@
-// @flow
+// https://github.com/jasongaare/react-native-walkthrough-tooltip
 import React, { Component } from 'react';
 import type { Node } from 'react';
 import {
@@ -188,9 +188,10 @@ class Tooltip extends Component<Props, State> {
       } else if (placement === 'right') {
           marginLeft = arrowSize.height;
       }
+      let topValue = placement === 'bottom' ? -10 : anchorPoint.y - tooltipOrigin.y - ((height / 2) + marginTop);
       return {
           left:              anchorPoint.x - tooltipOrigin.x - ((width / 2) + marginLeft),
-          top:               anchorPoint.y - tooltipOrigin.y - ((height / 2) + marginTop),
+          top:               topValue,
           width,
           height,
           borderTopWidth:    height / 2,
@@ -499,7 +500,7 @@ class Tooltip extends Component<Props, State> {
                               style={[styles.background, ...extendedStyles.background, { backgroundColor }]}
                           />
                           <Animated.View
-                              style={[styles.tooltip, ...extendedStyles.tooltip, tooltipPlacementStyles]}
+                              style={[styles.tooltip, ...extendedStyles.tooltip, tooltipPlacementStyles,]}
                           >
                               <Animated.View style={arrowStyle} />
                               <Animated.View onLayout={this.measureContent} style={contentStyle}>
