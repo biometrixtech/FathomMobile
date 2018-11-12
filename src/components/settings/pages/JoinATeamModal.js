@@ -15,7 +15,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, } from 'react-native';
+import { Platform, View, } from 'react-native';
 
 // import third-party libraries
 import Modal from 'react-native-modalbox';
@@ -25,6 +25,18 @@ import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
 import { Alerts, Button, FormInput, ProgressCircle, Spacer, TabIcon, Text, } from '../../custom';
 
 /* Component ==================================================================== */
+const Wrapper = props => Platform.OS === 'ios' ?
+    (
+        <KeyboardAvoidingView behavior={'padding'} style={[AppStyles.containerCentered, AppStyles.container,]}>
+            {props.children}
+        </KeyboardAvoidingView>
+    ) :
+    (
+        <View style={[AppStyles.containerCentered, AppStyles.container, {height: AppSizes.screen.height, width: AppSizes.screen.width,}]}>
+            {props.children}
+        </View>
+    );
+
 const JoinATeamModal = ({
     code,
     handleFormChange,
@@ -35,17 +47,17 @@ const JoinATeamModal = ({
     resultMsg,
     teamName,
 }) => (
-    <Modal
-        backdropColor={AppColors.black}
-        backdropOpacity={0.8}
-        backdropPressToClose={false}
-        coverScreen={true}
-        isOpen={isOpen}
-        position={'center'}
-        style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, }]}
-        swipeToClose={false}
-    >
-        <View>
+    <Wrapper>
+        <Modal
+            backdropColor={AppColors.black}
+            backdropOpacity={0.8}
+            backdropPressToClose={false}
+            coverScreen={true}
+            isOpen={isOpen}
+            position={'center'}
+            style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, }]}
+            swipeToClose={false}
+        >
             <View style={[AppStyles.containerCentered, AppStyles.paddingVerticalSml, {backgroundColor: AppColors.white, width: (AppSizes.screen.width * 0.9),}]}>
                 <TabIcon
                     containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml),}]}
@@ -128,8 +140,8 @@ const JoinATeamModal = ({
                         </View>
                 }
             </View>
-        </View>
-    </Modal>
+        </Modal>
+    </Wrapper>
 );
 
 JoinATeamModal.propTypes = {
