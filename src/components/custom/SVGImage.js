@@ -23,10 +23,7 @@ import { Image, Platform, StyleSheet, TouchableOpacity, View, } from 'react-nati
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
-import { Spacer, Text, } from './';
-
-// import third-party libraries
-import Tooltip from 'react-native-walkthrough-tooltip';
+import { Spacer, Text, Tooltip, } from './';
 
 const TooltipContent = ({ handleTooltipClose, text, }) => (
     <View style={{padding: AppSizes.padding,}}>

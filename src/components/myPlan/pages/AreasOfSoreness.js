@@ -21,12 +21,11 @@ import { TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, Spacer, SVGImage, Text, } from '../../custom';
+import { Button, Spacer, SVGImage, Text, Tooltip, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
 // import third-party libraries
 import _ from 'lodash';
-import Tooltip from 'react-native-walkthrough-tooltip';
 
 // Components
 import { SoreBodyPart, } from './';
