@@ -1043,15 +1043,19 @@ class MyPlan extends Component {
                                     toggleCompletedAMPMRecoveryModal={() => {
                                         this.setState({ loading: true });
                                         this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
-                                            .then(() =>
-                                                this.setState({
-                                                    loading: false,
-                                                    prepare: Object.assign({}, this.state.prepare, {
-                                                        finishedRecovery:          true,
-                                                        isActiveRecoveryCollapsed: true,
-                                                    }),
-                                                })
-                                            )
+                                            .then(res => {
+                                                let newDailyPlanObj = store.getState().plan.dailyPlan[0];
+                                                this.setState(
+                                                    {
+                                                        loading: false,
+                                                        prepare: Object.assign({}, this.state.prepare, {
+                                                            finishedRecovery:          true,
+                                                            isActiveRecoveryCollapsed: true,
+                                                        }),
+                                                    },
+                                                    () => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(newDailyPlanObj)),
+                                                )
+                                            })
                                             .catch(() => {
                                                 this.setState({ loading: false });
                                                 AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
