@@ -62,7 +62,7 @@ class AccountType extends Component {
                         />
                         <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.white, fontSize: AppFonts.scaleFont(15),}]}>{'Choose account type:'}</Text>
                         <Spacer size={15} />
-                        <TouchableHighlight onPress={() => Actions.inviteCode()}>
+                        <TouchableHighlight onPress={() => Actions.inviteCode()} underlayColor={'rgba(0, 0, 0, 0)'}>
                             <View style={[AppStyles.containerCentered]}>
                                 <TabIcon
                                     color={AppColors.white}
@@ -79,7 +79,7 @@ class AccountType extends Component {
                             </View>
                         </TouchableHighlight>
                         <Spacer size={35} />
-                        <TouchableHighlight onPress={() => Actions.onboarding()}>
+                        <TouchableHighlight onPress={() => Actions.onboarding()} underlayColor={'rgba(0, 0, 0, 0)'}>
                             <View style={[AppStyles.containerCentered]}>
                                 <TabIcon
                                     color={AppColors.white}

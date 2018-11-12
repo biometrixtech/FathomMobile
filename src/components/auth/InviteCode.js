@@ -66,10 +66,10 @@ class InviteCode extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            account:              '',
-            isSuccessModalOpen:   false,
-            isVerifyingModalOpen: false,
-            resultMsg:            {
+            account:         '',
+            isSuccessOpen:   false,
+            isVerifyingOpen: false,
+            resultMsg:       {
                 error:   '',
                 status:  '',
                 success: '',
@@ -100,17 +100,12 @@ class InviteCode extends Component {
         Keyboard.dismiss();
         if(code.length > 0) {
             this.setState(
-                { isVerifyingModalOpen: true, },
+                { isVerifyingOpen: true, },
                 () => {
                     this.props.checkAccountCode(code)
-                        .then(res => {
-                            this.setState(
-                                { isVerifyingModalOpen: false, account: res.account, },
-                                () => _.delay(() => this.setState({ isSuccessModalOpen: true, }), 500)
-                            );
-                        })
+                        .then(res => this.setState({ isSuccessOpen: true, isVerifyingOpen: false, account: res.account, }))
                         .catch(err => {
-                            this.setState({ isVerifyingModalOpen: false, });
+                            this.setState({ isVerifyingOpen: false, });
                             this._handleUpdateResultMsg('error', 'invalid code, please try again');
                         });
                 }
@@ -123,8 +118,8 @@ class InviteCode extends Component {
     render = () => {
         return(
             <Wrapper>
-                <View style={[AppStyles.containerCentered, styles.imageBackground, styles.contentWrapper,]}>
-                    { this.state.isVerifyingModalOpen || this.state.isSuccessModalOpen ?
+                <View style={[styles.contentWrapper, styles.imageBackground]}>
+                    { this.state.isVerifyingOpen || this.state.isSuccessOpen ?
                         null
                         :
                         <TabIcon
@@ -142,8 +137,8 @@ class InviteCode extends Component {
                         source={require('../../../assets/images/standard/fathom_logo_color_stacked.png')}
                         style={styles.mainLogo}
                     />
-                    { this.state.isVerifyingModalOpen ?
-                        <View style={[AppStyles.containerCentered]}>
+                    { this.state.isVerifyingOpen ?
+                        <View style={[AppStyles.containerCentered, {flex: 7,}]}>
                             <ProgressCircle
                                 borderWidth={5}
                                 color={AppColors.primary.yellow.hundredPercent}
@@ -155,17 +150,16 @@ class InviteCode extends Component {
                             />
                             <Spacer size={50} />
                         </View>
-                        : this.state.isSuccessModalOpen ?
-                            <View style={[AppStyles.containerCentered,]}>
+                        : this.state.isSuccessOpen ?
+                            <View style={[AppStyles.containerCentered, {flex: 7,}]}>
                                 <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.white, fontSize: AppFonts.scaleFont(40),}]}>{'Success!'}</Text>
                                 <Spacer size={20} />
                                 <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.white, fontSize: AppFonts.scaleFont(14),}]}>{'Continue to Create Account'}</Text>
                                 <Spacer size={5} />
                                 <TabIcon
-                                    containerStyle={[{paddingVertical: AppSizes.paddingLrg,}]}
                                     icon={'arrow-right-circle'}
                                     iconStyle={[{color: AppColors.primary.yellow.hundredPercent,}]}
-                                    onPress={() => this.setState({ isSuccessModalOpen: false, }, () => Actions.onboarding({ accountCode: this.state.account.code, }))}
+                                    onPress={() => this.setState({ isSuccessOpen: false, }, () => Actions.onboarding({ accountCode: this.state.account.code, }))}
                                     reverse={false}
                                     size={45}
                                     type={'simple-line-icon'}
@@ -173,7 +167,7 @@ class InviteCode extends Component {
                                 <Spacer size={50} />
                             </View>
                             :
-                            <View style={[AppStyles.containerCentered,]}>
+                            <View style={[AppStyles.containerCentered, {flex: 7,}]}>
                                 <Spacer size={this.state.resultMsg.error.length > 0 ? 0 : 20} />
                                 <Alerts
                                     status={this.state.resultMsg.status}
@@ -189,7 +183,7 @@ class InviteCode extends Component {
                                     autoCapitalize={'none'}
                                     blurOnSubmit={true}
                                     clearButtonMode={'while-editing'}
-                                    inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,paddingTop: 25}]}
+                                    inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, paddingTop: 25, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,}]}
                                     keyboardType={'default'}
                                     onChangeText={(text) => this._handleFormChange('code', text)}
                                     placeholder={'code'}
@@ -197,7 +191,9 @@ class InviteCode extends Component {
                                     returnKeyType={'done'}
                                     value={this.state.form_values.code}
                                 />
-                                <Spacer size={40} />
+                                <Spacer size={10} />
+                                <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.white, fontSize: AppFonts.scaleFont(15), opacity: 0.7,}]}>{'case sensitive'}</Text>
+                                <Spacer size={30} />
                                 <Button
                                     backgroundColor={AppColors.white}
                                     buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {borderRadius: 0, justifyContent: 'center', width: '85%',}]}
@@ -214,6 +210,7 @@ class InviteCode extends Component {
                                 <Text onPress={() => Actions.onboarding()} robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), opacity: 0.7, textDecorationLine: 'none',}}>{'I do not have an invite code.'}</Text>
                             </View>
                     }
+                    <View style={{flex: 3,}} />
                 </View>
             </Wrapper>
         );

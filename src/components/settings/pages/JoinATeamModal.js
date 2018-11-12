@@ -71,9 +71,7 @@ const JoinATeamModal = ({
                 : teamName.length > 0 ?
                     <View style={[AppStyles.containerCentered]}>
                         <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(40),}]}>{'Success!'}</Text>
-                        <Spacer size={20} />
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}>{`Welcome to your ${teamName}!`}</Text>
-                        <Spacer size={35} />
+                        <Spacer size={40} />
                         <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}>{'Return to App'}</Text>
                         <Spacer size={10} />
                         <TabIcon
@@ -85,7 +83,6 @@ const JoinATeamModal = ({
                             size={45}
                             type={'simple-line-icon'}
                         />
-                        <Spacer size={50} />
                     </View>
                     :
                     <View style={[AppStyles.containerCentered]}>

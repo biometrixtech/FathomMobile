@@ -33,6 +33,7 @@ const TabIcon = ({
     selected,
     size,
     type,
+    underlayColor,
 }) => (
     <Icon
         color={color ? color : selected ? AppColors.tabbar.iconSelected : AppColors.tabbar.iconDefault}
@@ -44,6 +45,7 @@ const TabIcon = ({
         reverse={reverse}
         size={size}
         type={type}
+        underlayColor={underlayColor}
     />
 );
 
@@ -58,6 +60,7 @@ TabIcon.propTypes = {
     selected:       PropTypes.bool,
     size:           PropTypes.number,
     type:           PropTypes.string,
+    underlayColor:  PropTypes.string,
 };
 TabIcon.defaultProps = {
     color:          null,
@@ -70,6 +73,7 @@ TabIcon.defaultProps = {
     selected:       false,
     size:           26,
     type:           'material',
+    underlayColor:  'transparent',
 };
 
 /* Export Component ==================================================================== */
