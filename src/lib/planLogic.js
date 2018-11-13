@@ -268,7 +268,7 @@ const PlanLogic = {
       * Post Session Survey Render Logic
       * - PostSessionSurvey
       */
-    handlePostSessionSurveyRenderLogic: (postSession, soreBodyParts) => {
+    handlePostSessionSurveyRenderLogic: (postSession, soreBodyParts, areasOfSorenessRef) => {
         let filteredAreasOfSoreness = _.filter(postSession.soreness, o => {
             let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
             return doesItInclude.length === 0;
@@ -281,7 +281,7 @@ const PlanLogic = {
         let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
         let areAreasOfSorenessValid = (
             _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
-            (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
+            (areasOfSorenessRef && areasOfSorenessRef.state.isAllGood)
         );
         let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
@@ -296,7 +296,7 @@ const PlanLogic = {
       * Readiness Survey Render Logic
       * - ReadinessSurvey
       */
-    handleReadinessSurveyRenderLogic: (dailyReadiness, soreBodyParts) => {
+    handleReadinessSurveyRenderLogic: (dailyReadiness, soreBodyParts, areasOfSorenessRef) => {
         let split_afternoon = 12 // 24hr time to split the afternoon
         let split_evening = 17 // 24hr time to split the evening
         let hourOfDay = moment().get('hour');
@@ -313,7 +313,7 @@ const PlanLogic = {
         let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
         let areAreasOfSorenessValid = (
             _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
-            (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
+            (areasOfSorenessRef && areasOfSorenessRef.state.isAllGood)
         );
         let selectedSportPositions = dailyReadiness.current_sport_name !== null ? _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name).positions : [];
         const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
@@ -409,7 +409,7 @@ const PlanLogic = {
         let dateTimeDurationFromState = PlanLogic.handleGetDateTimeDurationFromState(pageState.durationValueGroups, pageState.isFormValid, pageState.timeValueGroups);
         let selectedStartTime = dateTimeDurationFromState.event_date;
         let selectedDuration = dateTimeDurationFromState.duration;
-        let getFinalSportTextString = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, this.props.postSession, pageState.isFormValid, pageState.step, selectedStartTime, selectedDuration);
+        let getFinalSportTextString = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, pageState.isFormValid, pageState.step, selectedStartTime, selectedDuration);
         let sportText = getFinalSportTextString.sportText;
         let startTimeText = getFinalSportTextString.startTimeText;
         let durationText = getFinalSportTextString.durationText;

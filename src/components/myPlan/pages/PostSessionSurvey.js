@@ -79,7 +79,7 @@ class PostSessionSurvey extends Component {
             typicalSessions,
             user,
         } = this.props;
-        let { isFormValid, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts);
+        let { isFormValid, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
         return (
             <View style={{flex: 1}}>
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
