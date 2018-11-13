@@ -167,7 +167,8 @@ class SoreBodyPart extends Component {
                                                 type:  this.state.type === 'all-good' ? '' : 'all-good',
                                                 value: null,
                                             }, () => {
-                                                handleFormChange('soreness', 0, this.state.type === 'pain', bodyPartMap.index, bodyPartSide, true);
+                                                let value = this.state.type === 'all-good' ? 0 : null;
+                                                handleFormChange('soreness', value, this.state.type === 'pain', bodyPartMap.index, bodyPartSide, true);
                                             });
                                         }
                                     }}
