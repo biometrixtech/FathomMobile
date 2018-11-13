@@ -4,7 +4,6 @@
     <UserAccountAbout
         clearCoachContent={this._clearCoachContent}
         handleFormChange={handleFormChange}
-        heightPressed={heightPressed}
         setAccordionSection={handleFormSubmit}
         updateErrorMessage={this._updateErrorMessage}
         user={user}
@@ -13,18 +12,12 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
-import {
-    AppColors,
-    AppFonts,
-    AppSizes,
-    AppStyles,
-    UserAccount as UserAccountConstants,
-} from '../../../constants';
-import { FormInput, FormLabel, RadioButton, Spacer, Text } from '../../custom';
-import { onboardingUtils } from '../../../constants/utils';
+import { AppColors, AppFonts, AppSizes, AppStyles, UserAccount as UserAccountConstants, } from '../../../constants';
+import { FormInput, FormLabel, Spacer, Text, } from '../../custom';
+import { onboardingUtils, } from '../../../constants/utils';
 
 // import third-party libraries
 import DatePicker from 'react-native-datepicker';
@@ -39,9 +32,6 @@ const styles = StyleSheet.create({
         justifyContent:    'center',
         marginRight:       20,
         paddingLeft:       11,
-    },
-    background: {
-        width: AppSizes.screen.width,
     },
     pickerSelectAndroid: {
         color: AppColors.black,
@@ -82,7 +72,6 @@ class UserAccountAbout extends Component {
         const {
             clearCoachContent,
             handleFormChange,
-            heightPressed,
             setAccordionSection,
             updateErrorMessage,
             user,
@@ -159,13 +148,6 @@ class UserAccountAbout extends Component {
                     }}
                     value={parseInt(user.biometric_data.height.in, 10) || null}
                 />
-                {/*<TouchableOpacity onPress={heightPressed} style={[styles.reusableCustomSpacing, {height: 40, justifyContent: 'center'}]}>
-                    { user.biometric_data.height.in > 0 ?
-                        <Text>{Math.floor(user.biometric_data.height.in / 12) + '\'' + user.biometric_data.height.in % 12 + '"'}</Text>
-                        :
-                        <Text style={{color: AppColors.zeplin.lightGrey}}>{'Height'}</Text>
-                    }
-                </TouchableOpacity>*/}
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.mass.lb.length > 0 ? 'Weight (lbs)' : ' '}</FormLabel>
                 <FormInput
                     blurOnSubmit={ true }
@@ -197,24 +179,6 @@ class UserAccountAbout extends Component {
                     }}
                     value={user.biometric_data.sex}
                 />
-                {/*<FormLabel labelStyle={{color: AppColors.black}}>{user.system_type.length > 0 ? 'System Type' : ' '}</FormLabel>
-                <RNPickerSelect
-                    disabled={true}
-                    hideIcon={true}
-                    items={UserAccountConstants.possibleSystemTypes}
-                    onValueChange={value => clearCoachContent('', () => handleFormChange('system_type', value))}
-                    placeholder={{
-                        label: 'Select a System Type...',
-                        value: null,
-                    }}
-                    style={{
-                        inputAndroid:     [styles.pickerSelectAndroid],
-                        inputIOS:         [styles.reusableCustomSpacing, styles.pickerSelectIOS],
-                        placeholderColor: AppColors.zeplin.lightGrey,
-                        viewContainer:    [styles.androidViewContainer],
-                    }}
-                    value={user.system_type}
-                />*/}
                 <Spacer size={50} />
                 <Text
                     oswaldRegular
@@ -233,7 +197,6 @@ class UserAccountAbout extends Component {
 
 UserAccountAbout.propTypes = {
     handleFormChange:    PropTypes.func.isRequired,
-    heightPressed:       PropTypes.func.isRequired,
     setAccordionSection: PropTypes.func.isRequired,
     updateErrorMessage:  PropTypes.func.isRequired,
     user:                PropTypes.object.isRequired,

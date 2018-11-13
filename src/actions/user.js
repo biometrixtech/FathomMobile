@@ -24,7 +24,7 @@ const getUser = (userId) => {
         .then(userData => {
             dispatch({
                 type: Actions.USER_REPLACE,
-                data: userData,
+                data: userData.user,
             });
             let cleanedResult = {};
             cleanedResult.sensor_pid = userData.user.sensor_pid;
@@ -69,6 +69,34 @@ const createUser = (payload) => {
             console.log('err',err);
             return Promise.reject(err);
         });
+};
+
+/**
+  * User Join Account
+  */
+const userJoinAccount = (userId, payload) => {
+    return dispatch => AppAPI.join_account.post({userId}, payload)
+        .then(userData => Promise.resolve(userData))
+        .catch(err => Promise.reject(err));
+};
+
+/**
+  * Check Account Code
+  */
+const checkAccountCode = (account_code) => {
+    return dispatch => AppAPI.check_account_code.get({account_code})
+        .then(userData => Promise.resolve(userData))
+        .catch(err => Promise.reject(err));
+};
+
+/**
+  * Update First Time User Experience Reducer
+  */
+const updateFirstTimeExperience = firstTimeExperience => {
+    return dispatch => Promise.resolve(dispatch({
+        type: Actions.UPDATE_FIRST_TIME_EXPERIENCE,
+        data: firstTimeExperience,
+    }));
 };
 
 /**
@@ -329,6 +357,7 @@ const selectGraph = (selectedGraphIndex) => {
 };
 
 export default {
+    checkAccountCode,
     clearUserData,
     createTrainingGroup,
     createUser,
@@ -348,6 +377,8 @@ export default {
     stopRequest,
     stopSession,
     teamSelect,
+    updateFirstTimeExperience,
     updateUser,
+    userJoinAccount,
     userSelect,
 };

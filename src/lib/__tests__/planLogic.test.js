@@ -1,7 +1,14 @@
 /* global it expect jest */
 import 'react-native';
 
+// import third-party libraries
+import moment from 'moment';
+
+// import logic file(s)
 import { PlanLogic, } from '../';
+
+// Consts and Libs
+import { MyPlan as MyPlanConstants, } from '../../constants';
 
 const helperFunctions = {
 
@@ -439,7 +446,297 @@ const helperFunctions = {
         return expectedResult;
     },
 
+    getFunctionalStrengthOptionsSession: (sport_name, strength_and_conditioning_type) => {
+        return { sport_name, strength_and_conditioning_type };
+    },
+
+    getFunctionalStrengthOptionsExpectedResult: (isSport, isStrengthConditioning, sessionName) => {
+        return { isSport, isStrengthConditioning, sessionName };
+    },
+
+    getSportScheduleBuilderDateTimeDurationFromStateExpectedResult: (duration, event_date, timeValueGroups) => {
+        if(event_date) {
+            return {
+                duration,
+                event_date
+            };
+        }
+        let now = moment();
+        now = now.set('second', 0);
+        now = now.set('millisecond', 0);
+        let hoursIn24 = timeValueGroups.amPM === 0 ? (timeValueGroups.hours + 1) : ((timeValueGroups.hours + 1) + 12);
+        hoursIn24 = hoursIn24 === 12 ? 0 : hoursIn24;
+        hoursIn24 = hoursIn24 === 24 ? 12 : hoursIn24;
+        now = now.set('hour', hoursIn24);
+        now = now.set('minute', Number(MyPlanConstants.timeOptionGroups.minutes[timeValueGroups.minutes]));
+        return {
+            duration,
+            event_date: now
+        };
+    },
+
+    getDefaultDurationValuesFromState: (durationMinutes, durationLabel) => {
+        return {
+            durationValueGroups: {
+                minutes: durationMinutes,
+                label:   durationLabel,
+            }
+        };
+    },
+
+    getDefaulTimeValuesFromState: (timeHours, timeMinutes, TimeAMPM) => {
+        return {
+            timeValueGroups: {
+                hours:   timeHours,
+                minutes: timeMinutes,
+                amPM:    TimeAMPM,
+            }
+        };
+    },
+
+    handleGetFinalSportTextString: (durationText, sportText, startTimeText) => {
+        return {
+            durationText,
+            sportText,
+            startTimeText,
+        };
+    },
+
+    handleAreasOfSorenessBodyPartExpectedResult: (bodyImage, isSelected, mainBodyPartName) => {
+        return {
+            bodyImage,
+            isSelected,
+            mainBodyPartName,
+        };
+    },
+
+    handleSoreBodyParts: bodyPartIndex => {
+        return {
+            body_parts: [
+                {
+                    body_part: bodyPartIndex,
+                    side:      0,
+                }
+            ]
+        };
+    },
+
+    getAreaOfSorenessAddingNonBilateralBodyPart: bodyPartIndex => {
+        return [
+            {
+                body_part: bodyPartIndex,
+                pain:      false,
+                severity:  null,
+                side:      0
+            }
+        ];
+    },
+
 };
+
+it('Areas of Soreness Body Part - NOT Selected Joint (Knee)', () => {
+    let areaOfSorenessClicked = [];
+    let kneeBodyParts = helperFunctions.getAreaOfSorenessBilateralAreaClicked();
+    let soreBodyParts = helperFunctions.handleSoreBodyParts(18);
+    let expectedResult = helperFunctions.handleAreasOfSorenessBodyPartExpectedResult('Knee.svg', false, 'KNEE');
+    expect(PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, kneeBodyParts, soreBodyParts)).toEqual(expectedResult);
+});
+
+it('Areas of Soreness Body Part - Selected Joint (Knee)', () => {
+    let areaOfSorenessClicked = helperFunctions.getAreaOfSorenessAddingBilateralBodyPartExpectedResult(7);
+    let kneeBodyParts = helperFunctions.getAreaOfSorenessBilateralAreaClicked();
+    let soreBodyParts = helperFunctions.handleSoreBodyParts(18);
+    let expectedResult = helperFunctions.handleAreasOfSorenessBodyPartExpectedResult('Knee.svg', true, 'KNEE');
+    expect(PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, kneeBodyParts, soreBodyParts)).toEqual(expectedResult);
+});
+
+it('Areas of Soreness Body Part - NOT Selected Muscle (Abs)', () => {
+    let areaOfSorenessClicked = [];
+    let absBodyParts = helperFunctions.getAreaOfSorenessNonBilateralAreaClicked();
+    let soreBodyParts = helperFunctions.handleSoreBodyParts(3);
+    let expectedResult = helperFunctions.handleAreasOfSorenessBodyPartExpectedResult('Abs.svg', false, 'ABDOMINALS');
+    expect(PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, absBodyParts, soreBodyParts)).toEqual(expectedResult);
+});
+
+it('Areas of Soreness Body Part - Selected Muscle (Abs)', () => {
+    let areaOfSorenessClicked = helperFunctions.getAreaOfSorenessAddingNonBilateralBodyPart(3);
+    let absBodyParts = helperFunctions.getAreaOfSorenessNonBilateralAreaClicked();
+    let soreBodyParts = helperFunctions.handleSoreBodyParts(3);
+    let expectedResult = helperFunctions.handleAreasOfSorenessBodyPartExpectedResult('Abs.svg', true, 'ABDOMINALS');
+    expect(PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, absBodyParts, soreBodyParts)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Sport Text - Selected Recent Sport - Pool Sports Competition', () => {
+    let selectedSport = 'pool sports';
+    let filteredSessionType = [{index: 2, order: 2, label: 'Competition'}];
+    let postSession = { session_type: 2 };
+    let isFormValid = false;
+    let step = 3;
+    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
+    let selectedDuration = '';
+    let expectedResult = helperFunctions.handleGetFinalSportTextString('duration', 'pool sports competition', 'time');
+    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Sport Text - Selected Recent Sport - Strength Training', () => {
+    let selectedSport = 'strength';
+    let filteredSessionType = [];
+    let postSession = { session_type: 1 };
+    let isFormValid = false;
+    let step = 3;
+    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
+    let selectedDuration = '';
+    let expectedResult = helperFunctions.handleGetFinalSportTextString('duration', 'strength training', 'time');
+    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Sport Text - Selected Recent Sport - Cross Training', () => {
+    let selectedSport = 'distance running';
+    let filteredSessionType = [{index: 0, order: 1, label: 'Practice'}];
+    let postSession = { session_type: 0 };
+    let isFormValid = false;
+    let step = 3;
+    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
+    let selectedDuration = '';
+    let expectedResult = helperFunctions.handleGetFinalSportTextString('duration', 'distance running practice', 'time');
+    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Sport Text - Selected Sport - Cross Training', () => {
+    let selectedSport = 'cross';
+    let filteredSessionType = [];
+    let postSession = { session_type: 1 };
+    let isFormValid = false;
+    let step = 2;
+    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
+    let selectedDuration = '';
+    let expectedResult = helperFunctions.handleGetFinalSportTextString('', 'cross ', '');
+    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Sport Text - Selected Sport - Basketball', () => {
+    let selectedSport = 'basketball';
+    let filteredSessionType = [];
+    let postSession = { session_type: null };
+    let isFormValid = false;
+    let step = 2;
+    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
+    let selectedDuration = '';
+    let expectedResult = helperFunctions.handleGetFinalSportTextString('', 'basketball ', '');
+    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Sport Text - Selected Sport, & Type - Speed & Agility', () => {
+    let selectedSport = 'speed & agility';
+    let filteredSessionType = [];
+    let postSession = { session_type: 1 };
+    let isFormValid = false;
+    let step = 3;
+    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
+    let selectedDuration = '';
+    let expectedResult = helperFunctions.handleGetFinalSportTextString('duration', 'speed & agility training', 'time');
+    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Sport Text - Selected Sport, & Type - Soccer Practice', () => {
+    let selectedSport = 'soccer';
+    let filteredSessionType = [{index: 0, order: 1, label: 'Practice'}];
+    let postSession = { session_type: 0 };
+    let isFormValid = false;
+    let step = 3;
+    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
+    let selectedDuration = '';
+    let expectedResult = helperFunctions.handleGetFinalSportTextString('duration', 'soccer practice', 'time');
+    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Sport Text - Selected Sport, Type, Time, & Duration', () => {
+    let selectedSport = 'basketball';
+    let filteredSessionType = [{index: 6, order: 3, label: 'Training'}];
+    let postSession = { session_type: 1 };
+    let isFormValid = true;
+    let step = 3;
+    let selectedStartTime = moment('06:30', 'HH:mm');
+    let selectedDuration = 60;
+    let expectedResult = helperFunctions.handleGetFinalSportTextString('60', 'basketball training', '6:30');
+    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Sport Text - Empty Data', () => {
+    let selectedSport = null;
+    let filteredSessionType = null;
+    let postSession = helperFunctions.getPostSessionRPEInputExpectedResult(0);
+    let isFormValid = false;
+    let step = 0;
+    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
+    let selectedDuration = '';
+    let expectedResult = helperFunctions.handleGetFinalSportTextString('', 'activity type', '');
+    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Date and Time Duration from State - Form Is Valid with data #1', () => {
+    let durationValueGroups = helperFunctions.getDefaultDurationValuesFromState(11, 1).durationValueGroups;
+    let isFormValid = true;
+    let timeValueGroups = helperFunctions.getDefaulTimeValuesFromState(4, 0, 0).timeValueGroups;
+    let expectedResult = helperFunctions.getSportScheduleBuilderDateTimeDurationFromStateExpectedResult(60, false, timeValueGroups);
+    expect(PlanLogic.handleGetDateTimeDurationFromState(durationValueGroups, isFormValid, timeValueGroups)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Date and Time Duration from State - Form Is Valid with data #2', () => {
+    let durationValueGroups = helperFunctions.getDefaultDurationValuesFromState(17, 1).durationValueGroups;
+    let isFormValid = true;
+    let timeValueGroups = helperFunctions.getDefaulTimeValuesFromState(5, 2, 1).timeValueGroups;
+    let expectedResult = helperFunctions.getSportScheduleBuilderDateTimeDurationFromStateExpectedResult(90, false, timeValueGroups);
+    expect(PlanLogic.handleGetDateTimeDurationFromState(durationValueGroups, isFormValid, timeValueGroups)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Date and Time Duration from State - Form Is Valid with data #3', () => {
+    let durationValueGroups = helperFunctions.getDefaultDurationValuesFromState(2, 1).durationValueGroups;
+    let isFormValid = true;
+    let timeValueGroups = helperFunctions.getDefaulTimeValuesFromState(2, 2, 1).timeValueGroups;
+    let expectedResult = helperFunctions.getSportScheduleBuilderDateTimeDurationFromStateExpectedResult(15, false, timeValueGroups);
+    expect(PlanLogic.handleGetDateTimeDurationFromState(durationValueGroups, isFormValid, timeValueGroups)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Date and Time Duration from State - Form Isn\'t Valid without data', () => {
+    let durationValueGroups = false;
+    let isFormValid = false;
+    let timeValueGroups = false;
+    let expectedResult = helperFunctions.getSportScheduleBuilderDateTimeDurationFromStateExpectedResult('', `${moment().toISOString(true).split('.')[0]}Z`);
+    expect(PlanLogic.handleGetDateTimeDurationFromState(durationValueGroups, isFormValid, timeValueGroups)).toEqual(expectedResult);
+});
+
+it('Sport Schedule Builder Cleaning of Date and Time Duration from State - Form Isn\'t Valid with data', () => {
+    let durationValueGroups = helperFunctions.getDefaultDurationValuesFromState(2, 1).durationValueGroups;
+    let isFormValid = false;
+    let timeValueGroups = helperFunctions.getDefaulTimeValuesFromState(2, 2, 1).timeValueGroups;
+    let expectedResult = helperFunctions.getSportScheduleBuilderDateTimeDurationFromStateExpectedResult('', `${moment().toISOString(true).split('.')[0]}Z`);
+    expect(PlanLogic.handleGetDateTimeDurationFromState(durationValueGroups, isFormValid, timeValueGroups)).toEqual(expectedResult);
+});
+
+it('Functional Strength Options - Sport - Soccer', () => {
+    let session = helperFunctions.getFunctionalStrengthOptionsSession(14, null);
+    let expectedResult = helperFunctions.getFunctionalStrengthOptionsExpectedResult(true, false, 'Soccer');
+    expect(PlanLogic.handleFunctionalStrengthOptions(session)).toEqual(expectedResult);
+});
+
+it('Functional Strength Options - Sport - Basketball', () => {
+    let session = helperFunctions.getFunctionalStrengthOptionsSession(0, null);
+    let expectedResult = helperFunctions.getFunctionalStrengthOptionsExpectedResult(true, false, 'Basketball');
+    expect(PlanLogic.handleFunctionalStrengthOptions(session)).toEqual(expectedResult);
+});
+
+it('Functional Strength Options - Strength & Conditioning - Strength', () => {
+    let session = helperFunctions.getFunctionalStrengthOptionsSession(null, 3);
+    let expectedResult = helperFunctions.getFunctionalStrengthOptionsExpectedResult(false, true, 'Strength TRAINING');
+    expect(PlanLogic.handleFunctionalStrengthOptions(session)).toEqual(expectedResult);
+});
+
+it('Functional Strength Options - Strength & Conditioning - Endurance', () => {
+    let session = helperFunctions.getFunctionalStrengthOptionsSession(null, 0);
+    let expectedResult = helperFunctions.getFunctionalStrengthOptionsExpectedResult(false, true, 'Endurance TRAINING');
+    expect(PlanLogic.handleFunctionalStrengthOptions(session)).toEqual(expectedResult);
+});
 
 it('Area Of Soreness Clicked - Adding Bilateral Body Part', () => {
     let bodyPartIndex = 7;

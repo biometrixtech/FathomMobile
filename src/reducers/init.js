@@ -39,7 +39,7 @@ export default function initReducer(state = initialState, action) {
         });
     case Actions.NOTIFICATION_RECEIVED:
         return Object.assign({}, state, {
-            notification: action.data,
+            notification: action.data || false,
         });
     case Actions.NOTIFICATION_ADDRESSED:
         return Object.assign({}, state, {

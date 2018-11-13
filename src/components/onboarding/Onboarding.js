@@ -4,49 +4,22 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-    ActivityIndicator,
-    Alert,
-    BackHandler,
-    Platform,
-    StyleSheet,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { ActivityIndicator, Alert, BackHandler, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
-import Carousel from 'react-native-snap-carousel';
 import Modal from 'react-native-modalbox';
 import moment from 'moment';
 
 // Consts, Libs, and Utils
-import { AppAPI, AppUtil, } from '../../lib/';
-import {
-    APIConfig,
-    AppColors,
-    AppStyles,
-    AppSizes,
-    UserAccount as UserAccountConstants,
-} from '../../constants';
-import { onboardingUtils } from '../../constants/utils';
+import { AppAPI, AppUtil, } from '../../lib';
+import { AppColors, AppStyles, AppSizes, UserAccount as UserAccountConstants, } from '../../constants';
+import { onboardingUtils, } from '../../constants/utils';
 
 // Components
-import {
-    Alerts,
-    ProgressBar,
-    Text,
-    WebViewPage,
-} from '../custom/';
-import {
-    UserAccount,
-    UserActivities,
-    UserClearedQuestion,
-    UserRole,
-    UserSportSchedule,
-    UserWorkoutQuestion,
-} from './pages/';
+import { Alerts, ProgressBar, Text, WebViewPage, } from '../custom/';
+import { UserAccount, } from './pages/';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -112,6 +85,7 @@ class Onboarding extends Component {
                 user: {
                     // agreed_terms_of_use:   false, // boolean
                     // agreed_privacy_policy: false, // boolean
+                    account_code:      '',
                     cleared_to_play:   false, // boolean
                     onboarding_status: user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
                     password:          '',
@@ -137,7 +111,7 @@ class Onboarding extends Component {
                     personal_data: {
                         account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                         account_type:   'free', // 'paid', 'free'
-                        birth_date:     user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'YYYY-MM-DD').format('MM/DD/YYYY') : '',
+                        birth_date:     user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'MM/DD/YYYY').format('MM/DD/YYYY') : '',
                         email:          user.personal_data && user.personal_data.email ? user.personal_data.email : '',
                         first_name:     user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
                         last_name:      user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
@@ -161,7 +135,6 @@ class Onboarding extends Component {
                 }
             },
             isFormValid:         false,
-            isHeightModalOpen:   false,
             isPrivacyPolicyOpen: false,
             isTermsOpen:         false,
             modalStyle:          {},
@@ -170,10 +143,9 @@ class Onboarding extends Component {
                 status:  '',
                 success: '',
             },
-            step:                2, // TODO: UPDATE THIS VALUE BACK TO '1'
-            totalSteps:          1,
-            heightsCarouselData: [],
-            loading:             false,
+            step:       2, // TODO: UPDATE THIS VALUE BACK TO '1'
+            totalSteps: 1,
+            loading:    false,
         };
     }
 
@@ -191,6 +163,9 @@ class Onboarding extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
+        if(Actions.currentParams.accountCode !== this.state.form_fields.user.account_code) {
+            this._handleUserFormChange('account_code', Actions.currentParams.accountCode);
+        }
     }
 
     _toggleTermsWebView = () => {
@@ -220,63 +195,13 @@ class Onboarding extends Component {
         }
     }
 
-    _handleUserHeightFormChange = (index) => {
-        // set height in inches
-        const f = this.state.heightsCarouselData[index].title;
-        const rex = /^(\d+)'(\d+)(?:''|")$/;
-        let match = rex.exec(f);
-        let feet, inches, feetToInches, totalInches;
-        if (match) {
-            feet = parseInt(match[1], 10);
-            inches = parseInt(match[2], 10);
-        }
-        feetToInches = feet * 12;
-        totalInches = feetToInches + inches;
-        this._handleUserFormChange('biometric_data.height.in', totalInches.toString());
-        // update carousel data
-        this._handleHeightsArray(f);
-    }
-
-    _handleHeightsArray = (title, index = 47) => {
-        const wholeHeightsArray = UserAccountConstants.heights;
-        index = title ? _.findIndex(wholeHeightsArray, {title: title}) : index;
-        let newHeightsArray = _.cloneDeep(wholeHeightsArray);
-        if(title && index > 47) {
-            let newIndexLength = ((index + 4) - 47) + 1;
-            let objToAddToEnd = newHeightsArray.splice(47, newIndexLength);
-            newHeightsArray = _.unionBy(this.state.heightsCarouselData, objToAddToEnd, 'title');
-        } else if(title && index < 47) {
-            let newIndex = (index - 4);
-            let objToAddToFront = newHeightsArray.splice(newIndex, 1);
-            newHeightsArray = _.unionBy(objToAddToFront, this.state.heightsCarouselData, 'title');
-        } else if(!title) {
-            newHeightsArray = newHeightsArray.splice(index - 4, 9);
-        }
-        this.setState({
-            heightsCarouselData: newHeightsArray
-        });
-    }
-
     _validateForm = () => {
         let isUpdatingUser = this.props.user.id ? true : false
-        const { form_fields, step } = this.state;
+        const { form_fields, step, } = this.state;
         let errorsArray = [];
-        if(step === 1) { // select a user role
-            errorsArray = errorsArray.concat(onboardingUtils.isUserRoleValid(form_fields.user.role).errorsArray);
-        } else if(step === 2) { // enter user information
+        if(step === 2) { // enter user information
             errorsArray = errorsArray.concat(onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray);
             errorsArray = errorsArray.concat(onboardingUtils.isUserAboutValid(form_fields.user).errorsArray);
-            // errorsArray = errorsArray.concat(onboardingUtils.areSportsValid(form_fields.user.sports).errorsArray);
-        } else if(step === 3) { // sport(s) schedule
-            errorsArray = errorsArray.concat(onboardingUtils.areTrainingSchedulesValid(form_fields.user.training_schedule).errorsArray);
-        } else if(step === 4) { // workout outside of practice?
-            errorsArray = errorsArray.concat(onboardingUtils.isWorkoutOutsidePracticeValid(form_fields.user.workout_outside_practice).errorsArray);
-        } else if(step === 5) { // activities
-            errorsArray = errorsArray.concat(onboardingUtils.isActivitiesValid(form_fields.user.training_strength_conditioning).errorsArray);
-        } else if(step === 6) { // injury
-        } else if(step === 7) { // cleared?
-            errorsArray = errorsArray.concat(onboardingUtils.isUserClearedValid(form_fields.user).errorsArray);
-        } else if(step === 8) { // pair device
         }
         return errorsArray;
     }
@@ -309,56 +234,11 @@ class Onboarding extends Component {
     }
 
     _nextStep = () => {
-        const { form_fields, step } = this.state;
         // validation
         let errorsArray = this._validateForm();
-        /*let newStep;
-        if (
-            step === 4
-            && !form_fields.user.workout_outside_practice
-        ) {
-            if(
-                form_fields.user.injury_status === 'healthy'
-            ) { // if user is health and they don't workout outside of practice
-                newStep = step + 3;
-            } else { // if the user doesn't workout outside of practice
-                newStep = step + 2;
-            }
-        } else {
-            newStep = step + 1;
-        }*/
-        let newStep = step + 1;
         this.setState({
             ['resultMsg.error']: errorsArray,
-            // isFormValid:         false,
-            // step:                newStep,
         });
-        // save or update, if no errors
-        if(errorsArray.length === 0) {
-            this._handleUpdateForm();
-        }
-    }
-
-    _heightPressed = () => {
-        this._handleHeightsArray();
-        this.setState({ isHeightModalOpen: !this.state.isHeightModalOpen });
-    }
-
-    _renderHeightItem = ({item, index}) => {
-        return (
-            <View style={[styles.carouselCustomStyles, {height: AppSizes.screen.height / 3}]}>
-                <View style={[styles.carouselCustomStyles, {height: '50%', width: '100%'}]}>
-                    <Text style={[AppStyles.h1]}>{ item.title }</Text>
-                </View>
-                <View style={[styles.carouselCustomStyles, {flexDirection: 'row', height: '50%', width: '100%', margin: 'auto'}]}>
-                    <View style={[styles.carouselTick, {height: '50%'}]} />
-                    <View style={[styles.carouselTick, {height: '50%'}]} />
-                    <View style={[styles.carouselTick, {height: '100%'}]} />
-                    <View style={[styles.carouselTick, {height: '50%'}]} />
-                    <View style={[styles.carouselTick, {height: '50%'}]} />
-                </View>
-            </View>
-        );
     }
 
     _notClearedBtnPressed = () => {
@@ -451,6 +331,9 @@ class Onboarding extends Component {
         userObj.personal_data.account_type = newUser.personal_data.account_type;
         userObj.personal_data.account_status = newUser.personal_data.account_status;
         userObj.personal_data.zip_code = newUser.personal_data.zip_code;
+        if(newUser.account_code && newUser.account_code.length > 0) {
+            userObj.account_code = newUser.account_code.toUpperCase();
+        }
         // create or update, if no errors
         if(errorsArray.length === 0) {
             if(this.props.user.id) {
@@ -485,142 +368,47 @@ class Onboarding extends Component {
         }, false)
             .then(response => {
                 let { authorization, user } = response;
-                return this.props.authorizeUser(authorization, user, credentials)
-                    .then(res => {
-                        let returnObj = {};
-                        returnObj.user = user;
-                        returnObj.authorization = res.authorization;
-                        returnObj.authorization.session_token = authorization.session_token;
-                        return Promise.resolve(returnObj);
-                    })
-                    .catch(err => Promise.reject('Unexpected response authorization'))
-            })
-            .then(response => {
-                let { authorization, user } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
-                    .then(() => this.props.finalizeLogin(user, {Email: userObj.personal_data.email, Password: userObj.password}, authorization.jwt));
+                    .then(() => this.props.finalizeLogin(user, credentials, authorization));
             })
             .then(userRes => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
             }, () => {
-                this.setState({ loading: false });
+                this.setState({ loading: false, });
                 return AppUtil.routeOnLogin(userRes);
             })).catch((err) => {
                 console.log('err',err);
                 const error = AppAPI.handleError(err);
-                return this.setState({ resultMsg: { error }, loading: false });
+                return this.setState({ loading: false, resultMsg: { error }, });
             });
-    }
-
-    _handleUpdateForm = () => {
-
     }
 
     render = () => {
         const {
             form_fields,
-            heightsCarouselData,
             isFormValid,
-            isHeightModalOpen,
             isPrivacyPolicyOpen,
             isTermsOpen,
             resultMsg,
             step,
             totalSteps,
         } = this.state;
-        /* TODO: BRING BACK PROGRESSBAR BELOW AS NEEDED:
-         <ProgressBar
-            currentStep={step}
-            totalSteps={totalSteps}
-         />
-         ALSO TouchableOpacity BUTTON
-         { isFormValid && step > 1 && step !== 7 ?
-             <TouchableOpacity onPress={this._nextStep} style={[AppStyles.nextButtonWrapper]}>
-                 <Text style={[AppStyles.nextButtonText]}>{step === totalSteps ? 'Done' : 'Next Step'}</Text>
-             </TouchableOpacity>
-             :
-             null
-         }
-         */
         return (
             <View style={[styles.background]}>
                 <ProgressBar
                     currentStep={onboardingUtils.getCurrentStep(form_fields.user)}
                     totalSteps={onboardingUtils.getTotalSteps(form_fields.user)}
                 />
-                {/*<UserRole
-                    componentStep={1}
-                    currentStep={step}
-                    handleFormChange={this._handleUserFormChange}
-                    user={form_fields.user}
-                />*/}
                 <UserAccount
                     componentStep={2}
                     currentStep={step}
                     error={resultMsg.error}
                     handleFormChange={this._handleUserFormChange}
                     handleFormSubmit={this._handleFormSubmit}
-                    heightPressed={this._heightPressed}
                     isUpdatingUser={this.props.user.id ? true : false}
                     user={form_fields.user}
                 />
-                {/*<UserSportSchedule
-                    componentStep={3}
-                    currentStep={step}
-                    handleFormChange={this._handleUserFormChange}
-                    user={form_fields.user}
-                />
-                <UserWorkoutQuestion
-                    componentStep={4}
-                    currentStep={step}
-                    handleFormChange={this._handleUserFormChange}
-                    user={form_fields.user}
-                />
-                <UserActivities
-                    componentStep={5}
-                    currentStep={step}
-                    handleFormChange={this._handleUserFormChange}
-                    user={form_fields.user}
-                <UserClearedQuestion
-                    componentStep={4}
-                    currentStep={step}
-                    handleFormChange={this._handleUserFormChange}
-                    isFormValid={isFormValid}
-                    isPrivacyPolicyOpen={isPrivacyPolicyOpen}
-                    isTermsOpen={isTermsOpen}
-                    nextStep={this._nextStep}
-                    notClearedBtnPressed={this._notClearedBtnPressed}
-                    togglePrivacyPolicyWebView={this._togglePrivacyPolicyWebView}
-                    toggleTermsWebView={this._toggleTermsWebView}
-                    user={form_fields.user}
-                />
-                <Modal
-                    backdropPressToClose={false}
-                    coverScreen={true}
-                    isOpen={isHeightModalOpen}
-                    swipeToClose={false}
-                >
-                    <View style={[styles.carouselCustomStyles, styles.carouselBanner]}>
-                        <Text style={[AppStyles.textBold, AppStyles.h2]}>{'HEIGHT'}</Text>
-                    </View>
-                    <Carousel
-                        activeSlideAlignment={'center'}
-                        contentContainerCustomStyle={[styles.carouselCustomStyles]}
-                        data={heightsCarouselData}
-                        firstItem={4}
-                        inactiveSlideOpacity={0.7}
-                        inactiveSlideScale={0.9}
-                        itemWidth={AppSizes.screen.width / 3}
-                        loop={false}
-                        onSnapToItem={index => this._handleUserHeightFormChange(index)}
-                        renderItem={this._renderHeightItem}
-                        sliderWidth={AppSizes.screen.width}
-                    />
-                    <TouchableOpacity onPress={this._heightPressed} style={[AppStyles.nextButtonWrapper]}>
-                        <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
-                    </TouchableOpacity>
-                </Modal>
-                <Modal
+                {/*<Modal
                     backdropPressToClose={false}
                     coverScreen={true}
                     isOpen={isTermsOpen}

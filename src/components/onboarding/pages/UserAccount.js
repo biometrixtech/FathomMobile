@@ -78,8 +78,6 @@ class UserAccount extends Component {
             isFormValid = onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid;
         } else if (section.index === 2) {
             isFormValid = onboardingUtils.isUserAboutValid(user).isValid;
-        } else if (section.index === 3) {
-            isFormValid = onboardingUtils.areSportsValid(user.sports).isValid;
         }
         return(
             <View>
@@ -155,55 +153,6 @@ class UserAccount extends Component {
         )
     };
 
-    _handleSportsFormChange = (i, name, value) => {
-        this.setState({ coachContent: '' });
-        const { handleFormChange, user } = this.props;
-        let newSportsArray = _.cloneDeep(user.sports);
-        newSportsArray[i][name] = value;
-        handleFormChange('sports', newSportsArray);
-        if(name === 'name') {
-            let newTrainingScheduleArray = user.training_schedule;
-            newTrainingScheduleArray[value] = {};
-            newTrainingScheduleArray[value].practice = {days_of_week: '', duration_minutes: ''};
-            newTrainingScheduleArray[value].competition = {days_of_week: ''};
-            handleFormChange('training_schedule', newTrainingScheduleArray);
-        }
-    };
-
-    _addAnotherSport = (index) => {
-        const { handleFormChange, user } = this.props;
-        const sportValidation = onboardingUtils.isSportValid(user.sports[index]);
-        if(sportValidation.isValid) {
-            this.setState({ coachContent: '' });
-            const newSportArray = {
-                competition_level:  '',
-                end_date:           '', // 'MM/DD/YYYY' or 'current'
-                name:               '',
-                positions:          [],
-                season_end_month:   '',
-                season_start_month: '',
-                start_date:         '',
-            };
-            let newSportsArray = _.cloneDeep(user.sports);
-            newSportsArray.push(newSportArray);
-            handleFormChange('sports', newSportsArray);
-        } else {
-            this.setState({ coachContent: 'Please make sure to fill out all the sports related information before trying to add a new one!' });
-        }
-    };
-
-    _removeSport = (index) => {
-        const { handleFormChange, user } = this.props;
-        if(index > 0) {
-            this.setState({ coachContent: '' });
-            let newSportsArray = _.cloneDeep(user.sports);
-            newSportsArray.splice(index, 1);
-            handleFormChange('sports', newSportsArray);
-        } else {
-            this.setState({ coachContent: 'You cannot remove your first sport, at least one sport is required!' });
-        }
-    };
-
     _setAccordionSection = (section, nextStep) => {
         const { isUpdatingUser, user, } = this.props;
         let errorsArray = [];
@@ -213,8 +162,6 @@ class UserAccount extends Component {
                 errorsArray = onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).errorsArray;
             } else if(section === 1) {
                 errorsArray = onboardingUtils.isUserAboutValid(user).errorsArray;
-            } else if(section === 2) {
-                errorsArray = onboardingUtils.areSportsValid(user.sports).errorsArray;
             }
             if(errorsArray.length > 0) {
                 this.setState({
@@ -284,7 +231,6 @@ class UserAccount extends Component {
             currentStep,
             handleFormChange,
             handleFormSubmit,
-            heightPressed,
             isUpdatingUser,
             user,
         } = this.props;
@@ -309,7 +255,6 @@ class UserAccount extends Component {
                 content: <UserAccountAbout
                     clearCoachContent={this._clearCoachContent}
                     handleFormChange={handleFormChange}
-                    heightPressed={heightPressed}
                     setAccordionSection={handleFormSubmit}
                     updateErrorMessage={this._updateErrorMessage}
                     user={user}
@@ -318,16 +263,6 @@ class UserAccount extends Component {
                 index:    2,
                 subtitle: 'Now, let\'s understand how you train and how we can help you to get better!',
             },
-            /*{
-                content: <UserSports
-                    addAnotherSport={this._addAnotherSport}
-                    handleFormChange={this._handleSportsFormChange}
-                    removeSport={this._removeSport}
-                    sports={user.sports}
-                />,
-                header: 'TRAINING DETAILS',
-                index:  3,
-            },*/
         ];
         return (
             <View style={{flex: 1}}>
@@ -374,7 +309,6 @@ UserAccount.propTypes = {
         PropTypes.string,
     ]),
     handleFormChange: PropTypes.func.isRequired,
-    heightPressed:    PropTypes.func.isRequired,
     isUpdatingUser:   PropTypes.bool.isRequired,
     user:             PropTypes.object.isRequired,
 };

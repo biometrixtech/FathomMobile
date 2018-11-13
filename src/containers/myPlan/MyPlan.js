@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { plan as PlanActions, } from '../../actions';
+import { plan as PlanActions, user as UserActions, } from '../../actions';
 
 const MyPlan = ({
     Layout,
@@ -26,6 +26,7 @@ const MyPlan = ({
     scheduledMaintenance,
     setCompletedExercises,
     setCompletedFSExercises,
+    updateFirstTimeExperience,
     user,
 }) => (
     <Layout
@@ -49,6 +50,7 @@ const MyPlan = ({
         scheduledMaintenance={scheduledMaintenance}
         setCompletedExercises={setCompletedExercises}
         setCompletedFSExercises={setCompletedFSExercises}
+        updateFirstTimeExperience={updateFirstTimeExperience}
         user={user}
     />
 );
@@ -69,16 +71,17 @@ MyPlan.propTypes = {
         PropTypes.bool,
         PropTypes.string,
     ]).isRequired,
-    patchActiveRecovery:     PropTypes.func.isRequired,
-    patchFunctionalStrength: PropTypes.func.isRequired,
-    plan:                    PropTypes.object.isRequired,
-    postReadinessSurvey:     PropTypes.func.isRequired,
-    postSessionSurvey:       PropTypes.func.isRequired,
-    preReadiness:            PropTypes.func.isRequired,
-    scheduledMaintenance:    PropTypes.object,
-    setCompletedExercises:   PropTypes.func.isRequired,
-    setCompletedFSExercises: PropTypes.func.isRequired,
-    user:                    PropTypes.object.isRequired,
+    patchActiveRecovery:       PropTypes.func.isRequired,
+    patchFunctionalStrength:   PropTypes.func.isRequired,
+    plan:                      PropTypes.object.isRequired,
+    postReadinessSurvey:       PropTypes.func.isRequired,
+    postSessionSurvey:         PropTypes.func.isRequired,
+    preReadiness:              PropTypes.func.isRequired,
+    scheduledMaintenance:      PropTypes.object,
+    setCompletedExercises:     PropTypes.func.isRequired,
+    setCompletedFSExercises:   PropTypes.func.isRequired,
+    updateFirstTimeExperience: PropTypes.func.isRequired,
+    user:                      PropTypes.object.isRequired,
 };
 
 MyPlan.defaultProps = {
@@ -110,6 +113,7 @@ const mapDispatchToProps = {
     preReadiness:                  PlanActions.preReadiness,
     setCompletedExercises:         PlanActions.setCompletedExercises,
     setCompletedFSExercises:       PlanActions.setCompletedFSExercises,
+    updateFirstTimeExperience:     UserActions.updateFirstTimeExperience,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyPlan);

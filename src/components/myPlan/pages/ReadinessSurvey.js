@@ -6,6 +6,7 @@
         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handleReadinessSurveySubmit}
+        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
         soreBodyParts={this.state.soreBodyParts}
         typicalSessions={this.props.plan.typicalSessions}
         user={user}
@@ -18,10 +19,11 @@ import { Image, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-na
 
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
-import { Button, FathomSlider, Spacer, Text, } from '../../custom';
+import { Button, FathomSlider, Spacer, TabIcon, Text, } from '../../custom';
+import { PlanLogic, } from '../../../lib';
 
 // Components
-import { AreasOfSoreness, ScaleButton, SoreBodyPart, } from './';
+import { AreasOfSoreness, ScaleButton, SlideUpPanel, SoreBodyPart, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -43,6 +45,10 @@ const styles = StyleSheet.create({
 class ReadinessSurvey extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            isSlideUpPanelExpanded: true,
+            isSlideUpPanelOpen:     false,
+        };
         this.scrollViewRef = {};
         this.myComponents = [];
         this.positionsComponents = [];
@@ -74,26 +80,11 @@ class ReadinessSurvey extends Component {
         }, 500);
     }
 
-    _getFunctionalStrengthOptions = session => {
-        let isSport = session.sport_name > 0 || session.sport_name === 0 ? true : false;
-        let isStrengthConditioning = session.strength_and_conditioning_type > 0 || session.strength_and_conditioning_type === 0;
-        let sessionName = isSport ?
-            _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name)
-            : isStrengthConditioning ?
-                _.find(MyPlanConstants.strengthConditioningTypes, o => o.index === session.strength_and_conditioning_type)
-                :
-                '';
-        sessionName = sessionName.label && isSport ?
-            sessionName.label
-            : sessionName.label && isStrengthConditioning ?
-                `${sessionName.label.replace(' Training', '')} TRAINING`
-                :
-                '';
-        return {
-            isSport,
-            isStrengthConditioning,
-            sessionName,
-        };
+    _toggleSlideUpPanel = (isExpanded = true) => {
+        this.setState({
+            isSlideUpPanelExpanded: isExpanded,
+            isSlideUpPanelOpen:     !this.state.isSlideUpPanelOpen,
+        });
     }
 
     render = () => {
@@ -102,6 +93,7 @@ class ReadinessSurvey extends Component {
             handleAreaOfSorenessClick,
             handleFormChange,
             handleFormSubmit,
+            handleUpdateFirstTimeExperience,
             soreBodyParts,
             typicalSessions,
             user,
@@ -182,9 +174,10 @@ class ReadinessSurvey extends Component {
                                 </Text>
                                 <Spacer size={10} />
                                 { _.map(typicalSessions, (session, i) => {
-                                    let isSport = this._getFunctionalStrengthOptions(session).isSport;
-                                    let isStrengthConditioning = this._getFunctionalStrengthOptions(session).isStrengthConditioning;
-                                    let sessionName = this._getFunctionalStrengthOptions(session).sessionName;
+                                    let FSOptions = PlanLogic.handleFunctionalStrengthOptions(session);
+                                    let isSport = FSOptions.isSport;
+                                    let isStrengthConditioning = FSOptions.isStrengthConditioning;
+                                    let sessionName = FSOptions.sessionName;
                                     let isSelected = false;
                                     if(isSport) {
                                         isSelected = dailyReadiness.current_sport_name === session.sport_name;
@@ -247,7 +240,7 @@ class ReadinessSurvey extends Component {
                                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                                             {'What is your primary position in '}
                                             <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                                {this._getFunctionalStrengthOptions({ sport_name: dailyReadiness.current_sport_name, }).sessionName.toLowerCase()}
+                                                {PlanLogic.handleFunctionalStrengthOptions({ sport_name: dailyReadiness.current_sport_name, }).sessionName.toLowerCase()}
                                             </Text>
                                             {'?'}
                                         </Text>
@@ -463,15 +456,18 @@ class ReadinessSurvey extends Component {
                             <SoreBodyPart
                                 bodyPart={bodyPart}
                                 bodyPartSide={bodyPart.side}
+                                firstTimeExperience={user.firstTimeExperience}
                                 handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                     handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
                                     if(shouldScroll) {
                                         this._scrollTo(isFirstFunctionalStrength || isSecondFunctionalStrength ? (i + 4) : (i + 3));
                                     }
                                 }}
+                                handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
                                 index={isFirstFunctionalStrength ? (i + 5) : isSecondFunctionalStrength ? (i + 4) : (i + 3)}
                                 isPrevSoreness={true}
                                 surveyObject={dailyReadiness}
+                                toggleSlideUpPanel={this._toggleSlideUpPanel}
                             />
                             <Spacer size={100} />
                         </View>
@@ -481,56 +477,45 @@ class ReadinessSurvey extends Component {
                             {isFirstFunctionalStrength ? (newSoreBodyParts.length + 5) : isSecondFunctionalStrength ? (newSoreBodyParts.length + 4) : (newSoreBodyParts.length + 3)}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' '}pain or soreness?`}
+                            {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
                         </Text>
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
                             handleFormChange={handleFormChange}
+                            handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
                             scrollToBottom={this._scrollToBottom}
                             soreBodyParts={soreBodyParts}
                             soreBodyPartsState={dailyReadiness.soreness}
                             surveyObject={dailyReadiness}
+                            toggleSlideUpPanel={this._toggleSlideUpPanel}
+                            user={user}
                         />
                     </View>
-                    { isFormValid ?
-                        <Button
-                            backgroundColor={AppColors.primary.yellow.hundredPercent}
-                            buttonStyle={{
-                                alignSelf:       'center',
-                                borderRadius:    5,
-                                marginBottom:    AppSizes.padding,
-                                paddingVertical: AppSizes.paddingMed,
-                                width:           AppSizes.screen.widthTwoThirds,
-                            }}
-                            color={AppColors.white}
-                            fontFamily={AppStyles.robotoMedium.fontFamily}
-                            fontWeight={AppStyles.robotoMedium.fontWeight}
-                            onPress={handleFormSubmit}
-                            raised={false}
-                            textStyle={{ fontSize: AppFonts.scaleFont(18), }}
-                            title={'Submit'}
-                        />
-                        :
-                        <Button
-                            backgroundColor={AppColors.white}
-                            buttonStyle={{
-                                alignSelf:       'center',
-                                borderRadius:    5,
-                                marginBottom:    AppSizes.padding,
-                                paddingVertical: AppSizes.paddingMed,
-                                width:           AppSizes.screen.widthTwoThirds,
-                            }}
-                            color={AppColors.zeplin.lightGrey}
-                            fontFamily={AppStyles.robotoMedium.fontFamily}
-                            fontWeight={AppStyles.robotoMedium.fontWeight}
-                            onPress={() => null}
-                            outlined
-                            textStyle={{ fontSize: AppFonts.scaleFont(18), }}
-                            title={'Select an Option'}
-                        />
-                    }
+                    <Button
+                        backgroundColor={isFormValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                        buttonStyle={{
+                            alignSelf:       'center',
+                            borderRadius:    5,
+                            marginBottom:    AppSizes.padding,
+                            paddingVertical: AppSizes.paddingMed,
+                            width:           AppSizes.screen.widthTwoThirds,
+                        }}
+                        color={isFormValid ? AppColors.white : AppColors.zeplin.lightGrey}
+                        fontFamily={AppStyles.robotoMedium.fontFamily}
+                        fontWeight={AppStyles.robotoMedium.fontWeight}
+                        onPress={() => isFormValid ? handleFormSubmit() : null}
+                        outlined
+                        textStyle={{ fontSize: AppFonts.scaleFont(18), }}
+                        title={isFormValid ? 'Submit' : 'Select an Option'}
+                    />
                 </ScrollView>
+                <SlideUpPanel
+                    expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
+                    isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
+                    isSlideUpPanelExpanded={this.state.isSlideUpPanelExpanded}
+                    toggleSlideUpPanel={isExpanded => this._toggleSlideUpPanel(isExpanded)}
+                />
             </View>
         )
     }
@@ -545,9 +530,11 @@ ReadinessSurvey.propTypes = {
     typicalSessions:           PropTypes.array,
     user:                      PropTypes.object.isRequired,
 };
+
 ReadinessSurvey.defaultProps = {
     typicalSession: [],
 };
+
 ReadinessSurvey.componentName = 'ReadinessSurvey';
 
 /* Export Component ================================================================== */

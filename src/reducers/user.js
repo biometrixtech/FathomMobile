@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-04-23 03:55:33 
+ * @Author: Vir Desai
+ * @Date: 2018-04-23 03:55:33
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-20 18:11:00
  */
@@ -30,6 +30,10 @@ export default function userReducer(state = initialState, action) {
     case Actions.STOP_REQUEST:
         return Object.assign({}, state, {
             loading: false
+        });
+    case Actions.UPDATE_FIRST_TIME_EXPERIENCE:
+        return Object.assign({}, state, {
+            firstTimeExperience: action.data
         });
     default:
         return state;

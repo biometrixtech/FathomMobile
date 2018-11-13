@@ -10,11 +10,12 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import { Animated, Alert, BackHandler, Easing, Platform, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
 import Toast, { DURATION, } from 'react-native-easy-toast';
+import _ from 'lodash';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles, UserAccount, } from '../../constants';
@@ -24,7 +25,7 @@ import { AppUtil, } from '../../lib';
 import { ble as BLEActions, user as UserActions, } from '../../actions';
 
 // Components
-import { Animated, Alert, BackHandler, Easing, Platform, View, } from 'react-native';
+import { JoinATeamModal, } from './pages';
 
 /* Component ==================================================================== */
 class Settings extends Component {
@@ -36,6 +37,7 @@ class Settings extends Component {
         logout:                         PropTypes.func.isRequired,
         network:                        PropTypes.object.isRequired,
         user:                           PropTypes.object.isRequired,
+        userJoinAccount:                PropTypes.func.isRequired,
     }
 
     static defaultProps = {}
@@ -43,7 +45,32 @@ class Settings extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isUnpairing: false,
+            isFormSubmitting:     false,
+            isJoinATeamModalOpen: false,
+            isUnpairing:          false,
+            resultMsg:            {
+                error:   '',
+                status:  '',
+                success: '',
+            },
+            form_values: {
+                code: '',
+            },
+            teamName: '',
+        };
+        this.defaultState = {
+            isFormSubmitting:     false,
+            isJoinATeamModalOpen: false,
+            isUnpairing:          false,
+            resultMsg:            {
+                error:   '',
+                status:  '',
+                success: '',
+            },
+            form_values: {
+                code: '',
+            },
+            teamName: '',
         };
     }
 
@@ -120,6 +147,7 @@ class Settings extends Component {
                     text:    'Yes',
                     onPress: () => {
                         return UserActions.clearUserData()
+                            .then(res => this.refs.toast.show('Your account has been reset!', (DURATION.LENGTH_SHORT * 2)))
                             .catch(err => this._alertResetError(err));
                     }
                 },
@@ -224,6 +252,47 @@ class Settings extends Component {
         )
     }
 
+    _toggleJoinATeamModal = () => {
+        let newState = _.cloneDeep(this.defaultState);
+        newState.isJoinATeamModalOpen = !this.state.isJoinATeamModalOpen;
+        this.setState(newState);
+    }
+
+    _handleFormChange = (name, value) => {
+        let newFormFields = _.update( this.state.form_values, name, () => value);
+        this.setState({
+            ['form_values']: newFormFields,
+        });
+    }
+
+    _handleUpdateResultMsg = (name, value) => {
+        let newFormFields = _.update( this.state.resultMsg, name, () => value);
+        this.setState({
+            ['resultMsg']: newFormFields,
+        });
+    }
+
+    _handleFormSubmit = () => {
+        let code = this.state.form_values.code;
+        if(code.length > 0) {
+            this.setState(
+                { isFormSubmitting: true, },
+                () => {
+                    this.props.userJoinAccount(this.props.user.id, { account_code: code, })
+                        .then(res => {
+                            this.setState({ isFormSubmitting: false, teamName: res.account.name, });
+                        })
+                        .catch(err => {
+                            this.setState({ isFormSubmitting: false, });
+                            this._handleUpdateResultMsg('error', 'invalid code, please try again');
+                        });
+                }
+            );
+        } else {
+            this._handleUpdateResultMsg('error', 'please enter a valid code');
+        }
+    }
+
     render = () => {
         const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
         const userObj = this.props.user ? this.props.user : false;
@@ -286,16 +355,13 @@ class Settings extends Component {
                     leftIcon={
                         <TabIcon
                             color={AppColors.black}
-                            icon={'power-settings-new'}
+                            icon={'account-group'}
                             size={24}
+                            type={'material-community'}
                         />
                     }
-                    onPress={() =>
-                        this.props.logout(this.props.user.id)
-                            .then(() => {Actions.start();})
-                            .catch(err => this._handleLogoutAlert(err))
-                    }
-                    title={'LOGOUT'}
+                    onPress={() => this._toggleJoinATeamModal()}
+                    title={'JOIN A TEAM'}
                     titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
                 />
                 {
@@ -331,9 +397,37 @@ class Settings extends Component {
                         :
                         null
                 }
+                <ListItem
+                    chevronColor={AppColors.black}
+                    containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
+                    leftIcon={
+                        <TabIcon
+                            color={AppColors.black}
+                            icon={'power-settings-new'}
+                            size={24}
+                        />
+                    }
+                    onPress={() =>
+                        this.props.logout(this.props.user.id)
+                            .then(() => {Actions.start();})
+                            .catch(err => this._handleLogoutAlert(err))
+                    }
+                    title={'LOGOUT'}
+                    titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
+                />
                 <Toast
                     position={'bottom'}
                     ref={'toast'}
+                />
+                <JoinATeamModal
+                    code={this.state.form_values.code}
+                    handleFormChange={this._handleFormChange}
+                    handleFormSubmit={() => this._handleFormSubmit()}
+                    handleToggleModal={() => this._toggleJoinATeamModal()}
+                    isFormSubmitting={this.state.isFormSubmitting}
+                    isOpen={this.state.isJoinATeamModalOpen}
+                    resultMsg={this.state.resultMsg}
+                    teamName={this.state.teamName}
                 />
             </View>
         );

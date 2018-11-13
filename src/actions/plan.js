@@ -31,6 +31,7 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
     store.dispatch({
         type:   Actions.UPDATE_LAST_OPENED,
         userId: userId,
+        date:   moment().format(),
     });
     // continue logic
     let currentState = store.getState();
