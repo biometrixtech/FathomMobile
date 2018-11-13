@@ -85,15 +85,7 @@ class AreasOfSoreness extends Component {
             toggleSlideUpPanel,
             user,
         } = this.props;
-        let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, (u, i) => _.findIndex(soreBodyParts, o => o.body_part === i) === -1);
-        let newBodyPartMap = _.filter(filteredBodyPartMap, o => {
-            let itemStateFiltered = _.filter(soreBodyParts.body_parts, {body_part: o.index});
-            return o.order &&
-                _.findIndex(soreBodyParts.body_parts, u => u.body_part === o.index && u.side === 0) === -1 &&
-                (itemStateFiltered.length === 1 || itemStateFiltered.length === 0);
-        });
-        let areaOfSorenessClicked = _.filter(soreBodyPartsState, bodyPartState => _.findIndex(soreBodyParts.body_parts, bodyPartProp => bodyPartProp.body_part === bodyPartState.body_part && bodyPartProp.side === bodyPartState.side) === -1);
-        let groupedNewBodyPartMap = _.groupBy(newBodyPartMap, 'location');
+        let { areaOfSorenessClicked, groupedNewBodyPartMap, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState);
         return(
             <View>
                 <Spacer size={30} />
@@ -231,7 +223,9 @@ AreasOfSoreness.propTypes = {
     surveyObject:              PropTypes.object,
     user:                      PropTypes.object.isRequired,
 };
+
 AreasOfSoreness.defaultProps = {};
+
 AreasOfSoreness.componentName = 'AreasOfSoreness';
 
 /* Export Component ================================================================== */

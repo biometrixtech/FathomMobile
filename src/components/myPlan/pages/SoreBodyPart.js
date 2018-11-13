@@ -21,6 +21,7 @@ import { TouchableOpacity, View, } from 'react-native';
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
 import { FathomSlider, SVGImage, Spacer, TabIcon, Text, Tooltip, } from '../../custom';
+import { PlanLogic, } from '../../../lib';
 import { ScaleButton } from './';
 
 // import third-party libraries
@@ -91,29 +92,13 @@ class SoreBodyPart extends Component {
             surveyObject,
             toggleSlideUpPanel,
         } = this.props;
-        let bodyPartSorenessIndex = _.findIndex(surveyObject.soreness, o => (o.body_part === bodyPart.body_part || o.body_part === bodyPart.index) && o.side === bodyPartSide);
-        let bodyPartMap = bodyPart.body_part ? MyPlanConstants.bodyPartMapping[bodyPart.body_part] : MyPlanConstants.bodyPartMapping[bodyPart.index];
-        let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
-        let sorenessPainMapping =
-            bodyPartGroup && bodyPartGroup === 'muscle' && this.state.type.length > 0 ?
-                MyPlanConstants.muscleLevels[this.state.type]
-                : bodyPartGroup && bodyPartGroup === 'joint' ?
-                    MyPlanConstants.jointLevels
-                    :
-                    [];
-        let helpingVerb = bodyPartMap ? bodyPartMap.helping_verb : '';
-        let mainBodyPartName = bodyPartMap ? bodyPartMap.label : '';
-        if (mainBodyPartName.slice(-1) === 's' && bodyPartMap.bilateral && !!bodyPartSide) {
-            if (mainBodyPartName === 'Achilles') {
-                // do nothing
-            } else if (mainBodyPartName === 'Calves') {
-                mainBodyPartName = 'Calf';
-            } else {
-                mainBodyPartName = mainBodyPartName.slice(0, -1);
-            }
-            helpingVerb = 'is';
-        }
-        let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'left ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'right ' : ''}${mainBodyPartName.toLowerCase()}`;
+        let {
+            bodyPartMap,
+            bodyPartName,
+            bodyPartGroup,
+            helpingVerb,
+            sorenessPainMapping,
+        } = PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, this.state.type);
         return(
             <View>
                 { index ?

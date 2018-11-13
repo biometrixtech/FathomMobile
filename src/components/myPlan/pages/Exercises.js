@@ -111,11 +111,13 @@ Exercises.propTypes = {
     toggleCompletedAMPMRecoveryModal: PropTypes.func.isRequired,
     toggleSelectedExercise:           PropTypes.func.isRequired,
 };
+
 Exercises.defaultProps = {
     isFSCompletedValid:   false,
     isFunctionalStrength: false,
     isPrep:               false,
 };
+
 Exercises.componentName = 'Exercises';
 
 /* Export Component ================================================================== */

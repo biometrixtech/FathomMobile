@@ -21,6 +21,7 @@ import { Image, ScrollView, TouchableOpacity, View, } from 'react-native';
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants, AppFonts, } from '../../../constants';
 import { Button, FathomSlider, Spacer, TabIcon, Text, } from '../../custom';
+import { PlanLogic, } from '../../../lib';
 
 // Components
 import { AreasOfSoreness, ScaleButton, SlideUpPanel, SoreBodyPart, SportScheduleBuilder, } from './';
@@ -78,23 +79,7 @@ class PostSessionSurvey extends Component {
             typicalSessions,
             user,
         } = this.props;
-        let filteredAreasOfSoreness = _.filter(postSession.soreness, o => {
-            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
-            return doesItInclude.length === 0;
-        });
-        let filteredSoreBodyParts = _.filter(postSession.soreness, o => {
-            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
-            return doesItInclude.length > 0;
-        });
-        let areQuestionsValid = postSession.RPE > 0 && postSession.event_date;
-        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
-        let areAreasOfSorenessValid = (
-            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
-            (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
-        );
-        let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;
-        let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
-        newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
+        let { isFormValid, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts);
         return (
             <View style={{flex: 1}}>
                 <ScrollView ref={ref => {this.scrollViewRef = ref}}>
@@ -264,7 +249,9 @@ PostSessionSurvey.propTypes = {
     typicalSessions:               PropTypes.array.isRequired,
     user:                          PropTypes.object.isRequired,
 };
+
 PostSessionSurvey.defaultProps = {};
+
 PostSessionSurvey.componentName = 'PostSessionSurvey';
 
 /* Export Component ================================================================== */

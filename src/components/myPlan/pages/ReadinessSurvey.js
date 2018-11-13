@@ -98,54 +98,63 @@ class ReadinessSurvey extends Component {
             typicalSessions,
             user,
         } = this.props;
-        let split_afternoon = 12 // 24hr time to split the afternoon
-        let split_evening = 17 // 24hr time to split the evening
-        let hourOfDay = moment().get('hour');
-        let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'AFTERNOON' : hourOfDay >= split_evening ? 'EVENING' : 'MORNING';
-        let filteredAreasOfSoreness = _.filter(dailyReadiness.soreness, o => {
-            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
-            return doesItInclude.length === 0;
-        });
-        let filteredSoreBodyParts = _.filter(dailyReadiness.soreness, o => {
-            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
-            return doesItInclude.length > 0;
-        });
-        let areQuestionsValid = dailyReadiness.readiness > 0 && dailyReadiness.sleep_quality > 0;
-        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
-        let areAreasOfSorenessValid = (
-            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
-            (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
-        );
-        let selectedSportPositions = dailyReadiness.current_sport_name !== null ? _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name).positions : [];
-        const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
-        const isFirstFunctionalStrength = isFunctionalStrengthEligible &&
-            (!soreBodyParts.current_sport_name && soreBodyParts.current_sport_name !== 0) &&
-            (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
-        const isSecondFunctionalStrength = isFunctionalStrengthEligible &&
-            (
-                soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0 ||
-                soreBodyParts.current_sport_name === 0 || soreBodyParts.current_sport_name > 0
-            ) &&
-            (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
-        let isFunctionalStrengthTargetValid = dailyReadiness.current_sport_name !== null ?
-            dailyReadiness.current_sport_name !== null && (dailyReadiness.current_position !== null || !selectedSportPositions)
-            : dailyReadiness.current_sport_name === null ?
-                dailyReadiness.current_position !== null
-                :
-                false;
-        let isFunctionalStrengthValid = isFunctionalStrengthEligible && isFirstFunctionalStrength ?
-            dailyReadiness.wants_functional_strength !== null && isFunctionalStrengthTargetValid
-            : isFunctionalStrengthEligible && isSecondFunctionalStrength ?
-                dailyReadiness.wants_functional_strength !== null
-                :
-                true;
-        let functionalStrengthTodaySubtext = isFunctionalStrengthEligible ?
-            `(${soreBodyParts.completed_functional_strength_sessions}/2 completed in last 7 days${soreBodyParts.completed_functional_strength_sessions === 2 ? ', but you can go for 3!': ''})`
-            :
-            '';
-        let isFormValid = isFunctionalStrengthValid && areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
-        let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
-        newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
+        // let split_afternoon = 12 // 24hr time to split the afternoon
+        // let split_evening = 17 // 24hr time to split the evening
+        // let hourOfDay = moment().get('hour');
+        // let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'AFTERNOON' : hourOfDay >= split_evening ? 'EVENING' : 'MORNING';
+        // let filteredAreasOfSoreness = _.filter(dailyReadiness.soreness, o => {
+        //     let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
+        //     return doesItInclude.length === 0;
+        // });
+        // let filteredSoreBodyParts = _.filter(dailyReadiness.soreness, o => {
+        //     let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
+        //     return doesItInclude.length > 0;
+        // });
+        // let areQuestionsValid = dailyReadiness.readiness > 0 && dailyReadiness.sleep_quality > 0;
+        // let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
+        // let areAreasOfSorenessValid = (
+        //     _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
+        //     (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
+        // );
+        // let selectedSportPositions = dailyReadiness.current_sport_name !== null ? _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name).positions : [];
+        // const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
+        // const isFirstFunctionalStrength = isFunctionalStrengthEligible &&
+        //     (!soreBodyParts.current_sport_name && soreBodyParts.current_sport_name !== 0) &&
+        //     (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
+        // const isSecondFunctionalStrength = isFunctionalStrengthEligible &&
+        //     (
+        //         soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0 ||
+        //         soreBodyParts.current_sport_name === 0 || soreBodyParts.current_sport_name > 0
+        //     ) &&
+        //     (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
+        // let isFunctionalStrengthTargetValid = dailyReadiness.current_sport_name !== null ?
+        //     dailyReadiness.current_sport_name !== null && (dailyReadiness.current_position !== null || !selectedSportPositions)
+        //     : dailyReadiness.current_sport_name === null ?
+        //         dailyReadiness.current_position !== null
+        //         :
+        //         false;
+        // let isFunctionalStrengthValid = isFunctionalStrengthEligible && isFirstFunctionalStrength ?
+        //     dailyReadiness.wants_functional_strength !== null && isFunctionalStrengthTargetValid
+        //     : isFunctionalStrengthEligible && isSecondFunctionalStrength ?
+        //         dailyReadiness.wants_functional_strength !== null
+        //         :
+        //         true;
+        // let functionalStrengthTodaySubtext = isFunctionalStrengthEligible ?
+        //     `(${soreBodyParts.completed_functional_strength_sessions}/2 completed in last 7 days${soreBodyParts.completed_functional_strength_sessions === 2 ? ', but you can go for 3!': ''})`
+        //     :
+        //     '';
+        // let isFormValid = isFunctionalStrengthValid && areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
+        // let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
+        // newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
+        let {
+            functionalStrengthTodaySubtext,
+            isFirstFunctionalStrength,
+            isFormValid,
+            isSecondFunctionalStrength,
+            newSoreBodyParts,
+            partOfDay,
+            selectedSportPositions,
+        } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts);
         let questionCounter = 0;
         /*eslint no-return-assign: 0*/
         return(

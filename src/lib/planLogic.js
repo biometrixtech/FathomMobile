@@ -244,6 +244,188 @@ const PlanLogic = {
         };
     },
 
+    /**
+      * Areas of Soreness Render Logic
+      * - AreasOfSoreness
+      */
+    handleAreaOfSorenessRenderLogic: (soreBodyParts, soreBodyPartsState) => {
+        let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, (u, i) => _.findIndex(soreBodyParts, o => o.body_part === i) === -1);
+        let newBodyPartMap = _.filter(filteredBodyPartMap, o => {
+            let itemStateFiltered = _.filter(soreBodyParts.body_parts, {body_part: o.index});
+            return o.order &&
+                _.findIndex(soreBodyParts.body_parts, u => u.body_part === o.index && u.side === 0) === -1 &&
+                (itemStateFiltered.length === 1 || itemStateFiltered.length === 0);
+        });
+        let areaOfSorenessClicked = _.filter(soreBodyPartsState, bodyPartState => _.findIndex(soreBodyParts.body_parts, bodyPartProp => bodyPartProp.body_part === bodyPartState.body_part && bodyPartProp.side === bodyPartState.side) === -1);
+        let groupedNewBodyPartMap = _.groupBy(newBodyPartMap, 'location');
+        return {
+            areaOfSorenessClicked,
+            groupedNewBodyPartMap,
+        };
+    },
+
+    /**
+      * Post Session Survey Render Logic
+      * - PostSessionSurvey
+      */
+    handlePostSessionSurveyRenderLogic: (postSession, soreBodyParts) => {
+        let filteredAreasOfSoreness = _.filter(postSession.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
+            return doesItInclude.length === 0;
+        });
+        let filteredSoreBodyParts = _.filter(postSession.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
+            return doesItInclude.length > 0;
+        });
+        let areQuestionsValid = postSession.RPE > 0 && postSession.event_date;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
+        let areAreasOfSorenessValid = (
+            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
+            (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
+        );
+        let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;
+        let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
+        newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
+        return {
+            isFormValid,
+            newSoreBodyParts,
+        };
+    },
+
+    /**
+      * Readiness Survey Render Logic
+      * - ReadinessSurvey
+      */
+    handleReadinessSurveyRenderLogic: (dailyReadiness, soreBodyParts) => {
+        let split_afternoon = 12 // 24hr time to split the afternoon
+        let split_evening = 17 // 24hr time to split the evening
+        let hourOfDay = moment().get('hour');
+        let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'AFTERNOON' : hourOfDay >= split_evening ? 'EVENING' : 'MORNING';
+        let filteredAreasOfSoreness = _.filter(dailyReadiness.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
+            return doesItInclude.length === 0;
+        });
+        let filteredSoreBodyParts = _.filter(dailyReadiness.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
+            return doesItInclude.length > 0;
+        });
+        let areQuestionsValid = dailyReadiness.readiness > 0 && dailyReadiness.sleep_quality > 0;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
+        let areAreasOfSorenessValid = (
+            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
+            (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
+        );
+        let selectedSportPositions = dailyReadiness.current_sport_name !== null ? _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name).positions : [];
+        const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
+        const isFirstFunctionalStrength = isFunctionalStrengthEligible &&
+            (!soreBodyParts.current_sport_name && soreBodyParts.current_sport_name !== 0) &&
+            (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
+        const isSecondFunctionalStrength = isFunctionalStrengthEligible &&
+            (
+                soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0 ||
+                soreBodyParts.current_sport_name === 0 || soreBodyParts.current_sport_name > 0
+            ) &&
+            (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
+        let isFunctionalStrengthTargetValid = dailyReadiness.current_sport_name !== null ?
+            dailyReadiness.current_sport_name !== null && (dailyReadiness.current_position !== null || !selectedSportPositions)
+            : dailyReadiness.current_sport_name === null ?
+                dailyReadiness.current_position !== null
+                :
+                false;
+        let isFunctionalStrengthValid = isFunctionalStrengthEligible && isFirstFunctionalStrength ?
+            dailyReadiness.wants_functional_strength !== null && isFunctionalStrengthTargetValid
+            : isFunctionalStrengthEligible && isSecondFunctionalStrength ?
+                dailyReadiness.wants_functional_strength !== null
+                :
+                true;
+        let functionalStrengthTodaySubtext = isFunctionalStrengthEligible ?
+            `(${soreBodyParts.completed_functional_strength_sessions}/2 completed in last 7 days${soreBodyParts.completed_functional_strength_sessions === 2 ? ', but you can go for 3!': ''})`
+            :
+            '';
+        let isFormValid = isFunctionalStrengthValid && areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
+        let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
+        newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
+        return {
+            functionalStrengthTodaySubtext,
+            isFirstFunctionalStrength,
+            isFormValid,
+            isSecondFunctionalStrength,
+            newSoreBodyParts,
+            partOfDay,
+            selectedSportPositions,
+        };
+    },
+
+    /**
+      * Sore Body Part Render Logic
+      * - SoreBodyPart
+      */
+    handleSoreBodyPartRenderLogic: (bodyPart, bodyPartSide, pageStateType) => {
+        let bodyPartMap = bodyPart.body_part ? MyPlanConstants.bodyPartMapping[bodyPart.body_part] : MyPlanConstants.bodyPartMapping[bodyPart.index];
+        let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
+        let sorenessPainMapping =
+            bodyPartGroup && bodyPartGroup === 'muscle' && pageStateType.length > 0 ?
+                MyPlanConstants.muscleLevels[pageStateType]
+                : bodyPartGroup && bodyPartGroup === 'joint' ?
+                    MyPlanConstants.jointLevels
+                    :
+                    [];
+        let helpingVerb = bodyPartMap ? bodyPartMap.helping_verb : '';
+        let mainBodyPartName = bodyPartMap ? bodyPartMap.label : '';
+        if (mainBodyPartName.slice(-1) === 's' && bodyPartMap.bilateral && !!bodyPartSide) {
+            if (mainBodyPartName === 'Achilles') {
+                // do nothing
+            } else if (mainBodyPartName === 'Calves') {
+                mainBodyPartName = 'Calf';
+            } else {
+                mainBodyPartName = mainBodyPartName.slice(0, -1);
+            }
+            helpingVerb = 'is';
+        }
+        let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'left ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'right ' : ''}${mainBodyPartName.toLowerCase()}`;
+        return {
+            bodyPartMap,
+            bodyPartName,
+            bodyPartGroup,
+            helpingVerb,
+            sorenessPainMapping,
+        };
+    },
+
+    /**
+      * Sport Schedule Builder Render Logic
+      * - SportScheduleBuilder
+      */
+    handleSportScheduleBuilderRenderLogic: (postSession, pageState) => {
+        let filteredTeamSports = _.filter(MyPlanConstants.teamSports, o => o.order && o.order > 0);
+        let teamSports = _.orderBy(filteredTeamSports, ['order'], ['asc']);
+        let filteredStrengthConditioningTypes = _.filter(MyPlanConstants.strengthConditioningTypes, o => o.order && o.order > 0);
+        let strengthConditioningTypes = _.orderBy(filteredStrengthConditioningTypes, ['order'], ['asc']);
+        let filteredSessionTypes = _.filter(MyPlanConstants.availableSessionTypes, o => o.order && o.order > 0);
+        let sessionTypes = _.orderBy(filteredSessionTypes, ['order'], ['asc']);
+        let filteredSport = postSession.sport_name || postSession.sport_name === 0 ? _.filter(teamSports, ['index', postSession.sport_name]) : postSession.strength_and_conditioning_type || postSession.strength_and_conditioning_type === 0 ? _.filter(strengthConditioningTypes, ['index', postSession.strength_and_conditioning_type]) : null;
+        let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0].label.toLowerCase().replace(' training', '') : '';
+        let filteredSessionType = postSession.session_type || postSession.session_type === 0 ? _.filter(sessionTypes, ['index', postSession.session_type]) : null;
+        let dateTimeDurationFromState = PlanLogic.handleGetDateTimeDurationFromState(pageState.durationValueGroups, pageState.isFormValid, pageState.timeValueGroups);
+        let selectedStartTime = dateTimeDurationFromState.event_date;
+        let selectedDuration = dateTimeDurationFromState.duration;
+        let getFinalSportTextString = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, this.props.postSession, pageState.isFormValid, pageState.step, selectedStartTime, selectedDuration);
+        let sportText = getFinalSportTextString.sportText;
+        let startTimeText = getFinalSportTextString.startTimeText;
+        let durationText = getFinalSportTextString.durationText;
+        let isSport = postSession.sport_name > 0 || postSession.sport_name === 0 ? true : false;
+        let filteredSportSessionTypes = isSport ? _.filter(sessionTypes, type => !type.ignoreSelection) : sessionTypes;
+        return {
+            durationText,
+            filteredSportSessionTypes,
+            selectedSport,
+            sportText,
+            startTimeText,
+            strengthConditioningTypes,
+            teamSports,
+        };
+    },
+
 };
 
 /* Export ==================================================================== */
