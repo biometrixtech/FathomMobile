@@ -183,8 +183,8 @@ class UserAccount extends Component {
             this.setState({
                 accordionSection: section,
                 coachContent:     errorsArray.length > 0 ? coachesMessage : '',
-                isAboutFormValid: isAccountAboutValid,
-                isInfoFormValid:  isAccountInfoValid,
+                isAboutFormValid: isAccountAboutValid.isValid,
+                isInfoFormValid:  isAccountInfoValid.isValid,
             });
         }
     };
@@ -195,9 +195,13 @@ class UserAccount extends Component {
 
     _updateErrorMessage = (isAbout) => {
         this.scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
-        let coachesMessage = isAbout ? onboardingUtils.isUserAboutValid(this.props.user).errorsArray : onboardingUtils.isUserAccountInformationValid(this.props.user, this.props.isUpdatingUser).errorsArray;
+        let validationObj = isAbout ? onboardingUtils.isUserAboutValid(this.props.user) : onboardingUtils.isUserAccountInformationValid(this.props.user, this.props.isUpdatingUser);
+        let isAboutFormValid = isAbout ? validationObj.isValid : this.state.isAboutFormValid;
+        let isInfoFormValid = isAbout ? this.state.isInfoFormValid : validationObj.isValid;
         this.setState({
-            coachContent: coachesMessage,
+            coachContent: validationObj.errorsArray,
+            isAboutFormValid,
+            isInfoFormValid,
         });
     };
 
