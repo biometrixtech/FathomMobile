@@ -276,7 +276,7 @@ class SoreBodyPart extends Component {
                     </View>
                 </Tooltip>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.padding}}>
-                    { bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint') ?
+                    { bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint') && this.state.type !== 'all-good' ?
                         _.map(sorenessPainMapping, (value, key) => {
                             if(key === 0) { return; }
                             let sorenessPainScaleMappingValue = (
@@ -307,14 +307,16 @@ class SoreBodyPart extends Component {
                                 />
                             )
                         })
-                        :
-                        <Text
-                            onPress={() => toggleSlideUpPanel(false)}
-                            robotoLight
-                            style={{color: AppColors.primary.yellow.hundredPercent, textDecorationLine: 'underline',}}
-                        >
-                            {'What\'s the difference?'}
-                        </Text>
+                        : bodyPartGroup && bodyPartGroup === 'muscle' ?
+                            <Text
+                                onPress={() => toggleSlideUpPanel(false)}
+                                robotoLight
+                                style={{color: AppColors.primary.yellow.hundredPercent, textDecorationLine: 'underline',}}
+                            >
+                                {'What\'s the difference?'}
+                            </Text>
+                            :
+                            null
                     }
                 </View>
             </View>
