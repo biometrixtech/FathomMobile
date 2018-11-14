@@ -47,8 +47,8 @@ const DEBUG_MODE = AppConfig.DEV;
 
 // Number each API request (used for debugging)
 let requestCounter = 0;
+let retryCounter = 0;
 let unauthorizedCounter = 0;
-
 
 /* Helper Functions ==================================================================== */
 /**
@@ -256,6 +256,14 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                             return Actions.login();
                         });
                 }
+
+                // retry fetcher if we get a server error
+                if(rawRes && rawRes.status >= 500 && retryCounter < 2) {
+                    retryCounter += 1;
+                    return fetcher(method, endpoint, params, body, api_enum);
+                }
+                // if we get here reset counter
+                retryCounter = 0;
 
                 // Only continue if the header is successful
                 if (rawRes && /20[012]/.test(`${rawRes.status}`)) { return jsonRes; }

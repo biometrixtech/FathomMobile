@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Image, Platform, View, } from 'react-native';
+import { Image, Platform, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -36,7 +36,6 @@ class Tutorial extends Component {
             activeDotStyle:  {backgroundColor: AppColors.zeplin.darkGrey,},
             buttonTextStyle: {color: AppColors.zeplin.darkGrey,},
             dotStyle:        {backgroundColor: AppColors.zeplin.lightGrey,},
-            loading:         false,
             showSkipButton:  false,
             slides:          onboardingUtils.getTutorialSlides(),
             uniqueValue:     0,
@@ -82,18 +81,10 @@ class Tutorial extends Component {
     }
 
     _onDone = () => {
-        this.setState({ loading: true, });
         let payload = {};
         payload.onboarding_status = ['tutorial-tutorial'];
-        this.props.updateUser(payload, this.props.user.id)
-            .then(userRes => {
-                this.setState({ loading: false, });
-                AppUtil.routeOnLogin(userRes.user);
-            })
-            .catch(err => {
-                this.setState({ loading: false, });
-                AppUtil.handleAPIErrorAlert(ErrorMessages.updatingUser);
-            });
+        this.props.updateUser(payload, this.props.user.id);
+        AppUtil.routeOnLogin({});
     }
 
     _onSkip = () => {
@@ -270,13 +261,6 @@ class Tutorial extends Component {
                     skipLabel={'skip'}
                     slides={this.state.slides}
                 />
-                { this.state.loading ?
-                    <ActivityIndicator
-                        color={AppColors.primary.yellow.hundredPercent}
-                        size={'large'}
-                        style={[AppStyles.activityIndicator]}
-                    /> : null
-                }
             </View>
         )
     }
