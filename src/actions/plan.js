@@ -183,7 +183,7 @@ const postSessionSurvey = postSessionObj => {
                 data: newPlan,
             });
             return myPlanData;
-        }).then(myPlanData => Promise.resolve(myPlanData))
+        }).then(myPlanData => Promise.resolve(newPlan))
         .catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);

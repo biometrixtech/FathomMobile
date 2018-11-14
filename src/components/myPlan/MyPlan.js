@@ -112,10 +112,11 @@ class MyPlan extends Component {
                 wants_functional_strength: null,
             },
             isCompletedAMPMRecoveryModalOpen: true,
-            isExerciseListRefreshing:         false,
             isFunctionalStrengthCollapsed:    true,
             isPostSessionSurveyModalOpen:     false,
+            isPrepCalculating:                false,
             isReadinessSurveyModalOpen:       false,
+            isRecoverCalculating:             false,
             isSelectedExerciseModalOpen:      false,
             page0:                            {},
             page1:                            {},
@@ -324,7 +325,7 @@ class MyPlan extends Component {
                         });
                     }
                     if(pushNotificationUpdate.updateExerciseList) {
-                        this._handleExerciseListRefresh();
+                        this._handleExerciseListRefresh(true);
                     }
                     if(pushNotificationUpdate.updatePushNotificationFlag) {
                         AppUtil.updatePushNotificationFlag();
@@ -376,6 +377,7 @@ class MyPlan extends Component {
                         sleep_quality: 0,
                         soreness:      [],
                     },
+                    isPrepCalculating:          true,
                     isReadinessSurveyModalOpen: false,
                     loading:                    false,
                     prepare:                    newPrepareObject,
@@ -429,21 +431,25 @@ class MyPlan extends Component {
                 newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
                 newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
                 this.props.clearCompletedExercises();
-                this.setState({
-                    train:                        newTrainObject,
-                    isPostSessionSurveyModalOpen: false,
-                    loading:                      false,
-                    postSession:                  {
-                        description:                    '',
-                        duration:                       0,
-                        event_date:                     null,
-                        session_type:                   null,
-                        sport_name:                     null,
-                        strength_and_conditioning_type: null,
-                        RPE:                            0,
-                        soreness:                       [],
+                this.setState(
+                    {
+                        train:                        newTrainObject,
+                        isPostSessionSurveyModalOpen: false,
+                        isRecoverCalculating:         true,
+                        loading:                      false,
+                        postSession:                  {
+                            description:                    '',
+                            duration:                       0,
+                            event_date:                     null,
+                            session_type:                   null,
+                            sport_name:                     null,
+                            strength_and_conditioning_type: null,
+                            RPE:                            0,
+                            soreness:                       [],
+                        },
                     },
-                });
+                    () => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(response.daily_plans[0]))
+                );
             })
             .catch(error => {
                 this.setState({
@@ -541,10 +547,7 @@ class MyPlan extends Component {
         }
     }
 
-    _handleExerciseListRefresh = () => {
-        this.setState({
-            isExerciseListRefreshing: true
-        });
+    _handleExerciseListRefresh = shouldClearCompletedExercises => {
         let userId = this.props.user.id;
         this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
             .then(response => {
@@ -560,12 +563,15 @@ class MyPlan extends Component {
                     postPracticeSurveys: dailyPlanObj ? dailyPlanObj.training_sessions : [],
                 });
                 this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
-                this.props.clearCompletedExercises();
+                if(shouldClearCompletedExercises) {
+                    this.props.clearCompletedExercises();
+                }
                 this.setState({
-                    isExerciseListRefreshing: false,
-                    prepare:                  newPrepare,
-                    recover:                  newRecover,
-                    train:                    newTrain,
+                    isPrepCalculating:    false,
+                    isRecoverCalculating: false,
+                    prepare:              newPrepare,
+                    recover:              newRecover,
+                    train:                newTrain,
                 });
                 // pull areas of soreness
                 this.props.getSoreBodyParts()
@@ -584,9 +590,6 @@ class MyPlan extends Component {
             })
             .catch(error => {
                 // console.log('error',error);
-                this.setState({
-                    isExerciseListRefreshing: false,
-                });
             });
     }
 
@@ -821,10 +824,40 @@ class MyPlan extends Component {
         );
     }
 
+    renderCalculatingActiveRecoveryBlocks = (whenStyles, styles) => {
+        const { isPrepCalculating, isRecoverCalculating, } = this.state;
+        return(
+            <View style={{ flexDirection: 'row', }}>
+                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: whenStyles.activeRecoveryWhenBackgroundColor, borderColor: whenStyles.activeRecoveryWhenBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                    <Text h7 oswaldMedium style={{ color: whenStyles.activeRecoveryWhenHeaderColor, fontSize: AppFonts.scaleFont(12), paddingBottom: 5 }}>{'WHEN'}</Text>
+                    <Text h6 oswaldMedium style={{ color: whenStyles.activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(18) }}>{`ANYTIME\n${!isPrepCalculating && isRecoverCalculating ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
+                </View>
+                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryActiveTimeBackgroundColor, borderColor: styles.activeRecoveryActiveTimeBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                    <Text h7 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
+                    <View style={{ alignItems: 'center', flexDirection: 'row', flex: 1, }}>
+                        <View style={{ backgroundColor: styles.subtextColor, borderRadius: 3, color: styles.subtextColor, height: AppFonts.scaleFont(32), width: AppSizes.padding, }} />
+                        <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
+                            <Text h7 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeSubtextColor, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
+                        </View>
+                    </View>
+                </View>
+                <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryBackgroundColor, borderColor: styles.activeRecoveryBorderColor, borderWidth: 1, borderRadius: 5 }}>
+                    <Text h7 oswaldMedium style={{ color: styles.activeRecoveryHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'IMPACT SCORE'}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
+                        <View style={{ backgroundColor: styles.subtextColor, borderRadius: 3, color: styles.subtextColor, height: AppFonts.scaleFont(32), width: AppSizes.padding, }} />
+                        <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
+                            <Text h7 oswaldMedium style={{ color: styles.subtextColor, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'/ 5'}</Text>
+                        </View>
+                    </View>
+                </View>
+            </View>
+        );
+    }
+
     renderPrepare = (index) => {
-        let { prepare } = this.state;
+        let { isPrepCalculating, prepare, } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
-        let { plan } = this.props;
+        let { plan, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && (dailyPlanObj.daily_readiness_survey_completed || prepare.isReadinessSurveyCompleted) ? true : false;
         // assuming AM/PM is switching to something for prepared vs recover
@@ -852,8 +885,8 @@ class MyPlan extends Component {
                 refreshControl={
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
-                        onRefresh={this._handleExerciseListRefresh}
-                        refreshing={this.state.isExerciseListRefreshing}
+                        onRefresh={() => this._handleExerciseListRefresh(false)}
+                        refreshing={false}
                         title={'Loading...'}
                         titleColor={AppColors.primary.yellow.hundredPercent}
                         tintColor={AppColors.primary.yellow.hundredPercent}
@@ -908,7 +941,7 @@ class MyPlan extends Component {
                                             color: AppColors.primary.yellow.hundredPercent,
                                             name:  'chevron-right',
                                             size:  AppFonts.scaleFont(24),
-                                            style: {flex: 1,},
+                                            style: { flex: 1, },
                                         }}
                                         outlined
                                         onPress={() => this._toggleReadinessSurvey()}
@@ -916,7 +949,7 @@ class MyPlan extends Component {
                                             color: AppColors.white,
                                             name:  'chevron-right',
                                             size:  AppFonts.scaleFont(24),
-                                            style: {flex: 1,},
+                                            style: { flex: 1, },
                                         }}
                                         textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                         title={'Start'}
@@ -942,7 +975,7 @@ class MyPlan extends Component {
                 />
                 {
                     /* eslint-disable indent */
-                    disabled ?
+                    disabled && !isPrepCalculating ?
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
@@ -953,6 +986,38 @@ class MyPlan extends Component {
                                         {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
                                     )
                                 }
+                            </View>
+                        </View>
+                    : disabled && isPrepCalculating ?
+                        <View style={{ flex: 1, flexDirection: 'row' }}>
+                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                            <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
+                                {
+                                    this.renderCalculatingActiveRecoveryBlocks(
+                                        {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
+                                        {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
+                                    )
+                                }
+                                <Spacer size={12}/>
+                                <Button
+                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                    buttonStyle={{width: '100%',}}
+                                    containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
+                                    color={AppColors.white}
+                                    fontFamily={AppStyles.robotoBold.fontFamily}
+                                    fontWeight={AppStyles.robotoBold.fontWeight}
+                                    loading={isPrepCalculating}
+                                    outlined
+                                    onPress={() => null}
+                                    rightIcon={{
+                                        color: AppColors.white,
+                                        name:  'chevron-right',
+                                        size:  AppFonts.scaleFont(24),
+                                        style: {flex: 1,},
+                                    }}
+                                    textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                                    title={'Calculating...'}
+                                />
                             </View>
                         </View>
                     : isActive ?
@@ -1036,8 +1101,6 @@ class MyPlan extends Component {
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
                                     handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'pre')}
-                                    handleExerciseListRefresh={this._handleExerciseListRefresh}
-                                    isExerciseListRefreshing={this.state.isExerciseListRefreshing}
                                     isLoading={this.state.loading}
                                     isPrep={true}
                                     toggleCompletedAMPMRecoveryModal={() => {
@@ -1158,9 +1221,9 @@ class MyPlan extends Component {
     };
 
     renderRecover = (index) => {
-        let { recover } = this.state;
+        let { isRecoverCalculating, recover, } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
-        let { plan } = this.props;
+        let { plan, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery ? dailyPlanObj.post_recovery : false;
         let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
@@ -1186,8 +1249,8 @@ class MyPlan extends Component {
                 refreshControl={
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
-                        onRefresh={this._handleExerciseListRefresh}
-                        refreshing={this.state.isExerciseListRefreshing}
+                        onRefresh={() => this._handleExerciseListRefresh(false)}
+                        refreshing={false}
                         title={'Loading...'}
                         titleColor={AppColors.primary.yellow.hundredPercent}
                         tintColor={AppColors.primary.yellow.hundredPercent}
@@ -1213,7 +1276,7 @@ class MyPlan extends Component {
                 />
                 {
                     /* eslint-disable indent */
-                    disabled ?
+                    disabled && !isRecoverCalculating ?
                         <View>
                             <View style={{ flex: 1, flexDirection: 'row', }}>
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
@@ -1230,6 +1293,38 @@ class MyPlan extends Component {
                             </View>
                             <Spacer size={35}/>
                             <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}>{activeRecoveryDisabledText}</Text>
+                        </View>
+                    : disabled || isRecoverCalculating ?
+                        <View style={{ flex: 1, flexDirection: 'row' }}>
+                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                            <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
+                                {
+                                    this.renderCalculatingActiveRecoveryBlocks(
+                                        {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
+                                        {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
+                                    )
+                                }
+                                <Spacer size={12}/>
+                                <Button
+                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                    buttonStyle={{width: '100%',}}
+                                    containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
+                                    color={AppColors.white}
+                                    fontFamily={AppStyles.robotoBold.fontFamily}
+                                    fontWeight={AppStyles.robotoBold.fontWeight}
+                                    loading={isRecoverCalculating}
+                                    outlined
+                                    onPress={() => null}
+                                    rightIcon={{
+                                        color: AppColors.white,
+                                        name:  'chevron-right',
+                                        size:  AppFonts.scaleFont(24),
+                                        style: {flex: 1,},
+                                    }}
+                                    textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                                    title={'Calculating...'}
+                                />
+                            </View>
                         </View>
                     : isActive ?
                         exerciseList.totalLength === 0 ?
@@ -1313,8 +1408,6 @@ class MyPlan extends Component {
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
                                     handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'post')}
-                                    handleExerciseListRefresh={this._handleExerciseListRefresh}
-                                    isExerciseListRefreshing={this.state.isExerciseListRefreshing}
                                     isLoading={this.state.loading}
                                     toggleCompletedAMPMRecoveryModal={() => {
                                         this.setState({ loading: true });
@@ -1554,8 +1647,6 @@ class MyPlan extends Component {
                         completedExercises={completedFSExercises}
                         exerciseList={fsExerciseList}
                         handleCompleteExercise={this._handleCompleteFSExercise}
-                        handleExerciseListRefresh={this._handleExerciseListRefresh}
-                        isExerciseListRefreshing={this.state.isExerciseListRefreshing}
                         isFSCompletedValid={isFSCompletedValid}
                         isFunctionalStrength={true}
                         isLoading={this.state.loading}
