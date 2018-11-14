@@ -15,7 +15,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, StyleSheet, View, } from 'react-native';
+import { Image, Platform, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
@@ -168,7 +168,7 @@ class UserAccountInfo extends Component {
                             />
                             <TabIcon
                                 color={AppColors.zeplin.lightGrey}
-                                containerStyle={[{height: '100%', position: 'absolute', right: 10, top: 0,}]}
+                                containerStyle={[{height: '100%', position: 'absolute', right: Platform.OS === 'ios' ? 10 : 20, top: 0,}]}
                                 icon={isPasswordSecure ? 'visibility' : 'visibility-off'}
                                 onPress={toggleShowPassword}
                                 size={24}
