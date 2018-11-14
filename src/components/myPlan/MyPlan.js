@@ -824,29 +824,29 @@ class MyPlan extends Component {
         );
     }
 
-    renderCalculatingActiveRecoveryBlocks = (whenStyles, styles) => {
+    renderCalculatingActiveRecoveryBlocks = () => {
         const { isPrepCalculating, isRecoverCalculating, } = this.state;
         return(
             <View style={{ flexDirection: 'row', }}>
-                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: whenStyles.activeRecoveryWhenBackgroundColor, borderColor: whenStyles.activeRecoveryWhenBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                    <Text h7 oswaldMedium style={{ color: whenStyles.activeRecoveryWhenHeaderColor, fontSize: AppFonts.scaleFont(12), paddingBottom: 5 }}>{'WHEN'}</Text>
-                    <Text h6 oswaldMedium style={{ color: whenStyles.activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(18) }}>{`ANYTIME\n${!isPrepCalculating && isRecoverCalculating ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
+                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, borderRadius: 5 }}>
+                    <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, fontSize: AppFonts.scaleFont(12), paddingBottom: 5 }}>{'WHEN'}</Text>
+                    <Text h6 oswaldMedium style={{ color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(18) }}>{`ANYTIME\n${!isPrepCalculating && isRecoverCalculating ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
                 </View>
-                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryActiveTimeBackgroundColor, borderColor: styles.activeRecoveryActiveTimeBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                    <Text h7 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
+                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, borderRadius: 5 }}>
+                    <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
                     <View style={{ alignItems: 'center', flexDirection: 'row', flex: 1, }}>
-                        <View style={{ backgroundColor: styles.subtextColor, borderRadius: 3, color: styles.subtextColor, height: AppFonts.scaleFont(32), width: AppSizes.padding, }} />
+                        <View style={{ backgroundColor: AppColors.zeplin.lightGrey, borderRadius: 3, color: AppColors.zeplin.lightGrey, height: AppFonts.scaleFont(32), width: AppSizes.padding, }} />
                         <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
-                            <Text h7 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeSubtextColor, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
+                            <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
                         </View>
                     </View>
                 </View>
-                <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryBackgroundColor, borderColor: styles.activeRecoveryBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                    <Text h7 oswaldMedium style={{ color: styles.activeRecoveryHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'IMPACT SCORE'}</Text>
+                <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, borderRadius: 5 }}>
+                    <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'IMPACT SCORE'}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
-                        <View style={{ backgroundColor: styles.subtextColor, borderRadius: 3, color: styles.subtextColor, height: AppFonts.scaleFont(32), width: AppSizes.padding, }} />
+                        <View style={{ backgroundColor: AppColors.zeplin.lightGrey, borderRadius: 3, color: AppColors.zeplin.lightGrey, height: AppFonts.scaleFont(32), width: AppSizes.padding, }} />
                         <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
-                            <Text h7 oswaldMedium style={{ color: styles.subtextColor, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'/ 5'}</Text>
+                            <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'/ 5'}</Text>
                         </View>
                     </View>
                 </View>
@@ -992,12 +992,7 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                {
-                                    this.renderCalculatingActiveRecoveryBlocks(
-                                        {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                        {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
-                                    )
-                                }
+                                {this.renderCalculatingActiveRecoveryBlocks()}
                                 <Spacer size={12}/>
                                 <Button
                                     backgroundColor={AppColors.primary.yellow.hundredPercent}
@@ -1298,12 +1293,7 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                {
-                                    this.renderCalculatingActiveRecoveryBlocks(
-                                        {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                        {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
-                                    )
-                                }
+                                {this.renderCalculatingActiveRecoveryBlocks()}
                                 <Spacer size={12}/>
                                 <Button
                                     backgroundColor={AppColors.primary.yellow.hundredPercent}
