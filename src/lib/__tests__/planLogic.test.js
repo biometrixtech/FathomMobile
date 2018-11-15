@@ -760,14 +760,6 @@ const helperFunctions = {
         };
     },
 
-    getPartOfDay: () => {
-        let split_afternoon = 12 // 24hr time to split the afternoon
-        let split_evening = 17 // 24hr time to split the evening
-        let hourOfDay = moment().get('hour');
-        let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'AFTERNOON' : hourOfDay >= split_evening ? 'EVENING' : 'MORNING';
-        return partOfDay;
-    },
-
 };
 
 it('Sport Schedule Builder Render Logic - Valid Sport, RPE, & All Good', () => {
@@ -798,36 +790,36 @@ it('Sport Schedule Builder Render Logic - On Enter', () => {
     expect(PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, pageState)).toEqual(expectedResult);
 });
 
-it('Readiness Survey Render Logic - On Enter, No Previous Soreness (FS Eligible & NOT Valid Form)', () => {
+it('Readiness Survey Render Logic - On Enter, No Previous Soreness (FS Eligible, NOT Valid Form, & In the Afternoon)', () => {
     let dailyReadiness = helperFunctions.getDailyReadinessDefaultState(null, null, 6, 8, [], null);
     let soreBodyParts = helperFunctions.readinessSurveyRenderLogicSoreBodyParts([], 0, 2, 14, true);
     let areasOfSorenessRef = {state: {isAllGood: true}};
-    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('(0/2 completed in last 7 days)', false, false, true, [], helperFunctions.getPartOfDay(), []);
-    expect(PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
+    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('(0/2 completed in last 7 days)', false, false, true, [], 'AFTERNOON', []);
+    expect(PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, areasOfSorenessRef, 14)).toEqual(expectedResult);
 });
 
-it('Readiness Survey Render Logic - On Enter, No Previous Soreness (FS Eligible)', () => {
+it('Readiness Survey Render Logic - On Enter, No Previous Soreness (FS Eligible & In the Evening)', () => {
     let dailyReadiness = helperFunctions.getDailyReadinessDefaultState();
     let soreBodyParts = helperFunctions.readinessSurveyRenderLogicSoreBodyParts([], 0, 2, 14, true);
     let areasOfSorenessRef = {state: {isAllGood: false}};
-    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('(0/2 completed in last 7 days)', false, false, true, [], helperFunctions.getPartOfDay(), []);
-    expect(PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
+    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('(0/2 completed in last 7 days)', false, false, true, [], 'EVENING', []);
+    expect(PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, areasOfSorenessRef, 21)).toEqual(expectedResult);
 });
 
-it('Readiness Survey Render Logic - On Enter, No Previous Soreness (NOT FS Eligible & Valid Form)', () => {
+it('Readiness Survey Render Logic - On Enter, No Previous Soreness (NOT FS Eligible, Valid Form, & In the Evening)', () => {
     let dailyReadiness = helperFunctions.getDailyReadinessDefaultState(null, null, 6, 8, [], null);
     let soreBodyParts = helperFunctions.readinessSurveyRenderLogicSoreBodyParts([], 0, 2, 14, false);
     let areasOfSorenessRef = {state: {isAllGood: true}};
-    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('', false, true, false, [], helperFunctions.getPartOfDay(), []);
-    expect(PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
+    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('', false, true, false, [], 'EVENING', []);
+    expect(PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, areasOfSorenessRef, 18)).toEqual(expectedResult);
 });
 
-it('Readiness Survey Render Logic - On Enter, No Previous Soreness (NOT FS Eligible)', () => {
+it('Readiness Survey Render Logic - On Enter, No Previous Soreness (NOT FS Eligible & In the Morning)', () => {
     let dailyReadiness = helperFunctions.getDailyReadinessDefaultState();
     let soreBodyParts = {body_parts: [], completed_functional_strength_sessions: 0, current_position: 2, current_sport_name: 14, functional_strength_eligible: false};
     let areasOfSorenessRef = {state: {isAllGood: false}};
-    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('', false, false, false, [], helperFunctions.getPartOfDay(), []);
-    expect(PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
+    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('', false, false, false, [], 'MORNING', []);
+    expect(PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, areasOfSorenessRef, 8)).toEqual(expectedResult);
 });
 
 it('Sore Body Part Render Logic - On Enter, Right Hamstring (PAIN Selected)', () => {
