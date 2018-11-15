@@ -99,6 +99,9 @@ class SoreBodyPart extends Component {
             helpingVerb,
             sorenessPainMapping,
         } = PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, this.state.type);
+        let showScaleButtons = bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint') && this.state.type !== 'all-good';
+        let showWhatsTheDifferenceLink = bodyPartGroup && bodyPartGroup === 'muscle';
+        let isBodyPartJoint = bodyPartGroup === 'joint';
         return(
             <View>
                 { index ?
@@ -193,7 +196,7 @@ class SoreBodyPart extends Component {
                             :
                             null
                         }
-                        { bodyPartGroup === 'joint' ?
+                        { isBodyPartJoint ?
                             null
                             :
                             <View>
@@ -233,7 +236,7 @@ class SoreBodyPart extends Component {
                                 </Text>
                             </View>
                         }
-                        { bodyPartGroup === 'joint' ?
+                        { isBodyPartJoint ?
                             null
                             :
                             <View>
@@ -276,11 +279,11 @@ class SoreBodyPart extends Component {
                     </View>
                 </Tooltip>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.padding}}>
-                    { bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint') && this.state.type !== 'all-good' ?
+                    { showScaleButtons ?
                         _.map(sorenessPainMapping, (value, key) => {
                             if(key === 0) { return; }
                             let sorenessPainScaleMappingValue = (
-                                bodyPartGroup === 'joint'
+                                isBodyPartJoint
                             ) ?
                                 MyPlanConstants.sorenessPainScaleMapping(false, key, true)
                                 :
@@ -307,7 +310,7 @@ class SoreBodyPart extends Component {
                                 />
                             )
                         })
-                        : bodyPartGroup && bodyPartGroup === 'muscle' ?
+                        : showWhatsTheDifferenceLink ?
                             <Text
                                 onPress={() => toggleSlideUpPanel(false)}
                                 robotoLight
