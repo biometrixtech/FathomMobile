@@ -64,7 +64,7 @@ class UserAccountAbout extends Component {
         this.inputs = {};
     }
 
-    focusNextField(id) {
+    focusNextField = id => {
         this.inputs[id].focus();
     }
 
