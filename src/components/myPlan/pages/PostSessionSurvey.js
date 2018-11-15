@@ -60,6 +60,12 @@ class PostSessionSurvey extends Component {
         }, 500);
     }
 
+    _scrollToTop = () => {
+        _.delay(() => {
+            this.scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
+        }, 500);
+    }
+
     _toggleSlideUpPanel = (isExpanded = true) => {
         this.setState({
             isSlideUpPanelExpanded: isExpanded,
@@ -106,6 +112,7 @@ class PostSessionSurvey extends Component {
                             }}
                             postSession={postSession}
                             scrollTo={() => this._scrollTo(0)}
+                            scrollToTop={this._scrollToTop}
                             typicalSessions={typicalSessions}
                         />
                     </View>

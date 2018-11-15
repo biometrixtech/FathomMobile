@@ -5,6 +5,7 @@
         handleFormChange={this._handleFormChange}
         postSession={postSession}
         scrollTo={() => this._scrollTo(0)}
+        scrollToTop={this._scrollToTop}
         typicalSessions={typicalSessions}
     />
  *
@@ -114,7 +115,7 @@ class SportScheduleBuilder extends Component {
     }
 
     render = () => {
-        const { handleFormChange, postSession, scrollTo, typicalSessions, } = this.props;
+        const { handleFormChange, postSession, scrollTo, scrollToTop, typicalSessions, } = this.props;
         const { durationValueGroups, isFormValid, step, timeValueGroups, } = this.state;
         let underlinePadding = Platform.OS === 'ios' ? 2 : 8;
         let {
@@ -305,6 +306,7 @@ class SportScheduleBuilder extends Component {
                                                     this._nextStep(3);
                                                     handleFormChange('strength_and_conditioning_type', strengthConditioningType.index);
                                                     handleFormChange('session_type', 1);
+                                                    scrollToTop();
                                                 }}
                                                 outlined
                                                 raised={false}
