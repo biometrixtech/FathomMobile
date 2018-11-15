@@ -88,7 +88,7 @@ class Onboarding extends Component {
                     account_code:      '',
                     cleared_to_play:   false, // boolean
                     onboarding_status: user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    password:          'Fathom123!',//'',
+                    password:          '',
                     biometric_data:    {
                         height: {
                             in: user.biometric_data && user.biometric_data.height.ft_in ?
@@ -112,9 +112,9 @@ class Onboarding extends Component {
                         account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                         account_type:   'free', // 'paid', 'free'
                         birth_date:     user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'MM/DD/YYYY').format('MM/DD/YYYY') : '',
-                        email:          'mazen@fathomai.com',//user.personal_data && user.personal_data.email ? user.personal_data.email : '',
-                        first_name:     'Mazen',//user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
-                        last_name:      'Chami',//user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
+                        email:          user.personal_data && user.personal_data.email ? user.personal_data.email : '',
+                        first_name:     user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
+                        last_name:      user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
                         phone_number:   user.personal_data && user.personal_data.phone_number ? user.personal_data.phone_number : '',
                         zip_code:       user.personal_data && user.personal_data.zip_code ? user.personal_data.zip_code : '',
                     },
