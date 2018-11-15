@@ -80,13 +80,25 @@ const transitionConfig = () => {
         },
         screenInterpolator: sceneProps => {
             const { position, layout, scene, } = sceneProps;
+            const translateY = 0;
             const thisSceneIndex = scene.index;
+            const inputRange = [thisSceneIndex - 1, thisSceneIndex, thisSceneIndex + 1];
             const width = layout.initWidth;
+            const opacity = position.interpolate({
+                inputRange,
+                // default: outputRange: [1, 1, 0.3],
+                outputRange: [1, 1, 0.5],
+            });
+            const scale = position.interpolate({
+                inputRange,
+                // default: outputRange: [1, 1, 0.95],
+                outputRange: [1, 1, 1],
+            });
             const translateX = position.interpolate({
-                inputRange:  [thisSceneIndex - 1, thisSceneIndex, thisSceneIndex + 1],
+                inputRange,
                 outputRange: [-width, 0, 0]
             });
-            return { transform: [ { translateX } ] };
+            return { opacity, transform: [ { scale }, { translateX }, { translateY } ] };
         },
     }
 };
