@@ -16,12 +16,11 @@ import { StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, UserAccount as UserAccountConstants, } from '../../../constants';
-import { FormInput, FormLabel, Spacer, Text, } from '../../custom';
+import { FathomPicker, FormInput, FormLabel, Spacer, Text, } from '../../custom';
 import { onboardingUtils, } from '../../../constants/utils';
 
 // import third-party libraries
 import DatePicker from 'react-native-datepicker';
-import RNPickerSelect from 'react-native-picker-select';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -100,7 +99,7 @@ class UserAccountAbout extends Component {
                     style={{width: '100%'}}
                 />
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.injury_status.length > 0 ? 'Health Status' : ' '}</FormLabel>
-                <RNPickerSelect
+                <FathomPicker
                     hideIcon={true}
                     items={UserAccountConstants.possibleInjuryStatuses}
                     onValueChange={value => value ? clearCoachContent('', () => handleFormChange('injury_status', value)) : null}
@@ -132,7 +131,7 @@ class UserAccountAbout extends Component {
                     value={user.personal_data.zip_code}
                 />
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.height.in ? 'Height' : ' '}</FormLabel>
-                <RNPickerSelect
+                <FathomPicker
                     hideIcon={true}
                     items={UserAccountConstants.heights}
                     onValueChange={value => value ? clearCoachContent('', () => handleFormChange('biometric_data.height.in', value)) : null}
@@ -140,6 +139,8 @@ class UserAccountAbout extends Component {
                         label: 'Height',
                         value: null,
                     }}
+                    startingIndex={60}
+                    startingValue={37}
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
                         inputIOS:         [styles.pickerSelectIOS],
@@ -163,7 +164,7 @@ class UserAccountAbout extends Component {
                     value={user.biometric_data.mass.lb}
                 />
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.sex.length > 0 ? 'Sex' : ' '}</FormLabel>
-                <RNPickerSelect
+                <FathomPicker
                     hideIcon={true}
                     items={UserAccountConstants.possibleGenders}
                     onValueChange={value => value ? clearCoachContent('', () => handleFormChange('biometric_data.sex', value)) : null}
