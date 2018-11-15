@@ -297,9 +297,8 @@ const PlanLogic = {
       * - ReadinessSurvey
       */
     handleReadinessSurveyRenderLogic: (dailyReadiness, soreBodyParts, areasOfSorenessRef, hourOfDay = moment().get('hour')) => {
-        let split_afternoon = 12 // 24hr time to split the afternoon
-        let split_evening = 17 // 24hr time to split the evening
-        // let hourOfDay = hourOfDayString ? hourOfDayString : moment().get('hour');
+        let split_afternoon = 12; // 24hr time to split the afternoon
+        let split_evening = 17; // 24hr time to split the evening
         let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'AFTERNOON' : hourOfDay >= split_evening ? 'EVENING' : 'MORNING';
         let filteredAreasOfSoreness = _.filter(dailyReadiness.soreness, o => {
             let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
