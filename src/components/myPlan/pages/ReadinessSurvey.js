@@ -417,14 +417,14 @@ class ReadinessSurvey extends Component {
                             <SoreBodyPart
                                 bodyPart={bodyPart}
                                 bodyPartSide={bodyPart.side}
-                                firstTimeExperience={user.firstTimeExperience}
+                                firstTimeExperience={user.first_time_experience}
                                 handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                     handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
                                     if(shouldScroll) {
                                         this._scrollTo(isFirstFunctionalStrength || isSecondFunctionalStrength ? (i + 4) : (i + 3));
                                     }
                                 }}
-                                handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
+                                handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                                 index={isFirstFunctionalStrength ? (i + 5) : isSecondFunctionalStrength ? (i + 4) : (i + 3)}
                                 isPrevSoreness={true}
                                 surveyObject={dailyReadiness}
@@ -443,7 +443,7 @@ class ReadinessSurvey extends Component {
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
                             handleFormChange={handleFormChange}
-                            handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
+                            handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
                             scrollToBottom={this._scrollToBottom}
                             soreBodyParts={soreBodyParts}

@@ -181,14 +181,14 @@ class PostSessionSurvey extends Component {
                             <SoreBodyPart
                                 bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
                                 bodyPartSide={bodyPart.side}
-                                firstTimeExperience={user.firstTimeExperience}
+                                firstTimeExperience={user.first_time_experience}
                                 handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                     handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
                                     if(shouldScroll) {
                                         this._scrollTo(i + 2);
                                     }
                                 }}
-                                handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
+                                handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                                 index={i+3}
                                 isPrevSoreness={true}
                                 surveyObject={postSession}
@@ -207,7 +207,7 @@ class PostSessionSurvey extends Component {
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, false, isAllGood)}
                             handleFormChange={handleFormChange}
-                            handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
+                            handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
                             scrollToBottom={this._scrollToBottom}
                             soreBodyParts={soreBodyParts}

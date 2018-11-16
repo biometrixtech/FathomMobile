@@ -6,7 +6,7 @@
         bodyPartSide={bodyPart.side}
         firstTimeExperience={user.firstTimeExperience}
         handleFormChange={handleFormChange}
-        handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
+        handleUpdateFirstTimeExperience={name => handleUpdateFirstTimeExperience(name)}
         index={i+3}
         isPrevSoreness={true}
         surveyObject={dailyReadiness}
@@ -144,12 +144,12 @@ class SoreBodyPart extends Component {
                         <TooltipContent
                             handleTooltipClose={() => this.setState(
                                 { isToolTipOpen: false, },
-                                () => handleUpdateFirstTimeExperience('sorenessPainTooltip', true)
+                                () => handleUpdateFirstTimeExperience('soreness_pain_tooltip')
                             )}
                             text={MyPlanConstants.painSorenessMessage()}
                             toggleSlideUpPanel={() => this.setState(
                                 { isToolTipOpen: false, },
-                                () => { toggleSlideUpPanel(); handleUpdateFirstTimeExperience('sorenessPainTooltip', true);}
+                                () => { toggleSlideUpPanel(); handleUpdateFirstTimeExperience('soreness_pain_tooltip');}
                             )}
                         />
                     }
@@ -210,7 +210,7 @@ class SoreBodyPart extends Component {
                                                 type:  this.state.type === 'soreness' ? '' : 'soreness',
                                                 value: null,
                                             }, () => {
-                                                if(this.state.type === 'soreness' && !firstTimeExperience.sorenessPainTooltip) {
+                                                if(this.state.type === 'soreness' && !firstTimeExperience.includes('soreness_pain_tooltip')) {
                                                     this.setState({ isToolTipOpen: true, });
                                                 }
                                                 handleFormChange('soreness', null, this.state.type === 'pain', bodyPartMap.index, bodyPartSide);
@@ -250,7 +250,7 @@ class SoreBodyPart extends Component {
                                                 type:  this.state.type === 'pain' ? '' : 'pain',
                                                 value: null,
                                             }, () => {
-                                                if(this.state.type === 'pain' && !firstTimeExperience.sorenessPainTooltip) {
+                                                if(this.state.type === 'pain' && !firstTimeExperience.includes('soreness_pain_tooltip')) {
                                                     this.setState({ isToolTipOpen: true, });
                                                 }
                                                 handleFormChange('soreness', null, this.state.type === 'pain', bodyPartMap.index, bodyPartSide);
@@ -328,13 +328,14 @@ class SoreBodyPart extends Component {
 }
 
 SoreBodyPart.propTypes = {
-    bodyPart:            PropTypes.object.isRequired,
-    bodyPartSide:        PropTypes.number,
-    firstTimeExperience: PropTypes.object.isRequired,
-    handleFormChange:    PropTypes.func.isRequired,
-    index:               PropTypes.number,
-    isPrevSoreness:      PropTypes.bool,
-    surveyObject:        PropTypes.object,
+    bodyPart:                        PropTypes.object.isRequired,
+    bodyPartSide:                    PropTypes.number,
+    firstTimeExperience:             PropTypes.array.isRequired,
+    handleFormChange:                PropTypes.func.isRequired,
+    handleUpdateFirstTimeExperience: PropTypes.func.isRequired,
+    index:                           PropTypes.number,
+    isPrevSoreness:                  PropTypes.bool,
+    surveyObject:                    PropTypes.object,
 };
 
 SoreBodyPart.defaultProps = {

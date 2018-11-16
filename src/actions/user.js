@@ -90,16 +90,6 @@ const checkAccountCode = (account_code) => {
 };
 
 /**
-  * Update First Time User Experience Reducer
-  */
-const updateFirstTimeExperience = firstTimeExperience => {
-    return dispatch => Promise.resolve(dispatch({
-        type: Actions.UPDATE_FIRST_TIME_EXPERIENCE,
-        data: firstTimeExperience,
-    }));
-};
-
-/**
   * Clear User data
   * - WARNING: this will clear the users data for my plan and reset the reducer!
   */
@@ -377,7 +367,6 @@ export default {
     stopRequest,
     stopSession,
     teamSelect,
-    updateFirstTimeExperience,
     updateUser,
     userJoinAccount,
     userSelect,

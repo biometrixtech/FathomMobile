@@ -4,7 +4,7 @@
     <AreasOfSoreness
         handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
         handleFormChange={handleFormChange}
-        handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
+        handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
         ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
         scrollToBottom={this._scrollToBottom}
         soreBodyParts={soreBodyParts}
@@ -94,7 +94,7 @@ class AreasOfSoreness extends Component {
                     content={
                         <TooltipContent
                             handleTooltipClose={() => this._handleTooltipClose(() => {
-                                handleUpdateFirstTimeExperience('allGoodBodyPartTooltip', true);
+                                handleUpdateFirstTimeExperience('all_good_body_part_tooltip');
                             })}
                             text={MyPlanConstants.allGoodBodyPartMessage()}
                         />
@@ -109,10 +109,10 @@ class AreasOfSoreness extends Component {
                                 this.setState({
                                     isAllGood: !this.state.isAllGood,
                                 }, () => {
-                                    if(!user.firstTimeExperience.allGoodBodyPartTooltip && this.state.isAllGood) {
+                                    if(!user.first_time_experience.includes('all_good_body_part_tooltip') && this.state.isAllGood) {
                                         this.setState({ isAllGoodTooltipOpen: true, });
                                     }
-                                    if(user.firstTimeExperience.allGoodBodyPartTooltip) {
+                                    if(user.first_time_experience.includes('all_good_body_part_tooltip')) {
                                         scrollToBottom();
                                     }
                                     handleAreaOfSorenessClick(false, true);
@@ -179,7 +179,7 @@ class AreasOfSoreness extends Component {
                                             style={[AppStyles.paddingSml]}
                                         >
                                             <SVGImage
-                                                firstTimeExperience={user.firstTimeExperience}
+                                                firstTimeExperience={user.first_time_experience}
                                                 handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
                                                 image={areasOfSorenessBodyPart.bodyImage}
                                                 overlay={true}
@@ -201,7 +201,7 @@ class AreasOfSoreness extends Component {
                             <SoreBodyPart
                                 bodyPart={MyPlanConstants.bodyPartMapping[area.body_part]}
                                 bodyPartSide={area.side}
-                                firstTimeExperience={user.firstTimeExperience}
+                                firstTimeExperience={user.first_time_experience}
                                 handleFormChange={handleFormChange}
                                 handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
                                 surveyObject={surveyObject}

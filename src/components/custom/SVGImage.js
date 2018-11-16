@@ -51,7 +51,7 @@ const TooltipContent = ({ handleTooltipClose, text, }) => (
 /* Component ==================================================================== */
 class SVGImage extends Component {
     static propTypes = {
-        firstTimeExperience:             PropTypes.object.isRequired,
+        firstTimeExperience:             PropTypes.array.isRequired,
         handleUpdateFirstTimeExperience: PropTypes.func.isRequired,
         image:                           PropTypes.string.isRequired,
         overlay:                         PropTypes.bool,
@@ -161,7 +161,7 @@ class SVGImage extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
-        if(this.props.selected !== prevProps.selected && this.props.selected && !this.props.firstTimeExperience.allGoodBodyPartTooltip) {
+        if(this.props.selected !== prevProps.selected && this.props.selected && !this.props.firstTimeExperience.includes('all_good_body_part_tooltip')) {
             this.setState({ isTooltipOpen: true, });
         }
     }
@@ -173,7 +173,7 @@ class SVGImage extends Component {
                 <TooltipContent
                     handleTooltipClose={() => this.setState(
                         { isTooltipOpen: false, },
-                        () => this.props.handleUpdateFirstTimeExperience('allGoodBodyPartTooltip', true)
+                        () => this.props.handleUpdateFirstTimeExperience('all_good_body_part_tooltip')
                     )}
                     text={MyPlanConstants.allGoodBodyPartMessage()}
                 />

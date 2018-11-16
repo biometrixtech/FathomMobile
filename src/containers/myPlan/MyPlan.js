@@ -26,7 +26,7 @@ const MyPlan = ({
     scheduledMaintenance,
     setCompletedExercises,
     setCompletedFSExercises,
-    updateFirstTimeExperience,
+    updateUser,
     user,
 }) => (
     <Layout
@@ -50,7 +50,7 @@ const MyPlan = ({
         scheduledMaintenance={scheduledMaintenance}
         setCompletedExercises={setCompletedExercises}
         setCompletedFSExercises={setCompletedFSExercises}
-        updateFirstTimeExperience={updateFirstTimeExperience}
+        updateUser={updateUser}
         user={user}
     />
 );
@@ -71,17 +71,17 @@ MyPlan.propTypes = {
         PropTypes.bool,
         PropTypes.string,
     ]).isRequired,
-    patchActiveRecovery:       PropTypes.func.isRequired,
-    patchFunctionalStrength:   PropTypes.func.isRequired,
-    plan:                      PropTypes.object.isRequired,
-    postReadinessSurvey:       PropTypes.func.isRequired,
-    postSessionSurvey:         PropTypes.func.isRequired,
-    preReadiness:              PropTypes.func.isRequired,
-    scheduledMaintenance:      PropTypes.object,
-    setCompletedExercises:     PropTypes.func.isRequired,
-    setCompletedFSExercises:   PropTypes.func.isRequired,
-    updateFirstTimeExperience: PropTypes.func.isRequired,
-    user:                      PropTypes.object.isRequired,
+    patchActiveRecovery:     PropTypes.func.isRequired,
+    patchFunctionalStrength: PropTypes.func.isRequired,
+    plan:                    PropTypes.object.isRequired,
+    postReadinessSurvey:     PropTypes.func.isRequired,
+    postSessionSurvey:       PropTypes.func.isRequired,
+    preReadiness:            PropTypes.func.isRequired,
+    scheduledMaintenance:    PropTypes.object,
+    setCompletedExercises:   PropTypes.func.isRequired,
+    setCompletedFSExercises: PropTypes.func.isRequired,
+    updateUser:              PropTypes.func.isRequired,
+    user:                    PropTypes.object.isRequired,
 };
 
 MyPlan.defaultProps = {
@@ -113,7 +113,7 @@ const mapDispatchToProps = {
     preReadiness:                  PlanActions.preReadiness,
     setCompletedExercises:         PlanActions.setCompletedExercises,
     setCompletedFSExercises:       PlanActions.setCompletedFSExercises,
-    updateFirstTimeExperience:     UserActions.updateFirstTimeExperience,
+    updateUser:                    UserActions.updateUser,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyPlan);

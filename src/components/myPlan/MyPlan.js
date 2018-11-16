@@ -86,16 +86,16 @@ class MyPlan extends Component {
             PropTypes.bool,
             PropTypes.string,
         ]),
-        patchActiveRecovery:       PropTypes.func.isRequired,
-        patchFunctionalStrength:   PropTypes.func.isRequired,
-        plan:                      PropTypes.object.isRequired,
-        postReadinessSurvey:       PropTypes.func.isRequired,
-        postSessionSurvey:         PropTypes.func.isRequired,
-        preReadiness:              PropTypes.func.isRequired,
-        setCompletedExercises:     PropTypes.func.isRequired,
-        setCompletedFSExercises:   PropTypes.func.isRequired,
-        updateFirstTimeExperience: PropTypes.func.isRequired,
-        user:                      PropTypes.object.isRequired,
+        patchActiveRecovery:     PropTypes.func.isRequired,
+        patchFunctionalStrength: PropTypes.func.isRequired,
+        plan:                    PropTypes.object.isRequired,
+        postReadinessSurvey:     PropTypes.func.isRequired,
+        postSessionSurvey:       PropTypes.func.isRequired,
+        preReadiness:            PropTypes.func.isRequired,
+        setCompletedExercises:   PropTypes.func.isRequired,
+        setCompletedFSExercises: PropTypes.func.isRequired,
+        updateUser:              PropTypes.func.isRequired,
+        user:                    PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -475,11 +475,11 @@ class MyPlan extends Component {
         }
     }
 
-    _handleUpdateFirstTimeExperience = (name, value) => {
-        let newFirstTimeExperienceObj = _.cloneDeep(this.props.user.firstTimeExperience);
-        newFirstTimeExperienceObj = _.update( newFirstTimeExperienceObj, name, () => value);
-        // don't need to do anything here, just update the reducer
-        this.props.updateFirstTimeExperience(newFirstTimeExperienceObj);
+    _handleUpdateFirstTimeExperience = (value) => {
+        let newUserObj = {};
+        newUserObj.first_time_experience = [value];
+        // update user object
+        this.props.updateUser(newUserObj, this.props.user.id);
     }
 
     _toggleCompletedAMPMRecoveryModal = () => {
