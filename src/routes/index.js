@@ -160,7 +160,7 @@ const Index = (
                 hideNavBar={false}
                 key={'onboarding'}
                 navBar={CustomNavBar}
-                onLeft={() => Actions.start()}
+                onLeft={() => Actions.pop()}
                 panHandlers={null}
                 renderLeftButton={null}
                 title={'GET STARTED'}
@@ -199,7 +199,7 @@ const Index = (
                 hideNavBar={false}
                 key={'forgotPassword'}
                 navBar={CustomNavBar}
-                onLeft={() => Actions.login()}
+                onLeft={() => Actions.pop()}
                 panHandlers={null}
                 title={'FORGOT PASSWORD'}
             />
@@ -209,47 +209,40 @@ const Index = (
                 hideNavBar={false}
                 key={'resetPassword'}
                 navBar={CustomNavBar}
-                onLeft={() => Actions.forgotPassword()}
+                onLeft={() => Actions.pop()}
                 panHandlers={null}
                 title={'FORGOT PASSWORD'}
             />
-            <Stack
+            <Scene
+                Layout={MyPlanComponent}
+                component={MyPlanContainer}
+                hideNavBar={false}
+                key={'myPlan'}
+                navBar={CustomMyPlanNavBar}
+                onLeft={() => Actions.settings()}
+                panHandlers={null}
+                type={'replace'}
+            />
+            <Scene
+                Layout={SettingsComponent}
+                component={SettingsContainer}
+                hideNavBar={false}
+                key={'settings'}
+                navBar={CustomNavBar}
+                onLeft={() => Actions.myPlan()}
+                panHandlers={null}
+                title={'SETTINGS'}
+                type={'replace'}
+            />
+            <Scene
+                Layout={BluetoothConnectComponent}
+                component={BluetoothConnectContainer}
                 hideNavBar={true}
-                key={'loggedIn'}
-                titleStyle={{ alignSelf: 'center' }}
-                transitionConfig={transitionConfig}
-            >
-                <Scene
-                    Layout={MyPlanComponent}
-                    component={MyPlanContainer}
-                    hideNavBar={false}
-                    key={'myPlan'}
-                    navBar={CustomMyPlanNavBar}
-                    onLeft={() => Actions.settings()}
-                    panHandlers={null}
-                    type={'replace'}
-                />
-                <Scene
-                    Layout={SettingsComponent}
-                    component={SettingsContainer}
-                    hideNavBar={false}
-                    key={'settings'}
-                    navBar={CustomNavBar}
-                    onLeft={() => Actions.myPlan()}
-                    panHandlers={null}
-                    title={'SETTINGS'}
-                    type={'replace'}
-                />
-                <Scene
-                    Layout={BluetoothConnectComponent}
-                    component={BluetoothConnectContainer}
-                    hideNavBar={true}
-                    key={'bluetoothConnect'}
-                    panHandlers={null}
-                    // title={'Bluetooth Connect'}
-                    // {...DefaultProps.navbarProps}
-                />
-            </Stack>
+                key={'bluetoothConnect'}
+                panHandlers={null}
+                // title={'Bluetooth Connect'}
+                // {...DefaultProps.navbarProps}
+            />
             {/*<Stack>
                 <Scene
                     Layout={KitManagementComponent}
