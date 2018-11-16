@@ -4,6 +4,7 @@
     <UserAccountAbout
         clearCoachContent={this._clearCoachContent}
         handleFormChange={handleFormChange}
+        isUpdatingUser={isUpdatingUser}
         setAccordionSection={handleFormSubmit}
         updateErrorMessage={this._updateErrorMessage}
         user={user}
@@ -71,6 +72,7 @@ class UserAccountAbout extends Component {
         const {
             clearCoachContent,
             handleFormChange,
+            isUpdatingUser,
             setAccordionSection,
             updateErrorMessage,
             user,
@@ -139,8 +141,8 @@ class UserAccountAbout extends Component {
                         label: 'Height',
                         value: null,
                     }}
-                    startingIndex={60}
-                    startingValue={37}
+                    startingIndex={isUpdatingUser ? null : 60}
+                    startingValue={isUpdatingUser ? null : 37}
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
                         inputIOS:         [styles.pickerSelectIOS],

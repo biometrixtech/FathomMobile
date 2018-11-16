@@ -246,6 +246,7 @@ class UserAccount extends Component {
                 content: <UserAccountAbout
                     clearCoachContent={this._clearCoachContent}
                     handleFormChange={handleFormChange}
+                    isUpdatingUser={isUpdatingUser}
                     setAccordionSection={handleFormSubmit}
                     updateErrorMessage={this._updateErrorMessage}
                     user={user}
