@@ -1,3 +1,4 @@
+// https://github.com/lawnstarter/react-native-picker-select
 import React, { PureComponent } from 'react';
 import {
     ColorPropType,
@@ -288,7 +289,7 @@ export default class RNPickerSelect extends PureComponent {
     }
 
     togglePicker(animate = false) {
-        const { modalProps, disabled, startingIndex, startingValue } = this.props;
+        const { modalProps, disabled,  } = this.props;
 
         if (disabled) {
             return;
@@ -307,6 +308,13 @@ export default class RNPickerSelect extends PureComponent {
             this.inputRef.blur();
         }
 
+        // custom update for iOS
+        this.customUpdateValue();
+
+    }
+
+    customUpdateValue = () => {
+        const { startingIndex, startingValue, } = this.props;
         // custom fields
         if(this.state.isFirstTime && startingIndex && startingValue) {
             this.setState(
