@@ -99,12 +99,11 @@ class ReadinessSurvey extends Component {
 
     _fabScrollClicked = areaOfSorenessComponent => {
         let actualSoreBodyPartRefY = (areaOfSorenessComponent.y + areaOfSorenessComponent.height) - (this.areasOfSorenessRef.soreBodyPartRef.height + 50);
-        let approxEndHeight = (actualSoreBodyPartRefY + this.areasOfSorenessRef.soreBodyPartRef.height);
         if(
             this.areasOfSorenessRef &&
             this.areasOfSorenessRef.soreBodyPartRef &&
             this.areasOfSorenessRef.soreBodyPartRef.y &&
-            (this._scrollViewContentHeight - approxEndHeight) > 200
+            ((AppSizes.screen.height + actualSoreBodyPartRefY) - this._scrollViewContentHeight) <= 0
         ) {
             this._scrollToXY(this.areasOfSorenessRef.soreBodyPartRef.x, actualSoreBodyPartRefY, true);
         } else {
