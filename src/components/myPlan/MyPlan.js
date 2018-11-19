@@ -350,7 +350,6 @@ class MyPlan extends Component {
     }
 
     _handleReadinessSurveySubmit = () => {
-        this.setState({ loading: true });
         let newDailyReadiness = {};
         newDailyReadiness.user_id = this.props.user.id;
         newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
@@ -364,30 +363,26 @@ class MyPlan extends Component {
         if(this.state.dailyReadiness.current_position === 0 || this.state.dailyReadiness.current_position > 0) {
             newDailyReadiness.current_position = this.state.dailyReadiness.current_position;
         }
+        let newPrepareObject = Object.assign({}, this.state.prepare, {
+            isReadinessSurveyCompleted: true,
+        });
+        this.setState({
+            dailyReadiness: {
+                readiness:     0,
+                sleep_quality: 0,
+                soreness:      [],
+            },
+            isPrepCalculating:          true,
+            isReadinessSurveyModalOpen: false,
+            prepare:                    newPrepareObject,
+        });
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
-                let newPrepareObject = Object.assign({}, this.state.prepare, {
-                    isReadinessSurveyCompleted: true,
-                });
                 this.props.clearCompletedExercises();
                 this.props.clearCompletedFSExercises();
-                this.setState({
-                    dailyReadiness: {
-                        readiness:     0,
-                        sleep_quality: 0,
-                        soreness:      [],
-                    },
-                    isPrepCalculating:          true,
-                    isReadinessSurveyModalOpen: false,
-                    loading:                    false,
-                    prepare:                    newPrepareObject,
-                });
             })
             .catch(error => {
                 console.log('error',error);
-                this.setState({
-                    loading: false,
-                });
                 AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey);
             });
     }
@@ -398,7 +393,6 @@ class MyPlan extends Component {
          * result in a tabPage auto change if a postPracticeSurvey
          * has not already been completed
          */
-        this.setState({ loading: true });
         let newPostSessionSurvey = {};
         newPostSessionSurvey.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
         newPostSessionSurvey.RPE = this.state.postSession.RPE;
@@ -421,40 +415,36 @@ class MyPlan extends Component {
         newSurvey.isPostPracticeSurveyCollapsed = true;
         newSurvey.isPostPracticeSurveyCompleted = true;
         clonedPostPracticeSurveys.push(newSurvey);
+        let newTrainObject = Object.assign({}, this.state.train, {
+            completedPostPracticeSurvey: true,
+            postPracticeSurveys:         clonedPostPracticeSurveys,
+        });
+        let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
+        newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
+        newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
+        this.setState(
+            {
+                train:                        newTrainObject,
+                isPostSessionSurveyModalOpen: false,
+                isRecoverCalculating:         true,
+                postSession:                  {
+                    description:                    '',
+                    duration:                       0,
+                    event_date:                     null,
+                    session_type:                   null,
+                    sport_name:                     null,
+                    strength_and_conditioning_type: null,
+                    RPE:                            0,
+                    soreness:                       [],
+                },
+            },
+            () => this._goToScrollviewPage(2),
+        );
         this.props.postSessionSurvey(postSession)
             .then(response => {
-                let newTrainObject = Object.assign({}, this.state.train, {
-                    completedPostPracticeSurvey: true,
-                    postPracticeSurveys:         clonedPostPracticeSurveys,
-                });
-                let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
-                newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
-                newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
                 this.props.clearCompletedExercises();
-                this.setState(
-                    {
-                        train:                        newTrainObject,
-                        isPostSessionSurveyModalOpen: false,
-                        isRecoverCalculating:         true,
-                        loading:                      false,
-                        postSession:                  {
-                            description:                    '',
-                            duration:                       0,
-                            event_date:                     null,
-                            session_type:                   null,
-                            sport_name:                     null,
-                            strength_and_conditioning_type: null,
-                            RPE:                            0,
-                            soreness:                       [],
-                        },
-                    },
-                    () => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(response.daily_plans[0]))
-                );
             })
             .catch(error => {
-                this.setState({
-                    loading: false,
-                });
                 console.log('error',error);
                 AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey);
             });
@@ -1003,21 +993,16 @@ class MyPlan extends Component {
                                 {this.renderCalculatingActiveRecoveryBlocks()}
                                 <Spacer size={12}/>
                                 <Button
-                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                    backgroundColor={AppColors.white}
                                     buttonStyle={{width: '100%',}}
                                     containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                    color={AppColors.white}
+                                    color={AppColors.zeplin.lightGrey}
                                     fontFamily={AppStyles.robotoBold.fontFamily}
                                     fontWeight={AppStyles.robotoBold.fontWeight}
                                     loading={isPrepCalculating}
+                                    loadingRight={true}
                                     outlined
                                     onPress={() => null}
-                                    rightIcon={{
-                                        color: AppColors.white,
-                                        name:  'chevron-right',
-                                        size:  AppFonts.scaleFont(24),
-                                        style: {flex: 1,},
-                                    }}
                                     textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                     title={'Calculating...'}
                                 />
@@ -1304,21 +1289,16 @@ class MyPlan extends Component {
                                 {this.renderCalculatingActiveRecoveryBlocks()}
                                 <Spacer size={12}/>
                                 <Button
-                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                    backgroundColor={AppColors.white}
                                     buttonStyle={{width: '100%',}}
                                     containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                    color={AppColors.white}
+                                    color={AppColors.zeplin.lightGrey}
                                     fontFamily={AppStyles.robotoBold.fontFamily}
                                     fontWeight={AppStyles.robotoBold.fontWeight}
                                     loading={isRecoverCalculating}
+                                    loadingRight={true}
                                     outlined
                                     onPress={() => null}
-                                    rightIcon={{
-                                        color: AppColors.white,
-                                        name:  'chevron-right',
-                                        size:  AppFonts.scaleFont(24),
-                                        style: {flex: 1,},
-                                    }}
                                     textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                     title={'Calculating...'}
                                 />
