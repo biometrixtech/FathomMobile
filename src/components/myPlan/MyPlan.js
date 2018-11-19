@@ -476,10 +476,18 @@ class MyPlan extends Component {
     }
 
     _handleUpdateFirstTimeExperience = (value) => {
-        let newUserObj = {};
+        // setup variables
+        let newUserPayloadObj = {};
+        newUserPayloadObj.first_time_experience = [value];
+        let newUserObj = _.cloneDeep(this.props.user);
         newUserObj.first_time_experience = [value];
+        // update reducer as API might take too long to return a value
+        store.dispatch({
+            type: DispatchActions.USER_REPLACE,
+            data: newUserObj
+        });
         // update user object
-        this.props.updateUser(newUserObj, this.props.user.id);
+        this.props.updateUser(newUserPayloadObj, this.props.user.id);
     }
 
     _toggleCompletedAMPMRecoveryModal = () => {
