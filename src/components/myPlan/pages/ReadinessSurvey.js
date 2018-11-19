@@ -15,7 +15,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Image, LayoutAnimation, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
@@ -27,6 +27,7 @@ import { AreasOfSoreness, ScaleButton, SlideUpPanel, SoreBodyPart, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
+import ActionButton from 'react-native-action-button';
 import moment from 'moment';
 
 /* Styles ==================================================================== */
@@ -46,13 +47,15 @@ class ReadinessSurvey extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isActionButtonVisible:  false,
             isSlideUpPanelExpanded: true,
             isSlideUpPanelOpen:     false,
         };
-        this.scrollViewRef = {};
+        this._scrollViewContentHeight = 0;
+        this.headerComponent = {};
         this.myComponents = [];
         this.positionsComponents = [];
-        this.headerComponent = {};
+        this.scrollViewRef = {};
     }
 
     _scrollTo = (index, scrollToPositions, isFromFS) => {
@@ -64,13 +67,7 @@ class ReadinessSurvey extends Component {
             myComponentsLocation.y = myComponentsLocation.y + this.headerComponent.height;
         }
         if(myComponentsLocation) {
-            _.delay(() => {
-                this.scrollViewRef.scrollTo({
-                    x:        myComponentsLocation.x,
-                    y:        myComponentsLocation.y,
-                    animated: true,
-                });
-            }, 500);
+            this._scrollToXY(myComponentsLocation.x, myComponentsLocation.y, true);
         }
     }
 
@@ -85,6 +82,45 @@ class ReadinessSurvey extends Component {
             isSlideUpPanelExpanded: isExpanded,
             isSlideUpPanelOpen:     !this.state.isSlideUpPanelOpen,
         });
+    }
+
+    _scrollViewEndDrag = (event, areaOfSorenessComponent) => {
+        const offset = event.nativeEvent.contentOffset.y;
+        let actualSoreBodyPartRefY = (areaOfSorenessComponent.y + areaOfSorenessComponent.height) - (this.areasOfSorenessRef.soreBodyPartRef.height + 50)
+        let isCloseToBottom = event.nativeEvent.layoutMeasurement.height + offset >= event.nativeEvent.contentSize.height - 100;
+        let isActionButtonVisible = (
+            areaOfSorenessComponent &&
+            offset >= areaOfSorenessComponent.y && // have we scrolled past areaOfSorenessComponent
+            offset <= actualSoreBodyPartRefY && // have we scrolled to the end of areaOfSorenessComponent
+            !isCloseToBottom // is NOT close to the bottom
+        );
+        this.setState({ isActionButtonVisible, });
+    }
+
+    _fabScrollClicked = areaOfSorenessComponent => {
+        let actualSoreBodyPartRefY = (areaOfSorenessComponent.y + areaOfSorenessComponent.height) - (this.areasOfSorenessRef.soreBodyPartRef.height + 50);
+        let approxEndHeight = (actualSoreBodyPartRefY + this.areasOfSorenessRef.soreBodyPartRef.height);
+        if(
+            this.areasOfSorenessRef &&
+            this.areasOfSorenessRef.soreBodyPartRef &&
+            this.areasOfSorenessRef.soreBodyPartRef.y &&
+            (this._scrollViewContentHeight - approxEndHeight) > 200
+        ) {
+            this._scrollToXY(this.areasOfSorenessRef.soreBodyPartRef.x, actualSoreBodyPartRefY, true);
+        } else {
+            this._scrollToBottom();
+        }
+        this.setState({ isActionButtonVisible: false, });
+    }
+
+    _scrollToXY = (x, y, shouldAnimate = true) => {
+        _.delay(() => {
+            this.scrollViewRef.scrollTo({
+                x:        x,
+                y:        y,
+                animated: shouldAnimate,
+            });
+        }, 500);
     }
 
     render = () => {
@@ -107,11 +143,20 @@ class ReadinessSurvey extends Component {
             partOfDay,
             selectedSportPositions,
         } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
+        let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, dailyReadiness.soreness);
+        let isFABVisible = areaOfSorenessClicked && this.state.isActionButtonVisible && areaOfSorenessClicked.length > 0;
         let questionCounter = 0;
         /*eslint no-return-assign: 0*/
         return(
             <View style={{flex: 1,}}>
-                <ScrollView ref={ref => {this.scrollViewRef = ref}}>
+                <ScrollView
+                    bounces={false}
+                    onContentSizeChange={(contentWidth, contentHeight) => {this._scrollViewContentHeight = contentHeight}}
+                    onScrollEndDrag={event => this._scrollViewEndDrag(event, this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (newSoreBodyParts.length + 3) : (newSoreBodyParts.length + 2)])}
+                    overScrollMode={'never'}
+                    ref={ref => {this.scrollViewRef = ref}}
+                    style={{flex: isFABVisible ? 9 : 10,}}
+                >
                     <View onLayout={event => {this.headerComponent = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,}}} style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: 'center', width: AppSizes.screen.width}}>
                         { isFirstFunctionalStrength ?
                             <View style={{textAlign: 'center',}}>
@@ -433,7 +478,7 @@ class ReadinessSurvey extends Component {
                             <Spacer size={100} />
                         </View>
                     )}
-                    <View onLayout={event => {this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (newSoreBodyParts.length + 3) : (newSoreBodyParts.length + 2)] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
+                    <View onLayout={event => {this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (newSoreBodyParts.length + 3) : (newSoreBodyParts.length + 2)] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50, height: event.nativeEvent.layout.height}}}>
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                             {isFirstFunctionalStrength ? (newSoreBodyParts.length + 5) : isSecondFunctionalStrength ? (newSoreBodyParts.length + 4) : (newSoreBodyParts.length + 3)}
                         </Text>
@@ -441,7 +486,7 @@ class ReadinessSurvey extends Component {
                             {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
                         </Text>
                         <AreasOfSoreness
-                            handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
+                            handleAreaOfSorenessClick={(body, isAllGood) => { this.setState({ isActionButtonVisible: true, }); handleAreaOfSorenessClick(body, true, isAllGood); }}
                             handleFormChange={handleFormChange}
                             handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
@@ -471,6 +516,25 @@ class ReadinessSurvey extends Component {
                         title={isFormValid ? 'Submit' : 'Select an Option'}
                     />
                 </ScrollView>
+                { isFABVisible ?
+                    <ActionButton
+                        buttonColor={AppColors.primary.yellow.hundredPercent}
+                        degrees={0}
+                        hideShadow
+                        onPress={() => this._fabScrollClicked(this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (newSoreBodyParts.length + 3) : (newSoreBodyParts.length + 2)])}
+                        renderIcon={() =>
+                            <TabIcon
+                                color={AppColors.white}
+                                icon={'chevron-down'}
+                                raised={false}
+                                type={'material-community'}
+                            />
+                        }
+                        style={{flex: 1,}}
+                    />
+                    :
+                    null
+                }
                 <SlideUpPanel
                     expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
                     isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}

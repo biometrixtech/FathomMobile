@@ -197,7 +197,7 @@ class PostSessionSurvey extends Component {
                             <Spacer size={100} />
                         </View>
                     )}
-                    <View onLayout={event => {this.myComponents[newSoreBodyParts ? newSoreBodyParts.length + 1 : 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
+                    <View onLayout={event => {this.myComponents[newSoreBodyParts ? newSoreBodyParts.length + 1 : 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}>
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                             {newSoreBodyParts.length > 0 ? newSoreBodyParts.length + 3 : '3'}
                         </Text>
