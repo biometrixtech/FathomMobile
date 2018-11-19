@@ -10,6 +10,7 @@ import { Animated, Easing, Image, View, Text, } from 'react-native';
 
 // import third-party libraries
 import { ActionConst, Actions, Router, Scene, Stack } from 'react-native-router-flux';
+import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackView/StackViewStyleInterpolator';
 
 // Consts, Libs, and Utils
 import { AppColors, AppSizes, AppStyles, } from '../constants';
@@ -70,46 +71,13 @@ import ChangeEmailComponent from '../components/onboarding/ChangeEmail';
 import TutorialContainer from '../containers/onboarding/Tutorial';
 import TutorialComponent from '../components/onboarding/Tutorial';
 
-const transitionConfig = () => {
-    return {
-        transitionSpec: {
-            duration:        750,
-            easing:          Easing.out(Easing.poly(4)),
-            timing:          Animated.timing,
-            useNativeDriver: true,
-        },
-        screenInterpolator: sceneProps => {
-            const { position, layout, scene, } = sceneProps;
-            const translateY = 0;
-            const thisSceneIndex = scene.index;
-            const inputRange = [thisSceneIndex - 1, thisSceneIndex, thisSceneIndex + 1];
-            const width = layout.initWidth;
-            const opacity = position.interpolate({
-                inputRange,
-                // default: outputRange: [1, 1, 0.3],
-                outputRange: [1, 1, 0.5],
-            });
-            const scale = position.interpolate({
-                inputRange,
-                // default: outputRange: [1, 1, 0.95],
-                outputRange: [1, 1, 1],
-            });
-            const translateX = position.interpolate({
-                inputRange,
-                outputRange: [-width, 0, 0]
-            });
-            return { opacity, transform: [ { scale }, { translateX }, { translateY } ] };
-        },
-    }
-};
-
 const Index = (
     <Router hideNavBar={true}>
         <Stack
             hideNavBar={true}
             key={'root'}
             titleStyle={{ alignSelf: 'center' }}
-            // transitionConfig={transitionConfig}
+            transitionConfig={() => ({ screenInterpolator: StackViewStyleInterpolator.forHorizontal })}
         >
             <Scene
                 Layout={StartComponent}
