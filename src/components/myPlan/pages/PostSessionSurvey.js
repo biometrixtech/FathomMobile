@@ -28,29 +28,26 @@ import { AreasOfSoreness, ScaleButton, SlideUpPanel, SoreBodyPart, SportSchedule
 
 // import third-party libraries
 import _ from 'lodash';
+import ActionButton from 'react-native-action-button';
 
 /* Component ==================================================================== */
 class PostSessionSurvey extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isActionButtonVisible:  false,
             isSlideUpPanelExpanded: true,
             isSlideUpPanelOpen:     false,
         };
-        this.scrollViewRef = {};
+        this._scrollViewContentHeight = 0;
         this.myComponents = [];
+        this.scrollViewRef = {};
     }
 
     _scrollTo = (index) => {
         let myComponentsLocation = this.myComponents[index];
         if(myComponentsLocation) {
-            _.delay(() => {
-                this.scrollViewRef.scrollTo({
-                    x:        myComponentsLocation.x,
-                    y:        myComponentsLocation.y,
-                    animated: true,
-                });
-            }, 500);
+            this._scrollToXY(myComponentsLocation.x, myComponentsLocation.y, true);
         }
     }
 
@@ -73,6 +70,45 @@ class PostSessionSurvey extends Component {
         });
     }
 
+    _scrollViewEndDrag = (event, areaOfSorenessComponent) => {
+        const offset = event.nativeEvent.contentOffset.y;
+        let actualSoreBodyPartRefY = (areaOfSorenessComponent.y + areaOfSorenessComponent.height) - (this.areasOfSorenessRef.soreBodyPartRef.height + 50)
+        let isCloseToBottom = event.nativeEvent.layoutMeasurement.height + offset >= event.nativeEvent.contentSize.height - 100;
+        let isActionButtonVisible = (
+            areaOfSorenessComponent &&
+            offset >= areaOfSorenessComponent.y && // have we scrolled past areaOfSorenessComponent
+            offset <= actualSoreBodyPartRefY && // have we scrolled to the end of areaOfSorenessComponent
+            !isCloseToBottom // is NOT close to the bottom
+        );
+        this.setState({ isActionButtonVisible, });
+    }
+
+    _fabScrollClicked = areaOfSorenessComponent => {
+        let actualSoreBodyPartRefY = (areaOfSorenessComponent.y + areaOfSorenessComponent.height) - (this.areasOfSorenessRef.soreBodyPartRef.height + 50);
+        let approxEndHeight = (actualSoreBodyPartRefY + this.areasOfSorenessRef.soreBodyPartRef.height);
+        if(
+            this.areasOfSorenessRef &&
+            this.areasOfSorenessRef.soreBodyPartRef &&
+            this.areasOfSorenessRef.soreBodyPartRef.y &&
+            (this._scrollViewContentHeight - approxEndHeight) > 200
+        ) {
+            this._scrollToXY(this.areasOfSorenessRef.soreBodyPartRef.x, actualSoreBodyPartRefY, true);
+        } else {
+            this._scrollToBottom();
+        }
+        this.setState({ isActionButtonVisible: false, });
+    }
+
+    _scrollToXY = (x, y, shouldAnimate = true) => {
+        _.delay(() => {
+            this.scrollViewRef.scrollTo({
+                x:        x,
+                y:        y,
+                animated: shouldAnimate,
+            });
+        }, 500);
+    }
+
     render = () => {
         const {
             handleAreaOfSorenessClick,
@@ -86,9 +122,18 @@ class PostSessionSurvey extends Component {
             user,
         } = this.props;
         let { isFormValid, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
+        let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, postSession.soreness);
+        let isFABVisible = areaOfSorenessClicked && this.state.isActionButtonVisible && areaOfSorenessClicked.length > 0;
         return (
-            <View style={{flex: 1}}>
-                <ScrollView ref={ref => {this.scrollViewRef = ref}}>
+            <View style={{flex: 1,}}>
+                <ScrollView
+                    bounces={false}
+                    onContentSizeChange={(contentWidth, contentHeight) => {this._scrollViewContentHeight = contentHeight}}
+                    onScrollEndDrag={event => this._scrollViewEndDrag(event, this.myComponents[newSoreBodyParts ? newSoreBodyParts.length + 1 : 1])}
+                    overScrollMode={'never'}
+                    ref={ref => {this.scrollViewRef = ref}}
+                    style={{flex: isFABVisible ? 9 : 10,}}
+                >
                     <TabIcon
                         containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml + AppSizes.statusBarHeight),}]}
                         icon={'close'}
@@ -205,7 +250,7 @@ class PostSessionSurvey extends Component {
                             {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
                         </Text>
                         <AreasOfSoreness
-                            handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, false, isAllGood)}
+                            handleAreaOfSorenessClick={(body, isAllGood) => { this.setState({ isActionButtonVisible: true, }); handleAreaOfSorenessClick(body, false, isAllGood); }}
                             handleFormChange={handleFormChange}
                             handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
@@ -235,6 +280,25 @@ class PostSessionSurvey extends Component {
                         title={isFormValid ? 'Submit' : 'Select an Option'}
                     />
                 </ScrollView>
+                { isFABVisible ?
+                    <ActionButton
+                        buttonColor={AppColors.primary.yellow.hundredPercent}
+                        degrees={0}
+                        hideShadow
+                        onPress={() => this._fabScrollClicked(this.myComponents[newSoreBodyParts ? newSoreBodyParts.length + 1 : 1])}
+                        renderIcon={() =>
+                            <TabIcon
+                                color={AppColors.white}
+                                icon={'chevron-down'}
+                                raised={false}
+                                type={'material-community'}
+                            />
+                        }
+                        style={{flex: 1,}}
+                    />
+                    :
+                    null
+                }
                 <SlideUpPanel
                     expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
                     isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
