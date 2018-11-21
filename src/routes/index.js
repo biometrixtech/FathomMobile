@@ -15,6 +15,7 @@ import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackV
 // Consts, Libs, and Utils
 import { AppColors, AppSizes, AppStyles, } from '../constants';
 import { CustomMyPlanNavBar, CustomNavBar, TabIcon, } from '../components/custom';
+import { store } from '../store';
 
 // import components
 import LoginContainer from '../containers/auth/Login';
@@ -70,6 +71,9 @@ import ChangeEmailComponent from '../components/onboarding/ChangeEmail';
 
 import TutorialContainer from '../containers/onboarding/Tutorial';
 import TutorialComponent from '../components/onboarding/Tutorial';
+
+import CoachesDashboardContainer from '../containers/coachesDashboard/CoachesDashboard';
+import CoachesDashboardComponent from '../components/coachesDashboard/CoachesDashboard';
 
 const Index = (
     <Router hideNavBar={true}>
@@ -192,12 +196,22 @@ const Index = (
                 type={'replace'}
             />
             <Scene
+                Layout={CoachesDashboardComponent}
+                component={CoachesDashboardContainer}
+                hideNavBar={false}
+                key={'coachesDashboard'}
+                navBar={CustomNavBar}
+                onLeft={() => Actions.settings()}
+                panHandlers={null}
+                type={'replace'}
+            />
+            <Scene
                 Layout={SettingsComponent}
                 component={SettingsContainer}
                 hideNavBar={false}
                 key={'settings'}
                 navBar={CustomNavBar}
-                onLeft={() => Actions.myPlan()}
+                onLeft={() => store.getState().user.role === 'athlete' ? Actions.myPlan() : Actions.coachesDashboard()}
                 panHandlers={null}
                 title={'SETTINGS'}
                 type={'replace'}

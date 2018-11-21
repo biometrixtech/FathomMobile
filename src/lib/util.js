@@ -175,7 +175,13 @@ const UTIL = {
                 // NOTE: THIS IS THE LAST SCREEN PRIOR TO MYPLAN
                 RouterActions.tutorial({step: 'tutorial'});
             } else {
-                RouterActions.myPlan();
+                if(userObj.role === 'athlete') {
+                    // TODO: FIX BELOW
+                    // RouterActions.myPlan();
+                    RouterActions.coachesDashboard();
+                } else {
+                    RouterActions.coachesDashboard();
+                }
             }
         }
     },

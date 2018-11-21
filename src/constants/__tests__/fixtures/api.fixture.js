@@ -50,6 +50,7 @@ export default {
         // My Plan specific routes
         ['active_recovery',       `${plansAPIVersion}/active_recovery`], // POST/PATCH
         ['clear_user_data',       `${plansAPIVersion}/misc/clear_user_data`], // POST
+        ['coach_dashboard',       `${plansAPIVersion}/coach/{user_id}/dashboard`], // GET
         ['functional_strength',   `${plansAPIVersion}/functional_strength`], // POST/PATCH
         ['get_my_plan',           `${plansAPIVersion}/daily_plan`], // POST
         ['get_sore_body_parts',   `${plansAPIVersion}/daily_readiness/previous`], // POST

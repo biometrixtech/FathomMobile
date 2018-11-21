@@ -43,6 +43,10 @@ export default function planReducer(state = initialState, action) {
         return Object.assign({}, state, {
             dailyPlan: action.data.daily_plans,
         });
+    case Actions.GET_COACHES_DASHBOARD:
+        return Object.assign({}, state, {
+            coachesDashboardData: action.data,
+        });
     case Actions.CLEAR_MY_PLAN:
         return initialState;
     case Actions.SET_TYPICAL_SESSIONS:

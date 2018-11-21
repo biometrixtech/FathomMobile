@@ -351,10 +351,28 @@ const markStartedFunctionalStrength = (user_id, newMyPlan) => {
         });
 };
 
+/**
+  * Get Coaches Dashboard Data
+  */
+const getCoachesDashboardData = (user_id) => {
+    return dispatch => AppAPI.coach_dashboard.get({user_id})
+        .then(coachesDashboardData => {
+            dispatch({
+                type: Actions.GET_COACHES_DASHBOARD,
+                data: coachesDashboardData.message,
+            });
+            return Promise.resolve(coachesDashboardData);
+        }).catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+};
+
 export default {
     clearCompletedExercises,
     clearCompletedFSExercises,
     clearMyPlanData,
+    getCoachesDashboardData,
     getMyPlan,
     getSoreBodyParts,
     markStartedFunctionalStrength,
