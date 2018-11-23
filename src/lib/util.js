@@ -176,9 +176,7 @@ const UTIL = {
                 RouterActions.tutorial({step: 'tutorial'});
             } else {
                 if(userObj.role === 'athlete') {
-                    // TODO: FIX BELOW
-                    // RouterActions.myPlan();
-                    RouterActions.coachesDashboard();
+                    RouterActions.myPlan();
                 } else {
                     RouterActions.coachesDashboard();
                 }

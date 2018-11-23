@@ -200,8 +200,6 @@ function cleanExerciseList(recoveryObj) {
     };
 }
 
-
-
 const fsExerciseListOrder = [
     {
         index: 'warm_up',
@@ -420,6 +418,75 @@ const sorenessVSPainMessage = () => {
     }
 };
 
+const coachesDashboardCardsData = isToday => {
+    if(isToday) {
+        return [
+            {
+                description: 'Train as normal and complete Fathom\'s Prep and Recovery',
+                label:       'ALL GOOD',
+                value:       'all_good',
+            },
+            {
+                description: 'Complete a relatively high intensity or long duration training within the next 3 days',
+                label:       'INCREASE WORKLOAD',
+                value:       'increase_workload',
+            },
+            {
+                description: 'Shorten training or limit intensity and focus on recovery modalities',
+                label:       'LIMIT TIME & INTENSITY IN TRAINING',
+                value:       'limit_time_intensity',
+            },
+            {
+                description: 'Stop training if pain increases or consider reducing workload to facilitate recovery',
+                label:       'MONITOR IN TRAINING',
+                value:       'monitor_training',
+            },
+            {
+                description: 'Pain severity is too high to train today, consult medical staff to evaluate status',
+                label:       'NOT CLEARED TO TRAIN TODAY',
+                value:       'not_cleared',
+            },
+        ]
+    }
+    return [
+        {
+            description: 'Diversify your daily workloads and intensity or prioritize holistic recovery',
+            label:       'ADD VARIETY TO TRAINING THIS WEEK',
+            value:       'add_variety',
+        },
+        {
+            description: 'Prioritize Recovery and consider decreasing upcoming workloads',
+            label:       'ADDRESS PAIN OR SORENESS',
+            value:       'address_pain_soreness',
+        },
+        {
+            description: 'Decrease this week\'s workload or prioritize holistic recovery',
+            label:       'BALANCE OVERTRAINING RISK',
+            value:       'balance_overtraining_risk',
+        },
+        {
+            description: 'If tapering is unintentional, increase this week\'s workload',
+            label:       'INCREASE WEEKLY WORKLOAD',
+            value:       'increase_workload',
+        },
+    ]
+};
+
+const coachesDashboardSortBy = [
+    {
+        label: 'View all',
+        value: 'view_all',
+    },
+    {
+        label: 'Cleared to train',
+        value: 'cleared_to_play',
+    },
+    {
+        label: 'Not cleared to train',
+        value: 'not_cleared_to_play',
+    },
+];
+
 export default {
     allGoodBodyPartMessage,
     availableSessionTypes,
@@ -428,6 +495,8 @@ export default {
     cleanExerciseList,
     cleanFSExerciseList,
     cleanedPostSessionName,
+    coachesDashboardSortBy,
+    coachesDashboardCardsData,
     durationOptionGroups,
     exerciseListButtonStyles,
     isFSCompletedValid,

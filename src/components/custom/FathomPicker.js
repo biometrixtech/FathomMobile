@@ -15,6 +15,9 @@ import {
 import PropTypes from 'prop-types';
 import isEqual from 'lodash.isequal';
 
+import { TabIcon, } from './';
+import { AppColors, AppStyles, } from '../../constants/';
+
 const defaultStyles = StyleSheet.create({
     viewContainer: {
         alignSelf: 'stretch',
@@ -404,7 +407,14 @@ export default class RNPickerSelect extends PureComponent {
             return null;
         }
 
-        return <View testID="icon_ios" style={[defaultStyles.icon, style.icon]} />;
+        // return <View testID="icon_ios" style={[defaultStyles.icon, style.icon]} />;
+        return <TabIcon
+            containerStyle={[AppStyles.containerCentered,]}
+            icon={'chevron-down'}
+            iconStyle={[{color: AppColors.zeplin.darkGrey}]}
+            reverse={false}
+            type={'material-community'}
+        />;
     }
 
     renderTextInputOrChildren() {
@@ -420,10 +430,10 @@ export default class RNPickerSelect extends PureComponent {
             );
         }
         return (
-            <View pointerEvents="box-only" style={containerStyle}>
+            <View pointerEvents="box-only" style={[containerStyle, !hideIcon ? {flexDirection: 'row',} : {}]}>
                 <TextInput
                     style={[
-                        !hideIcon ? { paddingRight: 30 } : {},
+                        !hideIcon ? { paddingRight: 5 } : {},
                         Platform.OS === 'ios' ? style.inputIOS : style.inputAndroid,
                         this.getPlaceholderStyle(),
                     ]}
