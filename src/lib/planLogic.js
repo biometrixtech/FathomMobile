@@ -425,6 +425,30 @@ const PlanLogic = {
         };
     },
 
+    /**
+      * Today & This Week Render Logic
+      * - CoachesDashboard
+      */
+    handleRenderTodayAndThisWeek: (isToday, insights, athletes, filter, renderSection) => {
+        let coachesDashboardCardsData = MyPlanConstants.coachesDashboardCardsData(isToday);
+        let sections = [];
+        _.map(insights, (insight, ind) => {
+            _.forEach(insight, (value, key) => {
+                let newValue = filter === 'not_cleared_to_play' ?
+                    _.filter(value, ['cleared_to_train', false])
+                    : filter === 'cleared_to_play' ?
+                        _.filter(value, ['cleared_to_train', true])
+                        :
+                        value;
+                let description = _.filter(coachesDashboardCardsData, ['value', key])[0];
+                sections.push(renderSection(description, newValue, athletes, key));
+            });
+        });
+        return {
+            sections,
+        };
+    },
+
 };
 
 /* Export ==================================================================== */

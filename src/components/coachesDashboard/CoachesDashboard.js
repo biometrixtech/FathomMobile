@@ -16,7 +16,7 @@ import moment from 'moment';
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles, AppFonts, MyPlan as MyPlanConstants, } from '../../constants/';
 import { store } from '../../store';
-import { AppUtil, } from '../../lib';
+import { AppUtil, PlanLogic, } from '../../lib';
 
 // Components
 import { FathomPicker, Spacer, TabIcon, Text, } from '../custom/';
@@ -83,6 +83,7 @@ class CoachesDashboard extends Component {
     }
 
     componentDidMount = () => {
+        // fetch coaches dashboard data
         let userId = this.props.user.id;
         // TODO: FIX BELOW
         // if(
@@ -212,12 +213,15 @@ class CoachesDashboard extends Component {
 
     renderAthleteCardModal = () => {
         const { selectedAthlete, selectedAthletePage, } = this.state;
-        console.log('selectedAthlete',selectedAthlete);
+        // render empty information - athlete not selected
         if(!selectedAthlete) {
             return(null)
         }
+        console.log('selectedAthlete',selectedAthlete);
         let athleteName = `${selectedAthlete.first_name.toUpperCase()} ${selectedAthlete.last_name.toUpperCase()}`;
         let mainColor = selectedAthlete.color === 0 ? AppColors.zeplin.success : selectedAthlete.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
+        let subHeader = selectedAthlete.color === 0 ? 'Train as normal' : selectedAthlete.color === 1 ? 'Consider altering training plan' : 'Consider not training today';
+        // render information - athlete selected
         return(
             <View style={{flex: 1, flexDirection: 'row',}}>
                 <View style={{backgroundColor: mainColor, borderBottomLeftRadius: 5, borderTopLeftRadius: 5, width: 5,}} />
@@ -238,30 +242,65 @@ class CoachesDashboard extends Component {
                         </Text>
                         <Spacer size={5} />
                         <Text robotoRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(13), paddingHorizontal: AppSizes.paddingLrg,}}>
-                            {'Train as normal'}
+                            {subHeader}
                         </Text>
                         <Spacer size={15} />
                         { selectedAthletePage === 0 ?
-                            <View style={{flexDirection: 'row', paddingHorizontal: AppSizes.paddingLrg,}}>
-                                <TabIcon
-                                    containerStyle={[AppStyles.containerCentered,]}
-                                    icon={'checkbox-marked-circle'}
-                                    iconStyle={[{color: mainColor}]}
-                                    reverse={false}
-                                    type={'material-community'}
-                                />
-                                <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20), paddingLeft: AppSizes.paddingSml,}}>{'WE RECOMMEND...'}</Text>
+                            <View>
+                                <View style={{flexDirection: 'row', paddingHorizontal: AppSizes.paddingLrg,}}>
+                                    <TabIcon
+                                        containerStyle={[AppStyles.containerCentered,]}
+                                        icon={'checkbox-marked-circle'}
+                                        iconStyle={[{color: mainColor}]}
+                                        reverse={false}
+                                        type={'material-community'}
+                                    />
+                                    <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20), paddingLeft: AppSizes.paddingSml,}}>{'WE RECOMMEND...'}</Text>
+                                </View>
+                                <Spacer size={10} />
+                                { selectedAthlete.daily_recommendation.length > 0 ?
+                                    <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'TODAY'}</Text>
+                                    :
+                                    null
+                                }
+                                {_.map(selectedAthlete.daily_recommendation, (rec, index) => (
+                                    <View key={index} style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, flex: 1, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingXSml,}}>{rec}</Text>
+                                    </View>
+                                ))}
+                                { selectedAthlete.weekly_recommendation.length > 0 ?
+                                    <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'THIS WEEK'}</Text>
+                                    :
+                                    null
+                                }
+                                {_.map(selectedAthlete.weekly_recommendation, (rec, index) => (
+                                    <View key={index} style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, flex: 1, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingXSml,}}>{rec}</Text>
+                                    </View>
+                                ))}
                             </View>
                             :
-                            <View style={{flexDirection: 'row', paddingHorizontal: AppSizes.paddingLrg,}}>
-                                <TabIcon
-                                    containerStyle={[AppStyles.containerCentered,]}
-                                    icon={'checkbox-marked-circle'}
-                                    iconStyle={[{color: mainColor}]}
-                                    reverse={false}
-                                    type={'material-community'}
-                                />
-                                <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20), paddingLeft: AppSizes.paddingSml,}}>{'BECAUSE WE\'VE NOTICED…'}</Text>
+                            <View>
+                                <View style={{flexDirection: 'row', paddingHorizontal: AppSizes.paddingLrg,}}>
+                                    <TabIcon
+                                        containerStyle={[AppStyles.containerCentered,]}
+                                        icon={'checkbox-marked-circle'}
+                                        iconStyle={[{color: mainColor}]}
+                                        reverse={false}
+                                        type={'material-community'}
+                                    />
+                                    <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20), paddingLeft: AppSizes.paddingSml,}}>{'BECAUSE WE\'VE NOTICED…'}</Text>
+                                </View>
+                                <Spacer size={10} />
+                                {_.map(selectedAthlete.insights, (rec, index) => (
+                                    <View key={index} style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, flex: 1, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingXSml,}}>{rec}</Text>
+                                    </View>
+                                ))}
+                                <Spacer size={10} />
                             </View>
                         }
                     </View>
@@ -356,7 +395,7 @@ class CoachesDashboard extends Component {
         )
     }
 
-    renderSection = (descriptionObj, items, key) => {
+    renderSection = (descriptionObj, items, athletes, key) => {
         if(items.length === 0) {
             return(null)
         }
@@ -371,11 +410,15 @@ class CoachesDashboard extends Component {
                     <Spacer size={25} />
                     <View style={{flexDirection: 'row', paddingHorizontal: AppSizes.padding,}}>
                         {_.map(items, (item, index) => {
-                            let backgroundColor = item.color === 0 ? AppColors.zeplin.success : item.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
+                            let filteredAthlete = _.filter(athletes, ['user_id', item.user_id])[0];
+                            if(!filteredAthlete) {
+                                return(null)
+                            }
+                            let backgroundColor = filteredAthlete.color === 0 ? AppColors.zeplin.success : filteredAthlete.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
                             return(
                                 <TouchableHighlight
                                     key={index}
-                                    onPress={() => this.setState({ isAthleteCardModalOpen: true, selectedAthlete: item, })}
+                                    onPress={() => this.setState({ isAthleteCardModalOpen: true, selectedAthlete: filteredAthlete, })}
                                     style={{
                                         backgroundColor: backgroundColor,
                                         borderRadius:    65/2,
@@ -398,7 +441,7 @@ class CoachesDashboard extends Component {
                                             }
                                         ]}
                                     >
-                                        {`${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`}
+                                        {`${filteredAthlete.first_name.toUpperCase()}\n${filteredAthlete.last_name.charAt(0).toUpperCase()}.`}
                                     </Text>
                                 </TouchableHighlight>
                             )
@@ -412,20 +455,7 @@ class CoachesDashboard extends Component {
 
     renderToday = (index, insights, athletes, complianceColor) => {
         const { todayFilter, } = this.state;
-        let coachesDashboardCardsData = MyPlanConstants.coachesDashboardCardsData(true);
-        let sections = [];
-        _.map(insights, (insight, ind) => {
-            _.forEach(insight, (value, key) => {
-                let newValue = todayFilter === 'not_cleared_to_play' ?
-                    _.filter(value, ['cleared_to_train', false])
-                    : todayFilter === 'cleared_to_play' ?
-                        _.filter(value, ['cleared_to_train', true])
-                        :
-                        value;
-                let description = _.filter(coachesDashboardCardsData, ['value', key])[0];
-                sections.push(this.renderSection(description, newValue, key));
-            });
-        });
+        let { sections, } = PlanLogic.handleRenderTodayAndThisWeek(true, insights, athletes, todayFilter, this.renderSection);
         return (
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding, }}
@@ -441,20 +471,7 @@ class CoachesDashboard extends Component {
 
     renderThisWeek = (index, insights, athletes, complianceColor) => {
         const { thisWeekFilter, } = this.state;
-        const coachesDashboardCardsData = MyPlanConstants.coachesDashboardCardsData(false);
-        let sections = [];
-        _.map(insights, (insight, ind) => {
-            _.forEach(insight, (value, key) => {
-                let newValue = thisWeekFilter === 'not_cleared_to_play' ?
-                    _.filter(value, ['cleared_to_train', false])
-                    : thisWeekFilter === 'cleared_to_play' ?
-                        _.filter(value, ['cleared_to_train', true])
-                        :
-                        value;
-                let description = _.filter(coachesDashboardCardsData, ['value', key])[0];
-                sections.push(this.renderSection(description, newValue, key));
-            });
-        });
+        let { sections, } = PlanLogic.handleRenderTodayAndThisWeek(false, insights, athletes, thisWeekFilter, this.renderSection);
         return (
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding, }}
@@ -468,7 +485,8 @@ class CoachesDashboard extends Component {
         )
     }
 
-    render() {
+    render = () => {
+        // TODO: MOVE TO LOGIC FILE AND ADD UNIT TESTS
         const { selectedTeamIndex, } = this.state;
         const { coachesDashboardData, } = this.props;
         // team information data
