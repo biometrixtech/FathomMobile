@@ -39,6 +39,23 @@ const styles = StyleSheet.create({
         color:    AppColors.zeplin.darkGrey,
         fontSize: AppFonts.scaleFont(15),
     },
+    ul: {
+        alignSelf:  'flex-start',
+        color:      AppColors.zeplin.darkGrey,
+        fontSize:   AppFonts.scaleFont(30),
+        lineHeight: AppFonts.scaleFont(30),
+    },
+    ulText: {
+        color:       AppColors.primary.grey.fiftyPercent,
+        flex:        1,
+        fontSize:    AppFonts.scaleFont(15),
+        paddingLeft: AppSizes.paddingXSml,
+    },
+    ulWrapper: {
+        flexDirection:     'row',
+        paddingHorizontal: AppSizes.paddingLrg,
+        paddingVertical:   AppSizes.paddingSml,
+    },
 });
 /* Component ==================================================================== */
 class CoachesDashboard extends Component {
@@ -85,14 +102,7 @@ class CoachesDashboard extends Component {
     componentDidMount = () => {
         // fetch coaches dashboard data
         let userId = this.props.user.id;
-        // TODO: FIX BELOW
-        // if(
-        //     !this.props.lastOpened.date ||
-        //     moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD') ||
-        //     this.props.coachesDashboardData.length === 0
-        // ) {
-            this.props.getCoachesDashboardData(userId);
-        // }
+        this.props.getCoachesDashboardData(userId);
         // set GA variables
         GATracker.setUser(this.props.user.id);
         GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
@@ -217,10 +227,7 @@ class CoachesDashboard extends Component {
         if(!selectedAthlete) {
             return(null)
         }
-        console.log('selectedAthlete',selectedAthlete);
-        let athleteName = `${selectedAthlete.first_name.toUpperCase()} ${selectedAthlete.last_name.toUpperCase()}`;
-        let mainColor = selectedAthlete.color === 0 ? AppColors.zeplin.success : selectedAthlete.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
-        let subHeader = selectedAthlete.color === 0 ? 'Train as normal' : selectedAthlete.color === 1 ? 'Consider altering training plan' : 'Consider not training today';
+        const { athleteName, mainColor, subHeader, } = PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete);
         // render information - athlete selected
         return(
             <View style={{flex: 1, flexDirection: 'row',}}>
@@ -264,9 +271,9 @@ class CoachesDashboard extends Component {
                                     null
                                 }
                                 {_.map(selectedAthlete.daily_recommendation, (rec, index) => (
-                                    <View key={index} style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, flex: 1, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingXSml,}}>{rec}</Text>
+                                    <View key={index} style={styles.ulWrapper}>
+                                        <Text robotoRegular style={styles.ul}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={styles.ulText}>{rec}</Text>
                                     </View>
                                 ))}
                                 { selectedAthlete.weekly_recommendation.length > 0 ?
@@ -275,9 +282,9 @@ class CoachesDashboard extends Component {
                                     null
                                 }
                                 {_.map(selectedAthlete.weekly_recommendation, (rec, index) => (
-                                    <View key={index} style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, flex: 1, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingXSml,}}>{rec}</Text>
+                                    <View key={index} style={styles.ulWrapper}>
+                                        <Text robotoRegular style={styles.ul}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={styles.ulText}>{rec}</Text>
                                     </View>
                                 ))}
                             </View>
@@ -295,9 +302,9 @@ class CoachesDashboard extends Component {
                                 </View>
                                 <Spacer size={10} />
                                 {_.map(selectedAthlete.insights, (rec, index) => (
-                                    <View key={index} style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, flex: 1, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingXSml,}}>{rec}</Text>
+                                    <View key={index} style={styles.ulWrapper}>
+                                        <Text robotoRegular style={styles.ul}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={styles.ulText}>{rec}</Text>
                                     </View>
                                 ))}
                                 <Spacer size={10} />
@@ -411,10 +418,7 @@ class CoachesDashboard extends Component {
                     <View style={{flexDirection: 'row', paddingHorizontal: AppSizes.padding,}}>
                         {_.map(items, (item, index) => {
                             let filteredAthlete = _.filter(athletes, ['user_id', item.user_id])[0];
-                            if(!filteredAthlete) {
-                                return(null)
-                            }
-                            let backgroundColor = filteredAthlete.color === 0 ? AppColors.zeplin.success : filteredAthlete.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
+                            let backgroundColor = item.color === 0 ? AppColors.zeplin.success : item.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
                             return(
                                 <TouchableHighlight
                                     key={index}
@@ -441,7 +445,7 @@ class CoachesDashboard extends Component {
                                             }
                                         ]}
                                     >
-                                        {`${filteredAthlete.first_name.toUpperCase()}\n${filteredAthlete.last_name.charAt(0).toUpperCase()}.`}
+                                        {`${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`}
                                     </Text>
                                 </TouchableHighlight>
                             )
@@ -486,31 +490,16 @@ class CoachesDashboard extends Component {
     }
 
     render = () => {
-        // TODO: MOVE TO LOGIC FILE AND ADD UNIT TESTS
         const { selectedTeamIndex, } = this.state;
         const { coachesDashboardData, } = this.props;
-        // team information data
-        let coachesTeams = [];
-        _.map(coachesDashboardData, (team, index) => {
-            let teamObj = team;
-            teamObj.label = team.name.toUpperCase();
-            teamObj.value = index;
-            coachesTeams.push(teamObj);
-        });
-        let selectedTeam = coachesTeams[selectedTeamIndex];
-        // compliance modal data
-        let complianceObj = selectedTeam.compliance;
-        let numOfCompletedAthletes = complianceObj ? complianceObj.complete.length : 0;
-        let numOfIncompletedAthletes = complianceObj ? complianceObj.incomplete.length : 0;
-        let numOfTotalAthletes = numOfCompletedAthletes + numOfIncompletedAthletes;
-        let incompleteAtheltes = complianceObj ? complianceObj.incomplete : [];
-        let completedPercent = (numOfIncompletedAthletes / numOfTotalAthletes) * 100;
-        let complianceColor = completedPercent <= 33 ?
-            AppColors.zeplin.error
-            : completedPercent >= 34 && completedPercent <= 66 ?
-                AppColors.zeplin.warning
-                :
-                AppColors.zeplin.success;
+        const {
+            coachesTeams,
+            complianceColor,
+            incompleteAtheltes,
+            numOfCompletedAthletes,
+            numOfTotalAthletes,
+            selectedTeam,
+        } = PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex);
         return(
             <View style={{flex: 1,}}>
                 <View style={[AppStyles.containerCentered, {backgroundColor: AppColors.white, flexDirection: 'row', justifyContent: 'center', paddingBottom: AppSizes.paddingSml,}]}>

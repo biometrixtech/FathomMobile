@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 // Consts and Libs
-import { MyPlan as MyPlanConstants, } from '../constants';
+import { AppColors, MyPlan as MyPlanConstants, } from '../constants';
 
 const PlanLogic = {
 
@@ -428,6 +428,7 @@ const PlanLogic = {
     /**
       * Today & This Week Render Logic
       * - CoachesDashboard
+      * -- returns an array of RN 'display' code
       */
     handleRenderTodayAndThisWeek: (isToday, insights, athletes, filter, renderSection) => {
         let coachesDashboardCardsData = MyPlanConstants.coachesDashboardCardsData(isToday);
@@ -446,6 +447,58 @@ const PlanLogic = {
         });
         return {
             sections,
+        };
+    },
+
+    /**
+      * Athlete Card Modal Render Logic
+      * - CoachesDashboard
+      */
+    handleAthleteCardModalRenderLogic: selectedAthlete => {
+        let athleteName = `${selectedAthlete.first_name.toUpperCase()} ${selectedAthlete.last_name.toUpperCase()}`;
+        let mainColor = selectedAthlete.color === 0 ? AppColors.zeplin.success : selectedAthlete.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
+        let subHeader = selectedAthlete.color === 0 ? 'Train as normal' : selectedAthlete.color === 1 ? 'Consider altering training plan' : 'Consider not training today';
+        return {
+            athleteName,
+            mainColor,
+            subHeader,
+        };
+    },
+
+    /**
+      * Coaches Dashboard Render Logic
+      * - CoachesDashboard
+      */
+    handleCoachesDashboardRenderLogic: (coachesDashboardData, selectedTeamIndex) => {
+        // team information data
+        let coachesTeams = [];
+        _.map(coachesDashboardData, (team, index) => {
+            let teamObj = team;
+            teamObj.label = team.name.toUpperCase();
+            teamObj.value = index;
+            coachesTeams.push(teamObj);
+        });
+        let selectedTeam = coachesTeams[selectedTeamIndex];
+        // compliance modal data
+        let complianceObj = selectedTeam.compliance;
+        let numOfCompletedAthletes = complianceObj ? complianceObj.complete.length : 0;
+        let numOfIncompletedAthletes = complianceObj ? complianceObj.incomplete.length : 0;
+        let numOfTotalAthletes = numOfCompletedAthletes + numOfIncompletedAthletes;
+        let incompleteAtheltes = complianceObj ? complianceObj.incomplete : [];
+        let completedPercent = (numOfIncompletedAthletes / numOfTotalAthletes) * 100;
+        let complianceColor = completedPercent <= 33 ?
+            AppColors.zeplin.error
+            : completedPercent >= 34 && completedPercent <= 66 ?
+                AppColors.zeplin.warning
+                :
+                AppColors.zeplin.success;
+        return {
+            coachesTeams,
+            complianceColor,
+            incompleteAtheltes,
+            numOfCompletedAthletes,
+            numOfTotalAthletes,
+            selectedTeam,
         };
     },
 
