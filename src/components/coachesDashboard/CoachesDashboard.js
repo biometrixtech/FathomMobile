@@ -415,7 +415,7 @@ class CoachesDashboard extends Component {
                         <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{descriptionObj.description}</Text>
                     </View>
                     <Spacer size={25} />
-                    <View style={{flexDirection: 'row', paddingHorizontal: AppSizes.padding,}}>
+                    <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: AppSizes.padding,}}>
                         {_.map(items, (item, index) => {
                             let filteredAthlete = _.filter(athletes, ['user_id', item.user_id])[0];
                             let backgroundColor = item.color === 0 ? AppColors.zeplin.success : item.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
@@ -428,6 +428,7 @@ class CoachesDashboard extends Component {
                                         borderRadius:    65/2,
                                         height:          65,
                                         justifyContent:  'center',
+                                        marginBottom:    AppSizes.paddingXSml,
                                         marginRight:     AppSizes.paddingSml,
                                         width:           65,
                                     }}
