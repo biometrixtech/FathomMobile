@@ -79,9 +79,11 @@ ScaleButton.propTypes = {
     updateStateAndForm:        PropTypes.func.isRequired,
     valueLabel:                PropTypes.string,
 };
+
 ScaleButton.defaultProps = {
     valueLabel: null,
 };
+
 ScaleButton.componentName = 'ScaleButton';
 
 /* Export Component ================================================================== */

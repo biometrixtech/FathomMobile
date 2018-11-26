@@ -20,11 +20,7 @@ export default {
     // users:                 [],
     // selectedTrainingGroup: {},
     // weekOffset:            0,
-    loading:             false,
-    firstTimeExperience: {
-        allGoodBodyPartTooltip: false,
-        sorenessPainTooltip:    false,
-    },
+    loading: false,
     // statsStartDate:        `${date.getFullYear()}-${AppUtil.formatDate(date.getMonth()+1)}-${AppUtil.formatDate(date.getDate())}`,
     // statsEndDate:          `${date.getFullYear()}-${AppUtil.formatDate(date.getMonth()+1)}-${AppUtil.formatDate(date.getDate())}`,
     // selectedStats:         {

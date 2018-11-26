@@ -5,8 +5,6 @@
         completedExercises={this.state.completedExercises}
         exerciseList={exerciseList}
         handleCompleteExercise={this._handleCompleteExercise}
-        handleExerciseListRefresh={this._handleExerciseListRefresh}
-        isExerciseListRefreshing={this.state.isExerciseListRefreshing}
         isLoading={this.state.loading}
         toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
         toggleSelectedExercise={this._toggleSelectedExercise}
@@ -33,8 +31,6 @@ const Exercises = ({
     completedExercises,
     exerciseList,
     handleCompleteExercise,
-    handleExerciseListRefresh,
-    isExerciseListRefreshing,
     isFSCompletedValid,
     isFunctionalStrength,
     isLoading,
@@ -102,8 +98,6 @@ Exercises.propTypes = {
     completedExercises:               PropTypes.array.isRequired,
     exerciseList:                     PropTypes.object.isRequired,
     handleCompleteExercise:           PropTypes.func.isRequired,
-    handleExerciseListRefresh:        PropTypes.func.isRequired,
-    isExerciseListRefreshing:         PropTypes.bool.isRequired,
     isFSCompletedValid:               PropTypes.bool,
     isFunctionalStrength:             PropTypes.bool,
     isLoading:                        PropTypes.bool.isRequired,
@@ -111,11 +105,13 @@ Exercises.propTypes = {
     toggleCompletedAMPMRecoveryModal: PropTypes.func.isRequired,
     toggleSelectedExercise:           PropTypes.func.isRequired,
 };
+
 Exercises.defaultProps = {
     isFSCompletedValid:   false,
     isFunctionalStrength: false,
     isPrep:               false,
 };
+
 Exercises.componentName = 'Exercises';
 
 /* Export Component ================================================================== */

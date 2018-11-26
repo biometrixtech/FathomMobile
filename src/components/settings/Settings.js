@@ -45,10 +45,10 @@ class Settings extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isFormSubmitting:     false,
-            isJoinATeamModalOpen: false,
-            isUnpairing:          false,
-            resultMsg:            {
+            isJoinATeamFormSubmitting: false,
+            isJoinATeamModalOpen:      false,
+            isUnpairing:               false,
+            resultMsg:                 {
                 error:   '',
                 status:  '',
                 success: '',
@@ -56,13 +56,13 @@ class Settings extends Component {
             form_values: {
                 code: '',
             },
-            teamName: '',
+            teamName: false,
         };
         this.defaultState = {
-            isFormSubmitting:     false,
-            isJoinATeamModalOpen: false,
-            isUnpairing:          false,
-            resultMsg:            {
+            isJoinATeamFormSubmitting: false,
+            isJoinATeamModalOpen:      false,
+            isUnpairing:               false,
+            resultMsg:                 {
                 error:   '',
                 status:  '',
                 success: '',
@@ -70,7 +70,7 @@ class Settings extends Component {
             form_values: {
                 code: '',
             },
-            teamName: '',
+            teamName: false,
         };
     }
 
@@ -276,14 +276,14 @@ class Settings extends Component {
         let code = this.state.form_values.code;
         if(code.length > 0) {
             this.setState(
-                { isFormSubmitting: true, },
+                { isJoinATeamFormSubmitting: true, },
                 () => {
                     this.props.userJoinAccount(this.props.user.id, { account_code: code, })
                         .then(res => {
-                            this.setState({ isFormSubmitting: false, teamName: res.account.name, });
+                            this.setState({ isJoinATeamFormSubmitting: false, teamName: res.account.name, });
                         })
                         .catch(err => {
-                            this.setState({ isFormSubmitting: false, });
+                            this.setState({ isJoinATeamFormSubmitting: false, });
                             this._handleUpdateResultMsg('error', 'invalid code, please try again');
                         });
                 }
@@ -424,10 +424,10 @@ class Settings extends Component {
                     handleFormChange={this._handleFormChange}
                     handleFormSubmit={() => this._handleFormSubmit()}
                     handleToggleModal={() => this._toggleJoinATeamModal()}
-                    isFormSubmitting={this.state.isFormSubmitting}
+                    isFormSubmitting={this.state.isJoinATeamFormSubmitting}
+                    isFormSuccessful={this.state.teamName && this.state.teamName.length > 0}
                     isOpen={this.state.isJoinATeamModalOpen}
                     resultMsg={this.state.resultMsg}
-                    teamName={this.state.teamName}
                 />
             </View>
         );

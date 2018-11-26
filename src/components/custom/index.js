@@ -18,6 +18,7 @@ import Checkbox from './Checkbox';
 import Coach from './Coach';
 import CustomMyPlanNavBar from './CustomMyPlanNavBar';
 import CustomNavBar from './CustomNavBar';
+import FathomPicker from './FathomPicker';
 import FathomSlider from './FathomSlider';
 import FormInput from './FormInput';
 import FormLabel from './FormLabel';
@@ -46,6 +47,7 @@ export {
     Coach,
     CustomMyPlanNavBar,
     CustomNavBar,
+    FathomPicker,
     FathomSlider,
     FormInput,
     FormLabel,

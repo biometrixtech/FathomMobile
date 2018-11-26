@@ -50,7 +50,7 @@ class AccountType extends Component {
                             containerStyle={[{position: 'absolute', top: (20 + AppSizes.statusBarHeight), left: 10}]}
                             icon={'arrow-left'}
                             iconStyle={[{color: AppColors.white,}]}
-                            onPress={() => Actions.start()}
+                            onPress={() => Actions.pop()}
                             reverse={false}
                             size={26}
                             type={'simple-line-icon'}

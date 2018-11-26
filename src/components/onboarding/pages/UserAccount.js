@@ -64,7 +64,8 @@ class UserAccount extends Component {
         this.state = {
             accordionSection: 0,
             coachContent:     '',
-            isFormValid:      false,
+            isAboutFormValid: false,
+            isInfoFormValid:  false,
             isPasswordSecure: true,
         };
 
@@ -72,13 +73,8 @@ class UserAccount extends Component {
     }
 
     _renderHeader = (section) => {
-        const { isUpdatingUser, user, } = this.props;
-        let isFormValid = false;
-        if (section.index === 1) {
-            isFormValid = onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid;
-        } else if (section.index === 2) {
-            isFormValid = onboardingUtils.isUserAboutValid(user).isValid;
-        }
+        const { isAboutFormValid, isInfoFormValid, } = this.state;
+        let isFormValid = section.index === 1 ? isInfoFormValid : section.index === 2 ? isAboutFormValid : false;
         return(
             <View>
                 <Spacer size={10} />
@@ -155,26 +151,24 @@ class UserAccount extends Component {
 
     _setAccordionSection = (section, nextStep) => {
         const { isUpdatingUser, user, } = this.props;
+        let isAboutFormValid = false;
+        let isInfoFormValid = false;
         let errorsArray = [];
         if(nextStep) {
             // Validation to make sure we can go to the next step
             if(section === 0) {
                 errorsArray = onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).errorsArray;
+                isInfoFormValid = errorsArray.length > 0 ? false : true;
             } else if(section === 1) {
                 errorsArray = onboardingUtils.isUserAboutValid(user).errorsArray;
+                isAboutFormValid = errorsArray.length > 0 ? false : true;
             }
-            if(errorsArray.length > 0) {
-                this.setState({
-                    coachContent: errorsArray,
-                    isFormValid:  false,
-                });
-            } else {
-                this.setState({
-                    accordionSection: nextStep,
-                    coachContent:     '',
-                    isFormValid:      false,
-                });
-            }
+            this.setState({
+                accordionSection: nextStep,
+                coachContent:     errorsArray.length > 0 ? errorsArray : '',
+                isAboutFormValid,
+                isInfoFormValid,
+            });
         } else {
             let coachesMessage = '';
             let isAccountInfoValid = onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser);
@@ -186,18 +180,12 @@ class UserAccount extends Component {
                 coachesMessage = 'The TELL US ABOUT YOU section has invalid fields. Please complete first and try agian.';
                 errorsArray = errorsArray.concat(isAccountAboutValid.errorsArray);
             }
-            if(errorsArray.length > 0) {
-                this.setState({
-                    coachContent: coachesMessage,
-                    isFormValid:  false,
-                });
-            } else {
-                this.setState({
-                    accordionSection: section,
-                    coachContent:     '',
-                    isFormValid:      true,
-                });
-            }
+            this.setState({
+                accordionSection: section,
+                coachContent:     errorsArray.length > 0 ? coachesMessage : '',
+                isAboutFormValid: isAccountAboutValid.isValid,
+                isInfoFormValid:  isAccountInfoValid.isValid,
+            });
         }
     };
 
@@ -207,10 +195,13 @@ class UserAccount extends Component {
 
     _updateErrorMessage = (isAbout) => {
         this.scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
-        let coachesMessage = isAbout ? onboardingUtils.isUserAboutValid(this.props.user).errorsArray : onboardingUtils.isUserAccountInformationValid(this.props.user, this.props.isUpdatingUser).errorsArray;
+        let validationObj = isAbout ? onboardingUtils.isUserAboutValid(this.props.user) : onboardingUtils.isUserAccountInformationValid(this.props.user, this.props.isUpdatingUser);
+        let isAboutFormValid = isAbout ? validationObj.isValid : this.state.isAboutFormValid;
+        let isInfoFormValid = isAbout ? this.state.isInfoFormValid : validationObj.isValid;
         this.setState({
-            coachContent: coachesMessage,
-            isFormValid:  false,
+            coachContent: validationObj.errorsArray,
+            isAboutFormValid,
+            isInfoFormValid,
         });
     };
 
@@ -255,6 +246,7 @@ class UserAccount extends Component {
                 content: <UserAccountAbout
                     clearCoachContent={this._clearCoachContent}
                     handleFormChange={handleFormChange}
+                    isUpdatingUser={isUpdatingUser}
                     setAccordionSection={handleFormSubmit}
                     updateErrorMessage={this._updateErrorMessage}
                     user={user}
@@ -282,7 +274,7 @@ class UserAccount extends Component {
                                 <Spacer size={40} />
                                 <Text
                                     oswaldRegular
-                                    onPress={() => this.state.isFormValid ? handleFormSubmit() : this._setAccordionSection(0, 1)}
+                                    onPress={() => this.state.isAboutFormValid && this.state.isInfoFormValid ? handleFormSubmit() : this._setAccordionSection(0, 1)}
                                     style={[AppStyles.continueButton,
                                         {
                                             fontSize:      AppFonts.scaleFont(16),

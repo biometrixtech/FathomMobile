@@ -15,7 +15,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Image, LayoutAnimation, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
@@ -27,6 +27,7 @@ import { AreasOfSoreness, ScaleButton, SlideUpPanel, SoreBodyPart, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
+import ActionButton from 'react-native-action-button';
 import moment from 'moment';
 
 /* Styles ==================================================================== */
@@ -46,13 +47,15 @@ class ReadinessSurvey extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isActionButtonVisible:  false,
             isSlideUpPanelExpanded: true,
             isSlideUpPanelOpen:     false,
         };
-        this.scrollViewRef = {};
+        this._scrollViewContentHeight = 0;
+        this.headerComponent = {};
         this.myComponents = [];
         this.positionsComponents = [];
-        this.headerComponent = {};
+        this.scrollViewRef = {};
     }
 
     _scrollTo = (index, scrollToPositions, isFromFS) => {
@@ -64,13 +67,7 @@ class ReadinessSurvey extends Component {
             myComponentsLocation.y = myComponentsLocation.y + this.headerComponent.height;
         }
         if(myComponentsLocation) {
-            _.delay(() => {
-                this.scrollViewRef.scrollTo({
-                    x:        myComponentsLocation.x,
-                    y:        myComponentsLocation.y,
-                    animated: true,
-                });
-            }, 500);
+            this._scrollToXY(myComponentsLocation.x, myComponentsLocation.y, true);
         }
     }
 
@@ -87,6 +84,44 @@ class ReadinessSurvey extends Component {
         });
     }
 
+    _scrollViewEndDrag = (event, areaOfSorenessComponent) => {
+        const offset = event.nativeEvent.contentOffset.y;
+        let actualSoreBodyPartRefY = (areaOfSorenessComponent.y + areaOfSorenessComponent.height) - (this.areasOfSorenessRef.soreBodyPartRef.height + 50)
+        let isCloseToBottom = event.nativeEvent.layoutMeasurement.height + offset >= event.nativeEvent.contentSize.height - 100;
+        let isActionButtonVisible = (
+            areaOfSorenessComponent &&
+            offset >= areaOfSorenessComponent.y && // have we scrolled past areaOfSorenessComponent
+            offset <= actualSoreBodyPartRefY && // have we scrolled to the end of areaOfSorenessComponent
+            !isCloseToBottom // is NOT close to the bottom
+        );
+        this.setState({ isActionButtonVisible, });
+    }
+
+    _fabScrollClicked = areaOfSorenessComponent => {
+        let actualSoreBodyPartRefY = (areaOfSorenessComponent.y + areaOfSorenessComponent.height) - (this.areasOfSorenessRef.soreBodyPartRef.height + 50);
+        if(
+            this.areasOfSorenessRef &&
+            this.areasOfSorenessRef.soreBodyPartRef &&
+            this.areasOfSorenessRef.soreBodyPartRef.y &&
+            ((AppSizes.screen.height + actualSoreBodyPartRefY) - this._scrollViewContentHeight) <= 0
+        ) {
+            this._scrollToXY(this.areasOfSorenessRef.soreBodyPartRef.x, actualSoreBodyPartRefY, true);
+        } else {
+            this._scrollToBottom();
+        }
+        this.setState({ isActionButtonVisible: false, });
+    }
+
+    _scrollToXY = (x, y, shouldAnimate = true) => {
+        _.delay(() => {
+            this.scrollViewRef.scrollTo({
+                x:        x,
+                y:        y,
+                animated: shouldAnimate,
+            });
+        }, 500);
+    }
+
     render = () => {
         const {
             dailyReadiness,
@@ -98,59 +133,29 @@ class ReadinessSurvey extends Component {
             typicalSessions,
             user,
         } = this.props;
-        let split_afternoon = 12 // 24hr time to split the afternoon
-        let split_evening = 17 // 24hr time to split the evening
-        let hourOfDay = moment().get('hour');
-        let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'AFTERNOON' : hourOfDay >= split_evening ? 'EVENING' : 'MORNING';
-        let filteredAreasOfSoreness = _.filter(dailyReadiness.soreness, o => {
-            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
-            return doesItInclude.length === 0;
-        });
-        let filteredSoreBodyParts = _.filter(dailyReadiness.soreness, o => {
-            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
-            return doesItInclude.length > 0;
-        });
-        let areQuestionsValid = dailyReadiness.readiness > 0 && dailyReadiness.sleep_quality > 0;
-        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
-        let areAreasOfSorenessValid = (
-            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
-            (this.areasOfSorenessRef && this.areasOfSorenessRef.state.isAllGood)
-        );
-        let selectedSportPositions = dailyReadiness.current_sport_name !== null ? _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name).positions : [];
-        const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
-        const isFirstFunctionalStrength = isFunctionalStrengthEligible &&
-            (!soreBodyParts.current_sport_name && soreBodyParts.current_sport_name !== 0) &&
-            (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
-        const isSecondFunctionalStrength = isFunctionalStrengthEligible &&
-            (
-                soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0 ||
-                soreBodyParts.current_sport_name === 0 || soreBodyParts.current_sport_name > 0
-            ) &&
-            (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
-        let isFunctionalStrengthTargetValid = dailyReadiness.current_sport_name !== null ?
-            dailyReadiness.current_sport_name !== null && (dailyReadiness.current_position !== null || !selectedSportPositions)
-            : dailyReadiness.current_sport_name === null ?
-                dailyReadiness.current_position !== null
-                :
-                false;
-        let isFunctionalStrengthValid = isFunctionalStrengthEligible && isFirstFunctionalStrength ?
-            dailyReadiness.wants_functional_strength !== null && isFunctionalStrengthTargetValid
-            : isFunctionalStrengthEligible && isSecondFunctionalStrength ?
-                dailyReadiness.wants_functional_strength !== null
-                :
-                true;
-        let functionalStrengthTodaySubtext = isFunctionalStrengthEligible ?
-            `(${soreBodyParts.completed_functional_strength_sessions}/2 completed in last 7 days${soreBodyParts.completed_functional_strength_sessions === 2 ? ', but you can go for 3!': ''})`
-            :
-            '';
-        let isFormValid = isFunctionalStrengthValid && areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
-        let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
-        newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
+        let {
+            functionalStrengthTodaySubtext,
+            isFirstFunctionalStrength,
+            isFormValid,
+            isSecondFunctionalStrength,
+            newSoreBodyParts,
+            partOfDay,
+            selectedSportPositions,
+        } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
+        let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, dailyReadiness.soreness);
+        let isFABVisible = areaOfSorenessClicked && this.state.isActionButtonVisible && areaOfSorenessClicked.length > 0;
         let questionCounter = 0;
         /*eslint no-return-assign: 0*/
         return(
             <View style={{flex: 1,}}>
-                <ScrollView ref={ref => {this.scrollViewRef = ref}}>
+                <ScrollView
+                    bounces={false}
+                    onContentSizeChange={(contentWidth, contentHeight) => {this._scrollViewContentHeight = contentHeight}}
+                    onScrollEndDrag={event => this._scrollViewEndDrag(event, this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (newSoreBodyParts.length + 3) : (newSoreBodyParts.length + 2)])}
+                    overScrollMode={'never'}
+                    ref={ref => {this.scrollViewRef = ref}}
+                    style={{flex: isFABVisible ? 9 : 10,}}
+                >
                     <View onLayout={event => {this.headerComponent = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,}}} style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: 'center', width: AppSizes.screen.width}}>
                         { isFirstFunctionalStrength ?
                             <View style={{textAlign: 'center',}}>
@@ -456,14 +461,14 @@ class ReadinessSurvey extends Component {
                             <SoreBodyPart
                                 bodyPart={bodyPart}
                                 bodyPartSide={bodyPart.side}
-                                firstTimeExperience={user.firstTimeExperience}
+                                firstTimeExperience={user.first_time_experience}
                                 handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                     handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
                                     if(shouldScroll) {
                                         this._scrollTo(isFirstFunctionalStrength || isSecondFunctionalStrength ? (i + 4) : (i + 3));
                                     }
                                 }}
-                                handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
+                                handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                                 index={isFirstFunctionalStrength ? (i + 5) : isSecondFunctionalStrength ? (i + 4) : (i + 3)}
                                 isPrevSoreness={true}
                                 surveyObject={dailyReadiness}
@@ -472,7 +477,7 @@ class ReadinessSurvey extends Component {
                             <Spacer size={100} />
                         </View>
                     )}
-                    <View onLayout={event => {this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (newSoreBodyParts.length + 3) : (newSoreBodyParts.length + 2)] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}}>
+                    <View onLayout={event => {this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (newSoreBodyParts.length + 3) : (newSoreBodyParts.length + 2)] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50, height: event.nativeEvent.layout.height}}}>
                         <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
                             {isFirstFunctionalStrength ? (newSoreBodyParts.length + 5) : isSecondFunctionalStrength ? (newSoreBodyParts.length + 4) : (newSoreBodyParts.length + 3)}
                         </Text>
@@ -480,9 +485,9 @@ class ReadinessSurvey extends Component {
                             {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
                         </Text>
                         <AreasOfSoreness
-                            handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
+                            handleAreaOfSorenessClick={(body, isAllGood) => { this.setState({ isActionButtonVisible: true, }); handleAreaOfSorenessClick(body, true, isAllGood); }}
                             handleFormChange={handleFormChange}
-                            handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
+                            handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
                             scrollToBottom={this._scrollToBottom}
                             soreBodyParts={soreBodyParts}
@@ -510,6 +515,25 @@ class ReadinessSurvey extends Component {
                         title={isFormValid ? 'Submit' : 'Select an Option'}
                     />
                 </ScrollView>
+                { isFABVisible ?
+                    <ActionButton
+                        buttonColor={AppColors.primary.yellow.hundredPercent}
+                        degrees={0}
+                        hideShadow
+                        onPress={() => this._fabScrollClicked(this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (newSoreBodyParts.length + 3) : (newSoreBodyParts.length + 2)])}
+                        renderIcon={() =>
+                            <TabIcon
+                                color={AppColors.white}
+                                icon={'chevron-down'}
+                                raised={false}
+                                type={'material-community'}
+                            />
+                        }
+                        style={{flex: 1,}}
+                    />
+                    :
+                    null
+                }
                 <SlideUpPanel
                     expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
                     isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}

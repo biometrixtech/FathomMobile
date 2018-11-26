@@ -71,7 +71,9 @@ SingleExerciseItem.propTypes = {
     handleCompleteExercise: PropTypes.func.isRequired,
     selectedExercise:       PropTypes.string.isRequired,
 };
+
 SingleExerciseItem.defaultProps = {};
+
 SingleExerciseItem.componentName = 'SingleExerciseItem';
 
 /* Export Component ================================================================== */

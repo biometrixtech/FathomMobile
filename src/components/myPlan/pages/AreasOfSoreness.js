@@ -4,7 +4,7 @@
     <AreasOfSoreness
         handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
         handleFormChange={handleFormChange}
-        handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
+        handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
         ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
         scrollToBottom={this._scrollToBottom}
         soreBodyParts={soreBodyParts}
@@ -61,6 +61,7 @@ class AreasOfSoreness extends Component {
             isAllGood:            false,
             isAllGoodTooltipOpen: false,
         };
+        this.soreBodyPartRef = {};
     }
 
     _handleTooltipClose = callback => {
@@ -85,15 +86,7 @@ class AreasOfSoreness extends Component {
             toggleSlideUpPanel,
             user,
         } = this.props;
-        let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, (u, i) => _.findIndex(soreBodyParts, o => o.body_part === i) === -1);
-        let newBodyPartMap = _.filter(filteredBodyPartMap, o => {
-            let itemStateFiltered = _.filter(soreBodyParts.body_parts, {body_part: o.index});
-            return o.order &&
-                _.findIndex(soreBodyParts.body_parts, u => u.body_part === o.index && u.side === 0) === -1 &&
-                (itemStateFiltered.length === 1 || itemStateFiltered.length === 0);
-        });
-        let areaOfSorenessClicked = _.filter(soreBodyPartsState, bodyPartState => _.findIndex(soreBodyParts.body_parts, bodyPartProp => bodyPartProp.body_part === bodyPartState.body_part && bodyPartProp.side === bodyPartState.side) === -1);
-        let groupedNewBodyPartMap = _.groupBy(newBodyPartMap, 'location');
+        let { areaOfSorenessClicked, groupedNewBodyPartMap, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState);
         return(
             <View>
                 <Spacer size={30} />
@@ -102,7 +95,7 @@ class AreasOfSoreness extends Component {
                     content={
                         <TooltipContent
                             handleTooltipClose={() => this._handleTooltipClose(() => {
-                                handleUpdateFirstTimeExperience('allGoodBodyPartTooltip', true);
+                                handleUpdateFirstTimeExperience('all_good_body_part_tooltip');
                             })}
                             text={MyPlanConstants.allGoodBodyPartMessage()}
                         />
@@ -117,10 +110,10 @@ class AreasOfSoreness extends Component {
                                 this.setState({
                                     isAllGood: !this.state.isAllGood,
                                 }, () => {
-                                    if(!user.firstTimeExperience.allGoodBodyPartTooltip && this.state.isAllGood) {
+                                    if(!user.first_time_experience.includes('all_good_body_part_tooltip') && this.state.isAllGood) {
                                         this.setState({ isAllGoodTooltipOpen: true, });
                                     }
-                                    if(user.firstTimeExperience.allGoodBodyPartTooltip) {
+                                    if(user.first_time_experience.includes('all_good_body_part_tooltip')) {
                                         scrollToBottom();
                                     }
                                     handleAreaOfSorenessClick(false, true);
@@ -187,7 +180,7 @@ class AreasOfSoreness extends Component {
                                             style={[AppStyles.paddingSml]}
                                         >
                                             <SVGImage
-                                                firstTimeExperience={user.firstTimeExperience}
+                                                firstTimeExperience={user.first_time_experience}
                                                 handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
                                                 image={areasOfSorenessBodyPart.bodyImage}
                                                 overlay={true}
@@ -203,21 +196,23 @@ class AreasOfSoreness extends Component {
                     )
                 })}
                 <Spacer size={50} />
-                {_.map(areaOfSorenessClicked, (area, i) => {
-                    return(
-                        <View key={`AreasOfSoreness1${i}`} style={[AppStyles.paddingVertical]}>
-                            <SoreBodyPart
-                                bodyPart={MyPlanConstants.bodyPartMapping[area.body_part]}
-                                bodyPartSide={area.side}
-                                firstTimeExperience={user.firstTimeExperience}
-                                handleFormChange={handleFormChange}
-                                handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
-                                surveyObject={surveyObject}
-                                toggleSlideUpPanel={toggleSlideUpPanel}
-                            />
-                        </View>
-                    )
-                })}
+                <View onLayout={event => {this.soreBodyPartRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,}}}>
+                    {_.map(areaOfSorenessClicked, (area, i) => {
+                        return(
+                            <View key={`AreasOfSoreness1${i}`} style={[AppStyles.paddingVertical]}>
+                                <SoreBodyPart
+                                    bodyPart={MyPlanConstants.bodyPartMapping[area.body_part]}
+                                    bodyPartSide={area.side}
+                                    firstTimeExperience={user.first_time_experience}
+                                    handleFormChange={handleFormChange}
+                                    handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
+                                    surveyObject={surveyObject}
+                                    toggleSlideUpPanel={toggleSlideUpPanel}
+                                />
+                            </View>
+                        )
+                    })}
+                </View>
             </View>
         )
     }
@@ -231,7 +226,9 @@ AreasOfSoreness.propTypes = {
     surveyObject:              PropTypes.object,
     user:                      PropTypes.object.isRequired,
 };
+
 AreasOfSoreness.defaultProps = {};
+
 AreasOfSoreness.componentName = 'AreasOfSoreness';
 
 /* Export Component ================================================================== */

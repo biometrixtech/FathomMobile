@@ -76,7 +76,25 @@ const createUser = (payload) => {
   */
 const userJoinAccount = (userId, payload) => {
     return dispatch => AppAPI.join_account.post({userId}, payload)
-        .then(userData => Promise.resolve(userData))
+        .then(userData => {
+            let accountObj = userData;
+            return AppAPI.get_user.get({userId})
+                .then(getUserData => {
+                    dispatch({
+                        type: Actions.USER_REPLACE,
+                        data: getUserData.user,
+                    });
+                    let cleanedResult = {};
+                    cleanedResult.sensor_pid = getUserData.user.sensor_pid;
+                    cleanedResult.mobile_udid = getUserData.user.mobile_udid;
+                    dispatch({
+                        type: Actions.CONNECT_TO_ACCESSORY,
+                        data: cleanedResult,
+                    });
+                    return Promise.resolve(accountObj);
+                })
+                .catch(error => Promise.reject(error));
+        })
         .catch(err => Promise.reject(err));
 };
 
@@ -87,16 +105,6 @@ const checkAccountCode = (account_code) => {
     return dispatch => AppAPI.check_account_code.get({account_code})
         .then(userData => Promise.resolve(userData))
         .catch(err => Promise.reject(err));
-};
-
-/**
-  * Update First Time User Experience Reducer
-  */
-const updateFirstTimeExperience = firstTimeExperience => {
-    return dispatch => Promise.resolve(dispatch({
-        type: Actions.UPDATE_FIRST_TIME_EXPERIENCE,
-        data: firstTimeExperience,
-    }));
 };
 
 /**
@@ -377,7 +385,6 @@ export default {
     stopRequest,
     stopSession,
     teamSelect,
-    updateFirstTimeExperience,
     updateUser,
     userJoinAccount,
     userSelect,
