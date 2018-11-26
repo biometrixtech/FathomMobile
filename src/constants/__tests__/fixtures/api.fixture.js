@@ -12,7 +12,7 @@
 // what {version} are we on?
 const metaAPIVersion = '/meta/1_0';
 const plansAPIVersion = '/plans/2_0';
-const usersAPIVersion = '/users/2_0';
+const usersAPIVersion = '/users/2_1';
 
 export default {
     APIs: {

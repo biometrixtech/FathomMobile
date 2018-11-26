@@ -760,7 +760,130 @@ const helperFunctions = {
         };
     },
 
+    getAthleteCardSelectedAthlete: (color, first_name,last_name) => {
+        return {
+            color,
+            first_name,
+            last_name,
+        };
+    },
+
+    athleteCardModalRenderLogicExpectedResult: (athleteName, mainColor, subHeader) => {
+        return {
+            athleteName,
+            mainColor,
+            subHeader,
+        };
+    },
+
+    getCoachesDashboardSingleTeamData: (teamName, value) => {
+        return {
+            athletes:   [{}, {}, {}, {}, {}, {}, {}],
+            compliance: {
+                complete: [
+                    {first_name: 'Dipesh', last_name: 'Gautam'},
+                    {first_name: 'Mazen', last_name: 'Chami'},
+                ],
+                incomplete: [
+                    {first_name: 'Paul', last_name: 'LaForge'},
+                    {first_name: 'Gabby', last_name: 'Levac'},
+                    {first_name: 'Chris', last_name: 'Perry'},
+                    {first_name: 'Melissa', last_name: 'White'},
+                    {first_name: 'Ivonna', last_name: 'Dumanyan'},
+                ]
+            },
+            daily_insights:  [{}],
+            label:           teamName.toUpperCase(),
+            name:            teamName,
+            value:           value,
+            weekly_insights: [{
+                add_variety:               [],
+                address_pain_soreness:     [],
+                balance_overtraining_risk: [],
+                increase_workload:         [],
+            }],
+        };
+    },
+
+    getCoachesDashboardMultipleTeamsData: (firstTeamName, secondTeamName) => {
+        return [
+            helperFunctions.getCoachesDashboardSingleTeamData(firstTeamName, 0),
+            helperFunctions.getCoachesDashboardSingleTeamData(secondTeamName, 1)
+        ];
+    },
+
+    getCoachesDashboardRenderLogicExpectedResult: (coachesTeams, complianceColor, incompleteAtheltes, numOfCompletedAthletes, numOfTotalAthletes, selectedTeam) => {
+        return {
+            coachesTeams,
+            complianceColor,
+            incompleteAtheltes,
+            numOfCompletedAthletes,
+            numOfTotalAthletes,
+            selectedTeam,
+        };
+    },
+
 };
+
+it('Coaches Dashboard Render Logic - 1 Team', () => {
+    let coachesDashboardData = [helperFunctions.getCoachesDashboardSingleTeamData('fathom-1', 0)];
+    let selectedTeamIndex = 0;
+    let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
+        coachesDashboardData,
+        '#5EB123',
+        coachesDashboardData[selectedTeamIndex].compliance.incomplete,
+        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
+        coachesDashboardData[selectedTeamIndex]
+    );
+    expect(PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex)).toEqual(expectedResult);
+});
+
+it('Coaches Dashboard Render Logic - 2 Teams, First Team Selected', () => {
+    let coachesDashboardData = helperFunctions.getCoachesDashboardMultipleTeamsData('fathom', 'fathom-1');
+    let selectedTeamIndex = 0;
+    let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
+        coachesDashboardData,
+        '#5EB123',
+        coachesDashboardData[selectedTeamIndex].compliance.incomplete,
+        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
+        coachesDashboardData[selectedTeamIndex]
+    );
+    expect(PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex)).toEqual(expectedResult);
+});
+
+it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
+    let coachesDashboardData = helperFunctions.getCoachesDashboardMultipleTeamsData('fathom', 'fathom-1');
+    let selectedTeamIndex = 1;
+    let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
+        coachesDashboardData,
+        '#5EB123',
+        coachesDashboardData[selectedTeamIndex].compliance.incomplete,
+        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
+        coachesDashboardData[selectedTeamIndex]
+    );
+    expect(PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex)).toEqual(expectedResult);
+});
+
+it('Athlete Card Modal Render Logic - No Information - Dipesh', () => {
+    let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(0, 'Dipesh', 'Gautam');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('DIPESH GAUTAM', '#5EB123', 'Train as normal');
+    expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
+});
+
+it('Athlete Card Modal Render Logic - With Information - Mazen', () => {
+    let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(1, 'Mazen', 'Chami');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('MAZEN CHAMI', '#EBBA2D', 'Consider altering training plan');
+    expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
+});
+
+it('Athlete Card Modal Render Logic - With Information - Gabby', () => {
+    let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(2, 'Gabby', 'Lavac');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('GABBY LAVAC', '#C8432A', 'Consider not training today');
+    expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
+});
 
 it('Sport Schedule Builder Render Logic - Valid Sport, RPE, & All Good', () => {
     let postSession = helperFunctions.getPostSessionDefaultState(5, '', 20, '2018-11-15T15:30:00Z', 2, [], 0, null);
