@@ -536,8 +536,8 @@ class CoachesDashboard extends Component {
                     tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
                     tabBarUnderlineStyle={{height: 0,}}
                 >
-                    {this.renderToday(0, selectedTeam.daily_insights, selectedTeam.athletes, complianceColor)}
-                    {this.renderThisWeek(1, selectedTeam.weekly_insights, selectedTeam.athletes)}
+                    {this.renderToday(0, selectedTeam ? selectedTeam.daily_insights : [], selectedTeam ? selectedTeam.athletes : [], complianceColor)}
+                    {this.renderThisWeek(1, selectedTeam ? selectedTeam.weekly_insights : [], selectedTeam ? selectedTeam.athletes : [])}
                 </ScrollableTabView>
                 <Modal
                     backdropOpacity={0.75}

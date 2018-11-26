@@ -480,7 +480,7 @@ const PlanLogic = {
         });
         let selectedTeam = coachesTeams[selectedTeamIndex];
         // compliance modal data
-        let complianceObj = selectedTeam.compliance;
+        let complianceObj = selectedTeam ? selectedTeam.compliance : {complete: [], incomplete: []};
         let numOfCompletedAthletes = complianceObj ? complianceObj.complete.length : 0;
         let numOfIncompletedAthletes = complianceObj ? complianceObj.incomplete.length : 0;
         let numOfTotalAthletes = numOfCompletedAthletes + numOfIncompletedAthletes;
