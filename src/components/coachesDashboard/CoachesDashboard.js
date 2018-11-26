@@ -14,7 +14,7 @@ import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab
 import moment from 'moment';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles, AppFonts, MyPlan as MyPlanConstants, } from '../../constants/';
+import { AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants/';
 import { store } from '../../store';
 import { AppUtil, PlanLogic, } from '../../lib';
 
@@ -66,10 +66,13 @@ class CoachesDashboard extends Component {
         getCoachesDashboardData: PropTypes.func.isRequired,
         lastOpened:              PropTypes.object.isRequired,
         network:                 PropTypes.object.isRequired,
+        scheduledMaintenance:    PropTypes.object,
         user:                    PropTypes.object.isRequired,
     }
 
-    static defaultProps = {}
+    static defaultProps = {
+        scheduledMaintenance: null,
+    }
 
     constructor(props) {
         super(props);
@@ -100,6 +103,12 @@ class CoachesDashboard extends Component {
     }
 
     componentDidMount = () => {
+        // scheduled maintenance
+        if(!this.props.scheduledMaintenance.addressed) {
+            let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
+            let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
+            AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
+        }
         // fetch coaches dashboard data
         let userId = this.props.user.id;
         this.props.getCoachesDashboardData(userId);

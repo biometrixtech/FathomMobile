@@ -10,6 +10,7 @@ const CoachesDashboard = ({
     getCoachesDashboardData,
     lastOpened,
     network,
+    scheduledMaintenance,
     user,
 }) => (
     <Layout
@@ -17,6 +18,7 @@ const CoachesDashboard = ({
         getCoachesDashboardData={getCoachesDashboardData}
         lastOpened={lastOpened}
         network={network}
+        scheduledMaintenance={scheduledMaintenance}
         user={user}
     />
 );
@@ -27,6 +29,7 @@ CoachesDashboard.propTypes = {
     getCoachesDashboardData: PropTypes.func.isRequired,
     lastOpened:              PropTypes.object.isRequired,
     network:                 PropTypes.object.isRequired,
+    scheduledMaintenance:    PropTypes.object,
     user:                    PropTypes.object.isRequired,
 };
 
@@ -38,6 +41,7 @@ const mapStateToProps = state => ({
     coachesDashboardData: state.plan.coachesDashboardData,
     lastOpened:           state.plan.lastOpened,
     network:              state.network,
+    scheduledMaintenance: state.init.scheduledMaintenance || null,
     user:                 state.user,
 });
 
