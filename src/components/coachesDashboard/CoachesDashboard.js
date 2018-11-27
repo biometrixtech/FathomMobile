@@ -27,8 +27,38 @@ const tabs = ['TODAY', 'THIS WEEK'];
 // setup GA Tracker
 const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
 
+// constants
+const circleSize = 65;
+
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    athleteCircle: {
+        borderRadius:   (circleSize / 2),
+        height:         circleSize,
+        justifyContent: 'center',
+        marginBottom:   AppSizes.paddingXSml,
+        marginRight:    AppSizes.paddingSml,
+        width:          circleSize,
+    },
+    athleteCircleText: {
+        color:             AppColors.white,
+        fontSize:          AppFonts.scaleFont(15),
+        paddingHorizontal: AppSizes.paddingXSml,
+        paddingVertical:   AppSizes.paddingSml,
+    },
+    athleteComplianceBtn: {
+        borderRadius:    5,
+        flexDirection:   'row',
+        paddingLeft:     AppSizes.paddingXSml,
+        paddingVertical: AppSizes.paddingXSml,
+    },
+    complianceModalAthleteNameWrapper: {
+        alignSelf:         'center',
+        borderBottomColor: AppColors.zeplin.shadow,
+        borderBottomWidth: 1,
+        borderStyle:       'solid',
+        width:             (AppSizes.screen.widthThreeQuarters - (AppSizes.paddingLrg + AppSizes.paddingLrg)),
+    },
     pickerSelect: {
         ...AppFonts.oswaldRegular,
         color:    AppColors.zeplin.darkGrey,
@@ -43,7 +73,7 @@ const styles = StyleSheet.create({
         alignSelf:  'flex-start',
         color:      AppColors.zeplin.darkGrey,
         fontSize:   AppFonts.scaleFont(30),
-        lineHeight: AppFonts.scaleFont(30),
+        lineHeight: AppFonts.scaleFont(28),
     },
     ulText: {
         color:       AppColors.primary.grey.fiftyPercent,
@@ -191,11 +221,11 @@ class CoachesDashboard extends Component {
                     size={30}
                     type={'material-community'}
                 />
-                <Spacer size={30} />
+                <Spacer size={25} />
                 <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(30), paddingHorizontal: AppSizes.paddingLrg,}}>
                     {'COMPLIANCE'}
                 </Text>
-                <Spacer size={20} />
+                <Spacer size={15} />
                 <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, paddingVertical: AppSizes.paddingSml,}}>
                     <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(12), paddingHorizontal: AppSizes.paddingLrg,}}>
                         {`READINESS SURVEYS COMPLETE ${moment().format('MM/DD/YY')}`}
@@ -207,22 +237,22 @@ class CoachesDashboard extends Component {
                         </Text>
                     </Text>
                 </View>
-                <Spacer size={20} />
+                <Spacer size={15} />
                 <Text robotoRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(17), paddingHorizontal: AppSizes.paddingLrg,}}>
                     {`Athletes without Readiness Survey ${moment().format('MM/DD/YY')}:`}
                 </Text>
-                <Spacer size={20} />
+                <Spacer size={10} />
                 { _.map(incompleteAtheltes, (athlete, index) =>
-                    <View
-                        key={index}
-                        style={{alignSelf: 'center', borderBottomColor: AppColors.zeplin.shadow, borderBottomWidth: 1, borderStyle: 'solid', width: (AppSizes.screen.widthThreeQuarters - (AppSizes.paddingLrg + AppSizes.paddingLrg)),}}
-                    >
-                        <Text
-                            oswaldRegular
-                            style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingBottom: AppSizes.padding,}}
-                        >
-                            {`${athlete.first_name} ${athlete.last_name}`}
-                        </Text>
+                    <View key={index}>
+                        <View style={[styles.complianceModalAthleteNameWrapper]}>
+                            <Text
+                                oswaldRegular
+                                style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingBottom: AppSizes.padding,}}
+                            >
+                                {`${athlete.first_name} ${athlete.last_name}`}
+                            </Text>
+                        </View>
+                        <Spacer size={15} />
                     </View>
                 )}
                 <Spacer size={20} />
@@ -368,7 +398,7 @@ class CoachesDashboard extends Component {
                     <View />
                     :
                     <TouchableHighlight onPress={() => this._toggleComplianceModal()} underlayColor={AppColors.transparent}>
-                        <View style={[AppStyles.containerCentered, { backgroundColor: complianceColor, borderRadius: 5, flexDirection: 'row', paddingLeft: AppSizes.paddingXSml, paddingVertical: AppSizes.paddingXSml,}]}>
+                        <View style={[AppStyles.containerCentered, styles.athleteComplianceBtn, {backgroundColor: complianceColor,}]}>
                             <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(13),}}>
                                 {'ATHLETE COMPLIANCE'}
                             </Text>
@@ -432,27 +462,14 @@ class CoachesDashboard extends Component {
                                 <TouchableHighlight
                                     key={index}
                                     onPress={() => this.setState({ isAthleteCardModalOpen: true, selectedAthlete: filteredAthlete, })}
-                                    style={{
-                                        backgroundColor: backgroundColor,
-                                        borderRadius:    65/2,
-                                        height:          65,
-                                        justifyContent:  'center',
-                                        marginBottom:    AppSizes.paddingXSml,
-                                        marginRight:     AppSizes.paddingSml,
-                                        width:           65,
-                                    }}
+                                    style={[styles.athleteCircle, {backgroundColor: backgroundColor,}]}
                                     underlayColor={AppColors.transparent}
                                 >
                                     <Text
                                         oswaldRegular
                                         style={[
                                             AppStyles.textCenterAligned,
-                                            {
-                                                color:             AppColors.white,
-                                                fontSize:          AppFonts.scaleFont(15),
-                                                paddingHorizontal: AppSizes.paddingXSml,
-                                                paddingVertical:   AppSizes.paddingSml,
-                                            }
+                                            styles.athleteCircleText,
                                         ]}
                                     >
                                         {`${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`}
