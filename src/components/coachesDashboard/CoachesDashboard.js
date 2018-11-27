@@ -456,8 +456,7 @@ class CoachesDashboard extends Component {
                     <Spacer size={25} />
                     <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: AppSizes.padding,}}>
                         {_.map(items, (item, index) => {
-                            let filteredAthlete = _.filter(athletes, ['user_id', item.user_id])[0];
-                            let backgroundColor = item.color === 0 ? AppColors.zeplin.success : item.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
+                            let { athleteName, backgroundColor, filteredAthlete, } = PlanLogic.handleRenderCoachesDashboardSection(athletes, item);
                             return(
                                 <TouchableHighlight
                                     key={index}
@@ -472,7 +471,7 @@ class CoachesDashboard extends Component {
                                             styles.athleteCircleText,
                                         ]}
                                     >
-                                        {`${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`}
+                                        {athleteName}
                                     </Text>
                                 </TouchableHighlight>
                             )

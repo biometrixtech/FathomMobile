@@ -502,6 +502,21 @@ const PlanLogic = {
         };
     },
 
+    /**
+      * Coaches Dashboard Section Render Logic
+      * - CoachesDashboard
+      */
+    handleRenderCoachesDashboardSection: (athletes, item) => {
+        let athleteName = `${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`;
+        let backgroundColor = item.color === 0 ? AppColors.zeplin.success : item.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
+        let filteredAthlete = _.filter(athletes, ['user_id', item.user_id])[0];
+        return {
+            athleteName,
+            backgroundColor,
+            filteredAthlete,
+        }
+    },
+
 };
 
 /* Export ==================================================================== */

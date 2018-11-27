@@ -823,7 +823,54 @@ const helperFunctions = {
         };
     },
 
+    getCoachesDashboardSectionRenderLoopLogicAthlets: () => {
+        return [
+            {color: 0, first_name: 'Dipesh', last_name: 'Gautam', user_id: '1'},
+            {color: 1, first_name: 'Mazen', last_name: 'Chami', user_id: '2'},
+            {color: 2, first_name: 'Paul', last_name: 'LaForge', user_id: '3'},
+            {color: 2, first_name: 'Melissa', last_name: 'White', user_id: '4'},
+        ];
+    },
+
+    getCoachesDashboardSectionRenderLoopLogicItem: (first_name, last_name, color, user_id) => {
+        return {
+            first_name,
+            last_name,
+            color,
+            user_id,
+        };
+    },
+
+    getRenderCoachesDashboardSectionExpectedResult: (athleteFName, athleteLName, backgroundColor, filteredAthlete) => {
+        return {
+            athleteName: `${athleteFName.toUpperCase()}\n${athleteLName.charAt(0).toUpperCase()}.`,
+            backgroundColor,
+            filteredAthlete,
+        }
+    },
+
 };
+
+it('Coaches Dashboard Section Render Loop Logic - Dipesh Gautam', () => {
+    let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
+    let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Dipesh', 'Gautam', 0, '1');
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('Dipesh', 'Gautam', '#5EB123', item);
+    expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
+});
+
+it('Coaches Dashboard Section Render Loop Logic - Paul LaForge', () => {
+    let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
+    let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Paul', 'LaForge', 2, '3');
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('Paul', 'LaForge', '#C8432A', item);
+    expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
+});
+
+it('Coaches Dashboard Section Render Loop Logic - Mazen Chami', () => {
+    let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
+    let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Mazen', 'Chami', 1, '2');
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('Mazen', 'Chami', '#EBBA2D', item);
+    expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
+});
 
 it('Coaches Dashboard Render Logic - 1 Team', () => {
     let coachesDashboardData = [helperFunctions.getCoachesDashboardSingleTeamData('fathom-1', 0)];
