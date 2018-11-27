@@ -2,7 +2,7 @@
  * CoachesDashboard View
  */
 import React, { Component } from 'react';
-import { Animated, BackHandler, Platform, ScrollView, StyleSheet, TouchableHighlight, TouchableWithoutFeedback, View, } from 'react-native';
+import { Animated, BackHandler, Platform, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, TouchableWithoutFeedback, View, } from 'react-native';
 import PropTypes from 'prop-types';
 
 // import third-party libraries
@@ -109,6 +109,7 @@ class CoachesDashboard extends Component {
         this.state = {
             isAthleteCardModalOpen: false,
             isComplianceModalOpen:  false,
+            isPageLoading:          false,
             page0:                  {},
             page1:                  {},
             selectedAthlete:        null,
@@ -140,8 +141,7 @@ class CoachesDashboard extends Component {
             AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
         }
         // fetch coaches dashboard data
-        let userId = this.props.user.id;
-        this.props.getCoachesDashboardData(userId);
+        this._handleEnteringApp();
         // set GA variables
         GATracker.setUser(this.props.user.id);
         GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
@@ -150,6 +150,18 @@ class CoachesDashboard extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
+    }
+
+    _handleEnteringApp = () => {
+        // fetch coaches dashboard data
+        let userId = this.props.user.id;
+        this.setState({ isPageLoading: true, });
+        this.props.getCoachesDashboardData(userId)
+            .then(res => this.setState({ isPageLoading: false, }))
+            .catch(err => {
+                this.setState({ isPageLoading: false, });
+                AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
+            });
     }
 
     renderTab = (name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) => {
@@ -163,13 +175,15 @@ class CoachesDashboard extends Component {
         let page1ExtraStyles = currentPage === 1 ? {paddingRight: AppSizes.screen.widthQuarter} : {};
         let page0Styles = [AppStyles.leftTabBar, page0ExtraStyles, {width: page0Width,}];
         let page1Styles = [AppStyles.rightTabBar, page1ExtraStyles, {width: page1Width,}];
+        // making sure we can only drag horizontally if our modals are closed and nothing is loading
+        let isScrollLocked = !this.state.isPageLoading ? false : true;
         return(
             <TouchableWithoutFeedback
                 key={`${name}_${page}`}
                 accessible={true}
                 accessibilityLabel={name}
                 accessibilityTraits={'button'}
-                onPress={() => onPressHandler(page)}
+                onPress={() => isScrollLocked ? null : onPressHandler(page)}
                 onLayout={onLayoutHandler}
             >
                 <View style={[page === 0 ? page0Styles : page === 1 ? page1Styles : {}]}>
@@ -484,11 +498,24 @@ class CoachesDashboard extends Component {
     }
 
     renderToday = (index, insights, athletes, complianceColor) => {
-        const { todayFilter, } = this.state;
+        const { isPageLoading, todayFilter, } = this.state;
         let { sections, } = PlanLogic.handleRenderTodayAndThisWeek(true, insights, athletes, todayFilter, this.renderSection);
         return (
             <ScrollView
+                bounces={false}
                 contentContainerStyle={{ backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding, }}
+                overScrollMode={'never'}
+                refreshControl={
+                    <RefreshControl
+                        colors={[AppColors.primary.yellow.hundredPercent]}
+                        onRefresh={() => this._handleEnteringApp()}
+                        refreshing={isPageLoading}
+                        title={'Loading...'}
+                        titleColor={AppColors.primary.yellow.hundredPercent}
+                        tintColor={AppColors.primary.yellow.hundredPercent}
+                    />
+                }
+                style={{flex: 1,}}
                 tabLabel={tabs[index]}
             >
                 <Spacer size={20} />
@@ -500,11 +527,24 @@ class CoachesDashboard extends Component {
     }
 
     renderThisWeek = (index, insights, athletes, complianceColor) => {
-        const { thisWeekFilter, } = this.state;
+        const { isPageLoading, thisWeekFilter, } = this.state;
         let { sections, } = PlanLogic.handleRenderTodayAndThisWeek(false, insights, athletes, thisWeekFilter, this.renderSection);
         return (
             <ScrollView
+                bounces={false}
                 contentContainerStyle={{ backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding, }}
+                overScrollMode={'never'}
+                refreshControl={
+                    <RefreshControl
+                        colors={[AppColors.primary.yellow.hundredPercent]}
+                        onRefresh={() => this._handleEnteringApp()}
+                        refreshing={isPageLoading}
+                        title={'Loading...'}
+                        titleColor={AppColors.primary.yellow.hundredPercent}
+                        tintColor={AppColors.primary.yellow.hundredPercent}
+                    />
+                }
+                style={{flex: 1,}}
                 tabLabel={tabs[index]}
             >
                 <Spacer size={20} />
@@ -526,6 +566,8 @@ class CoachesDashboard extends Component {
             numOfTotalAthletes,
             selectedTeam,
         } = PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex);
+        // making sure we can only drag horizontally if our modals are closed and nothing is loading
+        let isScrollLocked = !this.state.isPageLoading ? false : true;
         return(
             <View style={{flex: 1,}}>
                 <View style={[AppStyles.containerCentered, {backgroundColor: AppColors.white, flexDirection: 'row', justifyContent: 'center', paddingBottom: AppSizes.paddingSml,}]}>
@@ -552,7 +594,7 @@ class CoachesDashboard extends Component {
                     }
                 </View>
                 <ScrollableTabView
-                    locked={false}
+                    locked={isScrollLocked}
                     onChangeTab={tabLocation => this._onChangeTab(tabLocation)}
                     ref={tabView => { this.tabView = tabView; }}
                     renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderBottomWidth: 0,}} />}
