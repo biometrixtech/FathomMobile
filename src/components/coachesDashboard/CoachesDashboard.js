@@ -313,28 +313,30 @@ class CoachesDashboard extends Component {
                                     <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20), paddingLeft: AppSizes.paddingSml,}}>{'WE RECOMMEND...'}</Text>
                                 </View>
                                 <Spacer size={10} />
-                                { selectedAthlete.daily_recommendation.length > 0 ?
-                                    <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'TODAY'}</Text>
-                                    :
-                                    null
-                                }
-                                {_.map(selectedAthlete.daily_recommendation, (rec, index) => (
-                                    <View key={index} style={styles.ulWrapper}>
-                                        <Text robotoRegular style={styles.ul}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={styles.ulText}>{rec}</Text>
-                                    </View>
-                                ))}
-                                { selectedAthlete.weekly_recommendation.length > 0 ?
-                                    <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'THIS WEEK'}</Text>
-                                    :
-                                    null
-                                }
-                                {_.map(selectedAthlete.weekly_recommendation, (rec, index) => (
-                                    <View key={index} style={styles.ulWrapper}>
-                                        <Text robotoRegular style={styles.ul}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={styles.ulText}>{rec}</Text>
-                                    </View>
-                                ))}
+                                <ScrollView>
+                                    { selectedAthlete.daily_recommendation.length > 0 ?
+                                        <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'TODAY'}</Text>
+                                        :
+                                        null
+                                    }
+                                    {_.map(selectedAthlete.daily_recommendation, (rec, index) => (
+                                        <View key={index} style={styles.ulWrapper}>
+                                            <Text robotoRegular style={styles.ul}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={styles.ulText}>{rec}</Text>
+                                        </View>
+                                    ))}
+                                    { selectedAthlete.weekly_recommendation.length > 0 ?
+                                        <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'THIS WEEK'}</Text>
+                                        :
+                                        null
+                                    }
+                                    {_.map(selectedAthlete.weekly_recommendation, (rec, index) => (
+                                        <View key={index} style={styles.ulWrapper}>
+                                            <Text robotoRegular style={styles.ul}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={styles.ulText}>{rec}</Text>
+                                        </View>
+                                    ))}
+                                </ScrollView>
                             </View>
                             :
                             <View>
@@ -349,12 +351,14 @@ class CoachesDashboard extends Component {
                                     <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20), paddingLeft: AppSizes.paddingSml,}}>{'BECAUSE WE\'VE NOTICED…'}</Text>
                                 </View>
                                 <Spacer size={10} />
-                                {_.map(selectedAthlete.insights, (rec, index) => (
-                                    <View key={index} style={styles.ulWrapper}>
-                                        <Text robotoRegular style={styles.ul}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={styles.ulText}>{rec}</Text>
-                                    </View>
-                                ))}
+                                <ScrollView>
+                                    {_.map(selectedAthlete.insights, (rec, index) => (
+                                        <View key={index} style={styles.ulWrapper}>
+                                            <Text robotoRegular style={styles.ul}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={styles.ulText}>{rec}</Text>
+                                        </View>
+                                    ))}
+                                </ScrollView>
                                 <Spacer size={10} />
                             </View>
                         }

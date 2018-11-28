@@ -434,16 +434,14 @@ const PlanLogic = {
         let coachesDashboardCardsData = MyPlanConstants.coachesDashboardCardsData(isToday);
         let sections = [];
         _.map(insights, (insight, ind) => {
-            _.forEach(insight, (value, key) => {
-                let newValue = filter === 'not_cleared_to_play' ?
-                    _.filter(value, ['cleared_to_train', false])
-                    : filter === 'cleared_to_play' ?
-                        _.filter(value, ['cleared_to_train', true])
-                        :
-                        value;
-                let description = _.filter(coachesDashboardCardsData, ['value', key])[0];
-                sections.push(renderSection(description, newValue, athletes, key));
-            });
+            let newValue = filter === 'not_cleared_to_play' ?
+                _.filter(insight, ['cleared_to_train', false])
+                : filter === 'cleared_to_play' ?
+                    _.filter(insight, ['cleared_to_train', true])
+                    :
+                    insight;
+            let description = _.filter(coachesDashboardCardsData, ['value', ind])[0];
+            sections.push(renderSection(description, newValue, athletes, ind));
         });
         return {
             sections,
@@ -480,8 +478,8 @@ const PlanLogic = {
         });
         let selectedTeam = coachesTeams[selectedTeamIndex];
         // compliance modal data
-        let complianceObj = selectedTeam ? selectedTeam.compliance : {complete: [], incomplete: []};
-        let numOfCompletedAthletes = complianceObj ? complianceObj.complete.length : 0;
+        let complianceObj = selectedTeam ? selectedTeam.compliance : {completed: [], incomplete: []};
+        let numOfCompletedAthletes = complianceObj ? complianceObj.completed.length : 0;
         let numOfIncompletedAthletes = complianceObj ? complianceObj.incomplete.length : 0;
         let numOfTotalAthletes = numOfCompletedAthletes + numOfIncompletedAthletes;
         let incompleteAtheltes = complianceObj ? complianceObj.incomplete : [];

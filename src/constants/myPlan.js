@@ -434,30 +434,25 @@ const coachesDashboardCardsData = isToday => {
             {
                 description: 'Shorten training or limit intensity and focus on recovery modalities',
                 label:       'LIMIT TIME & INTENSITY IN TRAINING',
-                value:       'limit_time_intensity',
+                value:       'limit_time_intensity_of_training',
             },
             {
                 description: 'Stop training if pain increases or consider reducing workload to facilitate recovery',
                 label:       'MONITOR IN TRAINING',
-                value:       'monitor_training',
+                value:       'monitor_in_training',
             },
             {
                 description: 'Pain severity is too high to train today, consult medical staff to evaluate status',
                 label:       'NOT CLEARED TO TRAIN TODAY',
-                value:       'not_cleared',
+                value:       'not_cleared_for_training',
             },
         ]
     }
     return [
         {
-            description: 'Diversify your daily workloads and intensity or prioritize holistic recovery',
-            label:       'ADD VARIETY TO TRAINING THIS WEEK',
-            value:       'add_variety',
-        },
-        {
-            description: 'Prioritize Recovery and consider decreasing upcoming workloads',
-            label:       'ADDRESS PAIN OR SORENESS',
-            value:       'address_pain_soreness',
+            description: 'Train as normal and complete Fathom\'s Prep and Recovery',
+            label:       'ALL GOOD',
+            value:       'all_good',
         },
         {
             description: 'Decrease this week\'s workload or prioritize holistic recovery',
@@ -465,9 +460,24 @@ const coachesDashboardCardsData = isToday => {
             value:       'balance_overtraining_risk',
         },
         {
+            description: 'Diversify your daily workloads and intensity or prioritize holistic recovery',
+            label:       'ADD VARIETY TO TRAINING THIS WEEK',
+            value:       'add_variety_to_training_risk',
+        },
+        {
             description: 'If tapering is unintentional, increase this week\'s workload',
             label:       'INCREASE WEEKLY WORKLOAD',
-            value:       'increase_workload',
+            value:       'increase_weekly_workload',
+        },
+        {
+            description: 'Prioritize Recovery and consider decreasing upcoming workloads',
+            label:       'ADDRESS PAIN OR SORENESS',
+            value:       'address_pain_or_soreness',
+        },
+        {
+            description: 'Consult medical staff to evaluate status before training',
+            label:       'EVALUATE HEALTH STATUS',
+            value:       'evaluate_health_status',
         },
     ]
 };
