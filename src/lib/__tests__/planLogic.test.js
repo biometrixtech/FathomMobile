@@ -780,7 +780,7 @@ const helperFunctions = {
         return {
             athletes:   [{}, {}, {}, {}, {}, {}, {}],
             compliance: {
-                complete: [
+                completed: [
                     {first_name: 'Dipesh', last_name: 'Gautam'},
                     {first_name: 'Mazen', last_name: 'Chami'},
                 ],
@@ -879,8 +879,8 @@ it('Coaches Dashboard Render Logic - 1 Team', () => {
         coachesDashboardData,
         '#5EB123',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
-        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
-        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
+        coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
         coachesDashboardData[selectedTeamIndex]
     );
     expect(PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex)).toEqual(expectedResult);
@@ -893,8 +893,8 @@ it('Coaches Dashboard Render Logic - 2 Teams, First Team Selected', () => {
         coachesDashboardData,
         '#5EB123',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
-        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
-        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
+        coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
         coachesDashboardData[selectedTeamIndex]
     );
     expect(PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex)).toEqual(expectedResult);
@@ -907,8 +907,8 @@ it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
         coachesDashboardData,
         '#5EB123',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
-        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
-        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
+        coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
         coachesDashboardData[selectedTeamIndex]
     );
     expect(PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex)).toEqual(expectedResult);
