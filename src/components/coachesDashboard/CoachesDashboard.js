@@ -10,7 +10,7 @@ import { Actions } from 'react-native-router-flux';
 import { GoogleAnalyticsTracker, } from 'react-native-google-analytics-bridge';
 import _ from 'lodash';
 import Modal from 'react-native-modalbox';
-import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
+import ScrollableTabView from 'react-native-scrollable-tab-view';
 import moment from 'moment';
 
 // Consts and Libs
@@ -19,7 +19,7 @@ import { store } from '../../store';
 import { AppUtil, PlanLogic, } from '../../lib';
 
 // Components
-import { FathomPicker, Spacer, TabIcon, Text, } from '../custom/';
+import { CoachesDashboardTabBar, FathomPicker, Spacer, TabIcon, Text, } from '../custom/';
 
 // Tabs titles
 const tabs = ['TODAY', 'THIS WEEK'];
@@ -58,11 +58,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderStyle:       'solid',
         width:             (AppSizes.screen.widthThreeQuarters - (AppSizes.paddingLrg + AppSizes.paddingLrg)),
-    },
-    pickerSelect: {
-        ...AppFonts.oswaldRegular,
-        color:    AppColors.zeplin.darkGrey,
-        fontSize: AppFonts.scaleFont(30),
     },
     sortByPickerSelect: {
         ...AppFonts.robotoLight,
@@ -502,9 +497,7 @@ class CoachesDashboard extends Component {
         let { sections, } = PlanLogic.handleRenderTodayAndThisWeek(true, insights, athletes, todayFilter, this.renderSection);
         return (
             <ScrollView
-                bounces={false}
                 contentContainerStyle={{ backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding, }}
-                overScrollMode={'never'}
                 refreshControl={
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
@@ -515,7 +508,6 @@ class CoachesDashboard extends Component {
                         tintColor={AppColors.primary.yellow.hundredPercent}
                     />
                 }
-                style={{flex: 1,}}
                 tabLabel={tabs[index]}
             >
                 <Spacer size={20} />
@@ -531,9 +523,7 @@ class CoachesDashboard extends Component {
         let { sections, } = PlanLogic.handleRenderTodayAndThisWeek(false, insights, athletes, thisWeekFilter, this.renderSection);
         return (
             <ScrollView
-                bounces={false}
                 contentContainerStyle={{ backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding, }}
-                overScrollMode={'never'}
                 refreshControl={
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
@@ -544,7 +534,6 @@ class CoachesDashboard extends Component {
                         tintColor={AppColors.primary.yellow.hundredPercent}
                     />
                 }
-                style={{flex: 1,}}
                 tabLabel={tabs[index]}
             >
                 <Spacer size={20} />
@@ -570,34 +559,23 @@ class CoachesDashboard extends Component {
         let isScrollLocked = !this.state.isPageLoading ? false : true;
         return(
             <View style={{flex: 1,}}>
-                <View style={[AppStyles.containerCentered, {backgroundColor: AppColors.white, flexDirection: 'row', justifyContent: 'center', paddingBottom: AppSizes.paddingSml,}]}>
-                    { coachesTeams.length === 1 ?
-                        <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(30),}}>
-                            {selectedTeam.label}
-                        </Text>
-                        :
-                        <FathomPicker
-                            hideIcon={false}
-                            items={coachesTeams}
-                            onValueChange={value => this.setState({ selectedTeamIndex: value ? value : 0, })}
-                            placeholder={{
-                                label: 'Select A Team',
-                                value: null,
-                            }}
-                            style={{
-                                inputAndroid:     [styles.pickerSelect],
-                                inputIOS:         [styles.pickerSelect],
-                                placeholderColor: AppColors.zeplin.darkGrey,
-                            }}
-                            value={selectedTeamIndex}
-                        />
-                    }
-                </View>
                 <ScrollableTabView
                     locked={isScrollLocked}
                     onChangeTab={tabLocation => this._onChangeTab(tabLocation)}
                     ref={tabView => { this.tabView = tabView; }}
-                    renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderBottomWidth: 0,}} />}
+                    renderTabBar={() =>
+                        <CoachesDashboardTabBar
+                            headerItems={{
+                                coachesTeams,
+                                selectedTeam,
+                                selectedTeamIndex,
+                                updateState: value => this.setState({ selectedTeamIndex: value ? value : 0, })
+                            }}
+                            locked
+                            renderTab={this.renderTab}
+                            style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderBottomWidth: 0,}}
+                        />
+                    }
                     style={{backgroundColor: AppColors.white,}}
                     tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
                     tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
