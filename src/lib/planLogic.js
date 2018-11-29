@@ -430,7 +430,7 @@ const PlanLogic = {
       * - CoachesDashboard
       * -- returns an array of RN 'display' code
       */
-    handleRenderTodayAndThisWeek: (isToday, insights, athletes, filter, renderSection) => {
+    handleRenderTodayAndThisWeek: (isToday, insights, athletes, filter, compliance, renderSection) => {
         let coachesDashboardCardsData = MyPlanConstants.coachesDashboardCardsData(isToday);
         let sections = [];
         _.map(insights, (insight, ind) => {
@@ -441,7 +441,7 @@ const PlanLogic = {
                     :
                     insight;
             let description = _.filter(coachesDashboardCardsData, ['value', ind])[0];
-            sections.push(renderSection(description, newValue, athletes, ind));
+            sections.push(renderSection(description, newValue, athletes, ind, compliance));
         });
         return {
             sections,
@@ -453,7 +453,7 @@ const PlanLogic = {
       * - CoachesDashboard
       */
     handleAthleteCardModalRenderLogic: selectedAthlete => {
-        let athleteName = `${selectedAthlete.first_name.toUpperCase()} ${selectedAthlete.last_name.toUpperCase()}`;
+        let athleteName = `${selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*'}${selectedAthlete.first_name.toUpperCase()} ${selectedAthlete.last_name.toUpperCase()}`;
         let mainColor = selectedAthlete.color === 0 ? AppColors.zeplin.success : selectedAthlete.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
         let subHeader = selectedAthlete.color === 0 ? 'Train as normal' : selectedAthlete.color === 1 ? 'Consider altering training plan' : 'Consider not training today';
         return {
@@ -504,10 +504,15 @@ const PlanLogic = {
       * Coaches Dashboard Section Render Logic
       * - CoachesDashboard
       */
-    handleRenderCoachesDashboardSection: (athletes, item) => {
-        let athleteName = `${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`;
+    handleRenderCoachesDashboardSection: (athletes, item, compliance) => {
+        let didUserCompleteReadinessSurvey = compliance && compliance.completed ?
+            _.filter(compliance.completed, ['user_id', item.user_id]).length > 0
+            :
+            false;
+        let athleteName = `${didUserCompleteReadinessSurvey ? '' : '*'}${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`;
         let backgroundColor = item.color === 0 ? AppColors.zeplin.success : item.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
         let filteredAthlete = _.filter(athletes, ['user_id', item.user_id])[0];
+        filteredAthlete.didUserCompleteReadinessSurvey = didUserCompleteReadinessSurvey;
         return {
             athleteName,
             backgroundColor,

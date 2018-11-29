@@ -286,7 +286,7 @@ class CoachesDashboard extends Component {
                             containerStyle={[{alignSelf: 'flex-end',}]}
                             icon={'close'}
                             iconStyle={[{color: AppColors.black, paddingRight: AppSizes.paddingLrg, paddingTop: AppSizes.paddingLrg,}]}
-                            onPress={() => this.setState({ isAthleteCardModalOpen: false, selectedAthlete: null, selectedAthletePage:   0, })}
+                            onPress={() => this.setState({ isAthleteCardModalOpen: false, selectedAthlete: null, selectedAthletePage: 0, })}
                             reverse={false}
                             size={30}
                             type={'material-community'}
@@ -364,7 +364,12 @@ class CoachesDashboard extends Component {
                         }
                     </View>
                     { selectedAthletePage === 0 ?
-                        <View style={{alignItems: 'flex-end', flex: 1, justifyContent: 'flex-end', paddingBottom: AppSizes.padding, paddingRight: AppSizes.paddingLrg,}}>
+                        <View style={{alignItems: 'center', flex: 1, flexDirection: 'row',justifyContent: 'space-between', paddingBottom: AppSizes.padding, paddingRight: AppSizes.paddingLrg,}}>
+                            <View style={{paddingLeft: AppSizes.paddingLrg,}}>
+                                <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(11),}}>
+                                    {selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*survey not completed today'}
+                                </Text>
+                            </View>
                             <TouchableHighlight onPress={() => this.setState({ selectedAthletePage: 1, })} underlayColor={AppColors.transparent}>
                                 <View style={{flexDirection: 'row',}}>
                                     <Text oswaldRegular style={[AppStyles.containerCentered, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}>
@@ -454,7 +459,7 @@ class CoachesDashboard extends Component {
         )
     }
 
-    renderSection = (descriptionObj, items, athletes, key) => {
+    renderSection = (descriptionObj, items, athletes, key, compliance) => {
         if(items.length === 0) {
             return(null)
         }
@@ -469,7 +474,7 @@ class CoachesDashboard extends Component {
                     <Spacer size={25} />
                     <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: AppSizes.padding,}}>
                         {_.map(items, (item, index) => {
-                            let { athleteName, backgroundColor, filteredAthlete, } = PlanLogic.handleRenderCoachesDashboardSection(athletes, item);
+                            let { athleteName, backgroundColor, filteredAthlete, } = PlanLogic.handleRenderCoachesDashboardSection(athletes, item, compliance);
                             return(
                                 <TouchableHighlight
                                     key={index}
@@ -496,9 +501,9 @@ class CoachesDashboard extends Component {
         )
     }
 
-    renderToday = (index, insights, athletes, complianceColor) => {
+    renderToday = (index, insights, athletes, compliance, complianceColor) => {
         const { isPageLoading, todayFilter, } = this.state;
-        let { sections, } = PlanLogic.handleRenderTodayAndThisWeek(true, insights, athletes, todayFilter, this.renderSection);
+        let { sections, } = PlanLogic.handleRenderTodayAndThisWeek(true, insights, athletes, todayFilter, compliance, this.renderSection);
         return (
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding, }}
@@ -522,9 +527,9 @@ class CoachesDashboard extends Component {
         )
     }
 
-    renderThisWeek = (index, insights, athletes, complianceColor) => {
+    renderThisWeek = (index, insights, athletes, compliance, complianceColor) => {
         const { isPageLoading, thisWeekFilter, } = this.state;
-        let { sections, } = PlanLogic.handleRenderTodayAndThisWeek(false, insights, athletes, thisWeekFilter, this.renderSection);
+        let { sections, } = PlanLogic.handleRenderTodayAndThisWeek(false, insights, athletes, thisWeekFilter, compliance, this.renderSection);
         return (
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding, }}
@@ -585,8 +590,8 @@ class CoachesDashboard extends Component {
                     tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
                     tabBarUnderlineStyle={{height: 0,}}
                 >
-                    {this.renderToday(0, selectedTeam ? selectedTeam.daily_insights : [], selectedTeam ? selectedTeam.athletes : [], complianceColor)}
-                    {this.renderThisWeek(1, selectedTeam ? selectedTeam.weekly_insights : [], selectedTeam ? selectedTeam.athletes : [])}
+                    {this.renderToday(0, selectedTeam ? selectedTeam.daily_insights : [], selectedTeam ? selectedTeam.athletes : [], selectedTeam ? selectedTeam.compliance : [], complianceColor)}
+                    {this.renderThisWeek(1, selectedTeam ? selectedTeam.weekly_insights : [], selectedTeam ? selectedTeam.athletes : [], selectedTeam ? selectedTeam.compliance : [])}
                 </ScrollableTabView>
                 <Modal
                     backdropOpacity={0.75}
