@@ -484,9 +484,9 @@ const PlanLogic = {
         let numOfTotalAthletes = numOfCompletedAthletes + numOfIncompletedAthletes;
         let incompleteAtheltes = complianceObj ? complianceObj.incomplete : [];
         let completedPercent = (numOfCompletedAthletes / numOfTotalAthletes) * 100;
-        let complianceColor = completedPercent <= 33 ?
+        let complianceColor = completedPercent <= 49 ?
             AppColors.zeplin.error
-            : completedPercent >= 34 && completedPercent <= 66 ?
+            : completedPercent >= 50 && completedPercent <= 74 ?
                 AppColors.zeplin.warning
                 :
                 AppColors.zeplin.success;
