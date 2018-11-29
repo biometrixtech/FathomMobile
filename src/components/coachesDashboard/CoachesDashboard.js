@@ -286,7 +286,7 @@ class CoachesDashboard extends Component {
                             containerStyle={[{alignSelf: 'flex-end',}]}
                             icon={'close'}
                             iconStyle={[{color: AppColors.black, paddingRight: AppSizes.paddingLrg, paddingTop: AppSizes.paddingLrg,}]}
-                            onPress={() => this.setState({ isAthleteCardModalOpen: false, selectedAthlete: null, })}
+                            onPress={() => this.setState({ isAthleteCardModalOpen: false, selectedAthlete: null, selectedAthletePage:   0, })}
                             reverse={false}
                             size={30}
                             type={'material-community'}
@@ -475,7 +475,7 @@ class CoachesDashboard extends Component {
                                     key={index}
                                     onPress={() => this.setState({ isAthleteCardModalOpen: true, selectedAthlete: filteredAthlete, })}
                                     style={[styles.athleteCircle, {backgroundColor: backgroundColor,}]}
-                                    underlayColor={AppColors.transparent}
+                                    underlayColor={backgroundColor}
                                 >
                                     <Text
                                         oswaldRegular

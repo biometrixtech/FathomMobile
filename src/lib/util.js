@@ -171,14 +171,14 @@ const UTIL = {
             // TODO: uncomment below when single-sensor information is ready
             // } else if(userObj.onboarding_status && !userObj.onboarding_status.includes('single-sensor-tutorial')) {
             //     RouterActions.tutorial({step: 'single-sensor'});
-            } else if(userObj.onboarding_status && !userObj.onboarding_status.includes('tutorial-tutorial')) {
+            } else if(userObj.onboarding_status && !userObj.onboarding_status.includes('tutorial-tutorial') && userObj.role === 'athlete') {
                 // NOTE: THIS IS THE LAST SCREEN PRIOR TO MYPLAN
                 RouterActions.tutorial({step: 'tutorial'});
             } else {
-                if(userObj.role === 'athlete') {
-                    RouterActions.myPlan();
-                } else {
+                if(userObj.role === 'coach') {
                     RouterActions.coachesDashboard();
+                } else {
+                    RouterActions.myPlan();
                 }
             }
         }
