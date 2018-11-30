@@ -2,7 +2,18 @@
  * CoachesDashboard View
  */
 import React, { Component } from 'react';
-import { Animated, BackHandler, Platform, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, TouchableWithoutFeedback, View, } from 'react-native';
+import {
+    Animated,
+    BackHandler,
+    ImageBackground,
+    Platform,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    TouchableHighlight,
+    TouchableWithoutFeedback,
+    View,
+} from 'react-native';
 import PropTypes from 'prop-types';
 
 // import third-party libraries
@@ -506,14 +517,20 @@ class CoachesDashboard extends Component {
                             <Spacer size={20} />
                         </View>
                         : !isThisWeek && numberOfAthletes === insights.all_good.length && complianceColor === AppColors.zeplin.success ?
-                            <View>
-                                <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.black, fontSize: AppFonts.scaleFont(20),}]}>
-                                    {!doWeHaveWeeklyInsights ? 'NICE WORK COACH!' : 'READY FOR TODAY!'}
-                                </Text>
-                                <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.black, fontSize: AppFonts.scaleFont(14),}]}>
-                                    {!doWeHaveWeeklyInsights ? 'All athletes are ready to\ntrain as normal' : 'Check "THIS WEEK" tab for\nnadditional suggestions'}
-                                </Text>
-                            </View>
+                            <ImageBackground
+                                resizeMode={'contain'}
+                                source={require('../../../assets/images/standard/soccer_player.png')}
+                                style={{height: AppSizes.screen.heightOneThird, width: (AppSizes.screen.width - (AppSizes.padding * 2)),}}
+                            >
+                                <View style={[styles.overlayWrapper, {alignItems: 'flex-end'}]}>
+                                    <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.black, fontSize: AppFonts.scaleFont(20),}]}>
+                                        {!doWeHaveWeeklyInsights ? 'NICE WORK COACH!' : 'READY FOR TODAY!'}
+                                    </Text>
+                                    <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.black, fontSize: AppFonts.scaleFont(14),}]}>
+                                        {!doWeHaveWeeklyInsights ? 'All athletes are ready to\ntrain as normal' : 'Check "THIS WEEK" tab for\nnadditional suggestions'}
+                                    </Text>
+                                </View>
+                            </ImageBackground>
                             :
                             null
                 }
