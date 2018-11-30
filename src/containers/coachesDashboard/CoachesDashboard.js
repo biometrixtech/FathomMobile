@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { plan as PlanActions, } from '../../actions';
+import { plan as PlanActions, user as UserActions, } from '../../actions';
 
 const CoachesDashboard = ({
     Layout,
@@ -11,6 +11,7 @@ const CoachesDashboard = ({
     lastOpened,
     network,
     scheduledMaintenance,
+    updateUser,
     user,
 }) => (
     <Layout
@@ -19,6 +20,7 @@ const CoachesDashboard = ({
         lastOpened={lastOpened}
         network={network}
         scheduledMaintenance={scheduledMaintenance}
+        updateUser={updateUser}
         user={user}
     />
 );
@@ -30,6 +32,7 @@ CoachesDashboard.propTypes = {
     lastOpened:              PropTypes.object.isRequired,
     network:                 PropTypes.object.isRequired,
     scheduledMaintenance:    PropTypes.object,
+    updateUser:              PropTypes.func.isRequired,
     user:                    PropTypes.object.isRequired,
 };
 
@@ -47,6 +50,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
     getCoachesDashboardData: PlanActions.getCoachesDashboardData,
+    updateUser:              UserActions.updateUser,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CoachesDashboard);

@@ -431,6 +431,11 @@ const PlanLogic = {
       * -- returns an array of RN 'display' code
       */
     handleRenderTodayAndThisWeek: (isToday, insights, athletes, filter, compliance, renderSection) => {
+        let insightsLength = 0;
+        _.map(insights, (value, key) => {
+            insightsLength += value.length;
+        });
+        let doWeHaveInsights = insightsLength > 0;
         let coachesDashboardCardsData = MyPlanConstants.coachesDashboardCardsData(isToday);
         let sections = [];
         _.map(insights, (insight, ind) => {
@@ -444,6 +449,7 @@ const PlanLogic = {
             sections.push(renderSection(description, newValue, athletes, ind, compliance));
         });
         return {
+            doWeHaveInsights,
             sections,
         };
     },
@@ -490,6 +496,7 @@ const PlanLogic = {
                 AppColors.zeplin.warning
                 :
                 AppColors.zeplin.success;
+        complianceColor = numOfTotalAthletes === 0 ? AppColors.zeplin.error : complianceColor;
         return {
             coachesTeams,
             complianceColor,
@@ -518,6 +525,35 @@ const PlanLogic = {
             backgroundColor,
             filteredAthlete,
         }
+    },
+
+    /**
+      * Coaches Dashboard GOT IT button clicked
+      * - CoachesDashboard
+      */
+    gotItButtonLogic: coachesDashboardData => {
+        let numberOfTotalAthletes = 0;
+        _.map(coachesDashboardData, team => {
+            numberOfTotalAthletes += team.athletes.length;
+        });
+        return {
+            numberOfTotalAthletes,
+        };
+    },
+
+    /**
+      * Coaches Dashboard Search Area Render Logic
+      * - CoachesDashboard
+      */
+    coachesDashboardSearchAreaRenderLogic: weeklyInsights => {
+        let weeklyInsightsLength = 0;
+        _.map(weeklyInsights, (value, key) => {
+            weeklyInsightsLength += value.length;
+        });
+        let doWeHaveWeeklyInsights = weeklyInsightsLength > 0;
+        return {
+            doWeHaveWeeklyInsights,
+        };
     },
 
 };
