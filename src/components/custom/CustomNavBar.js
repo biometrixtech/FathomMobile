@@ -10,8 +10,8 @@ import { Image, Platform, StatusBar, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles, } from '../../constants';
+import { AppUtil, } from '../../lib';
 import { TabIcon, Text, } from './';
-import { store } from '../../store';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -45,7 +45,7 @@ class CustomNavBar extends Component {
     _renderLeft = () => {
         return (
             <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingXSml,}}>
-                { this.props.routeName === 'onboarding' && !store.getState().user.id ?
+                { this.props.routeName === 'onboarding' && !this.props.user.id ?
                     <TabIcon
                         icon={'arrow-left'}
                         iconStyle={[{color: AppColors.black,}]}

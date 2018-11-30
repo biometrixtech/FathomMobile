@@ -71,7 +71,7 @@ class AccountType extends Component {
                                     size={40}
                                 />
                                 <Spacer size={15} />
-                                <Text robotoMedium style={[AppStyles.textCenterAligned, {color: AppColors.primary.white.hundredPercent, fontSize: AppFonts.scaleFont(15),}]}>{'Team Athlete'}</Text>
+                                <Text robotoMedium style={[AppStyles.textCenterAligned, {color: AppColors.primary.white.hundredPercent, fontSize: AppFonts.scaleFont(15),}]}>{'Team'}</Text>
                                 <Spacer size={2} />
                                 <Text robotoMedium style={[AppStyles.textCenterAligned, {color: AppColors.primary.white.hundredPercent, fontSize: AppFonts.scaleFont(12),}]}>{'I\'m joining FATHOM\nas a part of a team'}</Text>
                                 <Spacer size={2} />
@@ -88,7 +88,7 @@ class AccountType extends Component {
                                     size={40}
                                 />
                                 <Spacer size={15} />
-                                <Text robotoMedium style={[AppStyles.textCenterAligned, {color: AppColors.primary.white.hundredPercent, fontSize: AppFonts.scaleFont(15),}]}>{'Individual Athlete'}</Text>
+                                <Text robotoMedium style={[AppStyles.textCenterAligned, {color: AppColors.primary.white.hundredPercent, fontSize: AppFonts.scaleFont(15),}]}>{'Individual'}</Text>
                                 <Spacer size={2} />
                                 <Text robotoMedium style={[AppStyles.textCenterAligned, {color: AppColors.primary.white.hundredPercent, fontSize: AppFonts.scaleFont(12),}]}>{'I\'m not joining FATHOM\nas a part of a team'}</Text>
                                 <Spacer size={2} />

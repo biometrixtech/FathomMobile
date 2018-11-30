@@ -780,7 +780,7 @@ const helperFunctions = {
         return {
             athletes:   [{}, {}, {}, {}, {}, {}, {}],
             compliance: {
-                complete: [
+                completed: [
                     {first_name: 'Dipesh', last_name: 'Gautam'},
                     {first_name: 'Mazen', last_name: 'Chami'},
                 ],
@@ -823,17 +823,94 @@ const helperFunctions = {
         };
     },
 
+    getCoachesDashboardSectionRenderLoopLogicAthlets: () => {
+        return [
+            {color: 0, first_name: 'Dipesh', last_name: 'Gautam', user_id: '1'},
+            {color: 1, first_name: 'Mazen', last_name: 'Chami', user_id: '2'},
+            {color: 2, first_name: 'Paul', last_name: 'LaForge', user_id: '3'},
+            {color: 2, first_name: 'Melissa', last_name: 'White', user_id: '4'},
+        ];
+    },
+
+    getCoachesDashboardSectionRenderLoopLogicItem: (first_name, last_name, color, user_id, didUserCompleteReadinessSurvey) => {
+        return {
+            didUserCompleteReadinessSurvey,
+            first_name,
+            last_name,
+            color,
+            user_id,
+        };
+    },
+
+    getRenderCoachesDashboardSectionExpectedResult: (athleteFName, athleteLName, backgroundColor, filteredAthlete) => {
+        return {
+            athleteName: `${athleteFName.toUpperCase()}\n${athleteLName.charAt(0).toUpperCase()}.`,
+            backgroundColor,
+            filteredAthlete,
+        }
+    },
+
+    getSearchAreaWeeklyInsights: hasInsights => {
+        return {
+            add_variety_to_training_risk: [],
+            address_pain_or_soreness:     hasInsights ? ['ADDRESS'] : [],
+            all_good:                     [],
+            balance_overtraining_risk:    [],
+            evaluate_health_status:       hasInsights ? ['EVALUATE'] : [],
+            increase_weekly_workload:     [],
+        };
+    },
+
+    getSearchAreaWeeklyInsightsExpectedResult: doWeHaveWeeklyInsights => {
+        return {
+            doWeHaveWeeklyInsights,
+        };
+    },
+
 };
+
+it('Coaches Dashboard Search Area Render Logic - No Insights', () => {
+    let weeklyInsights = helperFunctions.getSearchAreaWeeklyInsights(false);
+    let expectedResult = helperFunctions.getSearchAreaWeeklyInsightsExpectedResult(false);
+    expect(PlanLogic.coachesDashboardSearchAreaRenderLogic(weeklyInsights)).toEqual(expectedResult);
+});
+
+it('Coaches Dashboard Search Area Render Logic - With Insights', () => {
+    let weeklyInsights = helperFunctions.getSearchAreaWeeklyInsights(true);
+    let expectedResult = helperFunctions.getSearchAreaWeeklyInsightsExpectedResult(true);
+    expect(PlanLogic.coachesDashboardSearchAreaRenderLogic(weeklyInsights)).toEqual(expectedResult);
+});
+
+it('Coaches Dashboard Section Render Loop Logic - Dipesh Gautam', () => {
+    let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
+    let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Dipesh', 'Gautam', 0, '1', false);
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Dipesh', 'Gautam', '#5EB123', item);
+    expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
+});
+
+it('Coaches Dashboard Section Render Loop Logic - Paul LaForge', () => {
+    let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
+    let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Paul', 'LaForge', 2, '3', false);
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Paul', 'LaForge', '#C8432A', item);
+    expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
+});
+
+it('Coaches Dashboard Section Render Loop Logic - Mazen Chami', () => {
+    let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
+    let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Mazen', 'Chami', 1, '2', false);
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Mazen', 'Chami', '#EBBA2D', item);
+    expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
+});
 
 it('Coaches Dashboard Render Logic - 1 Team', () => {
     let coachesDashboardData = [helperFunctions.getCoachesDashboardSingleTeamData('fathom-1', 0)];
     let selectedTeamIndex = 0;
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
-        '#5EB123',
+        '#C8432A',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
-        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
-        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
+        coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
         coachesDashboardData[selectedTeamIndex]
     );
     expect(PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex)).toEqual(expectedResult);
@@ -844,10 +921,10 @@ it('Coaches Dashboard Render Logic - 2 Teams, First Team Selected', () => {
     let selectedTeamIndex = 0;
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
-        '#5EB123',
+        '#C8432A',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
-        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
-        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
+        coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
         coachesDashboardData[selectedTeamIndex]
     );
     expect(PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex)).toEqual(expectedResult);
@@ -858,10 +935,10 @@ it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
     let selectedTeamIndex = 1;
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
-        '#5EB123',
+        '#C8432A',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
-        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
-        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
+        coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
         coachesDashboardData[selectedTeamIndex]
     );
     expect(PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex)).toEqual(expectedResult);
@@ -869,19 +946,19 @@ it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
 
 it('Athlete Card Modal Render Logic - No Information - Dipesh', () => {
     let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(0, 'Dipesh', 'Gautam');
-    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('DIPESH GAUTAM', '#5EB123', 'Train as normal');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*DIPESH GAUTAM', '#5EB123', 'Train as normal');
     expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
 });
 
 it('Athlete Card Modal Render Logic - With Information - Mazen', () => {
     let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(1, 'Mazen', 'Chami');
-    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('MAZEN CHAMI', '#EBBA2D', 'Consider altering training plan');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*MAZEN CHAMI', '#EBBA2D', 'Consider altering training plan');
     expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
 });
 
 it('Athlete Card Modal Render Logic - With Information - Gabby', () => {
     let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(2, 'Gabby', 'Lavac');
-    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('GABBY LAVAC', '#C8432A', 'Consider not training today');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*GABBY LAVAC', '#C8432A', 'Consider not training today');
     expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
 });
 

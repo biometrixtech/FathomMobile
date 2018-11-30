@@ -430,22 +430,26 @@ const PlanLogic = {
       * - CoachesDashboard
       * -- returns an array of RN 'display' code
       */
-    handleRenderTodayAndThisWeek: (isToday, insights, athletes, filter, renderSection) => {
+    handleRenderTodayAndThisWeek: (isToday, insights, athletes, filter, compliance, renderSection) => {
+        let insightsLength = 0;
+        _.map(insights, (value, key) => {
+            insightsLength += value.length;
+        });
+        let doWeHaveInsights = insightsLength > 0;
         let coachesDashboardCardsData = MyPlanConstants.coachesDashboardCardsData(isToday);
         let sections = [];
         _.map(insights, (insight, ind) => {
-            _.forEach(insight, (value, key) => {
-                let newValue = filter === 'not_cleared_to_play' ?
-                    _.filter(value, ['cleared_to_train', false])
-                    : filter === 'cleared_to_play' ?
-                        _.filter(value, ['cleared_to_train', true])
-                        :
-                        value;
-                let description = _.filter(coachesDashboardCardsData, ['value', key])[0];
-                sections.push(renderSection(description, newValue, athletes, key));
-            });
+            let newValue = filter === 'not_cleared_to_play' ?
+                _.filter(insight, ['cleared_to_train', false])
+                : filter === 'cleared_to_play' ?
+                    _.filter(insight, ['cleared_to_train', true])
+                    :
+                    insight;
+            let description = _.filter(coachesDashboardCardsData, ['value', ind])[0];
+            sections.push(renderSection(description, newValue, athletes, ind, compliance));
         });
         return {
+            doWeHaveInsights,
             sections,
         };
     },
@@ -455,7 +459,7 @@ const PlanLogic = {
       * - CoachesDashboard
       */
     handleAthleteCardModalRenderLogic: selectedAthlete => {
-        let athleteName = `${selectedAthlete.first_name.toUpperCase()} ${selectedAthlete.last_name.toUpperCase()}`;
+        let athleteName = `${selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*'}${selectedAthlete.first_name.toUpperCase()} ${selectedAthlete.last_name.toUpperCase()}`;
         let mainColor = selectedAthlete.color === 0 ? AppColors.zeplin.success : selectedAthlete.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
         let subHeader = selectedAthlete.color === 0 ? 'Train as normal' : selectedAthlete.color === 1 ? 'Consider altering training plan' : 'Consider not training today';
         return {
@@ -480,18 +484,19 @@ const PlanLogic = {
         });
         let selectedTeam = coachesTeams[selectedTeamIndex];
         // compliance modal data
-        let complianceObj = selectedTeam ? selectedTeam.compliance : {complete: [], incomplete: []};
-        let numOfCompletedAthletes = complianceObj ? complianceObj.complete.length : 0;
+        let complianceObj = selectedTeam ? selectedTeam.compliance : {completed: [], incomplete: []};
+        let numOfCompletedAthletes = complianceObj ? complianceObj.completed.length : 0;
         let numOfIncompletedAthletes = complianceObj ? complianceObj.incomplete.length : 0;
         let numOfTotalAthletes = numOfCompletedAthletes + numOfIncompletedAthletes;
         let incompleteAtheltes = complianceObj ? complianceObj.incomplete : [];
-        let completedPercent = (numOfIncompletedAthletes / numOfTotalAthletes) * 100;
-        let complianceColor = completedPercent <= 33 ?
+        let completedPercent = (numOfCompletedAthletes / numOfTotalAthletes) * 100;
+        let complianceColor = completedPercent <= 49 ?
             AppColors.zeplin.error
-            : completedPercent >= 34 && completedPercent <= 66 ?
+            : completedPercent >= 50 && completedPercent <= 74 ?
                 AppColors.zeplin.warning
                 :
                 AppColors.zeplin.success;
+        complianceColor = numOfTotalAthletes === 0 ? AppColors.zeplin.error : complianceColor;
         return {
             coachesTeams,
             complianceColor,
@@ -499,6 +504,55 @@ const PlanLogic = {
             numOfCompletedAthletes,
             numOfTotalAthletes,
             selectedTeam,
+        };
+    },
+
+    /**
+      * Coaches Dashboard Section Render Logic
+      * - CoachesDashboard
+      */
+    handleRenderCoachesDashboardSection: (athletes, item, compliance) => {
+        let didUserCompleteReadinessSurvey = compliance && compliance.completed ?
+            _.filter(compliance.completed, ['user_id', item.user_id]).length > 0
+            :
+            false;
+        let athleteName = `${didUserCompleteReadinessSurvey ? '' : '*'}${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`;
+        let backgroundColor = item.color === 0 ? AppColors.zeplin.success : item.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
+        let filteredAthlete = _.filter(athletes, ['user_id', item.user_id])[0];
+        filteredAthlete.didUserCompleteReadinessSurvey = didUserCompleteReadinessSurvey;
+        return {
+            athleteName,
+            backgroundColor,
+            filteredAthlete,
+        }
+    },
+
+    /**
+      * Coaches Dashboard GOT IT button clicked
+      * - CoachesDashboard
+      */
+    gotItButtonLogic: coachesDashboardData => {
+        let numberOfTotalAthletes = 0;
+        _.map(coachesDashboardData, team => {
+            numberOfTotalAthletes += team.athletes.length;
+        });
+        return {
+            numberOfTotalAthletes,
+        };
+    },
+
+    /**
+      * Coaches Dashboard Search Area Render Logic
+      * - CoachesDashboard
+      */
+    coachesDashboardSearchAreaRenderLogic: weeklyInsights => {
+        let weeklyInsightsLength = 0;
+        _.map(weeklyInsights, (value, key) => {
+            weeklyInsightsLength += value.length;
+        });
+        let doWeHaveWeeklyInsights = weeklyInsightsLength > 0;
+        return {
+            doWeHaveWeeklyInsights,
         };
     },
 

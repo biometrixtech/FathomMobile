@@ -105,6 +105,7 @@ const zeplin = {
     darkGreyText:   '#868686', // 134, 134, 134
     error:          '#C8432A', // 200, 67, 42
     greyText:       '#B2B2B2', // 178, 178, 178
+    iconCircle:     '#AFAFAF',
     lightGrey:      '#D5D5D5', // 213, 213, 213
     mediumGrey:     '#707070', // 112, 112, 112
     navyBlue:       '#0E0822', // 14, 8, 34

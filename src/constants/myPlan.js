@@ -422,9 +422,19 @@ const coachesDashboardCardsData = isToday => {
     if(isToday) {
         return [
             {
-                description: 'Train as normal and complete Fathom\'s Prep and Recovery',
-                label:       'ALL GOOD',
-                value:       'all_good',
+                description: 'Pain severity is too high to train today, consult medical staff to evaluate status',
+                label:       'NOT CLEARED TO TRAIN TODAY',
+                value:       'not_cleared_for_training',
+            },
+            {
+                description: 'Shorten training or limit intensity and focus on recovery modalities',
+                label:       'LIMIT TIME & INTENSITY IN TRAINING',
+                value:       'limit_time_intensity_of_training',
+            },
+            {
+                description: 'Stop training if pain increases or consider reducing workload to facilitate recovery',
+                label:       'MONITOR IN TRAINING',
+                value:       'monitor_in_training',
             },
             {
                 description: 'Complete a relatively high intensity or long duration training within the next 3 days',
@@ -432,32 +442,24 @@ const coachesDashboardCardsData = isToday => {
                 value:       'increase_workload',
             },
             {
-                description: 'Shorten training or limit intensity and focus on recovery modalities',
-                label:       'LIMIT TIME & INTENSITY IN TRAINING',
-                value:       'limit_time_intensity',
-            },
-            {
-                description: 'Stop training if pain increases or consider reducing workload to facilitate recovery',
-                label:       'MONITOR IN TRAINING',
-                value:       'monitor_training',
-            },
-            {
-                description: 'Pain severity is too high to train today, consult medical staff to evaluate status',
-                label:       'NOT CLEARED TO TRAIN TODAY',
-                value:       'not_cleared',
+                description: 'Train as normal and complete Fathom\'s Prep and Recovery',
+                label:       'ALL GOOD',
+                overlayText: 'When an athlete completes a survey, their status will update here.',
+                value:       'all_good',
             },
         ]
     }
     return [
         {
-            description: 'Diversify your daily workloads and intensity or prioritize holistic recovery',
-            label:       'ADD VARIETY TO TRAINING THIS WEEK',
-            value:       'add_variety',
+            description: 'Consult medical staff to evaluate status before training',
+            label:       'EVALUATE HEALTH STATUS',
+            value:       'evaluate_health_status',
         },
         {
             description: 'Prioritize Recovery and consider decreasing upcoming workloads',
             label:       'ADDRESS PAIN OR SORENESS',
-            value:       'address_pain_soreness',
+            overlayText: 'When an athlete has been identified as having a chronic issue, their status will update here.',
+            value:       'address_pain_or_soreness',
         },
         {
             description: 'Decrease this week\'s workload or prioritize holistic recovery',
@@ -467,7 +469,12 @@ const coachesDashboardCardsData = isToday => {
         {
             description: 'If tapering is unintentional, increase this week\'s workload',
             label:       'INCREASE WEEKLY WORKLOAD',
-            value:       'increase_workload',
+            value:       'increase_weekly_workload',
+        },
+        {
+            description: 'Diversify your daily workloads and intensity or prioritize holistic recovery',
+            label:       'ADD VARIETY TO TRAINING THIS WEEK',
+            value:       'add_variety_to_training_risk',
         },
     ]
 };

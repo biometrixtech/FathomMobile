@@ -357,9 +357,16 @@ const markStartedFunctionalStrength = (user_id, newMyPlan) => {
 const getCoachesDashboardData = (user_id) => {
     return dispatch => AppAPI.coach_dashboard.get({user_id})
         .then(coachesDashboardData => {
+            // update coaches dashboard data
             dispatch({
                 type: Actions.GET_COACHES_DASHBOARD,
-                data: coachesDashboardData.message,
+                data: coachesDashboardData.teams,
+            });
+            // update last opened flag
+            store.dispatch({
+                type:   Actions.UPDATE_LAST_OPENED,
+                userId: user_id,
+                date:   moment().format(),
             });
             return Promise.resolve(coachesDashboardData);
         }).catch(err => {
