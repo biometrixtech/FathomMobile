@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Animated, StyleSheet, Text, View, ViewPropTypes, } from 'react-native';
+import { Animated, Easing, StyleSheet, Text, View, ViewPropTypes, } from 'react-native';
 import PropTypes from 'prop-types';
 const createReactClass = require('create-react-class');
 import { Button, FathomPicker, Text as FathomText, } from './';
 
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants/';
+import { TabIcon, } from './';
 
 const styles = StyleSheet.create({
     pickerSelect: {
@@ -90,31 +91,78 @@ const CoachesDashboardTabBar = createReactClass({
             inputRange:  [0, 1],
             outputRange: [0,  containerWidth / numberOfTabs],
         });
+        // set animated values
+        const spinValue = new Animated.Value(0);
+        // First set up animation
+        Animated.loop(
+            Animated.timing(
+                spinValue,
+                {
+                    duration:        3000,
+                    easing:          Easing.linear,
+                    toValue:         1,
+                    useNativeDriver: true,
+                }
+            )
+        ).start();
+        // Second interpolate beginning and end values (in this case 0 and 1)
+        const spin = spinValue.interpolate({
+            inputRange:  [0, 1],
+            outputRange: ['0deg', '360deg'],
+        });
         return (
             <View>
                 { this.props.headerItems ?
                     <View style={[AppStyles.containerCentered, {backgroundColor: AppColors.white, flexDirection: 'row', justifyContent: 'center', paddingBottom: AppSizes.paddingSml,}]}>
-                        { this.props.headerItems.coachesTeams.length === 1 ?
-                            <FathomText oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(30),}}>
-                                {this.props.headerItems.selectedTeam.label}
-                            </FathomText>
-                            :
-                            <FathomPicker
-                                hideIcon={false}
-                                items={this.props.headerItems.coachesTeams}
-                                onValueChange={value => this.props.headerItems.updateState(value ? value : 0)}
-                                placeholder={{
-                                    label: 'Select A Team',
-                                    value: null,
-                                }}
+                        <View style={{flex: 1,}} />
+                        <View style={{flex: 8,}}>
+                            { this.props.headerItems.coachesTeams.length === 1 ?
+                                <FathomText oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(30),}}>
+                                    {this.props.headerItems.selectedTeam.label}
+                                </FathomText>
+                                :
+                                <FathomPicker
+                                    hideIcon={false}
+                                    items={this.props.headerItems.coachesTeams}
+                                    onValueChange={value => this.props.headerItems.updateState(value ? value : 0)}
+                                    placeholder={{
+                                        label: 'Select A Team',
+                                        value: null,
+                                    }}
+                                    style={{
+                                        inputAndroid:     [styles.pickerSelect],
+                                        inputIOS:         [styles.pickerSelect],
+                                        placeholderColor: AppColors.zeplin.darkGrey,
+                                        viewContainer:    [{alignSelf: 'center',}],
+                                    }}
+                                    value={this.props.headerItems.selectedTeamIndex}
+                                />
+                            }
+                        </View>
+                        <View
+                            style={{
+                                alignItems:     'flex-end',
+                                flex:           1,
+                                justifyContent: 'center',
+                                marginRight:    AppSizes.padding,
+                            }}
+                        >
+                            <Animated.View
                                 style={{
-                                    inputAndroid:     [styles.pickerSelect],
-                                    inputIOS:         [styles.pickerSelect],
-                                    placeholderColor: AppColors.zeplin.darkGrey,
+                                    marginRight: AppSizes.paddingXSml,
+                                    transform:   this.props.headerItems.refreshing ? [{rotate: spin}] : [],
                                 }}
-                                value={this.props.headerItems.selectedTeamIndex}
-                            />
-                        }
+                            >
+                                <TabIcon
+                                    icon={'cached'}
+                                    iconStyle={[{color: AppColors.black,}]}
+                                    onPress={() => this.props.headerItems.onRefresh()}
+                                    reverse={false}
+                                    size={26}
+                                    type={'material-community'}
+                                />
+                            </Animated.View>
+                        </View>
                     </View>
                     :
                     null

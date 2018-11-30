@@ -6,13 +6,11 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, Easing, Image, Platform, StatusBar, StyleSheet, View, } from 'react-native';
-import { connect } from 'react-redux';
+import { Image, Platform, StatusBar, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles, ErrorMessages, } from '../../constants';
+import { AppColors, AppSizes, AppStyles, } from '../../constants';
 import { AppUtil, } from '../../lib';
-import { plan as PlanActions, } from '../../actions';
 import { TabIcon, Text, } from './';
 
 // import third-party libraries
@@ -35,9 +33,6 @@ class CustomNavBar extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            isCoachesDashboardLoading: false,
-        }
     }
 
     componentDidMount = () => {
@@ -101,59 +96,7 @@ class CustomNavBar extends Component {
     }
 
     _renderRight = () => {
-        // set animated values
-        const spinValue = new Animated.Value(0);
-        // First set up animation
-        Animated.loop(
-            Animated.timing(
-                spinValue,
-                {
-                    duration:        3000,
-                    easing:          Easing.linear,
-                    toValue:         1,
-                    useNativeDriver: true,
-                }
-            )
-        ).start();
-        // Second interpolate beginning and end values (in this case 0 and 1)
-        const spin = spinValue.interpolate({
-            inputRange:  [0, 1],
-            outputRange: ['0deg', '360deg'],
-        });
-        if(this.props.routeName === 'coachesDashboard') {
-            return(
-                <Animated.View
-                    style={{
-                        flex:           1,
-                        justifyContent: 'center',
-                        paddingLeft:    AppSizes.paddingXSml,
-                        transform:      this.state.isCoachesDashboardLoading ? [{rotate: spin}] : [],
-                    }}
-                >
-                    <TabIcon
-                        icon={'cached'}
-                        iconStyle={[{color: AppColors.black,}]}
-                        onPress={() => this._handleCoachesDashboardRefresh()}
-                        reverse={false}
-                        size={26}
-                        type={'material-community'}
-                    />
-                </Animated.View>
-            )
-        }
         return(<View style={{flex: 1}}></View>)
-    }
-
-    _handleCoachesDashboardRefresh = () => {
-        // fetch coaches dashboard data
-        let userId = this.props.user.id;
-        this.setState({ isCoachesDashboardLoading: true, });
-        this.props.getCoachesDashboardData(userId)
-            .then(res => this.setState({ isCoachesDashboardLoading: false, }))
-            .catch(err => {
-                this.setState({ isCoachesDashboardLoading: false, });
-                AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
-            });
     }
 
     render = () => {
@@ -172,12 +115,4 @@ class CustomNavBar extends Component {
 }
 
 /* Export Component ==================================================================== */
-const mapStateToProps = state => ({
-    user: state.user,
-});
-
-const mapDispatchToProps = {
-    getCoachesDashboardData: PlanActions.getCoachesDashboardData,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(CustomNavBar);
+export default CustomNavBar;

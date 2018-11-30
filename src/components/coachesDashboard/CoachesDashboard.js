@@ -776,7 +776,7 @@ class CoachesDashboard extends Component {
     }
 
     render = () => {
-        const { selectedTeamIndex, } = this.state;
+        const { isPageLoading, selectedTeamIndex, } = this.state;
         const { coachesDashboardData, } = this.props;
         const {
             coachesTeams,
@@ -798,6 +798,8 @@ class CoachesDashboard extends Component {
                         <CoachesDashboardTabBar
                             headerItems={{
                                 coachesTeams,
+                                onRefresh:   () => this._handleEnteringApp(),
+                                refreshing:  isPageLoading,
                                 selectedTeam,
                                 selectedTeamIndex,
                                 updateState: value => this.setState({ selectedTeamIndex: value ? value : 0, })
