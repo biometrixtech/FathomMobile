@@ -512,7 +512,7 @@ class CoachesDashboard extends Component {
                         colors={[AppColors.primary.yellow.hundredPercent]}
                         onRefresh={() => this._handleEnteringApp()}
                         refreshing={isPageLoading}
-                        title={'Loading...'}
+                        title={'Updating...'}
                         titleColor={AppColors.primary.yellow.hundredPercent}
                         tintColor={AppColors.primary.yellow.hundredPercent}
                     />
