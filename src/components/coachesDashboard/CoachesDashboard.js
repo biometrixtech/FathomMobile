@@ -597,53 +597,55 @@ class CoachesDashboard extends Component {
                 }
                 tabLabel={tabs[index]}
             >
-                { !user.first_time_experience.includes('coaches_today_popup') && !hideTodayStartState ?
-                    <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
-                        <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'LET\'S GET STARTED!'}</Text>
-                        <Spacer size={20} />
-                        <TabIcon
-                            containerStyle={[styles.iconCircle,]}
-                            icon={'report-problem'}
-                            iconStyle={[{color: AppColors.white,}]}
-                            reverse={false}
-                            size={25}
-                        />
-                        <Spacer size={5} />
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{todayPopupFirstText}</Text>
-                        <Spacer size={30} />
-                        <TabIcon
-                            containerStyle={[styles.iconCircle,]}
-                            icon={'phone-iphone'}
-                            iconStyle={[{color: AppColors.white,}]}
-                            reverse={false}
-                            size={25}
-                        />
-                        <Spacer size={5} />
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{todayPopupSecondText}</Text>
-                        <Spacer size={20} />
-                        <Button
-                            backgroundColor={AppColors.primary.yellow.hundredPercent}
-                            buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {borderRadius: 5,}]}
-                            fontFamily={AppStyles.oswaldRegular.fontFamily}
-                            fontWeight={AppStyles.oswaldRegular.fontWeight}
-                            onPress={() => this._toggleGotItBtn(true)}
-                            textColor={AppColors.white}
-                            textStyle={{ fontSize: AppFonts.scaleFont(14) }}
-                            title={'GOT IT'}
-                        />
-                        <Spacer size={20} />
-                    </View>
-                    :
-                    <View>
-                        <Spacer size={20} />
-                        {this.renderSearchArea(false, athletes.length, complianceColor, doWeHaveInsights, compliance, insights, weeklyInsights)}
-                        <Spacer size={20} />
-                        { athletes.length === 0 ?
-                            this._renderNoAthletes(true)
-                            :
-                            sections
-                        }
-                    </View>
+                { insights.length === 0 ?
+                    <View />
+                    : !user.first_time_experience.includes('coaches_today_popup') && !hideTodayStartState ?
+                        <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
+                            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'LET\'S GET STARTED!'}</Text>
+                            <Spacer size={20} />
+                            <TabIcon
+                                containerStyle={[styles.iconCircle,]}
+                                icon={'report-problem'}
+                                iconStyle={[{color: AppColors.white,}]}
+                                reverse={false}
+                                size={25}
+                            />
+                            <Spacer size={5} />
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{todayPopupFirstText}</Text>
+                            <Spacer size={30} />
+                            <TabIcon
+                                containerStyle={[styles.iconCircle,]}
+                                icon={'phone-iphone'}
+                                iconStyle={[{color: AppColors.white,}]}
+                                reverse={false}
+                                size={25}
+                            />
+                            <Spacer size={5} />
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{todayPopupSecondText}</Text>
+                            <Spacer size={20} />
+                            <Button
+                                backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {borderRadius: 5,}]}
+                                fontFamily={AppStyles.oswaldRegular.fontFamily}
+                                fontWeight={AppStyles.oswaldRegular.fontWeight}
+                                onPress={() => this._toggleGotItBtn(true)}
+                                textColor={AppColors.white}
+                                textStyle={{ fontSize: AppFonts.scaleFont(14) }}
+                                title={'GOT IT'}
+                            />
+                            <Spacer size={20} />
+                        </View>
+                        :
+                        <View>
+                            <Spacer size={20} />
+                            {this.renderSearchArea(false, athletes.length, complianceColor, doWeHaveInsights, compliance, insights, weeklyInsights)}
+                            <Spacer size={20} />
+                            { athletes.length === 0 ?
+                                this._renderNoAthletes(true)
+                                :
+                                sections
+                            }
+                        </View>
                 }
             </ScrollView>
         )
@@ -668,43 +670,45 @@ class CoachesDashboard extends Component {
                 }
                 tabLabel={tabs[index]}
             >
-                { !user.first_time_experience.includes('coaches_this_week_popup') && !hideThisWeekStartState ?
-                    <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
-                        <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'TRENDING INSIGHTS\nLIVE HERE!'}</Text>
-                        <Spacer size={10} />
-                        <TabIcon
-                            containerStyle={[styles.iconCircle,]}
-                            icon={'trending-up'}
-                            iconStyle={[{color: AppColors.white,}]}
-                            reverse={false}
-                            size={25}
-                        />
-                        <Spacer size={5} />
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{thisWeekPopupText}</Text>
-                        <Spacer size={20} />
-                        <Button
-                            backgroundColor={AppColors.primary.yellow.hundredPercent}
-                            buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {borderRadius: 5,}]}
-                            fontFamily={AppStyles.oswaldRegular.fontFamily}
-                            fontWeight={AppStyles.oswaldRegular.fontWeight}
-                            onPress={() => this._toggleGotItBtn(false)}
-                            textColor={AppColors.white}
-                            textStyle={{ fontSize: AppFonts.scaleFont(14) }}
-                            title={'GOT IT'}
-                        />
-                        <Spacer size={20} />
-                    </View>
-                    :
-                    <View>
-                        <Spacer size={20} />
-                        {this.renderSearchArea(true, athletes.length, complianceColor, doWeHaveInsights, compliance, insights)}
-                        <Spacer size={20} />
-                        { !doWeHaveInsights ?
-                            this._renderNoAthletes(false)
-                            :
-                            sections
-                        }
-                    </View>
+                { insights.length === 0 ?
+                    <View />
+                    : !user.first_time_experience.includes('coaches_this_week_popup') && !hideThisWeekStartState ?
+                        <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
+                            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'TRENDING INSIGHTS\nLIVE HERE!'}</Text>
+                            <Spacer size={10} />
+                            <TabIcon
+                                containerStyle={[styles.iconCircle,]}
+                                icon={'trending-up'}
+                                iconStyle={[{color: AppColors.white,}]}
+                                reverse={false}
+                                size={25}
+                            />
+                            <Spacer size={5} />
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{thisWeekPopupText}</Text>
+                            <Spacer size={20} />
+                            <Button
+                                backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {borderRadius: 5,}]}
+                                fontFamily={AppStyles.oswaldRegular.fontFamily}
+                                fontWeight={AppStyles.oswaldRegular.fontWeight}
+                                onPress={() => this._toggleGotItBtn(false)}
+                                textColor={AppColors.white}
+                                textStyle={{ fontSize: AppFonts.scaleFont(14) }}
+                                title={'GOT IT'}
+                            />
+                            <Spacer size={20} />
+                        </View>
+                        :
+                        <View>
+                            <Spacer size={20} />
+                            {this.renderSearchArea(true, athletes.length, complianceColor, doWeHaveInsights, compliance, insights)}
+                            <Spacer size={20} />
+                            { !doWeHaveInsights ?
+                                this._renderNoAthletes(false)
+                                :
+                                sections
+                            }
+                        </View>
                 }
             </ScrollView>
         )
