@@ -195,7 +195,7 @@ class CoachesDashboard extends Component {
             .then(res => this.setState({ isPageLoading: false, }))
             .catch(err => {
                 this.setState({ isPageLoading: false, });
-                AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
+                AppUtil.handleAPIErrorAlert(ErrorMessages.coachesDashboardData);
             });
     }
 
