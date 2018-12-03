@@ -147,21 +147,15 @@ const CoachesDashboardTabBar = createReactClass({
                                 marginRight:    AppSizes.padding,
                             }}
                         >
-                            <Animated.View
-                                style={{
-                                    marginRight: AppSizes.paddingXSml,
-                                    transform:   this.props.headerItems.refreshing ? [{rotate: spin}] : [],
-                                }}
-                            >
-                                <TabIcon
-                                    icon={'cached'}
-                                    iconStyle={[{color: AppColors.black,}]}
-                                    onPress={() => this.props.headerItems.onRefresh()}
-                                    reverse={false}
-                                    size={26}
-                                    type={'material-community'}
-                                />
-                            </Animated.View>
+                            <TabIcon
+                                containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
+                                icon={'cached'}
+                                iconStyle={[{color: AppColors.black,}]}
+                                onPress={() => this.props.headerItems.onRefresh()}
+                                reverse={false}
+                                size={26}
+                                type={'material-community'}
+                            />
                         </View>
                     </View>
                     :

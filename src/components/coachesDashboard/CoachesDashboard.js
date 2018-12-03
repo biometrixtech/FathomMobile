@@ -406,7 +406,7 @@ class CoachesDashboard extends Component {
                     { selectedAthletePage === 0 ?
                         <View style={{alignItems: 'center', flex: 1, flexDirection: 'row',justifyContent: 'space-between', paddingBottom: AppSizes.padding, paddingRight: AppSizes.paddingLrg,}}>
                             <View style={{paddingLeft: AppSizes.paddingLrg,}}>
-                                <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(11),}}>
+                                <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(13),}}>
                                     {selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*survey not completed today'}
                                 </Text>
                             </View>
@@ -550,7 +550,7 @@ class CoachesDashboard extends Component {
                     <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{descriptionObj.description}</Text>
                 </View>
                 <Spacer size={25} />
-                <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between',}}>
+                <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: AppSizes.padding,}}>
                     {_.map(items, (item, index) => {
                         let { athleteName, backgroundColor, filteredAthlete, } = PlanLogic.handleRenderCoachesDashboardSection(athletes, item, compliance);
                         return(
