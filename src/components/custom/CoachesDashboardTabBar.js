@@ -117,7 +117,7 @@ const CoachesDashboardTabBar = createReactClass({
                         <View style={{flex: 1,}} />
                         <View style={{flex: 8,}}>
                             { this.props.headerItems.coachesTeams.length === 1 ?
-                                <FathomText oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(30),}}>
+                                <FathomText oswaldRegular style={{alignSelf: 'center', color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(30),}}>
                                     {this.props.headerItems.selectedTeam.label}
                                 </FathomText>
                                 :

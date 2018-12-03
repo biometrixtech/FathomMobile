@@ -39,7 +39,7 @@ const tabs = ['TODAY', 'THIS WEEK'];
 const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
 
 // constants
-const circleSize = 65;
+const circleSize = ((AppSizes.screen.width - ((AppSizes.padding * 4) + (AppSizes.paddingSml * 4))) / 4);
 const iconCircleSize = 40;
 const thisWeekPopupText = 'Here you\'ll find insights regarding soreness, pain, workload, and other trends which focus on mitigating injury risk and improving training readiness!\n\nInsights found here are derived from data spanning a 7 to 28 day timeframe.';
 const thisWeekInsufficientDataText = 'Return here later for insights regarding trends spanning a 7 day to 28 day timeframe.\n\nEncourage athletes to complete their survey before & after every practice for most accurate insights and recommendations.';
@@ -511,7 +511,7 @@ class CoachesDashboard extends Component {
                     </View>
                     : !isThisWeek && complianceColor === AppColors.zeplin.error ?
                         <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
-                            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(18),}]}>{`${compliance.completed.length} SURVEYS COMPLETED`}</Text>
+                            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(18),}]}>{`${compliance.completed.length} ${compliance.completed.length === 1 ? 'SURVEY' : 'SURVEYS'} COMPLETED`}</Text>
                             <Spacer size={20} />
                             <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(12),}]}>{todayInsufficientDataText}</Text>
                             <Spacer size={20} />
@@ -636,7 +636,7 @@ class CoachesDashboard extends Component {
                             <Spacer size={20} />
                         </View>
                         :
-                        <View>
+                        <View style={{flex: 1,}}>
                             <Spacer size={20} />
                             {this.renderSearchArea(false, athletes.length, complianceColor, doWeHaveInsights, compliance, insights, weeklyInsights)}
                             <Spacer size={20} />
@@ -699,7 +699,7 @@ class CoachesDashboard extends Component {
                             <Spacer size={20} />
                         </View>
                         :
-                        <View>
+                        <View style={{flex: 1,}}>
                             <Spacer size={20} />
                             {this.renderSearchArea(true, athletes.length, complianceColor, doWeHaveInsights, compliance, insights)}
                             <Spacer size={20} />
