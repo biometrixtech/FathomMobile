@@ -43,7 +43,6 @@ class CustomNavBar extends Component {
     }
 
     _renderLeft = () => {
-        console.log(this.props);
         return (
             <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingXSml,}}>
                 { this.props.routeName === 'onboarding' && !store.getState().user.id ?
