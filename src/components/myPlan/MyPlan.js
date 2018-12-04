@@ -909,7 +909,7 @@ class MyPlan extends Component {
                             icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
                         />
                     }
-                    title={'ACTIVE PREP'}
+                    title={'MOBILIZE'}
                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                 />
                 {

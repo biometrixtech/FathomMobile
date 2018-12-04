@@ -39,7 +39,7 @@ const tabs = ['TODAY', 'THIS WEEK'];
 const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
 
 // constants
-const circleSize = ((AppSizes.screen.width - ((AppSizes.padding * 4) + (AppSizes.paddingSml * 4))) / 4);
+const circleSize = ((AppSizes.screen.width - ((AppSizes.paddingMed * 3) + (AppSizes.padding * 3))) / 3);
 const iconCircleSize = 40;
 const thisWeekPopupText = 'Here you\'ll find insights regarding soreness, pain, workload, and other trends which focus on mitigating injury risk and improving training readiness!\n\nInsights found here are derived from data spanning a 7 to 28 day timeframe.';
 const thisWeekInsufficientDataText = 'Return here later for insights regarding trends spanning a 7 day to 28 day timeframe.\n\nEncourage athletes to complete their survey before & after every practice for most accurate insights and recommendations.';
@@ -57,10 +57,9 @@ const styles = StyleSheet.create({
         width:          circleSize,
     },
     athleteCircleText: {
-        color:             AppColors.white,
-        fontSize:          AppFonts.scaleFont(15),
-        paddingHorizontal: AppSizes.paddingXSml,
-        paddingVertical:   AppSizes.paddingSml,
+        color:           AppColors.white,
+        fontSize:        AppFonts.scaleFont(15),
+        paddingVertical: AppSizes.paddingSml,
     },
     athleteComplianceBtn: {
         borderRadius:    5,
@@ -95,10 +94,13 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         shadowRadius:  6,
     },
-    sortByPickerSelect: {
-        ...AppFonts.robotoLight,
+    sortByPickerSelectAndroid: {
+        color: AppColors.zeplin.darkGrey,
+    },
+    sortByPickerSelectIOS: {
+        ...AppFonts.oswaldRegular,
         color:    AppColors.zeplin.darkGrey,
-        fontSize: AppFonts.scaleFont(15),
+        fontSize: AppFonts.scaleFont(20),
     },
     ul: {
         alignSelf:  'flex-start',
@@ -490,9 +492,11 @@ class CoachesDashboard extends Component {
                                     value: null,
                                 }}
                                 style={{
-                                    inputAndroid:     [styles.sortByPickerSelect],
-                                    inputIOS:         [styles.sortByPickerSelect],
+                                    inputAndroid:     [styles.sortByPickerSelectAndroid],
+                                    inputIOS:         [styles.sortByPickerSelectIOS],
                                     placeholderColor: AppColors.zeplin.darkGrey,
+                                    underline:        {borderTopColor: AppColors.white, borderTopWidth: 0,},
+                                    viewContainer:    [Platform.OS === 'ios' ? {} : {height: 40, justifyContent: 'center', width: AppSizes.screen.widthHalf,}],
                                 }}
                                 value={isThisWeek ? thisWeekFilter : todayFilter}
                             />
@@ -549,7 +553,7 @@ class CoachesDashboard extends Component {
                     <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{descriptionObj.description}</Text>
                 </View>
                 <Spacer size={25} />
-                <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: AppSizes.padding,}}>
+                <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: AppSizes.paddingMed,}}>
                     {_.map(items, (item, index) => {
                         let { athleteName, backgroundColor, filteredAthlete, } = PlanLogic.handleRenderCoachesDashboardSection(athletes, item, compliance);
                         return(

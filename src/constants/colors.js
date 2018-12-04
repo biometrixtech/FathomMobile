@@ -111,7 +111,6 @@ const zeplin = {
     mediumGrey:     '#707070', // 112, 112, 112
     navyBlue:       '#0E0822', // 14, 8, 34
     shadow:         '#e4e4e4',
-    scaleButton:    '#E2E2E2',
     success:        '#5EB123',
     warning:        '#EBBA2D',
 }

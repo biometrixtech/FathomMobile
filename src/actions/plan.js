@@ -357,10 +357,26 @@ const markStartedFunctionalStrength = (user_id, newMyPlan) => {
 const getCoachesDashboardData = (user_id) => {
     return dispatch => AppAPI.coach_dashboard.get({user_id})
         .then(coachesDashboardData => {
+            let cleanedTeams = _.cloneDeep(coachesDashboardData.teams);
+            cleanedTeams = _.orderBy(cleanedTeams, ['name']);
+            _.map(coachesDashboardData.teams, (team, key) => {
+                cleanedTeams[key].daily_insights = {};
+                cleanedTeams[key].daily_insights.not_cleared_for_training = team.daily_insights.not_cleared_for_training;
+                cleanedTeams[key].daily_insights.limit_time_intensity_of_training = team.daily_insights.limit_time_intensity_of_training;
+                cleanedTeams[key].daily_insights.monitor_in_training = team.daily_insights.monitor_in_training;
+                cleanedTeams[key].daily_insights.increase_workload = team.daily_insights.increase_workload;
+                cleanedTeams[key].daily_insights.all_good = team.daily_insights.all_good;
+                cleanedTeams[key].weekly_insights = {};
+                cleanedTeams[key].weekly_insights.evaluate_health_status = team.weekly_insights.evaluate_health_status;
+                cleanedTeams[key].weekly_insights.address_pain_or_soreness = team.weekly_insights.address_pain_or_soreness;
+                cleanedTeams[key].weekly_insights.balance_overtraining_risk = team.weekly_insights.balance_overtraining_risk;
+                cleanedTeams[key].weekly_insights.increase_weekly_workload = team.weekly_insights.increase_weekly_workload;
+                cleanedTeams[key].weekly_insights.add_variety_to_training_risk = team.weekly_insights.add_variety_to_training_risk;
+            });
             // update coaches dashboard data
             dispatch({
                 type: Actions.GET_COACHES_DASHBOARD,
-                data: coachesDashboardData.teams,
+                data: cleanedTeams,
             });
             // update last opened flag
             store.dispatch({

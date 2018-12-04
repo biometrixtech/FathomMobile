@@ -22,6 +22,7 @@ import { Spacer, Text, } from '../../custom';
 
 /* Component ==================================================================== */
 const ScaleButton = ({
+    circleStyle,
     isSelected,
     keyLabel,
     opacity,
@@ -34,10 +35,8 @@ const ScaleButton = ({
     >
         <TouchableHighlight
             onPress={updateStateAndForm}
-            style={[AppStyles.sorenessPainValues, {
-                backgroundColor: isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.scaleButton,
-                borderColor:     isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.scaleButton,
-                opacity:         opacity,
+            style={[circleStyle, {
+                backgroundColor: isSelected ? `rgba(235, 186, 45, ${opacity})` : `rgba(226, 226, 226, ${opacity})`,
             }]}
             underlayColor={AppColors.transparent}
         >
@@ -86,8 +85,9 @@ ScaleButton.propTypes = {
 };
 
 ScaleButton.defaultProps = {
-    opacity:    1,
-    valueLabel: null,
+    circleStyle: AppStyles.sorenessPainValues,
+    opacity:     1,
+    valueLabel:  null,
 };
 
 ScaleButton.componentName = 'ScaleButton';

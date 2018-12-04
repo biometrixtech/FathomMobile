@@ -161,7 +161,7 @@ class SoreBodyPart extends Component {
                         { isPrevSoreness || bodyPartMap.bilateral ?
                             <View>
                                 <TabIcon
-                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
+                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 50, paddingHorizontal: AppSizes.padding,}]}
                                     icon={this.state.type === 'all-good' ? 'check-circle' : 'checkbox-blank-circle-outline'}
                                     iconStyle={[{color: this.state.type === 'all-good' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
                                     onPress={() => {
@@ -176,7 +176,7 @@ class SoreBodyPart extends Component {
                                         }
                                     }}
                                     reverse={false}
-                                    size={35}
+                                    size={45}
                                     type={'material-community'}
                                 />
                                 <Text
@@ -201,7 +201,7 @@ class SoreBodyPart extends Component {
                             :
                             <View>
                                 <TabIcon
-                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
+                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 50, paddingHorizontal: AppSizes.padding,}]}
                                     icon={this.state.type === 'soreness' ? 'check-circle' : 'checkbox-blank-circle-outline'}
                                     iconStyle={[{color: this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
                                     onPress={() => {
@@ -218,7 +218,7 @@ class SoreBodyPart extends Component {
                                         }
                                     }}
                                     reverse={false}
-                                    size={35}
+                                    size={45}
                                     type={'material-community'}
                                 />
                                 <Text
@@ -241,7 +241,7 @@ class SoreBodyPart extends Component {
                             :
                             <View>
                                 <TabIcon
-                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
+                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 50, paddingHorizontal: AppSizes.padding,}]}
                                     icon={this.state.type === 'pain' ? 'check-circle' : 'checkbox-blank-circle-outline'}
                                     iconStyle={[{color: this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
                                     onPress={() => {
@@ -258,7 +258,7 @@ class SoreBodyPart extends Component {
                                         }
                                     }}
                                     reverse={false}
-                                    size={35}
+                                    size={45}
                                     type={'material-community'}
                                 />
                                 <Text
@@ -288,12 +288,17 @@ class SoreBodyPart extends Component {
                                 MyPlanConstants.sorenessPainScaleMapping(false, key, true)
                                 :
                                 MyPlanConstants.sorenessPainScaleMapping(this.state.type, key);
+
+                            let isSelected = this.state.value === key;
+                            let opacity = isSelected ? 1 : (key * 0.2);
                             /*eslint consistent-return: 0*/
                             return(
                                 <ScaleButton
-                                    isSelected={this.state.value === key}
+                                    circleStyle={AppStyles.sorenessPainValuesLrg}
+                                    isSelected={isSelected}
                                     key={value+key}
                                     keyLabel={key}
+                                    opacity={opacity}
                                     sorenessPainMappingLength={sorenessPainMapping.length}
                                     updateStateAndForm={() => {
                                         let newType = this.state.type === 'all-good' ? '' : this.state.type;

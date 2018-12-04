@@ -373,7 +373,7 @@ const onboardingUtils = {
                     videoLink:       'https://s3.amazonaws.com/onboarding-content/coachinsight.mp4',
                 },
                 {
-                    backgroundColor: AppColors.zeplin.navyBlue,
+                    backgroundColor: AppColors.primary.yellow.hundredPercent,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-5',
                     text:            'Encourage athletes to complete Fathom\'s Active Recovery to improve their training readiness & reduce chronic soreness & injury risk.',
