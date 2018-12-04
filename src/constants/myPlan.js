@@ -173,16 +173,16 @@ const exerciseListOrder = [
 ];
 
 const postSessionFeel = [
-    '',
-    'Effortless',
-    '',
-    'Light',
-    '',
+    'Rest',
+    'Very, Very Easy',
+    'Easy',
     'Moderate',
-    '',
-    'Vigorous',
+    'Somewhat Hard',
+    'Hard',
     '',
     'Very Hard',
+    '',
+    '',
     'Max effort',
 ];
 
