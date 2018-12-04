@@ -14,7 +14,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, View, } from 'react-native';
+import { TouchableHighlight, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
@@ -32,13 +32,14 @@ const ScaleButton = ({
     <View
         style={{flex: 1, justifyContent: 'center',}}
     >
-        <TouchableOpacity
+        <TouchableHighlight
+            onPress={updateStateAndForm}
             style={[AppStyles.sorenessPainValues, {
                 backgroundColor: isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.scaleButton,
                 borderColor:     isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.scaleButton,
                 opacity:         opacity,
             }]}
-            onPress={updateStateAndForm}
+            underlayColor={AppColors.transparent}
         >
             <Text
                 oswaldMedium
@@ -52,7 +53,7 @@ const ScaleButton = ({
             >
                 {keyLabel}
             </Text>
-        </TouchableOpacity>
+        </TouchableHighlight>
         { valueLabel ?
             <Text
                 oswaldMedium
