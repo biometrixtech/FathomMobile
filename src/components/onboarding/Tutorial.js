@@ -82,9 +82,11 @@ class Tutorial extends Component {
 
     _onDone = () => {
         let payload = {};
-        payload.onboarding_status = ['tutorial-tutorial'];
+        payload.onboarding_status = [Actions.currentParams.step];
         this.props.updateUser(payload, this.props.user.id);
-        AppUtil.routeOnLogin({});
+        let newUserObj = _.cloneDeep(this.props.user);
+        newUserObj.onboarding_status.push(Actions.currentParams.step);
+        AppUtil.routeOnLogin(newUserObj);
     }
 
     _onSkip = () => {

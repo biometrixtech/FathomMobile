@@ -44,19 +44,19 @@ const bodyPartMapping = [
 const overallReadiness = [
     '',
     'Not At All Ready',
-    'Not Ready',
-    'Ready',
+    ' ',
+    'Somewhat Ready',
+    ' ',
     'Very Ready',
-    'Max Ready',
 ];
 
 const sleepQuality = [
     '',
-    'Terribly',
-    'Poor',
-    'Well',
-    'Very well',
-    'Max well',
+    'Not At All Rested',
+    ' ',
+    'Somewhat Rested',
+    ' ',
+    'Very Rested',
 ];
 
 const muscleLevels = {
@@ -453,12 +453,12 @@ const coachesDashboardCardsData = isToday => {
         {
             description: 'Consult medical staff to evaluate status before training',
             label:       'EVALUATE HEALTH STATUS',
+            overlayText: 'When an athlete has been identified as having a chronic issue, their status will update here.',
             value:       'evaluate_health_status',
         },
         {
             description: 'Prioritize Recovery and consider decreasing upcoming workloads',
             label:       'ADDRESS PAIN OR SORENESS',
-            overlayText: 'When an athlete has been identified as having a chronic issue, their status will update here.',
             value:       'address_pain_or_soreness',
         },
         {

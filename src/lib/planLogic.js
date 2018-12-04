@@ -341,7 +341,12 @@ const PlanLogic = {
             `(${soreBodyParts.completed_functional_strength_sessions}/2 completed in last 7 days${soreBodyParts.completed_functional_strength_sessions === 2 ? ', but you can go for 3!': ''})`
             :
             '';
-        let isFormValid = isFunctionalStrengthValid && areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
+        let isFormValid = {
+            isFunctionalStrengthValid: isFunctionalStrengthValid,
+            areQuestionsValid:         areQuestionsValid,
+            isPrevSorenessValid:       (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0),
+            areAreasOfSorenessValid:   areAreasOfSorenessValid,
+        };
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         return {

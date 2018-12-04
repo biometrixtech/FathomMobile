@@ -5,6 +5,7 @@
          isSelected={this.state.value === key}
          key={value+key}
          keyLabel={key}
+         opacity={0.25}
          sorenessPainMappingLength={sorenessPainMapping.length}
          updateStateAndForm={this._updateStateAndForm}
          valueLabel={value}
@@ -23,6 +24,7 @@ import { Spacer, Text, } from '../../custom';
 const ScaleButton = ({
     isSelected,
     keyLabel,
+    opacity,
     sorenessPainMappingLength,
     updateStateAndForm,
     valueLabel,
@@ -32,18 +34,19 @@ const ScaleButton = ({
     >
         <TouchableOpacity
             style={[AppStyles.sorenessPainValues, {
-                backgroundColor: isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
-                borderColor:     isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
+                backgroundColor: isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.scaleButton,
+                borderColor:     isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.scaleButton,
+                opacity:         opacity,
             }]}
             onPress={updateStateAndForm}
         >
             <Text
-                oswaldRegular
+                oswaldMedium
                 style={[
                     AppStyles.textCenterAligned,
                     {
                         color:    isSelected ? AppColors.white : AppColors.primary.grey.fiftyPercent,
-                        fontSize: AppFonts.scaleFont(14),
+                        fontSize: AppFonts.scaleFont(15),
                     }
                 ]}
             >
@@ -52,11 +55,11 @@ const ScaleButton = ({
         </TouchableOpacity>
         { valueLabel ?
             <Text
-                oswaldRegular
+                oswaldMedium
                 style={[
                     AppStyles.textCenterAligned,
                     {
-                        color:             isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
+                        color:             AppColors.primary.grey.fiftyPercent,
                         flex:              1,
                         fontSize:          AppFonts.scaleFont(12),
                         paddingHorizontal: AppSizes.paddingXSml,
@@ -75,12 +78,14 @@ const ScaleButton = ({
 ScaleButton.propTypes = {
     isSelected:                PropTypes.bool.isRequired,
     keyLabel:                  PropTypes.number.isRequired,
+    opacity:                   PropTypes.number,
     sorenessPainMappingLength: PropTypes.number.isRequired,
     updateStateAndForm:        PropTypes.func.isRequired,
     valueLabel:                PropTypes.string,
 };
 
 ScaleButton.defaultProps = {
+    opacity:    1,
     valueLabel: null,
 };
 

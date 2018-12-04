@@ -330,6 +330,73 @@ const onboardingUtils = {
                 },
             ],
         };
+        const COACH_TUTORIAL_SLIDES = {
+            showSkipButton: false,
+            slides:         [
+                {
+                    backgroundColor: AppColors.white,
+                    icon:            {color: AppColors.primary.yellow.hundredPercent, goToPage: 1, icon: 'arrow-right-circle', type: 'simple-line-icon',},
+                    key:             'tutorial-0',
+                    title:           'Let\'s Take a Tour of Fathom!',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},
+                },
+                {
+                    backgroundColor: AppColors.primary.yellow.hundredPercent,
+                    buttonTextStyle: {color: AppColors.white,},
+                    key:             'tutorial-1',
+                    text:            'It\'s important that athletes do pre & post training surveys regularly to ensure your dashboard has the most accurate insights.',
+                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
+                    title:           'Athlete App: Surveys',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
+                },
+                {
+                    backgroundColor: AppColors.white,
+                    key:             'tutorial-2',
+                    title:           'Athlete App: Surveys',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
+                    videoLink:       'https://s3.amazonaws.com/onboarding-content/athletesurvey.mp4',
+                },
+                {
+                    backgroundColor: AppColors.zeplin.navyBlue,
+                    buttonTextStyle: {color: AppColors.white,},
+                    key:             'tutorial-3',
+                    text:            'We synthesize athlete responses & provide simple recommendations to help reduce risk of injury and overtraining.',
+                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
+                    title:           'Coach’s App: Training Insights',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
+                },
+                {
+                    backgroundColor: AppColors.white,
+                    key:             'tutorial-4',
+                    title:           'Coach’s App: Training Insights',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(25),},
+                    videoLink:       'https://s3.amazonaws.com/onboarding-content/coachinsight.mp4',
+                },
+                {
+                    backgroundColor: AppColors.zeplin.navyBlue,
+                    buttonTextStyle: {color: AppColors.white,},
+                    key:             'tutorial-5',
+                    text:            'Encourage athletes to complete Fathom\'s Active Recovery to improve their training readiness & reduce chronic soreness & injury risk.',
+                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
+                    title:           'Athlete App: Active Recovery',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
+                },
+                {
+                    backgroundColor: AppColors.white,
+                    key:             'tutorial-6',
+                    title:           'Athlete App: Recovery',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
+                    videoLink:       'https://s3.amazonaws.com/onboarding-content/athleterecovery.mp4',
+                },
+                {
+                    backgroundColor: AppColors.white,
+                    icon:            {color: AppColors.primary.yellow.hundredPercent, goToPage: false, icon: 'arrow-right-circle', type: 'simple-line-icon',},
+                    key:             'tutorial-9',
+                    title:           'Now Let\'s Go To The Dashboard!',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},
+                },
+            ],
+        };
         const VALUE_EDUCATION_SLIDES = {
             showSkipButton: true,
             slides:         [
@@ -366,10 +433,12 @@ const onboardingUtils = {
             SINGLE_SENSOR_SLIDES
             : page === 'educational' ?
                 VALUE_EDUCATION_SLIDES
-                : page === 'tutorial' ?
+                : page === 'tutorial-tutorial' ?
                     TUTORIAL_SLIDES
-                    :
-                    EMPTY_SLIDES;
+                    : page === 'coach-tutorial' ?
+                        COACH_TUTORIAL_SLIDES
+                        :
+                        EMPTY_SLIDES;
     },
 
 }

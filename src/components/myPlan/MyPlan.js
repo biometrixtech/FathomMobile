@@ -208,6 +208,7 @@ class MyPlan extends Component {
                                 let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
                                 newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
                                 this.setState({ dailyReadiness: newDailyReadiness });
+                                this._toggleReadinessSurvey();
                                 if(hideSplashScreen) {
                                     SplashScreen.hide();
                                 }
@@ -242,6 +243,10 @@ class MyPlan extends Component {
         } else {
             setTimeout(() => {
                 this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(this.props.plan.dailyPlan[0]));
+                let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && (this.props.plan.dailyPlan[0].daily_readiness_survey_completed || this.state.prepare.isReadinessSurveyCompleted) ? true : false;
+                if(!isDailyReadinessSurveyCompleted) {
+                    this._toggleReadinessSurvey();
+                }
                 if(callback) {
                     callback();
                 }
@@ -857,7 +862,6 @@ class MyPlan extends Component {
         let completedExercises = store.getState().plan.completedExercises;
         let { plan, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let isDailyReadinessSurveyCompleted = dailyPlanObj && (dailyPlanObj.daily_readiness_survey_completed || prepare.isReadinessSurveyCompleted) ? true : false;
         // assuming AM/PM is switching to something for prepared vs recover
         let recoveryObj = dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
         let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
@@ -893,69 +897,6 @@ class MyPlan extends Component {
                 tabLabel={tabs[index]}
             >
                 <Spacer size={30} />
-                <ListItem
-                    containerStyle={{ borderBottomWidth: 0 }}
-                    hideChevron={true}
-                    leftIcon={
-                        <TabIcon
-                            containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                            size={isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(24) : 20}
-                            color={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
-                            icon={isDailyReadinessSurveyCompleted ? 'check-circle' : 'fiber-manual-record'}
-                        />
-                    }
-                    title={'READINESS SURVEY'}
-                    titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
-                />
-                {
-                    isDailyReadinessSurveyCompleted ?
-                        null
-                        :
-                        prepare.isReadinessSurveyCollapsed ?
-                            null
-                            :
-                            <View style={{ flexDirection: 'row', }}>
-                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
-                                <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                            <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
-                                            <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'EARLY IN\nTHE DAY'}</Text>
-                                        </View>
-                                        <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                            <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHY'}</Text>
-                                            <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'PERSONALIZE\nYOUR PLAN'}</Text>
-                                        </View>
-                                    </View>
-                                    <Spacer size={12}/>
-                                    <Button
-                                        backgroundColor={AppColors.primary.yellow.hundredPercent}
-                                        buttonStyle={{width: '100%',}}
-                                        containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                        color={AppColors.white}
-                                        fontFamily={AppStyles.robotoBold.fontFamily}
-                                        fontWeight={AppStyles.robotoBold.fontWeight}
-                                        leftIcon={{
-                                            color: AppColors.primary.yellow.hundredPercent,
-                                            name:  'chevron-right',
-                                            size:  AppFonts.scaleFont(24),
-                                            style: { flex: 1, },
-                                        }}
-                                        outlined
-                                        onPress={() => this._toggleReadinessSurvey()}
-                                        rightIcon={{
-                                            color: AppColors.white,
-                                            name:  'chevron-right',
-                                            size:  AppFonts.scaleFont(24),
-                                            style: { flex: 1, },
-                                        }}
-                                        textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
-                                        title={'Start'}
-                                    />
-                                </View>
-                            </View>
-                }
-                { prepare.isReadinessSurveyCollapsed || isDailyReadinessSurveyCompleted ? this.renderDefaultListGap(23) : null }
                 <ListItem
                     containerStyle={{ borderBottomWidth: 0 }}
                     disabled={disabled}

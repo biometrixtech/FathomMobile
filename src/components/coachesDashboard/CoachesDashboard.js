@@ -404,7 +404,7 @@ class CoachesDashboard extends Component {
                         }
                     </View>
                     { selectedAthletePage === 0 ?
-                        <View style={{alignItems: 'center', flex: 1, flexDirection: 'row',justifyContent: 'space-between', paddingBottom: AppSizes.padding, paddingRight: AppSizes.paddingLrg,}}>
+                        <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingBottom: AppSizes.padding, paddingRight: AppSizes.paddingLrg,}}>
                             <View style={{paddingLeft: AppSizes.paddingLrg,}}>
                                 <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(13),}}>
                                     {selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*survey not completed today'}
@@ -506,14 +506,14 @@ class CoachesDashboard extends Component {
                     <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
                         <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(18),}]}>{'INSUFFICIENT TREND DATA'}</Text>
                         <Spacer size={20} />
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(12),}]}>{thisWeekInsufficientDataText}</Text>
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{thisWeekInsufficientDataText}</Text>
                         <Spacer size={20} />
                     </View>
                     : !isThisWeek && complianceColor === AppColors.zeplin.error ?
                         <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
                             <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(18),}]}>{`${compliance.completed.length} ${compliance.completed.length === 1 ? 'SURVEY' : 'SURVEYS'} COMPLETED`}</Text>
                             <Spacer size={20} />
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(12),}]}>{todayInsufficientDataText}</Text>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{todayInsufficientDataText}</Text>
                             <Spacer size={20} />
                         </View>
                         : !isThisWeek && numberOfAthletes === insights.all_good.length && complianceColor === AppColors.zeplin.success ?
@@ -663,7 +663,7 @@ class CoachesDashboard extends Component {
                         colors={[AppColors.primary.yellow.hundredPercent]}
                         onRefresh={() => this._handleEnteringApp()}
                         refreshing={isPageLoading}
-                        title={'Loading...'}
+                        title={'Updating...'}
                         titleColor={AppColors.primary.yellow.hundredPercent}
                         tintColor={AppColors.primary.yellow.hundredPercent}
                     />
