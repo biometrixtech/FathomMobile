@@ -347,7 +347,7 @@ class ReadinessSurvey extends Component {
                             {questionCounter+=1}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {'How mentally ready do you feel for today?'}
+                            {'How ready do you feel to train?'}
                         </Text>
                         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
                             { _.map(MyPlanConstants.overallReadiness, (value, key) => {
@@ -378,7 +378,7 @@ class ReadinessSurvey extends Component {
                             {questionCounter+=1}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {'How well did you sleep last night?'}
+                            {'How well rested do you feel?'}
                         </Text>
                         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
                             { _.map(MyPlanConstants.sleepQuality, (value, key) => {

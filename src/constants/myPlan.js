@@ -179,10 +179,10 @@ const postSessionFeel = [
     'Moderate',
     'Somewhat Hard',
     'Hard',
-    '',
+    ' ',
     'Very Hard',
-    '',
-    '',
+    ' ',
+    ' ',
     'Max effort',
 ];
 
