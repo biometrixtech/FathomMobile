@@ -44,8 +44,7 @@ const iconCircleSize = 40;
 const thisWeekPopupText = 'Here you\'ll find insights regarding soreness, pain, workload, and other trends which focus on mitigating injury risk and improving training readiness!\n\nInsights found here are derived from data spanning a 7 to 28 day timeframe.';
 const thisWeekInsufficientDataText = 'Return here later for insights regarding trends spanning a 7 day to 28 day timeframe.\n\nEncourage athletes to complete their survey before & after every practice for most accurate insights and recommendations.';
 const todayInsufficientDataText = 'For up to date status & recommendations athletes must submit pre & post-training surveys.\n\nTap the "Athlete Compliance" tab above to see which athletes still have to submit a survey.';
-const todayPopupFirstText = 'Here you\'ll find daily readiness status, injury risk mitigation suggestions & underlying training & soreness insights for each athlete.';
-const todayPopupSecondText = 'The athlete app includes a survey for before & after practice which unlocks activities created to increase readiness & reduce injury risk.';
+const todayPopupText = 'Here you\'ll find daily readiness status, injury risk mitigation suggestions & underlying training & soreness insights for each athlete.\n\nTap on any athlete name to see all of the athlete\'s suggestions. Flip the card to see the trends causing the suggestion.';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -605,23 +604,13 @@ class CoachesDashboard extends Component {
                             <Spacer size={20} />
                             <TabIcon
                                 containerStyle={[styles.iconCircle,]}
-                                icon={'report-problem'}
+                                icon={'directions-run'}
                                 iconStyle={[{color: AppColors.white,}]}
                                 reverse={false}
                                 size={25}
                             />
                             <Spacer size={5} />
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{todayPopupFirstText}</Text>
-                            <Spacer size={30} />
-                            <TabIcon
-                                containerStyle={[styles.iconCircle,]}
-                                icon={'phone-iphone'}
-                                iconStyle={[{color: AppColors.white,}]}
-                                reverse={false}
-                                size={25}
-                            />
-                            <Spacer size={5} />
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{todayPopupSecondText}</Text>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{todayPopupText}</Text>
                             <Spacer size={20} />
                             <Button
                                 backgroundColor={AppColors.primary.yellow.hundredPercent}
@@ -629,6 +618,7 @@ class CoachesDashboard extends Component {
                                 fontFamily={AppStyles.oswaldRegular.fontFamily}
                                 fontWeight={AppStyles.oswaldRegular.fontWeight}
                                 onPress={() => this._toggleGotItBtn(true)}
+                                raised={false}
                                 textColor={AppColors.white}
                                 textStyle={{ fontSize: AppFonts.scaleFont(14) }}
                                 title={'GOT IT'}
@@ -692,6 +682,7 @@ class CoachesDashboard extends Component {
                                 fontFamily={AppStyles.oswaldRegular.fontFamily}
                                 fontWeight={AppStyles.oswaldRegular.fontWeight}
                                 onPress={() => this._toggleGotItBtn(false)}
+                                raised={false}
                                 textColor={AppColors.white}
                                 textStyle={{ fontSize: AppFonts.scaleFont(14) }}
                                 title={'GOT IT'}

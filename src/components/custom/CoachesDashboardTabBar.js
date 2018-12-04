@@ -144,7 +144,6 @@ const CoachesDashboardTabBar = createReactClass({
                                 alignItems:     'flex-end',
                                 flex:           1,
                                 justifyContent: 'center',
-                                marginRight:    AppSizes.padding,
                             }}
                         >
                             <TabIcon
