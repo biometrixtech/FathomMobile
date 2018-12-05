@@ -72,28 +72,31 @@ const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
 /* Styles ==================================================================== */
 const customStyles = StyleSheet.create({
     alertMessageWrapper: {
-        alignSelf: 'center',
-        width:     AppSizes.screen.widthThreeQuarters,
+        alignSelf:    'center',
+        flex:         1,
+        marginRight:  9,
+        paddingLeft:  37,
+        paddingRight: 15,
     },
     alertMessageIconWrapper: {
+        alignSelf:            'stretch',
         backgroundColor:      AppColors.primary.yellow.hundredPercent,
         borderTopLeftRadius:  5,
         borderTopRightRadius: 5,
         paddingVertical:      AppSizes.paddingSml,
-        width:                AppSizes.screen.widthThreeQuarters,
     },
     alertMessageTextWrapper: {
         backgroundColor:         AppColors.primary.grey.twentyPercent,
         borderBottomLeftRadius:  5,
         borderBottomRightRadius: 5,
+        flex:                    1,
         padding:                 AppSizes.padding,
-        width:                   AppSizes.screen.widthThreeQuarters,
     },
     shadowEffect: {
-        shadowColor:   'black',
-        shadowOffset:  { width: 0, height: 2 },
-        shadowRadius:  2,
-        shadowOpacity: 0.8,
+        shadowColor:   'rgba(0, 0, 0, 0.16)',
+        shadowOffset:  { width: 0, height: 3 },
+        shadowRadius:  6,
+        shadowOpacity: 1,
     },
 });
 
@@ -817,7 +820,7 @@ class MyPlan extends Component {
                         <Text oswaldMedium style={{ color: whenStyles.activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
                     </View>
                     <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryBackgroundColor, borderColor: styles.activeRecoveryBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                        <Text h7 oswaldMedium style={{ color: styles.activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'TYP. ACTIVE TIME'}</Text>
+                        <Text h7 oswaldMedium style={{ color: styles.activeRecoveryHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'TYP. ACTIVE TIME'}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
                             <Text h1 oswaldMedium style={{ color: styles.activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{'5-15'}</Text>
                             <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
@@ -981,7 +984,7 @@ class MyPlan extends Component {
                     : isActive ?
                         exerciseList.totalLength === 0 ?
                             <View style={{ flex: 1, }}>
-                                <Spacer size={12} />
+                                <Spacer size={10} />
                                 <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
                                     <TabIcon
                                         color={AppColors.white}
@@ -1256,7 +1259,7 @@ class MyPlan extends Component {
                                     }
                                 </View>
                             </View>
-                            <Spacer size={35}/>
+                            <Spacer size={25}/>
                             <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
                                 <TabIcon
                                     color={AppColors.white}
@@ -1295,7 +1298,7 @@ class MyPlan extends Component {
                     : isActive ?
                         exerciseList.totalLength === 0 ?
                             <View style={{ flex: 1, }}>
-                                <Spacer size={12} />
+                                <Spacer size={10} />
                                 <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
                                     <TabIcon
                                         color={AppColors.white}

@@ -408,7 +408,7 @@ class CoachesDashboard extends Component {
                         <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingBottom: AppSizes.padding, paddingRight: AppSizes.paddingLrg,}}>
                             <View style={{paddingLeft: AppSizes.paddingLrg,}}>
                                 <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(13),}}>
-                                    {selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*survey not completed today'}
+                                    {selectedAthlete && selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*survey not completed today'}
                                 </Text>
                             </View>
                             <TouchableHighlight onPress={() => this.setState({ selectedAthletePage: 1, })} underlayColor={AppColors.transparent}>
@@ -590,7 +590,7 @@ class CoachesDashboard extends Component {
         let { doWeHaveInsights, sections, } = PlanLogic.handleRenderTodayAndThisWeek(true, insights, athletes, todayFilter, compliance, this.renderSection);
         return (
             <ScrollView
-                contentContainerStyle={{ backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding, }}
+                contentContainerStyle={{ backgroundColor: AppColors.white, }}
                 refreshControl={
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
@@ -603,47 +603,49 @@ class CoachesDashboard extends Component {
                 }
                 tabLabel={tabs[index]}
             >
-                { insights.length === 0 ?
-                    this.renderNoDataSection()
-                    : !user.first_time_experience.includes('coaches_today_popup') && !hideTodayStartState ?
-                        <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
-                            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'LET\'S GET STARTED!'}</Text>
-                            <Spacer size={20} />
-                            <TabIcon
-                                containerStyle={[styles.iconCircle,]}
-                                icon={'directions-run'}
-                                iconStyle={[{color: AppColors.white,}]}
-                                reverse={false}
-                                size={25}
-                            />
-                            <Spacer size={5} />
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{todayPopupText}</Text>
-                            <Spacer size={20} />
-                            <Button
-                                backgroundColor={AppColors.primary.yellow.hundredPercent}
-                                buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {borderRadius: 5,}]}
-                                fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                fontWeight={AppStyles.oswaldRegular.fontWeight}
-                                onPress={() => this._toggleGotItBtn(true)}
-                                raised={false}
-                                textColor={AppColors.white}
-                                textStyle={{ fontSize: AppFonts.scaleFont(14) }}
-                                title={'GOT IT'}
-                            />
-                            <Spacer size={20} />
-                        </View>
-                        :
-                        <View style={{flex: 1,}}>
-                            <Spacer size={20} />
-                            {this.renderSearchArea(false, athletes.length, complianceColor, doWeHaveInsights, compliance, insights, weeklyInsights)}
-                            <Spacer size={20} />
-                            { athletes.length === 0 ?
-                                this._renderNoAthletes(true)
-                                :
-                                sections
-                            }
-                        </View>
-                }
+                <View style={{flex: 1, paddingHorizontal: AppSizes.padding,}}>
+                    { insights.length === 0 ?
+                        this.renderNoDataSection()
+                        : !user.first_time_experience.includes('coaches_today_popup') && !hideTodayStartState ?
+                            <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
+                                <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'LET\'S GET STARTED!'}</Text>
+                                <Spacer size={20} />
+                                <TabIcon
+                                    containerStyle={[styles.iconCircle,]}
+                                    icon={'directions-run'}
+                                    iconStyle={[{color: AppColors.white,}]}
+                                    reverse={false}
+                                    size={25}
+                                />
+                                <Spacer size={5} />
+                                <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{todayPopupText}</Text>
+                                <Spacer size={20} />
+                                <Button
+                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                    buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {borderRadius: 5,}]}
+                                    fontFamily={AppStyles.oswaldRegular.fontFamily}
+                                    fontWeight={AppStyles.oswaldRegular.fontWeight}
+                                    onPress={() => this._toggleGotItBtn(true)}
+                                    raised={false}
+                                    textColor={AppColors.white}
+                                    textStyle={{ fontSize: AppFonts.scaleFont(14) }}
+                                    title={'GOT IT'}
+                                />
+                                <Spacer size={20} />
+                            </View>
+                            :
+                            <View style={{flex: 1,}}>
+                                <Spacer size={20} />
+                                {this.renderSearchArea(false, athletes.length, complianceColor, doWeHaveInsights, compliance, insights, weeklyInsights)}
+                                <Spacer size={20} />
+                                { athletes.length === 0 ?
+                                    this._renderNoAthletes(true)
+                                    :
+                                    sections
+                                }
+                            </View>
+                    }
+                </View>
             </ScrollView>
         )
     }
@@ -654,7 +656,7 @@ class CoachesDashboard extends Component {
         let { doWeHaveInsights, sections, } = PlanLogic.handleRenderTodayAndThisWeek(false, insights, athletes, thisWeekFilter, compliance, this.renderSection);
         return (
             <ScrollView
-                contentContainerStyle={{ backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding, }}
+                contentContainerStyle={{ backgroundColor: AppColors.white, }}
                 refreshControl={
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
@@ -667,47 +669,49 @@ class CoachesDashboard extends Component {
                 }
                 tabLabel={tabs[index]}
             >
-                { insights.length === 0 ?
-                    this.renderNoDataSection()
-                    : !user.first_time_experience.includes('coaches_this_week_popup') && !hideThisWeekStartState ?
-                        <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
-                            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'TRENDING INSIGHTS\nLIVE HERE!'}</Text>
-                            <Spacer size={10} />
-                            <TabIcon
-                                containerStyle={[styles.iconCircle,]}
-                                icon={'trending-up'}
-                                iconStyle={[{color: AppColors.white,}]}
-                                reverse={false}
-                                size={25}
-                            />
-                            <Spacer size={5} />
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{thisWeekPopupText}</Text>
-                            <Spacer size={20} />
-                            <Button
-                                backgroundColor={AppColors.primary.yellow.hundredPercent}
-                                buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {borderRadius: 5,}]}
-                                fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                fontWeight={AppStyles.oswaldRegular.fontWeight}
-                                onPress={() => this._toggleGotItBtn(false)}
-                                raised={false}
-                                textColor={AppColors.white}
-                                textStyle={{ fontSize: AppFonts.scaleFont(14) }}
-                                title={'GOT IT'}
-                            />
-                            <Spacer size={20} />
-                        </View>
-                        :
-                        <View style={{flex: 1,}}>
-                            <Spacer size={20} />
-                            {this.renderSearchArea(true, athletes.length, complianceColor, doWeHaveInsights, compliance, insights)}
-                            <Spacer size={20} />
-                            { !doWeHaveInsights ?
-                                this._renderNoAthletes(false)
-                                :
-                                sections
-                            }
-                        </View>
-                }
+                <View style={{flex: 1, paddingHorizontal: AppSizes.padding,}}>
+                    { insights.length === 0 ?
+                        this.renderNoDataSection()
+                        : !user.first_time_experience.includes('coaches_this_week_popup') && !hideThisWeekStartState ?
+                            <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
+                                <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'TRENDING INSIGHTS\nLIVE HERE!'}</Text>
+                                <Spacer size={10} />
+                                <TabIcon
+                                    containerStyle={[styles.iconCircle,]}
+                                    icon={'trending-up'}
+                                    iconStyle={[{color: AppColors.white,}]}
+                                    reverse={false}
+                                    size={25}
+                                />
+                                <Spacer size={5} />
+                                <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{thisWeekPopupText}</Text>
+                                <Spacer size={20} />
+                                <Button
+                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                    buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {borderRadius: 5,}]}
+                                    fontFamily={AppStyles.oswaldRegular.fontFamily}
+                                    fontWeight={AppStyles.oswaldRegular.fontWeight}
+                                    onPress={() => this._toggleGotItBtn(false)}
+                                    raised={false}
+                                    textColor={AppColors.white}
+                                    textStyle={{ fontSize: AppFonts.scaleFont(14) }}
+                                    title={'GOT IT'}
+                                />
+                                <Spacer size={20} />
+                            </View>
+                            :
+                            <View style={{flex: 1,}}>
+                                <Spacer size={20} />
+                                {this.renderSearchArea(true, athletes.length, complianceColor, doWeHaveInsights, compliance, insights)}
+                                <Spacer size={20} />
+                                { !doWeHaveInsights ?
+                                    this._renderNoAthletes(false)
+                                    :
+                                    sections
+                                }
+                            </View>
+                    }
+                </View>
             </ScrollView>
         )
     }
@@ -808,7 +812,7 @@ class CoachesDashboard extends Component {
     }
 
     render = () => {
-        const { isPageLoading, selectedTeamIndex, } = this.state;
+        const { isAthleteCardModalOpen, isComplianceModalOpen, isPageLoading, selectedTeamIndex, } = this.state;
         const { coachesDashboardData, } = this.props;
         const {
             coachesTeams,
@@ -819,7 +823,7 @@ class CoachesDashboard extends Component {
             selectedTeam,
         } = PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex);
         // making sure we can only drag horizontally if our modals are closed and nothing is loading
-        let isScrollLocked = !this.state.isPageLoading ? false : true;
+        let isScrollLocked = !isPageLoading ? false : true;
         return(
             <View style={{flex: 1,}}>
                 <ScrollableTabView
@@ -849,36 +853,44 @@ class CoachesDashboard extends Component {
                     {this.renderToday(0, selectedTeam ? selectedTeam.daily_insights : [], selectedTeam ? selectedTeam.athletes : [], selectedTeam ? selectedTeam.compliance : [], complianceColor, selectedTeam ? selectedTeam.weekly_insights : [])}
                     {this.renderThisWeek(1, selectedTeam ? selectedTeam.weekly_insights : [], selectedTeam ? selectedTeam.athletes : [], selectedTeam ? selectedTeam.compliance : [])}
                 </ScrollableTabView>
-                <Modal
-                    backdropOpacity={0.75}
-                    backdropPressToClose={false}
-                    coverScreen={true}
-                    isOpen={this.state.isComplianceModalOpen}
-                    position={'center'}
-                    style={{
-                        borderRadius: 5,
-                        height:       AppSizes.screen.heightThreeQuarters,
-                        width:        AppSizes.screen.widthThreeQuarters,
-                    }}
-                    swipeToClose={false}
-                >
-                    {this.renderComplianceModal(complianceColor, numOfCompletedAthletes, numOfTotalAthletes, incompleteAtheltes)}
-                </Modal>
-                <Modal
-                    backdropOpacity={0.75}
-                    backdropPressToClose={false}
-                    coverScreen={true}
-                    isOpen={this.state.isAthleteCardModalOpen}
-                    position={'center'}
-                    style={{
-                        borderRadius: 5,
-                        height:       AppSizes.screen.heightThreeQuarters,
-                        width:        AppSizes.screen.width * 0.9,
-                    }}
-                    swipeToClose={false}
-                >
-                    {this.renderAthleteCardModal()}
-                </Modal>
+                { isComplianceModalOpen ?
+                    <Modal
+                        backdropOpacity={0.75}
+                        backdropPressToClose={false}
+                        coverScreen={true}
+                        isOpen={isComplianceModalOpen}
+                        position={'center'}
+                        style={{
+                            borderRadius: 5,
+                            height:       AppSizes.screen.heightThreeQuarters,
+                            width:        AppSizes.screen.widthThreeQuarters,
+                        }}
+                        swipeToClose={false}
+                    >
+                        {this.renderComplianceModal(complianceColor, numOfCompletedAthletes, numOfTotalAthletes, incompleteAtheltes)}
+                    </Modal>
+                    :
+                    null
+                }
+                { isAthleteCardModalOpen ?
+                    <Modal
+                        backdropOpacity={0.75}
+                        backdropPressToClose={false}
+                        coverScreen={true}
+                        isOpen={isAthleteCardModalOpen}
+                        position={'center'}
+                        style={{
+                            borderRadius: 5,
+                            height:       AppSizes.screen.heightThreeQuarters,
+                            width:        AppSizes.screen.width * 0.9,
+                        }}
+                        swipeToClose={false}
+                    >
+                        {this.renderAthleteCardModal()}
+                    </Modal>
+                    :
+                    null
+                }
             </View>
         );
     }
