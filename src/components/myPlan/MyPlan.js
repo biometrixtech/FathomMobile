@@ -71,10 +71,10 @@ const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
 
 /* Styles ==================================================================== */
 const customStyles = StyleSheet.create({
-    alertMessageWrapper: [
-        ...AppStyles.containerCentered,
-        {alignSelf: 'center', width: AppSizes.screen.widthThreeQuarters,}
-    ],
+    alertMessageWrapper: {
+        alignSelf: 'center',
+        width:     AppSizes.screen.widthThreeQuarters,
+    },
     alertMessageIconWrapper: {
         backgroundColor:      AppColors.primary.yellow.hundredPercent,
         borderTopLeftRadius:  5,
@@ -980,9 +980,9 @@ class MyPlan extends Component {
                         </View>
                     : isActive ?
                         exerciseList.totalLength === 0 ?
-                            <View style={{ flex: 1, flexDirection: 'row', }}>
+                            <View style={{ flex: 1, }}>
                                 <Spacer size={12} />
-                                <View style={[customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
+                                <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
                                     <TabIcon
                                         color={AppColors.white}
                                         containerStyle={[customStyles.alertMessageIconWrapper, recoveryObj.impact_score < 1.5 ? {backgroundColor: AppColors.zeplin.tealGreen,} : {backgroundColor: AppColors.zeplin.error,}]}
@@ -1257,7 +1257,7 @@ class MyPlan extends Component {
                                 </View>
                             </View>
                             <Spacer size={35}/>
-                            <View style={[customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
+                            <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
                                 <TabIcon
                                     color={AppColors.white}
                                     containerStyle={[customStyles.alertMessageIconWrapper,]}
@@ -1294,9 +1294,9 @@ class MyPlan extends Component {
                         </View>
                     : isActive ?
                         exerciseList.totalLength === 0 ?
-                            <View style={{ flex: 1, flexDirection: 'row', }}>
-                                <Spacer size={12}/>
-                                <View style={[customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
+                            <View style={{ flex: 1, }}>
+                                <Spacer size={12} />
+                                <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
                                     <TabIcon
                                         color={AppColors.white}
                                         containerStyle={[customStyles.alertMessageIconWrapper, recoveryObj.impact_score < 1.5 ? {backgroundColor: AppColors.zeplin.tealGreen,} : {backgroundColor: AppColors.zeplin.error,}]}
