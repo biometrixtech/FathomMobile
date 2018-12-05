@@ -113,6 +113,7 @@ const zeplin = {
     navyBlue:       '#0E0822', // 14, 8, 34
     shadow:         '#e4e4e4',
     success:        '#5EB123',
+    tealGreen:      '#2EA985', // 46, 169, 133
     warning:        '#EBBA2D',
 }
 

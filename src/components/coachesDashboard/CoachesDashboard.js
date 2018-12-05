@@ -493,12 +493,14 @@ class CoachesDashboard extends Component {
                                     value: null,
                                 }}
                                 style={{
-                                    inputAndroid:     [styles.sortByPickerSelectAndroid],
-                                    inputIOS:         [styles.sortByPickerSelectIOS],
-                                    placeholderColor: AppColors.zeplin.darkGrey,
-                                    underline:        {borderTopColor: AppColors.white, borderTopWidth: 0,},
-                                    viewContainer:    [Platform.OS === 'ios' ? {} : {height: 40, justifyContent: 'center', width: AppSizes.screen.widthHalf,}],
+                                    headlessAndroidContainer: [{alignItems: 'flex-end', justifyContent: 'center',}],
+                                    inputAndroid:             [styles.sortByPickerSelectIOS, {textAlignVertical: 'center',}],
+                                    inputIOS:                 [styles.sortByPickerSelectIOS],
+                                    placeholderColor:         AppColors.zeplin.darkGrey,
+                                    underline:                {borderTopColor: AppColors.white, borderTopWidth: 0,},
+                                    viewContainer:            [{}],
                                 }}
+                                useNativeAndroidPickerStyle={false}
                                 value={isThisWeek ? thisWeekFilter : todayFilter}
                             />
                         </View>

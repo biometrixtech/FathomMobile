@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Animated, Easing, Platform, StyleSheet, Text, View, ViewPropTypes, } from 'react-native';
+import { Animated, Easing, StyleSheet, Text, View, ViewPropTypes, } from 'react-native';
 import PropTypes from 'prop-types';
 const createReactClass = require('create-react-class');
 import { Button, FathomPicker, Text as FathomText, } from './';
@@ -113,13 +113,12 @@ const CoachesDashboardTabBar = createReactClass({
             inputRange:  [0, 1],
             outputRange: ['0deg', '360deg'],
         });
-        console.log('selectedTeamIndex',this.props.headerItems.selectedTeamIndex);
         return (
             <View>
                 { this.props.headerItems ?
                     <View style={[AppStyles.containerCentered, {backgroundColor: AppColors.white, flexDirection: 'row', justifyContent: 'center', marginHorizontal: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml,}]}>
                         <View style={{flex: 1,}} />
-                        <View style={Platform.OS === 'ios' ? {flex: 8,} : {flex: 3,}}>
+                        <View style={{flex: 8,}}>
                             { this.props.headerItems.coachesTeams.length === 0 ?
                                 <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.darkWhite, borderRadius: 5, height: 38, width: AppSizes.screen.widthHalf,}} />
                                 : this.props.headerItems.coachesTeams.length === 1 ?
@@ -137,12 +136,14 @@ const CoachesDashboardTabBar = createReactClass({
                                             value: null,
                                         }}
                                         style={{
-                                            inputAndroid:     [styles.pickerSelectAndroid],
-                                            inputIOS:         [styles.pickerSelectIOS],
-                                            placeholderColor: AppColors.zeplin.darkGrey,
-                                            underline:        {borderTopColor: AppColors.white, borderTopWidth: 0,},
-                                            viewContainer:    [Platform.OS === 'ios' ? {alignSelf: 'center',} : {height: 40, justifyContent: 'center',}],
+                                            headlessAndroidContainer: [{alignItems: 'center', justifyContent: 'center',}],
+                                            inputAndroid:             [styles.pickerSelectIOS, {textAlignVertical: 'center',}],
+                                            inputIOS:                 [styles.pickerSelectIOS],
+                                            placeholderColor:         AppColors.zeplin.darkGrey,
+                                            underline:                {borderTopColor: AppColors.white, borderTopWidth: 0,},
+                                            viewContainer:            [{alignSelf: 'center',}],
                                         }}
+                                        useNativeAndroidPickerStyle={false}
                                         value={this.props.headerItems.selectedTeamIndex}
                                     />
                             }

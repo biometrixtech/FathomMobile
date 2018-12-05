@@ -12,6 +12,7 @@ import {
     Platform,
     RefreshControl,
     ScrollView,
+    StyleSheet,
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
@@ -39,11 +40,11 @@ import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } fro
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
 
 // text constants
-const activeRecoveryDisabledText = 'Log an activity to receive your\nactive recovery.';
+const activeRecoveryDisabledText = 'Log an activity on the Train screen to receive an Active Recovery!';
 const errorInARAPMessage = '\nPlease Swipe Down to Refresh!';
-const highSorenessMessage = 'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.';
-const lowSorenessPostMessage = 'Looks like you\'re all clear! Active recovery is low-impact for now so let\'s pick up tomorrow or after the next practice you log!';
-const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Active recovery is low-impact this morning so let\'s pick up with post practice recovery!';
+const highSorenessMessage = 'Based on your reported discomfort we recommend you rest & utilize self-care techniques like heat, ice, or massage to help reduce swelling, ease pain, & speed up healing.\n\nIf you have pain or swelling that gets worse or doesn\'t go away, please seek appropriate medical attention.';
+const lowSorenessPostMessage = 'Looks like you\'re all clear! Active Recovery is low-impact for now, so log another activity or we\'ll check in tomorrow to assess your ideal Recovery Plan!';
+const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Mobilize is low-impact this morning so complete your usual warm-up and we’ll pick-up with post practice recovery!';
 const offDayLoggedText = 'Make the most of your training by resting well today: hydrate, eat well and sleep early.';
 
 // styles
@@ -67,6 +68,34 @@ const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
 
 // setup GA Tracker
 const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
+
+/* Styles ==================================================================== */
+const customStyles = StyleSheet.create({
+    alertMessageWrapper: [
+        ...AppStyles.containerCentered,
+        {alignSelf: 'center', width: AppSizes.screen.widthThreeQuarters,}
+    ],
+    alertMessageIconWrapper: {
+        backgroundColor:      AppColors.primary.yellow.hundredPercent,
+        borderTopLeftRadius:  5,
+        borderTopRightRadius: 5,
+        paddingVertical:      AppSizes.paddingSml,
+        width:                AppSizes.screen.widthThreeQuarters,
+    },
+    alertMessageTextWrapper: {
+        backgroundColor:         AppColors.primary.grey.twentyPercent,
+        borderBottomLeftRadius:  5,
+        borderBottomRightRadius: 5,
+        padding:                 AppSizes.padding,
+        width:                   AppSizes.screen.widthThreeQuarters,
+    },
+    shadowEffect: {
+        shadowColor:   'black',
+        shadowOffset:  { width: 0, height: 2 },
+        shadowRadius:  2,
+        shadowOpacity: 0.8,
+    },
+});
 
 /* Component ==================================================================== */
 class MyPlan extends Component {
@@ -952,10 +981,17 @@ class MyPlan extends Component {
                     : isActive ?
                         exerciseList.totalLength === 0 ?
                             <View style={{ flex: 1, flexDirection: 'row', }}>
-                                <Spacer size={12}/>
-                                <View style={{flex: 1}}>
-                                    <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVertical]}>
-                                        <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: recoveryObj.impact_score < 1.5 ? AppFonts.scaleFont(18) : AppFonts.scaleFont(15) }]}>{recoveryObj.impact_score < 1.5 ? lowSorenessPreMessage : highSorenessMessage}</Text>
+                                <Spacer size={12} />
+                                <View style={[customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
+                                    <TabIcon
+                                        color={AppColors.white}
+                                        containerStyle={[customStyles.alertMessageIconWrapper, recoveryObj.impact_score < 1.5 ? {backgroundColor: AppColors.zeplin.tealGreen,} : {backgroundColor: AppColors.zeplin.error,}]}
+                                        icon={recoveryObj.impact_score < 1.5 ? 'check-circle' : 'alert'}
+                                        size={AppFonts.scaleFont(26)}
+                                        type={'material-community'}
+                                    />
+                                    <View style={[customStyles.alertMessageTextWrapper,]}>
+                                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(13),}]}>{recoveryObj.impact_score < 1.5 ? lowSorenessPreMessage : highSorenessMessage}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -1221,7 +1257,18 @@ class MyPlan extends Component {
                                 </View>
                             </View>
                             <Spacer size={35}/>
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}>{activeRecoveryDisabledText}</Text>
+                            <View style={[customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
+                                <TabIcon
+                                    color={AppColors.white}
+                                    containerStyle={[customStyles.alertMessageIconWrapper,]}
+                                    icon={'alert'}
+                                    size={AppFonts.scaleFont(26)}
+                                    type={'material-community'}
+                                />
+                                <View style={[customStyles.alertMessageTextWrapper,]}>
+                                    <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(13),}]}>{activeRecoveryDisabledText}</Text>
+                                </View>
+                            </View>
                         </View>
                     : disabled || isRecoverCalculating ?
                         <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -1249,9 +1296,16 @@ class MyPlan extends Component {
                         exerciseList.totalLength === 0 ?
                             <View style={{ flex: 1, flexDirection: 'row', }}>
                                 <Spacer size={12}/>
-                                <View style={{flex: 1}}>
-                                    <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVertical]}>
-                                        <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: recoveryObj.impact_score < 1.5 ? AppFonts.scaleFont(18) : AppFonts.scaleFont(15) }]}>{recoveryObj.impact_score < 1.5 ? lowSorenessPostMessage : highSorenessMessage}</Text>
+                                <View style={[customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
+                                    <TabIcon
+                                        color={AppColors.white}
+                                        containerStyle={[customStyles.alertMessageIconWrapper, recoveryObj.impact_score < 1.5 ? {backgroundColor: AppColors.zeplin.tealGreen,} : {backgroundColor: AppColors.zeplin.error,}]}
+                                        icon={recoveryObj.impact_score < 1.5 ? 'check-circle' : 'alert'}
+                                        size={AppFonts.scaleFont(26)}
+                                        type={'material-community'}
+                                    />
+                                    <View style={[customStyles.alertMessageTextWrapper,]}>
+                                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(13),}]}>{recoveryObj.impact_score < 1.5 ? lowSorenessPostMessage : highSorenessMessage}</Text>
                                     </View>
                                 </View>
                             </View>
