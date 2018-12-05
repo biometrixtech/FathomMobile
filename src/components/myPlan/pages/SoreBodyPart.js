@@ -294,7 +294,6 @@ class SoreBodyPart extends Component {
                             /*eslint consistent-return: 0*/
                             return(
                                 <ScaleButton
-                                    circleStyle={AppStyles.sorenessPainValuesLrg}
                                     isSelected={isSelected}
                                     key={value+key}
                                     keyLabel={key}

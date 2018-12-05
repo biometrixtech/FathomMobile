@@ -98,9 +98,9 @@ const styles = StyleSheet.create({
         color: AppColors.zeplin.darkGrey,
     },
     sortByPickerSelectIOS: {
-        ...AppFonts.oswaldRegular,
+        ...AppFonts.oswaldMedium,
         color:    AppColors.zeplin.darkGrey,
-        fontSize: AppFonts.scaleFont(20),
+        fontSize: AppFonts.scaleFont(15),
     },
     ul: {
         alignSelf:  'flex-start',
@@ -200,7 +200,7 @@ class CoachesDashboard extends Component {
             });
     }
 
-    renderTab = (name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) => {
+    renderTab = (name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle, selectedTeam) => {
         const textStyle = AppStyles.tabHeaders;
         const fontSize = isTabActive ? AppFonts.scaleFont(20) : AppFonts.scaleFont(16);
         let { page0, page1, } = this.state;
@@ -219,7 +219,7 @@ class CoachesDashboard extends Component {
                 accessible={true}
                 accessibilityLabel={name}
                 accessibilityTraits={'button'}
-                onPress={() => isScrollLocked ? null : onPressHandler(page)}
+                onPress={() => isScrollLocked || !selectedTeam ? null : onPressHandler(page)}
                 onLayout={onLayoutHandler}
             >
                 <View style={[page === 0 ? page0Styles : page === 1 ? page1Styles : {}]}>
@@ -235,7 +235,7 @@ class CoachesDashboard extends Component {
                                 style={[
                                     textStyle,
                                     {
-                                        color: isTabActive ? AppColors.activeTabText : AppColors.inactiveTabText,
+                                        color: !selectedTeam ? AppColors.primary.grey.twentyPercent : isTabActive ? AppColors.activeTabText : AppColors.inactiveTabText,
                                         fontSize,
                                     }
                                 ]}
@@ -351,7 +351,7 @@ class CoachesDashboard extends Component {
                                         reverse={false}
                                         type={'material-community'}
                                     />
-                                    <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20), paddingLeft: AppSizes.paddingSml,}}>{'WE RECOMMEND...'}</Text>
+                                    <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingSml,}}>{'WE RECOMMEND...'}</Text>
                                 </View>
                                 <Spacer size={10} />
                                 <ScrollView>
@@ -389,7 +389,7 @@ class CoachesDashboard extends Component {
                                         reverse={false}
                                         type={'material-community'}
                                     />
-                                    <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20), paddingLeft: AppSizes.paddingSml,}}>{'BECAUSE WE\'VE NOTICED…'}</Text>
+                                    <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingSml,}}>{'BECAUSE WE\'VE NOTICED…'}</Text>
                                 </View>
                                 <Spacer size={10} />
                                 <ScrollView>
@@ -413,7 +413,7 @@ class CoachesDashboard extends Component {
                             </View>
                             <TouchableHighlight onPress={() => this.setState({ selectedAthletePage: 1, })} underlayColor={AppColors.transparent}>
                                 <View style={{flexDirection: 'row',}}>
-                                    <Text oswaldRegular style={[AppStyles.containerCentered, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}>
+                                    <Text oswaldMedium style={[AppStyles.containerCentered, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20),}]}>
                                         {'VIEW WHY'}
                                     </Text>
                                     <TabIcon
@@ -427,8 +427,8 @@ class CoachesDashboard extends Component {
                             </TouchableHighlight>
                         </View>
                         :
-                        <View style={{flex: 1, justifyContent: 'flex-end', paddingBottom: AppSizes.padding, paddingLeft: AppSizes.paddingLrg,}}>
-                            <TouchableHighlight onPress={() => this.setState({ selectedAthletePage: 0, })} underlayColor={AppColors.transparent}>
+                        <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingBottom: AppSizes.padding, paddingRight: AppSizes.paddingLrg,}}>
+                            <TouchableHighlight onPress={() => this.setState({ selectedAthletePage: 0, })} style={{paddingLeft: AppSizes.paddingLrg,}} underlayColor={AppColors.transparent}>
                                 <View style={{flexDirection: 'row',}}>
                                     <TabIcon
                                         containerStyle={[AppStyles.containerCentered,]}
@@ -437,11 +437,12 @@ class CoachesDashboard extends Component {
                                         reverse={false}
                                         type={'material-community'}
                                     />
-                                    <Text oswaldRegular style={[AppStyles.containerCentered, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}>
+                                    <Text oswaldMedium style={[AppStyles.containerCentered, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20),}]}>
                                         {'VIEW RECOMMENDATIONS'}
                                     </Text>
                                 </View>
                             </TouchableHighlight>
+                            <View />
                         </View>
                     }
                 </View>
@@ -488,7 +489,7 @@ class CoachesDashboard extends Component {
                                     }
                                 }}
                                 placeholder={{
-                                    label: 'Sort by',
+                                    label: 'SORT BY',
                                     value: null,
                                 }}
                                 style={{
@@ -601,7 +602,7 @@ class CoachesDashboard extends Component {
                 tabLabel={tabs[index]}
             >
                 { insights.length === 0 ?
-                    <View />
+                    this.renderNoDataSection()
                     : !user.first_time_experience.includes('coaches_today_popup') && !hideTodayStartState ?
                         <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
                             <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'LET\'S GET STARTED!'}</Text>
@@ -665,7 +666,7 @@ class CoachesDashboard extends Component {
                 tabLabel={tabs[index]}
             >
                 { insights.length === 0 ?
-                    <View />
+                    this.renderNoDataSection()
                     : !user.first_time_experience.includes('coaches_this_week_popup') && !hideThisWeekStartState ?
                         <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
                             <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'TRENDING INSIGHTS\nLIVE HERE!'}</Text>
@@ -709,6 +710,37 @@ class CoachesDashboard extends Component {
         )
     }
 
+    renderNoDataSection = () => {
+        return(
+            <View style={{flex: 1,}}>
+                <Spacer size={20} />
+                <View
+                    style={[
+                        AppStyles.containerCentered,
+                        styles.athleteComplianceBtn,
+                        {backgroundColor: AppColors.zeplin.darkWhite, height: 30, width: AppSizes.screen.widthHalf,}
+                    ]}
+                />
+                <Spacer size={25} />
+                <View style={{backgroundColor: AppColors.zeplin.darkWhite, borderRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingXLrg,}} />
+                <Spacer size={25} />
+                <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between',}}>
+                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.darkWhite,}]} />
+                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.darkWhite,}]} />
+                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.darkWhite,}]} />
+                </View>
+                <Spacer size={40} />
+                <View style={{backgroundColor: AppColors.zeplin.darkWhite, borderRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingXLrg,}} />
+                <Spacer size={25} />
+                <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between',}}>
+                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.darkWhite,}]} />
+                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.darkWhite,}]} />
+                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.darkWhite,}]} />
+                </View>
+            </View>
+        )
+    }
+
     _toggleGotItBtn = isToday => {
         const { numberOfTotalAthletes, } = PlanLogic.gotItButtonLogic(this.props.coachesDashboardData);
         if(numberOfTotalAthletes > 0) {
@@ -744,7 +776,6 @@ class CoachesDashboard extends Component {
                     </View>
                     <Spacer size={25} />
                     <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between',}}>
-                        <View style={[styles.athleteCircle, {backgroundColor: AppColors.primary.grey.twentyPercent,}]} />
                         <View style={[styles.athleteCircle, {backgroundColor: AppColors.primary.grey.twentyPercent,}]} />
                         <View style={[styles.athleteCircle, {backgroundColor: AppColors.primary.grey.twentyPercent,}]} />
                         <View style={[styles.athleteCircle, {backgroundColor: AppColors.primary.grey.twentyPercent,}]} />
@@ -790,7 +821,7 @@ class CoachesDashboard extends Component {
         return(
             <View style={{flex: 1,}}>
                 <ScrollableTabView
-                    locked={isScrollLocked}
+                    locked={isScrollLocked || !selectedTeam}
                     onChangeTab={tabLocation => this._onChangeTab(tabLocation)}
                     ref={tabView => { this.tabView = tabView; }}
                     renderTabBar={() =>
@@ -804,7 +835,7 @@ class CoachesDashboard extends Component {
                                 updateState: value => this.setState({ selectedTeamIndex: value ? value : 0, })
                             }}
                             locked
-                            renderTab={this.renderTab}
+                            renderTab={(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) => this.renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle, selectedTeam)}
                             style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderBottomWidth: 0,}}
                         />
                     }

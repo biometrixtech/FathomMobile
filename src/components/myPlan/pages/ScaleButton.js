@@ -22,7 +22,6 @@ import { Spacer, Text, } from '../../custom';
 
 /* Component ==================================================================== */
 const ScaleButton = ({
-    circleStyle,
     isSelected,
     keyLabel,
     opacity,
@@ -35,7 +34,7 @@ const ScaleButton = ({
     >
         <TouchableHighlight
             onPress={updateStateAndForm}
-            style={[circleStyle, {
+            style={[AppStyles.sorenessPainValuesLrg, {
                 backgroundColor: isSelected ? `rgba(235, 186, 45, ${opacity})` : `rgba(226, 226, 226, ${opacity})`,
             }]}
             underlayColor={AppColors.transparent}
@@ -85,9 +84,8 @@ ScaleButton.propTypes = {
 };
 
 ScaleButton.defaultProps = {
-    circleStyle: AppStyles.sorenessPainValues,
-    opacity:     1,
-    valueLabel:  null,
+    opacity:    1,
+    valueLabel: null,
 };
 
 ScaleButton.componentName = 'ScaleButton';

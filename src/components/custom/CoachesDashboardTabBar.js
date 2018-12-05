@@ -113,35 +113,38 @@ const CoachesDashboardTabBar = createReactClass({
             inputRange:  [0, 1],
             outputRange: ['0deg', '360deg'],
         });
+        console.log('selectedTeamIndex',this.props.headerItems.selectedTeamIndex);
         return (
             <View>
                 { this.props.headerItems ?
                     <View style={[AppStyles.containerCentered, {backgroundColor: AppColors.white, flexDirection: 'row', justifyContent: 'center', marginHorizontal: AppSizes.paddingSml, paddingBottom: AppSizes.paddingSml,}]}>
                         <View style={{flex: 1,}} />
                         <View style={Platform.OS === 'ios' ? {flex: 8,} : {flex: 3,}}>
-                            { this.props.headerItems.coachesTeams.length === 1 ?
-                                <FathomText oswaldRegular style={{alignSelf: 'center', color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(30),}}>
-                                    {this.props.headerItems.selectedTeam.label}
-                                </FathomText>
-                                :
-                                <FathomPicker
-                                    hideIcon={false}
-                                    items={this.props.headerItems.coachesTeams}
-                                    itemStyle={{color: 'blue', fontSize: 100,}}
-                                    onValueChange={value => this.props.headerItems.updateState(value ? value : 0)}
-                                    placeholder={{
-                                        label: 'Select A Team',
-                                        value: null,
-                                    }}
-                                    style={{
-                                        inputAndroid:     [styles.pickerSelectAndroid],
-                                        inputIOS:         [styles.pickerSelectIOS],
-                                        placeholderColor: AppColors.zeplin.darkGrey,
-                                        underline:        {borderTopColor: AppColors.white, borderTopWidth: 0,},
-                                        viewContainer:    [Platform.OS === 'ios' ? {alignSelf: 'center',} : {height: 40, justifyContent: 'center',}],
-                                    }}
-                                    value={this.props.headerItems.selectedTeamIndex}
-                                />
+                            { this.props.headerItems.coachesTeams.length === 0 ?
+                                <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.darkWhite, borderRadius: 5, height: 38, width: AppSizes.screen.widthHalf,}} />
+                                : this.props.headerItems.coachesTeams.length === 1 ?
+                                    <FathomText oswaldRegular style={{alignSelf: 'center', color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(30),}}>
+                                        {this.props.headerItems.selectedTeam.label.toUpperCase()}
+                                    </FathomText>
+                                    :
+                                    <FathomPicker
+                                        hideIcon={false}
+                                        items={this.props.headerItems.coachesTeams}
+                                        itemStyle={{color: 'blue', fontSize: 100,}}
+                                        onValueChange={value => this.props.headerItems.updateState(value ? value : 0)}
+                                        placeholder={{
+                                            label: 'SELECT A TEAM',
+                                            value: null,
+                                        }}
+                                        style={{
+                                            inputAndroid:     [styles.pickerSelectAndroid],
+                                            inputIOS:         [styles.pickerSelectIOS],
+                                            placeholderColor: AppColors.zeplin.darkGrey,
+                                            underline:        {borderTopColor: AppColors.white, borderTopWidth: 0,},
+                                            viewContainer:    [Platform.OS === 'ios' ? {alignSelf: 'center',} : {height: 40, justifyContent: 'center',}],
+                                        }}
+                                        value={this.props.headerItems.selectedTeamIndex}
+                                    />
                             }
                         </View>
                         <View

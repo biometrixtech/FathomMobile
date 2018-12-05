@@ -481,15 +481,15 @@ const coachesDashboardCardsData = isToday => {
 
 const coachesDashboardSortBy = [
     {
-        label: 'View all',
+        label: 'VIEW ALL',
         value: 'view_all',
     },
     {
-        label: 'Cleared to train',
+        label: 'CLEARED TO TRAIN',
         value: 'cleared_to_play',
     },
     {
-        label: 'Not cleared to train',
+        label: 'NOT CLEARED TO TRAIN',
         value: 'not_cleared_to_play',
     },
 ];
