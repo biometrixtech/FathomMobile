@@ -12,6 +12,7 @@ import {
     Platform,
     RefreshControl,
     ScrollView,
+    StyleSheet,
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
@@ -39,11 +40,11 @@ import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } fro
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
 
 // text constants
-const activeRecoveryDisabledText = 'Log an activity to receive your\nactive recovery.';
+const activeRecoveryDisabledText = 'Log an activity on the Train screen to receive an Active Recovery!';
 const errorInARAPMessage = '\nPlease Swipe Down to Refresh!';
-const highSorenessMessage = 'Based on the discomfort reporting we recommend you rest and utilize available self-care techniques to help reduce swelling, ease pain, and speed up healing.\n\nIf you have pain or swelling that gets worse or doesn’t go away, please seek appropriate medical attention.';
-const lowSorenessPostMessage = 'Looks like you\'re all clear! Active recovery is low-impact for now so let\'s pick up tomorrow or after the next practice you log!';
-const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Active recovery is low-impact this morning so let\'s pick up with post practice recovery!';
+const highSorenessMessage = 'Based on your reported discomfort we recommend you rest & utilize self-care techniques like heat, ice, or massage to help reduce swelling, ease pain, & speed up healing.\n\nIf you have pain or swelling that gets worse or doesn\'t go away, please seek appropriate medical attention.';
+const lowSorenessPostMessage = 'Looks like you\'re all clear! Active Recovery is low-impact for now, so log another activity or we\'ll check in tomorrow to assess your ideal Recovery Plan!';
+const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Mobilize is low-impact this morning so complete your usual warm-up and we’ll pick-up with post practice recovery!';
 const offDayLoggedText = 'Make the most of your training by resting well today: hydrate, eat well and sleep early.';
 
 // styles
@@ -67,6 +68,37 @@ const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
 
 // setup GA Tracker
 const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
+
+/* Styles ==================================================================== */
+const customStyles = StyleSheet.create({
+    alertMessageWrapper: {
+        alignSelf:    'center',
+        flex:         1,
+        marginRight:  9,
+        paddingLeft:  37,
+        paddingRight: 15,
+    },
+    alertMessageIconWrapper: {
+        alignSelf:            'stretch',
+        backgroundColor:      AppColors.primary.yellow.hundredPercent,
+        borderTopLeftRadius:  5,
+        borderTopRightRadius: 5,
+        paddingVertical:      AppSizes.paddingSml,
+    },
+    alertMessageTextWrapper: {
+        backgroundColor:         AppColors.primary.grey.twentyPercent,
+        borderBottomLeftRadius:  5,
+        borderBottomRightRadius: 5,
+        flex:                    1,
+        padding:                 AppSizes.padding,
+    },
+    shadowEffect: {
+        shadowColor:   'rgba(0, 0, 0, 0.16)',
+        shadowOffset:  { width: 0, height: 3 },
+        shadowRadius:  6,
+        shadowOpacity: 1,
+    },
+});
 
 /* Component ==================================================================== */
 class MyPlan extends Component {
@@ -208,6 +240,7 @@ class MyPlan extends Component {
                                 let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
                                 newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
                                 this.setState({ dailyReadiness: newDailyReadiness });
+                                this._toggleReadinessSurvey();
                                 if(hideSplashScreen) {
                                     SplashScreen.hide();
                                 }
@@ -242,6 +275,10 @@ class MyPlan extends Component {
         } else {
             setTimeout(() => {
                 this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(this.props.plan.dailyPlan[0]));
+                let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && (this.props.plan.dailyPlan[0].daily_readiness_survey_completed || this.state.prepare.isReadinessSurveyCompleted) ? true : false;
+                if(!isDailyReadinessSurveyCompleted) {
+                    this._toggleReadinessSurvey();
+                }
                 if(callback) {
                     callback();
                 }
@@ -783,7 +820,7 @@ class MyPlan extends Component {
                         <Text oswaldMedium style={{ color: whenStyles.activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
                     </View>
                     <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryBackgroundColor, borderColor: styles.activeRecoveryBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                        <Text h7 oswaldMedium style={{ color: styles.activeRecoveryHeaderColor, fontWeight: 'bold', paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'TYP. ACTIVE TIME'}</Text>
+                        <Text h7 oswaldMedium style={{ color: styles.activeRecoveryHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'TYP. ACTIVE TIME'}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
                             <Text h1 oswaldMedium style={{ color: styles.activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{'5-15'}</Text>
                             <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
@@ -857,7 +894,6 @@ class MyPlan extends Component {
         let completedExercises = store.getState().plan.completedExercises;
         let { plan, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let isDailyReadinessSurveyCompleted = dailyPlanObj && (dailyPlanObj.daily_readiness_survey_completed || prepare.isReadinessSurveyCompleted) ? true : false;
         // assuming AM/PM is switching to something for prepared vs recover
         let recoveryObj = dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
         let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
@@ -895,69 +931,6 @@ class MyPlan extends Component {
                 <Spacer size={30} />
                 <ListItem
                     containerStyle={{ borderBottomWidth: 0 }}
-                    hideChevron={true}
-                    leftIcon={
-                        <TabIcon
-                            containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                            size={isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(24) : 20}
-                            color={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
-                            icon={isDailyReadinessSurveyCompleted ? 'check-circle' : 'fiber-manual-record'}
-                        />
-                    }
-                    title={'READINESS SURVEY'}
-                    titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
-                />
-                {
-                    isDailyReadinessSurveyCompleted ?
-                        null
-                        :
-                        prepare.isReadinessSurveyCollapsed ?
-                            null
-                            :
-                            <View style={{ flexDirection: 'row', }}>
-                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
-                                <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                            <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
-                                            <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'EARLY IN\nTHE DAY'}</Text>
-                                        </View>
-                                        <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                            <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHY'}</Text>
-                                            <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'PERSONALIZE\nYOUR PLAN'}</Text>
-                                        </View>
-                                    </View>
-                                    <Spacer size={12}/>
-                                    <Button
-                                        backgroundColor={AppColors.primary.yellow.hundredPercent}
-                                        buttonStyle={{width: '100%',}}
-                                        containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                        color={AppColors.white}
-                                        fontFamily={AppStyles.robotoBold.fontFamily}
-                                        fontWeight={AppStyles.robotoBold.fontWeight}
-                                        leftIcon={{
-                                            color: AppColors.primary.yellow.hundredPercent,
-                                            name:  'chevron-right',
-                                            size:  AppFonts.scaleFont(24),
-                                            style: { flex: 1, },
-                                        }}
-                                        outlined
-                                        onPress={() => this._toggleReadinessSurvey()}
-                                        rightIcon={{
-                                            color: AppColors.white,
-                                            name:  'chevron-right',
-                                            size:  AppFonts.scaleFont(24),
-                                            style: { flex: 1, },
-                                        }}
-                                        textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
-                                        title={'Start'}
-                                    />
-                                </View>
-                            </View>
-                }
-                { prepare.isReadinessSurveyCollapsed || isDailyReadinessSurveyCompleted ? this.renderDefaultListGap(23) : null }
-                <ListItem
-                    containerStyle={{ borderBottomWidth: 0 }}
                     disabled={disabled}
                     hideChevron={true}
                     leftIcon={
@@ -968,7 +941,7 @@ class MyPlan extends Component {
                             icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
                         />
                     }
-                    title={'ACTIVE PREP'}
+                    title={'MOBILIZE'}
                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                 />
                 {
@@ -1010,11 +983,18 @@ class MyPlan extends Component {
                         </View>
                     : isActive ?
                         exerciseList.totalLength === 0 ?
-                            <View style={{ flex: 1, flexDirection: 'row', }}>
-                                <Spacer size={12}/>
-                                <View style={{flex: 1}}>
-                                    <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVertical]}>
-                                        <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: recoveryObj.impact_score < 1.5 ? AppFonts.scaleFont(18) : AppFonts.scaleFont(15) }]}>{recoveryObj.impact_score < 1.5 ? lowSorenessPreMessage : highSorenessMessage}</Text>
+                            <View style={{ flex: 1, }}>
+                                <Spacer size={10} />
+                                <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
+                                    <TabIcon
+                                        color={AppColors.white}
+                                        containerStyle={[customStyles.alertMessageIconWrapper, recoveryObj.impact_score < 1.5 ? {backgroundColor: AppColors.zeplin.tealGreen,} : {backgroundColor: AppColors.zeplin.error,}]}
+                                        icon={recoveryObj.impact_score < 1.5 ? 'check-circle' : 'alert'}
+                                        size={AppFonts.scaleFont(26)}
+                                        type={'material-community'}
+                                    />
+                                    <View style={[customStyles.alertMessageTextWrapper,]}>
+                                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(13),}]}>{recoveryObj.impact_score < 1.5 ? lowSorenessPreMessage : highSorenessMessage}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -1279,8 +1259,19 @@ class MyPlan extends Component {
                                     }
                                 </View>
                             </View>
-                            <Spacer size={35}/>
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}>{activeRecoveryDisabledText}</Text>
+                            <Spacer size={25}/>
+                            <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
+                                <TabIcon
+                                    color={AppColors.white}
+                                    containerStyle={[customStyles.alertMessageIconWrapper,]}
+                                    icon={'alert'}
+                                    size={AppFonts.scaleFont(26)}
+                                    type={'material-community'}
+                                />
+                                <View style={[customStyles.alertMessageTextWrapper,]}>
+                                    <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(13),}]}>{activeRecoveryDisabledText}</Text>
+                                </View>
+                            </View>
                         </View>
                     : disabled || isRecoverCalculating ?
                         <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -1306,11 +1297,18 @@ class MyPlan extends Component {
                         </View>
                     : isActive ?
                         exerciseList.totalLength === 0 ?
-                            <View style={{ flex: 1, flexDirection: 'row', }}>
-                                <Spacer size={12}/>
-                                <View style={{flex: 1}}>
-                                    <View style={[AppStyles.paddingHorizontal, AppStyles.paddingVertical]}>
-                                        <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: recoveryObj.impact_score < 1.5 ? AppFonts.scaleFont(18) : AppFonts.scaleFont(15) }]}>{recoveryObj.impact_score < 1.5 ? lowSorenessPostMessage : highSorenessMessage}</Text>
+                            <View style={{ flex: 1, }}>
+                                <Spacer size={10} />
+                                <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
+                                    <TabIcon
+                                        color={AppColors.white}
+                                        containerStyle={[customStyles.alertMessageIconWrapper, recoveryObj.impact_score < 1.5 ? {backgroundColor: AppColors.zeplin.tealGreen,} : {backgroundColor: AppColors.zeplin.error,}]}
+                                        icon={recoveryObj.impact_score < 1.5 ? 'check-circle' : 'alert'}
+                                        size={AppFonts.scaleFont(26)}
+                                        type={'material-community'}
+                                    />
+                                    <View style={[customStyles.alertMessageTextWrapper,]}>
+                                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(13),}]}>{recoveryObj.impact_score < 1.5 ? lowSorenessPostMessage : highSorenessMessage}</Text>
                                     </View>
                                 </View>
                             </View>

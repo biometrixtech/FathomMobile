@@ -14,8 +14,9 @@ import SplashScreen from 'react-native-splash-screen';
 
 // Consts and Libs
 import { AppAPI, AppUtil, } from '../../lib/';
-import { AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, } from '../../constants';
+import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, } from '../../constants';
 import { Alerts, Button, Spacer, Text, } from '../custom';
+import { store } from '../../store';
 
 /* Component ==================================================================== */
 class Start extends Component {
@@ -76,6 +77,11 @@ class Start extends Component {
             ) {
                 this.login();
             } else {
+                // clear user reducer
+                store.dispatch({
+                    type: DispatchActions.LOGOUT
+                })
+                // hide splash screen
                 this.hideSplash();
                 // check if we have a maintenance window to alert the user on
                 if(!this.props.scheduledMaintenance.addressed) {

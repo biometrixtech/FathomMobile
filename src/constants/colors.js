@@ -103,7 +103,9 @@ const zeplin = {
     darkBlue:       '#081832', // 8, 24, 50
     darkGrey:       '#2B2B2B', // 43, 43, 43
     darkGreyText:   '#868686', // 134, 134, 134
+    darkWhite:      '#F8F8F8', // 248, 248, 248
     error:          '#C8432A', // 200, 67, 42
+    green:          '#0B7B88',
     greyText:       '#B2B2B2', // 178, 178, 178
     iconCircle:     '#AFAFAF',
     lightGrey:      '#D5D5D5', // 213, 213, 213
@@ -111,6 +113,7 @@ const zeplin = {
     navyBlue:       '#0E0822', // 14, 8, 34
     shadow:         '#e4e4e4',
     success:        '#5EB123',
+    tealGreen:      '#2EA985', // 46, 169, 133
     warning:        '#EBBA2D',
 }
 

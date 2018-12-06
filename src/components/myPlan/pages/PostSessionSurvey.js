@@ -166,7 +166,7 @@ class PostSessionSurvey extends Component {
                             {'2'}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {'How hard was your training session?'}
+                            {'How was your training session?'}
                         </Text>
                         <View style={{flex: 1, flexDirection: 'row', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
                             <View style={{alignItems: 'flex-end', flex: 5, justifyContent: 'center', paddingHorizontal: AppSizes.paddingSml}}>
@@ -191,7 +191,6 @@ class PostSessionSurvey extends Component {
                                 { _.map(MyPlanConstants.postSessionFeel, (value, key) => {
                                     if(key === 0 || value.length === 0) { return; }
                                     const isLast = (MyPlanConstants.postSessionFeel.length - 1) === key;
-                                    const isFirst = (MyPlanConstants.postSessionFeel.length - 1) === 1;
                                     /*eslint consistent-return: 0*/
                                     return(
                                         <Text
@@ -201,14 +200,12 @@ class PostSessionSurvey extends Component {
                                                 {
                                                     color:           AppColors.primary.grey.fiftyPercent,
                                                     fontSize:        AppFonts.scaleFont(16),
-                                                    paddingVertical: AppSizes.paddingSml,
+                                                    paddingVertical: AppSizes.paddingXSml,
                                                 },
                                                 isLast ?
                                                     {paddingVertical: AppSizes.paddingMed}
-                                                    : isFirst ?
-                                                        {paddingVertical: AppSizes.paddingXSml}
-                                                        :
-                                                        {},
+                                                    :
+                                                    {},
                                             ]}
                                             key={value+key}
                                         >

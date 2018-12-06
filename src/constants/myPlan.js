@@ -44,19 +44,19 @@ const bodyPartMapping = [
 const overallReadiness = [
     '',
     'Not At All Ready',
-    'Not Ready',
-    'Ready',
+    ' ',
+    'Somewhat Ready',
+    ' ',
     'Very Ready',
-    'Max Ready',
 ];
 
 const sleepQuality = [
     '',
-    'Terribly',
-    'Poor',
-    'Well',
-    'Very well',
-    'Max well',
+    'Not At All Rested',
+    ' ',
+    'Somewhat Rested',
+    ' ',
+    'Very Rested',
 ];
 
 const muscleLevels = {
@@ -173,16 +173,16 @@ const exerciseListOrder = [
 ];
 
 const postSessionFeel = [
-    '',
-    'Effortless',
-    '',
-    'Light',
-    '',
+    'Rest',
+    'Very, Very Easy',
+    'Easy',
     'Moderate',
-    '',
-    'Vigorous',
-    '',
+    'Somewhat Hard',
+    'Hard',
+    ' ',
     'Very Hard',
+    ' ',
+    ' ',
     'Max effort',
 ];
 
@@ -374,7 +374,7 @@ const cleanedPostSessionName = (postPracticeSurvey) => {
 };
 
 const exerciseListButtonStyles = (isPrep, completedExercises, isFSCompleteValid, isFunctionalStrength) => {
-    let buttonTitle = completedExercises.length > 0 ? `${isPrep ? 'Prep ' : 'Recovery '}Complete` : `Check Boxes to Complete${isPrep ? ' Prep' : ' Recovery'}`;
+    let buttonTitle = completedExercises.length > 0 ? `${isPrep ? 'Mobilize ' : 'Recovery '}Complete` : `Check Boxes to Complete${isPrep ? ' Mobilize' : ' Recovery'}`;
     let isButtonDisabled = completedExercises.length > 0 ? false : true;
     let isButtonOutlined = isButtonDisabled || completedExercises.length === 0 ? true : false;
     let buttonDisabledStyle = {backgroundColor: AppColors.white,};
@@ -453,12 +453,12 @@ const coachesDashboardCardsData = isToday => {
         {
             description: 'Consult medical staff to evaluate status before training',
             label:       'EVALUATE HEALTH STATUS',
+            overlayText: 'When an athlete has been identified as having a chronic issue, their status will update here.',
             value:       'evaluate_health_status',
         },
         {
             description: 'Prioritize Recovery and consider decreasing upcoming workloads',
             label:       'ADDRESS PAIN OR SORENESS',
-            overlayText: 'When an athlete has been identified as having a chronic issue, their status will update here.',
             value:       'address_pain_or_soreness',
         },
         {
@@ -481,15 +481,15 @@ const coachesDashboardCardsData = isToday => {
 
 const coachesDashboardSortBy = [
     {
-        label: 'View all',
+        label: 'VIEW ALL',
         value: 'view_all',
     },
     {
-        label: 'Cleared to train',
+        label: 'CLEARED TO TRAIN',
         value: 'cleared_to_play',
     },
     {
-        label: 'Not cleared to train',
+        label: 'NOT CLEARED TO TRAIN',
         value: 'not_cleared_to_play',
     },
 ];

@@ -347,17 +347,20 @@ class ReadinessSurvey extends Component {
                             {questionCounter+=1}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {'How mentally ready do you feel for today?'}
+                            {'How ready do you feel to train?'}
                         </Text>
                         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
                             { _.map(MyPlanConstants.overallReadiness, (value, key) => {
                                 if(key === 0) { return; }
+                                let isSelected = (dailyReadiness.readiness / 2) === key;
+                                let opacity = isSelected ? 1 : (key * 0.2);
                                 /*eslint consistent-return: 0*/
                                 return(
                                     <ScaleButton
-                                        isSelected={(dailyReadiness.readiness / 2) === key}
+                                        isSelected={isSelected}
                                         key={value+key}
                                         keyLabel={key}
+                                        opacity={opacity}
                                         sorenessPainMappingLength={MyPlanConstants.overallReadiness.length}
                                         updateStateAndForm={() => {
                                             handleFormChange('readiness', (key * 2));
@@ -375,17 +378,20 @@ class ReadinessSurvey extends Component {
                             {questionCounter+=1}
                         </Text>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {'How well did you sleep last night?'}
+                            {'How well rested do you feel?'}
                         </Text>
                         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
                             { _.map(MyPlanConstants.sleepQuality, (value, key) => {
                                 if(key === 0) { return; }
+                                let isSelected = (dailyReadiness.sleep_quality / 2) === key;
+                                let opacity = isSelected ? 1 : (key * 0.2);
                                 /*eslint consistent-return: 0*/
                                 return(
                                     <ScaleButton
-                                        isSelected={(dailyReadiness.sleep_quality / 2) === key}
+                                        isSelected={isSelected}
                                         key={value+key}
                                         keyLabel={key}
+                                        opacity={opacity}
                                         sorenessPainMappingLength={MyPlanConstants.sleepQuality.length}
                                         updateStateAndForm={() => {
                                             handleFormChange('sleep_quality', (key * 2));
