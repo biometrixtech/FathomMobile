@@ -12,6 +12,7 @@ export default {
     CLEAR_MY_PLAN:                'CLEAR_MY_PLAN',
     FORGOT_PASSWORD_FAILED:       'FORGOT_PASSWORD_FAILED',
     FORGOT_PASSWORD_SUCCESS:      'FORGOT_PASSWORD_SUCCESS',
+    GET_COACHES_DASHBOARD:        'GET_COACHES_DASHBOARD',
     GET_SORE_BODY_PARTS:          'GET_SORE_BODY_PARTS',
     GET_MY_PLAN:                  'GET_MY_PLAN',
     LOGIN:                        'LOGIN',
@@ -65,7 +66,6 @@ export default {
     WIFI_SCAN:                    'WIFI_SCAN',
     WIFI:                         'WIFI',
     // OTHER
-    UPDATE_FIRST_TIME_EXPERIENCE: 'UPDATE_FIRST_TIME_EXPERIENCE',
     UPDATE_LAST_OPENED:           'UPDATE_LAST_OPENED',
     UPDATE_SCHEDULED_MAINTENANCE: 'UPDATE_SCHEDULED_MAINTENANCE',
 };

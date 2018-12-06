@@ -6,7 +6,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, StatusBar, StyleSheet, View, } from 'react-native';
+import { Image, Platform, StatusBar, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles, } from '../../constants';
@@ -54,23 +54,40 @@ class CustomNavBar extends Component {
                         size={26}
                         type={'simple-line-icon'}
                     />
-                    : Actions.currentParams.onLeft && this.props.routeName !== 'onboarding' ?
+                    : Actions.currentParams.onLeft && this.props.routeName === 'coachesDashboard' ?
                         <TabIcon
-                            icon={'arrow-left'}
+                            icon={'settings'}
                             iconStyle={[{color: AppColors.black,}]}
                             onPress={Actions.currentParams.onLeft}
                             reverse={false}
                             size={26}
-                            type={'simple-line-icon'}
+                            type={'material-community'}
                         />
-                        :
-                        null
+                        : Actions.currentParams.onLeft && this.props.routeName !== 'onboarding' ?
+                            <TabIcon
+                                icon={'arrow-left'}
+                                iconStyle={[{color: AppColors.black,}]}
+                                onPress={Actions.currentParams.onLeft}
+                                reverse={false}
+                                size={26}
+                                type={'simple-line-icon'}
+                            />
+                            :
+                            null
                 }
             </View>
         )
     }
 
     _renderMiddle = () => {
+        if(this.props.routeName === 'coachesDashboard') {
+            return (
+                <Image
+                    source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
+                    style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
+                />
+            )
+        }
         return (
             <View style={{flex: 8, justifyContent: 'center',}}>
                 <Text style={[AppStyles.h3, {color: AppColors.black, textAlign: 'center'}]}>{Actions.currentParams.title}</Text>

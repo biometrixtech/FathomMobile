@@ -183,7 +183,7 @@ const postSessionSurvey = postSessionObj => {
                 data: newPlan,
             });
             return myPlanData;
-        }).then(myPlanData => Promise.resolve(myPlanData))
+        }).then(myPlanData => Promise.resolve(newPlan))
         .catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
@@ -351,10 +351,57 @@ const markStartedFunctionalStrength = (user_id, newMyPlan) => {
         });
 };
 
+/**
+  * Get Coaches Dashboard Data
+  */
+const getCoachesDashboardData = (user_id) => {
+    return dispatch => AppAPI.coach_dashboard.get({user_id})
+        .then(coachesDashboardData => {
+            let cleanedTeams = [];
+            _.map(coachesDashboardData.teams, (team, key) => {
+                cleanedTeams[key] = {};
+                cleanedTeams[key].athletes = [];
+                cleanedTeams[key].athletes = team.athletes;
+                cleanedTeams[key].compliance = {};
+                cleanedTeams[key].compliance = team.compliance;
+                cleanedTeams[key].name = team.name.toUpperCase();
+                cleanedTeams[key].daily_insights = {};
+                cleanedTeams[key].daily_insights.not_cleared_for_training = team.daily_insights.not_cleared_for_training;
+                cleanedTeams[key].daily_insights.limit_time_intensity_of_training = team.daily_insights.limit_time_intensity_of_training;
+                cleanedTeams[key].daily_insights.monitor_in_training = team.daily_insights.monitor_in_training;
+                cleanedTeams[key].daily_insights.increase_workload = team.daily_insights.increase_workload;
+                cleanedTeams[key].daily_insights.all_good = team.daily_insights.all_good;
+                cleanedTeams[key].weekly_insights = {};
+                cleanedTeams[key].weekly_insights.evaluate_health_status = team.weekly_insights.evaluate_health_status;
+                cleanedTeams[key].weekly_insights.address_pain_or_soreness = team.weekly_insights.address_pain_or_soreness;
+                cleanedTeams[key].weekly_insights.balance_overtraining_risk = team.weekly_insights.balance_overtraining_risk;
+                cleanedTeams[key].weekly_insights.increase_weekly_workload = team.weekly_insights.increase_weekly_workload;
+                cleanedTeams[key].weekly_insights.add_variety_to_training_risk = team.weekly_insights.add_variety_to_training_risk;
+            });
+            cleanedTeams = _.orderBy(cleanedTeams, ['name']);
+            // update coaches dashboard data
+            dispatch({
+                type: Actions.GET_COACHES_DASHBOARD,
+                data: cleanedTeams,
+            });
+            // update last opened flag
+            store.dispatch({
+                type:   Actions.UPDATE_LAST_OPENED,
+                userId: user_id,
+                date:   moment().format(),
+            });
+            return Promise.resolve(coachesDashboardData);
+        }).catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+};
+
 export default {
     clearCompletedExercises,
     clearCompletedFSExercises,
     clearMyPlanData,
+    getCoachesDashboardData,
     getMyPlan,
     getSoreBodyParts,
     markStartedFunctionalStrength,

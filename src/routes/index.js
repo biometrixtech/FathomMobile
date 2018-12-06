@@ -10,10 +10,12 @@ import { Animated, Easing, Image, View, Text, } from 'react-native';
 
 // import third-party libraries
 import { ActionConst, Actions, Router, Scene, Stack } from 'react-native-router-flux';
+import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackView/StackViewStyleInterpolator';
 
 // Consts, Libs, and Utils
 import { AppColors, AppSizes, AppStyles, } from '../constants';
 import { CustomMyPlanNavBar, CustomNavBar, TabIcon, } from '../components/custom';
+import { store } from '../store';
 
 // import components
 import LoginContainer from '../containers/auth/Login';
@@ -70,26 +72,8 @@ import ChangeEmailComponent from '../components/onboarding/ChangeEmail';
 import TutorialContainer from '../containers/onboarding/Tutorial';
 import TutorialComponent from '../components/onboarding/Tutorial';
 
-const transitionConfig = () => {
-    return {
-        transitionSpec: {
-            duration:        750,
-            easing:          Easing.out(Easing.poly(4)),
-            timing:          Animated.timing,
-            useNativeDriver: true,
-        },
-        screenInterpolator: sceneProps => {
-            const { position, layout, scene, } = sceneProps;
-            const thisSceneIndex = scene.index;
-            const width = layout.initWidth;
-            const translateX = position.interpolate({
-                inputRange:  [thisSceneIndex - 1, thisSceneIndex, thisSceneIndex + 1],
-                outputRange: [-width, 0, 0]
-            });
-            return { transform: [ { translateX } ] };
-        },
-    }
-};
+import CoachesDashboardContainer from '../containers/coachesDashboard/CoachesDashboard';
+import CoachesDashboardComponent from '../components/coachesDashboard/CoachesDashboard';
 
 const Index = (
     <Router hideNavBar={true}>
@@ -97,7 +81,7 @@ const Index = (
             hideNavBar={true}
             key={'root'}
             titleStyle={{ alignSelf: 'center' }}
-            transitionConfig={transitionConfig}
+            transitionConfig={() => ({ screenInterpolator: StackViewStyleInterpolator.forHorizontal })}
         >
             <Scene
                 Layout={StartComponent}
@@ -148,7 +132,7 @@ const Index = (
                 hideNavBar={false}
                 key={'onboarding'}
                 navBar={CustomNavBar}
-                onLeft={() => Actions.start()}
+                onLeft={() => Actions.pop()}
                 panHandlers={null}
                 renderLeftButton={null}
                 title={'GET STARTED'}
@@ -187,7 +171,7 @@ const Index = (
                 hideNavBar={false}
                 key={'forgotPassword'}
                 navBar={CustomNavBar}
-                onLeft={() => Actions.login()}
+                onLeft={() => Actions.pop()}
                 panHandlers={null}
                 title={'FORGOT PASSWORD'}
             />
@@ -197,7 +181,7 @@ const Index = (
                 hideNavBar={false}
                 key={'resetPassword'}
                 navBar={CustomNavBar}
-                onLeft={() => Actions.forgotPassword()}
+                onLeft={() => Actions.pop()}
                 panHandlers={null}
                 title={'FORGOT PASSWORD'}
             />
@@ -212,12 +196,22 @@ const Index = (
                 type={'replace'}
             />
             <Scene
+                Layout={CoachesDashboardComponent}
+                component={CoachesDashboardContainer}
+                hideNavBar={false}
+                key={'coachesDashboard'}
+                navBar={CustomNavBar}
+                onLeft={() => Actions.settings()}
+                panHandlers={null}
+                type={'replace'}
+            />
+            <Scene
                 Layout={SettingsComponent}
                 component={SettingsContainer}
                 hideNavBar={false}
                 key={'settings'}
                 navBar={CustomNavBar}
-                onLeft={() => Actions.myPlan()}
+                onLeft={() => store.getState().user.role === 'athlete' ? Actions.myPlan() : Actions.coachesDashboard()}
                 panHandlers={null}
                 title={'SETTINGS'}
                 type={'replace'}

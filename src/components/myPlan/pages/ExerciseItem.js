@@ -22,10 +22,11 @@ import { Checkbox, TabIcon, Text } from '../../custom';
 class ExerciseItem extends Component {
     constructor(props) {
         super(props);
+        let cleanedExercise = MyPlan.cleanExercise(this.props.exercise);
         this.state = {
-            displayName:    MyPlan.cleanExercise(this.props.exercise).displayName,
-            dosage:         MyPlan.cleanExercise(this.props.exercise).dosage,
-            imageThumbnail: {uri: MyPlan.cleanExercise(this.props.exercise).thumbnailUrl},
+            displayName:    cleanedExercise.displayName,
+            dosage:         cleanedExercise.dosage,
+            imageThumbnail: {uri: cleanedExercise.thumbnailUrl},
         };
     }
 
@@ -102,7 +103,9 @@ ExerciseItem.propTypes = {
     isLastItem:             PropTypes.bool.isRequired,
     toggleSelectedExercise: PropTypes.func.isRequired,
 };
+
 ExerciseItem.defaultProps = {};
+
 ExerciseItem.componentName = 'ExerciseItem';
 
 /* Export Component ================================================================== */

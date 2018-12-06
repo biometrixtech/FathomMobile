@@ -5,6 +5,7 @@
         handleFormChange={this._handleFormChange}
         postSession={postSession}
         scrollTo={() => this._scrollTo(0)}
+        scrollToTop={this._scrollToTop}
         typicalSessions={typicalSessions}
     />
  *
@@ -114,27 +115,18 @@ class SportScheduleBuilder extends Component {
     }
 
     render = () => {
-        const { handleFormChange, postSession, scrollTo, typicalSessions, } = this.props;
-        const { isFormValid, step, timeValueGroups, } = this.state;
+        const { handleFormChange, postSession, scrollTo, scrollToTop, typicalSessions, } = this.props;
+        const { durationValueGroups, isFormValid, step, timeValueGroups, } = this.state;
         let underlinePadding = Platform.OS === 'ios' ? 2 : 8;
-        let filteredTeamSports = _.filter(MyPlanConstants.teamSports, o => o.order && o.order > 0);
-        let teamSports = _.orderBy(filteredTeamSports, ['order'], ['asc']);
-        let filteredStrengthConditioningTypes = _.filter(MyPlanConstants.strengthConditioningTypes, o => o.order && o.order > 0);
-        let strengthConditioningTypes = _.orderBy(filteredStrengthConditioningTypes, ['order'], ['asc']);
-        let filteredSessionTypes = _.filter(MyPlanConstants.availableSessionTypes, o => o.order && o.order > 0);
-        let sessionTypes = _.orderBy(filteredSessionTypes, ['order'], ['asc']);
-        let filteredSport = postSession.sport_name || postSession.sport_name === 0 ? _.filter(teamSports, ['index', postSession.sport_name]) : postSession.strength_and_conditioning_type || postSession.strength_and_conditioning_type === 0 ? _.filter(strengthConditioningTypes, ['index', postSession.strength_and_conditioning_type]) : null;
-        let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0].label.toLowerCase().replace(' training', '') : '';
-        let filteredSessionType = postSession.session_type || postSession.session_type === 0 ? _.filter(sessionTypes, ['index', postSession.session_type]) : null;
-        let dateTimeDurationFromState = PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, isFormValid, this.state.timeValueGroups);
-        let selectedStartTime = dateTimeDurationFromState.event_date;
-        let selectedDuration = dateTimeDurationFromState.duration;
-        let getFinalSportTextString = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, this.props.postSession, this.state.isFormValid, this.state.step, selectedStartTime, selectedDuration);
-        let sportText = getFinalSportTextString.sportText;
-        let startTimeText = getFinalSportTextString.startTimeText;
-        let durationText = getFinalSportTextString.durationText;
-        let isSport = postSession.sport_name > 0 || postSession.sport_name === 0 ? true : false;
-        let filteredSportSessionTypes = isSport ? _.filter(sessionTypes, type => !type.ignoreSelection) : sessionTypes;
+        let {
+            durationText,
+            filteredSportSessionTypes,
+            selectedSport,
+            sportText,
+            startTimeText,
+            strengthConditioningTypes,
+            teamSports,
+        } = PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, this.state);
         return (
             <View style={{flex: 1,}}>
                 <View style={{flexDirection: 'row'}}>
@@ -314,6 +306,7 @@ class SportScheduleBuilder extends Component {
                                                     this._nextStep(3);
                                                     handleFormChange('strength_and_conditioning_type', strengthConditioningType.index);
                                                     handleFormChange('session_type', 1);
+                                                    scrollToTop();
                                                 }}
                                                 outlined
                                                 raised={false}
@@ -363,7 +356,7 @@ class SportScheduleBuilder extends Component {
                                                         highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        selectedIndex={this.state.timeValueGroups.hours}
+                                                        selectedIndex={timeValueGroups.hours}
                                                         onValueChange={(data, selectedIndex) => {
                                                             this._handleScrollFormChange('timeValueGroups', 'hours', data, selectedIndex);
                                                         }}
@@ -378,7 +371,7 @@ class SportScheduleBuilder extends Component {
                                                         highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        selectedIndex={this.state.timeValueGroups.minutes}
+                                                        selectedIndex={timeValueGroups.minutes}
                                                         onValueChange={(data, selectedIndex) => {
                                                             this._handleScrollFormChange('timeValueGroups', 'minutes', data, selectedIndex);
                                                         }}
@@ -393,7 +386,7 @@ class SportScheduleBuilder extends Component {
                                                         highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        selectedIndex={this.state.timeValueGroups.amPM}
+                                                        selectedIndex={timeValueGroups.amPM}
                                                         onValueChange={(data, selectedIndex) => {
                                                             this._handleScrollFormChange('timeValueGroups', 'amPM', data, selectedIndex);
                                                         }}
@@ -428,7 +421,7 @@ class SportScheduleBuilder extends Component {
                                                         highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        selectedIndex={this.state.durationValueGroups.minutes}
+                                                        selectedIndex={durationValueGroups.minutes}
                                                         onValueChange={(data, selectedIndex) => {
                                                             this._handleScrollFormChange('durationValueGroups', 'minutes', data, selectedIndex);
                                                         }}
@@ -444,7 +437,7 @@ class SportScheduleBuilder extends Component {
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
                                                         scrollEnabled={false}
-                                                        selectedIndex={this.state.durationValueGroups.label}
+                                                        selectedIndex={durationValueGroups.label}
                                                         onValueChange={(data, selectedIndex) => {
                                                             this._handleScrollFormChange('durationValueGroups', 'label', data, selectedIndex);
                                                         }}
@@ -456,18 +449,18 @@ class SportScheduleBuilder extends Component {
                                         </View>
                                         <Spacer size={30} />
                                         <Button
-                                            backgroundColor={this.state.isFormValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                                            backgroundColor={isFormValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
                                             buttonStyle={{
-                                                borderColor:  this.state.isFormValid ? AppColors.white : AppColors.zeplin.lightGrey,
+                                                borderColor:  isFormValid ? AppColors.white : AppColors.zeplin.lightGrey,
                                                 borderRadius: 10,
                                                 borderWidth:  1,
                                                 width:        AppSizes.screen.widthThird,
                                             }}
-                                            color={this.state.isFormValid ? AppColors.white : AppColors.zeplin.lightGrey}
+                                            color={isFormValid ? AppColors.white : AppColors.zeplin.lightGrey}
                                             containerViewStyle={{alignItems: 'center', justifyContent: 'center',}}
                                             fontFamily={AppStyles.robotoBold.fontFamily}
                                             fontWeight={AppStyles.robotoBold.fontWeight}
-                                            onPress={() => this.state.isFormValid ? scrollTo() : null}
+                                            onPress={() => isFormValid ? scrollTo() : null}
                                             outlined
                                             raised={false}
                                             textStyle={{ fontSize: AppFonts.scaleFont(14) }}
@@ -489,7 +482,9 @@ SportScheduleBuilder.propTypes = {
     scrollTo:         PropTypes.func.isRequired,
     typicalSessions:  PropTypes.array.isRequired,
 };
+
 SportScheduleBuilder.defaultProps = {};
+
 SportScheduleBuilder.componentName = 'SportScheduleBuilder';
 
 /* Export Component ================================================================== */

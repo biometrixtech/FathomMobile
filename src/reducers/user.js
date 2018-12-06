@@ -31,10 +31,6 @@ export default function userReducer(state = initialState, action) {
         return Object.assign({}, state, {
             loading: false
         });
-    case Actions.UPDATE_FIRST_TIME_EXPERIENCE:
-        return Object.assign({}, state, {
-            firstTimeExperience: action.data
-        });
     default:
         return state;
     }

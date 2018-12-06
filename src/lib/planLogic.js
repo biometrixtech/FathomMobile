@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 // Consts and Libs
-import { MyPlan as MyPlanConstants, } from '../constants';
+import { AppColors, MyPlan as MyPlanConstants, } from '../constants';
 
 const PlanLogic = {
 
@@ -241,6 +241,318 @@ const PlanLogic = {
             bodyImage,
             isSelected,
             mainBodyPartName,
+        };
+    },
+
+    /**
+      * Areas of Soreness Render Logic
+      * - AreasOfSoreness
+      */
+    handleAreaOfSorenessRenderLogic: (soreBodyParts, soreBodyPartsState) => {
+        let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, (u, i) => _.findIndex(soreBodyParts, o => o.body_part === i) === -1);
+        let newBodyPartMap = _.filter(filteredBodyPartMap, o => {
+            let itemStateFiltered = _.filter(soreBodyParts.body_parts, {body_part: o.index});
+            return o.order &&
+                _.findIndex(soreBodyParts.body_parts, u => u.body_part === o.index && u.side === 0) === -1 &&
+                (itemStateFiltered.length === 1 || itemStateFiltered.length === 0);
+        });
+        let areaOfSorenessClicked = _.filter(soreBodyPartsState, bodyPartState => _.findIndex(soreBodyParts.body_parts, bodyPartProp => bodyPartProp.body_part === bodyPartState.body_part && bodyPartProp.side === bodyPartState.side) === -1);
+        let groupedNewBodyPartMap = _.groupBy(newBodyPartMap, 'location');
+        return {
+            areaOfSorenessClicked,
+            groupedNewBodyPartMap,
+        };
+    },
+
+    /**
+      * Post Session Survey Render Logic
+      * - PostSessionSurvey
+      */
+    handlePostSessionSurveyRenderLogic: (postSession, soreBodyParts, areasOfSorenessRef) => {
+        let filteredAreasOfSoreness = _.filter(postSession.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
+            return doesItInclude.length === 0;
+        });
+        let filteredSoreBodyParts = _.filter(postSession.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
+            return doesItInclude.length > 0;
+        });
+        let areQuestionsValid = postSession.RPE > 0 && postSession.event_date;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
+        let areAreasOfSorenessValid = (
+            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
+            (areasOfSorenessRef && areasOfSorenessRef.state.isAllGood)
+        );
+        let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;
+        let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
+        newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
+        return {
+            isFormValid,
+            newSoreBodyParts,
+        };
+    },
+
+    /**
+      * Readiness Survey Render Logic
+      * - ReadinessSurvey
+      */
+    handleReadinessSurveyRenderLogic: (dailyReadiness, soreBodyParts, areasOfSorenessRef, hourOfDay = moment().get('hour')) => {
+        let split_afternoon = 12; // 24hr time to split the afternoon
+        let split_evening = 17; // 24hr time to split the evening
+        let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'AFTERNOON' : hourOfDay >= split_evening ? 'EVENING' : 'MORNING';
+        let filteredAreasOfSoreness = _.filter(dailyReadiness.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
+            return doesItInclude.length === 0;
+        });
+        let filteredSoreBodyParts = _.filter(dailyReadiness.soreness, o => {
+            let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
+            return doesItInclude.length > 0;
+        });
+        let areQuestionsValid = dailyReadiness.readiness > 0 && dailyReadiness.sleep_quality > 0;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
+        let areAreasOfSorenessValid = (
+            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
+            (areasOfSorenessRef && areasOfSorenessRef.state.isAllGood)
+        );
+        let selectedSportPositions = dailyReadiness.current_sport_name !== null ? _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name).positions : [];
+        const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
+        const isFirstFunctionalStrength = isFunctionalStrengthEligible &&
+            (!soreBodyParts.current_sport_name && soreBodyParts.current_sport_name !== 0) &&
+            (!soreBodyParts.current_position && soreBodyParts.current_position !== 0);
+        const isSecondFunctionalStrength = isFunctionalStrengthEligible &&
+            (
+                soreBodyParts.current_position === 0 || soreBodyParts.current_position > 0 ||
+                soreBodyParts.current_sport_name === 0 || soreBodyParts.current_sport_name > 0
+            ) &&
+            (soreBodyParts.completed_functional_strength_sessions === 0 || soreBodyParts.completed_functional_strength_sessions <= 2);
+        let isFunctionalStrengthTargetValid = dailyReadiness.current_sport_name !== null ?
+            dailyReadiness.current_sport_name !== null && (dailyReadiness.current_position !== null || !selectedSportPositions)
+            : dailyReadiness.current_sport_name === null ?
+                dailyReadiness.current_position !== null
+                :
+                false;
+        let isFunctionalStrengthValid = isFunctionalStrengthEligible && isFirstFunctionalStrength ?
+            dailyReadiness.wants_functional_strength !== null && isFunctionalStrengthTargetValid
+            : isFunctionalStrengthEligible && isSecondFunctionalStrength ?
+                dailyReadiness.wants_functional_strength !== null
+                :
+                true;
+        let functionalStrengthTodaySubtext = isFunctionalStrengthEligible ?
+            `(${soreBodyParts.completed_functional_strength_sessions}/2 completed in last 7 days${soreBodyParts.completed_functional_strength_sessions === 2 ? ', but you can go for 3!': ''})`
+            :
+            '';
+        let isFormValid = isFunctionalStrengthValid && areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
+        let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
+        newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
+        return {
+            functionalStrengthTodaySubtext,
+            isFirstFunctionalStrength,
+            isFormValid,
+            isSecondFunctionalStrength,
+            newSoreBodyParts,
+            partOfDay,
+            selectedSportPositions,
+        };
+    },
+
+    /**
+      * Sore Body Part Render Logic
+      * - SoreBodyPart
+      */
+    handleSoreBodyPartRenderLogic: (bodyPart, bodyPartSide, pageStateType) => {
+        let bodyPartMap = bodyPart.body_part ? MyPlanConstants.bodyPartMapping[bodyPart.body_part] : MyPlanConstants.bodyPartMapping[bodyPart.index];
+        let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
+        let sorenessPainMapping =
+            bodyPartGroup && bodyPartGroup === 'muscle' && pageStateType.length > 0 ?
+                MyPlanConstants.muscleLevels[pageStateType]
+                : bodyPartGroup && bodyPartGroup === 'joint' ?
+                    MyPlanConstants.jointLevels
+                    :
+                    [];
+        let helpingVerb = bodyPartMap ? bodyPartMap.helping_verb : '';
+        let mainBodyPartName = bodyPartMap ? bodyPartMap.label : '';
+        if (mainBodyPartName.slice(-1) === 's' && bodyPartMap.bilateral && !!bodyPartSide) {
+            if (mainBodyPartName === 'Achilles') {
+                // do nothing
+            } else if (mainBodyPartName === 'Calves') {
+                mainBodyPartName = 'Calf';
+            } else {
+                mainBodyPartName = mainBodyPartName.slice(0, -1);
+            }
+            helpingVerb = 'is';
+        }
+        let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'left ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'right ' : ''}${mainBodyPartName.toLowerCase()}`;
+        return {
+            bodyPartMap,
+            bodyPartName,
+            bodyPartGroup,
+            helpingVerb,
+            sorenessPainMapping,
+        };
+    },
+
+    /**
+      * Sport Schedule Builder Render Logic
+      * - SportScheduleBuilder
+      */
+    handleSportScheduleBuilderRenderLogic: (postSession, pageState) => {
+        let filteredTeamSports = _.filter(MyPlanConstants.teamSports, o => o.order && o.order > 0);
+        let teamSports = _.orderBy(filteredTeamSports, ['order'], ['asc']);
+        let filteredStrengthConditioningTypes = _.filter(MyPlanConstants.strengthConditioningTypes, o => o.order && o.order > 0);
+        let strengthConditioningTypes = _.orderBy(filteredStrengthConditioningTypes, ['order'], ['asc']);
+        let filteredSessionTypes = _.filter(MyPlanConstants.availableSessionTypes, o => o.order && o.order > 0);
+        let sessionTypes = _.orderBy(filteredSessionTypes, ['order'], ['asc']);
+        let filteredSport = postSession.sport_name || postSession.sport_name === 0 ? _.filter(teamSports, ['index', postSession.sport_name]) : postSession.strength_and_conditioning_type || postSession.strength_and_conditioning_type === 0 ? _.filter(strengthConditioningTypes, ['index', postSession.strength_and_conditioning_type]) : null;
+        let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0].label.toLowerCase().replace(' training', '') : '';
+        let filteredSessionType = postSession.session_type || postSession.session_type === 0 ? _.filter(sessionTypes, ['index', postSession.session_type]) : null;
+        let dateTimeDurationFromState = PlanLogic.handleGetDateTimeDurationFromState(pageState.durationValueGroups, pageState.isFormValid, pageState.timeValueGroups);
+        let selectedStartTime = dateTimeDurationFromState.event_date;
+        let selectedDuration = dateTimeDurationFromState.duration;
+        let getFinalSportTextString = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, pageState.isFormValid, pageState.step, selectedStartTime, selectedDuration);
+        let sportText = getFinalSportTextString.sportText;
+        let startTimeText = getFinalSportTextString.startTimeText;
+        let durationText = getFinalSportTextString.durationText;
+        let isSport = postSession.sport_name > 0 || postSession.sport_name === 0 ? true : false;
+        let filteredSportSessionTypes = isSport ? _.filter(sessionTypes, type => !type.ignoreSelection) : sessionTypes;
+        return {
+            durationText,
+            filteredSportSessionTypes,
+            selectedSport,
+            sportText,
+            startTimeText,
+            strengthConditioningTypes,
+            teamSports,
+        };
+    },
+
+    /**
+      * Today & This Week Render Logic
+      * - CoachesDashboard
+      * -- returns an array of RN 'display' code
+      */
+    handleRenderTodayAndThisWeek: (isToday, insights, athletes, filter, compliance, renderSection) => {
+        let insightsLength = 0;
+        _.map(insights, (value, key) => {
+            insightsLength += value.length;
+        });
+        let doWeHaveInsights = insightsLength > 0;
+        let coachesDashboardCardsData = MyPlanConstants.coachesDashboardCardsData(isToday);
+        let sections = [];
+        _.map(insights, (insight, ind) => {
+            let newValue = filter === 'not_cleared_to_play' ?
+                _.filter(insight, ['cleared_to_train', false])
+                : filter === 'cleared_to_play' ?
+                    _.filter(insight, ['cleared_to_train', true])
+                    :
+                    insight;
+            let description = _.filter(coachesDashboardCardsData, ['value', ind])[0];
+            sections.push(renderSection(description, newValue, athletes, ind, compliance));
+        });
+        return {
+            doWeHaveInsights,
+            sections,
+        };
+    },
+
+    /**
+      * Athlete Card Modal Render Logic
+      * - CoachesDashboard
+      */
+    handleAthleteCardModalRenderLogic: selectedAthlete => {
+        let athleteName = `${selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*'}${selectedAthlete.first_name.toUpperCase()} ${selectedAthlete.last_name.toUpperCase()}`;
+        let mainColor = selectedAthlete.color === 0 ? AppColors.zeplin.success : selectedAthlete.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
+        let subHeader = selectedAthlete.color === 0 ? 'Train as normal' : selectedAthlete.color === 1 ? 'Consider altering training plan' : 'Consider not training today';
+        return {
+            athleteName,
+            mainColor,
+            subHeader,
+        };
+    },
+
+    /**
+      * Coaches Dashboard Render Logic
+      * - CoachesDashboard
+      */
+    handleCoachesDashboardRenderLogic: (coachesDashboardData, selectedTeamIndex) => {
+        // team information data
+        let coachesTeams = [];
+        _.map(coachesDashboardData, (team, index) => {
+            let teamObj = team;
+            teamObj.label = team.name.toUpperCase();
+            teamObj.value = index;
+            coachesTeams.push(teamObj);
+        });
+        let selectedTeam = coachesTeams[selectedTeamIndex];
+        // compliance modal data
+        let complianceObj = selectedTeam ? selectedTeam.compliance : {completed: [], incomplete: []};
+        let numOfCompletedAthletes = complianceObj ? complianceObj.completed.length : 0;
+        let numOfIncompletedAthletes = complianceObj ? complianceObj.incomplete.length : 0;
+        let numOfTotalAthletes = numOfCompletedAthletes + numOfIncompletedAthletes;
+        let incompleteAtheltes = complianceObj ? complianceObj.incomplete : [];
+        let completedPercent = (numOfCompletedAthletes / numOfTotalAthletes) * 100;
+        let complianceColor = completedPercent <= 49 ?
+            AppColors.zeplin.error
+            : completedPercent >= 50 && completedPercent <= 74 ?
+                AppColors.zeplin.warning
+                :
+                AppColors.zeplin.success;
+        complianceColor = numOfTotalAthletes === 0 ? AppColors.zeplin.error : complianceColor;
+        return {
+            coachesTeams,
+            complianceColor,
+            incompleteAtheltes,
+            numOfCompletedAthletes,
+            numOfTotalAthletes,
+            selectedTeam,
+        };
+    },
+
+    /**
+      * Coaches Dashboard Section Render Logic
+      * - CoachesDashboard
+      */
+    handleRenderCoachesDashboardSection: (athletes, item, compliance) => {
+        let didUserCompleteReadinessSurvey = compliance && compliance.completed ?
+            _.filter(compliance.completed, ['user_id', item.user_id]).length > 0
+            :
+            false;
+        let athleteName = `${didUserCompleteReadinessSurvey ? '' : '*'}${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`;
+        let backgroundColor = item.color === 0 ? AppColors.zeplin.success : item.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
+        let filteredAthlete = _.filter(athletes, ['user_id', item.user_id])[0];
+        filteredAthlete.didUserCompleteReadinessSurvey = didUserCompleteReadinessSurvey;
+        return {
+            athleteName,
+            backgroundColor,
+            filteredAthlete,
+        }
+    },
+
+    /**
+      * Coaches Dashboard GOT IT button clicked
+      * - CoachesDashboard
+      */
+    gotItButtonLogic: coachesDashboardData => {
+        let numberOfTotalAthletes = 0;
+        _.map(coachesDashboardData, team => {
+            numberOfTotalAthletes += team.athletes.length;
+        });
+        return {
+            numberOfTotalAthletes,
+        };
+    },
+
+    /**
+      * Coaches Dashboard Search Area Render Logic
+      * - CoachesDashboard
+      */
+    coachesDashboardSearchAreaRenderLogic: weeklyInsights => {
+        let weeklyInsightsLength = 0;
+        _.map(weeklyInsights, (value, key) => {
+            weeklyInsightsLength += value.length;
+        });
+        let doWeHaveWeeklyInsights = weeklyInsightsLength > 0;
+        return {
+            doWeHaveWeeklyInsights,
         };
     },
 

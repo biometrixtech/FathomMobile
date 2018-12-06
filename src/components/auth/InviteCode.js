@@ -103,7 +103,11 @@ class InviteCode extends Component {
                 { isVerifyingOpen: true, },
                 () => {
                     this.props.checkAccountCode(code)
-                        .then(res => this.setState({ isSuccessOpen: true, isVerifyingOpen: false, account: res.account, }))
+                        .then(res => {
+                            let newAccount = _.cloneDeep(res.account);
+                            newAccount.code = code;
+                            this.setState({ isSuccessOpen: true, isVerifyingOpen: false, account: newAccount, });
+                        })
                         .catch(err => {
                             this.setState({ isVerifyingOpen: false, });
                             this._handleUpdateResultMsg('error', 'invalid code, please try again');
@@ -126,7 +130,7 @@ class InviteCode extends Component {
                             containerStyle={[{position: 'absolute', top: (20 + AppSizes.statusBarHeight), left: 10}]}
                             icon={'arrow-left'}
                             iconStyle={[{color: AppColors.white,}]}
-                            onPress={() => Actions.accountType()}
+                            onPress={() => Actions.pop()}
                             reverse={false}
                             size={26}
                             type={'simple-line-icon'}

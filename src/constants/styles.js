@@ -429,10 +429,16 @@ export default {
     sorenessPainValues: {
         alignSelf:      'center',
         borderRadius:   35 / 2,
-        borderWidth:    3,
         height:         35,
         justifyContent: 'center',
         width:          35,
+    },
+    sorenessPainValuesLrg: {
+        alignSelf:      'center',
+        borderRadius:   45 / 2,
+        height:         45,
+        justifyContent: 'center',
+        width:          45,
     },
     allGoodBtn: {
         alignSelf:      'center',

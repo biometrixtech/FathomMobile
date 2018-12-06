@@ -77,6 +77,7 @@ export default {
     },
 
     // API errors
+    coachesDashboardData:    'There was an error fetching your Athlete data. Please try again!',
     emailNotFound:           'Email not found, please try again',
     getMyPlan:               'There was an error getting your plan specific data. Please try again!',
     getSoreBodyParts:        'There was an error getting your plan specific data. Please try again!',

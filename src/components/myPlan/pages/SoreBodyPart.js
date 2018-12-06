@@ -6,7 +6,7 @@
         bodyPartSide={bodyPart.side}
         firstTimeExperience={user.firstTimeExperience}
         handleFormChange={handleFormChange}
-        handleUpdateFirstTimeExperience={(name, value) => handleUpdateFirstTimeExperience(name, value)}
+        handleUpdateFirstTimeExperience={name => handleUpdateFirstTimeExperience(name)}
         index={i+3}
         isPrevSoreness={true}
         surveyObject={dailyReadiness}
@@ -21,6 +21,7 @@ import { TouchableOpacity, View, } from 'react-native';
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
 import { FathomSlider, SVGImage, Spacer, TabIcon, Text, Tooltip, } from '../../custom';
+import { PlanLogic, } from '../../../lib';
 import { ScaleButton } from './';
 
 // import third-party libraries
@@ -91,29 +92,16 @@ class SoreBodyPart extends Component {
             surveyObject,
             toggleSlideUpPanel,
         } = this.props;
-        let bodyPartSorenessIndex = _.findIndex(surveyObject.soreness, o => (o.body_part === bodyPart.body_part || o.body_part === bodyPart.index) && o.side === bodyPartSide);
-        let bodyPartMap = bodyPart.body_part ? MyPlanConstants.bodyPartMapping[bodyPart.body_part] : MyPlanConstants.bodyPartMapping[bodyPart.index];
-        let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
-        let sorenessPainMapping =
-            bodyPartGroup && bodyPartGroup === 'muscle' && this.state.type.length > 0 ?
-                MyPlanConstants.muscleLevels[this.state.type]
-                : bodyPartGroup && bodyPartGroup === 'joint' ?
-                    MyPlanConstants.jointLevels
-                    :
-                    [];
-        let helpingVerb = bodyPartMap ? bodyPartMap.helping_verb : '';
-        let mainBodyPartName = bodyPartMap ? bodyPartMap.label : '';
-        if (mainBodyPartName.slice(-1) === 's' && bodyPartMap.bilateral && !!bodyPartSide) {
-            if (mainBodyPartName === 'Achilles') {
-                // do nothing
-            } else if (mainBodyPartName === 'Calves') {
-                mainBodyPartName = 'Calf';
-            } else {
-                mainBodyPartName = mainBodyPartName.slice(0, -1);
-            }
-            helpingVerb = 'is';
-        }
-        let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'left ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'right ' : ''}${mainBodyPartName.toLowerCase()}`;
+        let {
+            bodyPartMap,
+            bodyPartName,
+            bodyPartGroup,
+            helpingVerb,
+            sorenessPainMapping,
+        } = PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, this.state.type);
+        let showScaleButtons = bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint') && this.state.type !== 'all-good';
+        let showWhatsTheDifferenceLink = bodyPartGroup && bodyPartGroup === 'muscle';
+        let isBodyPartJoint = bodyPartGroup === 'joint';
         return(
             <View>
                 { index ?
@@ -156,12 +144,12 @@ class SoreBodyPart extends Component {
                         <TooltipContent
                             handleTooltipClose={() => this.setState(
                                 { isToolTipOpen: false, },
-                                () => handleUpdateFirstTimeExperience('sorenessPainTooltip', true)
+                                () => handleUpdateFirstTimeExperience('soreness_pain_tooltip')
                             )}
                             text={MyPlanConstants.painSorenessMessage()}
                             toggleSlideUpPanel={() => this.setState(
                                 { isToolTipOpen: false, },
-                                () => { toggleSlideUpPanel(); handleUpdateFirstTimeExperience('sorenessPainTooltip', true);}
+                                () => { toggleSlideUpPanel(); handleUpdateFirstTimeExperience('soreness_pain_tooltip');}
                             )}
                         />
                     }
@@ -173,7 +161,7 @@ class SoreBodyPart extends Component {
                         { isPrevSoreness || bodyPartMap.bilateral ?
                             <View>
                                 <TabIcon
-                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
+                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 50, paddingHorizontal: AppSizes.padding,}]}
                                     icon={this.state.type === 'all-good' ? 'check-circle' : 'checkbox-blank-circle-outline'}
                                     iconStyle={[{color: this.state.type === 'all-good' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
                                     onPress={() => {
@@ -182,12 +170,13 @@ class SoreBodyPart extends Component {
                                                 type:  this.state.type === 'all-good' ? '' : 'all-good',
                                                 value: null,
                                             }, () => {
-                                                handleFormChange('soreness', 0, this.state.type === 'pain', bodyPartMap.index, bodyPartSide, true);
+                                                let value = this.state.type === 'all-good' ? 0 : null;
+                                                handleFormChange('soreness', value, this.state.type === 'pain', bodyPartMap.index, bodyPartSide, true);
                                             });
                                         }
                                     }}
                                     reverse={false}
-                                    size={35}
+                                    size={45}
                                     type={'material-community'}
                                 />
                                 <Text
@@ -207,12 +196,12 @@ class SoreBodyPart extends Component {
                             :
                             null
                         }
-                        { bodyPartGroup === 'joint' ?
+                        { isBodyPartJoint ?
                             null
                             :
                             <View>
                                 <TabIcon
-                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
+                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 50, paddingHorizontal: AppSizes.padding,}]}
                                     icon={this.state.type === 'soreness' ? 'check-circle' : 'checkbox-blank-circle-outline'}
                                     iconStyle={[{color: this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
                                     onPress={() => {
@@ -221,7 +210,7 @@ class SoreBodyPart extends Component {
                                                 type:  this.state.type === 'soreness' ? '' : 'soreness',
                                                 value: null,
                                             }, () => {
-                                                if(this.state.type === 'soreness' && !firstTimeExperience.sorenessPainTooltip) {
+                                                if(this.state.type === 'soreness' && !firstTimeExperience.includes('soreness_pain_tooltip')) {
                                                     this.setState({ isToolTipOpen: true, });
                                                 }
                                                 handleFormChange('soreness', null, this.state.type === 'pain', bodyPartMap.index, bodyPartSide);
@@ -229,7 +218,7 @@ class SoreBodyPart extends Component {
                                         }
                                     }}
                                     reverse={false}
-                                    size={35}
+                                    size={45}
                                     type={'material-community'}
                                 />
                                 <Text
@@ -247,12 +236,12 @@ class SoreBodyPart extends Component {
                                 </Text>
                             </View>
                         }
-                        { bodyPartGroup === 'joint' ?
+                        { isBodyPartJoint ?
                             null
                             :
                             <View>
                                 <TabIcon
-                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 40, paddingHorizontal: AppSizes.padding,}]}
+                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 50, paddingHorizontal: AppSizes.padding,}]}
                                     icon={this.state.type === 'pain' ? 'check-circle' : 'checkbox-blank-circle-outline'}
                                     iconStyle={[{color: this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
                                     onPress={() => {
@@ -261,7 +250,7 @@ class SoreBodyPart extends Component {
                                                 type:  this.state.type === 'pain' ? '' : 'pain',
                                                 value: null,
                                             }, () => {
-                                                if(this.state.type === 'pain' && !firstTimeExperience.sorenessPainTooltip) {
+                                                if(this.state.type === 'pain' && !firstTimeExperience.includes('soreness_pain_tooltip')) {
                                                     this.setState({ isToolTipOpen: true, });
                                                 }
                                                 handleFormChange('soreness', null, this.state.type === 'pain', bodyPartMap.index, bodyPartSide);
@@ -269,7 +258,7 @@ class SoreBodyPart extends Component {
                                         }
                                     }}
                                     reverse={false}
-                                    size={35}
+                                    size={45}
                                     type={'material-community'}
                                 />
                                 <Text
@@ -290,21 +279,25 @@ class SoreBodyPart extends Component {
                     </View>
                 </Tooltip>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.padding}}>
-                    { bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint') ?
+                    { showScaleButtons ?
                         _.map(sorenessPainMapping, (value, key) => {
                             if(key === 0) { return; }
                             let sorenessPainScaleMappingValue = (
-                                bodyPartGroup === 'joint'
+                                isBodyPartJoint
                             ) ?
                                 MyPlanConstants.sorenessPainScaleMapping(false, key, true)
                                 :
                                 MyPlanConstants.sorenessPainScaleMapping(this.state.type, key);
+
+                            let isSelected = this.state.value === key;
+                            let opacity = isSelected ? 1 : (key * 0.2);
                             /*eslint consistent-return: 0*/
                             return(
                                 <ScaleButton
-                                    isSelected={this.state.value === key}
+                                    isSelected={isSelected}
                                     key={value+key}
                                     keyLabel={key}
+                                    opacity={opacity}
                                     sorenessPainMappingLength={sorenessPainMapping.length}
                                     updateStateAndForm={() => {
                                         let newType = this.state.type === 'all-good' ? '' : this.state.type;
@@ -321,14 +314,16 @@ class SoreBodyPart extends Component {
                                 />
                             )
                         })
-                        :
-                        <Text
-                            onPress={() => toggleSlideUpPanel(false)}
-                            robotoLight
-                            style={{color: AppColors.primary.yellow.hundredPercent, textDecorationLine: 'underline',}}
-                        >
-                            {'What\'s the difference?'}
-                        </Text>
+                        : showWhatsTheDifferenceLink ?
+                            <Text
+                                onPress={() => toggleSlideUpPanel(false)}
+                                robotoLight
+                                style={{color: AppColors.primary.yellow.hundredPercent, textDecorationLine: 'underline',}}
+                            >
+                                {'What\'s the difference?'}
+                            </Text>
+                            :
+                            null
                     }
                 </View>
             </View>
@@ -337,13 +332,14 @@ class SoreBodyPart extends Component {
 }
 
 SoreBodyPart.propTypes = {
-    bodyPart:            PropTypes.object.isRequired,
-    bodyPartSide:        PropTypes.number,
-    firstTimeExperience: PropTypes.object.isRequired,
-    handleFormChange:    PropTypes.func.isRequired,
-    index:               PropTypes.number,
-    isPrevSoreness:      PropTypes.bool,
-    surveyObject:        PropTypes.object,
+    bodyPart:                        PropTypes.object.isRequired,
+    bodyPartSide:                    PropTypes.number,
+    firstTimeExperience:             PropTypes.array.isRequired,
+    handleFormChange:                PropTypes.func.isRequired,
+    handleUpdateFirstTimeExperience: PropTypes.func.isRequired,
+    index:                           PropTypes.number,
+    isPrevSoreness:                  PropTypes.bool,
+    surveyObject:                    PropTypes.object,
 };
 
 SoreBodyPart.defaultProps = {

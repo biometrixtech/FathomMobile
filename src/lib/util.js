@@ -163,18 +163,25 @@ const UTIL = {
             //     RouterActions.accountDetails();
             // }
             // TODO: uncomment below when educational content is in
-            // if(!userObj.onboarding_status.includes('educational')) {
+            // if(userObj.onboarding_status && !userObj.onboarding_status.includes('educational')) {
             //   RouterActions.tutorial({step: 'educational-tutorial'});
             // } else
-            if(!userObj.onboarding_status.includes('account_setup')) {
+            if(userObj.onboarding_status && !userObj.onboarding_status.includes('account_setup')) {
                 RouterActions.onboarding();
-            } else if(!userObj.onboarding_status.includes('tutorial-tutorial')) {
-                RouterActions.tutorial({step: 'tutorial'});
             // TODO: uncomment below when single-sensor information is ready
-            // } else if(!userObj.onboarding_status.includes('single-sensor-tutorial')) {
+            // } else if(userObj.onboarding_status && !userObj.onboarding_status.includes('single-sensor-tutorial')) {
             //     RouterActions.tutorial({step: 'single-sensor'});
+            } else if(userObj.onboarding_status && !userObj.onboarding_status.includes('coach-tutorial') && userObj.role === 'coach') {
+                RouterActions.tutorial({step: 'coach-tutorial'});
+            } else if(userObj.onboarding_status && !userObj.onboarding_status.includes('tutorial-tutorial') && userObj.role === 'athlete') {
+                // NOTE: THIS IS THE LAST SCREEN PRIOR TO MYPLAN
+                RouterActions.tutorial({step: 'tutorial-tutorial'});
             } else {
-                RouterActions.myPlan();
+                if(userObj.role === 'coach') {
+                    RouterActions.coachesDashboard();
+                } else {
+                    RouterActions.myPlan();
+                }
             }
         }
     },

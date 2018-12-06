@@ -11,6 +11,7 @@ import moment from 'moment';
  * MyPlan Store
  */
 export default {
+    coachesDashboardData: [],
     completedExercises:   [],
     completedFSExercises: [],
     dailyPlan:            [{
