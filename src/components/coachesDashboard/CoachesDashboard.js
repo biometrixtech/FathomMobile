@@ -177,7 +177,9 @@ class CoachesDashboard extends Component {
             AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
         }
         // fetch coaches dashboard data
-        this._handleEnteringApp();
+        _.delay(() => {
+            this._handleEnteringApp();
+        }, 500);
         // set GA variables
         GATracker.setUser(this.props.user.id);
         GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
