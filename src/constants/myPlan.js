@@ -374,7 +374,7 @@ const cleanedPostSessionName = (postPracticeSurvey) => {
 };
 
 const exerciseListButtonStyles = (isPrep, completedExercises, isFSCompleteValid, isFunctionalStrength) => {
-    let buttonTitle = completedExercises.length > 0 ? `${isPrep ? 'Prep ' : 'Recovery '}Complete` : `Check Boxes to Complete${isPrep ? ' Prep' : ' Recovery'}`;
+    let buttonTitle = completedExercises.length > 0 ? `${isPrep ? 'Mobilize ' : 'Recovery '}Complete` : `Check Boxes to Complete${isPrep ? ' Mobilize' : ' Recovery'}`;
     let isButtonDisabled = completedExercises.length > 0 ? false : true;
     let isButtonOutlined = isButtonDisabled || completedExercises.length === 0 ? true : false;
     let buttonDisabledStyle = {backgroundColor: AppColors.white,};
