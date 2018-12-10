@@ -100,6 +100,7 @@ const tabbar = {
 
 const zeplin = {
     blueBackground: '#183C4D', // 24, 60, 77
+    blueGrey:       '#757D8A',
     darkBlue:       '#081832', // 8, 24, 50
     darkGrey:       '#2B2B2B', // 43, 43, 43
     darkGreyText:   '#868686', // 134, 134, 134
@@ -111,9 +112,9 @@ const zeplin = {
     lightGrey:      '#D5D5D5', // 213, 213, 213
     mediumGrey:     '#707070', // 112, 112, 112
     navyBlue:       '#0E0822', // 14, 8, 34
+    seaBlue:        '#0B7B88', // 11, 123, 136
     shadow:         '#e4e4e4',
     success:        '#5EB123',
-    tealGreen:      '#2EA985', // 46, 169, 133
     warning:        '#EBBA2D',
 }
 

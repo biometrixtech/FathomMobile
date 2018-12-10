@@ -139,9 +139,13 @@ class MyPlan extends Component {
                 current_position:          null,
                 current_sport_name:        null,
                 readiness:                 0,
+                sessions:                  [],
+                sessions_planned:          null,
                 sleep_quality:             0,
                 soreness:                  [],
                 wants_functional_strength: null,
+                // won't be submitted, help with UI
+                already_trained_number:    null,
             },
             isCompletedAMPMRecoveryModalOpen: true,
             isFunctionalStrengthCollapsed:    true,
@@ -194,7 +198,8 @@ class MyPlan extends Component {
         // when we arrive, load MyPlan, if it hasn't been loaded today yet
         let userId = this.props.user.id;
         let clearMyPlan = this.props.lastOpened.userId !== this.props.user.id ? true : false;
-        if(!this.props.lastOpened.date || clearMyPlan || moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')) {
+        // TODO: FIX ME
+        // if(!this.props.lastOpened.date || clearMyPlan || moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')) {
             this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                 .then(response => {
                     if(response.daily_plans[0].daily_readiness_survey_completed) {
@@ -272,18 +277,18 @@ class MyPlan extends Component {
                     }
                     AppUtil.handleAPIErrorAlert(ErrorMessages.getMyPlan);
                 });
-        } else {
-            setTimeout(() => {
-                this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(this.props.plan.dailyPlan[0]));
-                let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && (this.props.plan.dailyPlan[0].daily_readiness_survey_completed || this.state.prepare.isReadinessSurveyCompleted) ? true : false;
-                if(!isDailyReadinessSurveyCompleted) {
-                    this._toggleReadinessSurvey();
-                }
-                if(callback) {
-                    callback();
-                }
-            }, 500);
-        }
+        // } else {
+        //     setTimeout(() => {
+        //         this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(this.props.plan.dailyPlan[0]));
+        //         let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && (this.props.plan.dailyPlan[0].daily_readiness_survey_completed || this.state.prepare.isReadinessSurveyCompleted) ? true : false;
+        //         if(!isDailyReadinessSurveyCompleted) {
+        //             this._toggleReadinessSurvey();
+        //         }
+        //         if(callback) {
+        //             callback();
+        //         }
+        //     }, 500);
+        // }
     }
 
     componentWillUnmount = () => {
@@ -394,6 +399,8 @@ class MyPlan extends Component {
         newDailyReadiness.readiness = this.state.dailyReadiness.readiness;
         newDailyReadiness.soreness = this.state.dailyReadiness.soreness.filter(u => u.severity && u.severity > 0);
         newDailyReadiness.wants_functional_strength = this.state.dailyReadiness.wants_functional_strength;
+        newDailyReadiness.sessions = this.state.dailyReadiness.sessions;
+        newDailyReadiness.sessions_planned = this.state.dailyReadiness.sessions_planned;
         if(this.state.dailyReadiness.current_sport_name === 0 || this.state.dailyReadiness.current_sport_name > 0) {
             newDailyReadiness.current_sport_name = this.state.dailyReadiness.current_sport_name;
         }

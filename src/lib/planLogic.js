@@ -57,7 +57,14 @@ const PlanLogic = {
         // setup varibles
         let newFormFields;
         // logic
-        if(name === 'soreness' && bodyPart) {
+        if(name === 'already_trained_number' && value >= 1) {
+            let newValue = [];
+            for (let i = 0; i < value; i += 1) {
+                newValue.push(PlanLogic.returnEmptySession());
+            }
+            newFormFields = _.update(state, 'sessions', () => newValue);
+            newFormFields = _.update(state, name, () => value);
+        } else if(name === 'soreness' && bodyPart) {
             let newSorenessFields = _.cloneDeep(state.soreness);
             if(_.findIndex(state.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
                 // body part already exists
@@ -79,6 +86,23 @@ const PlanLogic = {
         }
         // return
         return newFormFields;
+    },
+
+    returnEmptySession: () => {
+        let postSessionSurvey = {
+            event_date: `${moment().toISOString(true).split('.')[0]}Z`,
+            RPE:        null,
+            soreness:   [],
+        };
+        return {
+            description:                    '',
+            duration:                       0,
+            event_date:                     null,
+            post_session_survey:            postSessionSurvey,
+            session_type:                   null,
+            sport_name:                     null, // this exists for session_type = 0,2,3,6
+            strength_and_conditioning_type: null, // this only exists for session_type=1
+        };
     },
 
     /**
@@ -309,7 +333,7 @@ const PlanLogic = {
             return doesItInclude.length > 0;
         });
         let areQuestionsValid = dailyReadiness.readiness > 0 && dailyReadiness.sleep_quality > 0;
-        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length === filteredSoreBodyParts.length : true;
         let areAreasOfSorenessValid = (
             _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
             (areasOfSorenessRef && areasOfSorenessRef.state.isAllGood)
@@ -341,13 +365,21 @@ const PlanLogic = {
             `(${soreBodyParts.completed_functional_strength_sessions}/2 completed in last 7 days${soreBodyParts.completed_functional_strength_sessions === 2 ? ', but you can go for 3!': ''})`
             :
             '';
+        let isTrainedTodayValid = dailyReadiness.already_trained_number === 0 || dailyReadiness.already_trained_number === false || dailyReadiness.already_trained_number >= 1;
         let isFormValid = isFunctionalStrengthValid && areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
+        let isFormValidItems = {
+            isFunctionalStrengthValid,
+            isPrevSorenessValid: (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0),
+            isTrainedTodayValid,
+            areQuestionsValid,
+        };
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         return {
             functionalStrengthTodaySubtext,
             isFirstFunctionalStrength,
             isFormValid,
+            isFormValidItems,
             isSecondFunctionalStrength,
             newSoreBodyParts,
             partOfDay,

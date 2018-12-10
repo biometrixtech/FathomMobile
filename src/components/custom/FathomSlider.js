@@ -19,13 +19,13 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, } from 'react-native';
 
 // import third-party libraries
-import { Slider } from 'react-native-elements';
+import { Slider, } from 'react-native-elements';
 
 // import constants
-import { AppColors, AppStyles, } from '../../constants';
+import { AppColors, } from '../../constants';
 
 /* Component ==================================================================== */
 const FathomSlider = ({
@@ -34,16 +34,18 @@ const FathomSlider = ({
     maximumValue,
     minimumValue,
     name,
+    orientation,
     side,
     step,
     thumbTintColor,
     value,
 }) => (
-    <View style={[AppStyles.paddingHorizontalMed]}>
+    <View style={{backgroundColor: 'red', alignItems: 'center', flex: 1, justifyContent: 'center',}}>
         <Slider
             maximumValue={maximumValue}
             minimumValue={minimumValue}
             onSlidingComplete={val => handleFormChange(name, val, bodyPart, side)}
+            orientation={orientation}
             step={step}
             thumbTintColor={thumbTintColor}
             value={value}
@@ -57,15 +59,18 @@ FathomSlider.propTypes = {
     maximumValue:     PropTypes.number.isRequired,
     minimumValue:     PropTypes.number.isRequired,
     name:             PropTypes.string.isRequired,
+    orientation:      PropTypes.string,
     side:             PropTypes.number,
     step:             PropTypes.number,
     thumbTintColor:   PropTypes.string,
     value:            PropTypes.number.isRequired,
 };
+
 FathomSlider.defaultProps = {
+    orientation:    'vertical',
     side:           null,
     step:           1,
-    thumbTintColor: AppColors.secondary.blue.hundredPercent,
+    thumbTintColor: AppColors.primary.yellow.hundredPercent,
 };
 
 /* Export Component ==================================================================== */
