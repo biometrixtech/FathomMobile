@@ -314,7 +314,8 @@ const PlanLogic = {
             _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
             (areasOfSorenessRef && areasOfSorenessRef.state.isAllGood)
         );
-        let selectedSportPositions = dailyReadiness.current_sport_name !== null ? _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name).positions : [];
+        let foundSport = _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name);
+        let selectedSportPositions = dailyReadiness.current_sport_name !== null && foundSport ? foundSport.positions : [];
         const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
         const isFirstFunctionalStrength = isFunctionalStrengthEligible &&
             (!soreBodyParts.current_sport_name && soreBodyParts.current_sport_name !== 0) &&
