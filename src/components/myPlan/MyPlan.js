@@ -145,6 +145,7 @@ class MyPlan extends Component {
             },
             isCompletedAMPMRecoveryModalOpen: true,
             isFunctionalStrengthCollapsed:    true,
+            isPageLoading:                    false,
             isPostSessionSurveyModalOpen:     false,
             isPrepCalculating:                false,
             isReadinessSurveyModalOpen:       false,
@@ -193,8 +194,18 @@ class MyPlan extends Component {
     _handleEnteringApp = (hideSplashScreen, callback) => {
         // when we arrive, load MyPlan, if it hasn't been loaded today yet
         let userId = this.props.user.id;
-        let clearMyPlan = this.props.lastOpened.userId !== this.props.user.id ? true : false;
-        if(!this.props.lastOpened.date || clearMyPlan || moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')) {
+        let clearMyPlan = (
+            this.props.lastOpened.userId !== this.props.user.id ||
+            moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')
+        ) ?
+            true
+            :
+            false;
+        if(!this.props.lastOpened.date || clearMyPlan) {
+            if(this.tabView) {
+                this.tabView.goToPage(0);
+            }
+            this.setState({ isPageLoading: true, });
             this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                 .then(response => {
                     if(response.daily_plans[0].daily_readiness_survey_completed) {
@@ -209,7 +220,8 @@ class MyPlan extends Component {
                         );
                         this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(response.daily_plans[0]));
                         this.setState({
-                            prepare: Object.assign({}, this.state.prepare, {
+                            isPageLoading: false,
+                            prepare:       Object.assign({}, this.state.prepare, {
                                 finishedRecovery:           response.daily_plans[0].pre_recovery_completed || this.state.prepare.finishedRecovery,
                                 isActiveRecoveryCollapsed:  response.daily_plans[0].pre_recovery_completed || this.state.prepare.isActiveRecoveryCollapsed,
                                 isReadinessSurveyCollapsed: true,
@@ -230,7 +242,8 @@ class MyPlan extends Component {
                         }
                     } else {
                         this.setState({
-                            prepare: Object.assign({}, this.state.prepare, {
+                            isPageLoading: false,
+                            prepare:       Object.assign({}, this.state.prepare, {
                                 isActiveRecoveryCollapsed:  true,
                                 isReadinessSurveyCollapsed: false,
                             })
@@ -264,6 +277,7 @@ class MyPlan extends Component {
                     }
                 })
                 .catch(error => {
+                    this.setState({ isPageLoading: false, });
                     if(hideSplashScreen) {
                         SplashScreen.hide();
                     }
@@ -335,8 +349,7 @@ class MyPlan extends Component {
     _handleAppStateChange = (nextAppState) => {
         if(nextAppState === 'active' && this.props.notification) {
             this._handleEnteringApp(false, () => this._handlePushNotification(this.props));
-        }
-        if(nextAppState === 'active') {
+        } else if(nextAppState === 'active') {
             this._handleEnteringApp(false);
         }
     }
@@ -584,6 +597,7 @@ class MyPlan extends Component {
 
     _handleExerciseListRefresh = shouldClearCompletedExercises => {
         let userId = this.props.user.id;
+        this.setState({ isPageLoading: true, });
         this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
             .then(response => {
                 const dailyPlanObj = response.daily_plans && response.daily_plans[0] ? response.daily_plans[0] : false;
@@ -602,6 +616,7 @@ class MyPlan extends Component {
                     this.props.clearCompletedExercises();
                 }
                 this.setState({
+                    isPageLoading:        false,
                     isPrepCalculating:    false,
                     isRecoverCalculating: false,
                     prepare:              newPrepare,
@@ -624,7 +639,7 @@ class MyPlan extends Component {
                     });
             })
             .catch(error => {
-                // console.log('error',error);
+                this.setState({ isPageLoading: false, });
             });
     }
 
@@ -890,7 +905,7 @@ class MyPlan extends Component {
     }
 
     renderPrepare = (index) => {
-        let { isPrepCalculating, prepare, } = this.state;
+        let { isPageLoading, isPrepCalculating, prepare, } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
         let { plan, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
@@ -920,7 +935,7 @@ class MyPlan extends Component {
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
                         onRefresh={() => this._handleExerciseListRefresh(false)}
-                        refreshing={false}
+                        refreshing={isPageLoading}
                         title={'Loading...'}
                         titleColor={AppColors.primary.yellow.hundredPercent}
                         tintColor={AppColors.primary.yellow.hundredPercent}
@@ -1189,7 +1204,7 @@ class MyPlan extends Component {
     };
 
     renderRecover = (index) => {
-        let { isRecoverCalculating, recover, } = this.state;
+        let { isPageLoading, isRecoverCalculating, recover, } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
         let { plan, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
@@ -1218,7 +1233,7 @@ class MyPlan extends Component {
                     <RefreshControl
                         colors={[AppColors.primary.yellow.hundredPercent]}
                         onRefresh={() => this._handleExerciseListRefresh(false)}
-                        refreshing={false}
+                        refreshing={isPageLoading}
                         title={'Loading...'}
                         titleColor={AppColors.primary.yellow.hundredPercent}
                         tintColor={AppColors.primary.yellow.hundredPercent}
