@@ -196,23 +196,6 @@ class AreasOfSoreness extends Component {
                     )
                 })}
                 <Spacer size={50} />
-                {/*<View onLayout={event => {this.soreBodyPartRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,}}}>
-                    {_.map(areaOfSorenessClicked, (area, i) => {
-                        return(
-                            <View key={`AreasOfSoreness1${i}`} style={[AppStyles.paddingVertical]}>
-                                <SoreBodyPart
-                                    bodyPart={MyPlanConstants.bodyPartMapping[area.body_part]}
-                                    bodyPartSide={area.side}
-                                    firstTimeExperience={user.first_time_experience}
-                                    handleFormChange={handleFormChange}
-                                    handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
-                                    surveyObject={surveyObject}
-                                    toggleSlideUpPanel={toggleSlideUpPanel}
-                                />
-                            </View>
-                        )
-                    })}
-                </View>*/}
             </View>
         )
     }

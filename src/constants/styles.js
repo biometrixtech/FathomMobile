@@ -440,6 +440,13 @@ export default {
         justifyContent: 'center',
         width:          45,
     },
+    backNextCircleButtons: {
+        alignSelf:      'center',
+        borderRadius:   55 / 2,
+        height:         55,
+        justifyContent: 'center',
+        width:          55,
+    },
     allGoodBtn: {
         alignSelf:      'center',
         borderRadius:   100 / 2,

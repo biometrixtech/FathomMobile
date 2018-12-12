@@ -424,28 +424,33 @@ class MyPlan extends Component {
             isReadinessSurveyCompleted: true,
         });
         if(!this.state.dailyReadiness.sessions_planned && this.tabView) {
-            this.tabView.goToPage(2);
+            this.setState(
+                { isReadinessSurveyModalOpen: false, },
+                () => this.tabView.goToPage(2),
+            );
         }
-        this.setState({
-            dailyReadiness: {
-                readiness:     0,
-                sleep_quality: 0,
-                soreness:      [],
-            },
-            isPrepCalculating:          this.state.dailyReadiness.sessions_planned ? true : false,
-            isReadinessSurveyModalOpen: false,
-            isRecoverCalculating:       this.state.dailyReadiness.sessions_planned ? false : true,
-            prepare:                    newPrepareObject,
-        });
-        this.props.postReadinessSurvey(newDailyReadiness)
-            .then(response => {
-                this.props.clearCompletedExercises();
-                this.props.clearCompletedFSExercises();
-            })
-            .catch(error => {
-                console.log('error',error);
-                AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey);
+        _.delay(() => {
+            this.setState({
+                dailyReadiness: {
+                    readiness:     0,
+                    sleep_quality: 0,
+                    soreness:      [],
+                },
+                isPrepCalculating:          this.state.dailyReadiness.sessions_planned ? true : false,
+                isReadinessSurveyModalOpen: false,
+                isRecoverCalculating:       this.state.dailyReadiness.sessions_planned ? false : true,
+                prepare:                    newPrepareObject,
             });
+            this.props.postReadinessSurvey(newDailyReadiness)
+                .then(response => {
+                    this.props.clearCompletedExercises();
+                    this.props.clearCompletedFSExercises();
+                })
+                .catch(error => {
+                    console.log('error',error);
+                    AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey);
+                });
+        }, 500);
     }
 
     _handlePostSessionSurveySubmit = () => {

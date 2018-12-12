@@ -15,7 +15,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ImageBackground, LayoutAnimation, ScrollView, StyleSheet, TouchableHighlight, View, } from 'react-native';
+import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     imageBackgroundStyle: {
         alignItems:      'center',
         alignSelf:       'stretch',
-        backgroundColor: 'transparent',
+        backgroundColor: AppColors.transparent,
         flex:            1,
         justifyContent:  'center',
     },
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
 
 /* Components ================================================================= */
 const ProgressPill = ({ currentStep, }) => (
-    <View style={{backgroundColor: AppColors.zeplin.lightGrey, height: (progressPillHeight) + AppSizes.statusBarHeight,}}>
+    <View style={{backgroundColor: '#FAFAFA', height: (progressPillHeight + AppSizes.statusBarHeight),}}>
         <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
         <View style={[styles.progressPillWrapper]}>
             <View style={[styles.progressPill, {marginRight: 2}, currentStep >= 1 ? styles.progressPillCurrent : {}]} />
@@ -105,7 +105,7 @@ const BackNextButtons = ({ handleFormSubmit, isValid, onBackClick, onNextClick, 
     <View style={[styles.backNextWrapper,]}>
         <TouchableHighlight
             onPress={onBackClick}
-            style={[AppStyles.sorenessPainValuesLrg, {
+            style={[AppStyles.backNextCircleButtons, {
                 backgroundColor: AppColors.white,
                 borderColor:     AppColors.primary.yellow.hundredPercent,
                 borderWidth:     1,
@@ -144,7 +144,7 @@ const BackNextButtons = ({ handleFormSubmit, isValid, onBackClick, onNextClick, 
             :
             <TouchableHighlight
                 onPress={isValid ? onNextClick : null}
-                style={[AppStyles.sorenessPainValuesLrg, {
+                style={[AppStyles.backNextCircleButtons, {
                     backgroundColor: isValid ? AppColors.primary.yellow.hundredPercent : AppColors.white,
                     borderColor:     isValid ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.lightGrey,
                     borderWidth:     1,
@@ -156,6 +156,7 @@ const BackNextButtons = ({ handleFormSubmit, isValid, onBackClick, onNextClick, 
                     style={[
                         AppStyles.textCenterAligned,
                         isValid ? styles.shadowEffect : {},
+                        Platform.OS === 'ios' ? {} : {elevation: 2,},
                         {
                             color:    isValid ? AppColors.white : AppColors.zeplin.lightGrey,
                             fontSize: AppFonts.scaleFont(12),
@@ -179,8 +180,6 @@ class ReadinessSurvey extends Component {
             isSlideUpPanelOpen:     false,
             pageIndex:              0,
         };
-        // this._scrollViewContentHeight = 0;
-        // this.headerComponent = {};
         this.myActivityTargetComponents = [];
         this.myAreasOfSorenessComponent = {};
         this.myClickedSorenessComponents = [];
@@ -205,72 +204,7 @@ class ReadinessSurvey extends Component {
 
     _renderNextPage = (currentPage, isFormValidItems, isBackBtn, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked) => {
         const { dailyReadiness, } = this.props;
-        let pageNum = 0;
-        let isValid = false;
-        if(currentPage === 0) { // 0. GOOD [TIME OF DAY], MAZEN!
-            pageNum = isFirstFunctionalStrength ? 1 : 2;
-            isValid = true;
-        } else if(currentPage === 1) { // 1. first FS
-            pageNum = isBackBtn ? 0 : 2;
-            isValid = isFormValidItems.isFunctionalStrengthValid;
-        } else if(currentPage === 2) { // 2. questions
-            pageNum = isBackBtn && isFirstFunctionalStrength ? 1 : isBackBtn && !isFirstFunctionalStrength ? 0 : 3;
-            isValid = isFormValidItems.areQuestionsValid;
-        } else if(currentPage === 3) { // 3. trained already?
-            if(isBackBtn) {
-                pageNum = 2;
-            } else {
-                pageNum = dailyReadiness.already_trained_number === false && (newSoreBodyParts && newSoreBodyParts.length === 0) ?
-                    (this.state.pageIndex + 3)
-                    : dailyReadiness.already_trained_number === false && (newSoreBodyParts && newSoreBodyParts.length > 0) ?
-                        (this.state.pageIndex + 2)
-                        :
-                        (this.state.pageIndex + 1);
-            }
-            isValid = isFormValidItems.isTrainedTodayValid;
-        } else if(currentPage === 4) { // 4. SportScheduleBuilder & RPE
-            if(isBackBtn) {
-                pageNum = this.state.pageIndex - 1;
-            } else {
-                pageNum = (newSoreBodyParts && newSoreBodyParts.length === 0) ? (this.state.pageIndex + 2) : (this.state.pageIndex + 1);
-            }
-            isValid = true; // can only click if form is valid
-        } else if(currentPage === 5) { // 5. previous soreness
-            if(isBackBtn) {
-                pageNum = dailyReadiness.sessions.length === 0 ?
-                    (this.state.pageIndex - 2)
-                    :
-                    (this.state.pageIndex - 1);
-            } else {
-                pageNum = this.state.pageIndex + 1;
-            }
-            isValid = isFormValidItems.isPrevSorenessValid;
-        } else if(currentPage === 6) { // 6. areas of soreness - body parts
-            if(isBackBtn) {
-                pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ?
-                    (this.state.pageIndex - 1)
-                    : (newSoreBodyParts && newSoreBodyParts.length === 0) && dailyReadiness.sessions.length === 0 ?
-                        (this.state.pageIndex - 3)
-                        :
-                        (this.state.pageIndex - 4);
-            } else {
-                pageNum = areaOfSorenessClicked.length > 0 ? (this.state.pageIndex + 1) : (this.state.pageIndex + 2);
-            }
-            isValid = isFormValidItems.selectAreasOfSorenessValid;
-        } else if(currentPage === 7) { // 7. areas of soreness - selected body parts
-            pageNum = isBackBtn ? (this.state.pageIndex - 1) : (this.state.pageIndex + 1);
-            isValid = isFormValidItems.areAreasOfSorenessValid;
-        } else if(currentPage === 8) { // 8. train later today?
-            if(isBackBtn) {
-                pageNum = areaOfSorenessClicked.length > 0 ? (this.state.pageIndex - 1) : (this.state.pageIndex - 2);
-            } else {
-                pageNum = this.state.pageIndex + 1;
-            }
-            isValid = isFormValidItems.willTrainLaterValid;
-        } else if(currentPage === 9) { // 9. second FS
-            pageNum = isBackBtn ? (this.state.pageIndex - 1) : this.state.pageIndex;
-            isValid = isFormValidItems.isSecondFunctionalStrengthValid;
-        }
+        let { isValid, pageNum, } = PlanLogic.handleReadinessSurveyNextPage(this.state, dailyReadiness, currentPage, isFormValidItems, isBackBtn, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked);
         if(isValid || isBackBtn) {
             this.pages.progress = pageNum;
             this.setState({ pageIndex: pageNum, });
@@ -310,6 +244,14 @@ class ReadinessSurvey extends Component {
         this.setState({
             isActionButtonVisible,
             isCloseToBottom,
+        });
+    }
+
+    _resetSportBuilder = () => {
+        _.map(this.sportScheduleBuilderRefs, (sportScheduleBuilderRef, index) => {
+            if(sportScheduleBuilderRef) {
+                sportScheduleBuilderRef._resetStep();
+            }
         });
     }
 
@@ -354,6 +296,8 @@ class ReadinessSurvey extends Component {
                         >
                             <LinearGradient
                                 colors={['#ffffff00', 'white']}
+                                start={{x: 0.0, y: 0.0}}
+                                end={{x: 0.0, y: 0.75}}
                                 style={[styles.linearGradientStyle]}
                             >
                                 <View style={{flex: 1, justifyContent: 'space-between',}}>
@@ -395,12 +339,14 @@ class ReadinessSurvey extends Component {
                     </View>
 
                     <ScrollView
+                        bounces={false}
                         nestedScrollEnabled={true}
+                        overScrollMode={'never'}
                         ref={ref => {this.scrollViewActivityTargetRef = ref}}
                         style={{flex: 1,}}
                     >
                         <Spacer size={50} />
-                        <View style={[styles.shadowEffect, {alignSelf: 'center', backgroundColor: AppColors.white, borderRadius: 5, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingXLrg, width: AppSizes.screen.widthFourFifths,}]}>
+                        <View style={[styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {alignSelf: 'center', backgroundColor: AppColors.white, borderRadius: 5, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingXLrg, width: AppSizes.screen.widthFourFifths,}]}>
                             <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(32),}]}>{`CONGRATS ${user.personal_data.first_name.toUpperCase()}!`}</Text>
                             <Spacer size={15} />
                             <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(24),}]}>{'You\'ve unlocked\nFunctional Strength!'}</Text>
@@ -631,7 +577,7 @@ class ReadinessSurvey extends Component {
                             <View style={{flexDirection: 'row', justifyContent: 'space-between', width: (AppSizes.screen.width - (AppSizes.paddingXLrg * 2))}}>
                                 <TouchableHighlight
                                     onPress={() => handleFormChange('already_trained_number', false)}
-                                    style={[AppStyles.xLrgCircle, styles.shadowEffect, {
+                                    style={[AppStyles.xLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
                                         backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
                                     }]}
                                     underlayColor={AppColors.transparent}
@@ -650,8 +596,11 @@ class ReadinessSurvey extends Component {
                                     </Text>
                                 </TouchableHighlight>
                                 <TouchableHighlight
-                                    onPress={() => handleFormChange('already_trained_number', 1)}
-                                    style={[AppStyles.xLrgCircle, styles.shadowEffect, {
+                                    onPress={() => {
+                                        this._resetSportBuilder();
+                                        handleFormChange('already_trained_number', 1);
+                                    }}
+                                    style={[AppStyles.xLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
                                         backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
                                     }]}
                                     underlayColor={AppColors.transparent}
@@ -670,8 +619,11 @@ class ReadinessSurvey extends Component {
                                     </Text>
                                 </TouchableHighlight>
                                 <TouchableHighlight
-                                    onPress={() => this.pickerTrainedAlreadyRefs.togglePicker()}
-                                    style={[AppStyles.xLrgCircle, styles.shadowEffect, {
+                                    onPress={() => {
+                                        console.log('this.pickerTrainedAlreadyRefs',this.pickerTrainedAlreadyRefs);
+                                        this.pickerTrainedAlreadyRefs.togglePicker(true);
+                                    }}
+                                    style={[AppStyles.xLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
                                         backgroundColor: dailyReadiness.already_trained_number > 1 ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
                                     }]}
                                     underlayColor={AppColors.transparent}
@@ -691,9 +643,13 @@ class ReadinessSurvey extends Component {
                                 </TouchableHighlight>
                             </View>
                             <FathomPicker
+                                enabled={true}
                                 hideIcon={true}
                                 items={MyPlanConstants.alreadyTrainedNumber}
-                                onValueChange={value => handleFormChange('already_trained_number', value)}
+                                onValueChange={value => {
+                                    this._resetSportBuilder();
+                                    handleFormChange('already_trained_number', value);
+                                }}
                                 placeholder={{
                                     label: 'Select a Value',
                                     value: null,
@@ -809,7 +765,9 @@ class ReadinessSurvey extends Component {
                     }) : <View />}
 
                     <ScrollView
+                        bounces={false}
                         nestedScrollEnabled={true}
+                        overScrollMode={'never'}
                         ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
                         style={{flex: 1,}}
                     >
@@ -845,8 +803,10 @@ class ReadinessSurvey extends Component {
                     </ScrollView>
 
                     <ScrollView
+                        bounces={false}
                         nestedScrollEnabled={true}
-                        onScrollEndDrag={event => this._scrollViewEndDrag(event)}
+                        onMomentumScrollEnd={event => this._scrollViewEndDrag(event)}
+                        overScrollMode={'never'}
                         ref={ref => {this.myAreasOfSorenessComponent = ref;}}
                         style={{flex: 1,}}
                     >
@@ -877,8 +837,14 @@ class ReadinessSurvey extends Component {
                         />
                         <BackNextButtons
                             isValid={isFormValidItems.selectAreasOfSorenessValid}
-                            onBackClick={() => this._renderNextPage(6, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked)}
-                            onNextClick={() => this._renderNextPage(6, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked)}
+                            onBackClick={() => {
+                                this.setState({ isActionButtonVisible: false, });
+                                this._renderNextPage(6, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked);
+                            }}
+                            onNextClick={() => {
+                                this.setState({ isActionButtonVisible: false, });
+                                this._renderNextPage(6, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked);
+                            }}
                         />
                     </ScrollView>
 
@@ -925,10 +891,16 @@ class ReadinessSurvey extends Component {
                         <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
                             <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Will you train later today?'}</Text>
                             <Spacer size={20} />
-                            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: (AppSizes.screen.width - (AppSizes.paddingXLrg * 2))}}>
+                            <View
+                                style={{
+                                    flexDirection:  'row',
+                                    justifyContent: 'space-between',
+                                    width:          220,
+                                }}
+                            >
                                 <TouchableHighlight
                                     onPress={() => handleFormChange('sessions_planned', true)}
-                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, {
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
                                         backgroundColor: dailyReadiness.sessions_planned === true ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
                                     }]}
                                     underlayColor={AppColors.transparent}
@@ -946,9 +918,10 @@ class ReadinessSurvey extends Component {
                                         {'YES'}
                                     </Text>
                                 </TouchableHighlight>
+                                <Spacer size={20} />
                                 <TouchableHighlight
                                     onPress={() => handleFormChange('sessions_planned', false)}
-                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, {
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
                                         backgroundColor: dailyReadiness.sessions_planned === false ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
                                     }]}
                                     underlayColor={AppColors.transparent}
@@ -987,10 +960,16 @@ class ReadinessSurvey extends Component {
                                 {functionalStrengthTodaySubtext}
                             </Text>
                             <Spacer size={20} />
-                            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: (AppSizes.screen.width - (AppSizes.paddingXLrg * 2))}}>
+                            <View
+                                style={{
+                                    flexDirection:  'row',
+                                    justifyContent: 'space-between',
+                                    width:          220,
+                                }}
+                            >
                                 <TouchableHighlight
                                     onPress={() => handleFormChange('wants_functional_strength', true)}
-                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, {
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
                                         backgroundColor: dailyReadiness.wants_functional_strength === true ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
                                     }]}
                                     underlayColor={AppColors.transparent}
@@ -1008,9 +987,10 @@ class ReadinessSurvey extends Component {
                                         {'YES'}
                                     </Text>
                                 </TouchableHighlight>
+                                <Spacer size={20} />
                                 <TouchableHighlight
                                     onPress={() => handleFormChange('wants_functional_strength', false)}
-                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, {
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
                                         backgroundColor: dailyReadiness.wants_functional_strength === false ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
                                     }]}
                                     underlayColor={AppColors.transparent}
