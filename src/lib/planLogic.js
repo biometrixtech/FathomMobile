@@ -373,10 +373,10 @@ const PlanLogic = {
             areQuestionsValid,
             isFunctionalStrengthValid,
             isPrevSorenessValid:             (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0),
+            isSecondFunctionalStrengthValid: dailyReadiness.wants_functional_strength !== null,
             isTrainedTodayValid,
             selectAreasOfSorenessValid:      filteredAreasOfSoreness.length > 0 || (areasOfSorenessRef && areasOfSorenessRef.state.isAllGood),
             willTrainLaterValid:             dailyReadiness.sessions_planned !== null,
-            isSecondFunctionalStrengthValid: dailyReadiness.wants_functional_strength !== null,
         };
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);

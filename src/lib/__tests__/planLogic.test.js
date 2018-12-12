@@ -378,7 +378,7 @@ const helperFunctions = {
         let nonBilateralAreaClicked = {
             bilateral:    false,
             group:        'muscle',
-            helping_verb: 'are',
+            helping_verb: 'have',
             image:        {0: 'Abs.svg',},
             index:        3,
             label:        'Abdominals',
@@ -407,7 +407,7 @@ const helperFunctions = {
         let bilateralAreaClicked = {
             bilateral:    true,
             group:        'joint',
-            helping_verb: 'is',
+            helping_verb: 'has',
             image:        {0: 'Knee.svg', 1: 'L_Knee.svg', 2: 'R_Knee.svg'},
             index:        7,
             label:        'knee',
@@ -535,23 +535,23 @@ const helperFunctions = {
     getAreaOfSorenessFullGroupedBodyPartMap: () => {
         return {
             back: [
-                {index: 12, order: 11, label: 'Lower Back', location: 'back', group: 'joint', image: {0: 'LowBack.svg'}, bilateral: false, helping_verb: 'is'},
-                {index: 14, order: 12, label: 'Glutes', location: 'back', group: 'muscle', image: {0: 'Glute.svg', 1: 'L_Glute.svg', 2: 'R_Glute.svg'}, bilateral: true, helping_verb: 'are'},
-                {index: 15, order: 13, label: 'Hamstrings', location: 'back', group: 'muscle', image: {0: 'Hamstring.svg', 1: 'L_Hamstring.svg', 2: 'R_Hamstring.svg'}, bilateral: true, helping_verb: 'are'},
-                {index: 16, order: 14, label: 'Calves', location: 'back', group: 'muscle', image: {0: 'Calf.svg', 1: 'L_Calf.svg', 2: 'R_Calf.svg'}, bilateral: true, helping_verb: 'are'},
-                {index: 17, order: 15, label: 'Achilles', location: 'back', group: 'joint', image: {0: 'Achilles.svg', 1: 'L_Achilles.svg', 2: 'R_Achilles.svg'}, bilateral: true, helping_verb: 'are'},
-                {index: 18, order: 10, label: 'Upper Back', location: 'back', group: 'muscle', image: {0: 'UpperBackNeck.svg'}, bilateral: false, helping_verb: 'is'},
+                {index: 12, order: 11, label: 'Lower Back', location: 'back', group: 'joint', image: {0: 'LowBack.svg'}, bilateral: false, helping_verb: 'has'},
+                {index: 14, order: 12, label: 'Glutes', location: 'back', group: 'muscle', image: {0: 'Glute.svg', 1: 'L_Glute.svg', 2: 'R_Glute.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 15, order: 13, label: 'Hamstrings', location: 'back', group: 'muscle', image: {0: 'Hamstring.svg', 1: 'L_Hamstring.svg', 2: 'R_Hamstring.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 16, order: 14, label: 'Calves', location: 'back', group: 'muscle', image: {0: 'Calf.svg', 1: 'L_Calf.svg', 2: 'R_Calf.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 17, order: 15, label: 'Achilles', location: 'back', group: 'joint', image: {0: 'Achilles.svg', 1: 'L_Achilles.svg', 2: 'R_Achilles.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 18, order: 10, label: 'Upper Back', location: 'back', group: 'muscle', image: {0: 'UpperBackNeck.svg'}, bilateral: false, helping_verb: 'has'},
             ],
             front: [
-                {index: 3, order: 1, label: 'Abdominals', location: 'front', group: 'muscle', image: {0: 'Abs.svg'}, bilateral: false, helping_verb: 'are'},
-                {index: 4, order: 3, label: 'Hip', location: 'front', group: 'joint', image: {0: 'Hip.svg', 1: 'L_Hip.svg', 2: 'R_Hip.svg'}, bilateral: true, helping_verb: 'is'},
-                {index: 5, order: 2, label: 'Groin', location: 'front', group: 'muscle', image: {0: 'Groin.svg', 1: 'L_Groin.svg', 2: 'R_Groin.svg'}, bilateral: true, helping_verb: 'is'},
-                {index: 6, order: 4, label: 'Quads', location: 'front', group: 'muscle', image: {0: 'Quad.svg', 1: 'L_Quad.svg', 2: 'R_Quad.svg'}, bilateral: true, helping_verb: 'are'},
-                {index: 7, order: 6, label: 'Knee', location: 'front', group: 'joint', image: {0: 'Knee.svg', 1: 'L_Knee.svg', 2: 'R_Knee.svg'}, bilateral: true, helping_verb: 'is'},
-                {index: 8, order: 7, label: 'Shin', location: 'front', group: 'muscle', image: {0: 'Shin.svg', 1: 'L_Shin.svg', 2: 'R_Shin.svg'}, bilateral: true, helping_verb: 'is'},
-                {index: 9, order: 8, label: 'Ankle', location: 'front', group: 'joint', image: {0: 'Ankle.svg', 1: 'L_Ankle.svg', 2: 'R_Ankle.svg'}, bilateral: true, helping_verb: 'is'},
-                {index: 10, order: 9, label: 'Foot', location: 'front', group: 'joint', image: {0: 'Foot.svg', 1: 'L_Foot.svg', 2: 'R_Foot.svg'}, bilateral: true, helping_verb: 'is'},
-                {index: 11, order: 5, label: 'IT Band', location: 'front', group: 'muscle', image: {0: 'ITBand.svg', 1: 'L_ITBand.svg', 2: 'R_ITBand.svg'}, bilateral: true, helping_verb: 'is'},
+                {index: 3, order: 1, label: 'Abdominals', location: 'front', group: 'muscle', image: {0: 'Abs.svg'}, bilateral: false, helping_verb: 'have'},
+                {index: 4, order: 3, label: 'Hip', location: 'front', group: 'joint', image: {0: 'Hip.svg', 1: 'L_Hip.svg', 2: 'R_Hip.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 5, order: 2, label: 'Groin', location: 'front', group: 'muscle', image: {0: 'Groin.svg', 1: 'L_Groin.svg', 2: 'R_Groin.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 6, order: 4, label: 'Quads', location: 'front', group: 'muscle', image: {0: 'Quad.svg', 1: 'L_Quad.svg', 2: 'R_Quad.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 7, order: 6, label: 'Knee', location: 'front', group: 'joint', image: {0: 'Knee.svg', 1: 'L_Knee.svg', 2: 'R_Knee.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 8, order: 7, label: 'Shin', location: 'front', group: 'muscle', image: {0: 'Shin.svg', 1: 'L_Shin.svg', 2: 'R_Shin.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 9, order: 8, label: 'Ankle', location: 'front', group: 'joint', image: {0: 'Ankle.svg', 1: 'L_Ankle.svg', 2: 'R_Ankle.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 10, order: 9, label: 'Foot', location: 'front', group: 'joint', image: {0: 'Foot.svg', 1: 'L_Foot.svg', 2: 'R_Foot.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 11, order: 5, label: 'IT Band', location: 'front', group: 'muscle', image: {0: 'ITBand.svg', 1: 'L_ITBand.svg', 2: 'R_ITBand.svg'}, bilateral: true, helping_verb: 'has'},
             ],
         }
     },
@@ -568,7 +568,7 @@ const helperFunctions = {
         let leftGlute = {
             bilateral:    true,
             group:        'muscle',
-            helping_verb: 'are',
+            helping_verb: 'has',
             image:        {0: 'Glute.svg', 1: 'L_Glute.svg', 2: 'R_Glute.svg'},
             index:        14,
             label:        'Glutes',
@@ -582,7 +582,7 @@ const helperFunctions = {
         let lowerBack = {
             bilateral:    false,
             group:        'joint',
-            helping_verb: 'is',
+            helping_verb: 'has',
             image:        {0: 'LowBack.svg'},
             index:        12,
             label:        'Lower Back',
@@ -596,7 +596,7 @@ const helperFunctions = {
         let rightHamstring = {
             bilateral:    true,
             group:        'muscle',
-            helping_verb: 'are',
+            helping_verb: 'has',
             image:        {0: 'Hamstring.svg', 1: 'L_Hamstring.svg', 2: 'R_Hamstring.svg'},
             index:        15,
             label:        'Hamstrings',
@@ -648,11 +648,12 @@ const helperFunctions = {
         ];
     },
 
-    readinessSurveyRenderLogicExpectedResult: (functionalStrengthTodaySubtext, isFirstFunctionalStrength, isFormValid, isSecondFunctionalStrength, newSoreBodyParts, partOfDay, selectedSportPositions) => {
+    readinessSurveyRenderLogicExpectedResult: (functionalStrengthTodaySubtext, isFirstFunctionalStrength, isFormValid, isFormValidItems, isSecondFunctionalStrength, newSoreBodyParts, partOfDay, selectedSportPositions) => {
         return {
             functionalStrengthTodaySubtext,
             isFirstFunctionalStrength,
             isFormValid,
+            isFormValidItems,
             isSecondFunctionalStrength,
             newSoreBodyParts,
             partOfDay,
@@ -867,6 +868,19 @@ const helperFunctions = {
         };
     },
 
+    readinessSurveyRenderLogicFormValidItems: (areAreasOfSorenessValid, areQuestionsValid, isFunctionalStrengthValid, isPrevSorenessValid, isSecondFunctionalStrengthValid, isTrainedTodayValid, selectAreasOfSorenessValid, willTrainLaterValid) => {
+        return {
+            areAreasOfSorenessValid,
+            areQuestionsValid,
+            isFunctionalStrengthValid,
+            isPrevSorenessValid,
+            isSecondFunctionalStrengthValid,
+            isTrainedTodayValid,
+            selectAreasOfSorenessValid,
+            willTrainLaterValid,
+        };
+    },
+
 };
 
 it('Coaches Dashboard Search Area Render Logic - No Insights', () => {
@@ -994,7 +1008,8 @@ it('Readiness Survey Render Logic - On Enter, No Previous Soreness (FS Eligible,
     let dailyReadiness = helperFunctions.getDailyReadinessDefaultState(null, null, 6, 8, [], null);
     let soreBodyParts = helperFunctions.readinessSurveyRenderLogicSoreBodyParts([], 0, 2, 14, true);
     let areasOfSorenessRef = {state: {isAllGood: true}};
-    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('(0/2 completed in last 7 days)', false, false, true, [], 'AFTERNOON', []);
+    let isFormValidItems = helperFunctions.readinessSurveyRenderLogicFormValidItems(true, true, false, true, false, false, true, true);
+    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('(0/2 completed in last 7 days)', false, false, isFormValidItems, true, [], 'AFTERNOON', []);
     expect(PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, areasOfSorenessRef, 14)).toEqual(expectedResult);
 });
 
@@ -1002,7 +1017,8 @@ it('Readiness Survey Render Logic - On Enter, No Previous Soreness (FS Eligible 
     let dailyReadiness = helperFunctions.getDailyReadinessDefaultState();
     let soreBodyParts = helperFunctions.readinessSurveyRenderLogicSoreBodyParts([], 0, 2, 14, true);
     let areasOfSorenessRef = {state: {isAllGood: false}};
-    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('(0/2 completed in last 7 days)', false, false, true, [], 'EVENING', []);
+    let isFormValidItems = helperFunctions.readinessSurveyRenderLogicFormValidItems(false, false, false, true, false, false, false, true);
+    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('(0/2 completed in last 7 days)', false, false, isFormValidItems, true, [], 'EVENING', []);
     expect(PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, areasOfSorenessRef, 21)).toEqual(expectedResult);
 });
 
@@ -1010,7 +1026,8 @@ it('Readiness Survey Render Logic - On Enter, No Previous Soreness (NOT FS Eligi
     let dailyReadiness = helperFunctions.getDailyReadinessDefaultState(null, null, 6, 8, [], null);
     let soreBodyParts = helperFunctions.readinessSurveyRenderLogicSoreBodyParts([], 0, 2, 14, false);
     let areasOfSorenessRef = {state: {isAllGood: true}};
-    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('', false, true, false, [], 'EVENING', []);
+    let isFormValidItems = helperFunctions.readinessSurveyRenderLogicFormValidItems(true, true, true, true, false, false, true, true);
+    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('', false, true, isFormValidItems, false, [], 'EVENING', []);
     expect(PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, areasOfSorenessRef, 18)).toEqual(expectedResult);
 });
 
@@ -1018,7 +1035,8 @@ it('Readiness Survey Render Logic - On Enter, No Previous Soreness (NOT FS Eligi
     let dailyReadiness = helperFunctions.getDailyReadinessDefaultState();
     let soreBodyParts = {body_parts: [], completed_functional_strength_sessions: 0, current_position: 2, current_sport_name: 14, functional_strength_eligible: false};
     let areasOfSorenessRef = {state: {isAllGood: false}};
-    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('', false, false, false, [], 'MORNING', []);
+    let isFormValidItems = helperFunctions.readinessSurveyRenderLogicFormValidItems(false, false, true, true, false, false, false, true)
+    let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('', false, false, isFormValidItems, false, [], 'MORNING', []);
     expect(PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, areasOfSorenessRef, 8)).toEqual(expectedResult);
 });
 
@@ -1026,7 +1044,7 @@ it('Sore Body Part Render Logic - On Enter, Right Hamstring (PAIN Selected)', ()
     let bodyPart = helperFunctions.handleSoreBodyParts(15, 2).body_parts[0];
     let bodyPartSide = 2;
     let pageStateType = 'pain';
-    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartRightHamstring(), 'right hamstring', 'muscle', 'is', helperFunctions.muscleLevelsOfSorenessAndPain());
+    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartRightHamstring(), 'Right Hamstring', 'muscle', 'has', helperFunctions.muscleLevelsOfSorenessAndPain());
     expect(PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, pageStateType)).toEqual(expectedResult);
 });
 
@@ -1034,7 +1052,7 @@ it('Sore Body Part Render Logic - On Enter, Lower Back (SORE Selected)', () => {
     let bodyPart = helperFunctions.handleSoreBodyParts(12, 0).body_parts[0];
     let bodyPartSide = 0;
     let pageStateType = '';
-    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartLowerBack(), 'lower back', 'joint', 'is', helperFunctions.jointLevelsOfSoreness());
+    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartLowerBack(), 'Lower Back', 'joint', 'has', helperFunctions.jointLevelsOfSoreness());
     expect(PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, pageStateType)).toEqual(expectedResult);
 });
 
@@ -1042,7 +1060,7 @@ it('Sore Body Part Render Logic - On Enter, Left Glute', () => {
     let bodyPart = helperFunctions.handleSoreBodyParts(14, 1).body_parts[0];
     let bodyPartSide = 1;
     let pageStateType = '';
-    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartLeftGlute(), 'left glute', 'muscle', 'is', []);
+    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartLeftGlute(), 'Left Glute', 'muscle', 'has', []);
     expect(PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, pageStateType)).toEqual(expectedResult);
 });
 
