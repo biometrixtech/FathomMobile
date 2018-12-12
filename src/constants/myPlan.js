@@ -424,6 +424,7 @@ const coachesDashboardCardsData = isToday => {
             {
                 description: 'Pain severity is too high to train today, consult medical staff to evaluate status',
                 label:       'NOT CLEARED TO TRAIN TODAY',
+                overlayText: 'When an athlete completes a survey, their status will update here.',
                 value:       'not_cleared_for_training',
             },
             {
@@ -444,7 +445,6 @@ const coachesDashboardCardsData = isToday => {
             {
                 description: 'Train as normal and complete Fathom\'s Prep and Recovery',
                 label:       'ALL GOOD',
-                overlayText: 'When an athlete completes a survey, their status will update here.',
                 value:       'all_good',
             },
         ]
@@ -521,6 +521,20 @@ const alreadyTrainedNumber = [
     },
 ];
 
+const fathomSliderText = [
+    'Rest',
+    'Very, Very Easy',
+    'Easy',
+    'Moderate',
+    'Somewhat Hard',
+    'Hard',
+    ' ',
+    'Very Hard',
+    ' ',
+    ' ',
+    'Max effort',
+];
+
 export default {
     allGoodBodyPartMessage,
     alreadyTrainedNumber,
@@ -534,6 +548,7 @@ export default {
     coachesDashboardCardsData,
     durationOptionGroups,
     exerciseListButtonStyles,
+    fathomSliderText,
     isFSCompletedValid,
     jointLevels,
     muscleLevels,
