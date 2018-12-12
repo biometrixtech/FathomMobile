@@ -66,7 +66,7 @@
     "react-native-sectioned-multi-select": "^0.5.2",
     "react-native-snap-carousel": "^3.7.2",
     "react-native-splash-screen": "3.1.1",
-    "react-native-vector-icons": "4.6.0",
+    "react-native-vector-icons": "^6.1.0",
     "react-native-video": "3.2.0",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
