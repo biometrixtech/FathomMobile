@@ -57,7 +57,7 @@ const PlanLogic = {
         // setup varibles
         let newFormFields;
         // logic
-        if(name === 'already_trained_number' && value >= 1) {
+        if(name === 'already_trained_number') {
             let newValue = [];
             for (let i = 0; i < value; i += 1) {
                 newValue.push(PlanLogic.returnEmptySession());
@@ -91,7 +91,7 @@ const PlanLogic = {
     returnEmptySession: () => {
         let postSessionSurvey = {
             event_date: `${moment().toISOString(true).split('.')[0]}Z`,
-            RPE:        null,
+            RPE:        -1,
             soreness:   [],
         };
         return {
@@ -368,10 +368,14 @@ const PlanLogic = {
         let isTrainedTodayValid = dailyReadiness.already_trained_number === 0 || dailyReadiness.already_trained_number === false || dailyReadiness.already_trained_number >= 1;
         let isFormValid = isFunctionalStrengthValid && areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
         let isFormValidItems = {
-            isFunctionalStrengthValid,
-            isPrevSorenessValid: (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0),
-            isTrainedTodayValid,
+            areAreasOfSorenessValid,
             areQuestionsValid,
+            isFunctionalStrengthValid,
+            isPrevSorenessValid:             (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0),
+            isTrainedTodayValid,
+            selectAreasOfSorenessValid:      filteredAreasOfSoreness.length > 0 || (areasOfSorenessRef && areasOfSorenessRef.state.isAllGood),
+            willTrainLaterValid:             dailyReadiness.sessions_planned !== null,
+            isSecondFunctionalStrengthValid: dailyReadiness.wants_functional_strength !== null,
         };
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
@@ -411,9 +415,9 @@ const PlanLogic = {
             } else {
                 mainBodyPartName = mainBodyPartName.slice(0, -1);
             }
-            helpingVerb = 'is';
+            helpingVerb = 'has';
         }
-        let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'left ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'right ' : ''}${mainBodyPartName.toLowerCase()}`;
+        let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'Left ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'Right ' : ''}${mainBodyPartName}`;
         return {
             bodyPartMap,
             bodyPartName,
@@ -585,6 +589,28 @@ const PlanLogic = {
         let doWeHaveWeeklyInsights = weeklyInsightsLength > 0;
         return {
             doWeHaveWeeklyInsights,
+        };
+    },
+
+    /**
+      * Single Session Validation in Render Logic
+      * - ReadinessSurvey
+      */
+    // TODO: UNIT TEST ME
+    handleSingleSessionValidation: (session, sportScheduleBuilderRef) => {
+        let isRPEValid = false;
+        let isSportValid = false;
+        if(!sportScheduleBuilderRef) {
+            return {
+                isRPEValid,
+                isSportValid,
+            };
+        }
+        let { sportText, } = PlanLogic.handleSportScheduleBuilderRenderLogic(session, sportScheduleBuilderRef.state);
+        return {
+            isRPEValid:   session.post_session_survey.RPE > 0,
+            isSportValid: sportScheduleBuilderRef.state.isFormValid,
+            sportText,
         };
     },
 

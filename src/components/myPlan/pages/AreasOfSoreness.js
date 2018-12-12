@@ -113,7 +113,7 @@ class AreasOfSoreness extends Component {
                                     if(!user.first_time_experience.includes('all_good_body_part_tooltip') && this.state.isAllGood) {
                                         this.setState({ isAllGoodTooltipOpen: true, });
                                     }
-                                    if(user.first_time_experience.includes('all_good_body_part_tooltip')) {
+                                    if(user.first_time_experience.includes('all_good_body_part_tooltip') && this.state.isAllGood) {
                                         scrollToBottom();
                                     }
                                     handleAreaOfSorenessClick(false, true);
@@ -196,7 +196,7 @@ class AreasOfSoreness extends Component {
                     )
                 })}
                 <Spacer size={50} />
-                <View onLayout={event => {this.soreBodyPartRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,}}}>
+                {/*<View onLayout={event => {this.soreBodyPartRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,}}}>
                     {_.map(areaOfSorenessClicked, (area, i) => {
                         return(
                             <View key={`AreasOfSoreness1${i}`} style={[AppStyles.paddingVertical]}>
@@ -212,7 +212,7 @@ class AreasOfSoreness extends Component {
                             </View>
                         )
                     })}
-                </View>
+                </View>*/}
             </View>
         )
     }

@@ -69,7 +69,7 @@ const ScaleButton = ({
                 {valueLabel.toUpperCase()}
             </Text>
             :
-            <Spacer size={10} />
+            null
         }
     </View>
 );

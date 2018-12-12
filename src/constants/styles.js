@@ -455,4 +455,11 @@ export default {
         justifyContent: 'center',
         width:          75,
     },
+    xxLrgCircle: {
+        alignSelf:      'center',
+        borderRadius:   100 / 2,
+        height:         100,
+        justifyContent: 'center',
+        width:          100,
+    },
 };

@@ -105,36 +105,34 @@ class SoreBodyPart extends Component {
         return(
             <View>
                 { isPrevSoreness ?
-                    <View>
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {`How ${helpingVerb} your `}
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                {bodyPartName}
-                            </Text>
-                            {' feeling?'}
+                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                        {`How ${helpingVerb} your `}
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                            {bodyPartName}
                         </Text>
-                        <View style={[AppStyles.containerCentered]}>
-                            { bodyPartMap ?
-                                <SVGImage
-                                    firstTimeExperience={firstTimeExperience}
-                                    handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
-                                    image={bodyPartMap.image[bodyPartSide]}
-                                    style={{width: 100, height: 100}}
-                                />
-                                :
-                                null
-                            }
-                        </View>
-                    </View>
+                        {' felt?'}
+                    </Text>
                     :
-                    <Text oswaldLight style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(18),}]}>
-                        {'MY'}
-                        <Text oswaldMedium style={{fontSize: AppFonts.scaleFont(18),}}>
-                            {` ${bodyPartName === 'abdominals' ? bodyPartName.slice(0, -1).toUpperCase() : bodyPartName.toUpperCase()}`}
+                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
+                        {'My '}
+                        <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>
+                            {bodyPartName}
                         </Text>
-                        {' FEELS...'}
+                        {` ${bodyPartName === 'Abdominals' ? 'feel...' : 'feels..'}`}
                     </Text>
                 }
+                <View style={[AppStyles.containerCentered]}>
+                    { bodyPartMap ?
+                        <SVGImage
+                            firstTimeExperience={firstTimeExperience}
+                            handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
+                            image={bodyPartMap.image[bodyPartSide]}
+                            style={{width: 100, height: 100}}
+                        />
+                        :
+                        null
+                    }
+                </View>
                 <Tooltip
                     animated
                     content={
@@ -177,12 +175,12 @@ class SoreBodyPart extends Component {
                                     type={'material-community'}
                                 />
                                 <Text
-                                    oswaldRegular
+                                    oswaldMedium
                                     style={[
                                         AppStyles.textCenterAligned,
                                         {
                                             color:           this.state.type === 'all-good' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                            fontSize:        AppFonts.scaleFont(14),
+                                            fontSize:        AppFonts.scaleFont(12),
                                             paddingVertical: AppSizes.paddingSml,
                                         }
                                     ]}
@@ -219,12 +217,12 @@ class SoreBodyPart extends Component {
                                     type={'material-community'}
                                 />
                                 <Text
-                                    oswaldRegular
+                                    oswaldMedium
                                     style={[
                                         AppStyles.textCenterAligned,
                                         {
                                             color:           this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                            fontSize:        AppFonts.scaleFont(14),
+                                            fontSize:        AppFonts.scaleFont(12),
                                             paddingVertical: AppSizes.paddingSml,
                                         }
                                     ]}
@@ -259,12 +257,12 @@ class SoreBodyPart extends Component {
                                     type={'material-community'}
                                 />
                                 <Text
-                                    oswaldRegular
+                                    oswaldMedium
                                     style={[
                                         AppStyles.textCenterAligned,
                                         {
                                             color:           this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                            fontSize:        AppFonts.scaleFont(14),
+                                            fontSize:        AppFonts.scaleFont(12),
                                             paddingVertical: AppSizes.paddingSml,
                                         }
                                     ]}

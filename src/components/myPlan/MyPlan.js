@@ -135,7 +135,8 @@ class MyPlan extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dailyReadiness: {
+            currentTabLocation: 0,
+            dailyReadiness:     {
                 current_position:          null,
                 current_sport_name:        null,
                 readiness:                 0,
@@ -410,14 +411,18 @@ class MyPlan extends Component {
         let newPrepareObject = Object.assign({}, this.state.prepare, {
             isReadinessSurveyCompleted: true,
         });
+        if(!this.state.dailyReadiness.sessions_planned && this.tabView) {
+            this.tabView.goToPage(2);
+        }
         this.setState({
             dailyReadiness: {
                 readiness:     0,
                 sleep_quality: 0,
                 soreness:      [],
             },
-            isPrepCalculating:          true,
+            isPrepCalculating:          this.state.dailyReadiness.sessions_planned ? true : false,
             isReadinessSurveyModalOpen: false,
+            isRecoverCalculating:       this.state.dailyReadiness.sessions_planned ? false : true,
             prepare:                    newPrepareObject,
         });
         this.props.postReadinessSurvey(newDailyReadiness)
@@ -1823,9 +1828,10 @@ class MyPlan extends Component {
         const currentScreenName = tabLocation.i === 0 ? 'PREPARE' : tabLocation.i === 1 ? 'TRAIN' : tabLocation.i === 2 ? 'RECOVER' : '';
         const fromScreenName = tabLocation.from === 0 ? 'PREPARE' : tabLocation.from === 1 ? 'TRAIN' : tabLocation.from === 2 ? 'RECOVER' : '';
         GATracker.trackScreenView(currentScreenName, { from: fromScreenName, });
+        this.setState({ currentTabLocation: tabLocation.i, });
     }
 
-    render() {
+    render = () => {
         // making sure we can only drag horizontally if our modals are closed and nothing is loading
         let isScrollLocked = !this.state.isReadinessSurveyModalOpen && !this.state.isPostSessionSurveyModalOpen && !this.state.loading ? false : true;
         return (

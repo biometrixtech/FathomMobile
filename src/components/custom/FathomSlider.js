@@ -23,9 +23,11 @@ import { View, } from 'react-native';
 
 // import third-party libraries
 import { Slider, } from 'react-native-elements';
+import _ from 'lodash';
 
 // import constants
-import { AppColors, } from '../../constants';
+import { AppColors, AppFonts, AppSizes, MyPlan as MyPlanConstants, } from '../../constants';
+import { Text, } from './';
 
 /* Component ==================================================================== */
 const FathomSlider = ({
@@ -35,21 +37,57 @@ const FathomSlider = ({
     minimumValue,
     name,
     orientation,
-    side,
     step,
     thumbTintColor,
     value,
 }) => (
-    <View style={{backgroundColor: 'red', alignItems: 'center', flex: 1, justifyContent: 'center',}}>
-        <Slider
-            maximumValue={maximumValue}
-            minimumValue={minimumValue}
-            onSlidingComplete={val => handleFormChange(name, val, bodyPart, side)}
-            orientation={orientation}
-            step={step}
-            thumbTintColor={thumbTintColor}
-            value={value}
-        />
+    <View style={{flex: 1, flexDirection: 'row',}}>
+        <View style={{alignItems: 'flex-end', flex: 4, justifyContent: 'space-between',}}>
+            <Text style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{' '}</Text>
+            { _.map(MyPlanConstants.postSessionFeel, (val, key) => (
+                <Text
+                    oswaldMedium
+                    key={val+key}
+                    style={{
+                        color:    key === value ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.darkGrey,
+                        fontSize: AppFonts.scaleFont(key === value ? 22 : 12),
+                    }}
+                >
+                    {key}
+                </Text>
+            ))}
+        </View>
+        <View style={{flex: 2, justifyContent: 'center',}}>
+            <Slider
+                maximumValue={maximumValue}
+                minimumTrackTintColor={AppColors.primary.yellow.hundredPercent}
+                minimumValue={minimumValue}
+                onSlidingComplete={val => handleFormChange(val)}
+                orientation={orientation}
+                step={step}
+                style={{backgroundColor: 'green',}}
+                thumbTintColor={thumbTintColor}
+                // thumbTouchSize={{height: 75, width: 75}}
+                thumbStyle={{backgroundColor: AppColors.primary.yellow.hundredPercent,}}
+                trackStyle={{backgroundColor: AppColors.border,}}
+                value={value}
+            />
+        </View>
+        <View style={{flex: 4, justifyContent: 'space-between',}}>
+            <Text style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{' '}</Text>
+            { _.map(MyPlanConstants.postSessionFeel, (val, key) => (
+                <Text
+                    oswaldMedium
+                    key={val+key}
+                    style={{
+                        color:    key === value ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.darkGrey,
+                        fontSize: AppFonts.scaleFont(key === value ? 22 : 12),
+                    }}
+                >
+                    {val.toUpperCase()}
+                </Text>
+            ))}
+        </View>
     </View>
 );
 
@@ -60,7 +98,6 @@ FathomSlider.propTypes = {
     minimumValue:     PropTypes.number.isRequired,
     name:             PropTypes.string.isRequired,
     orientation:      PropTypes.string,
-    side:             PropTypes.number,
     step:             PropTypes.number,
     thumbTintColor:   PropTypes.string,
     value:            PropTypes.number.isRequired,
@@ -68,7 +105,6 @@ FathomSlider.propTypes = {
 
 FathomSlider.defaultProps = {
     orientation:    'vertical',
-    side:           null,
     step:           1,
     thumbTintColor: AppColors.primary.yellow.hundredPercent,
 };
