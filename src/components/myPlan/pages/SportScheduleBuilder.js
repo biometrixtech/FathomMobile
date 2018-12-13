@@ -3,6 +3,7 @@
  *
     <SportScheduleBuilder
         handleFormChange={this._handleFormChange}
+        isPostSession={true}
         postSession={postSession}
         scrollTo={() => this._scrollTo(0)}
         scrollToTop={this._scrollToTop}
@@ -115,7 +116,7 @@ class SportScheduleBuilder extends Component {
     }
 
     render = () => {
-        const { handleFormChange, postSession, scrollTo, scrollToTop, typicalSessions, } = this.props;
+        const { handleFormChange, isPostSession, postSession, scrollTo, scrollToTop, typicalSessions, } = this.props;
         const { durationValueGroups, isFormValid, step, timeValueGroups, } = this.state;
         let underlinePadding = Platform.OS === 'ios' ? 2 : 8;
         let {
@@ -448,24 +449,28 @@ class SportScheduleBuilder extends Component {
                                             </View>
                                         </View>
                                         <Spacer size={30} />
-                                        <Button
-                                            backgroundColor={isFormValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                                            buttonStyle={{
-                                                borderColor:  isFormValid ? AppColors.white : AppColors.zeplin.lightGrey,
-                                                borderRadius: 10,
-                                                borderWidth:  1,
-                                                width:        AppSizes.screen.widthThird,
-                                            }}
-                                            color={isFormValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                                            containerViewStyle={{alignItems: 'center', justifyContent: 'center',}}
-                                            fontFamily={AppStyles.robotoBold.fontFamily}
-                                            fontWeight={AppStyles.robotoBold.fontWeight}
-                                            onPress={() => isFormValid ? scrollTo() : null}
-                                            outlined
-                                            raised={false}
-                                            textStyle={{ fontSize: AppFonts.scaleFont(14) }}
-                                            title={'Next'}
-                                        />
+                                        { isPostSession ?
+                                            <View />
+                                            :
+                                            <Button
+                                                backgroundColor={isFormValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                                                buttonStyle={{
+                                                    borderColor:  isFormValid ? AppColors.white : AppColors.zeplin.lightGrey,
+                                                    borderRadius: 10,
+                                                    borderWidth:  1,
+                                                    width:        AppSizes.screen.widthThird,
+                                                }}
+                                                color={isFormValid ? AppColors.white : AppColors.zeplin.lightGrey}
+                                                containerViewStyle={{alignItems: 'center', justifyContent: 'center',}}
+                                                fontFamily={AppStyles.robotoBold.fontFamily}
+                                                fontWeight={AppStyles.robotoBold.fontWeight}
+                                                onPress={() => isFormValid ? scrollTo() : null}
+                                                outlined
+                                                raised={false}
+                                                textStyle={{ fontSize: AppFonts.scaleFont(14) }}
+                                                title={'Next'}
+                                            />
+                                        }
                                     </View>
                                     :
                                     null
@@ -478,12 +483,15 @@ class SportScheduleBuilder extends Component {
 
 SportScheduleBuilder.propTypes = {
     handleFormChange: PropTypes.func.isRequired,
+    isPostSession:    PropTypes.bool,
     postSession:      PropTypes.object.isRequired,
     scrollTo:         PropTypes.func.isRequired,
     typicalSessions:  PropTypes.array.isRequired,
 };
 
-SportScheduleBuilder.defaultProps = {};
+SportScheduleBuilder.defaultProps = {
+    isPostSession: false,
+};
 
 SportScheduleBuilder.componentName = 'SportScheduleBuilder';
 

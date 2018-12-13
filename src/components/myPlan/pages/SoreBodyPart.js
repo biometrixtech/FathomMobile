@@ -99,7 +99,7 @@ class SoreBodyPart extends Component {
             helpingVerb,
             sorenessPainMapping,
         } = PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, this.state.type);
-        let showScaleButtons = bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint') && this.state.type !== 'all-good';
+        let showScaleButtons = bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint');
         let showWhatsTheDifferenceLink = bodyPartGroup && bodyPartGroup === 'muscle';
         let isBodyPartJoint = bodyPartGroup === 'joint';
         return(
@@ -166,7 +166,7 @@ class SoreBodyPart extends Component {
                                                 value: null,
                                             }, () => {
                                                 let value = this.state.type === 'all-good' ? 0 : null;
-                                                handleFormChange('soreness', value, this.state.type === 'pain', bodyPartMap.index, bodyPartSide, true);
+                                                handleFormChange('soreness', value, this.state.type === 'pain', bodyPartMap.index, bodyPartSide, value === 0 ? true : false);
                                             });
                                         }
                                     }}
@@ -302,7 +302,7 @@ class SoreBodyPart extends Component {
                                             type:  newType,
                                             value: newKey,
                                         }, () => {
-                                            handleFormChange('soreness', sorenessPainScaleMappingValue, this.state.type === 'pain' ,bodyPartMap.index, bodyPartSide, true);
+                                            handleFormChange('soreness', sorenessPainScaleMappingValue, this.state.type === 'pain' ,bodyPartMap.index, bodyPartSide, sorenessPainScaleMappingValue === null ? false : true);
                                         });
                                     }}
                                     valueLabel={value}

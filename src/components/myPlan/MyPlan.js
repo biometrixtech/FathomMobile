@@ -160,7 +160,7 @@ class MyPlan extends Component {
             page1:                            {},
             page2:                            {},
             postSession:                      {
-                RPE:                            0,
+                RPE:                            null,
                 description:                    '',
                 duration:                       0,
                 event_date:                     null,
@@ -423,14 +423,8 @@ class MyPlan extends Component {
         let newPrepareObject = Object.assign({}, this.state.prepare, {
             isReadinessSurveyCompleted: true,
         });
-        if(!this.state.dailyReadiness.sessions_planned && this.tabView) {
-            this.setState(
-                { isReadinessSurveyModalOpen: false, },
-                () => this.tabView.goToPage(2),
-            );
-        }
-        _.delay(() => {
-            this.setState({
+        this.setState(
+            {
                 dailyReadiness: {
                     readiness:     0,
                     sleep_quality: 0,
@@ -440,17 +434,18 @@ class MyPlan extends Component {
                 isReadinessSurveyModalOpen: false,
                 isRecoverCalculating:       this.state.dailyReadiness.sessions_planned ? false : true,
                 prepare:                    newPrepareObject,
+            },
+            () => { if(!this.state.dailyReadiness.sessions_planned) { this._goToScrollviewPage(2); } },
+        );
+        this.props.postReadinessSurvey(newDailyReadiness)
+            .then(response => {
+                this.props.clearCompletedExercises();
+                this.props.clearCompletedFSExercises();
+            })
+            .catch(error => {
+                console.log('error',error);
+                AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey);
             });
-            this.props.postReadinessSurvey(newDailyReadiness)
-                .then(response => {
-                    this.props.clearCompletedExercises();
-                    this.props.clearCompletedFSExercises();
-                })
-                .catch(error => {
-                    console.log('error',error);
-                    AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey);
-                });
-        }, 500);
     }
 
     _handlePostSessionSurveySubmit = () => {

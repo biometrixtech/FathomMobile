@@ -23,17 +23,15 @@ import { Button, FathomPicker, Pages, Spacer, TabIcon, Text, } from '../../custo
 import { PlanLogic, } from '../../../lib';
 
 // Components
-import { AreasOfSoreness, ScaleButton, SlideUpPanel, SoreBodyPart, SportScheduleBuilder, } from './';
+import { AreasOfSoreness, BackNextButtons, ProgressPill, ScaleButton, SlideUpPanel, SoreBodyPart, SportScheduleBuilder, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
 import ActionButton from 'react-native-action-button';
 import LinearGradient from 'react-native-linear-gradient';
-import moment from 'moment';
 
 // consts
 const helloPageText = 'Let us know how you feel so we can adapt your Recovery Plan to your body. This simple survey shouldn\'t take more than 2-minutes.';
-const progressPillHeight = AppSizes.screen.height * 0.08;
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -41,12 +39,6 @@ const styles = StyleSheet.create({
         ...AppFonts.oswaldMedium,
         color:    AppColors.zeplin.darkGrey,
         fontSize: AppFonts.scaleFont(17),
-    },
-    backNextWrapper: {
-        flexDirection:     'row',
-        justifyContent:    'space-between',
-        paddingBottom:     AppSizes.paddingMed,
-        paddingHorizontal: AppSizes.paddingMed,
     },
     imageBackgroundStyle: {
         alignItems:      'center',
@@ -63,22 +55,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 50,
         paddingVertical:   50,
     },
-    progressPill: {
-        backgroundColor: AppColors.border,
-        borderRadius:    5,
-        height:          10,
-        width:           35,
-    },
-    progressPillCurrent: {
-        backgroundColor: AppColors.primary.yellow.hundredPercent,
-    },
-    progressPillWrapper: {
-        alignItems:     'center',
-        flex:           1,
-        flexDirection:  'row',
-        height:         progressPillHeight,
-        justifyContent: 'center',
-    },
     shadowEffect: {
         shadowColor:   'rgba(0, 0, 0, 0.16)',
         shadowOffset:  { width: 0, height: 3 },
@@ -88,88 +64,6 @@ const styles = StyleSheet.create({
 });
 
 /* Components ================================================================= */
-const ProgressPill = ({ currentStep, }) => (
-    <View style={{backgroundColor: '#FAFAFA', height: (progressPillHeight + AppSizes.statusBarHeight),}}>
-        <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
-        <View style={[styles.progressPillWrapper]}>
-            <View style={[styles.progressPill, {marginRight: 2}, currentStep >= 1 ? styles.progressPillCurrent : {}]} />
-            <View style={[styles.progressPill, {marginRight: 2}, currentStep >= 2 ? styles.progressPillCurrent : {}]} />
-            <View style={[styles.progressPill, {marginRight: 2}, currentStep >= 3 ? styles.progressPillCurrent : {}]} />
-            <View style={[styles.progressPill, {marginRight: 2}, currentStep >= 4 ? styles.progressPillCurrent : {}]} />
-            <View style={[styles.progressPill, currentStep >= 5 ? styles.progressPillCurrent : {}]} />
-        </View>
-    </View>
-);
-
-const BackNextButtons = ({ handleFormSubmit, isValid, onBackClick, onNextClick, showSubmitBtn, }) => (
-    <View style={[styles.backNextWrapper,]}>
-        <TouchableHighlight
-            onPress={onBackClick}
-            style={[AppStyles.backNextCircleButtons, {
-                backgroundColor: AppColors.white,
-                borderColor:     AppColors.primary.yellow.hundredPercent,
-                borderWidth:     1,
-            }]}
-            underlayColor={AppColors.transparent}
-        >
-            <Text
-                robotoMedium
-                style={[
-                    AppStyles.textCenterAligned,
-                    {
-                        color:    AppColors.primary.yellow.hundredPercent,
-                        fontSize: AppFonts.scaleFont(12),
-                    }
-                ]}
-            >
-                {'Back'}
-            </Text>
-        </TouchableHighlight>
-        { showSubmitBtn ?
-            <Button
-                backgroundColor={isValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {justifyContent: 'center',}]}
-                color={isValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                containerViewStyle={{ alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf, }}
-                disabled={!isValid}
-                disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1,}}
-                fontFamily={AppStyles.robotoMedium.fontFamily}
-                fontWeight={AppStyles.robotoMedium.fontWeight}
-                onPress={() => isValid && handleFormSubmit ? handleFormSubmit() : null}
-                raised={false}
-                textColor={isValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                textStyle={{ fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%', }}
-                title={'Submit'}
-            />
-            :
-            <TouchableHighlight
-                onPress={isValid ? onNextClick : null}
-                style={[AppStyles.backNextCircleButtons, {
-                    backgroundColor: isValid ? AppColors.primary.yellow.hundredPercent : AppColors.white,
-                    borderColor:     isValid ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.lightGrey,
-                    borderWidth:     1,
-                }]}
-                underlayColor={AppColors.transparent}
-            >
-                <Text
-                    robotoMedium
-                    style={[
-                        AppStyles.textCenterAligned,
-                        isValid ? styles.shadowEffect : {},
-                        Platform.OS === 'ios' ? {} : {elevation: 2,},
-                        {
-                            color:    isValid ? AppColors.white : AppColors.zeplin.lightGrey,
-                            fontSize: AppFonts.scaleFont(12),
-                        }
-                    ]}
-                >
-                    {'Next'}
-                </Text>
-            </TouchableHighlight>
-        }
-    </View>
-);
-
 class ReadinessSurvey extends Component {
     constructor(props) {
         super(props);
@@ -262,7 +156,6 @@ class ReadinessSurvey extends Component {
             handleFormChange,
             handleFormSubmit,
             handleUpdateFirstTimeExperience,
-            pageIndex,
             soreBodyParts,
             typicalSessions,
             user,
@@ -281,12 +174,12 @@ class ReadinessSurvey extends Component {
         let isFABVisible = areaOfSorenessClicked && this.state.isActionButtonVisible && areaOfSorenessClicked.length > 0;
         /*eslint no-return-assign: 0*/
         return(
-            <View style={{backgroundColor: AppColors.white, flex: 1,}} onLayout={this._onLayoutDidChange}>
+            <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
                 <Pages
                     indicatorPosition={'none'}
                     ref={(pages) => { this.pages = pages; }}
-                    startPlay={pageIndex}
+                    startPlay={this.state.pageIndex}
                 >
 
                     <View style={{flex: 1,}}>
@@ -301,11 +194,11 @@ class ReadinessSurvey extends Component {
                                 style={[styles.linearGradientStyle]}
                             >
                                 <View style={{flex: 1, justifyContent: 'space-between',}}>
-                                    <View />
-                                    <View>
-                                        <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(30),}}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
+                                    <View style={{flex: 5,}} />
+                                    <View style={{flex: 5, justifyContent: 'center',}}>
+                                        <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(30), lineHeight: AppFonts.scaleFont(40),}}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
                                         <Spacer size={5} />
-                                        <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}}>{helloPageText}</Text>
+                                        <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(25),}}>{helloPageText}</Text>
                                         <Spacer size={10} />
                                         <Button
                                             backgroundColor={AppColors.primary.yellow.hundredPercent}
@@ -515,7 +408,7 @@ class ReadinessSurvey extends Component {
                     </ScrollView>
 
                     <View style={{flex: 1,}}>
-                        <ProgressPill currentStep={1} />
+                        <ProgressPill currentStep={1} totalSteps={5} />
                         <Spacer size={50} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {'How mentally ready do you feel?'}
@@ -570,7 +463,7 @@ class ReadinessSurvey extends Component {
                     </View>
 
                     <View style={{flex: 1,}}>
-                        <ProgressPill currentStep={2} />
+                        <ProgressPill currentStep={2} totalSteps={5} />
                         <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
                             <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Have you already trained today?'}</Text>
                             <Spacer size={20} />
@@ -681,7 +574,7 @@ class ReadinessSurvey extends Component {
                                 ref={ref => {this.scrollViewSportBuilderRefs[index] = ref;}}
                                 style={{flex: 1,}}
                             >
-                                <ProgressPill currentStep={3} />
+                                <ProgressPill currentStep={3} totalSteps={5} />
                                 <Spacer size={20} />
                                 <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>
                                     {'Build the sentence'}
@@ -771,7 +664,7 @@ class ReadinessSurvey extends Component {
                         ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
                         style={{flex: 1,}}
                     >
-                        <ProgressPill currentStep={4} />
+                        <ProgressPill currentStep={4} totalSteps={5} />
                         { _.map(newSoreBodyParts, (bodyPart, i) =>
                             <View key={i} onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}>
                                 <Spacer size={50} />
@@ -810,7 +703,7 @@ class ReadinessSurvey extends Component {
                         ref={ref => {this.myAreasOfSorenessComponent = ref;}}
                         style={{flex: 1,}}
                     >
-                        <ProgressPill currentStep={4} />
+                        <ProgressPill currentStep={4} totalSteps={5} />
                         <Spacer size={50} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
@@ -853,7 +746,7 @@ class ReadinessSurvey extends Component {
                         ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
                         style={{flex: 1,}}
                     >
-                        <ProgressPill currentStep={4} />
+                        <ProgressPill currentStep={4} totalSteps={5} />
                         {_.map(areaOfSorenessClicked, (area, i) => (
                             <View
                                 key={`AreasOfSoreness1${i}`}
@@ -887,7 +780,7 @@ class ReadinessSurvey extends Component {
                     </ScrollView>
 
                     <View style={{flex: 1,}}>
-                        <ProgressPill currentStep={5} />
+                        <ProgressPill currentStep={5} totalSteps={5} />
                         <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
                             <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Will you train later today?'}</Text>
                             <Spacer size={20} />
@@ -951,7 +844,7 @@ class ReadinessSurvey extends Component {
                     </View>
 
                     <View style={{flex: 1,}}>
-                        <ProgressPill currentStep={5} />
+                        <ProgressPill currentStep={5} totalSteps={5} />
                         <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
                             <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                                 {'Would you like to add functional strength to your training plan today?'}

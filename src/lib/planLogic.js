@@ -302,16 +302,21 @@ const PlanLogic = {
             return doesItInclude.length > 0;
         });
         let areQuestionsValid = postSession.RPE > 0 && postSession.event_date;
-        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length === filteredSoreBodyParts.length : true;
         let areAreasOfSorenessValid = (
-            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
-            (areasOfSorenessRef && areasOfSorenessRef.state.isAllGood)
+            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0
         );
         let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;
+        let isFormValidItems = {
+            areAreasOfSorenessValid,
+            isPrevSorenessValid:        (areSoreBodyPartsValid || postSession.soreness.length === 0),
+            selectAreasOfSorenessValid: areasOfSorenessRef && areasOfSorenessRef.state ? filteredAreasOfSoreness.length > 0 || areasOfSorenessRef.state.isAllGood : false,
+        };
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         return {
             isFormValid,
+            isFormValidItems,
             newSoreBodyParts,
         };
     },
@@ -335,8 +340,7 @@ const PlanLogic = {
         let areQuestionsValid = dailyReadiness.readiness > 0 && dailyReadiness.sleep_quality > 0;
         let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length === filteredSoreBodyParts.length : true;
         let areAreasOfSorenessValid = (
-            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
-            (areasOfSorenessRef && areasOfSorenessRef.state.isAllGood)
+            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0
         );
         let foundSport = _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name);
         let selectedSportPositions = dailyReadiness.current_sport_name !== null && foundSport ? foundSport.positions : [];
@@ -375,7 +379,7 @@ const PlanLogic = {
             isPrevSorenessValid:             (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0),
             isSecondFunctionalStrengthValid: dailyReadiness.wants_functional_strength !== null,
             isTrainedTodayValid,
-            selectAreasOfSorenessValid:      filteredAreasOfSoreness.length > 0 || (areasOfSorenessRef && areasOfSorenessRef.state.isAllGood),
+            selectAreasOfSorenessValid:      areasOfSorenessRef && areasOfSorenessRef.state ? filteredAreasOfSoreness.length > 0 || areasOfSorenessRef.state.isAllGood : false,
             willTrainLaterValid:             dailyReadiness.sessions_planned !== null,
         };
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
@@ -595,7 +599,7 @@ const PlanLogic = {
 
     /**
       * Single Session Validation in Render Logic
-      * - ReadinessSurvey
+      * - ReadinessSurvey & PostSessionSurvey
       */
     // TODO: UNIT TEST ME
     handleSingleSessionValidation: (session, sportScheduleBuilderRef) => {
@@ -607,16 +611,16 @@ const PlanLogic = {
                 isSportValid,
             };
         }
-        let { sportText, } = PlanLogic.handleSportScheduleBuilderRenderLogic(session, sportScheduleBuilderRef.state);
+        let { sportText, } = PlanLogic.handleSportScheduleBuilderRenderLogic(session, sportScheduleBuilderRef.state ? sportScheduleBuilderRef.state : {});
         return {
-            isRPEValid:   session.post_session_survey.RPE >= 0,
-            isSportValid: sportScheduleBuilderRef.state.isFormValid,
+            isRPEValid:   session.post_session_survey ? session.post_session_survey.RPE === 0 || session.post_session_survey.RPE > 0 : session.RPE === 0 || session.RPE > 0,
+            isSportValid: sportScheduleBuilderRef.state ? sportScheduleBuilderRef.state.isFormValid : false,
             sportText,
         };
     },
 
     /**
-      * Single Session Validation in Render Logic
+      * Next Page & Validation Logic
       * - ReadinessSurvey
       */
     // TODO: UNIT TEST ME
@@ -695,6 +699,40 @@ const PlanLogic = {
             pageNum,
         };
     },
+
+    /**
+      * Next Page & Validation Logic
+      * - PostSessionSurvey
+      */
+    // TODO: UNIT TEST ME
+    handlePostSessionSurveyNextPage: (postSession, currentPage, isFormValidItems, isBackBtn, newSoreBodyParts, areaOfSorenessClicked) => {
+        let isValid = false;
+        let pageNum = 0;
+        if(currentPage === 0) { // Sport Builder
+            pageNum = 1;
+            isValid = isFormValidItems.isSportValid;
+        } else if(currentPage === 1) { // RPE
+            pageNum = isBackBtn ? 0 : (newSoreBodyParts && newSoreBodyParts.length > 0) ? 2 : 3;
+            isValid = isFormValidItems.isRPEValid;
+        } else if(currentPage === 2) { // Previous Soreness
+            pageNum = isBackBtn ? 1 : 3;
+            isValid = isFormValidItems.isPrevSorenessValid;
+        } else if(currentPage === 3) { // Areas of Soreness
+            if(isBackBtn) {
+                pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 2 : 1;
+            } else {
+                pageNum = areaOfSorenessClicked.length > 0 ? 4 : 3;
+            }
+            isValid = isFormValidItems.selectAreasOfSorenessValid;
+        } else if(currentPage === 4) { // Areas of Soreness Selected
+            pageNum = isBackBtn ? 3 : 4;
+            isValid = isFormValidItems.areAreasOfSorenessValid;
+        }
+        return {
+            isValid,
+            pageNum,
+        };
+    }
 
 };
 

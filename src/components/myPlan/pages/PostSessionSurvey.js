@@ -16,15 +16,15 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ScrollView, TouchableOpacity, View, } from 'react-native';
+import { ScrollView, TouchableHighlight, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles, MyPlan as MyPlanConstants, AppFonts, } from '../../../constants';
-import { Button, FathomSlider, Spacer, TabIcon, Text, } from '../../custom';
+import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
+import { Pages, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
 // Components
-import { AreasOfSoreness, ScaleButton, SlideUpPanel, SoreBodyPart, SportScheduleBuilder, } from './';
+import { AreasOfSoreness, BackNextButtons, ProgressPill, ScaleButton, SlideUpPanel, SoreBodyPart, SportScheduleBuilder, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -38,28 +38,50 @@ class PostSessionSurvey extends Component {
             isActionButtonVisible:  false,
             isSlideUpPanelExpanded: true,
             isSlideUpPanelOpen:     false,
+            pageIndex:              0,
         };
-        this._scrollViewContentHeight = 0;
-        this.myComponents = [];
-        this.scrollViewRef = {};
+        this.areasOfSorenessRef = {};
+        this.myAreasOfSorenessComponent = {};
+        this.myClickedSorenessComponents = [];
+        this.myPrevSorenessComponents = [];
+        this.pages = {};
+        this.scrollViewClickedSorenessRef = {};
+        this.scrollViewPrevSorenessRef = {};
+        this.scrollViewRPERef = {};
+        this.scrollViewSportBuilderRef = {};
+        this.sportScheduleBuilderRef = {};
     }
 
-    _scrollTo = (index) => {
-        let myComponentsLocation = this.myComponents[index];
-        if(myComponentsLocation) {
-            this._scrollToXY(myComponentsLocation.x, myComponentsLocation.y, true);
+    _renderNextPage = (currentPage, isFormValidItems, isBackBtn, newSoreBodyParts, areaOfSorenessClicked) => {
+        const { postSession, } = this.props;
+        let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(postSession, currentPage, isFormValidItems, isBackBtn, newSoreBodyParts, areaOfSorenessClicked);
+        if(isValid || isBackBtn) {
+            this.pages.progress = pageNum;
+            this.setState({ pageIndex: pageNum, });
         }
     }
 
-    _scrollToBottom = () => {
+    _scrollTo = (myComponentsLocation, scrollViewRef) => {
+        if(myComponentsLocation) {
+            _.delay(() => {
+                scrollViewRef.scrollTo({
+                    x:        myComponentsLocation.x,
+                    y:        myComponentsLocation.y,
+                    animated: true,
+                });
+            }, 500);
+        }
+    }
+
+    _scrollToBottom = scrollViewRef => {
         _.delay(() => {
-            this.scrollViewRef.scrollToEnd({ animated: true, });
+            scrollViewRef.scrollToEnd({ animated: true, });
         }, 500);
     }
 
-    _scrollToTop = () => {
+    _scrollToTop = (scrollViewRef) => {
         _.delay(() => {
-            this.scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
+            scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
         }, 500);
     }
 
@@ -70,42 +92,16 @@ class PostSessionSurvey extends Component {
         });
     }
 
-    _scrollViewEndDrag = (event, areaOfSorenessComponent) => {
+    _scrollViewEndDrag = event => {
         const offset = event.nativeEvent.contentOffset.y;
-        let actualSoreBodyPartRefY = (areaOfSorenessComponent.y + areaOfSorenessComponent.height) - (this.areasOfSorenessRef.soreBodyPartRef.height + 50)
-        let isCloseToBottom = event.nativeEvent.layoutMeasurement.height + offset >= event.nativeEvent.contentSize.height - 100;
+        let isCloseToBottom = event.nativeEvent.layoutMeasurement.height + offset >= event.nativeEvent.contentSize.height - 20;
         let isActionButtonVisible = (
-            areaOfSorenessComponent &&
-            offset >= areaOfSorenessComponent.y && // have we scrolled past areaOfSorenessComponent
-            offset <= actualSoreBodyPartRefY && // have we scrolled to the end of areaOfSorenessComponent
             !isCloseToBottom // is NOT close to the bottom
         );
-        this.setState({ isActionButtonVisible, });
-    }
-
-    _fabScrollClicked = areaOfSorenessComponent => {
-        let actualSoreBodyPartRefY = (areaOfSorenessComponent.y + areaOfSorenessComponent.height) - (this.areasOfSorenessRef.soreBodyPartRef.height + 50);
-        if(
-            this.areasOfSorenessRef &&
-            this.areasOfSorenessRef.soreBodyPartRef &&
-            this.areasOfSorenessRef.soreBodyPartRef.y &&
-            ((AppSizes.screen.height + actualSoreBodyPartRefY) - this._scrollViewContentHeight) <= 0
-        ) {
-            this._scrollToXY(this.areasOfSorenessRef.soreBodyPartRef.x, actualSoreBodyPartRefY, true);
-        } else {
-            this._scrollToBottom();
-        }
-        this.setState({ isActionButtonVisible: false, });
-    }
-
-    _scrollToXY = (x, y, shouldAnimate = true) => {
-        _.delay(() => {
-            this.scrollViewRef.scrollTo({
-                x:        x,
-                y:        y,
-                animated: shouldAnimate,
-            });
-        }, 500);
+        this.setState({
+            isActionButtonVisible,
+            isCloseToBottom,
+        });
     }
 
     render = () => {
@@ -120,168 +116,238 @@ class PostSessionSurvey extends Component {
             typicalSessions,
             user,
         } = this.props;
-        let { isFormValid, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
+        let { isFormValid, isFormValidItems, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, postSession.soreness);
         let isFABVisible = areaOfSorenessClicked && this.state.isActionButtonVisible && areaOfSorenessClicked.length > 0;
+        const { isRPEValid, isSportValid, sportText, } = PlanLogic.handleSingleSessionValidation(postSession, this.sportScheduleBuilderRef);
         return (
-            <View style={{flex: 1,}}>
-                <ScrollView
-                    bounces={false}
-                    onContentSizeChange={(contentWidth, contentHeight) => {this._scrollViewContentHeight = contentHeight}}
-                    onScrollEndDrag={event => this._scrollViewEndDrag(event, this.myComponents[newSoreBodyParts ? newSoreBodyParts.length + 1 : 1])}
-                    overScrollMode={'never'}
-                    ref={ref => {this.scrollViewRef = ref}}
-                    style={{flex: isFABVisible ? 9 : 10,}}
+            <View style={{backgroundColor: AppColors.white, flex: 1,}}>
+
+                <Pages
+                    indicatorPosition={'none'}
+                    ref={(pages) => { this.pages = pages; }}
+                    startPlay={this.state.pageIndex}
                 >
-                    <TabIcon
-                        containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml + AppSizes.statusBarHeight),}]}
-                        icon={'close'}
-                        iconStyle={[{color: AppColors.black}]}
-                        onPress={handleTogglePostSessionSurvey}
-                        reverse={false}
-                        size={30}
-                        type={'material-community'}
-                    />
-                    <View>
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {'1'}
-                        </Text>
+
+                    <ScrollView
+                        ref={ref => {this.scrollViewSportBuilderRef = ref;}}
+                        style={{flex: 1,}}
+                    >
+                        <ProgressPill currentStep={1} totalSteps={3} />
+                        <Spacer size={20} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>
                             {'Build the sentence'}
                         </Text>
-                        <Spacer size={24} />
+                        <Spacer size={20} />
                         <SportScheduleBuilder
                             handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                 handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
                             }}
+                            isPostSession={true}
                             postSession={postSession}
-                            scrollTo={() => this._scrollTo(0)}
-                            scrollToTop={this._scrollToTop}
+                            ref={ref => {this.sportScheduleBuilderRef = ref;}}
+                            scrollTo={() => null}
+                            scrollToTop={() => this._scrollToTop(this.scrollViewSportBuilderRef)}
                             typicalSessions={typicalSessions}
                         />
-                    </View>
-                    <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: (event.nativeEvent.layout.y + 75)}}}>
-                        <Spacer size={100} />
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {'2'}
-                        </Text>
+                        <Spacer size={40} />
+                        <BackNextButtons
+                            isValid={isSportValid}
+                            onNextClick={() => this._renderNextPage(0, {isSportValid}, false)}
+                            showBackBtn={false}
+                        />
+                    </ScrollView>
+
+                    <ScrollView
+                        ref={ref => {this.scrollViewRPERef = ref;}}
+                        style={{flex: 1,}}
+                    >
+                        <ProgressPill currentStep={1} totalSteps={3} />
+                        <Spacer size={20} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {'How was your training session?'}
+                            {`How was your ${sportText}?`}
                         </Text>
-                        <View style={{flex: 1, flexDirection: 'row', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
-                            <View style={{alignItems: 'flex-end', flex: 5, justifyContent: 'center', paddingHorizontal: AppSizes.paddingSml}}>
-                                { _.map(MyPlanConstants.postSessionFeel, (value, key) => {
-                                    if(key === 0) { return; }
-                                    /*eslint consistent-return: 0*/
-                                    return(
-                                        <ScaleButton
-                                            isSelected={postSession.RPE === key}
-                                            key={value+key}
-                                            keyLabel={key}
-                                            sorenessPainMappingLength={MyPlanConstants.postSessionFeel.length}
-                                            updateStateAndForm={() => {
-                                                handleFormChange('RPE', key);
-                                                this._scrollTo(1);
-                                            }}
-                                        />
-                                    )
-                                })}
-                            </View>
-                            <View style={{alignItems: 'flex-start', flex: 5, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingMed}}>
-                                { _.map(MyPlanConstants.postSessionFeel, (value, key) => {
-                                    if(key === 0 || value.length === 0) { return; }
-                                    const isLast = (MyPlanConstants.postSessionFeel.length - 1) === key;
-                                    /*eslint consistent-return: 0*/
-                                    return(
-                                        <Text
-                                            oswaldRegular
-                                            style={[
-                                                AppStyles.textCenterAligned,
-                                                {
-                                                    color:           AppColors.primary.grey.fiftyPercent,
-                                                    fontSize:        AppFonts.scaleFont(16),
-                                                    paddingVertical: AppSizes.paddingXSml,
-                                                },
-                                                isLast ?
-                                                    {paddingVertical: AppSizes.paddingMed}
-                                                    :
-                                                    {},
-                                            ]}
-                                            key={value+key}
-                                        >
-                                            {value.toUpperCase()}
-                                        </Text>
-                                    )
-                                })}
-                            </View>
+                        <View style={{flex: 1, paddingTop: AppSizes.paddingSml,}}>
+                            { _.map(MyPlanConstants.postSessionFeel, (value, key) => {
+                                let isSelected = postSession.RPE === key;
+                                let opacity = isSelected ? 1 : (key * 0.1);
+                                return(
+                                    <TouchableHighlight
+                                        key={value+key}
+                                        onPress={() => {
+                                            handleFormChange('RPE', key);
+                                            this._scrollToBottom(this.scrollViewRPERef);
+                                        }}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingVertical: AppSizes.paddingXSml,}}>
+                                            <View style={{alignItems: 'flex-end', alignSelf: 'center', flex: 4, justifyContent: 'center',}}>
+                                                <ScaleButton
+                                                    isSelected={isSelected}
+                                                    keyLabel={key}
+                                                    opacity={opacity}
+                                                    sorenessPainMappingLength={MyPlanConstants.postSessionFeel.length}
+                                                    updateStateAndForm={() => {
+                                                        handleFormChange('RPE', key);
+                                                        this._scrollToBottom(this.scrollViewRPERef);
+                                                    }}
+                                                />
+                                            </View>
+                                            <View style={{flex: 6, justifyContent: 'center', paddingLeft: AppSizes.padding,}}>
+                                                <Text
+                                                    oswaldMedium
+                                                    style={{
+                                                        color:    isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.darkGrey,
+                                                        fontSize: AppFonts.scaleFont(isSelected ? 22 : 14),
+                                                    }}
+                                                >
+                                                    {value.toUpperCase()}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    </TouchableHighlight>
+                                )
+                            })}
                         </View>
-                    </View>
-                    <Spacer size={100} />
-                    { _.map(newSoreBodyParts, (bodyPart, i) =>
-                        <View onLayout={event => {this.myComponents[i + 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}} key={i}>
-                            <SoreBodyPart
-                                bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
-                                bodyPartSide={bodyPart.side}
-                                firstTimeExperience={user.first_time_experience}
-                                handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                    handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
-                                    if(shouldScroll) {
-                                        this._scrollTo(i + 2);
-                                    }
-                                }}
-                                handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
-                                index={i+3}
-                                isPrevSoreness={true}
-                                surveyObject={postSession}
-                                toggleSlideUpPanel={this._toggleSlideUpPanel}
-                            />
-                            <Spacer size={100} />
-                        </View>
-                    )}
-                    <View onLayout={event => {this.myComponents[newSoreBodyParts ? newSoreBodyParts.length + 1 : 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50, height: event.nativeEvent.layout.height}}}>
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {newSoreBodyParts.length > 0 ? newSoreBodyParts.length + 3 : '3'}
-                        </Text>
+                        <BackNextButtons
+                            isValid={isRPEValid}
+                            onBackClick={() => this._renderNextPage(1, {isRPEValid}, true, newSoreBodyParts)}
+                            onNextClick={() => this._renderNextPage(1, {isRPEValid}, false, newSoreBodyParts)}
+                        />
+                    </ScrollView>
+
+                    <ScrollView
+                        ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
+                        style={{flex: 1,}}
+                    >
+                        <ProgressPill currentStep={2} totalSteps={3} />
+                        <Spacer size={20} />
+                        { _.map(newSoreBodyParts, (bodyPart, i) =>
+                            <View key={i} onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}>
+                                <SoreBodyPart
+                                    bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
+                                    bodyPartSide={bodyPart.side}
+                                    firstTimeExperience={user.first_time_experience}
+                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                        handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                        if(shouldScroll && newSoreBodyParts.length !== (i + 1) && (newSoreBodyParts.length - 1) !== (i + 1)) {
+                                            this._scrollTo(this.myPrevSorenessComponents[i + 1], this.scrollViewPrevSorenessRef);
+                                        } else if(shouldScroll) {
+                                            this._scrollToBottom(this.scrollViewPrevSorenessRef);
+                                        }
+                                    }}
+                                    handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                    isPrevSoreness={true}
+                                    surveyObject={postSession}
+                                    toggleSlideUpPanel={this._toggleSlideUpPanel}
+                                />
+                                <Spacer size={50} />
+                            </View>
+                        )}
+                        <BackNextButtons
+                            isValid={isFormValidItems.isPrevSorenessValid}
+                            onBackClick={() => this._renderNextPage(2, isFormValidItems, true)}
+                            onNextClick={() => this._renderNextPage(2, isFormValidItems, false)}
+                        />
+                    </ScrollView>
+
+                    <ScrollView
+                        bounces={false}
+                        nestedScrollEnabled={true}
+                        onScrollEndDrag={event => this._scrollViewEndDrag(event)}
+                        overScrollMode={'never'}
+                        ref={ref => {this.myAreasOfSorenessComponent = ref;}}
+                        style={{flex: 1,}}
+                    >
+                        <ProgressPill currentStep={3} totalSteps={3} />
+                        <Spacer size={20} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
                         </Text>
                         <AreasOfSoreness
-                            handleAreaOfSorenessClick={(body, isAllGood) => { this.setState({ isActionButtonVisible: true, }); handleAreaOfSorenessClick(body, false, isAllGood); }}
+                            handleAreaOfSorenessClick={(body, isAllGood) => {
+                                if(!this.state.isCloseToBottom) {
+                                    this.setState({ isActionButtonVisible: true, });
+                                }
+                                handleAreaOfSorenessClick(body, false, isAllGood);
+                            }}
                             handleFormChange={handleFormChange}
                             handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
-                            scrollToBottom={this._scrollToBottom}
+                            scrollToBottom={() => {
+                                this._scrollToBottom(this.myAreasOfSorenessComponent);
+                                this.setState({ isCloseToBottom: true, });
+                            }}
                             soreBodyParts={soreBodyParts}
                             soreBodyPartsState={postSession.soreness}
                             surveyObject={postSession}
                             toggleSlideUpPanel={this._toggleSlideUpPanel}
                             user={user}
                         />
-                    </View>
-                    <Button
-                        backgroundColor={isFormValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                        buttonStyle={{
-                            alignSelf:       'center',
-                            borderRadius:    5,
-                            marginBottom:    AppSizes.padding,
-                            paddingVertical: AppSizes.paddingMed,
-                            width:           AppSizes.screen.widthTwoThirds
-                        }}
-                        color={isFormValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                        fontFamily={AppStyles.robotoMedium.fontFamily}
-                        fontWeight={AppStyles.robotoMedium.fontWeight}
-                        onPress={() => isFormValid ? handleFormSubmit() : null}
-                        outlined
-                        textStyle={{ fontSize: AppFonts.scaleFont(18) }}
-                        title={isFormValid ? 'Submit' : 'Select an Option'}
-                    />
-                </ScrollView>
+                        <Spacer size={20} />
+                        <BackNextButtons
+                            handleFormSubmit={() => handleFormSubmit()}
+                            isValid={isFormValidItems.selectAreasOfSorenessValid}
+                            onBackClick={() => {
+                                this.setState({ isActionButtonVisible: false, });
+                                this._renderNextPage(3, isFormValidItems, true, newSoreBodyParts);
+                            }}
+                            onNextClick={() => {
+                                this.setState({ isActionButtonVisible: false, });
+                                this._renderNextPage(3, isFormValidItems, false, newSoreBodyParts, areaOfSorenessClicked);
+                            }}
+                            showSubmitBtn={areaOfSorenessClicked.length === 0}
+                        />
+                    </ScrollView>
+
+                    <ScrollView
+                        nestedScrollEnabled={true}
+                        ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
+                        style={{flex: 1,}}
+                    >
+                        <ProgressPill currentStep={3} totalSteps={3} />
+                        {_.map(areaOfSorenessClicked, (area, i) => (
+                            <View
+                                key={`AreasOfSoreness1${i}`}
+                                onLayout={event => {this.myClickedSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50, height: event.nativeEvent.layout.height,}}}
+                                style={[AppStyles.paddingVertical]}
+                            >
+                                <SoreBodyPart
+                                    bodyPart={MyPlanConstants.bodyPartMapping[area.body_part]}
+                                    bodyPartSide={area.side}
+                                    firstTimeExperience={user.first_time_experience}
+                                    handleFormChange={handleFormChange}
+                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                        handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                        if(shouldScroll && areaOfSorenessClicked.length !== (i + 1) && (areaOfSorenessClicked.length - 1) !== (i + 1)) {
+                                            this._scrollTo(this.myClickedSorenessComponents[i + 1], this.scrollViewClickedSorenessRef);
+                                        } else if(shouldScroll) {
+                                            this._scrollToBottom(this.scrollViewClickedSorenessRef);
+                                        }
+                                    }}
+                                    handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                    surveyObject={postSession}
+                                    toggleSlideUpPanel={this._toggleSlideUpPanel}
+                                />
+                            </View>
+                        ))}
+                        <BackNextButtons
+                            handleFormSubmit={() => handleFormSubmit()}
+                            isValid={isFormValidItems.areAreasOfSorenessValid}
+                            onBackClick={() => this._renderNextPage(4, isFormValidItems, true)}
+                            onNextClick={() => this._renderNextPage(4, isFormValidItems, false)}
+                            showSubmitBtn={true}
+                        />
+                    </ScrollView>
+
+                </Pages>
+
                 { isFABVisible ?
                     <ActionButton
                         buttonColor={AppColors.primary.yellow.hundredPercent}
                         degrees={0}
                         hideShadow
-                        onPress={() => this._fabScrollClicked(this.myComponents[newSoreBodyParts ? newSoreBodyParts.length + 1 : 1])}
+                        onPress={() => {this._scrollToBottom(this.myAreasOfSorenessComponent); this.setState({ isActionButtonVisible: false, isCloseToBottom: true, });}}
                         renderIcon={() =>
                             <TabIcon
                                 color={AppColors.white}
