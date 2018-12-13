@@ -206,103 +206,90 @@ class MyPlan extends Component {
             true
             :
             false;
-        if(!this.props.lastOpened.date || clearMyPlan) {
-            if(this.tabView) {
-                this.tabView.goToPage(0);
-            }
-            this.setState({ isPageLoading: true, });
-            this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'), false, clearMyPlan)
-                .then(response => {
-                    if(response.daily_plans[0].daily_readiness_survey_completed) {
-                        let postPracticeSurveys = response.daily_plans[0].training_sessions.map(session => session.post_session_survey
-                            ? {
-                                isPostPracticeSurveyCollapsed: true,
-                                isPostPracticeSurveyCompleted: true,
-                            } : {
-                                isPostPracticeSurveyCollapsed: false,
-                                isPostPracticeSurveyCompleted: false,
-                            }
-                        );
-                        this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(response.daily_plans[0]));
-                        this.setState({
-                            isPageLoading: false,
-                            prepare:       Object.assign({}, this.state.prepare, {
-                                finishedRecovery:           response.daily_plans[0].pre_recovery_completed || this.state.prepare.finishedRecovery,
-                                isActiveRecoveryCollapsed:  response.daily_plans[0].pre_recovery_completed || this.state.prepare.isActiveRecoveryCollapsed,
-                                isReadinessSurveyCollapsed: true,
-                            }),
-                            recover: Object.assign({}, this.state.recover, {
-                                isActiveRecoveryCollapsed: response.daily_plans[0].post_recovery && !response.daily_plans[0].pre_recovery ? false : true,
-                            }),
-                            train: Object.assign({}, this.state.train, {
-                                completedPostPracticeSurvey: postPracticeSurveys[0] ? postPracticeSurveys[0].isPostPracticeSurveyCompleted : {},
-                                postPracticeSurveys
-                            }),
-                        });
-                        if(hideSplashScreen) {
-                            SplashScreen.hide();
+        if(this.tabView) {
+            this.tabView.goToPage(0);
+        }
+        this.setState({ isPageLoading: true, });
+        this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'), false, clearMyPlan)
+            .then(response => {
+                if(response.daily_plans[0].daily_readiness_survey_completed) {
+                    let postPracticeSurveys = response.daily_plans[0].training_sessions.map(session => session.post_session_survey
+                        ? {
+                            isPostPracticeSurveyCollapsed: true,
+                            isPostPracticeSurveyCompleted: true,
+                        } : {
+                            isPostPracticeSurveyCollapsed: false,
+                            isPostPracticeSurveyCompleted: false,
                         }
-                        if(callback) {
-                            callback();
-                        }
-                    } else {
-                        this.setState({
-                            isPageLoading: false,
-                            prepare:       Object.assign({}, this.state.prepare, {
-                                isActiveRecoveryCollapsed:  true,
-                                isReadinessSurveyCollapsed: false,
-                            })
-                        });
-                        this.props.getSoreBodyParts()
-                            .then(soreBodyParts => {
-                                let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                                newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
-                                this.setState({ dailyReadiness: newDailyReadiness });
-                                this._toggleReadinessSurvey();
-                                if(hideSplashScreen) {
-                                    SplashScreen.hide();
-                                }
-                                if(callback) {
-                                    callback();
-                                }
-                            })
-                            .catch(err => {
-                                // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
-                                let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                                newDailyReadiness.soreness = [];
-                                this.setState({ dailyReadiness: newDailyReadiness });
-                                if(hideSplashScreen) {
-                                    SplashScreen.hide();
-                                }
-                                if(callback) {
-                                    callback();
-                                }
-                                AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
-                            });
-                    }
-                })
-                .catch(error => {
-                    this.setState({ isPageLoading: false, });
+                    );
+                    this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(response.daily_plans[0]));
+                    this.setState({
+                        isPageLoading: false,
+                        prepare:       Object.assign({}, this.state.prepare, {
+                            finishedRecovery:           response.daily_plans[0].pre_recovery_completed || this.state.prepare.finishedRecovery,
+                            isActiveRecoveryCollapsed:  response.daily_plans[0].pre_recovery_completed || this.state.prepare.isActiveRecoveryCollapsed,
+                            isReadinessSurveyCollapsed: true,
+                        }),
+                        recover: Object.assign({}, this.state.recover, {
+                            isActiveRecoveryCollapsed: response.daily_plans[0].post_recovery && !response.daily_plans[0].pre_recovery ? false : true,
+                        }),
+                        train: Object.assign({}, this.state.train, {
+                            completedPostPracticeSurvey: postPracticeSurveys[0] ? postPracticeSurveys[0].isPostPracticeSurveyCompleted : {},
+                            postPracticeSurveys
+                        }),
+                    });
                     if(hideSplashScreen) {
                         SplashScreen.hide();
                     }
                     if(callback) {
                         callback();
                     }
-                    AppUtil.handleAPIErrorAlert(ErrorMessages.getMyPlan);
-                });
-        } else {
-            setTimeout(() => {
-                this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(this.props.plan.dailyPlan[0]));
-                let isDailyReadinessSurveyCompleted = this.props.plan.dailyPlan[0] && (this.props.plan.dailyPlan[0].daily_readiness_survey_completed || this.state.prepare.isReadinessSurveyCompleted) ? true : false;
-                if(!isDailyReadinessSurveyCompleted) {
-                    this._toggleReadinessSurvey();
+                } else {
+                    this.setState({
+                        isPageLoading: false,
+                        prepare:       Object.assign({}, this.state.prepare, {
+                            isActiveRecoveryCollapsed:  true,
+                            isReadinessSurveyCollapsed: false,
+                        })
+                    });
+                    this.props.getSoreBodyParts()
+                        .then(soreBodyParts => {
+                            let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+                            newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
+                            this.setState({ dailyReadiness: newDailyReadiness });
+                            this._toggleReadinessSurvey();
+                            if(hideSplashScreen) {
+                                SplashScreen.hide();
+                            }
+                            if(callback) {
+                                callback();
+                            }
+                        })
+                        .catch(err => {
+                            // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
+                            let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+                            newDailyReadiness.soreness = [];
+                            this.setState({ dailyReadiness: newDailyReadiness });
+                            if(hideSplashScreen) {
+                                SplashScreen.hide();
+                            }
+                            if(callback) {
+                                callback();
+                            }
+                            AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
+                        });
+                }
+            })
+            .catch(error => {
+                this.setState({ isPageLoading: false, });
+                if(hideSplashScreen) {
+                    SplashScreen.hide();
                 }
                 if(callback) {
                     callback();
                 }
-            }, 500);
-        }
+                AppUtil.handleAPIErrorAlert(ErrorMessages.getMyPlan);
+            });
     }
 
     componentWillUnmount = () => {
@@ -380,7 +367,7 @@ class MyPlan extends Component {
                         });
                     }
                     if(pushNotificationUpdate.updateExerciseList) {
-                        this._handleExerciseListRefresh(true);
+                        this._handleExerciseListRefresh(true, true);
                     }
                     if(pushNotificationUpdate.updatePushNotificationFlag) {
                         AppUtil.updatePushNotificationFlag();
@@ -592,23 +579,18 @@ class MyPlan extends Component {
     }
 
     _toggleReadinessSurvey = () => {
-        this.setState({ loading: true, });
-        let soreBodyParts = this.props.plan.soreBodyParts;
-        if(soreBodyParts.functional_strength_eligible && soreBodyParts.current_sport_name === null && soreBodyParts.current_position === null) {
-            this.props.preReadiness(this.props.user.id)
-                .then(() => this.setState({ isReadinessSurveyModalOpen: true, loading: false, }))
-                .catch(() => {
-                    this.setState({ loading: false, });
-                    AppUtil.handleAPIErrorAlert(ErrorMessages.preReadiness);
-                });
-        } else {
-            this.setState({ isReadinessSurveyModalOpen: true, loading: false, });
-        }
+        this.setState({ isPageLoading: true, });
+        this.props.preReadiness(this.props.user.id)
+            .then(() => this.setState({ isReadinessSurveyModalOpen: true, isPageLoading: false, }))
+            .catch(() => {
+                this.setState({ isPageLoading: false, });
+                AppUtil.handleAPIErrorAlert(ErrorMessages.preReadiness);
+            });
     }
 
-    _handleExerciseListRefresh = shouldClearCompletedExercises => {
+    _handleExerciseListRefresh = (shouldClearCompletedExercises, isFromPushNotification) => {
         let userId = this.props.user.id;
-        this.setState({ isPageLoading: true, });
+        this.setState({ isPageLoading: isFromPushNotification ? false : true, });
         this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
             .then(response => {
                 const dailyPlanObj = response.daily_plans && response.daily_plans[0] ? response.daily_plans[0] : false;

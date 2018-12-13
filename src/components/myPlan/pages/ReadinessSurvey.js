@@ -190,12 +190,12 @@ class ReadinessSurvey extends Component {
                             <LinearGradient
                                 colors={['#ffffff00', 'white']}
                                 start={{x: 0.0, y: 0.0}}
-                                end={{x: 0.0, y: 0.75}}
+                                end={{x: 0.0, y: 0.65}}
                                 style={[styles.linearGradientStyle]}
                             >
                                 <View style={{flex: 1, justifyContent: 'space-between',}}>
-                                    <View style={{flex: 5,}} />
-                                    <View style={{flex: 5, justifyContent: 'center',}}>
+                                    <View />
+                                    <View>
                                         <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(30), lineHeight: AppFonts.scaleFont(40),}}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
                                         <Spacer size={5} />
                                         <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(25),}}>{helloPageText}</Text>
