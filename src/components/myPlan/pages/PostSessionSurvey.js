@@ -133,7 +133,7 @@ class PostSessionSurvey extends Component {
                         contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         ref={ref => {this.scrollViewSportBuilderRef = ref;}}
                     >
-                        <ProgressPill currentStep={1} totalSteps={3} />
+                        <ProgressPill currentStep={1} onClose={handleTogglePostSessionSurvey} totalSteps={3} />
                         <Spacer size={20} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>
                             {'Build the sentence'}
@@ -162,7 +162,7 @@ class PostSessionSurvey extends Component {
                         ref={ref => {this.scrollViewRPERef = ref;}}
                         style={{flex: 1,}}
                     >
-                        <ProgressPill currentStep={1} totalSteps={3} />
+                        <ProgressPill currentStep={1} onClose={handleTogglePostSessionSurvey} totalSteps={3} />
                         <Spacer size={20} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {`How was your ${sportText}?`}
@@ -220,7 +220,7 @@ class PostSessionSurvey extends Component {
                         contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
                     >
-                        <ProgressPill currentStep={2} totalSteps={3} />
+                        <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={3} />
                         <Spacer size={20} />
                         { _.map(newSoreBodyParts, (bodyPart, i) =>
                             <View key={i} onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}>
@@ -259,7 +259,7 @@ class PostSessionSurvey extends Component {
                         ref={ref => {this.myAreasOfSorenessComponent = ref;}}
                         style={{flex: 1,}}
                     >
-                        <ProgressPill currentStep={3} totalSteps={3} />
+                        <ProgressPill currentStep={3} onClose={handleTogglePostSessionSurvey} totalSteps={3} />
                         <Spacer size={20} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
@@ -305,7 +305,7 @@ class PostSessionSurvey extends Component {
                         nestedScrollEnabled={true}
                         ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
                     >
-                        <ProgressPill currentStep={3} totalSteps={3} />
+                        <ProgressPill currentStep={3} onClose={handleTogglePostSessionSurvey} totalSteps={3} />
                         {_.map(areaOfSorenessClicked, (area, i) => (
                             <View
                                 key={`AreasOfSoreness1${i}`}

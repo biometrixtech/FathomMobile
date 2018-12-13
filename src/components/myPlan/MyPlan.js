@@ -206,9 +206,6 @@ class MyPlan extends Component {
             true
             :
             false;
-        if(this.tabView) {
-            this.tabView.goToPage(0);
-        }
         this.setState({ isPageLoading: true, });
         this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'), false, clearMyPlan)
             .then(response => {
@@ -339,9 +336,19 @@ class MyPlan extends Component {
     }
 
     _handleAppStateChange = (nextAppState) => {
+        let clearMyPlan = (
+            this.props.lastOpened.userId !== this.props.user.id ||
+            moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')
+        ) ?
+            true
+            :
+            false;
         if(nextAppState === 'active' && this.props.notification) {
             this._handleEnteringApp(false, () => this._handlePushNotification(this.props));
-        } else if(nextAppState === 'active') {
+        } else if(nextAppState === 'active' && !this.props.lastOpened.date || clearMyPlan) {
+            if(this.tabView) {
+                this.tabView.goToPage(0);
+            }
             this._handleEnteringApp(false);
         }
     }
@@ -422,7 +429,7 @@ class MyPlan extends Component {
                 isRecoverCalculating:       this.state.dailyReadiness.sessions_planned ? false : true,
                 prepare:                    newPrepareObject,
             },
-            () => { if(!this.state.dailyReadiness.sessions_planned) { this._goToScrollviewPage(2); } },
+            () => { if(!newDailyReadiness.sessions_planned) { this._goToScrollviewPage(2); } },
         );
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
@@ -482,7 +489,7 @@ class MyPlan extends Component {
                     session_type:                   null,
                     sport_name:                     null,
                     strength_and_conditioning_type: null,
-                    RPE:                            0,
+                    RPE:                            null,
                     soreness:                       [],
                 },
             },
@@ -568,7 +575,7 @@ class MyPlan extends Component {
             newPostSession.session_type = null;
             newPostSession.sport_name = null;
             newPostSession.strength_and_conditioning_type = null;
-            newPostSession.RPE = 0;
+            newPostSession.RPE = null;
             this.props.clearCompletedExercises();
             this.setState({
                 isPostSessionSurveyModalOpen: false,

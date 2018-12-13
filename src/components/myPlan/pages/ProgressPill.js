@@ -12,6 +12,7 @@ import { StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppSizes, } from '../../../constants';
+import { TabIcon, } from '../../custom';
 
 const progressPillHeight = AppSizes.screen.height * 0.08;
 
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
     },
     progressPillWrapper: {
         alignItems:     'center',
-        flex:           1,
+        flex:           8,
         flexDirection:  'row',
         height:         progressPillHeight,
         justifyContent: 'center',
@@ -38,6 +39,7 @@ const styles = StyleSheet.create({
 /* Component ==================================================================== */
 const ProgressPill = ({
     currentStep,
+    onClose,
     totalSteps,
 }) => {
     let pills = [];
@@ -58,8 +60,25 @@ const ProgressPill = ({
     return(
         <View style={{backgroundColor: AppColors.zeplin.progressPillBackground, height: (progressPillHeight + AppSizes.statusBarHeight),}}>
             <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
-            <View style={[styles.progressPillWrapper]}>
-                {pills}
+            <View style={{flex: 1, flexDirection: 'row',}}>
+                <View style={{flex: 1,}} />
+                <View style={[styles.progressPillWrapper]}>
+                    {pills}
+                </View>
+                <View style={{flex: 1, justifyContent: 'center',}}>
+                    { onClose ?
+                        <TabIcon
+                            containerStyle={[{paddingRight: AppSizes.paddingMed,}]}
+                            color={AppColors.zeplin.blueGrey}
+                            icon={'close'}
+                            onPress={() => onClose()}
+                            raised={false}
+                            type={'material-community'}
+                        />
+                        :
+                        null
+                    }
+                </View>
             </View>
         </View>
     )
@@ -67,10 +86,13 @@ const ProgressPill = ({
 
 ProgressPill.propTypes = {
     currentStep: PropTypes.number.isRequired,
+    onClose:     PropTypes.func,
     totalSteps:  PropTypes.number.isRequired,
 };
 
-ProgressPill.defaultProps = {};
+ProgressPill.defaultProps = {
+    onClose: null,
+};
 
 ProgressPill.componentName = 'ProgressPill';
 
