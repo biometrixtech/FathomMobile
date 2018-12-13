@@ -343,7 +343,7 @@ const timeOptionGroups = {
 
 const getDurationMinutes = () => {
     let minutesList = [];
-    for (let min = 5; min <= 120; min += 5) {
+    for (let min = 5; min <= 480; min += 5) {
         let minString = min.toString() === '5' ? '05' : min.toString();
         minutesList.push(minString);
     }

@@ -570,9 +570,9 @@ class ReadinessSurvey extends Component {
                         const { isRPEValid, isSportValid, sportText, } = PlanLogic.handleSingleSessionValidation(session, this.sportScheduleBuilderRefs[index]);
                         return(
                             <ScrollView
+                                contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                                 key={index}
                                 ref={ref => {this.scrollViewSportBuilderRefs[index] = ref;}}
-                                style={{flex: 1,}}
                             >
                                 <ProgressPill currentStep={3} totalSteps={5} />
                                 <Spacer size={20} />
@@ -659,10 +659,10 @@ class ReadinessSurvey extends Component {
 
                     <ScrollView
                         bounces={false}
+                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         nestedScrollEnabled={true}
                         overScrollMode={'never'}
                         ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
-                        style={{flex: 1,}}
                     >
                         <ProgressPill currentStep={4} totalSteps={5} />
                         { _.map(newSoreBodyParts, (bodyPart, i) =>
@@ -742,9 +742,9 @@ class ReadinessSurvey extends Component {
                     </ScrollView>
 
                     <ScrollView
+                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         nestedScrollEnabled={true}
                         ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
-                        style={{flex: 1,}}
                     >
                         <ProgressPill currentStep={4} totalSteps={5} />
                         {_.map(areaOfSorenessClicked, (area, i) => (

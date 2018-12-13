@@ -130,8 +130,8 @@ class PostSessionSurvey extends Component {
                 >
 
                     <ScrollView
+                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         ref={ref => {this.scrollViewSportBuilderRef = ref;}}
-                        style={{flex: 1,}}
                     >
                         <ProgressPill currentStep={1} totalSteps={3} />
                         <Spacer size={20} />
@@ -217,8 +217,8 @@ class PostSessionSurvey extends Component {
                     </ScrollView>
 
                     <ScrollView
+                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
-                        style={{flex: 1,}}
                     >
                         <ProgressPill currentStep={2} totalSteps={3} />
                         <Spacer size={20} />
@@ -301,9 +301,9 @@ class PostSessionSurvey extends Component {
                     </ScrollView>
 
                     <ScrollView
+                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         nestedScrollEnabled={true}
                         ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
-                        style={{flex: 1,}}
                     >
                         <ProgressPill currentStep={3} totalSteps={3} />
                         {_.map(areaOfSorenessClicked, (area, i) => (
