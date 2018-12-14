@@ -889,7 +889,117 @@ const helperFunctions = {
         };
     },
 
+    getReadinessSurveySingleSessionValidationSession: (RPE, sport_name, duration, session_type) => {
+        return {
+            post_session_survey: {
+                RPE,
+            },
+            sport_name,
+            duration,
+            session_type,
+        };
+    },
+
+    getPostSessionSurveySingleSessionValidationSession: (RPE, sport_name, duration, session_type) => {
+        return {
+            RPE,
+            sport_name,
+            duration,
+            session_type,
+        };
+    },
+
+    getSportScheduleBuilderRef: isFormValid => {
+        return {
+            state: {
+                durationValueGroups: {minutes: 4, label: 1},
+                pickerScrollCount:   2,
+                step:                3,
+                timeValueGroups:     {hours: 2, minutes: 2, amPM: 1},
+                isFormValid,
+            }
+        };
+    },
+
+    getSingleSessionValidationExpectedResult: (isRPEValid, isSportValid, sportText) => {
+        return {
+            isRPEValid,
+            isSportValid,
+            sportText,
+        };
+    }
+
 };
+
+it('Single Session Validation - First Open (Readiness Survey)', () => {
+    let session = helperFunctions.getReadinessSurveySingleSessionValidationSession(null, null, null, null);
+    let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(false);
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, ' ');
+    expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
+});
+
+it('Single Session Validation - Selected Sport (Readiness Survey)', () => {
+    let session = helperFunctions.getReadinessSurveySingleSessionValidationSession(null, 14, 0, null);
+    let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(false);
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, 'soccer ');
+    expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
+});
+
+it('Single Session Validation - Selected Sport & Session Type (Readiness Survey)', () => {
+    let session = helperFunctions.getReadinessSurveySingleSessionValidationSession(null, 14, 0, 6);
+    let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(false);
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, 'soccer training');
+    expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
+});
+
+it('Single Session Validation - Selected Sport, Session Type, & Duration (Readiness Survey)', () => {
+    let session = helperFunctions.getReadinessSurveySingleSessionValidationSession(null, 14, 0, 6);
+    let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(true);
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, true, 'soccer training');
+    expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
+});
+
+it('Single Session Validation - Selected Sport, Session Type, Duration, & RPE (Readiness Survey)', () => {
+    let session = helperFunctions.getReadinessSurveySingleSessionValidationSession(1, 14, 0, 6);
+    let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(true);
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(true, true, 'soccer training');
+    expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
+});
+
+it('Single Session Validation - First Open (Post Session Survey)', () => {
+    let session = helperFunctions.getPostSessionSurveySingleSessionValidationSession(null, null, null, null);
+    let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(false);
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, ' ');
+    expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
+});
+
+it('Single Session Validation - Selected Sport (Post Session Survey)', () => {
+    let session = helperFunctions.getPostSessionSurveySingleSessionValidationSession(null, 14, 0, null);
+    let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(false);
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, 'soccer ');
+    expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
+});
+
+it('Single Session Validation - Selected Sport & Session Type (Post Session Survey)', () => {
+    let session = helperFunctions.getPostSessionSurveySingleSessionValidationSession(null, 14, 0, 6);
+    let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(false);
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, 'soccer training');
+    expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
+});
+
+it('Single Session Validation - Selected Sport, Session Type, & Duration (Post Session Survey)', () => {
+    let session = helperFunctions.getPostSessionSurveySingleSessionValidationSession(null, 14, 25, 6);
+    let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(true);
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, true, 'soccer training');
+    expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
+});
+
+it('Single Session Validation - Selected Sport, Session Type, Duration, & RPE (Post Session Survey)', () => {
+    let session = helperFunctions.getPostSessionSurveySingleSessionValidationSession(1, 14, 25, 6);
+    let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(true);
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(true, true, 'soccer training');
+    expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
+});
 
 it('Coaches Dashboard Search Area Render Logic - No Insights', () => {
     let weeklyInsights = helperFunctions.getSearchAreaWeeklyInsights(false);

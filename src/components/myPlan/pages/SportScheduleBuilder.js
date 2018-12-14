@@ -283,6 +283,7 @@ class SportScheduleBuilder extends Component {
                                                 onPress={() => {
                                                     this._nextStep(2);
                                                     handleFormChange('sport_name', sport.index);
+                                                    scrollToTop();
                                                 }}
                                                 outlined
                                                 raised={false}

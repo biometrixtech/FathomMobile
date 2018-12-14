@@ -165,7 +165,11 @@ class PostSessionSurvey extends Component {
                         <ProgressPill currentStep={1} onClose={handleTogglePostSessionSurvey} totalSteps={3} />
                         <Spacer size={20} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {`How was your ${sportText}?`}
+                            {'How was your '}
+                            <Text robotoMedium style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                {sportText}
+                            </Text>
+                            {'?'}
                         </Text>
                         <View style={{flex: 1, paddingTop: AppSizes.paddingSml,}}>
                             { _.map(MyPlanConstants.postSessionFeel, (value, key) => {

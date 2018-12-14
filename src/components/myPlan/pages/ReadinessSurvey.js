@@ -35,11 +35,6 @@ const helloPageText = 'Let us know how you feel so we can adapt your Recovery Pl
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    pickerSelect: {
-        ...AppFonts.oswaldMedium,
-        color:    AppColors.zeplin.darkGrey,
-        fontSize: AppFonts.scaleFont(17),
-    },
     imageBackgroundStyle: {
         alignItems:      'center',
         alignSelf:       'stretch',
@@ -54,6 +49,17 @@ const styles = StyleSheet.create({
         overflow:          'visible',
         paddingHorizontal: 50,
         paddingVertical:   50,
+    },
+    pickerSelect: {
+        ...AppFonts.oswaldMedium,
+        color:    AppColors.zeplin.darkGrey,
+        fontSize: AppFonts.scaleFont(17),
+    },
+    pickerSelectAndroidContainer: {
+        borderColor:    AppColors.zeplin.blueGrey,
+        borderRadius:   5,
+        borderWidth:    1,
+        justifyContent: 'center',
     },
     shadowEffect: {
         shadowColor:   'rgba(0, 0, 0, 0.16)',
@@ -467,77 +473,86 @@ class ReadinessSurvey extends Component {
                         <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
                             <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Have you already trained today?'}</Text>
                             <Spacer size={20} />
-                            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: (AppSizes.screen.width - (AppSizes.paddingXLrg * 2))}}>
-                                <TouchableHighlight
-                                    onPress={() => handleFormChange('already_trained_number', false)}
-                                    style={[AppStyles.xLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
-                                        backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
-                                    }]}
-                                    underlayColor={AppColors.transparent}
-                                >
-                                    <Text
-                                        oswaldMedium
+                            { Platform.OS === 'ios' ?
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between', width: (AppSizes.screen.width - (AppSizes.paddingXLrg * 2))}}>
+                                    <TouchableHighlight
+                                        onPress={() => handleFormChange('already_trained_number', false)}
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                            backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
+                                        }]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'NO'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        onPress={() => {
+                                            this._resetSportBuilder();
+                                            handleFormChange('already_trained_number', 1);
+                                        }}
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                            backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
+                                        }]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number === 1 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'ONCE'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        onPress={() => this.pickerTrainedAlreadyRefs.togglePicker(true)}
                                         style={[
-                                            AppStyles.textCenterAligned,
+                                            AppStyles.xLrgCircle,
+                                            styles.shadowEffect,
+                                            Platform.OS === 'ios' ?
+                                                {}
+                                                :
+                                                {elevation: 2,},
                                             {
-                                                color:    dailyReadiness.already_trained_number === false ? AppColors.white : AppColors.zeplin.blueGrey,
-                                                fontSize: AppFonts.scaleFont(17),
+                                                backgroundColor: dailyReadiness.already_trained_number > 1 ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
                                             }
                                         ]}
+                                        underlayColor={AppColors.transparent}
                                     >
-                                        {'NO'}
-                                    </Text>
-                                </TouchableHighlight>
-                                <TouchableHighlight
-                                    onPress={() => {
-                                        this._resetSportBuilder();
-                                        handleFormChange('already_trained_number', 1);
-                                    }}
-                                    style={[AppStyles.xLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
-                                        backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
-                                    }]}
-                                    underlayColor={AppColors.transparent}
-                                >
-                                    <Text
-                                        oswaldMedium
-                                        style={[
-                                            AppStyles.textCenterAligned,
-                                            {
-                                                color:    dailyReadiness.already_trained_number === 1 ? AppColors.white : AppColors.zeplin.blueGrey,
-                                                fontSize: AppFonts.scaleFont(17),
-                                            }
-                                        ]}
-                                    >
-                                        {'ONCE'}
-                                    </Text>
-                                </TouchableHighlight>
-                                <TouchableHighlight
-                                    onPress={() => {
-                                        console.log('this.pickerTrainedAlreadyRefs',this.pickerTrainedAlreadyRefs);
-                                        this.pickerTrainedAlreadyRefs.togglePicker(true);
-                                    }}
-                                    style={[AppStyles.xLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
-                                        backgroundColor: dailyReadiness.already_trained_number > 1 ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
-                                    }]}
-                                    underlayColor={AppColors.transparent}
-                                >
-                                    <Text
-                                        oswaldMedium
-                                        style={[
-                                            AppStyles.textCenterAligned,
-                                            {
-                                                color:    dailyReadiness.already_trained_number > 1 ? AppColors.white : AppColors.zeplin.blueGrey,
-                                                fontSize: AppFonts.scaleFont(17),
-                                            }
-                                        ]}
-                                    >
-                                        {'MORE+'}
-                                    </Text>
-                                </TouchableHighlight>
-                            </View>
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number > 1 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'MORE+'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                </View>
+                                :
+                                null
+                            }
                             <FathomPicker
                                 enabled={true}
-                                hideIcon={true}
+                                hideIcon={Platform.OS === 'ios' ? true : false}
                                 items={MyPlanConstants.alreadyTrainedNumber}
                                 onValueChange={value => {
                                     this._resetSportBuilder();
@@ -547,13 +562,14 @@ class ReadinessSurvey extends Component {
                                     label: 'Select a Value',
                                     value: null,
                                 }}
-                                placeholderTextColor={AppColors.white}
+                                placeholderTextColor={Platform.OS === 'ios' ? AppColors.white : AppColors.zeplin.blueGrey}
                                 ref={ref => {this.pickerTrainedAlreadyRefs = ref;}}
                                 style={{
-                                    inputAndroid:     [styles.pickerSelect, {color: AppColors.white,}],
-                                    inputIOS:         [styles.pickerSelect, {color: AppColors.white,}],
-                                    placeholderColor: AppColors.white,
-                                    underline:        {borderTopColor: AppColors.white, borderTopWidth: 0,},
+                                    inputAndroid:          [styles.pickerSelect, {color: AppColors.zeplin.blueGrey,}],
+                                    inputAndroidContainer: [styles.pickerSelectAndroidContainer],
+                                    inputIOS:              [styles.pickerSelect, {color: AppColors.white,}],
+                                    placeholderColor:      Platform.OS === 'ios' ? AppColors.white : AppColors.zeplin.blueGrey,
+                                    underline:             Platform.OS === 'ios' ? {borderTopColor: AppColors.white, borderTopWidth: 0,} : {},
                                 }}
                                 useNativeAndroidPickerStyle={false}
                                 value={dailyReadiness.already_trained_number}
@@ -598,7 +614,11 @@ class ReadinessSurvey extends Component {
                                     { isSportValid ?
                                         <View>
                                             <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                                {`How was your ${sportText}?`}
+                                                {'How was your '}
+                                                <Text robotoMedium style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                                    {sportText}
+                                                </Text>
+                                                {'?'}
                                             </Text>
                                             <View style={{flex: 1, paddingTop: AppSizes.paddingSml,}}>
                                                 { _.map(MyPlanConstants.postSessionFeel, (value, key) => {

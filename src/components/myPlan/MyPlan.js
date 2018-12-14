@@ -16,21 +16,21 @@ import {
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
+import PropTypes from 'prop-types';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
 import { GoogleAnalyticsTracker, } from 'react-native-google-analytics-bridge';
 import _ from 'lodash';
-import PropTypes from 'prop-types';
-import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import Modal from 'react-native-modalbox';
+import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants/';
-import { store } from '../../store';
 import { AppUtil, PlanLogic, } from '../../lib';
+import { store } from '../../store';
 
 // Components
 import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
@@ -601,11 +601,15 @@ class MyPlan extends Component {
         this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
             .then(response => {
                 const dailyPlanObj = response.daily_plans && response.daily_plans[0] ? response.daily_plans[0] : false;
+                let prepExerciseList = dailyPlanObj.pre_recovery.display_exercises ? MyPlanConstants.cleanExerciseList(dailyPlanObj.pre_recovery) : {};
+                let recoverExerciseList = dailyPlanObj.post_recovery.display_exercises ? MyPlanConstants.cleanExerciseList(dailyPlanObj.post_recovery) : {};
+                let isPrepActive = isFromPushNotification && dailyPlanObj.pre_recovery && dailyPlanObj.pre_recovery.display_exercises && !dailyPlanObj.pre_recovery.completed && prepExerciseList.totalLength > 0 ? true : false;
+                let isRecoverActive = isFromPushNotification && dailyPlanObj.post_recovery && dailyPlanObj.post_recovery.display_exercises && !dailyPlanObj.post_recovery.completed && recoverExerciseList.totalLength > 0 ? true : false;
                 let newRecover = _.cloneDeep(this.state.recover);
-                newRecover.isActiveRecoveryCollapsed = true;
+                newRecover.isActiveRecoveryCollapsed = isRecoverActive ? false : true;
                 newRecover.finished = false;
                 let newPrepare = _.cloneDeep(this.state.prepare);
-                newPrepare.isActiveRecoveryCollapsed = true;
+                newPrepare.isActiveRecoveryCollapsed = isPrepActive ? false : true;
                 newPrepare.isReadinessSurveyCollapsed = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
                 newPrepare.isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
                 let newTrain = Object.assign({}, this.state.train, {

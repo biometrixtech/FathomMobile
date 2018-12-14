@@ -328,7 +328,8 @@ const PlanLogic = {
     handleReadinessSurveyRenderLogic: (dailyReadiness, soreBodyParts, areasOfSorenessRef, hourOfDay = moment().get('hour')) => {
         let split_afternoon = 12; // 24hr time to split the afternoon
         let split_evening = 17; // 24hr time to split the evening
-        let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'AFTERNOON' : hourOfDay >= split_evening ? 'EVENING' : 'MORNING';
+        let cutoffForNewDay = 3;
+        let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'AFTERNOON' : hourOfDay >= split_evening || hourOfDay < cutoffForNewDay ? 'EVENING' : 'MORNING';
         let filteredAreasOfSoreness = _.filter(dailyReadiness.soreness, o => {
             let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
             return doesItInclude.length === 0;
@@ -601,7 +602,6 @@ const PlanLogic = {
       * Single Session Validation in Render Logic
       * - ReadinessSurvey & PostSessionSurvey
       */
-    // TODO: UNIT TEST ME
     handleSingleSessionValidation: (session, sportScheduleBuilderRef) => {
         let isRPEValid = false;
         let isSportValid = false;
