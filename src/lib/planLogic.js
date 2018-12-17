@@ -57,7 +57,14 @@ const PlanLogic = {
         // setup varibles
         let newFormFields;
         // logic
-        if(name === 'soreness' && bodyPart) {
+        if(name === 'already_trained_number') {
+            let newValue = [];
+            for (let i = 0; i < value; i += 1) {
+                newValue.push(PlanLogic.returnEmptySession());
+            }
+            newFormFields = _.update(state, 'sessions', () => newValue);
+            newFormFields = _.update(state, name, () => value);
+        } else if(name === 'soreness' && bodyPart) {
             let newSorenessFields = _.cloneDeep(state.soreness);
             if(_.findIndex(state.soreness, (o) => o.body_part === bodyPart && o.side === side) > -1) {
                 // body part already exists
@@ -79,6 +86,23 @@ const PlanLogic = {
         }
         // return
         return newFormFields;
+    },
+
+    returnEmptySession: () => {
+        let postSessionSurvey = {
+            event_date: `${moment().toISOString(true).split('.')[0]}Z`,
+            RPE:        -1,
+            soreness:   [],
+        };
+        return {
+            description:                    '',
+            duration:                       0,
+            event_date:                     null,
+            post_session_survey:            postSessionSurvey,
+            session_type:                   null,
+            sport_name:                     null, // this exists for session_type = 0,2,3,6
+            strength_and_conditioning_type: null, // this only exists for session_type=1
+        };
     },
 
     /**
@@ -186,7 +210,8 @@ const PlanLogic = {
         hoursIn24 = hoursIn24 === 24 ? 12 : hoursIn24;
         now = now.set('hour', hoursIn24);
         now = now.set('minute', Number(MyPlanConstants.timeOptionGroups.minutes[timeValueGroups.minutes]));
-        let duration = Number(MyPlanConstants.durationOptionGroups.minutes[durationValueGroups.minutes]);
+        let hoursToMinutes = (Number(MyPlanConstants.durationOptionGroups.hours[durationValueGroups.hours]) * 60);
+        let duration = (Number(MyPlanConstants.durationOptionGroups.minutes[durationValueGroups.minutes]) + hoursToMinutes);
         return {
             duration,
             event_date: now,
@@ -278,16 +303,21 @@ const PlanLogic = {
             return doesItInclude.length > 0;
         });
         let areQuestionsValid = postSession.RPE > 0 && postSession.event_date;
-        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length === filteredSoreBodyParts.length : true;
         let areAreasOfSorenessValid = (
-            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
-            (areasOfSorenessRef && areasOfSorenessRef.state.isAllGood)
+            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0
         );
         let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;
+        let isFormValidItems = {
+            areAreasOfSorenessValid,
+            isPrevSorenessValid:        (areSoreBodyPartsValid || postSession.soreness.length === 0),
+            selectAreasOfSorenessValid: areasOfSorenessRef && areasOfSorenessRef.state ? filteredAreasOfSoreness.length > 0 || areasOfSorenessRef.state.isAllGood : false,
+        };
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         return {
             isFormValid,
+            isFormValidItems,
             newSoreBodyParts,
         };
     },
@@ -299,7 +329,8 @@ const PlanLogic = {
     handleReadinessSurveyRenderLogic: (dailyReadiness, soreBodyParts, areasOfSorenessRef, hourOfDay = moment().get('hour')) => {
         let split_afternoon = 12; // 24hr time to split the afternoon
         let split_evening = 17; // 24hr time to split the evening
-        let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'AFTERNOON' : hourOfDay >= split_evening ? 'EVENING' : 'MORNING';
+        let cutoffForNewDay = 3;
+        let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'AFTERNOON' : hourOfDay >= split_evening || hourOfDay < cutoffForNewDay ? 'EVENING' : 'MORNING';
         let filteredAreasOfSoreness = _.filter(dailyReadiness.soreness, o => {
             let doesItInclude = _.filter(soreBodyParts.body_parts, a => a.body_part === o.body_part && a.side === o.side);
             return doesItInclude.length === 0;
@@ -309,10 +340,9 @@ const PlanLogic = {
             return doesItInclude.length > 0;
         });
         let areQuestionsValid = dailyReadiness.readiness > 0 && dailyReadiness.sleep_quality > 0;
-        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length > 0 : true;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length === filteredSoreBodyParts.length : true;
         let areAreasOfSorenessValid = (
-            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0 ||
-            (areasOfSorenessRef && areasOfSorenessRef.state.isAllGood)
+            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0
         );
         let foundSport = _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name);
         let selectedSportPositions = dailyReadiness.current_sport_name !== null && foundSport ? foundSport.positions : [];
@@ -342,13 +372,25 @@ const PlanLogic = {
             `(${soreBodyParts.completed_functional_strength_sessions}/2 completed in last 7 days${soreBodyParts.completed_functional_strength_sessions === 2 ? ', but you can go for 3!': ''})`
             :
             '';
+        let isTrainedTodayValid = dailyReadiness.already_trained_number === 0 || dailyReadiness.already_trained_number === false || dailyReadiness.already_trained_number >= 1;
         let isFormValid = isFunctionalStrengthValid && areQuestionsValid && (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0) && areAreasOfSorenessValid;
+        let isFormValidItems = {
+            areAreasOfSorenessValid,
+            areQuestionsValid,
+            isFunctionalStrengthValid,
+            isPrevSorenessValid:             (areSoreBodyPartsValid || dailyReadiness.soreness.length === 0),
+            isSecondFunctionalStrengthValid: dailyReadiness.wants_functional_strength !== null,
+            isTrainedTodayValid,
+            selectAreasOfSorenessValid:      areasOfSorenessRef && areasOfSorenessRef.state ? filteredAreasOfSoreness.length > 0 || areasOfSorenessRef.state.isAllGood : false,
+            willTrainLaterValid:             dailyReadiness.sessions_planned !== null,
+        };
         let newSoreBodyParts = _.cloneDeep(soreBodyParts.body_parts);
         newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
         return {
             functionalStrengthTodaySubtext,
             isFirstFunctionalStrength,
             isFormValid,
+            isFormValidItems,
             isSecondFunctionalStrength,
             newSoreBodyParts,
             partOfDay,
@@ -380,9 +422,9 @@ const PlanLogic = {
             } else {
                 mainBodyPartName = mainBodyPartName.slice(0, -1);
             }
-            helpingVerb = 'is';
+            helpingVerb = 'has';
         }
-        let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'left ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'right ' : ''}${mainBodyPartName.toLowerCase()}`;
+        let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'Left ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'Right ' : ''}${mainBodyPartName}`;
         return {
             bodyPartMap,
             bodyPartName,
@@ -485,11 +527,12 @@ const PlanLogic = {
         });
         let selectedTeam = coachesTeams[selectedTeamIndex];
         // compliance modal data
-        let complianceObj = selectedTeam ? selectedTeam.compliance : {completed: [], incomplete: []};
+        let complianceObj = selectedTeam ? selectedTeam.compliance : {completed: [], incomplete: [], training_compliance: {}};
         let numOfCompletedAthletes = complianceObj ? complianceObj.completed.length : 0;
         let numOfIncompletedAthletes = complianceObj ? complianceObj.incomplete.length : 0;
         let numOfTotalAthletes = numOfCompletedAthletes + numOfIncompletedAthletes;
         let incompleteAtheltes = complianceObj ? complianceObj.incomplete : [];
+        let completedAtheltes = complianceObj ? complianceObj.completed : [];
         let completedPercent = (numOfCompletedAthletes / numOfTotalAthletes) * 100;
         let complianceColor = completedPercent <= 49 ?
             AppColors.zeplin.error
@@ -498,13 +541,17 @@ const PlanLogic = {
                 :
                 AppColors.zeplin.success;
         complianceColor = numOfTotalAthletes === 0 ? AppColors.zeplin.error : complianceColor;
+        let trainingCompliance = complianceObj ? complianceObj.training_compliance : [];
         return {
             coachesTeams,
+            completedAtheltes,
             complianceColor,
             incompleteAtheltes,
             numOfCompletedAthletes,
+            numOfIncompletedAthletes,
             numOfTotalAthletes,
             selectedTeam,
+            trainingCompliance,
         };
     },
 
@@ -556,6 +603,142 @@ const PlanLogic = {
             doWeHaveWeeklyInsights,
         };
     },
+
+    /**
+      * Single Session Validation in Render Logic
+      * - ReadinessSurvey & PostSessionSurvey
+      */
+    handleSingleSessionValidation: (session, sportScheduleBuilderRef) => {
+        let isRPEValid = false;
+        let isSportValid = false;
+        if(!sportScheduleBuilderRef) {
+            return {
+                isRPEValid,
+                isSportValid,
+            };
+        }
+        let { sportText, } = PlanLogic.handleSportScheduleBuilderRenderLogic(session, sportScheduleBuilderRef.state ? sportScheduleBuilderRef.state : {});
+        return {
+            isRPEValid:   session.post_session_survey ? session.post_session_survey.RPE === 0 || session.post_session_survey.RPE > 0 : session.RPE === 0 || session.RPE > 0,
+            isSportValid: sportScheduleBuilderRef.state ? sportScheduleBuilderRef.state.isFormValid : false,
+            sportText,
+        };
+    },
+
+    /**
+      * Next Page & Validation Logic
+      * - ReadinessSurvey
+      */
+    // TODO: UNIT TEST ME
+    handleReadinessSurveyNextPage: (pageState, dailyReadiness, currentPage, isFormValidItems, isBackBtn, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked) => {
+        let pageNum = 0;
+        let isValid = false;
+        if(currentPage === 0) { // 0. GOOD [TIME OF DAY], MAZEN!
+            pageNum = isFirstFunctionalStrength ? 1 : 2;
+            isValid = true;
+        } else if(currentPage === 1) { // 1. first FS
+            pageNum = isBackBtn ? 0 : 2;
+            isValid = isFormValidItems.isFunctionalStrengthValid;
+        } else if(currentPage === 2) { // 2. questions
+            pageNum = isBackBtn && isFirstFunctionalStrength ? 1 : isBackBtn && !isFirstFunctionalStrength ? 0 : 3;
+            isValid = isFormValidItems.areQuestionsValid;
+        } else if(currentPage === 3) { // 3. trained already?
+            if(isBackBtn) {
+                pageNum = 2;
+            } else {
+                pageNum = dailyReadiness.already_trained_number === false && (newSoreBodyParts && newSoreBodyParts.length === 0) ?
+                    (pageState.pageIndex + 3)
+                    : dailyReadiness.already_trained_number === false && (newSoreBodyParts && newSoreBodyParts.length > 0) ?
+                        (pageState.pageIndex + 2)
+                        :
+                        (pageState.pageIndex + 1);
+            }
+            isValid = isFormValidItems.isTrainedTodayValid;
+        } else if(currentPage === 4) { // 4. SportScheduleBuilder & RPE
+            if(isBackBtn) {
+                pageNum = pageState.pageIndex - 1;
+            } else {
+                pageNum = (newSoreBodyParts && newSoreBodyParts.length === 0) && (sportBuilderRPEIndex + 1) === dailyReadiness.sessions.length ?
+                    (pageState.pageIndex + 2)
+                    :
+                    (pageState.pageIndex + 1);
+            }
+            isValid = true; // can only click if form is valid
+        } else if(currentPage === 5) { // 5. previous soreness
+            if(isBackBtn) {
+                pageNum = dailyReadiness.sessions.length === 0 ?
+                    (pageState.pageIndex - 2)
+                    :
+                    (pageState.pageIndex - 1);
+            } else {
+                pageNum = pageState.pageIndex + 1;
+            }
+            isValid = isFormValidItems.isPrevSorenessValid;
+        } else if(currentPage === 6) { // 6. areas of soreness - body parts
+            if(isBackBtn) {
+                pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ?
+                    (pageState.pageIndex - 1)
+                    : (newSoreBodyParts && newSoreBodyParts.length === 0) && dailyReadiness.sessions.length === 0 ?
+                        (pageState.pageIndex - 3)
+                        :
+                        (pageState.pageIndex - 2);
+            } else {
+                pageNum = areaOfSorenessClicked.length > 0 ? (pageState.pageIndex + 1) : (pageState.pageIndex + 2);
+            }
+            isValid = isFormValidItems.selectAreasOfSorenessValid;
+        } else if(currentPage === 7) { // 7. areas of soreness - selected body parts
+            pageNum = isBackBtn ? (pageState.pageIndex - 1) : (pageState.pageIndex + 1);
+            isValid = isFormValidItems.areAreasOfSorenessValid;
+        } else if(currentPage === 8) { // 8. train later today?
+            if(isBackBtn) {
+                pageNum = areaOfSorenessClicked.length > 0 ? (pageState.pageIndex - 1) : (pageState.pageIndex - 2);
+            } else {
+                pageNum = pageState.pageIndex + 1;
+            }
+            isValid = isFormValidItems.willTrainLaterValid;
+        } else if(currentPage === 9) { // 9. second FS
+            pageNum = isBackBtn ? (pageState.pageIndex - 1) : pageState.pageIndex;
+            isValid = isFormValidItems.isSecondFunctionalStrengthValid;
+        }
+        return {
+            isValid,
+            pageNum,
+        };
+    },
+
+    /**
+      * Next Page & Validation Logic
+      * - PostSessionSurvey
+      */
+    // TODO: UNIT TEST ME
+    handlePostSessionSurveyNextPage: (postSession, currentPage, isFormValidItems, isBackBtn, newSoreBodyParts, areaOfSorenessClicked) => {
+        let isValid = false;
+        let pageNum = 0;
+        if(currentPage === 0) { // Sport Builder
+            pageNum = 1;
+            isValid = isFormValidItems.isSportValid;
+        } else if(currentPage === 1) { // RPE
+            pageNum = isBackBtn ? 0 : (newSoreBodyParts && newSoreBodyParts.length > 0) ? 2 : 3;
+            isValid = isFormValidItems.isRPEValid;
+        } else if(currentPage === 2) { // Previous Soreness
+            pageNum = isBackBtn ? 1 : 3;
+            isValid = isFormValidItems.isPrevSorenessValid;
+        } else if(currentPage === 3) { // Areas of Soreness
+            if(isBackBtn) {
+                pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 2 : 1;
+            } else {
+                pageNum = areaOfSorenessClicked.length > 0 ? 4 : 3;
+            }
+            isValid = isFormValidItems.selectAreasOfSorenessValid;
+        } else if(currentPage === 4) { // Areas of Soreness Selected
+            pageNum = isBackBtn ? 3 : 4;
+            isValid = isFormValidItems.areAreasOfSorenessValid;
+        }
+        return {
+            isValid,
+            pageNum,
+        };
+    }
 
 };
 

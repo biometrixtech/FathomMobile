@@ -58,7 +58,7 @@ const ScaleButton = ({
                 style={[
                     AppStyles.textCenterAligned,
                     {
-                        color:             AppColors.primary.grey.fiftyPercent,
+                        color:             isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
                         flex:              1,
                         fontSize:          AppFonts.scaleFont(12),
                         paddingHorizontal: AppSizes.paddingXSml,
@@ -69,7 +69,7 @@ const ScaleButton = ({
                 {valueLabel.toUpperCase()}
             </Text>
             :
-            <Spacer size={10} />
+            null
         }
     </View>
 );

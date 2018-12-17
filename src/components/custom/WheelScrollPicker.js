@@ -43,7 +43,7 @@ class WheelScrollPicker extends Component {
         this.onScrollBeginDrag = this.onScrollBeginDrag.bind(this);
         this.onScrollEndDrag = this.onScrollEndDrag.bind(this);
         this.state = {
-            selectedIndex: this.props.selectedIndex ? this.props.selectedIndex : 1,
+            selectedIndex: this.props.selectedIndex ? this.props.selectedIndex : 0,
         }
     }
 
