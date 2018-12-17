@@ -41,7 +41,8 @@ class SportScheduleBuilder extends Component {
         super(props);
         this.state = {
             durationValueGroups: {
-                minutes: 2,
+                hours:   0,
+                minutes: 0,
                 label:   1,
             },
             isFormValid:       false,
@@ -63,7 +64,8 @@ class SportScheduleBuilder extends Component {
         this.setState(
             {
                 durationValueGroups: {
-                    minutes: 2,
+                    hours:   0,
+                    minutes: 0,
                     label:   1,
                 },
                 isFormValid:       false,
@@ -91,7 +93,7 @@ class SportScheduleBuilder extends Component {
         this.setState(
             {
                 [this.state[stateIndex]]: newFormFields,
-                pickerScrollCount:        this.state.pickerScrollCount + 1,
+                pickerScrollCount:        this.state.durationValueGroups.hours !== 0 || this.state.durationValueGroups.minutes !== 0 ? 1 : 0,
             },
             () => {
                 this._validateForm();
@@ -101,18 +103,16 @@ class SportScheduleBuilder extends Component {
 
     _validateForm = () => {
         let { pickerScrollCount, } = this.state;
-        if(pickerScrollCount > 0) {
-            this.setState(
-                {
-                    isFormValid: true,
-                },
-                () => {
-                    let dateTimeDurationFromState = PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, this.state.isFormValid, this.state.timeValueGroups);
-                    this.props.handleFormChange('event_date', `${dateTimeDurationFromState.event_date.toISOString(true).split('.')[0]}Z`);
-                    this.props.handleFormChange('duration', dateTimeDurationFromState.duration);
-                },
-            );
-        }
+        this.setState(
+            {
+                isFormValid: pickerScrollCount > 0 ? true : false,
+            },
+            () => {
+                let dateTimeDurationFromState = PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, this.state.isFormValid, this.state.timeValueGroups);
+                this.props.handleFormChange('event_date', this.state.isFormValid ? `${dateTimeDurationFromState.event_date.toISOString(true).split('.')[0]}Z` : dateTimeDurationFromState.event_date);
+                this.props.handleFormChange('duration', dateTimeDurationFromState.duration);
+            },
+        );
     }
 
     render = () => {
@@ -174,11 +174,9 @@ class SportScheduleBuilder extends Component {
                                 }
                             </Text>
                             { step >= 3 ?
-                                <Text robotoLight style={{color: AppColors.zeplin.darkGrey,}}>{' at'}</Text>
+                                <Text />
                                 :
                                 <Text style={{fontSize: AppFonts.scaleFont(32), lineHeight: AppFonts.scaleFont(32),}}>
-                                    <Text robotoLight style={{color: AppColors.zeplin.darkGrey,}}>{' at '}</Text>
-                                    <Text robotoMedium style={{color: 'rgba(117, 117, 117, 0.5)',}}>{'time'}</Text>
                                     <Text robotoLight style={{color: AppColors.zeplin.darkGrey,}}>{' for '}</Text>
                                     <Text robotoMedium style={{color: 'rgba(117, 117, 117, 0.5)',}}>{'duration'}</Text>
                                 </Text>
@@ -186,19 +184,37 @@ class SportScheduleBuilder extends Component {
                         </Text>
                         { step >= 3 ?
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center'}}>
-                                <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2, height: (AppFonts.scaleFont(32) + underlinePadding),}}>
-                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32),}}>
-                                        {startTimeText}
-                                        <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? `${timeValueGroups.amPM === 0 ? 'AM' : 'PM'}` : ''}</Text>
-                                    </Text>
-                                </View>
                                 <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32), height: (AppFonts.scaleFont(32) + 5),}}>{' for '}</Text>
-                                <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2, height: (AppFonts.scaleFont(32) + underlinePadding),}}>
-                                    <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32),}}>
-                                        {durationText}
-                                        <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'MIN' : ''}</Text>
-                                    </Text>
-                                </View>
+                                { this.state.durationValueGroups.hours > 0 ?
+                                    <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2, height: (AppFonts.scaleFont(32) + underlinePadding),}}>
+                                        <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32),}}>
+                                            {parseInt((durationText / 60), 10)}
+                                            <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'HR' : ''}</Text>
+                                        </Text>
+                                    </View>
+                                    :
+                                    null
+                                }
+                                { this.state.durationValueGroups.minutes > 0 ?
+                                    <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2, height: (AppFonts.scaleFont(32) + underlinePadding),}}>
+                                        <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32),}}>
+                                            {(durationText % 60)}
+                                            <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'MIN' : ''}</Text>
+                                        </Text>
+                                    </View>
+                                    :
+                                    null
+                                }
+                                { this.state.durationValueGroups.minutes === 0 && this.state.durationValueGroups.hours === 0 ?
+                                    <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2, height: (AppFonts.scaleFont(32) + underlinePadding),}}>
+                                        <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32),}}>
+                                            {durationText}
+                                            <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'MIN' : ''}</Text>
+                                        </Text>
+                                    </View>
+                                    :
+                                    null
+                                }
                             </View>
                             :
                             null
@@ -346,65 +362,14 @@ class SportScheduleBuilder extends Component {
                                 : step === 3 ?
                                     <View>
                                         <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                                            <View style={{flex: 5,}}>
-                                                <Text oswaldMedium style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{'START TIME'}</Text>
-                                                <Spacer size={10} />
-                                                <View style={{flexDirection: 'row',}}>
-                                                    <WheelScrollPicker
-                                                        activeItemColor={AppColors.zeplin.darkGrey}
-                                                        activeItemHighlight={'#EBBA2D4D'}
-                                                        dataSource={MyPlanConstants.timeOptionGroups.hours}
-                                                        highlightBorderWidth={2}
-                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
-                                                        itemColor={AppColors.primary.grey.fiftyPercent}
-                                                        itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        selectedIndex={timeValueGroups.hours}
-                                                        onValueChange={(data, selectedIndex) => {
-                                                            this._handleScrollFormChange('timeValueGroups', 'hours', data, selectedIndex);
-                                                        }}
-                                                        wrapperBackground={AppColors.transparent}
-                                                        wrapperHeight={180}
-                                                    />
-                                                    <WheelScrollPicker
-                                                        activeItemColor={AppColors.zeplin.darkGrey}
-                                                        activeItemHighlight={'#EBBA2D4D'}
-                                                        dataSource={MyPlanConstants.timeOptionGroups.minutes}
-                                                        highlightBorderWidth={2}
-                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
-                                                        itemColor={AppColors.primary.grey.fiftyPercent}
-                                                        itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        selectedIndex={timeValueGroups.minutes}
-                                                        onValueChange={(data, selectedIndex) => {
-                                                            this._handleScrollFormChange('timeValueGroups', 'minutes', data, selectedIndex);
-                                                        }}
-                                                        wrapperBackground={AppColors.transparent}
-                                                        wrapperHeight={180}
-                                                    />
-                                                    <WheelScrollPicker
-                                                        activeItemColor={AppColors.zeplin.darkGrey}
-                                                        activeItemHighlight={'#EBBA2D4D'}
-                                                        dataSource={MyPlanConstants.timeOptionGroups.amPM}
-                                                        highlightBorderWidth={2}
-                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
-                                                        itemColor={AppColors.primary.grey.fiftyPercent}
-                                                        itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        selectedIndex={timeValueGroups.amPM}
-                                                        onValueChange={(data, selectedIndex) => {
-                                                            this._handleScrollFormChange('timeValueGroups', 'amPM', data, selectedIndex);
-                                                        }}
-                                                        wrapperBackground={AppColors.transparent}
-                                                        wrapperHeight={180}
-                                                    />
-                                                </View>
-                                            </View>
-                                            <View style={{flex: 5,}}>
-                                                <Text oswaldMedium style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{'DURATION'}</Text>
+                                            <View style={{flex: 1,}}>
+                                                <Text oswaldMedium style={{color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'DURATION'}</Text>
                                                 <Spacer size={10} />
                                                 <View style={{flex: 1, flexDirection: 'row',}}>
                                                     <WheelScrollPicker
                                                         activeItemColor={AppColors.zeplin.darkGrey}
                                                         activeItemHighlight={'#EBBA2D4D'}
-                                                        dataSource={['', '', '']}
+                                                        dataSource={[' ', ' ', ' ']}
                                                         highlightBorderWidth={2}
                                                         highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
@@ -418,31 +383,68 @@ class SportScheduleBuilder extends Component {
                                                     <WheelScrollPicker
                                                         activeItemColor={AppColors.zeplin.darkGrey}
                                                         activeItemHighlight={'#EBBA2D4D'}
-                                                        dataSource={MyPlanConstants.durationOptionGroups.minutes}
+                                                        dataSource={MyPlanConstants.durationOptionGroups.hours}
                                                         highlightBorderWidth={2}
                                                         highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        selectedIndex={durationValueGroups.minutes}
-                                                        onValueChange={(data, selectedIndex) => {
-                                                            this._handleScrollFormChange('durationValueGroups', 'minutes', data, selectedIndex);
-                                                        }}
+                                                        selectedIndex={durationValueGroups.hours}
+                                                        onValueChange={(data, selectedIndex) => this._handleScrollFormChange('durationValueGroups', 'hours', data, selectedIndex)}
                                                         wrapperBackground={AppColors.transparent}
                                                         wrapperHeight={180}
                                                     />
                                                     <WheelScrollPicker
                                                         activeItemColor={AppColors.zeplin.darkGrey}
                                                         activeItemHighlight={'#EBBA2D4D'}
-                                                        dataSource={MyPlanConstants.durationOptionGroups.label}
+                                                        dataSource={MyPlanConstants.durationOptionGroups.hourLabel}
                                                         highlightBorderWidth={2}
                                                         highlightColor={AppColors.primary.yellow.hundredPercent}
                                                         itemColor={AppColors.primary.grey.fiftyPercent}
                                                         itemHeight={AppFonts.scaleFont(18) + 10}
                                                         scrollEnabled={false}
                                                         selectedIndex={durationValueGroups.label}
-                                                        onValueChange={(data, selectedIndex) => {
-                                                            this._handleScrollFormChange('durationValueGroups', 'label', data, selectedIndex);
-                                                        }}
+                                                        onValueChange={(data, selectedIndex) => null}
+                                                        wrapperBackground={AppColors.transparent}
+                                                        wrapperHeight={180}
+                                                    />
+                                                    <WheelScrollPicker
+                                                        activeItemColor={AppColors.zeplin.darkGrey}
+                                                        activeItemHighlight={'#EBBA2D4D'}
+                                                        dataSource={MyPlanConstants.durationOptionGroups.minutes}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
+                                                        itemColor={AppColors.primary.grey.fiftyPercent}
+                                                        itemHeight={AppFonts.scaleFont(18) + 10}
+                                                        selectedIndex={durationValueGroups.minutes}
+                                                        onValueChange={(data, selectedIndex) => this._handleScrollFormChange('durationValueGroups', 'minutes', data, selectedIndex)}
+                                                        wrapperBackground={AppColors.transparent}
+                                                        wrapperHeight={180}
+                                                    />
+                                                    <WheelScrollPicker
+                                                        activeItemColor={AppColors.zeplin.darkGrey}
+                                                        activeItemHighlight={'#EBBA2D4D'}
+                                                        dataSource={MyPlanConstants.durationOptionGroups.minLabel}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
+                                                        itemColor={AppColors.primary.grey.fiftyPercent}
+                                                        itemHeight={AppFonts.scaleFont(18) + 10}
+                                                        scrollEnabled={false}
+                                                        selectedIndex={1}
+                                                        onValueChange={(data, selectedIndex) => null}
+                                                        wrapperBackground={AppColors.transparent}
+                                                        wrapperHeight={180}
+                                                    />
+                                                    <WheelScrollPicker
+                                                        activeItemColor={AppColors.zeplin.darkGrey}
+                                                        activeItemHighlight={'#EBBA2D4D'}
+                                                        dataSource={[' ', ' ', ' ']}
+                                                        highlightBorderWidth={2}
+                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
+                                                        itemColor={AppColors.primary.grey.fiftyPercent}
+                                                        itemHeight={AppFonts.scaleFont(18) + 10}
+                                                        scrollEnabled={false}
+                                                        selectedIndex={1}
+                                                        onValueChange={(data, selectedIndex) => null}
                                                         wrapperBackground={AppColors.transparent}
                                                         wrapperHeight={180}
                                                     />

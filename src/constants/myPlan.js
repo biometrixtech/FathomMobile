@@ -343,16 +343,27 @@ const timeOptionGroups = {
 
 const getDurationMinutes = () => {
     let minutesList = [];
-    for (let min = 5; min <= 480; min += 5) {
-        let minString = min.toString() === '5' ? '05' : min.toString();
+    for (let min = 0; min <= 55; min += 5) {
+        let minString = min.toString();//min.toString() === '5' ? '05' : min.toString();
         minutesList.push(minString);
     }
     return minutesList;
 };
 
+const getDurationHours = () => {
+    let hoursList = [];
+    for (let hour = 0; hour <= 23; hour += 1) {
+        let hourString = hour.toString();
+        hoursList.push(hourString);
+    }
+    return hoursList;
+};
+
 const durationOptionGroups = {
-    minutes: getDurationMinutes(),
-    label:   [' ', 'MIN', ' '],
+    hourLabel: [' ', 'HR', ' '],
+    hours:     getDurationHours(),
+    minLabel:  [' ', 'MIN', ' '],
+    minutes:   getDurationMinutes(),
 };
 
 const cleanedPostSessionName = (postPracticeSurvey) => {

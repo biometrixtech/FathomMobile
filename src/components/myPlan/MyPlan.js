@@ -124,6 +124,7 @@ class MyPlan extends Component {
         postReadinessSurvey:     PropTypes.func.isRequired,
         postSessionSurvey:       PropTypes.func.isRequired,
         preReadiness:            PropTypes.func.isRequired,
+        setAppLogs:              PropTypes.func.isRequired,
         setCompletedExercises:   PropTypes.func.isRequired,
         setCompletedFSExercises: PropTypes.func.isRequired,
         updateUser:              PropTypes.func.isRequired,
@@ -587,6 +588,7 @@ class MyPlan extends Component {
 
     _toggleReadinessSurvey = () => {
         this.setState({ isPageLoading: true, });
+        this.props.setAppLogs();
         this.props.preReadiness(this.props.user.id)
             .then(() => this.setState({ isReadinessSurveyModalOpen: true, isPageLoading: false, }))
             .catch(() => {

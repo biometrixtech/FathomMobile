@@ -210,7 +210,8 @@ const PlanLogic = {
         hoursIn24 = hoursIn24 === 24 ? 12 : hoursIn24;
         now = now.set('hour', hoursIn24);
         now = now.set('minute', Number(MyPlanConstants.timeOptionGroups.minutes[timeValueGroups.minutes]));
-        let duration = Number(MyPlanConstants.durationOptionGroups.minutes[durationValueGroups.minutes]);
+        let hoursToMinutes = (Number(MyPlanConstants.durationOptionGroups.hours[durationValueGroups.hours]) * 60);
+        let duration = (Number(MyPlanConstants.durationOptionGroups.minutes[durationValueGroups.minutes]) + hoursToMinutes);
         return {
             duration,
             event_date: now,
