@@ -475,9 +475,10 @@ const helperFunctions = {
         };
     },
 
-    getDefaultDurationValuesFromState: (durationMinutes, durationLabel) => {
+    getDefaultDurationValuesFromState: (durationHours, durationMinutes, durationLabel) => {
         return {
             durationValueGroups: {
+                hours:   durationHours,
                 minutes: durationMinutes,
                 label:   durationLabel,
             }
@@ -813,14 +814,17 @@ const helperFunctions = {
         ];
     },
 
-    getCoachesDashboardRenderLogicExpectedResult: (coachesTeams, complianceColor, incompleteAtheltes, numOfCompletedAthletes, numOfTotalAthletes, selectedTeam) => {
+    getCoachesDashboardRenderLogicExpectedResult: (coachesTeams, completedAtheltes, complianceColor, incompleteAtheltes, numOfCompletedAthletes, numOfIncompletedAthletes, numOfTotalAthletes, selectedTeam, trainingCompliance) => {
         return {
             coachesTeams,
+            completedAtheltes,
             complianceColor,
             incompleteAtheltes,
             numOfCompletedAthletes,
+            numOfIncompletedAthletes,
             numOfTotalAthletes,
             selectedTeam,
+            trainingCompliance,
         };
     },
 
@@ -1039,11 +1043,14 @@ it('Coaches Dashboard Render Logic - 1 Team', () => {
     let selectedTeamIndex = 0;
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
+        coachesDashboardData[selectedTeamIndex].compliance.completed,
         '#C8432A',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
         coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
         (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
-        coachesDashboardData[selectedTeamIndex]
+        coachesDashboardData[selectedTeamIndex],
+        coachesDashboardData[selectedTeamIndex].compliance.training_compliance
     );
     expect(PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex)).toEqual(expectedResult);
 });
@@ -1053,11 +1060,14 @@ it('Coaches Dashboard Render Logic - 2 Teams, First Team Selected', () => {
     let selectedTeamIndex = 0;
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
+        coachesDashboardData[selectedTeamIndex].compliance.completed,
         '#C8432A',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
         coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
         (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
-        coachesDashboardData[selectedTeamIndex]
+        coachesDashboardData[selectedTeamIndex],
+        coachesDashboardData[selectedTeamIndex].compliance.training_compliance
     );
     expect(PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex)).toEqual(expectedResult);
 });
@@ -1067,11 +1077,14 @@ it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
     let selectedTeamIndex = 1;
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
+        coachesDashboardData[selectedTeamIndex].compliance.completed,
         '#C8432A',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
         coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
         (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
-        coachesDashboardData[selectedTeamIndex]
+        coachesDashboardData[selectedTeamIndex],
+        coachesDashboardData[selectedTeamIndex].compliance.training_compliance
     );
     expect(PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex)).toEqual(expectedResult);
 });
@@ -1096,22 +1109,22 @@ it('Athlete Card Modal Render Logic - With Information - Gabby', () => {
 
 it('Sport Schedule Builder Render Logic - Valid Sport, RPE, & All Good', () => {
     let postSession = helperFunctions.getPostSessionDefaultState(5, '', 20, '2018-11-15T15:30:00Z', 2, [], 0, null);
-    let pageState = helperFunctions.readinessSurveyPageState({minutes: 3, label: 1}, true, 1, 3, {hours: 2, minutes: 2, amPM: 1});
-    let expectedResult = helperFunctions.sportScheduleBuilderRenderLogicExpectedResult('20', helperFunctions.filteredSportSessionTypes(true), 'basketball', 'basketball competition', '3:30', helperFunctions.getStrengthConditioningTypes(), helperFunctions.getTeamSports());
+    let pageState = helperFunctions.readinessSurveyPageState({hours: 0, minutes: 3, label: 1}, true, 1, 3, {hours: 2, minutes: 2, amPM: 1});
+    let expectedResult = helperFunctions.sportScheduleBuilderRenderLogicExpectedResult('15', helperFunctions.filteredSportSessionTypes(true), 'basketball', 'basketball competition', '3:30', helperFunctions.getStrengthConditioningTypes(), helperFunctions.getTeamSports());
     expect(PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, pageState)).toEqual(expectedResult);
 });
 
 it('Sport Schedule Builder Render Logic - Valid Sport & RPE', () => {
     let postSession = helperFunctions.getPostSessionDefaultState(5, '', 20, '2018-11-15T15:30:00Z', 2, [], 0, null);
-    let pageState = helperFunctions.readinessSurveyPageState({minutes: 3, label: 1}, true, 1, 3, {hours: 2, minutes: 2, amPM: 1});
-    let expectedResult = helperFunctions.sportScheduleBuilderRenderLogicExpectedResult('20', helperFunctions.filteredSportSessionTypes(true), 'basketball', 'basketball competition', '3:30', helperFunctions.getStrengthConditioningTypes(), helperFunctions.getTeamSports());
+    let pageState = helperFunctions.readinessSurveyPageState({hours: 0, minutes: 3, label: 1}, true, 1, 3, {hours: 2, minutes: 2, amPM: 1});
+    let expectedResult = helperFunctions.sportScheduleBuilderRenderLogicExpectedResult('15', helperFunctions.filteredSportSessionTypes(true), 'basketball', 'basketball competition', '3:30', helperFunctions.getStrengthConditioningTypes(), helperFunctions.getTeamSports());
     expect(PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, pageState)).toEqual(expectedResult);
 });
 
 it('Sport Schedule Builder Render Logic - Valid Sport', () => {
     let postSession = helperFunctions.getPostSessionDefaultState(0, '', 20, '2018-11-15T15:30:00Z', 2, [], 0, null);
-    let pageState = helperFunctions.readinessSurveyPageState({minutes: 3, label: 1}, true, 1, 3, {hours: 2, minutes: 2, amPM: 1});
-    let expectedResult = helperFunctions.sportScheduleBuilderRenderLogicExpectedResult('20', helperFunctions.filteredSportSessionTypes(true), 'basketball', 'basketball competition', '3:30', helperFunctions.getStrengthConditioningTypes(), helperFunctions.getTeamSports());
+    let pageState = helperFunctions.readinessSurveyPageState({hours: 0, minutes: 3, label: 1}, true, 1, 3, {hours: 2, minutes: 2, amPM: 1});
+    let expectedResult = helperFunctions.sportScheduleBuilderRenderLogicExpectedResult('15', helperFunctions.filteredSportSessionTypes(true), 'basketball', 'basketball competition', '3:30', helperFunctions.getStrengthConditioningTypes(), helperFunctions.getTeamSports());
     expect(PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, pageState)).toEqual(expectedResult);
 });
 
@@ -1376,26 +1389,18 @@ it('Sport Schedule Builder Cleaning of Sport Text - Empty Data', () => {
 });
 
 it('Sport Schedule Builder Cleaning of Date and Time Duration from State - Form Is Valid with data #1', () => {
-    let durationValueGroups = helperFunctions.getDefaultDurationValuesFromState(11, 1).durationValueGroups;
+    let durationValueGroups = helperFunctions.getDefaultDurationValuesFromState(0, 11, 1).durationValueGroups;
     let isFormValid = true;
     let timeValueGroups = helperFunctions.getDefaulTimeValuesFromState(4, 0, 0).timeValueGroups;
-    let expectedResult = helperFunctions.getSportScheduleBuilderDateTimeDurationFromStateExpectedResult(60, false, timeValueGroups);
+    let expectedResult = helperFunctions.getSportScheduleBuilderDateTimeDurationFromStateExpectedResult(55, false, timeValueGroups);
     expect(PlanLogic.handleGetDateTimeDurationFromState(durationValueGroups, isFormValid, timeValueGroups)).toEqual(expectedResult);
 });
 
 it('Sport Schedule Builder Cleaning of Date and Time Duration from State - Form Is Valid with data #2', () => {
-    let durationValueGroups = helperFunctions.getDefaultDurationValuesFromState(17, 1).durationValueGroups;
-    let isFormValid = true;
-    let timeValueGroups = helperFunctions.getDefaulTimeValuesFromState(5, 2, 1).timeValueGroups;
-    let expectedResult = helperFunctions.getSportScheduleBuilderDateTimeDurationFromStateExpectedResult(90, false, timeValueGroups);
-    expect(PlanLogic.handleGetDateTimeDurationFromState(durationValueGroups, isFormValid, timeValueGroups)).toEqual(expectedResult);
-});
-
-it('Sport Schedule Builder Cleaning of Date and Time Duration from State - Form Is Valid with data #3', () => {
-    let durationValueGroups = helperFunctions.getDefaultDurationValuesFromState(2, 1).durationValueGroups;
+    let durationValueGroups = helperFunctions.getDefaultDurationValuesFromState(0, 2, 1).durationValueGroups;
     let isFormValid = true;
     let timeValueGroups = helperFunctions.getDefaulTimeValuesFromState(2, 2, 1).timeValueGroups;
-    let expectedResult = helperFunctions.getSportScheduleBuilderDateTimeDurationFromStateExpectedResult(15, false, timeValueGroups);
+    let expectedResult = helperFunctions.getSportScheduleBuilderDateTimeDurationFromStateExpectedResult(10, false, timeValueGroups);
     expect(PlanLogic.handleGetDateTimeDurationFromState(durationValueGroups, isFormValid, timeValueGroups)).toEqual(expectedResult);
 });
 
@@ -1408,7 +1413,7 @@ it('Sport Schedule Builder Cleaning of Date and Time Duration from State - Form 
 });
 
 it('Sport Schedule Builder Cleaning of Date and Time Duration from State - Form Isn\'t Valid with data', () => {
-    let durationValueGroups = helperFunctions.getDefaultDurationValuesFromState(2, 1).durationValueGroups;
+    let durationValueGroups = helperFunctions.getDefaultDurationValuesFromState(0, 2, 1).durationValueGroups;
     let isFormValid = false;
     let timeValueGroups = helperFunctions.getDefaulTimeValuesFromState(2, 2, 1).timeValueGroups;
     let expectedResult = helperFunctions.getSportScheduleBuilderDateTimeDurationFromStateExpectedResult('', `${moment().toISOString(true).split('.')[0]}Z`);

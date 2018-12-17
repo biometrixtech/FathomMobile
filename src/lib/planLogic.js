@@ -527,11 +527,12 @@ const PlanLogic = {
         });
         let selectedTeam = coachesTeams[selectedTeamIndex];
         // compliance modal data
-        let complianceObj = selectedTeam ? selectedTeam.compliance : {completed: [], incomplete: []};
+        let complianceObj = selectedTeam ? selectedTeam.compliance : {completed: [], incomplete: [], training_compliance: {}};
         let numOfCompletedAthletes = complianceObj ? complianceObj.completed.length : 0;
         let numOfIncompletedAthletes = complianceObj ? complianceObj.incomplete.length : 0;
         let numOfTotalAthletes = numOfCompletedAthletes + numOfIncompletedAthletes;
         let incompleteAtheltes = complianceObj ? complianceObj.incomplete : [];
+        let completedAtheltes = complianceObj ? complianceObj.completed : [];
         let completedPercent = (numOfCompletedAthletes / numOfTotalAthletes) * 100;
         let complianceColor = completedPercent <= 49 ?
             AppColors.zeplin.error
@@ -540,13 +541,17 @@ const PlanLogic = {
                 :
                 AppColors.zeplin.success;
         complianceColor = numOfTotalAthletes === 0 ? AppColors.zeplin.error : complianceColor;
+        let trainingCompliance = complianceObj ? complianceObj.training_compliance : [];
         return {
             coachesTeams,
+            completedAtheltes,
             complianceColor,
             incompleteAtheltes,
             numOfCompletedAthletes,
+            numOfIncompletedAthletes,
             numOfTotalAthletes,
             selectedTeam,
+            trainingCompliance,
         };
     },
 
