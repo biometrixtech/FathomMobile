@@ -1233,7 +1233,7 @@ class MyPlan extends Component {
                                     backgroundColor={AppColors.white}
                                     buttonStyle={{width: '100%',}}
                                     containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                    color={AppColors.zeplin.lightGrey}
+                                    color={AppColors.zeplin.yellow}
                                     fontFamily={AppStyles.robotoBold.fontFamily}
                                     fontWeight={AppStyles.robotoBold.fontWeight}
                                     loading={isRecoverCalculating}
