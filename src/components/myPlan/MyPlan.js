@@ -190,6 +190,8 @@ class MyPlan extends Component {
             },
             loading: false,
         };
+        this._postSessionSurveyModalRef = {};
+        this._singleExerciseItemRef = {};
         this.renderTab = this.renderTab.bind(this);
     }
 
@@ -582,10 +584,10 @@ class MyPlan extends Component {
             newPostSession.RPE = null;
             this.props.clearCompletedExercises();
             this.setState({
-                isPostSessionSurveyModalOpen: false,
-                loading:                      false,
-                postSession:                  newPostSession,
+                loading:     false,
+                postSession: newPostSession,
             });
+            this._postSessionSurveyModalRef.close();
         }
     }
 
@@ -679,9 +681,6 @@ class MyPlan extends Component {
         }
         // continue by updating reducer and state
         this.props.setCompletedExercises(newCompletedExercises);
-        this.setState({
-            isSelectedExerciseModalOpen: false,
-        });
     }
 
     _handleCompleteFSExercise = (exerciseId) => {
@@ -702,9 +701,6 @@ class MyPlan extends Component {
         }
         // continue by updating reducer and state
         this.props.setCompletedFSExercises(newCompletedExercises);
-        this.setState({
-            isSelectedExerciseModalOpen: false,
-        });
     }
 
     _handleFunctionalStrengthFormSubmit = () => {
@@ -1091,6 +1087,8 @@ class MyPlan extends Component {
                     this.state.isReadinessSurveyModalOpen
                         ?
                         <Modal
+                            backdropColor={AppColors.zeplin.darkNavy}
+                            backdropOpacity={0.8}
                             backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isReadinessSurveyModalOpen}
@@ -1121,13 +1119,15 @@ class MyPlan extends Component {
                     this.state.isSelectedExerciseModalOpen
                         ?
                         <Modal
-                            backdropOpacity={0.75}
+                            backdropColor={AppColors.zeplin.darkNavy}
+                            backdropOpacity={0.8}
                             backdropPressToClose={true}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
-                            style={[AppStyles.containerCentered, {
+                            ref={ref => {this._singleExerciseItemRef = ref;}}
+                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {
                                 borderRadius: 4,
                                 height:       AppSizes.screen.heightThreeQuarters,
                                 padding:      AppSizes.paddingSml,
@@ -1138,7 +1138,11 @@ class MyPlan extends Component {
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem
                                     exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'pre')}
+                                    handleCompleteExercise={exerciseId => {
+                                        console.log('_singleExerciseItemRef',this._singleExerciseItemRef);
+                                        this._handleCompleteExercise(exerciseId, 'pre');
+                                        this._singleExerciseItemRef.close();
+                                    }}
                                     selectedExercise={this.state.selectedExercise.library_id}
                                 />
                                 :
@@ -1361,13 +1365,15 @@ class MyPlan extends Component {
                     this.state.isSelectedExerciseModalOpen
                         ?
                         <Modal
-                            backdropOpacity={0.75}
+                            backdropColor={AppColors.zeplin.darkNavy}
+                            backdropOpacity={0.8}
                             backdropPressToClose={true}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
-                            style={[AppStyles.containerCentered, {
+                            ref={ref => {this._singleExerciseItemRef = ref;}}
+                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {
                                 borderRadius: 4,
                                 height:       AppSizes.screen.heightThreeQuarters,
                                 padding:      AppSizes.paddingSml,
@@ -1378,7 +1384,10 @@ class MyPlan extends Component {
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem
                                     exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'post')}
+                                    handleCompleteExercise={exerciseId => {
+                                        this._handleCompleteExercise(exerciseId, 'post');
+                                        this._singleExerciseItemRef.close();
+                                    }}
                                     selectedExercise={this.state.selectedExercise.library_id}
                                 />
                                 :
@@ -1651,9 +1660,12 @@ class MyPlan extends Component {
                     this.state.isPostSessionSurveyModalOpen
                         ?
                         <Modal
+                            backdropColor={AppColors.zeplin.darkNavy}
+                            backdropOpacity={0.8}
                             backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isPostSessionSurveyModalOpen}
+                            ref={ref => {this._postSessionSurveyModalRef = ref;}}
                             swipeToClose={false}
                         >
                             <PostSessionSurvey
@@ -1689,13 +1701,15 @@ class MyPlan extends Component {
                     this.state.isSelectedExerciseModalOpen
                         ?
                         <Modal
-                            backdropOpacity={0.75}
+                            backdropColor={AppColors.zeplin.darkNavy}
+                            backdropOpacity={0.8}
                             backdropPressToClose={true}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
-                            style={[AppStyles.containerCentered, {
+                            ref={ref => {this._singleExerciseItemRef = ref;}}
+                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {
                                 borderRadius: 4,
                                 height:       AppSizes.screen.heightThreeQuarters,
                                 padding:      AppSizes.paddingSml,
@@ -1706,7 +1720,10 @@ class MyPlan extends Component {
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem
                                     exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={this._handleCompleteFSExercise}
+                                    handleCompleteExercise={exerciseId => {
+                                        this._handleCompleteFSExercise(exerciseId);
+                                        this._singleExerciseItemRef.close();
+                                    }}
                                     selectedExercise={this.state.selectedExercise.library_id}
                                 />
                                 :

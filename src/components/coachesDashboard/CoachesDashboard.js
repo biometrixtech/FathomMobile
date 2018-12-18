@@ -149,6 +149,8 @@ class CoachesDashboard extends Component {
             todayFilter:            'view_all',
             thisWeekFilter:         'view_all',
         };
+        this._athleteCardModalRef = {};
+        this._complianceModalRef = {};
         this.renderTab = this.renderTab.bind(this);
     }
 
@@ -253,7 +255,14 @@ class CoachesDashboard extends Component {
     }
 
     _toggleComplianceModal = () => {
-        this.setState({ isComplianceModalOpen: !this.state.isComplianceModalOpen, });
+        if(!this.state.isComplianceModalOpen) {
+            this.setState({ isComplianceModalOpen: true, });
+        } else {
+            this._complianceModalRef.close();
+            _.delay(() => {
+                this.setState({ isComplianceModalOpen: false, });
+            }, 500);
+        }
     }
 
     renderAthleteCardModal = () => {
@@ -273,7 +282,12 @@ class CoachesDashboard extends Component {
                             containerStyle={[{alignSelf: 'flex-end',}]}
                             icon={'close'}
                             iconStyle={[{color: AppColors.black, paddingRight: AppSizes.paddingLrg, paddingTop: AppSizes.paddingLrg,}]}
-                            onPress={() => this.setState({ isAthleteCardModalOpen: false, selectedAthlete: null, selectedAthletePage: 0, })}
+                            onPress={() => {
+                                this._athleteCardModalRef.close();
+                                _.delay(() => {
+                                    this.setState({ isAthleteCardModalOpen: false, selectedAthlete: null, selectedAthletePage: 0, });
+                                }, 500);
+                            }}
                             reverse={false}
                             size={30}
                             type={'material-community'}
@@ -508,7 +522,9 @@ class CoachesDashboard extends Component {
                         return(
                             <TouchableHighlight
                                 key={index}
-                                onPress={() => this.setState({ isAthleteCardModalOpen: true, selectedAthlete: filteredAthlete, })}
+                                onPress={() => {
+                                    this.setState({ isAthleteCardModalOpen: true, selectedAthlete: filteredAthlete, });
+                                }}
                                 style={[styles.athleteCircle, {backgroundColor: backgroundColor,}]}
                                 underlayColor={backgroundColor}
                             >
@@ -804,16 +820,18 @@ class CoachesDashboard extends Component {
                 </ScrollableTabView>
                 { isComplianceModalOpen ?
                     <Modal
-                        backdropOpacity={0.75}
+                        backdropColor={AppColors.zeplin.darkNavy}
+                        backdropOpacity={0.8}
                         backdropPressToClose={false}
                         coverScreen={true}
                         isOpen={isComplianceModalOpen}
                         position={'center'}
-                        style={{
+                        ref={ref => {this._complianceModalRef = ref;}}
+                        style={[AppStyles.modalShadowEffect, {
                             borderRadius: 5,
                             height:       AppSizes.screen.heightThreeQuarters,
                             width:        AppSizes.screen.widthThreeQuarters,
-                        }}
+                        }]}
                         swipeToClose={false}
                     >
                         <AthleteComplianceModal
@@ -832,16 +850,18 @@ class CoachesDashboard extends Component {
                 }
                 { isAthleteCardModalOpen ?
                     <Modal
-                        backdropOpacity={0.75}
+                        backdropColor={AppColors.zeplin.darkNavy}
+                        backdropOpacity={0.8}
                         backdropPressToClose={false}
                         coverScreen={true}
                         isOpen={isAthleteCardModalOpen}
                         position={'center'}
-                        style={{
+                        ref={ref => {this._athleteCardModalRef = ref;}}
+                        style={[AppStyles.modalShadowEffect, {
                             borderRadius: 5,
                             height:       AppSizes.screen.heightThreeQuarters,
                             width:        AppSizes.screen.width * 0.9,
-                        }}
+                        }]}
                         swipeToClose={false}
                     >
                         {this.renderAthleteCardModal()}

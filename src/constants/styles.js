@@ -469,4 +469,12 @@ export default {
         justifyContent: 'center',
         width:          100,
     },
+
+    // shadow
+    modalShadowEffect: {
+        shadowColor:   Colors.zeplin.darkNavy,
+        shadowOffset:  { width: 0, height: 2 },
+        shadowOpacity: 1,
+        shadowRadius:  20,
+    }
 };
