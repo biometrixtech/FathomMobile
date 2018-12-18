@@ -211,7 +211,7 @@ class SportScheduleBuilder extends Component {
                                 }
                             </Text>
                             { step >= 3 ?
-                                <Text />
+                                null
                                 :
                                 <Text style={{fontSize: AppFonts.scaleFont(32), lineHeight: AppFonts.scaleFont(32),}}>
                                     <Text robotoLight style={{color: AppColors.zeplin.darkGrey,}}>{' for '}</Text>
