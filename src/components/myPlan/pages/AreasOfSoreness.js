@@ -17,7 +17,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -30,6 +30,33 @@ import _ from 'lodash';
 // Components
 import { SoreBodyPart, } from './';
 
+/* Styles ==================================================================== */
+const styles = StyleSheet.create({
+    shadowEffect: {
+        shadowColor:   'rgba(0, 0, 0, 0.16)',
+        shadowOffset:  { width: 0, height: 3 },
+        shadowRadius:  6,
+        shadowOpacity: 1,
+    },
+    allGoodCircle: {
+        alignSelf:         'center',
+        borderRadius:      85 / 2,
+        height:            85,
+        justifyContent:    'center',
+        marginBottom:      20,
+        paddingHorizontal: AppSizes.paddingSml,
+        width:             85,
+    },
+    // alignSelf:       'center',
+    // backgroundColor: !this.state.isAllGood ? AppColors.white : AppColors.primary.yellow.hundredPercent,
+    // borderColor:     !this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent,
+    // borderRadius:    5,
+    // borderWidth:     1,
+    // paddingVertical: 5,
+    // width:           AppSizes.screen.widthTwoThirds,
+});
+
+/* Component ==================================================================== */
 const TooltipContent = ({ handleTooltipClose, text, }) => (
     <View style={{padding: AppSizes.padding,}}>
         <Text robotoLight style={{color: AppColors.black, fontSize: AppFonts.scaleFont(15),}}>
@@ -89,7 +116,7 @@ class AreasOfSoreness extends Component {
         let { areaOfSorenessClicked, groupedNewBodyPartMap, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState);
         return(
             <View>
-                <Spacer size={30} />
+                <Spacer size={20} />
                 <Tooltip
                     animated
                     content={
@@ -120,32 +147,23 @@ class AreasOfSoreness extends Component {
                                 });
                             }
                         }}
-                        style={{
-                            alignSelf:       'center',
-                            backgroundColor: !this.state.isAllGood ? AppColors.white : AppColors.primary.yellow.hundredPercent,
-                            borderColor:     !this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent,
-                            borderRadius:    5,
-                            borderWidth:     1,
-                            paddingVertical: 5,
-                            width:           AppSizes.screen.widthTwoThirds,
-                        }}
+                        style={[styles.shadowEffect, styles.allGoodCircle, {backgroundColor: !this.state.isAllGood ? AppColors.zeplin.superLight : AppColors.zeplin.yellow,}]}
                     >
                         <Text
                             oswaldMedium
                             style={{
-                                color:     !this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.white,
-                                fontSize:  AppFonts.scaleFont(18),
+                                color:     !this.state.isAllGood ? AppColors.zeplin.blueGrey : AppColors.white,
+                                fontSize:  AppFonts.scaleFont(22),
                                 textAlign: 'center',
                             }}
                         >
-                            {'NO, ALL GOOD'}
+                            {'NO,\n'}
+                            <Text oswaldMedium style={{color: !this.state.isAllGood ? AppColors.zeplin.blueGrey : AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{'ALL GOOD'}</Text>
                         </Text>
                     </TouchableOpacity>
                 </Tooltip>
-                <Spacer size={25} />
-                <Text oswaldRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{'OR'}</Text>
-                <Spacer size={5} />
-                <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}>{'Tap to select body part(s)'}</Text>
+                <Spacer size={15} />
+                <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}>{'Or tap to select body part(s)'}</Text>
                 <Spacer size={30} />
                 {_.map(groupedNewBodyPartMap, (object, key) => {
                     let bodyPartMap = _.orderBy(object, ['order'], ['asc']);
