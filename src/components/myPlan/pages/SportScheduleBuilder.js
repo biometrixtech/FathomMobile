@@ -344,25 +344,20 @@ class SportScheduleBuilder extends Component {
                             </View>
                             : step === 2 ?
                                 <View style={[AppStyles.containerCentered,]}>
-                                    <Text oswaldMedium style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{`${selectedSport.toUpperCase()} SESSION TYPE`}</Text>
-                                    <Spacer size={7} />
-                                    <View style={[AppStyles.containerCentered, {flexDirection: 'row', flexWrap: 'wrap',}]}>
+                                    <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(18),}}>{`${selectedSport.toUpperCase()} SESSION TYPE`}</Text>
+                                    <Spacer size={15} />
+                                    <View style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}]}>
                                         { _.map(filteredSportSessionTypes, (session, i) =>
-                                            <Button
-                                                backgroundColor={AppColors.white}
-                                                buttonStyle={[styles.pill, {width: (AppSizes.screen.width * 0.75)}]}
-                                                fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                                fontWeight={AppStyles.oswaldRegular.fontWeight}
+                                            <TouchableOpacity
                                                 key={i}
                                                 onPress={() => {
                                                     this._nextStep(3);
                                                     handleFormChange('session_type', session.index);
                                                 }}
-                                                outlined
-                                                raised={false}
-                                                textStyle={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14) }}
-                                                title={session.label.toUpperCase()}
-                                            />
+                                                style={[styles.step0Circle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, ((i + 1) % 3 === 0) ? {} : {marginRight: AppSizes.paddingSml,}]}
+                                            >
+                                                <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{session.label.toUpperCase()}</Text>
+                                            </TouchableOpacity>
                                         )}
                                     </View>
                                 </View>
