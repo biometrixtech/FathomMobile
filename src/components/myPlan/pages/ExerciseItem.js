@@ -35,16 +35,19 @@ class ExerciseItem extends Component {
         return(
             <View style={[{borderTopWidth: 1, borderTopColor: AppColors.zeplin.lightGrey, marginHorizontal: 10}]}>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
-                    <View style={[AppStyles.paddingVerticalXSml, {flex: 1, justifyContent: 'center',}]}>
+                    <TouchableOpacity
+                        onPress={() => handleCompleteExercise(exercise.library_id)}
+                        style={[AppStyles.paddingVerticalXSml, {flex: 1, justifyContent: 'center',}]}
+                    >
                         <Checkbox
                             checked={completedExercises.includes(exercise.library_id)}
-                            checkedColor={AppColors.primary.yellow.hundredPercent}
+                            checkedColor={AppColors.zeplin.yellow}
                             checkedIcon={'check-square'}
                             containerStyle={{backgroundColor: AppColors.white, borderWidth: 0, margin: 0, padding: 0, width: 30, }}
                             onPress={() => handleCompleteExercise(exercise.library_id)}
-                            size={20}
+                            size={30}
                         />
-                    </View>
+                    </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => toggleSelectedExercise(exercise, true)}
                         style={[AppStyles.paddingHorizontalMed, {flex: 2, justifyContent: 'center',}]}
@@ -61,10 +64,9 @@ class ExerciseItem extends Component {
                         style={[AppStyles.paddingVerticalXSml, {flex: 6, justifyContent: 'center',}]}
                     >
                         <Text
-                            p
                             oswaldMedium
                             style={{
-                                color:    completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black,
+                                color:    completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.black,
                                 flexWrap: 'wrap',
                                 fontSize: AppFonts.scaleFont(16),
                             }}
@@ -72,10 +74,9 @@ class ExerciseItem extends Component {
                             {this.state.displayName}
                         </Text>
                         <Text
-                            p
-                            robotoBold
+                            robotoMedium
                             style={{
-                                color:    completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.secondary.blue.hundredPercent,
+                                color:    completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.zeplin.blueGrey,
                                 fontSize: AppFonts.scaleFont(15),
                             }}
                         >
@@ -83,7 +84,7 @@ class ExerciseItem extends Component {
                         </Text>
                     </TouchableOpacity>
                     <TabIcon
-                        color={completedExercises.includes(exercise.library_id) ? AppColors.primary.yellow.hundredPercent : AppColors.black}
+                        color={completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.black}
                         containerStyle={[{flex: 1, justifyContent: 'center',}]}
                         icon={'arrow-right'}
                         onPress={() => toggleSelectedExercise(exercise, true)}
