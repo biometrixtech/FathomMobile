@@ -16,7 +16,7 @@ import { Image, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppStyles, MyPlan } from '../../../constants';
-import { Checkbox, TabIcon, Text } from '../../custom';
+import { TabIcon, Text } from '../../custom';
 
 /* Component ==================================================================== */
 class ExerciseItem extends Component {
@@ -39,13 +39,14 @@ class ExerciseItem extends Component {
                         onPress={() => handleCompleteExercise(exercise.library_id)}
                         style={[AppStyles.paddingVerticalXSml, {flex: 1, justifyContent: 'center',}]}
                     >
-                        <Checkbox
-                            checked={completedExercises.includes(exercise.library_id)}
-                            checkedColor={AppColors.zeplin.yellow}
-                            checkedIcon={'check-square'}
-                            containerStyle={{backgroundColor: AppColors.white, borderWidth: 0, margin: 0, padding: 0, width: 30, }}
+                        <TabIcon
+                            containerStyle={[{alignSelf: 'center'}]}
+                            icon={completedExercises.includes(exercise.library_id) ? 'ios-checkbox' : 'ios-checkbox-outline'}
+                            iconStyle={[{color: completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.zeplin.light,}]}
                             onPress={() => handleCompleteExercise(exercise.library_id)}
+                            reverse={false}
                             size={30}
+                            type={'ionicon'}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity

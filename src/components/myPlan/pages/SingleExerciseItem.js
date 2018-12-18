@@ -2,71 +2,105 @@
  * SingleExerciseItem
  *
     <SingleExerciseItem
-       exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-       handleCompleteExercise={this._handleCompleteExercise}
-       selectedExercise={this.state.selectedExercise.library_id}
+        completedExercises={completedExercises}
+        exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
+        handleCompleteExercise={this._handleCompleteExercise}
+        selectedExercise={this.state.selectedExercise.library_id}
     />
  *
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, View, } from 'react-native';
+import { Platform, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import Video from 'react-native-video';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
-import { Spacer, TabIcon, Text, } from '../../custom';
+import { Checkbox, Spacer, TabIcon, Text, } from '../../custom';
 import { Error } from '../../general';
 
 /* Component ==================================================================== */
-const SingleExerciseItem = ({
-    exercise,
-    handleCompleteExercise,
-    selectedExercise,
-}) => (
-    <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-        { exercise.videoUrl.length > 0 ?
-            <View style={{flex: 1,}}>
-                <Video
-                    paused={false}
-                    repeat={true}
-                    resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                    source={{uri: exercise.videoUrl}}
-                    style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {flex: 1, width: (AppSizes.screen.width * 0.9) - (AppSizes.padding),}]}
-                />
+class SingleExerciseItem extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isDescriptionExpanded: false,
+            modalStyle:            {},
+        };
+    }
+
+    _toggleDescription = () => {
+        this.setState({ isDescriptionExpanded: !this.state.isDescriptionExpanded, });
+    }
+
+    _resizeModal = ev => {
+        this.setState({ modalStyle: {height: ev.nativeEvent.layout.height,} });
+    }
+
+    render = () => {
+        const { completedExercises, exercise, handleCompleteExercise, selectedExercise, } = this.props;
+        const { isDescriptionExpanded, modalStyle, } = this.state;
+        return(
+            <View style={[modalStyle, {backgroundColor: AppColors.white, borderRadius: 4,}]}>
+                <View onLayout={ev => this._resizeModal(ev)}>
+                    <Spacer size={5} />
+                    { exercise.videoUrl.length > 0 ?
+                        <Video
+                            paused={false}
+                            repeat={true}
+                            resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
+                            source={{uri: exercise.videoUrl}}
+                            style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: (AppSizes.screen.width * 0.9), width: (AppSizes.screen.width * 0.9),}]}
+                        />
+                        :
+                        <Error type={'URL not defined.'} />
+                    }
+                    <View style={{paddingHorizontal: AppSizes.paddingMed, width: AppSizes.screen.width * 0.9,}}>
+                        <Spacer size={10} />
+                        <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(28),}]}>
+                            {exercise.displayName}
+                        </Text>
+                        <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(14),}]}>
+                            {exercise.dosage.toUpperCase()}
+                        </Text>
+                        <Spacer size={10} />
+                        <TouchableOpacity
+                            onPress={() => this._toggleDescription()}
+                        >
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(15), textDecorationLine: 'underline',}]}>
+                                {'see description ^'}
+                            </Text>
+                        </TouchableOpacity>
+                        <Spacer size={10} />
+                        { isDescriptionExpanded ?
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13),}]}>
+                                {exercise.description}
+                            </Text>
+                            :
+                            null
+                        }
+                        <Spacer size={20} />
+                        <TabIcon
+                            containerStyle={[{alignSelf: 'center'}]}
+                            icon={completedExercises.includes(exercise.library_id) ? 'ios-checkbox' : 'ios-checkbox-outline'}
+                            iconStyle={[{color: completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.zeplin.light,}]}
+                            onPress={() => handleCompleteExercise(selectedExercise)}
+                            reverse={false}
+                            size={50}
+                            type={'ionicon'}
+                        />
+                        <Spacer size={20} />
+                    </View>
+                </View>
             </View>
-            :
-            <Error type={'URL not defined.'} />
-        }
-        <Spacer size={10} />
-        <Text h2 oswaldMedium style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, {color: AppColors.black, fontSize: AppFonts.scaleFont(28)}]}>
-            {exercise.displayName}
-        </Text>
-        <Spacer size={10} />
-        <Text p robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, {color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(15)}]}>
-            {exercise.dosage}
-        </Text>
-        <Spacer size={10} />
-        <Text h6 robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalXSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15)}]} truncate={100}>
-            {exercise.description}
-        </Text>
-        <Spacer size={20} />
-        <TabIcon
-            containerStyle={[{alignSelf: 'center'}]}
-            icon={'check'}
-            iconStyle={[{color: AppColors.primary.yellow.hundredPercent}]}
-            onPress={() => handleCompleteExercise(selectedExercise)}
-            reverse={false}
-            size={34}
-            type={'material-community'}
-        />
-        <Spacer size={20} />
-    </View>
-);
+        )
+    }
+}
 
 SingleExerciseItem.propTypes = {
+    completedExercises:     PropTypes.array.isRequired,
     exercise:               PropTypes.object.isRequired,
     handleCompleteExercise: PropTypes.func.isRequired,
     selectedExercise:       PropTypes.string.isRequired,

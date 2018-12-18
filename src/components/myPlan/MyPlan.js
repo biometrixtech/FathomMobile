@@ -1127,19 +1127,14 @@ class MyPlan extends Component {
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
-                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {
-                                borderRadius: 4,
-                                height:       AppSizes.screen.heightThreeQuarters,
-                                padding:      AppSizes.paddingSml,
-                                width:        AppSizes.screen.width * 0.9,
-                            }]}
+                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
                             swipeToClose={true}
                         >
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem
+                                    completedExercises={completedExercises}
                                     exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
                                     handleCompleteExercise={exerciseId => {
-                                        console.log('_singleExerciseItemRef',this._singleExerciseItemRef);
                                         this._handleCompleteExercise(exerciseId, 'pre');
                                         this._singleExerciseItemRef.close();
                                     }}
@@ -1373,16 +1368,12 @@ class MyPlan extends Component {
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
-                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {
-                                borderRadius: 4,
-                                height:       AppSizes.screen.heightThreeQuarters,
-                                padding:      AppSizes.paddingSml,
-                                width:        AppSizes.screen.width * 0.9,
-                            }]}
+                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
                             swipeToClose={true}
                         >
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem
+                                    completedExercises={completedExercises}
                                     exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
                                     handleCompleteExercise={exerciseId => {
                                         this._handleCompleteExercise(exerciseId, 'post');
@@ -1709,16 +1700,12 @@ class MyPlan extends Component {
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
-                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {
-                                borderRadius: 4,
-                                height:       AppSizes.screen.heightThreeQuarters,
-                                padding:      AppSizes.paddingSml,
-                                width:        AppSizes.screen.width * 0.9,
-                            }]}
+                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
                             swipeToClose={true}
                         >
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem
+                                    completedExercises={completedFSExercises}
                                     exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
                                     handleCompleteExercise={exerciseId => {
                                         this._handleCompleteFSExercise(exerciseId);
