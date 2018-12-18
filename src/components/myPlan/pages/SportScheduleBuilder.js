@@ -31,7 +31,6 @@ const styles = StyleSheet.create({
     moreOptionsCircle: {
         alignSelf:      'center',
         borderColor:    AppColors.zeplin.lightGrey,
-        borderWidth:    1,
         borderRadius:   step0CircleSize / 2,
         height:         step0CircleSize,
         justifyContent: 'center',

@@ -339,7 +339,7 @@ class ReadinessSurvey extends Component {
                                                 isSelected ? {backgroundColor: AppColors.zeplin.yellow,} : {},
                                             ]}
                                         >
-                                            <Text oswaldMedium style={{color: isSelected ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>
+                                            <Text oswaldMedium style={{color: isSelected ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
                                                 {sessionName.toUpperCase()}
                                             </Text>
                                         </TouchableOpacity>
