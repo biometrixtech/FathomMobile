@@ -13,7 +13,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, StyleSheet, View, } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -23,8 +23,20 @@ import { PlanLogic, } from '../../../lib';
 // import third-party libraries
 import _ from 'lodash';
 
+const step0CircleSize = ((AppSizes.screen.width - (AppSizes.padding * 2) - (AppSizes.paddingSml * 4)) / 3);
+const step1CircleSize = ((AppSizes.screen.width - (AppSizes.padding * 2) - (AppSizes.paddingSml * 5)) / 4);
+
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    moreOptionsCircle: {
+        alignSelf:      'center',
+        borderColor:    AppColors.zeplin.lightGrey,
+        borderWidth:    1,
+        borderRadius:   step0CircleSize / 2,
+        height:         step0CircleSize,
+        justifyContent: 'center',
+        width:          step0CircleSize,
+    },
     pill: {
         borderColor:     AppColors.zeplin.darkGrey,
         borderRadius:    5,
@@ -32,6 +44,31 @@ const styles = StyleSheet.create({
         marginVertical:  AppSizes.paddingXSml,
         paddingVertical: AppSizes.paddingXSml,
         width:           (AppSizes.screen.widthThreeQuarters / 2),
+    },
+    shadowEffect: {
+        shadowColor:   'rgba(0, 0, 0, 0.16)',
+        shadowOffset:  { width: 0, height: 3 },
+        shadowRadius:  6,
+        shadowOpacity: 1,
+    },
+    step0Circle: {
+        alignSelf:         'center',
+        backgroundColor:   AppColors.zeplin.superLight,
+        borderRadius:      step0CircleSize / 2,
+        height:            step0CircleSize,
+        justifyContent:    'center',
+        marginBottom:      20,
+        paddingHorizontal: AppSizes.paddingSml,
+        width:             step0CircleSize,
+    },
+    step1Circle: {
+        alignSelf:       'center',
+        backgroundColor: AppColors.zeplin.superLight,
+        borderRadius:    step1CircleSize / 2,
+        height:          step1CircleSize,
+        justifyContent:  'center',
+        marginBottom:    20,
+        width:           step1CircleSize,
     },
 });
 
@@ -225,10 +262,10 @@ class SportScheduleBuilder extends Component {
                 <Spacer size={26} />
                 <View>
                     { step === 0 ?
-                        <View style={[AppStyles.containerCentered,]}>
-                            <Text oswaldMedium style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{'MOST RECENT'}</Text>
-                            <Spacer size={7} />
-                            <View style={[AppStyles.containerCentered,]}>
+                        <View>
+                            <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'MOST RECENT'}</Text>
+                            <Spacer size={15} />
+                            <View style={[typicalSessions.length === 1 ? AppStyles.containerCentered : {alignItems: 'flex-start'}, {alignSelf: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}]}>
                                 { _.map(typicalSessions, (session, i) => {
                                     let sportName = session.sport_name || session.sport_name === 0 ?
                                         _.filter(MyPlanConstants.teamSports, ['index', session.sport_name])[0].label.toUpperCase()
@@ -242,11 +279,7 @@ class SportScheduleBuilder extends Component {
                                         _.filter(MyPlanConstants.availableSessionTypes, ['index', session.session_type])[0].label.toUpperCase();
                                     let displayName = `${sportName} ${sessionType}`;
                                     return(
-                                        <Button
-                                            backgroundColor={AppColors.white}
-                                            buttonStyle={[styles.pill, {width: AppSizes.screen.widthThreeQuarters,}]}
-                                            fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                            fontWeight={AppStyles.oswaldRegular.fontWeight}
+                                        <TouchableOpacity
                                             key={i}
                                             onPress={() => {
                                                 this._nextStep(3);
@@ -256,82 +289,56 @@ class SportScheduleBuilder extends Component {
                                                 handleFormChange('event_date', session.event_date);
                                                 handleFormChange('duration', session.duration);
                                             }}
-                                            outlined
-                                            raised={false}
-                                            textStyle={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14) }}
-                                            title={displayName}
-                                        />
+                                            style={[styles.step0Circle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, ((i + 1) % 3 === 0) ? {} : {marginRight: AppSizes.paddingSml,}]}
+                                        >
+                                            <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{displayName}</Text>
+                                        </TouchableOpacity>
                                     )
                                 })}
-                            </View>
-                            <Spacer size={12} />
-                            <View style={[AppStyles.containerCentered,]}>
-                                <Button
-                                    backgroundColor={AppColors.white}
-                                    buttonStyle={[styles.pill, {width: AppSizes.screen.widthThreeQuarters,}]}
-                                    fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                    fontWeight={AppStyles.oswaldRegular.fontWeight}
-                                    leftIcon={{
-                                        color: AppColors.zeplin.darkBlue,
-                                        name:  'add',
-                                        size:  AppFonts.scaleFont(14),
-                                    }}
+                                <TouchableOpacity
                                     onPress={() => this._nextStep(1)}
-                                    outlined
-                                    raised={false}
-                                    textStyle={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14) }}
-                                    title={'MORE OPTIONS'}
-                                />
+                                    style={[styles.moreOptionsCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}
+                                >
+                                    <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{'+ MORE OPTIONS'}</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                         : step === 1 ?
-                            <View style={[AppStyles.containerCentered,]}>
-                                <Text oswaldMedium style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{'SPORT TRAINING'}</Text>
-                                <Spacer size={7} />
-                                <View style={[AppStyles.containerCentered, {flexDirection: 'row', flexWrap: 'wrap',}]}>
+                            <View>
+                                <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'SPORT TRAINING'}</Text>
+                                <Spacer size={15} />
+                                <View style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}]}>
                                     { _.map(teamSports, (sport, i) =>
-                                        <View key={sport.index} style={[i % 2 === 0 ? {paddingLeft: AppSizes.paddingSml,} : {paddingRight: AppSizes.paddingSml,}, {alignItems: 'center', width: (AppSizes.screen.widthHalf - AppSizes.paddingSml),}]}>
-                                            <Button
-                                                backgroundColor={AppColors.white}
-                                                buttonStyle={[styles.pill, {width: (AppSizes.screen.widthHalf - AppSizes.paddingLrg),}]}
-                                                fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                                fontWeight={AppStyles.oswaldRegular.fontWeight}
-                                                onPress={() => {
-                                                    this._nextStep(2);
-                                                    handleFormChange('sport_name', sport.index);
-                                                    scrollToTop();
-                                                }}
-                                                outlined
-                                                raised={false}
-                                                textStyle={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14) }}
-                                                title={sport.label.toUpperCase()}
-                                            />
-                                        </View>
+                                        <TouchableOpacity
+                                            key={sport.index}
+                                            onPress={() => {
+                                                this._nextStep(2);
+                                                handleFormChange('sport_name', sport.index);
+                                                scrollToTop();
+                                            }}
+                                            style={[styles.step1Circle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, ((i + 1) % 4 === 0) ? {} : {marginRight: AppSizes.paddingSml,}]}
+                                        >
+                                            <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{sport.label.toUpperCase()}</Text>
+                                        </TouchableOpacity>
                                     )}
                                 </View>
-                                <Spacer size={12} />
-                                <Text oswaldMedium style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{'FITNESS TRAINING'}</Text>
-                                <Spacer size={7} />
-                                <View style={[AppStyles.containerCentered, {flexDirection: 'row', flexWrap: 'wrap',}]}>
+                                <Spacer size={10} />
+                                <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'FITNESS TRAINING'}</Text>
+                                <Spacer size={15} />
+                                <View style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}]}>
                                     { _.map(strengthConditioningTypes, (strengthConditioningType, i) =>
-                                        <View key={strengthConditioningType.index} style={[i % 2 === 0 ? {paddingLeft: AppSizes.paddingSml,} : {paddingRight: AppSizes.paddingSml,}, {alignItems: 'center', width: (AppSizes.screen.widthHalf - AppSizes.paddingSml),}]}>
-                                            <Button
-                                                backgroundColor={AppColors.white}
-                                                buttonStyle={[styles.pill, {width: (AppSizes.screen.widthHalf - AppSizes.paddingLrg),}]}
-                                                fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                                fontWeight={AppStyles.oswaldRegular.fontWeight}
-                                                onPress={() => {
-                                                    this._nextStep(3);
-                                                    handleFormChange('strength_and_conditioning_type', strengthConditioningType.index);
-                                                    handleFormChange('session_type', 1);
-                                                    scrollToTop();
-                                                }}
-                                                outlined
-                                                raised={false}
-                                                textStyle={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14) }}
-                                                title={strengthConditioningType.label.toUpperCase()}
-                                            />
-                                        </View>
+                                        <TouchableOpacity
+                                            key={strengthConditioningType.index}
+                                            onPress={() => {
+                                                this._nextStep(3);
+                                                handleFormChange('strength_and_conditioning_type', strengthConditioningType.index);
+                                                handleFormChange('session_type', 1);
+                                                scrollToTop();
+                                            }}
+                                            style={[styles.step1Circle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, ((i + 1) % 4 === 0) ? {} : {marginRight: AppSizes.paddingSml,}]}
+                                        >
+                                            <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{strengthConditioningType.label.toUpperCase()}</Text>
+                                        </TouchableOpacity>
                                     )}
                                 </View>
                             </View>
