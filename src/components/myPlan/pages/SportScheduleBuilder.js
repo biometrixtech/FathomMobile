@@ -28,16 +28,6 @@ const step1CircleSize = ((AppSizes.screen.width - (AppSizes.padding * 2) - (AppS
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    moreOptionsCircle: {
-        alignSelf:       'center',
-        backgroundColor: AppColors.white,
-        borderColor:     AppColors.zeplin.darkSlate,
-        borderRadius:    step0CircleSize / 2,
-        borderWidth:     1,
-        height:          step0CircleSize,
-        justifyContent:  'center',
-        width:           step0CircleSize,
-    },
     pill: {
         borderColor:     AppColors.zeplin.darkGrey,
         borderRadius:    5,
@@ -298,7 +288,7 @@ class SportScheduleBuilder extends Component {
                                 })}
                                 <TouchableOpacity
                                     onPress={() => this._nextStep(1)}
-                                    style={[styles.moreOptionsCircle, {alignSelf: (typicalSessions.length % 4 === 0) || (typicalSessions.length % 5 === 0) ? 'center' : 'flex-start',}]}
+                                    style={[styles.step0Circle, styles.shadowEffect, {alignSelf: (typicalSessions.length % 4 === 0) || (typicalSessions.length % 5 === 0) ? 'center' : 'flex-start',}]}
                                 >
                                     <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{'+ MORE OPTIONS'}</Text>
                                 </TouchableOpacity>

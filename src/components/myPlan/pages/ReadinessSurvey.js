@@ -562,7 +562,7 @@ class ReadinessSurvey extends Component {
                                                 }
                                             ]}
                                         >
-                                            {'MORE+'}
+                                            {'+ MORE'}
                                         </Text>
                                     </TouchableHighlight>
                                 </View>
