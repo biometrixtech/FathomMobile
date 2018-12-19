@@ -97,9 +97,9 @@ const customStyles = StyleSheet.create({
     },
     shadowEffect: {
         shadowColor:   'rgba(0, 0, 0, 0.16)',
-        shadowOffset:  { width: 0, height: 3 },
-        shadowRadius:  4,
+        shadowOffset:  { height: 3, width: 0, },
         shadowOpacity: 1,
+        shadowRadius:  4,
     },
 });
 

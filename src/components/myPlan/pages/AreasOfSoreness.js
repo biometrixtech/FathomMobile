@@ -34,9 +34,9 @@ import { SoreBodyPart, } from './';
 const styles = StyleSheet.create({
     shadowEffect: {
         shadowColor:   'rgba(0, 0, 0, 0.16)',
-        shadowOffset:  { width: 0, height: 3 },
-        shadowRadius:  6,
+        shadowOffset:  { height: 3, width: 0, },
         shadowOpacity: 1,
+        shadowRadius:  6,
     },
     allGoodCircle: {
         alignSelf:         'center',
@@ -47,13 +47,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: AppSizes.paddingSml,
         width:             85,
     },
-    // alignSelf:       'center',
-    // backgroundColor: !this.state.isAllGood ? AppColors.white : AppColors.primary.yellow.hundredPercent,
-    // borderColor:     !this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent,
-    // borderRadius:    5,
-    // borderWidth:     1,
-    // paddingVertical: 5,
-    // width:           AppSizes.screen.widthTwoThirds,
 });
 
 /* Component ==================================================================== */

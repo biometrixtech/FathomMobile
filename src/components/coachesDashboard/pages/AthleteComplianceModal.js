@@ -65,8 +65,9 @@ class AthleteComplianceModal extends Component {
             trainingCompliance,
         } = this.props;
         this.state = {
-            page:              'readiness',
-            readinessSections: [
+            page:                       'readiness',
+            readinessAccordionSections: [0],
+            readinessSections:          [
                 {
                     content:        incompleteAtheltes,
                     leftIcon:       'alert-circle',
@@ -81,9 +82,8 @@ class AthleteComplianceModal extends Component {
                     subtitle: `${numOfCompletedAthletes}/${numOfTotalAthletes}`,
                 },
             ],
-            readinessAccordionSections: [0],
-            trainingAccordionSections:  [0],
-            trainingSections:           [
+            trainingAccordionSections: [0],
+            trainingSections:          [
                 {
                     content:        trainingCompliance.no_response,
                     leftIcon:       'alert-circle',
@@ -180,7 +180,7 @@ class AthleteComplianceModal extends Component {
 
     render = () => {
         let { toggleComplianceModal, } = this.props;
-        let { page, readinessSections, readinessAccordionSections, trainingAccordionSections, trainingSections, } = this.state;
+        let { page, readinessAccordionSections, readinessSections, trainingAccordionSections, trainingSections, } = this.state;
         return(
             <View style={{flex: 1, paddingHorizontal: AppSizes.paddingLrg,}}>
                 <TabIcon
