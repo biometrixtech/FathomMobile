@@ -319,7 +319,9 @@ class SportScheduleBuilder extends Component {
                                             }}
                                             style={[styles.step1Circle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, ((i + 1) % 4 === 0) ? {} : {marginRight: AppSizes.paddingSml,}]}
                                         >
-                                            <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{sport.label.toUpperCase()}</Text>
+                                            <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
+                                                {sport.label.toUpperCase() === 'TRACK & FIELD' ? 'TRACK &\nFIELD' : sport.label.toUpperCase().replace(' ', '\n')}
+                                            </Text>
                                         </TouchableOpacity>
                                     )}
                                 </View>
@@ -338,7 +340,9 @@ class SportScheduleBuilder extends Component {
                                             }}
                                             style={[styles.step1Circle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, ((i + 1) % 4 === 0) ? {} : {marginRight: AppSizes.paddingSml,}]}
                                         >
-                                            <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{strengthConditioningType.label.toUpperCase()}</Text>
+                                            <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
+                                                {strengthConditioningType.label.toUpperCase()}
+                                            </Text>
                                         </TouchableOpacity>
                                     )}
                                 </View>
