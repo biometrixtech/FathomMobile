@@ -31,7 +31,6 @@ const styles = StyleSheet.create({
     moreOptionsCircle: {
         alignSelf:       'center',
         backgroundColor: AppColors.white,
-        borderColor:     AppColors.zeplin.lightGrey,
         borderRadius:    step0CircleSize / 2,
         height:          step0CircleSize,
         justifyContent:  'center',
@@ -297,7 +296,7 @@ class SportScheduleBuilder extends Component {
                                 })}
                                 <TouchableOpacity
                                     onPress={() => this._nextStep(1)}
-                                    style={[styles.moreOptionsCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}
+                                    style={[styles.moreOptionsCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {alignSelf: 'flex-start',}]}
                                 >
                                     <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{'+ MORE OPTIONS'}</Text>
                                 </TouchableOpacity>
