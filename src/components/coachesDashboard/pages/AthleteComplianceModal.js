@@ -182,7 +182,7 @@ class AthleteComplianceModal extends Component {
         let { toggleComplianceModal, } = this.props;
         let { page, readinessSections, readinessAccordionSections, trainingAccordionSections, trainingSections, } = this.state;
         return(
-            <View style={{paddingHorizontal: AppSizes.paddingLrg,}}>
+            <View style={{flex: 1, paddingHorizontal: AppSizes.paddingLrg,}}>
                 <TabIcon
                     containerStyle={[{alignSelf: 'flex-end',}]}
                     icon={'close'}
@@ -214,7 +214,7 @@ class AthleteComplianceModal extends Component {
                     </TouchableHighlight>
                 </View>
                 <Spacer size={10} />
-                <ScrollView>
+                <ScrollView style={{flex: 1,}}>
                     <Spacer size={10} />
                     <Accordion
                         activeSections={page === 'readiness' ? readinessAccordionSections : trainingAccordionSections}

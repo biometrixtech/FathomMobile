@@ -545,6 +545,29 @@ const alreadyTrainedNumber = [
     },
 ];
 
+const alreadyTrainedNumberAndroid = [
+    {
+        label: 'ONE TIME',
+        value: 1,
+    },
+    {
+        label: 'TWO TIMES',
+        value: 2,
+    },
+    {
+        label: 'THREE TIMES',
+        value: 3,
+    },
+    {
+        label: 'FOUR TIMES',
+        value: 4,
+    },
+    {
+        label: 'FIVE TIMES',
+        value: 5,
+    },
+];
+
 const fathomSliderText = [
     'Rest',
     'Very, Very Easy',
@@ -562,6 +585,7 @@ const fathomSliderText = [
 export default {
     allGoodBodyPartMessage,
     alreadyTrainedNumber,
+    alreadyTrainedNumberAndroid,
     availableSessionTypes,
     bodyPartMapping,
     cleanExercise,
