@@ -40,7 +40,7 @@ import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } fro
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
 
 // text constants
-const activeRecoveryDisabledText = 'Log an activity on the Train screen to receive an Active Recovery!';
+const activeRecoveryDisabledText = 'Log a new activity on the Train Screen to receive an Active Recovery!';
 const errorInARAPMessage = '\nPlease Swipe Down to Refresh!';
 const highSorenessMessage = 'Based on your reported discomfort we recommend you rest & utilize self-care techniques like heat, ice, or massage to help reduce swelling, ease pain, & speed up healing.\n\nIf you have pain or swelling that gets worse or doesn\'t go away, please seek appropriate medical attention.';
 const lowSorenessPostMessage = 'Looks like you\'re all clear! Active Recovery is low-impact for now, so log another activity or we\'ll check in tomorrow to assess your ideal Recovery Plan!';
