@@ -298,11 +298,12 @@ class SoreBodyPart extends Component {
                                         let newType = this.state.type === 'all-good' ? '' : this.state.type;
                                         let newKey = sorenessPainScaleMappingValue === this.state.value ? null : key;
                                         sorenessPainScaleMappingValue = sorenessPainScaleMappingValue === this.state.value ? null : sorenessPainScaleMappingValue;
+                                        let isPain = bodyPartMap.group === 'joint' || this.state.type === 'pain';
                                         this.setState({
                                             type:  newType,
                                             value: newKey,
                                         }, () => {
-                                            handleFormChange('soreness', sorenessPainScaleMappingValue, this.state.type === 'pain' ,bodyPartMap.index, bodyPartSide, sorenessPainScaleMappingValue === null ? false : true);
+                                            handleFormChange('soreness', sorenessPainScaleMappingValue, isPain, bodyPartMap.index, bodyPartSide, sorenessPainScaleMappingValue === null ? false : true);
                                         });
                                     }}
                                     valueLabel={value}

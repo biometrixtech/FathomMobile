@@ -161,7 +161,7 @@ class ReadinessSurvey extends Component {
 
     _scrollViewEndDrag = event => {
         const offset = event.nativeEvent.contentOffset.y;
-        let isCloseToBottom = event.nativeEvent.layoutMeasurement.height + offset >= event.nativeEvent.contentSize.height - 20;
+        let isCloseToBottom = event.nativeEvent.layoutMeasurement.height + offset >= event.nativeEvent.contentSize.height - 80;
         let isActionButtonVisible = (
             !isCloseToBottom // is NOT close to the bottom
         );
@@ -771,6 +771,7 @@ class ReadinessSurvey extends Component {
                             toggleSlideUpPanel={this._toggleSlideUpPanel}
                             user={user}
                         />
+                        <Spacer size={10} />
                         <BackNextButtons
                             isValid={isFormValidItems.selectAreasOfSorenessValid}
                             onBackClick={() => {

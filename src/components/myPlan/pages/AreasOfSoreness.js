@@ -213,7 +213,6 @@ class AreasOfSoreness extends Component {
                         </View>
                     )
                 })}
-                <Spacer size={50} />
             </View>
         )
     }

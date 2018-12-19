@@ -252,12 +252,19 @@ function cleanExercise(exercise) {
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
     let cleanedDosage = cleanedExercise.sets_assigned === 1 ?
-        `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? 'yards' : ''}`
+        `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
         : cleanedExercise.sets_assigned > 1 ?
-            `${cleanedExercise.sets_assigned} x ${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? 'yards' : ''}`
+            `${cleanedExercise.sets_assigned} x ${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
+            :
+            '';
+    let cleanedLongDosage = cleanedExercise.sets_assigned === 1 ?
+        `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
+        : cleanedExercise.sets_assigned > 1 ?
+            `${cleanedExercise.sets_assigned} x ${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
             :
             '';
     cleanedExercise.dosage = `${cleanedDosage}${cleanedExercise.bilateral ? ' | Both Sides' : ''}`;
+    cleanedExercise.longDosage = `${cleanedLongDosage}${cleanedExercise.bilateral ? ' | Both Sides' : ''}`;
     cleanedExercise.imageUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.gif`;
     cleanedExercise.thumbnailUrl = `https://dd4o7zw7l62dt.cloudfront.net/${exercise.library_id}.png`;
     // cleanedExercise.thumbnailUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.png`;

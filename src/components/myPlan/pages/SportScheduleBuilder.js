@@ -29,12 +29,13 @@ const step1CircleSize = ((AppSizes.screen.width - (AppSizes.padding * 2) - (AppS
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     moreOptionsCircle: {
-        alignSelf:      'center',
-        borderColor:    AppColors.zeplin.lightGrey,
-        borderRadius:   step0CircleSize / 2,
-        height:         step0CircleSize,
-        justifyContent: 'center',
-        width:          step0CircleSize,
+        alignSelf:       'center',
+        backgroundColor: AppColors.white,
+        borderColor:     AppColors.zeplin.lightGrey,
+        borderRadius:    step0CircleSize / 2,
+        height:          step0CircleSize,
+        justifyContent:  'center',
+        width:           step0CircleSize,
     },
     pill: {
         borderColor:     AppColors.zeplin.darkGrey,

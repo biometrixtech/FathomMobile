@@ -63,7 +63,7 @@ class SingleExerciseItem extends Component {
                             {exercise.displayName}
                         </Text>
                         <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(14),}]}>
-                            {exercise.dosage.toUpperCase()}
+                            {exercise.longDosage.toUpperCase()}
                         </Text>
                         <Spacer size={10} />
                         <TouchableOpacity

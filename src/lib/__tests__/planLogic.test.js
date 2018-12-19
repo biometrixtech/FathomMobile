@@ -388,10 +388,10 @@ const helperFunctions = {
         return nonBilateralAreaClicked;
     },
 
-    getAreaOfSorenessAddingBilateralBodyPartExpectedResult: bodyPartIndex => {
+    getAreaOfSorenessAddingBilateralBodyPartExpectedResult: (bodyPartIndex, isPain = false) => {
         let expectedResult = [
-            { body_part: bodyPartIndex, pain: false, severity: null, side: 1 },
-            { body_part: bodyPartIndex, pain: false, severity: null, side: 2 },
+            { body_part: bodyPartIndex, pain: isPain, severity: null, side: 1 },
+            { body_part: bodyPartIndex, pain: isPain, severity: null, side: 2 },
         ];
         return expectedResult;
     },
@@ -1446,7 +1446,7 @@ it('Functional Strength Options - Strength & Conditioning - Endurance', () => {
 
 it('Area Of Soreness Clicked - Adding Bilateral Body Part', () => {
     let bodyPartIndex = 7;
-    let expectedResult = helperFunctions.getAreaOfSorenessAddingBilateralBodyPartExpectedResult(bodyPartIndex);
+    let expectedResult = helperFunctions.getAreaOfSorenessAddingBilateralBodyPartExpectedResult(bodyPartIndex, true);
     let stateObject = helperFunctions.getAreaOfSorenessAddingBilateralBodyPartStateObject(bodyPartIndex);
     let areaClicked = helperFunctions.getAreaOfSorenessBilateralAreaClicked();
     let soreBodyPartsPlan = {body_parts: []};

@@ -36,12 +36,12 @@
                         </imageView>
                         <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="daE-eU-Cc9">
                             <rect key="frame" x="44.5" y="140" width="37" height="37"/>
-                            <color key="color" red="0.92156862745098034" green="0.72941176470588232" blue="0.1764705882352941" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="color" white="1" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </activityIndicatorView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WARMING UP..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="INb-hk-NBp">
                             <rect key="frame" x="0.0" y="217" width="126" height="30"/>
                             <fontDescription key="fontDescription" name="Oswald-Medium" family="Oswald" pointSize="22"/>
-                            <color key="textColor" red="0.92156862745098034" green="0.72941176470588232" blue="0.098039215686274508" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="textColor" red="0.92156862745098034" green="0.72941176470588232" blue="0.098039215686274508" alpha="0.0" colorSpace="custom" customColorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>

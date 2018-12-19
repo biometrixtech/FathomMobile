@@ -98,7 +98,7 @@ const customStyles = StyleSheet.create({
     shadowEffect: {
         shadowColor:   'rgba(0, 0, 0, 0.16)',
         shadowOffset:  { width: 0, height: 3 },
-        shadowRadius:  6,
+        shadowRadius:  4,
         shadowOpacity: 1,
     },
 });
@@ -583,11 +583,14 @@ class MyPlan extends Component {
             newPostSession.strength_and_conditioning_type = null;
             newPostSession.RPE = null;
             this.props.clearCompletedExercises();
-            this.setState({
-                loading:     false,
-                postSession: newPostSession,
-            });
             this._postSessionSurveyModalRef.close();
+            _.delay(() => {
+                this.setState({
+                    isPostSessionSurveyModalOpen: false,
+                    loading:                      false,
+                    postSession:                  newPostSession,
+                });
+            }, 500);
         }
     }
 
