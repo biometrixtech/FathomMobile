@@ -65,8 +65,9 @@ class AthleteComplianceModal extends Component {
             trainingCompliance,
         } = this.props;
         this.state = {
-            page:              'readiness',
-            readinessSections: [
+            page:                       'readiness',
+            readinessAccordionSections: [0],
+            readinessSections:          [
                 {
                     content:        incompleteAtheltes,
                     leftIcon:       'alert-circle',
@@ -81,8 +82,7 @@ class AthleteComplianceModal extends Component {
                     subtitle: `${numOfCompletedAthletes}/${numOfTotalAthletes}`,
                 },
             ],
-            readinessAccordionSection: 0,
-            trainingAccordionSection:  0,
+            trainingAccordionSections: [0],
             trainingSections:          [
                 {
                     content:        trainingCompliance.no_response,
@@ -168,8 +168,8 @@ class AthleteComplianceModal extends Component {
         )
     }
 
-    _updateSections = (name, section) => {
-        let newState = _.update( this.state, name, () => section);
+    _updateSections = (name, sections) => {
+        let newState = _.update( this.state, name, () => sections);
         this.setState(newState);
     }
 
@@ -180,11 +180,9 @@ class AthleteComplianceModal extends Component {
 
     render = () => {
         let { toggleComplianceModal, } = this.props;
-        let { page, readinessSections, readinessAccordionSection, trainingAccordionSection, trainingSections, } = this.state;
+        let { page, readinessAccordionSections, readinessSections, trainingAccordionSections, trainingSections, } = this.state;
         return(
-            <ScrollView
-                style={{paddingHorizontal: AppSizes.paddingLrg,}}
-            >
+            <View style={{flex: 1, paddingHorizontal: AppSizes.paddingLrg,}}>
                 <TabIcon
                     containerStyle={[{alignSelf: 'flex-end',}]}
                     icon={'close'}
@@ -215,18 +213,21 @@ class AthleteComplianceModal extends Component {
                         <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}}>{'TRAINING'}</Text>
                     </TouchableHighlight>
                 </View>
-                <Spacer size={20} />
-                <Accordion
-                    activeSections={page === 'readiness' ? readinessAccordionSection : trainingAccordionSection}
-                    expandMultiple={true}
-                    onChange={section => page === 'readiness' ? this._updateSections('readinessAccordionSection', section) : this._updateSections('trainingAccordionSection', section)}
-                    renderContent={this._renderContent}
-                    renderHeader={this._renderHeader}
-                    sections={page === 'readiness' ? readinessSections : trainingSections}
-                    underlayColor={AppColors.transparent}
-                />
-                <Spacer size={20} />
-            </ScrollView>
+                <Spacer size={10} />
+                <ScrollView style={{flex: 1,}}>
+                    <Spacer size={10} />
+                    <Accordion
+                        activeSections={page === 'readiness' ? readinessAccordionSections : trainingAccordionSections}
+                        expandMultiple={true}
+                        onChange={sections => page === 'readiness' ? this._updateSections('readinessAccordionSections', sections) : this._updateSections('trainingAccordionSections', sections)}
+                        renderContent={this._renderContent}
+                        renderHeader={this._renderHeader}
+                        sections={page === 'readiness' ? readinessSections : trainingSections}
+                        underlayColor={AppColors.transparent}
+                    />
+                    <Spacer size={20} />
+                </ScrollView>
+            </View>
         )
     }
 }

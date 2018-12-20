@@ -251,7 +251,20 @@ function cleanExercise(exercise) {
     cleanedExercise.library_id = exercise.library_id;
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
-    cleanedExercise.dosage = `${exercise.sets_assigned}x${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : exercise.unit_of_measure === 'yards' ? 'yards' : ''}${exercise.bilateral ? ' per side' : ''}`;
+    let cleanedDosage = cleanedExercise.sets_assigned === 1 ?
+        `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
+        : cleanedExercise.sets_assigned > 1 ?
+            `${cleanedExercise.sets_assigned} x ${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
+            :
+            '';
+    let cleanedLongDosage = cleanedExercise.sets_assigned === 1 ?
+        `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
+        : cleanedExercise.sets_assigned > 1 ?
+            `${cleanedExercise.sets_assigned} x ${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
+            :
+            '';
+    cleanedExercise.dosage = `${cleanedDosage}${cleanedExercise.bilateral ? ' | Both Sides' : ''}`;
+    cleanedExercise.longDosage = `${cleanedLongDosage}${cleanedExercise.bilateral ? ' | Both Sides' : ''}`;
     cleanedExercise.imageUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.gif`;
     cleanedExercise.thumbnailUrl = `https://dd4o7zw7l62dt.cloudfront.net/${exercise.library_id}.png`;
     // cleanedExercise.thumbnailUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.png`;
@@ -532,6 +545,29 @@ const alreadyTrainedNumber = [
     },
 ];
 
+const alreadyTrainedNumberAndroid = [
+    {
+        label: 'ONE TIME',
+        value: 1,
+    },
+    {
+        label: 'TWO TIMES',
+        value: 2,
+    },
+    {
+        label: 'THREE TIMES',
+        value: 3,
+    },
+    {
+        label: 'FOUR TIMES',
+        value: 4,
+    },
+    {
+        label: 'FIVE TIMES',
+        value: 5,
+    },
+];
+
 const fathomSliderText = [
     'Rest',
     'Very, Very Easy',
@@ -549,6 +585,7 @@ const fathomSliderText = [
 export default {
     allGoodBodyPartMessage,
     alreadyTrainedNumber,
+    alreadyTrainedNumberAndroid,
     availableSessionTypes,
     bodyPartMapping,
     cleanExercise,

@@ -40,31 +40,12 @@ import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } fro
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
 
 // text constants
-const activeRecoveryDisabledText = 'Log an activity on the Train screen to receive an Active Recovery!';
+const activeRecoveryDisabledText = 'Log a new activity on the Train Screen to receive an Active Recovery!';
 const errorInARAPMessage = '\nPlease Swipe Down to Refresh!';
 const highSorenessMessage = 'Based on your reported discomfort we recommend you rest & utilize self-care techniques like heat, ice, or massage to help reduce swelling, ease pain, & speed up healing.\n\nIf you have pain or swelling that gets worse or doesn\'t go away, please seek appropriate medical attention.';
 const lowSorenessPostMessage = 'Looks like you\'re all clear! Active Recovery is low-impact for now, so log another activity or we\'ll check in tomorrow to assess your ideal Recovery Plan!';
 const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Mobilize is low-impact this morning so complete your usual warm-up and we’ll pick-up with post practice recovery!';
 const offDayLoggedText = 'Make the most of your training by resting well today: hydrate, eat well and sleep early.';
-
-// styles
-const disabledBackgroundColor = AppColors.white;
-const disabledBorderColor = AppColors.zeplin.greyText;
-const disabledDescriptionColor = AppColors.zeplin.greyText;
-const disabledHeaderColor = AppColors.zeplin.greyText;
-const enabledBackgroundColor = AppColors.zeplin.darkBlue;
-const enabledBorderColor = AppColors.zeplin.darkBlue;
-const enabledDescriptionColor = AppColors.primary.yellow.hundredPercent;
-const enabledHeaderColor = AppColors.white;
-const subtextColor = AppColors.zeplin.greyText;
-const whenDisabledBackgroundColor = AppColors.white;
-const whenDisabledBorderColor = AppColors.zeplin.greyText;
-const whenDisabledDescriptionColor = AppColors.zeplin.greyText;
-const whenDisabledHeaderColor = AppColors.zeplin.greyText;
-const whenEnabledBackgroundColor = AppColors.white;
-const whenEnabledBorderColor = AppColors.zeplin.lightGrey;
-const whenEnabledDescriptionColor = AppColors.zeplin.darkGrey;
-const whenEnabledHeaderColor = AppColors.zeplin.lightGrey;
 
 // setup GA Tracker
 const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
@@ -92,11 +73,33 @@ const customStyles = StyleSheet.create({
         flex:                    1,
         padding:                 AppSizes.padding,
     },
+    recoverBlocksDisabledWrapper: {
+        backgroundColor: AppColors.white,
+        borderColor:     AppColors.zeplin.lightGrey,
+        borderRadius:    5,
+        borderWidth:     1,
+        flex:            1,
+        marginRight:     9,
+        paddingBottom:   10,
+        paddingLeft:     10,
+        paddingTop:      7,
+    },
+    recoverBlocksActiveWrapper: {
+        backgroundColor: AppColors.zeplin.superLight,
+        borderColor:     AppColors.zeplin.superLight,
+        borderRadius:    5,
+        borderWidth:     1,
+        flex:            1,
+        marginRight:     9,
+        paddingBottom:   10,
+        paddingLeft:     10,
+        paddingTop:      7,
+    },
     shadowEffect: {
         shadowColor:   'rgba(0, 0, 0, 0.16)',
-        shadowOffset:  { width: 0, height: 3 },
-        shadowRadius:  6,
+        shadowOffset:  { height: 3, width: 0, },
         shadowOpacity: 1,
+        shadowRadius:  4,
     },
 });
 
@@ -187,6 +190,9 @@ class MyPlan extends Component {
             },
             loading: false,
         };
+        this._postSessionSurveyModalRef = {};
+        this._readinessSurveyModalRef = {};
+        this._singleExerciseItemRef = {};
         this.renderTab = this.renderTab.bind(this);
     }
 
@@ -418,20 +424,23 @@ class MyPlan extends Component {
         let newPrepareObject = Object.assign({}, this.state.prepare, {
             isReadinessSurveyCompleted: true,
         });
-        this.setState(
-            {
-                dailyReadiness: {
-                    readiness:     0,
-                    sleep_quality: 0,
-                    soreness:      [],
+        this._readinessSurveyModalRef.close();
+        _.delay(() => {
+            this.setState(
+                {
+                    dailyReadiness: {
+                        readiness:     0,
+                        sleep_quality: 0,
+                        soreness:      [],
+                    },
+                    isPrepCalculating:          this.state.dailyReadiness.sessions_planned ? true : false,
+                    isReadinessSurveyModalOpen: false,
+                    isRecoverCalculating:       this.state.dailyReadiness.sessions_planned ? false : true,
+                    prepare:                    newPrepareObject,
                 },
-                isPrepCalculating:          this.state.dailyReadiness.sessions_planned ? true : false,
-                isReadinessSurveyModalOpen: false,
-                isRecoverCalculating:       this.state.dailyReadiness.sessions_planned ? false : true,
-                prepare:                    newPrepareObject,
-            },
-            () => { if(!newDailyReadiness.sessions_planned) { this._goToScrollviewPage(2); } },
-        );
+                () => { if(!newDailyReadiness.sessions_planned) { this._goToScrollviewPage(2); } },
+            );
+        }, 500);
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
                 this.props.clearCompletedExercises();
@@ -478,24 +487,27 @@ class MyPlan extends Component {
         let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
-        this.setState(
-            {
-                train:                        newTrainObject,
-                isPostSessionSurveyModalOpen: false,
-                isRecoverCalculating:         true,
-                postSession:                  {
-                    description:                    '',
-                    duration:                       0,
-                    event_date:                     null,
-                    session_type:                   null,
-                    sport_name:                     null,
-                    strength_and_conditioning_type: null,
-                    RPE:                            null,
-                    soreness:                       [],
+        this._postSessionSurveyModalRef.close();
+        _.delay(() => {
+            this.setState(
+                {
+                    train:                        newTrainObject,
+                    isPostSessionSurveyModalOpen: false,
+                    isRecoverCalculating:         true,
+                    postSession:                  {
+                        RPE:                            null,
+                        description:                    '',
+                        duration:                       0,
+                        event_date:                     null,
+                        session_type:                   null,
+                        soreness:                       [],
+                        sport_name:                     null,
+                        strength_and_conditioning_type: null,
+                    },
                 },
-            },
-            () => this._goToScrollviewPage(2),
-        );
+                () => this._goToScrollviewPage(2),
+            );
+        }, 500);
         this.props.postSessionSurvey(postSession)
             .then(response => {
                 this.props.clearCompletedExercises();
@@ -578,11 +590,14 @@ class MyPlan extends Component {
             newPostSession.strength_and_conditioning_type = null;
             newPostSession.RPE = null;
             this.props.clearCompletedExercises();
-            this.setState({
-                isPostSessionSurveyModalOpen: false,
-                loading:                      false,
-                postSession:                  newPostSession,
-            });
+            this._postSessionSurveyModalRef.close();
+            _.delay(() => {
+                this.setState({
+                    isPostSessionSurveyModalOpen: false,
+                    loading:                      false,
+                    postSession:                  newPostSession,
+                });
+            }, 500);
         }
     }
 
@@ -676,9 +691,6 @@ class MyPlan extends Component {
         }
         // continue by updating reducer and state
         this.props.setCompletedExercises(newCompletedExercises);
-        this.setState({
-            isSelectedExerciseModalOpen: false,
-        });
     }
 
     _handleCompleteFSExercise = (exerciseId) => {
@@ -699,9 +711,6 @@ class MyPlan extends Component {
         }
         // continue by updating reducer and state
         this.props.setCompletedFSExercises(newCompletedExercises);
-        this.setState({
-            isSelectedExerciseModalOpen: false,
-        });
     }
 
     _handleFunctionalStrengthFormSubmit = () => {
@@ -788,6 +797,7 @@ class MyPlan extends Component {
                 <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
                     <View>
                         <Text
+                            oswaldMedium
                             onLayout={event =>
                                 this.setState({
                                     page0: page === 0 ? event.nativeEvent.layout : page0,
@@ -798,7 +808,7 @@ class MyPlan extends Component {
                             style={[
                                 textStyle,
                                 {
-                                    color: isTabActive ? AppColors.activeTabText : AppColors.inactiveTabText,
+                                    color: isTabActive ? AppColors.zeplin.darkNavy : AppColors.zeplin.lightSlate,
                                     fontSize,
                                 }
                             ]}
@@ -832,77 +842,37 @@ class MyPlan extends Component {
         )
     }
 
-    renderActiveRecoveryBlocks = (recoveryObj, whenStyles, styles, after) => {
-        if(!recoveryObj && !recoveryObj.minutes_duration && !recoveryObj.impact_score) {
-            return (
-                <View style={{ flexDirection: 'row' }}>
-                    <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: whenStyles.activeRecoveryWhenBackgroundColor, borderColor: whenStyles.activeRecoveryWhenBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                        <Text h7 oswaldMedium style={{ color: whenStyles.activeRecoveryWhenHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
-                        <Text oswaldMedium style={{ color: whenStyles.activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
-                    </View>
-                    <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryBackgroundColor, borderColor: styles.activeRecoveryBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                        <Text h7 oswaldMedium style={{ color: styles.activeRecoveryHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'TYP. ACTIVE TIME'}</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
-                            <Text h1 oswaldMedium style={{ color: styles.activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{'5-15'}</Text>
-                            <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
-                                <Text h7 oswaldMedium style={{ color: styles.activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-            );
-        }
-        return (
-            <View style={{ flexDirection: 'row', }}>
-                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: whenStyles.activeRecoveryWhenBackgroundColor, borderColor: whenStyles.activeRecoveryWhenBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                    <Text h7 oswaldMedium style={{ color: whenStyles.activeRecoveryWhenHeaderColor, fontSize: AppFonts.scaleFont(12), paddingBottom: 5 }}>{'WHEN'}</Text>
-                    <Text h6 oswaldMedium style={{ color: whenStyles.activeRecoveryWhenDescriptionColor, fontSize: AppFonts.scaleFont(18) }}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
-                </View>
-                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryActiveTimeBackgroundColor, borderColor: styles.activeRecoveryActiveTimeBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                    <Text h7 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
-                    <View style={{ alignItems: 'center', flexDirection: 'row', flex: 1, }}>
-                        <Text h1 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{`${recoveryObj && recoveryObj.minutes_duration ? parseFloat(recoveryObj.minutes_duration).toFixed(1) : '0'}`}</Text>
-                        <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
-                            <Text h7 oswaldMedium style={{ color: styles.activeRecoveryActiveTimeSubtextColor, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
-                        </View>
-                    </View>
-                </View>
-                <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: styles.activeRecoveryBackgroundColor, borderColor: styles.activeRecoveryBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                    <Text h7 oswaldMedium style={{ color: styles.activeRecoveryHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'IMPACT SCORE'}</Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
-                        <Text h1 oswaldMedium style={{ color: styles.activeRecoveryDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{`${recoveryObj && recoveryObj.impact_score ? parseFloat(recoveryObj.impact_score).toFixed(1) : '0'}`}</Text>
-                        <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
-                            <Text h7 oswaldMedium style={{ color: styles.subtextColor, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'/ 5'}</Text>
-                        </View>
-                    </View>
-                </View>
-            </View>
-        );
-    }
-
-    renderCalculatingActiveRecoveryBlocks = () => {
-        const { isPrepCalculating, isRecoverCalculating, } = this.state;
+    renderActiveRecoveryBlocks = (recoveryObj, after, isCalculating) => {
+        let isDisabled = !recoveryObj && !recoveryObj.minutes_duration && !recoveryObj.impact_score;
         return(
             <View style={{ flexDirection: 'row', }}>
-                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, borderRadius: 5 }}>
-                    <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, fontSize: AppFonts.scaleFont(12), paddingBottom: 5 }}>{'WHEN'}</Text>
-                    <Text h6 oswaldMedium style={{ color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(18) }}>{`ANYTIME\n${!isPrepCalculating && isRecoverCalculating ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
+                <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
+                    <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'WHEN'}</Text>
+                    <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
                 </View>
-                <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, borderRadius: 5 }}>
-                    <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
-                    <View style={{ alignItems: 'center', flexDirection: 'row', flex: 1, }}>
-                        <View style={{ backgroundColor: AppColors.zeplin.lightGrey, borderRadius: 3, color: AppColors.zeplin.lightGrey, height: AppFonts.scaleFont(32), width: AppSizes.padding, }} />
-                        <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
-                            <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
+                <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
+                    <Text oswaldMedium style={{ color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, paddingBottom: 5, fontSize: AppFonts.scaleFont(14),}}>{'ACTIVE TIME'}</Text>
+                    <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
+                        <View style={{backgroundColor: isDisabled ? AppColors.zeplin.light : AppColors.transparent, borderRadius: 3,}}>
+                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(28),}}>
+                                {isDisabled ? '00' : `${recoveryObj && recoveryObj.minutes_duration ? parseFloat(recoveryObj.minutes_duration).toFixed(1) : '0'}`}
+                            </Text>
+                        </View>
+                        <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: isDisabled ? 0 : AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
+                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(12),}}>{'MINS'}</Text>
                         </View>
                     </View>
                 </View>
-                <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 10, paddingBottom: 10, backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, borderRadius: 5 }}>
-                    <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'IMPACT SCORE'}</Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
-                        <View style={{ backgroundColor: AppColors.zeplin.lightGrey, borderRadius: 3, color: AppColors.zeplin.lightGrey, height: AppFonts.scaleFont(32), width: AppSizes.padding, }} />
-                        <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
-                            <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'/ 5'}</Text>
+                <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper, {marginRight: 10,}] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, {marginRight: 10,}, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
+                    <Text oswaldMedium style={{ color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, paddingBottom: 5, fontSize: AppFonts.scaleFont(14),}}>{'IMPACT SCORE'}</Text>
+                    <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
+                        <View style={{backgroundColor: isDisabled ? AppColors.zeplin.light : AppColors.transparent, borderRadius: 3,}}>
+                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(28),}}>
+                                {isDisabled ? '00' : `${recoveryObj && recoveryObj.impact_score ? parseFloat(recoveryObj.impact_score).toFixed(1) : '0'}`}
+                            </Text>
+                        </View>
+                        <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: isDisabled ? 0 : AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
+                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(12),}}>{'/ 5'}</Text>
                         </View>
                     </View>
                 </View>
@@ -921,19 +891,7 @@ class MyPlan extends Component {
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed  ? true : false;
-        let activeRecoveryBackgroundColor = disabled ? disabledBackgroundColor : isActive || isCompleted ? whenEnabledBackgroundColor : disabledBackgroundColor;
-        let activeRecoveryDescriptionColor = disabled ? disabledDescriptionColor : isActive || isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
-        let activeRecoveryHeaderColor = disabled ? disabledHeaderColor : isActive || isCompleted ? whenEnabledHeaderColor : disabledHeaderColor;
-        let activeRecoveryBorderColor = disabled ? disabledBorderColor : isActive || isCompleted ? whenEnabledBorderColor : disabledBorderColor;
-        let activeRecoveryActiveTimeBackgroundColor = disabled ? disabledBackgroundColor : isActive || isCompleted ? whenEnabledBackgroundColor : disabledBackgroundColor;
-        let activeRecoveryActiveTimeDescriptionColor = disabled ? disabledDescriptionColor : isActive || isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
-        let activeRecoveryActiveTimeHeaderColor = disabled ? disabledHeaderColor : isActive || isCompleted ? whenEnabledHeaderColor : disabledHeaderColor;
-        let activeRecoveryActiveTimeBorderColor = disabled ? disabledBorderColor : isActive || isCompleted ? whenEnabledBorderColor : disabledBorderColor;
-        let activeRecoveryActiveTimeSubtextColor = disabled ? disabledDescriptionColor : isActive || isCompleted ? whenEnabledBorderColor : disabledDescriptionColor;
-        let activeRecoveryWhenBackgroundColor = disabled ? whenDisabledBackgroundColor : isActive || isCompleted ? whenEnabledBackgroundColor : whenDisabledBackgroundColor;
-        let activeRecoveryWhenDescriptionColor = disabled ? whenDisabledDescriptionColor : isActive || isCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
-        let activeRecoveryWhenHeaderColor = disabled ? whenDisabledHeaderColor : isActive || isCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor;
-        let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive || isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
+        let isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
         return (
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}
@@ -950,6 +908,28 @@ class MyPlan extends Component {
                 tabLabel={tabs[index]}
             >
                 <Spacer size={30} />
+                { isReadinessSurveyCompleted ?
+                    <View>
+                        <ListItem
+                            containerStyle={{ borderBottomWidth: 0 }}
+                            disabled={false}
+                            hideChevron={true}
+                            leftIcon={
+                                <TabIcon
+                                    containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                    size={AppFonts.scaleFont(24)}
+                                    color={AppColors.zeplin.yellow}
+                                    icon={'check-circle'}
+                                />
+                            }
+                            title={'READINESS SURVEY'}
+                            titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
+                        />
+                        {this.renderDefaultListGap(24)}
+                    </View>
+                    :
+                    null
+                }
                 <ListItem
                     containerStyle={{ borderBottomWidth: 0 }}
                     disabled={disabled}
@@ -971,26 +951,20 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                {
-                                    this.renderActiveRecoveryBlocks(
-                                        false,
-                                        {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                        {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
-                                    )
-                                }
+                                {this.renderActiveRecoveryBlocks(false)}
                             </View>
                         </View>
                     : disabled && isPrepCalculating ?
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                {this.renderCalculatingActiveRecoveryBlocks()}
+                                {this.renderActiveRecoveryBlocks(false, false, isPrepCalculating)}
                                 <Spacer size={12}/>
                                 <Button
                                     backgroundColor={AppColors.white}
                                     buttonStyle={{width: '100%',}}
                                     containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                    color={AppColors.zeplin.lightGrey}
+                                    color={AppColors.zeplin.yellow}
                                     fontFamily={AppStyles.robotoBold.fontFamily}
                                     fontWeight={AppStyles.robotoBold.fontWeight}
                                     loading={isPrepCalculating}
@@ -1023,13 +997,7 @@ class MyPlan extends Component {
                             <View style={{ flex: 1, flexDirection: 'row' }}>
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                 <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                    {
-                                        this.renderActiveRecoveryBlocks(
-                                            recoveryObj,
-                                            {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                            {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
-                                        )
-                                    }
+                                    {this.renderActiveRecoveryBlocks(recoveryObj)}
                                     <Spacer size={12}/>
                                     <Button
                                         backgroundColor={AppColors.primary.yellow.hundredPercent}
@@ -1062,20 +1030,14 @@ class MyPlan extends Component {
                                 <View style={{flexDirection: 'row',}}>
                                     <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
-                                        {
-                                            this.renderActiveRecoveryBlocks(
-                                                recoveryObj,
-                                                {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                                {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
-                                            )
-                                        }
+                                        {this.renderActiveRecoveryBlocks(recoveryObj)}
                                         <Spacer size={20}/>
                                         <Text
                                             onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed }) }) }
                                             robotoBold
                                             style={[AppStyles.textCenterAligned,
                                                 {
-                                                    color:              AppColors.secondary.blue.eightyPercent,
+                                                    color:              AppColors.zeplin.yellow,
                                                     fontSize:           AppFonts.scaleFont(14),
                                                     marginRight:        10,
                                                     textDecorationLine: 'none',
@@ -1120,13 +1082,7 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{flex: 1, paddingLeft: 30, paddingRight: 15}}>
-                                {
-                                    this.renderActiveRecoveryBlocks(
-                                        recoveryObj,
-                                        {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                        {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor}
-                                    )
-                                }
+                                {this.renderActiveRecoveryBlocks(recoveryObj)}
                             </View>
                         </View>
                     :
@@ -1141,9 +1097,12 @@ class MyPlan extends Component {
                     this.state.isReadinessSurveyModalOpen
                         ?
                         <Modal
+                            backdropColor={AppColors.zeplin.darkNavy}
+                            backdropOpacity={0.8}
                             backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isReadinessSurveyModalOpen}
+                            ref={ref => {this._readinessSurveyModalRef = ref;}}
                             swipeToClose={false}
                         >
                             <ReadinessSurvey
@@ -1171,24 +1130,25 @@ class MyPlan extends Component {
                     this.state.isSelectedExerciseModalOpen
                         ?
                         <Modal
-                            backdropOpacity={0.75}
+                            backdropColor={AppColors.zeplin.darkNavy}
+                            backdropOpacity={0.8}
                             backdropPressToClose={true}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
-                            style={[AppStyles.containerCentered, {
-                                borderRadius: 4,
-                                height:       AppSizes.screen.heightThreeQuarters,
-                                padding:      AppSizes.paddingSml,
-                                width:        AppSizes.screen.width * 0.9,
-                            }]}
+                            ref={ref => {this._singleExerciseItemRef = ref;}}
+                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
                             swipeToClose={true}
                         >
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem
+                                    completedExercises={completedExercises}
                                     exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'pre')}
+                                    handleCompleteExercise={exerciseId => {
+                                        this._handleCompleteExercise(exerciseId, 'pre');
+                                        this._singleExerciseItemRef.close();
+                                    }}
                                     selectedExercise={this.state.selectedExercise.library_id}
                                 />
                                 :
@@ -1219,19 +1179,6 @@ class MyPlan extends Component {
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed ? true : false;
-        let activeRecoveryBackgroundColor = disabled ? disabledBackgroundColor : isActive || isCompleted ? whenEnabledBackgroundColor : disabledBackgroundColor;
-        let activeRecoveryDescriptionColor = disabled ? disabledDescriptionColor : isActive || isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
-        let activeRecoveryHeaderColor = disabled ? disabledHeaderColor : isActive || isCompleted ? whenEnabledHeaderColor : disabledHeaderColor;
-        let activeRecoveryBorderColor = disabled ? disabledBorderColor : isActive || isCompleted ? whenEnabledBorderColor : disabledBorderColor;
-        let activeRecoveryActiveTimeBackgroundColor = disabled ? disabledBackgroundColor : isActive || isCompleted ? whenEnabledBackgroundColor : disabledBackgroundColor;
-        let activeRecoveryActiveTimeDescriptionColor = disabled ? disabledDescriptionColor : isActive || isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
-        let activeRecoveryActiveTimeHeaderColor = disabled ? disabledHeaderColor : isActive || isCompleted ? whenEnabledHeaderColor : disabledHeaderColor;
-        let activeRecoveryActiveTimeBorderColor = disabled ? disabledBorderColor : isActive || isCompleted ? whenEnabledBorderColor : disabledBorderColor;
-        let activeRecoveryActiveTimeSubtextColor = disabled ? disabledDescriptionColor : isActive ? subtextColor : isCompleted ? whenEnabledDescriptionColor : disabledDescriptionColor;
-        let activeRecoveryWhenBackgroundColor = disabled ? whenDisabledBackgroundColor : isActive || isCompleted ? whenEnabledBackgroundColor : whenDisabledBackgroundColor;
-        let activeRecoveryWhenDescriptionColor = disabled ? whenDisabledDescriptionColor : isActive || isCompleted ? whenEnabledDescriptionColor : whenDisabledDescriptionColor;
-        let activeRecoveryWhenHeaderColor = disabled ? whenDisabledHeaderColor : isActive || isCompleted ? whenEnabledHeaderColor : whenDisabledHeaderColor;
-        let activeRecoveryWhenBorderColor = disabled ? whenDisabledBorderColor : isActive || isCompleted ? whenEnabledBorderColor : whenDisabledBorderColor;
         return (
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}
@@ -1270,14 +1217,7 @@ class MyPlan extends Component {
                             <View style={{ flex: 1, flexDirection: 'row', }}>
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                 <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                    {
-                                        this.renderActiveRecoveryBlocks(
-                                            false,
-                                            {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                            {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
-                                            true
-                                        )
-                                    }
+                                    {this.renderActiveRecoveryBlocks(false, true)}
                                 </View>
                             </View>
                             <Spacer size={25}/>
@@ -1298,13 +1238,13 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                {this.renderCalculatingActiveRecoveryBlocks()}
+                                {this.renderActiveRecoveryBlocks(false, true, isRecoverCalculating)}
                                 <Spacer size={12}/>
                                 <Button
                                     backgroundColor={AppColors.white}
                                     buttonStyle={{width: '100%',}}
                                     containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                    color={AppColors.zeplin.lightGrey}
+                                    color={AppColors.zeplin.yellow}
                                     fontFamily={AppStyles.robotoBold.fontFamily}
                                     fontWeight={AppStyles.robotoBold.fontWeight}
                                     loading={isRecoverCalculating}
@@ -1337,14 +1277,7 @@ class MyPlan extends Component {
                             <View style={{ flex: 1, flexDirection: 'row', }}>
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                 <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                    {
-                                        this.renderActiveRecoveryBlocks(
-                                            recoveryObj,
-                                            {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                            {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
-                                            true
-                                        )
-                                    }
+                                    {this.renderActiveRecoveryBlocks(recoveryObj, true)}
                                     <Spacer size={12}/>
                                     <Button
                                         backgroundColor={AppColors.primary.yellow.hundredPercent}
@@ -1376,21 +1309,14 @@ class MyPlan extends Component {
                                 <View style={{flexDirection: 'row',}}>
                                     <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
-                                        {
-                                            this.renderActiveRecoveryBlocks(
-                                                recoveryObj,
-                                                {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                                {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
-                                                true
-                                            )
-                                        }
+                                        {this.renderActiveRecoveryBlocks(recoveryObj, true)}
                                         <Spacer size={20}/>
                                         <Text
                                             onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) }) }
                                             robotoBold
                                             style={[AppStyles.textCenterAligned,
                                                 {
-                                                    color:              AppColors.secondary.blue.eightyPercent,
+                                                    color:              AppColors.zeplin.yellow,
                                                     fontSize:           AppFonts.scaleFont(14),
                                                     marginRight:        10,
                                                     textDecorationLine: 'none',
@@ -1430,14 +1356,7 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row', }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                {
-                                    this.renderActiveRecoveryBlocks(
-                                        recoveryObj,
-                                        {activeRecoveryWhenBackgroundColor, activeRecoveryWhenBorderColor, activeRecoveryWhenHeaderColor, activeRecoveryWhenDescriptionColor},
-                                        {activeRecoveryActiveTimeBackgroundColor, activeRecoveryActiveTimeBorderColor, activeRecoveryActiveTimeHeaderColor, activeRecoveryActiveTimeDescriptionColor, activeRecoveryActiveTimeSubtextColor, activeRecoveryBackgroundColor, activeRecoveryBorderColor, activeRecoveryHeaderColor, activeRecoveryDescriptionColor, subtextColor},
-                                        true
-                                    )
-                                }
+                                {this.renderActiveRecoveryBlocks(recoveryObj, true)}
                             </View>
                         </View>
                     :
@@ -1452,24 +1371,25 @@ class MyPlan extends Component {
                     this.state.isSelectedExerciseModalOpen
                         ?
                         <Modal
-                            backdropOpacity={0.75}
+                            backdropColor={AppColors.zeplin.darkNavy}
+                            backdropOpacity={0.8}
                             backdropPressToClose={true}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
-                            style={[AppStyles.containerCentered, {
-                                borderRadius: 4,
-                                height:       AppSizes.screen.heightThreeQuarters,
-                                padding:      AppSizes.paddingSml,
-                                width:        AppSizes.screen.width * 0.9,
-                            }]}
+                            ref={ref => {this._singleExerciseItemRef = ref;}}
+                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
                             swipeToClose={true}
                         >
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem
+                                    completedExercises={completedExercises}
                                     exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'post')}
+                                    handleCompleteExercise={exerciseId => {
+                                        this._handleCompleteExercise(exerciseId, 'post');
+                                        this._singleExerciseItemRef.close();
+                                    }}
                                     selectedExercise={this.state.selectedExercise.library_id}
                                 />
                                 :
@@ -1575,19 +1495,19 @@ class MyPlan extends Component {
                               titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                           />
                           <View style={{ flex: 1, flexDirection: 'row', }}>
-                              <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: this.state.isFunctionalStrengthCollapsed ? whenEnabledBorderColor : AppColors.white, }}/>
+                              <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: this.state.isFunctionalStrengthCollapsed ? AppColors.zeplin.lightGrey : AppColors.white, }}/>
                               <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
                                   <View style={{ flexDirection: 'row' }}>
-                                      <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                          <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
-                                          <Text oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(20) }}>{'ANYTIME DURING THE DAY'}</Text>
+                                      <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, borderRadius: 5 }}>
+                                          <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
+                                          <Text oswaldMedium style={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20) }}>{'ANYTIME DURING THE DAY'}</Text>
                                       </View>
-                                      <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: whenEnabledBackgroundColor, borderColor: whenEnabledBorderColor, borderWidth: 1, borderRadius: 5 }}>
-                                          <Text h7 oswaldMedium style={{ color: whenEnabledHeaderColor, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
+                                      <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, borderRadius: 5 }}>
+                                          <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
                                           <View style={{ alignItems: 'center', flexDirection: 'row', flex: 1, }}>
-                                              <Text h1 oswaldMedium style={{ color: whenEnabledDescriptionColor, fontSize: AppFonts.scaleFont(32) }}>{`${parseFloat(functionalStrength.minutes_duration).toFixed(1)}`}</Text>
+                                              <Text h1 oswaldMedium style={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32) }}>{`${parseFloat(functionalStrength.minutes_duration).toFixed(1)}`}</Text>
                                               <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
-                                                  <Text h7 oswaldMedium style={{ color: subtextColor, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
+                                                  <Text h7 oswaldMedium style={{ color: AppColors.zeplin.greyText, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
                                               </View>
                                           </View>
                                       </View>
@@ -1623,7 +1543,7 @@ class MyPlan extends Component {
                                           robotoBold
                                           style={[AppStyles.textCenterAligned,
                                               {
-                                                  color:              AppColors.secondary.blue.eightyPercent,
+                                                  color:              AppColors.zeplin.yellow,
                                                   fontSize:           AppFonts.scaleFont(14),
                                                   marginRight:        10,
                                                   textDecorationLine: 'none',
@@ -1742,9 +1662,12 @@ class MyPlan extends Component {
                     this.state.isPostSessionSurveyModalOpen
                         ?
                         <Modal
+                            backdropColor={AppColors.zeplin.darkNavy}
+                            backdropOpacity={0.8}
                             backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isPostSessionSurveyModalOpen}
+                            ref={ref => {this._postSessionSurveyModalRef = ref;}}
                             swipeToClose={false}
                         >
                             <PostSessionSurvey
@@ -1780,24 +1703,25 @@ class MyPlan extends Component {
                     this.state.isSelectedExerciseModalOpen
                         ?
                         <Modal
-                            backdropOpacity={0.75}
+                            backdropColor={AppColors.zeplin.darkNavy}
+                            backdropOpacity={0.8}
                             backdropPressToClose={true}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
-                            style={[AppStyles.containerCentered, {
-                                borderRadius: 4,
-                                height:       AppSizes.screen.heightThreeQuarters,
-                                padding:      AppSizes.paddingSml,
-                                width:        AppSizes.screen.width * 0.9,
-                            }]}
+                            ref={ref => {this._singleExerciseItemRef = ref;}}
+                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
                             swipeToClose={true}
                         >
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem
+                                    completedExercises={completedFSExercises}
                                     exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={this._handleCompleteFSExercise}
+                                    handleCompleteExercise={exerciseId => {
+                                        this._handleCompleteFSExercise(exerciseId);
+                                        this._singleExerciseItemRef.close();
+                                    }}
                                     selectedExercise={this.state.selectedExercise.library_id}
                                 />
                                 :

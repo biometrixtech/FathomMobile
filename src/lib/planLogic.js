@@ -114,7 +114,10 @@ const PlanLogic = {
         let newSorenessFields = _.cloneDeep(stateObject.soreness);
         // logic
         if(!areaClicked && isAllGood) {
-            let soreBodyParts = _.intersectionBy(stateObject.soreness, soreBodyPartsPlan.body_parts, 'body_part');
+            let soreBodyParts = _.filter(stateObject.soreness, stateObjectSoreBodyPart => {
+                let isPrev = _.filter(soreBodyPartsPlan.body_parts, o => o.body_part === stateObjectSoreBodyPart.body_part && o.side === stateObjectSoreBodyPart.side).length > 0;
+                return isPrev;
+            });
             newSorenessFields = soreBodyParts;
         } else {
             if(_.findIndex(stateObject.soreness, o => o.body_part === areaClicked.index) > -1) {
@@ -141,20 +144,20 @@ const PlanLogic = {
                 if(areaClicked.bilateral) {
                     let newLeftSorenessPart = {};
                     newLeftSorenessPart.body_part = areaClicked.index;
-                    newLeftSorenessPart.pain = false;
+                    newLeftSorenessPart.pain = areaClicked.group === 'joint';
                     newLeftSorenessPart.severity = null;
                     newLeftSorenessPart.side = 1;
                     newSorenessFields.push(newLeftSorenessPart);
                     let newRightSorenessPart = {};
                     newRightSorenessPart.body_part = areaClicked.index;
-                    newRightSorenessPart.pain = false;
+                    newRightSorenessPart.pain = areaClicked.group === 'joint';
                     newRightSorenessPart.severity = null;
                     newRightSorenessPart.side = 2;
                     newSorenessFields.push(newRightSorenessPart);
                 } else {
                     let newSorenessPart = {};
                     newSorenessPart.body_part = areaClicked.index;
-                    newSorenessPart.pain = false;
+                    newSorenessPart.pain = areaClicked.group === 'joint';
                     newSorenessPart.severity = null;
                     newSorenessPart.side = 0;
                     newSorenessFields.push(newSorenessPart);
@@ -710,7 +713,6 @@ const PlanLogic = {
       * Next Page & Validation Logic
       * - PostSessionSurvey
       */
-    // TODO: UNIT TEST ME
     handlePostSessionSurveyNextPage: (postSession, currentPage, isFormValidItems, isBackBtn, newSoreBodyParts, areaOfSorenessClicked) => {
         let isValid = false;
         let pageNum = 0;

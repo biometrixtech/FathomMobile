@@ -119,7 +119,7 @@ const JoinATeamModal = ({
     resultMsg,
 }) => (
     <Modal
-        backdropColor={AppColors.black}
+        backdropColor={AppColors.zeplin.darkNavy}
         backdropOpacity={0.8}
         backdropPressToClose={false}
         coverScreen={true}
@@ -128,7 +128,7 @@ const JoinATeamModal = ({
         style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, }]}
         swipeToClose={false}
     >
-        <View style={[AppStyles.containerCentered, AppStyles.paddingVerticalSml, {backgroundColor: AppColors.white, width: (AppSizes.screen.width * 0.9),}]}>
+        <View style={[AppStyles.containerCentered, AppStyles.paddingVerticalSml, AppStyles.modalShadowEffect, {backgroundColor: AppColors.white, width: (AppSizes.screen.width * 0.9),}]}>
             <TabIcon
                 containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml),}]}
                 icon={'close'}

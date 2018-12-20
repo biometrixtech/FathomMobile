@@ -15,7 +15,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, View, } from 'react-native';
+import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
@@ -32,6 +32,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 // consts
 const helloPageText = 'Let us know how you feel so we can adapt your Recovery Plan to your body. This simple survey shouldn\'t take more than 2-minutes.';
+const step0CircleSize = ((AppSizes.screen.width - (AppSizes.padding * 6)) / 3);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -50,6 +51,19 @@ const styles = StyleSheet.create({
         paddingHorizontal: 50,
         paddingVertical:   50,
     },
+    lockIconStyle: {
+        alignSelf:      'center',
+        justifyContent: 'center',
+    },
+    lockIconWrapperStyle: {
+        alignItems:      'center',
+        alignSelf:       'center',
+        backgroundColor: AppColors.zeplin.seaBlue,
+        borderRadius:    AppFonts.scaleFont(40) / 2,
+        height:          AppFonts.scaleFont(40),
+        justifyContent:  'center',
+        width:           AppFonts.scaleFont(40),
+    },
     pickerSelect: {
         ...AppFonts.oswaldMedium,
         color:    AppColors.zeplin.darkGrey,
@@ -67,6 +81,16 @@ const styles = StyleSheet.create({
         shadowRadius:  6,
         shadowOpacity: 1,
     },
+    step0Circle: {
+        alignSelf:         'center',
+        backgroundColor:   AppColors.zeplin.superLight,
+        borderRadius:      step0CircleSize / 2,
+        height:            step0CircleSize,
+        justifyContent:    'center',
+        marginBottom:      20,
+        paddingHorizontal: AppSizes.paddingSml,
+        width:             step0CircleSize,
+    },
 });
 
 /* Components ================================================================= */
@@ -74,6 +98,7 @@ class ReadinessSurvey extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            androidShowMoreOptions: false,
             isActionButtonVisible:  false,
             isCloseToBottom:        false,
             isSlideUpPanelExpanded: true,
@@ -137,7 +162,7 @@ class ReadinessSurvey extends Component {
 
     _scrollViewEndDrag = event => {
         const offset = event.nativeEvent.contentOffset.y;
-        let isCloseToBottom = event.nativeEvent.layoutMeasurement.height + offset >= event.nativeEvent.contentSize.height - 20;
+        let isCloseToBottom = event.nativeEvent.layoutMeasurement.height + offset >= event.nativeEvent.contentSize.height - 80;
         let isActionButtonVisible = (
             !isCloseToBottom // is NOT close to the bottom
         );
@@ -207,14 +232,14 @@ class ReadinessSurvey extends Component {
                                         <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(25),}}>{helloPageText}</Text>
                                         <Spacer size={10} />
                                         <Button
-                                            backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                            backgroundColor={AppColors.zeplin.yellow}
                                             buttonStyle={{borderRadius: 5, width: '100%',}}
                                             containerViewStyle={{marginLeft: 0, marginRight: 0}}
                                             color={AppColors.white}
                                             fontFamily={AppStyles.robotoBold.fontFamily}
                                             fontWeight={AppStyles.robotoBold.fontWeight}
                                             leftIcon={{
-                                                color: AppColors.primary.yellow.hundredPercent,
+                                                color: AppColors.zeplin.yellow,
                                                 name:  'chevron-right',
                                                 size:  AppFonts.scaleFont(24),
                                                 style: {flex: 1,},
@@ -245,10 +270,20 @@ class ReadinessSurvey extends Component {
                         style={{flex: 1,}}
                     >
                         <Spacer size={50} />
-                        <View style={[styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {alignSelf: 'center', backgroundColor: AppColors.white, borderRadius: 5, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingXLrg, width: AppSizes.screen.widthFourFifths,}]}>
+                        <View style={[styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {alignSelf: 'center', backgroundColor: AppColors.white, borderRadius: 5, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingMed, width: AppSizes.screen.widthFourFifths,}]}>
                             <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(32),}]}>{`CONGRATS ${user.personal_data.first_name.toUpperCase()}!`}</Text>
                             <Spacer size={15} />
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(24),}]}>{'You\'ve unlocked\nFunctional Strength!'}</Text>
+                            <TabIcon
+                                color={AppColors.white}
+                                containerStyle={[styles.lockIconWrapperStyle,]}
+                                icon={'lock-open-outline'}
+                                iconStyle={[styles.lockIconStyle,]}
+                                raised={false}
+                                size={AppFonts.scaleFont(26)}
+                                type={'material-community'}
+                            />
+                            <Spacer size={15} />
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(22),}]}>{'You\'ve unlocked\nFunctional Strength!'}</Text>
                         </View>
                         <Spacer size={60} />
                         <View>
@@ -256,30 +291,21 @@ class ReadinessSurvey extends Component {
                                 {'What activity would you like to target?'}
                             </Text>
                             <Spacer size={10} />
-                            { _.map(typicalSessions, (session, i) => {
-                                let FSOptions = PlanLogic.handleFunctionalStrengthOptions(session);
-                                let isSport = FSOptions.isSport;
-                                let isStrengthConditioning = FSOptions.isStrengthConditioning;
-                                let sessionName = FSOptions.sessionName;
-                                let isSelected = false;
-                                if(isSport) {
-                                    isSelected = dailyReadiness.current_sport_name === session.sport_name;
-                                } else if(isStrengthConditioning) {
-                                    isSelected = dailyReadiness.current_sport_name === null && dailyReadiness.current_position === session.strength_and_conditioning_type;
-                                }
-                                return(
-                                    <View key={i}>
-                                        <Button
-                                            backgroundColor={isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                                            buttonStyle={{
-                                                alignSelf:       'center',
-                                                borderRadius:    5,
-                                                paddingVertical: 5,
-                                                width:           AppSizes.screen.widthTwoThirds,
-                                            }}
-                                            color={isSelected ? AppColors.white : AppColors.zeplin.darkGrey}
-                                            fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                            fontWeight={AppStyles.oswaldRegular.fontWeight}
+                            <View style={{alignSelf: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}}>
+                                { _.map(typicalSessions, (session, i) => {
+                                    let FSOptions = PlanLogic.handleFunctionalStrengthOptions(session);
+                                    let isSport = FSOptions.isSport;
+                                    let isStrengthConditioning = FSOptions.isStrengthConditioning;
+                                    let sessionName = FSOptions.sessionName;
+                                    let isSelected = false;
+                                    if(isSport) {
+                                        isSelected = dailyReadiness.current_sport_name === session.sport_name;
+                                    } else if(isStrengthConditioning) {
+                                        isSelected = dailyReadiness.current_sport_name === null && dailyReadiness.current_position === session.strength_and_conditioning_type;
+                                    }
+                                    return(
+                                        <TouchableOpacity
+                                            key={i}
                                             onPress={() => {
                                                 if(isSport) {
                                                     if(isSelected) {
@@ -306,15 +332,21 @@ class ReadinessSurvey extends Component {
                                                     }
                                                 }
                                             }}
-                                            outlined={isSelected ? false : true}
-                                            raised={false}
-                                            textStyle={{ fontSize: AppFonts.scaleFont(14), }}
-                                            title={sessionName.toUpperCase()}
-                                        />
-                                        <Spacer size={8} />
-                                    </View>
-                                )
-                            })}
+                                            style={[
+                                                styles.step0Circle,
+                                                styles.shadowEffect,
+                                                Platform.OS === 'ios' ? {} : {elevation: 2,},
+                                                ((i + 1) % 3 === 0) ? {} : {marginRight: AppSizes.padding,},
+                                                isSelected ? {backgroundColor: AppColors.zeplin.yellow,} : {},
+                                            ]}
+                                        >
+                                            <Text oswaldMedium style={{color: isSelected ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
+                                                {sessionName.toUpperCase()}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )
+                                })}
+                            </View>
                         </View>
                         <View onLayout={event => {this.positionsComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
                             { dailyReadiness.current_sport_name !== null && selectedSportPositions && selectedSportPositions.length > 0 ?
@@ -328,33 +360,31 @@ class ReadinessSurvey extends Component {
                                         {'?'}
                                     </Text>
                                     <Spacer size={10} />
-                                    { _.map(selectedSportPositions, (position, i) => {
-                                        return(
-                                            <View key={i}>
-                                                <Button
-                                                    backgroundColor={dailyReadiness.current_position === i ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                                                    buttonStyle={{
-                                                        alignSelf:       'center',
-                                                        borderRadius:    5,
-                                                        paddingVertical: 5,
-                                                        width:           AppSizes.screen.widthTwoThirds,
-                                                    }}
-                                                    color={dailyReadiness.current_position === i ? AppColors.white : AppColors.zeplin.darkGrey}
-                                                    fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                                    fontWeight={AppStyles.oswaldRegular.fontWeight}
+                                    <View style={{alignSelf: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}}>
+                                        { _.map(selectedSportPositions, (position, i) => {
+                                            let isSelected = dailyReadiness.current_position === i;
+                                            return(
+                                                <TouchableOpacity
+                                                    key={i}
                                                     onPress={() => {
                                                         handleFormChange('current_position', i);
                                                         this._scrollToBottom(this.scrollViewActivityTargetRef);
                                                     }}
-                                                    outlined={dailyReadiness.current_position === i ? false : true}
-                                                    raised={false}
-                                                    textStyle={{ fontSize: AppFonts.scaleFont(14), }}
-                                                    title={position.toUpperCase()}
-                                                />
-                                                <Spacer size={8} />
-                                            </View>
-                                        )
-                                    })}
+                                                    style={[
+                                                        styles.step0Circle,
+                                                        styles.shadowEffect,
+                                                        Platform.OS === 'ios' ? {} : {elevation: 2,},
+                                                        ((i + 1) % 3 === 0) ? {} : {marginRight: AppSizes.padding,},
+                                                        isSelected ? {backgroundColor: AppColors.zeplin.yellow,} : {},
+                                                    ]}
+                                                >
+                                                    <Text oswaldMedium style={{color: isSelected ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>
+                                                        {position.toUpperCase()}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            )
+                                        })}
+                                    </View>
                                 </View>
                                 :
                                 null
@@ -369,41 +399,35 @@ class ReadinessSurvey extends Component {
                                 {functionalStrengthTodaySubtext}
                             </Text>
                             <Spacer size={10} />
-                            <Button
-                                backgroundColor={dailyReadiness.wants_functional_strength ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                                buttonStyle={{
-                                    alignSelf:       'center',
-                                    borderRadius:    5,
-                                    paddingVertical: 5,
-                                    width:           AppSizes.screen.widthTwoThirds,
-                                }}
-                                color={dailyReadiness.wants_functional_strength ? AppColors.white : AppColors.zeplin.darkGrey}
-                                fontFamily={AppStyles.robotoMedium.fontFamily}
-                                fontWeight={AppStyles.robotoMedium.fontWeight}
-                                onPress={() => handleFormChange('wants_functional_strength', true)}
-                                outlined={dailyReadiness.wants_functional_strength ? false : true}
-                                raised={false}
-                                textStyle={{ fontSize: AppFonts.scaleFont(14), }}
-                                title={'YES'}
-                            />
-                            <Spacer size={10} />
-                            <Button
-                                backgroundColor={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? AppColors.white : AppColors.primary.yellow.hundredPercent}
-                                buttonStyle={{
-                                    alignSelf:       'center',
-                                    borderRadius:    5,
-                                    paddingVertical: 5,
-                                    width:           AppSizes.screen.widthTwoThirds,
-                                }}
-                                color={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? AppColors.zeplin.darkGrey : AppColors.white}
-                                fontFamily={AppStyles.robotoMedium.fontFamily}
-                                fontWeight={AppStyles.robotoMedium.fontWeight}
-                                onPress={() => handleFormChange('wants_functional_strength', false)}
-                                outlined={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? true : false}
-                                raised={false}
-                                textStyle={{ fontSize: AppFonts.scaleFont(14), }}
-                                title={'NO'}
-                            />
+                            <View style={{alignSelf: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}}>
+                                <TouchableOpacity
+                                    onPress={() => handleFormChange('wants_functional_strength', true)}
+                                    style={[
+                                        styles.step0Circle,
+                                        styles.shadowEffect,
+                                        Platform.OS === 'ios' ? {} : {elevation: 2,},
+                                        {marginRight: AppSizes.padding,},
+                                        dailyReadiness.wants_functional_strength ? {backgroundColor: AppColors.zeplin.yellow,} : {},
+                                    ]}
+                                >
+                                    <Text oswaldMedium style={{color: dailyReadiness.wants_functional_strength ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>
+                                        {'YES'}
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => handleFormChange('wants_functional_strength', false)}
+                                    style={[
+                                        styles.step0Circle,
+                                        styles.shadowEffect,
+                                        Platform.OS === 'ios' ? {} : {elevation: 2,},
+                                        dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? {} : {backgroundColor: AppColors.zeplin.yellow,},
+                                    ]}
+                                >
+                                    <Text oswaldMedium style={{color: dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? AppColors.zeplin.blueGrey : AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>
+                                        {'NO'}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                         <Spacer size={50} />
                         <BackNextButtons
@@ -477,8 +501,8 @@ class ReadinessSurvey extends Component {
                                 <View style={{flexDirection: 'row', justifyContent: 'space-between', width: (AppSizes.screen.width - (AppSizes.paddingXLrg * 2))}}>
                                     <TouchableHighlight
                                         onPress={() => handleFormChange('already_trained_number', false)}
-                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
-                                            backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, {
+                                            backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
                                         }]}
                                         underlayColor={AppColors.transparent}
                                     >
@@ -500,8 +524,8 @@ class ReadinessSurvey extends Component {
                                             this._resetSportBuilder();
                                             handleFormChange('already_trained_number', 1);
                                         }}
-                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
-                                            backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, {
+                                            backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
                                         }]}
                                         underlayColor={AppColors.transparent}
                                     >
@@ -523,12 +547,8 @@ class ReadinessSurvey extends Component {
                                         style={[
                                             AppStyles.xLrgCircle,
                                             styles.shadowEffect,
-                                            Platform.OS === 'ios' ?
-                                                {}
-                                                :
-                                                {elevation: 2,},
                                             {
-                                                backgroundColor: dailyReadiness.already_trained_number > 1 ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
+                                                backgroundColor: dailyReadiness.already_trained_number > 1 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
                                             }
                                         ]}
                                         underlayColor={AppColors.transparent}
@@ -543,37 +563,193 @@ class ReadinessSurvey extends Component {
                                                 }
                                             ]}
                                         >
-                                            {'MORE+'}
+                                            {'+ MORE'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                </View>
+                                :
+                                <View>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between', width: (AppSizes.screen.width - (AppSizes.paddingXLrg * 2))}}>
+                                        <TouchableHighlight
+                                            onPress={() => handleFormChange('already_trained_number', false)}
+                                            style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                                backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                            }]}
+                                            underlayColor={AppColors.transparent}
+                                        >
+                                            <Text
+                                                oswaldMedium
+                                                style={[
+                                                    AppStyles.textCenterAligned,
+                                                    {
+                                                        color:    dailyReadiness.already_trained_number === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                        fontSize: AppFonts.scaleFont(17),
+                                                    }
+                                                ]}
+                                            >
+                                                {'NO'}
+                                            </Text>
+                                        </TouchableHighlight>
+                                        <TouchableHighlight
+                                            onPress={() => handleFormChange('already_trained_number', 1)}
+                                            style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                                backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                            }]}
+                                            underlayColor={AppColors.transparent}
+                                        >
+                                            <Text
+                                                oswaldMedium
+                                                style={[
+                                                    AppStyles.textCenterAligned,
+                                                    {
+                                                        color:    dailyReadiness.already_trained_number === 1 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                        fontSize: AppFonts.scaleFont(17),
+                                                    }
+                                                ]}
+                                            >
+                                                {'ONE\nTIME'}
+                                            </Text>
+                                        </TouchableHighlight>
+                                        { this.state.androidShowMoreOptions ?
+                                            <TouchableHighlight
+                                                onPress={() => handleFormChange('already_trained_number', 2)}
+                                                style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                                    backgroundColor: dailyReadiness.already_trained_number === 2 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                                }]}
+                                                underlayColor={AppColors.transparent}
+                                            >
+                                                <Text
+                                                    oswaldMedium
+                                                    style={[
+                                                        AppStyles.textCenterAligned,
+                                                        {
+                                                            color:    dailyReadiness.already_trained_number === 2 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                            fontSize: AppFonts.scaleFont(17),
+                                                        }
+                                                    ]}
+                                                >
+                                                    {'TWO\nTIMES'}
+                                                </Text>
+                                            </TouchableHighlight>
+                                            :
+                                            <TouchableHighlight
+                                                onPress={() => this.setState({ androidShowMoreOptions: true, })}
+                                                style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                                    backgroundColor: dailyReadiness.already_trained_number === 2 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                                }]}
+                                                underlayColor={AppColors.transparent}
+                                            >
+                                                <Text
+                                                    oswaldMedium
+                                                    style={[
+                                                        AppStyles.textCenterAligned,
+                                                        {
+                                                            color:    dailyReadiness.already_trained_number === 2 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                            fontSize: AppFonts.scaleFont(17),
+                                                        }
+                                                    ]}
+                                                >
+                                                    {'+ MORE'}
+                                                </Text>
+                                            </TouchableHighlight>
+                                        }
+                                    </View>
+                                </View>
+                            }
+                            { this.state.androidShowMoreOptions && Platform.OS === 'android' ?
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between', width: (AppSizes.screen.width - (AppSizes.paddingXLrg * 2)), paddingTop: AppSizes.padding,}}>
+                                    <TouchableHighlight
+                                        onPress={() => handleFormChange('already_trained_number', 3)}
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                            backgroundColor: dailyReadiness.already_trained_number === 3 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                        }]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number === 3 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'THREE\nTIMES'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        onPress={() => handleFormChange('already_trained_number', 4)}
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                            backgroundColor: dailyReadiness.already_trained_number === 4 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                        }]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number === 4 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'FOUR\nTIMES'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        onPress={() => handleFormChange('already_trained_number', 5)}
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                            backgroundColor: dailyReadiness.already_trained_number === 5 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                        }]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number === 5 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'FIVE\nTIMES'}
                                         </Text>
                                     </TouchableHighlight>
                                 </View>
                                 :
                                 null
                             }
-                            <FathomPicker
-                                enabled={true}
-                                hideIcon={Platform.OS === 'ios' ? true : false}
-                                items={MyPlanConstants.alreadyTrainedNumber}
-                                onValueChange={value => {
-                                    this._resetSportBuilder();
-                                    handleFormChange('already_trained_number', value);
-                                }}
-                                placeholder={{
-                                    label: 'Select a Value',
-                                    value: null,
-                                }}
-                                placeholderTextColor={Platform.OS === 'ios' ? AppColors.white : AppColors.zeplin.blueGrey}
-                                ref={ref => {this.pickerTrainedAlreadyRefs = ref;}}
-                                style={{
-                                    inputAndroid:          [styles.pickerSelect, {color: AppColors.zeplin.blueGrey,}],
-                                    inputAndroidContainer: [styles.pickerSelectAndroidContainer],
-                                    inputIOS:              [styles.pickerSelect, {color: AppColors.white,}],
-                                    placeholderColor:      Platform.OS === 'ios' ? AppColors.white : AppColors.zeplin.blueGrey,
-                                    underline:             Platform.OS === 'ios' ? {borderTopColor: AppColors.white, borderTopWidth: 0,} : {},
-                                }}
-                                useNativeAndroidPickerStyle={false}
-                                value={dailyReadiness.already_trained_number}
-                            />
+                            { Platform.OS === 'ios' ?
+                                <FathomPicker
+                                    enabled={true}
+                                    hideIcon={true}
+                                    items={MyPlanConstants.alreadyTrainedNumber}
+                                    onValueChange={value => {
+                                        this._resetSportBuilder();
+                                        handleFormChange('already_trained_number', value);
+                                    }}
+                                    placeholder={{
+                                        label: 'Select a Value',
+                                        value: null,
+                                    }}
+                                    placeholderTextColor={AppColors.white}
+                                    ref={ref => {this.pickerTrainedAlreadyRefs = ref;}}
+                                    style={{
+                                        inputAndroid:          [styles.pickerSelect, {color: AppColors.zeplin.blueGrey,}],
+                                        inputAndroidContainer: [styles.pickerSelectAndroidContainer],
+                                        inputIOS:              [styles.pickerSelect, {color: AppColors.white,}],
+                                        placeholderColor:      AppColors.white,
+                                        underline:             {borderTopColor: AppColors.white, borderTopWidth: 0,},
+                                    }}
+                                    useNativeAndroidPickerStyle={false}
+                                    value={dailyReadiness.already_trained_number}
+                                />
+                                :
+                                null
+                            }
                         </View>
                         <BackNextButtons
                             isValid={isFormValidItems.isTrainedTodayValid}
@@ -650,7 +826,7 @@ class ReadinessSurvey extends Component {
                                                                     <Text
                                                                         oswaldMedium
                                                                         style={{
-                                                                            color:    isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.darkGrey,
+                                                                            color:    isSelected ? AppColors.zeplin.yellow : AppColors.zeplin.darkGrey,
                                                                             fontSize: AppFonts.scaleFont(isSelected ? 22 : 14),
                                                                         }}
                                                                     >
@@ -748,6 +924,7 @@ class ReadinessSurvey extends Component {
                             toggleSlideUpPanel={this._toggleSlideUpPanel}
                             user={user}
                         />
+                        <Spacer size={10} />
                         <BackNextButtons
                             isValid={isFormValidItems.selectAreasOfSorenessValid}
                             onBackClick={() => {
@@ -814,7 +991,7 @@ class ReadinessSurvey extends Component {
                                 <TouchableHighlight
                                     onPress={() => handleFormChange('sessions_planned', true)}
                                     style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
-                                        backgroundColor: dailyReadiness.sessions_planned === true ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
+                                        backgroundColor: dailyReadiness.sessions_planned === true ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
                                     }]}
                                     underlayColor={AppColors.transparent}
                                 >
@@ -835,7 +1012,7 @@ class ReadinessSurvey extends Component {
                                 <TouchableHighlight
                                     onPress={() => handleFormChange('sessions_planned', false)}
                                     style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
-                                        backgroundColor: dailyReadiness.sessions_planned === false ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
+                                        backgroundColor: dailyReadiness.sessions_planned === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
                                     }]}
                                     underlayColor={AppColors.transparent}
                                 >
@@ -883,7 +1060,7 @@ class ReadinessSurvey extends Component {
                                 <TouchableHighlight
                                     onPress={() => handleFormChange('wants_functional_strength', true)}
                                     style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
-                                        backgroundColor: dailyReadiness.wants_functional_strength === true ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
+                                        backgroundColor: dailyReadiness.wants_functional_strength === true ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
                                     }]}
                                     underlayColor={AppColors.transparent}
                                 >
@@ -904,7 +1081,7 @@ class ReadinessSurvey extends Component {
                                 <TouchableHighlight
                                     onPress={() => handleFormChange('wants_functional_strength', false)}
                                     style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
-                                        backgroundColor: dailyReadiness.wants_functional_strength === false ? AppColors.primary.yellow.hundredPercent : AppColors.primary.white.hundredPercent,
+                                        backgroundColor: dailyReadiness.wants_functional_strength === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
                                     }]}
                                     underlayColor={AppColors.transparent}
                                 >
@@ -936,7 +1113,7 @@ class ReadinessSurvey extends Component {
 
                 { isFABVisible ?
                     <ActionButton
-                        buttonColor={AppColors.primary.yellow.hundredPercent}
+                        buttonColor={AppColors.zeplin.yellow}
                         degrees={0}
                         hideShadow
                         onPress={() => {this._scrollToBottom(this.myAreasOfSorenessComponent); this.setState({ isActionButtonVisible: false, isCloseToBottom: true, });}}

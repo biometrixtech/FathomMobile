@@ -5,11 +5,12 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Image, ImageBackground, Platform, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
 import _ from 'lodash';
+import LinearGradient from 'react-native-linear-gradient';
 import SplashScreen from 'react-native-splash-screen';
 
 // Consts and Libs
@@ -17,6 +18,19 @@ import { AppAPI, AppUtil, } from '../../lib/';
 import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, } from '../../constants';
 import { Alerts, Button, Spacer, Text, } from '../custom';
 import { store } from '../../store';
+
+/* Styles ==================================================================== */
+const styles = StyleSheet.create({
+    linearGradientStyle: {
+        alignItems:        'center',
+        alignSelf:         'stretch',
+        flex:              1,
+        justifyContent:    'center',
+        overflow:          'visible',
+        paddingHorizontal: 50,
+        paddingVertical:   50,
+    },
+});
 
 /* Component ==================================================================== */
 class Start extends Component {
@@ -170,24 +184,29 @@ class Start extends Component {
 
     render = () => {
         let { splashScreen } = this.state;
-        return Platform.OS === 'ios' && splashScreen
-            ?
-            <View>
+        return Platform.OS === 'ios' && splashScreen ?
+            <View style={{flex: 1,}}>
                 <ImageBackground
                     source={require('../../../assets/images/standard/background.png')}
                     style={[AppStyles.containerCentered, { height: AppSizes.screen.height, width: AppSizes.screen.width }]}
                 >
-                    <Image
-                        resizeMode={'contain'}
-                        source={require('../../../assets/images/standard/stacked_icon.png')}
-                        style={{ paddingBottom: 40, height: 100, width: 100 }}
-                    />
-                    <View style={{ paddingTop: 40 }}>
+                    <LinearGradient
+                        colors={['rgba(51, 64, 85, 0.89)', 'rgba(11, 26, 52, 0.97)', 'black']}
+                        style={[styles.linearGradientStyle]}
+                    >
+                        <Image
+                            resizeMode={'contain'}
+                            source={require('../../../assets/images/standard/stacked_icon.png')}
+                            style={{ height: 100, width: 100, }}
+                        />
+                        <Spacer size={80} />
                         <ActivityIndicator
                             color={AppColors.primary.yellow.hundredPercent}
                             size={'large'}
                         />
-                    </View>
+                        <Spacer size={30} />
+                        <Text oswaldMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>{'WARMING UP...'}</Text>
+                    </LinearGradient>
                 </ImageBackground>
             </View>
             :
