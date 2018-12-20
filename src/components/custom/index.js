@@ -30,6 +30,7 @@ import Pages from './Pages';
 import ProgressBar from './ProgressBar';
 import ProgressCircle from './CustomProgressCircle';
 import RadioButton from './RadioButton';
+import Slider from './Slider';
 import Spacer from './Spacer';
 import SVGImage from './SVGImage';
 import TabIcon from './TabIcon';
@@ -60,6 +61,7 @@ export {
     ProgressBar,
     ProgressCircle,
     RadioButton,
+    Slider,
     Spacer,
     SVGImage,
     TabIcon,

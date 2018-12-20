@@ -440,6 +440,13 @@ export default {
         justifyContent: 'center',
         width:          45,
     },
+    backNextCircleButtons: {
+        alignSelf:      'center',
+        borderRadius:   55 / 2,
+        height:         55,
+        justifyContent: 'center',
+        width:          55,
+    },
     allGoodBtn: {
         alignSelf:      'center',
         borderRadius:   100 / 2,
@@ -448,4 +455,26 @@ export default {
         justifyContent: 'center',
         width:          100,
     },
+    xLrgCircle: {
+        alignSelf:      'center',
+        borderRadius:   75 / 2,
+        height:         75,
+        justifyContent: 'center',
+        width:          75,
+    },
+    xxLrgCircle: {
+        alignSelf:      'center',
+        borderRadius:   100 / 2,
+        height:         100,
+        justifyContent: 'center',
+        width:          100,
+    },
+
+    // shadow
+    modalShadowEffect: {
+        shadowColor:   Colors.zeplin.darkNavy,
+        shadowOffset:  { width: 0, height: 2 },
+        shadowOpacity: 1,
+        shadowRadius:  20,
+    }
 };

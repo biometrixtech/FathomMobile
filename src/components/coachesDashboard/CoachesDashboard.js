@@ -30,6 +30,7 @@ import { store } from '../../store';
 import { AppUtil, PlanLogic, } from '../../lib';
 
 // Components
+import { AthleteComplianceModal, } from './pages';
 import { Button, CoachesDashboardTabBar, FathomPicker, Spacer, TabIcon, Text, } from '../custom/';
 
 // Tabs titles
@@ -66,13 +67,6 @@ const styles = StyleSheet.create({
         flexDirection:   'row',
         paddingLeft:     AppSizes.paddingXSml,
         paddingVertical: AppSizes.paddingXSml,
-    },
-    complianceModalAthleteNameWrapper: {
-        alignSelf:         'center',
-        borderBottomColor: AppColors.zeplin.shadow,
-        borderBottomWidth: 1,
-        borderStyle:       'solid',
-        width:             (AppSizes.screen.widthThreeQuarters - (AppSizes.paddingLrg + AppSizes.paddingLrg)),
     },
     iconCircle: {
         backgroundColor: AppColors.zeplin.iconCircle,
@@ -120,6 +114,7 @@ const styles = StyleSheet.create({
         paddingVertical:   AppSizes.paddingSml,
     },
 });
+
 /* Component ==================================================================== */
 class CoachesDashboard extends Component {
     static componentName = 'CoachesDashboard';
@@ -154,6 +149,8 @@ class CoachesDashboard extends Component {
             todayFilter:            'view_all',
             thisWeekFilter:         'view_all',
         };
+        this._athleteCardModalRef = {};
+        this._complianceModalRef = {};
         this.renderTab = this.renderTab.bind(this);
     }
 
@@ -258,58 +255,14 @@ class CoachesDashboard extends Component {
     }
 
     _toggleComplianceModal = () => {
-        this.setState({ isComplianceModalOpen: !this.state.isComplianceModalOpen, });
-    }
-
-    renderComplianceModal = (complianceColor, numOfCompletedAthletes, numOfTotalAthletes, incompleteAtheltes) => {
-        return(
-            <ScrollView>
-                <TabIcon
-                    containerStyle={[{alignSelf: 'flex-end',}]}
-                    icon={'close'}
-                    iconStyle={[{color: AppColors.black, paddingRight: AppSizes.paddingLrg, paddingTop: AppSizes.paddingLrg,}]}
-                    onPress={this._toggleComplianceModal}
-                    reverse={false}
-                    size={30}
-                    type={'material-community'}
-                />
-                <Spacer size={25} />
-                <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(30), paddingHorizontal: AppSizes.paddingLrg,}}>
-                    {'COMPLIANCE'}
-                </Text>
-                <Spacer size={15} />
-                <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, paddingVertical: AppSizes.paddingSml,}}>
-                    <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(12), paddingHorizontal: AppSizes.paddingLrg,}}>
-                        {`READINESS SURVEYS COMPLETE ${moment().format('MM/DD/YY')}`}
-                    </Text>
-                    <Text oswaldRegular style={{color: complianceColor, fontSize: AppFonts.scaleFont(28), paddingHorizontal: AppSizes.paddingLrg,}}>
-                        {numOfCompletedAthletes}
-                        <Text oswaldRegular style={{color: complianceColor, fontSize: AppFonts.scaleFont(12),}}>
-                            {` / ${numOfTotalAthletes} ATHLETES`}
-                        </Text>
-                    </Text>
-                </View>
-                <Spacer size={15} />
-                <Text robotoRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(17), paddingHorizontal: AppSizes.paddingLrg,}}>
-                    {`Athletes without Readiness Survey ${moment().format('MM/DD/YY')}:`}
-                </Text>
-                <Spacer size={10} />
-                { _.map(incompleteAtheltes, (athlete, index) =>
-                    <View key={index}>
-                        <View style={[styles.complianceModalAthleteNameWrapper]}>
-                            <Text
-                                oswaldRegular
-                                style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingBottom: AppSizes.padding,}}
-                            >
-                                {`${athlete.first_name} ${athlete.last_name}`}
-                            </Text>
-                        </View>
-                        <Spacer size={15} />
-                    </View>
-                )}
-                <Spacer size={20} />
-            </ScrollView>
-        )
+        if(!this.state.isComplianceModalOpen) {
+            this.setState({ isComplianceModalOpen: true, });
+        } else {
+            this._complianceModalRef.close();
+            _.delay(() => {
+                this.setState({ isComplianceModalOpen: false, });
+            }, 500);
+        }
     }
 
     renderAthleteCardModal = () => {
@@ -329,7 +282,12 @@ class CoachesDashboard extends Component {
                             containerStyle={[{alignSelf: 'flex-end',}]}
                             icon={'close'}
                             iconStyle={[{color: AppColors.black, paddingRight: AppSizes.paddingLrg, paddingTop: AppSizes.paddingLrg,}]}
-                            onPress={() => this.setState({ isAthleteCardModalOpen: false, selectedAthlete: null, selectedAthletePage: 0, })}
+                            onPress={() => {
+                                this._athleteCardModalRef.close();
+                                _.delay(() => {
+                                    this.setState({ isAthleteCardModalOpen: false, selectedAthlete: null, selectedAthletePage: 0, });
+                                }, 500);
+                            }}
                             reverse={false}
                             size={30}
                             type={'material-community'}
@@ -564,7 +522,9 @@ class CoachesDashboard extends Component {
                         return(
                             <TouchableHighlight
                                 key={index}
-                                onPress={() => this.setState({ isAthleteCardModalOpen: true, selectedAthlete: filteredAthlete, })}
+                                onPress={() => {
+                                    this.setState({ isAthleteCardModalOpen: true, selectedAthlete: filteredAthlete, });
+                                }}
                                 style={[styles.athleteCircle, {backgroundColor: backgroundColor,}]}
                                 underlayColor={backgroundColor}
                             >
@@ -818,11 +778,14 @@ class CoachesDashboard extends Component {
         const { coachesDashboardData, } = this.props;
         const {
             coachesTeams,
+            completedAtheltes,
             complianceColor,
             incompleteAtheltes,
             numOfCompletedAthletes,
+            numOfIncompletedAthletes,
             numOfTotalAthletes,
             selectedTeam,
+            trainingCompliance,
         } = PlanLogic.handleCoachesDashboardRenderLogic(coachesDashboardData, selectedTeamIndex);
         // making sure we can only drag horizontally if our modals are closed and nothing is loading
         let isScrollLocked = !isPageLoading ? false : true;
@@ -857,35 +820,48 @@ class CoachesDashboard extends Component {
                 </ScrollableTabView>
                 { isComplianceModalOpen ?
                     <Modal
-                        backdropOpacity={0.75}
+                        backdropColor={AppColors.zeplin.darkNavy}
+                        backdropOpacity={0.8}
                         backdropPressToClose={false}
                         coverScreen={true}
                         isOpen={isComplianceModalOpen}
                         position={'center'}
-                        style={{
+                        ref={ref => {this._complianceModalRef = ref;}}
+                        style={[AppStyles.modalShadowEffect, {
                             borderRadius: 5,
                             height:       AppSizes.screen.heightThreeQuarters,
                             width:        AppSizes.screen.widthThreeQuarters,
-                        }}
+                        }]}
                         swipeToClose={false}
                     >
-                        {this.renderComplianceModal(complianceColor, numOfCompletedAthletes, numOfTotalAthletes, incompleteAtheltes)}
+                        <AthleteComplianceModal
+                            completedAtheltes={completedAtheltes}
+                            complianceColor={complianceColor}
+                            incompleteAtheltes={incompleteAtheltes}
+                            numOfCompletedAthletes={numOfCompletedAthletes}
+                            numOfIncompletedAthletes={numOfIncompletedAthletes}
+                            numOfTotalAthletes={numOfTotalAthletes}
+                            toggleComplianceModal={this._toggleComplianceModal}
+                            trainingCompliance={trainingCompliance}
+                        />
                     </Modal>
                     :
                     null
                 }
                 { isAthleteCardModalOpen ?
                     <Modal
-                        backdropOpacity={0.75}
+                        backdropColor={AppColors.zeplin.darkNavy}
+                        backdropOpacity={0.8}
                         backdropPressToClose={false}
                         coverScreen={true}
                         isOpen={isAthleteCardModalOpen}
                         position={'center'}
-                        style={{
+                        ref={ref => {this._athleteCardModalRef = ref;}}
+                        style={[AppStyles.modalShadowEffect, {
                             borderRadius: 5,
                             height:       AppSizes.screen.heightThreeQuarters,
                             width:        AppSizes.screen.width * 0.9,
-                        }}
+                        }]}
                         swipeToClose={false}
                     >
                         {this.renderAthleteCardModal()}

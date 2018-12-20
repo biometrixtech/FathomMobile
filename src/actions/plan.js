@@ -9,12 +9,17 @@
  * MyPlan Actions
  */
 
+// RN Specific
+import { Platform, } from 'react-native';
+
+// consts & libs
 import { Actions } from '../constants';
 import { store } from '../store';
 import { AppAPI, } from '../lib';
 
 // import third-party libraries
 import _ from 'lodash';
+import DeviceInfo from 'react-native-device-info';
 import moment from 'moment';
 
 /**
@@ -397,6 +402,23 @@ const getCoachesDashboardData = (user_id) => {
         });
 };
 
+/**
+  * Log Device/App Information and Usage
+  */
+const setAppLogs = () => {
+    let bodyObj = {};
+    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    bodyObj.os_name = DeviceInfo.getSystemName();
+    bodyObj.os_version = DeviceInfo.getSystemVersion();
+    bodyObj.app_version = Platform.OS === 'ios' ? DeviceInfo.getBuildNumber() : DeviceInfo.getVersion();
+    return dispatch => AppAPI.app_logs.post(false, bodyObj)
+        .then(response => Promise.resolve(response))
+        .catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+};
+
 export default {
     clearCompletedExercises,
     clearCompletedFSExercises,
@@ -413,6 +435,7 @@ export default {
     postSessionSurvey,
     postSingleSensorData,
     preReadiness,
+    setAppLogs,
     setCompletedExercises,
     setCompletedFSExercises,
 };

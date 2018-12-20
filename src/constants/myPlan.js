@@ -20,25 +20,25 @@ import _ from 'lodash';
  */
 
 const bodyPartMapping = [
-    {index: 0, order: null, label: 'Head', location: '', group: '', image: {}, bilateral: false, helping_verb: 'is'},
-    {index: 1, order: null, label: 'Shoulder', location: '', group: '', image: {}, bilateral: false, helping_verb: 'is'},
-    {index: 2, order: null, label: 'Chest', location: '', group: '', image: {}, bilateral: false, helping_verb: 'is'},
-    {index: 3, order: 1, label: 'Abdominals', location: 'front', group: 'muscle', image: {0: 'Abs.svg'}, bilateral: false, helping_verb: 'are'},
-    {index: 4, order: 3, label: 'Hip', location: 'front', group: 'joint', image: {0: 'Hip.svg', 1: 'L_Hip.svg', 2: 'R_Hip.svg'}, bilateral: true, helping_verb: 'is'},
-    {index: 5, order: 2, label: 'Groin', location: 'front', group: 'muscle', image: {0: 'Groin.svg', 1: 'L_Groin.svg', 2: 'R_Groin.svg'}, bilateral: true, helping_verb: 'is'},
-    {index: 6, order: 4, label: 'Quads', location: 'front', group: 'muscle', image: {0: 'Quad.svg', 1: 'L_Quad.svg', 2: 'R_Quad.svg'}, bilateral: true, helping_verb: 'are'},
-    {index: 7, order: 6, label: 'Knee', location: 'front', group: 'joint', image: {0: 'Knee.svg', 1: 'L_Knee.svg', 2: 'R_Knee.svg'}, bilateral: true, helping_verb: 'is'},
-    {index: 8, order: 7, label: 'Shin', location: 'front', group: 'muscle', image: {0: 'Shin.svg', 1: 'L_Shin.svg', 2: 'R_Shin.svg'}, bilateral: true, helping_verb: 'is'},
-    {index: 9, order: 8, label: 'Ankle', location: 'front', group: 'joint', image: {0: 'Ankle.svg', 1: 'L_Ankle.svg', 2: 'R_Ankle.svg'}, bilateral: true, helping_verb: 'is'},
-    {index: 10, order: 9, label: 'Foot', location: 'front', group: 'joint', image: {0: 'Foot.svg', 1: 'L_Foot.svg', 2: 'R_Foot.svg'}, bilateral: true, helping_verb: 'is'},
-    {index: 11, order: 5, label: 'IT Band', location: 'front', group: 'muscle', image: {0: 'ITBand.svg', 1: 'L_ITBand.svg', 2: 'R_ITBand.svg'}, bilateral: true, helping_verb: 'is'},
-    {index: 12, order: 11, label: 'Lower Back', location: 'back', group: 'joint', image: {0: 'LowBack.svg'}, bilateral: false, helping_verb: 'is'},
+    {index: 0, order: null, label: 'Head', location: '', group: '', image: {}, bilateral: false, helping_verb: ''},
+    {index: 1, order: null, label: 'Shoulder', location: '', group: '', image: {}, bilateral: false, helping_verb: ''},
+    {index: 2, order: null, label: 'Chest', location: '', group: '', image: {}, bilateral: false, helping_verb: ''},
+    {index: 3, order: 1, label: 'Abdominals', location: 'front', group: 'muscle', image: {0: 'Abs.svg'}, bilateral: false, helping_verb: 'have'},
+    {index: 4, order: 3, label: 'Hip', location: 'front', group: 'joint', image: {0: 'Hip.svg', 1: 'L_Hip.svg', 2: 'R_Hip.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 5, order: 2, label: 'Groin', location: 'front', group: 'muscle', image: {0: 'Groin.svg', 1: 'L_Groin.svg', 2: 'R_Groin.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 6, order: 4, label: 'Quads', location: 'front', group: 'muscle', image: {0: 'Quad.svg', 1: 'L_Quad.svg', 2: 'R_Quad.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 7, order: 6, label: 'Knee', location: 'front', group: 'joint', image: {0: 'Knee.svg', 1: 'L_Knee.svg', 2: 'R_Knee.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 8, order: 7, label: 'Shin', location: 'front', group: 'muscle', image: {0: 'Shin.svg', 1: 'L_Shin.svg', 2: 'R_Shin.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 9, order: 8, label: 'Ankle', location: 'front', group: 'joint', image: {0: 'Ankle.svg', 1: 'L_Ankle.svg', 2: 'R_Ankle.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 10, order: 9, label: 'Foot', location: 'front', group: 'joint', image: {0: 'Foot.svg', 1: 'L_Foot.svg', 2: 'R_Foot.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 11, order: 5, label: 'IT Band', location: 'front', group: 'muscle', image: {0: 'ITBand.svg', 1: 'L_ITBand.svg', 2: 'R_ITBand.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 12, order: 11, label: 'Lower Back', location: 'back', group: 'joint', image: {0: 'LowBack.svg'}, bilateral: false, helping_verb: 'has'},
     {index: 13, order: null, label: 'General', location: '', group: '', image: {}, bilateral: false, helping_verb: ''},
-    {index: 14, order: 12, label: 'Glutes', location: 'back', group: 'muscle', image: {0: 'Glute.svg', 1: 'L_Glute.svg', 2: 'R_Glute.svg'}, bilateral: true, helping_verb: 'are'},
-    {index: 15, order: 13, label: 'Hamstrings', location: 'back', group: 'muscle', image: {0: 'Hamstring.svg', 1: 'L_Hamstring.svg', 2: 'R_Hamstring.svg'}, bilateral: true, helping_verb: 'are'},
-    {index: 16, order: 14, label: 'Calves', location: 'back', group: 'muscle', image: {0: 'Calf.svg', 1: 'L_Calf.svg', 2: 'R_Calf.svg'}, bilateral: true, helping_verb: 'are'},
-    {index: 17, order: 15, label: 'Achilles', location: 'back', group: 'joint', image: {0: 'Achilles.svg', 1: 'L_Achilles.svg', 2: 'R_Achilles.svg'}, bilateral: true, helping_verb: 'are'},
-    {index: 18, order: 10, label: 'Upper Back', location: 'back', group: 'muscle', image: {0: 'UpperBackNeck.svg'}, bilateral: false, helping_verb: 'is'},
+    {index: 14, order: 12, label: 'Glutes', location: 'back', group: 'muscle', image: {0: 'Glute.svg', 1: 'L_Glute.svg', 2: 'R_Glute.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 15, order: 13, label: 'Hamstrings', location: 'back', group: 'muscle', image: {0: 'Hamstring.svg', 1: 'L_Hamstring.svg', 2: 'R_Hamstring.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 16, order: 14, label: 'Calves', location: 'back', group: 'muscle', image: {0: 'Calf.svg', 1: 'L_Calf.svg', 2: 'R_Calf.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 17, order: 15, label: 'Achilles', location: 'back', group: 'joint', image: {0: 'Achilles.svg', 1: 'L_Achilles.svg', 2: 'R_Achilles.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 18, order: 10, label: 'Upper Back', location: 'back', group: 'muscle', image: {0: 'UpperBackNeck.svg'}, bilateral: false, helping_verb: 'has'},
 ];
 
 const overallReadiness = [
@@ -251,7 +251,20 @@ function cleanExercise(exercise) {
     cleanedExercise.library_id = exercise.library_id;
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
-    cleanedExercise.dosage = `${exercise.sets_assigned}x${exercise.reps_assigned}${exercise.unit_of_measure === 'seconds' ? 's' : exercise.unit_of_measure === 'yards' ? 'yards' : ''}${exercise.bilateral ? ' per side' : ''}`;
+    let cleanedDosage = cleanedExercise.sets_assigned === 1 ?
+        `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
+        : cleanedExercise.sets_assigned > 1 ?
+            `${cleanedExercise.sets_assigned} x ${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
+            :
+            '';
+    let cleanedLongDosage = cleanedExercise.sets_assigned === 1 ?
+        `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
+        : cleanedExercise.sets_assigned > 1 ?
+            `${cleanedExercise.sets_assigned} x ${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
+            :
+            '';
+    cleanedExercise.dosage = `${cleanedDosage}${cleanedExercise.bilateral ? ' | Both Sides' : ''}`;
+    cleanedExercise.longDosage = `${cleanedLongDosage}${cleanedExercise.bilateral ? ' | Both Sides' : ''}`;
     cleanedExercise.imageUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.gif`;
     cleanedExercise.thumbnailUrl = `https://dd4o7zw7l62dt.cloudfront.net/${exercise.library_id}.png`;
     // cleanedExercise.thumbnailUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.png`;
@@ -343,16 +356,27 @@ const timeOptionGroups = {
 
 const getDurationMinutes = () => {
     let minutesList = [];
-    for (let min = 5; min <= 120; min += 5) {
-        let minString = min.toString() === '5' ? '05' : min.toString();
+    for (let min = 0; min <= 55; min += 5) {
+        let minString = min.toString();//min.toString() === '5' ? '05' : min.toString();
         minutesList.push(minString);
     }
     return minutesList;
 };
 
+const getDurationHours = () => {
+    let hoursList = [];
+    for (let hour = 0; hour <= 23; hour += 1) {
+        let hourString = hour.toString();
+        hoursList.push(hourString);
+    }
+    return hoursList;
+};
+
 const durationOptionGroups = {
-    minutes: getDurationMinutes(),
-    label:   [' ', 'MIN', ' '],
+    hourLabel: [' ', 'HR', ' '],
+    hours:     getDurationHours(),
+    minLabel:  [' ', 'MIN', ' '],
+    minutes:   getDurationMinutes(),
 };
 
 const cleanedPostSessionName = (postPracticeSurvey) => {
@@ -424,6 +448,7 @@ const coachesDashboardCardsData = isToday => {
             {
                 description: 'Pain severity is too high to train today, consult medical staff to evaluate status',
                 label:       'NOT CLEARED TO TRAIN TODAY',
+                overlayText: 'When an athlete completes a survey, their status will update here.',
                 value:       'not_cleared_for_training',
             },
             {
@@ -444,7 +469,6 @@ const coachesDashboardCardsData = isToday => {
             {
                 description: 'Train as normal and complete Fathom\'s Prep and Recovery',
                 label:       'ALL GOOD',
-                overlayText: 'When an athlete completes a survey, their status will update here.',
                 value:       'all_good',
             },
         ]
@@ -494,8 +518,74 @@ const coachesDashboardSortBy = [
     },
 ];
 
+const alreadyTrainedNumber = [
+    {
+        label: '0',
+        value: false,
+    },
+    {
+        label: '1',
+        value: 1,
+    },
+    {
+        label: '2',
+        value: 2,
+    },
+    {
+        label: '3',
+        value: 3,
+    },
+    {
+        label: '4',
+        value: 4,
+    },
+    {
+        label: '5',
+        value: 5,
+    },
+];
+
+const alreadyTrainedNumberAndroid = [
+    {
+        label: 'ONE TIME',
+        value: 1,
+    },
+    {
+        label: 'TWO TIMES',
+        value: 2,
+    },
+    {
+        label: 'THREE TIMES',
+        value: 3,
+    },
+    {
+        label: 'FOUR TIMES',
+        value: 4,
+    },
+    {
+        label: 'FIVE TIMES',
+        value: 5,
+    },
+];
+
+const fathomSliderText = [
+    'Rest',
+    'Very, Very Easy',
+    'Easy',
+    'Moderate',
+    'Somewhat Hard',
+    'Hard',
+    ' ',
+    'Very Hard',
+    ' ',
+    ' ',
+    'Max effort',
+];
+
 export default {
     allGoodBodyPartMessage,
+    alreadyTrainedNumber,
+    alreadyTrainedNumberAndroid,
     availableSessionTypes,
     bodyPartMapping,
     cleanExercise,
@@ -506,6 +596,7 @@ export default {
     coachesDashboardCardsData,
     durationOptionGroups,
     exerciseListButtonStyles,
+    fathomSliderText,
     isFSCompletedValid,
     jointLevels,
     muscleLevels,

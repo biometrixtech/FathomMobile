@@ -15,66 +15,109 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, LayoutAnimation, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
-import { Button, FathomSlider, Spacer, TabIcon, Text, } from '../../custom';
+import { Button, FathomPicker, Pages, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
 // Components
-import { AreasOfSoreness, ScaleButton, SlideUpPanel, SoreBodyPart, } from './';
+import { AreasOfSoreness, BackNextButtons, ProgressPill, ScaleButton, SlideUpPanel, SoreBodyPart, SportScheduleBuilder, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
 import ActionButton from 'react-native-action-button';
-import moment from 'moment';
+import LinearGradient from 'react-native-linear-gradient';
+
+// consts
+const helloPageText = 'Let us know how you feel so we can adapt your Recovery Plan to your body. This simple survey shouldn\'t take more than 2-minutes.';
+const step0CircleSize = ((AppSizes.screen.width - (AppSizes.padding * 6)) / 3);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    pill: {
-        borderColor:     AppColors.zeplin.darkGrey,
-        borderRadius:    5,
-        borderWidth:     1,
-        marginVertical:  AppSizes.paddingXSml,
-        paddingVertical: AppSizes.paddingXSml,
-        width:           (AppSizes.screen.widthThreeQuarters / 2),
+    imageBackgroundStyle: {
+        alignItems:      'center',
+        alignSelf:       'stretch',
+        backgroundColor: AppColors.transparent,
+        flex:            1,
+        justifyContent:  'center',
+    },
+    linearGradientStyle: {
+        alignItems:        'center',
+        alignSelf:         'stretch',
+        flex:              1,
+        overflow:          'visible',
+        paddingHorizontal: 50,
+        paddingVertical:   50,
+    },
+    lockIconStyle: {
+        alignSelf:      'center',
+        justifyContent: 'center',
+    },
+    lockIconWrapperStyle: {
+        alignItems:      'center',
+        alignSelf:       'center',
+        backgroundColor: AppColors.zeplin.seaBlue,
+        borderRadius:    AppFonts.scaleFont(40) / 2,
+        height:          AppFonts.scaleFont(40),
+        justifyContent:  'center',
+        width:           AppFonts.scaleFont(40),
+    },
+    pickerSelect: {
+        ...AppFonts.oswaldMedium,
+        color:    AppColors.zeplin.darkGrey,
+        fontSize: AppFonts.scaleFont(17),
+    },
+    pickerSelectAndroidContainer: {
+        borderColor:    AppColors.zeplin.blueGrey,
+        borderRadius:   5,
+        borderWidth:    1,
+        justifyContent: 'center',
+    },
+    shadowEffect: {
+        shadowColor:   'rgba(0, 0, 0, 0.16)',
+        shadowOffset:  { width: 0, height: 3 },
+        shadowRadius:  6,
+        shadowOpacity: 1,
+    },
+    step0Circle: {
+        alignSelf:         'center',
+        backgroundColor:   AppColors.zeplin.superLight,
+        borderRadius:      step0CircleSize / 2,
+        height:            step0CircleSize,
+        justifyContent:    'center',
+        marginBottom:      20,
+        paddingHorizontal: AppSizes.paddingSml,
+        width:             step0CircleSize,
     },
 });
 
-/* Component ==================================================================== */
+/* Components ================================================================= */
 class ReadinessSurvey extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            androidShowMoreOptions: false,
             isActionButtonVisible:  false,
+            isCloseToBottom:        false,
             isSlideUpPanelExpanded: true,
             isSlideUpPanelOpen:     false,
+            pageIndex:              0,
         };
-        this._scrollViewContentHeight = 0;
-        this.headerComponent = {};
-        this.myComponents = [];
+        this.myActivityTargetComponents = [];
+        this.myAreasOfSorenessComponent = {};
+        this.myClickedSorenessComponents = [];
+        this.myPrevSorenessComponents = [];
+        this.myRPEComponents = [];
         this.positionsComponents = [];
-        this.scrollViewRef = {};
-    }
-
-    _scrollTo = (index, scrollToPositions, isFromFS) => {
-        let myComponentsLocation = this.myComponents[index];
-        if(scrollToPositions) {
-            myComponentsLocation = this.positionsComponents[index];
-        }
-        if(isFromFS && this.headerComponent) {
-            myComponentsLocation.y = myComponentsLocation.y + this.headerComponent.height;
-        }
-        if(myComponentsLocation) {
-            this._scrollToXY(myComponentsLocation.x, myComponentsLocation.y, true);
-        }
-    }
-
-    _scrollToBottom = () => {
-        _.delay(() => {
-            this.scrollViewRef.scrollToEnd({ animated: true, });
-        }, 500);
+        this.scrollViewActivityTargetRef = {};
+        this.scrollViewClickedSorenessRef = {};
+        this.scrollViewPrevSorenessRef = {};
+        this.scrollViewSportBuilderRefs = [];
+        this.sportScheduleBuilderRefs = [];
+        this.pages = {};
+        this.pickerTrainedAlreadyRefs = {};
     }
 
     _toggleSlideUpPanel = (isExpanded = true) => {
@@ -84,42 +127,57 @@ class ReadinessSurvey extends Component {
         });
     }
 
-    _scrollViewEndDrag = (event, areaOfSorenessComponent) => {
+    _renderNextPage = (currentPage, isFormValidItems, isBackBtn, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked) => {
+        const { dailyReadiness, } = this.props;
+        let { isValid, pageNum, } = PlanLogic.handleReadinessSurveyNextPage(this.state, dailyReadiness, currentPage, isFormValidItems, isBackBtn, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked);
+        if(isValid || isBackBtn) {
+            this.pages.progress = pageNum;
+            this.setState({ pageIndex: pageNum, });
+        }
+    }
+
+    _scrollToBottom = scrollViewRef => {
+        _.delay(() => {
+            scrollViewRef.scrollToEnd({ animated: true, });
+        }, 500);
+    }
+
+    _scrollTo = (myComponentsLocation, scrollViewRef) => {
+        if(myComponentsLocation) {
+            _.delay(() => {
+                scrollViewRef.scrollTo({
+                    x:        myComponentsLocation.x,
+                    y:        myComponentsLocation.y,
+                    animated: true,
+                });
+            }, 500);
+        }
+    }
+
+    _scrollToTop = (scrollViewRef) => {
+        _.delay(() => {
+            scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
+        }, 500);
+    }
+
+    _scrollViewEndDrag = event => {
         const offset = event.nativeEvent.contentOffset.y;
-        let actualSoreBodyPartRefY = (areaOfSorenessComponent.y + areaOfSorenessComponent.height) - (this.areasOfSorenessRef.soreBodyPartRef.height + 50)
-        let isCloseToBottom = event.nativeEvent.layoutMeasurement.height + offset >= event.nativeEvent.contentSize.height - 100;
+        let isCloseToBottom = event.nativeEvent.layoutMeasurement.height + offset >= event.nativeEvent.contentSize.height - 80;
         let isActionButtonVisible = (
-            areaOfSorenessComponent &&
-            offset >= areaOfSorenessComponent.y && // have we scrolled past areaOfSorenessComponent
-            offset <= actualSoreBodyPartRefY && // have we scrolled to the end of areaOfSorenessComponent
             !isCloseToBottom // is NOT close to the bottom
         );
-        this.setState({ isActionButtonVisible, });
+        this.setState({
+            isActionButtonVisible,
+            isCloseToBottom,
+        });
     }
 
-    _fabScrollClicked = areaOfSorenessComponent => {
-        let actualSoreBodyPartRefY = (areaOfSorenessComponent.y + areaOfSorenessComponent.height) - (this.areasOfSorenessRef.soreBodyPartRef.height + 50);
-        if(
-            this.areasOfSorenessRef &&
-            this.areasOfSorenessRef.soreBodyPartRef &&
-            this.areasOfSorenessRef.soreBodyPartRef.y &&
-            ((AppSizes.screen.height + actualSoreBodyPartRefY) - this._scrollViewContentHeight) <= 0
-        ) {
-            this._scrollToXY(this.areasOfSorenessRef.soreBodyPartRef.x, actualSoreBodyPartRefY, true);
-        } else {
-            this._scrollToBottom();
-        }
-        this.setState({ isActionButtonVisible: false, });
-    }
-
-    _scrollToXY = (x, y, shouldAnimate = true) => {
-        _.delay(() => {
-            this.scrollViewRef.scrollTo({
-                x:        x,
-                y:        y,
-                animated: shouldAnimate,
-            });
-        }, 500);
+    _resetSportBuilder = () => {
+        _.map(this.sportScheduleBuilderRefs, (sportScheduleBuilderRef, index) => {
+            if(sportScheduleBuilderRef) {
+                sportScheduleBuilderRef._resetStep();
+            }
+        });
     }
 
     render = () => {
@@ -137,6 +195,7 @@ class ReadinessSurvey extends Component {
             functionalStrengthTodaySubtext,
             isFirstFunctionalStrength,
             isFormValid,
+            isFormValidItems,
             isSecondFunctionalStrength,
             newSoreBodyParts,
             partOfDay,
@@ -144,40 +203,95 @@ class ReadinessSurvey extends Component {
         } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, dailyReadiness.soreness);
         let isFABVisible = areaOfSorenessClicked && this.state.isActionButtonVisible && areaOfSorenessClicked.length > 0;
-        let questionCounter = 0;
         /*eslint no-return-assign: 0*/
         return(
-            <View style={{flex: 1,}}>
-                <ScrollView
-                    bounces={false}
-                    onContentSizeChange={(contentWidth, contentHeight) => {this._scrollViewContentHeight = contentHeight}}
-                    onScrollEndDrag={event => this._scrollViewEndDrag(event, this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (newSoreBodyParts.length + 3) : (newSoreBodyParts.length + 2)])}
-                    overScrollMode={'never'}
-                    ref={ref => {this.scrollViewRef = ref}}
-                    style={{flex: isFABVisible ? 9 : 10,}}
+            <View style={{backgroundColor: AppColors.white, flex: 1,}}>
+
+                <Pages
+                    indicatorPosition={'none'}
+                    ref={(pages) => { this.pages = pages; }}
+                    startPlay={this.state.pageIndex}
                 >
-                    <View onLayout={event => {this.headerComponent = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,}}} style={{backgroundColor: AppColors.primary.grey.twentyPercent, alignItems: 'center', width: AppSizes.screen.width}}>
-                        { isFirstFunctionalStrength ?
-                            <View style={{textAlign: 'center',}}>
-                                <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, {color: AppColors.black, paddingTop: AppSizes.paddingXLrg,}]}>{`Congrats, ${user.personal_data.first_name}!`}</Text>
-                                <Spacer size={10} />
-                                <Text oswaldBold style={[AppStyles.paddingHorizontalMed, {color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(24), paddingBottom: AppSizes.paddingXLrg, textAlign: 'center',}]}>{'You\'ve unlocked\nFunctional Strength'}</Text>
-                            </View>
-                            :
-                            <Text oswaldBold style={[AppStyles.h1, AppStyles.paddingHorizontalMed, AppStyles.paddingVerticalXLrg, {color: AppColors.black,}]}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
-                        }
+
+                    <View style={{flex: 1,}}>
+                        <ImageBackground
+                            source={require('../../../../assets/images/standard/start_page_background.png')}
+                            style={[styles.imageBackgroundStyle]}
+                        >
+                            <LinearGradient
+                                colors={['#ffffff00', 'white']}
+                                start={{x: 0.0, y: 0.0}}
+                                end={{x: 0.0, y: 0.65}}
+                                style={[styles.linearGradientStyle]}
+                            >
+                                <View style={{flex: 1, justifyContent: 'space-between',}}>
+                                    <View />
+                                    <View>
+                                        <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(30), lineHeight: AppFonts.scaleFont(40),}}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
+                                        <Spacer size={5} />
+                                        <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(25),}}>{helloPageText}</Text>
+                                        <Spacer size={10} />
+                                        <Button
+                                            backgroundColor={AppColors.zeplin.yellow}
+                                            buttonStyle={{borderRadius: 5, width: '100%',}}
+                                            containerViewStyle={{marginLeft: 0, marginRight: 0}}
+                                            color={AppColors.white}
+                                            fontFamily={AppStyles.robotoBold.fontFamily}
+                                            fontWeight={AppStyles.robotoBold.fontWeight}
+                                            leftIcon={{
+                                                color: AppColors.zeplin.yellow,
+                                                name:  'chevron-right',
+                                                size:  AppFonts.scaleFont(24),
+                                                style: {flex: 1,},
+                                            }}
+                                            outlined={false}
+                                            onPress={() => this._renderNextPage(0, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                                            raised={false}
+                                            rightIcon={{
+                                                color: AppColors.white,
+                                                name:  'chevron-right',
+                                                size:  AppFonts.scaleFont(24),
+                                                style: {flex: 1,},
+                                            }}
+                                            textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                                            title={'Begin'}
+                                        />
+                                    </View>
+                                </View>
+                            </LinearGradient>
+                        </ImageBackground>
                     </View>
-                    { isFirstFunctionalStrength ?
+
+                    <ScrollView
+                        bounces={false}
+                        nestedScrollEnabled={true}
+                        overScrollMode={'never'}
+                        ref={ref => {this.scrollViewActivityTargetRef = ref}}
+                        style={{flex: 1,}}
+                    >
+                        <Spacer size={50} />
+                        <View style={[styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {alignSelf: 'center', backgroundColor: AppColors.white, borderRadius: 5, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingMed, width: AppSizes.screen.widthFourFifths,}]}>
+                            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(32),}]}>{`CONGRATS ${user.personal_data.first_name.toUpperCase()}!`}</Text>
+                            <Spacer size={15} />
+                            <TabIcon
+                                color={AppColors.white}
+                                containerStyle={[styles.lockIconWrapperStyle,]}
+                                icon={'lock-open-outline'}
+                                iconStyle={[styles.lockIconStyle,]}
+                                raised={false}
+                                size={AppFonts.scaleFont(26)}
+                                type={'material-community'}
+                            />
+                            <Spacer size={15} />
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(22),}]}>{'You\'ve unlocked\nFunctional Strength!'}</Text>
+                        </View>
+                        <Spacer size={60} />
                         <View>
-                            <Spacer size={50} />
-                            <View>
-                                <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                                    {questionCounter+=1}
-                                </Text>
-                                <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                    {'What activity would you like to target?'}
-                                </Text>
-                                <Spacer size={10} />
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                {'What activity would you like to target?'}
+                            </Text>
+                            <Spacer size={10} />
+                            <View style={{alignSelf: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}}>
                                 { _.map(typicalSessions, (session, i) => {
                                     let FSOptions = PlanLogic.handleFunctionalStrengthOptions(session);
                                     let isSport = FSOptions.isSport;
@@ -190,164 +304,144 @@ class ReadinessSurvey extends Component {
                                         isSelected = dailyReadiness.current_sport_name === null && dailyReadiness.current_position === session.strength_and_conditioning_type;
                                     }
                                     return(
-                                        <View key={i}>
-                                            <Button
-                                                backgroundColor={isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                                                buttonStyle={{
-                                                    alignSelf:       'center',
-                                                    borderRadius:    5,
-                                                    paddingVertical: 5,
-                                                    width:           AppSizes.screen.widthTwoThirds,
-                                                }}
-                                                color={isSelected ? AppColors.white : AppColors.zeplin.darkGrey}
-                                                fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                                fontWeight={AppStyles.oswaldRegular.fontWeight}
-                                                onPress={() => {
-                                                    if(isSport) {
-                                                        if(isSelected) {
-                                                            handleFormChange('current_sport_name', null);
-                                                            handleFormChange('current_position', null);
+                                        <TouchableOpacity
+                                            key={i}
+                                            onPress={() => {
+                                                if(isSport) {
+                                                    if(isSelected) {
+                                                        handleFormChange('current_sport_name', null);
+                                                        handleFormChange('current_position', null);
+                                                    } else {
+                                                        handleFormChange('current_sport_name', session.sport_name);
+                                                        handleFormChange('current_position', null);
+                                                        let currentSportPositions = _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name).positions;
+                                                        if(currentSportPositions && currentSportPositions.length > 0) {
+                                                            this._scrollTo(this.positionsComponents[0], this.scrollViewActivityTargetRef);
                                                         } else {
-                                                            handleFormChange('current_sport_name', session.sport_name);
-                                                            handleFormChange('current_position', null);
-                                                            let currentSportPositions = _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name).positions;
-                                                            if(currentSportPositions && currentSportPositions.length > 0) {
-                                                                this._scrollTo(0, true, true);
-                                                            } else {
-                                                                this._scrollTo(0);
-                                                            }
-                                                        }
-                                                    } else if(isStrengthConditioning) {
-                                                        if(isSelected) {
-                                                            handleFormChange('current_sport_name', null);
-                                                            handleFormChange('current_position', null);
-                                                        } else {
-                                                            handleFormChange('current_sport_name', null);
-                                                            handleFormChange('current_position', session.strength_and_conditioning_type);
-                                                            this._scrollTo(0, false, true);
+                                                            this._scrollTo(this.myActivityTargetComponents[0], this.scrollViewActivityTargetRef);
                                                         }
                                                     }
-                                                }}
-                                                outlined={isSelected ? false : true}
-                                                raised={false}
-                                                textStyle={{ fontSize: AppFonts.scaleFont(14), }}
-                                                title={sessionName.toUpperCase()}
-                                            />
-                                            <Spacer size={8} />
-                                        </View>
+                                                } else if(isStrengthConditioning) {
+                                                    if(isSelected) {
+                                                        handleFormChange('current_sport_name', null);
+                                                        handleFormChange('current_position', null);
+                                                    } else {
+                                                        handleFormChange('current_sport_name', null);
+                                                        handleFormChange('current_position', session.strength_and_conditioning_type);
+                                                        this._scrollToBottom(this.scrollViewActivityTargetRef);
+                                                    }
+                                                }
+                                            }}
+                                            style={[
+                                                styles.step0Circle,
+                                                styles.shadowEffect,
+                                                Platform.OS === 'ios' ? {} : {elevation: 2,},
+                                                ((i + 1) % 3 === 0) ? {} : {marginRight: AppSizes.padding,},
+                                                isSelected ? {backgroundColor: AppColors.zeplin.yellow,} : {},
+                                            ]}
+                                        >
+                                            <Text oswaldMedium style={{color: isSelected ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
+                                                {sessionName.toUpperCase()}
+                                            </Text>
+                                        </TouchableOpacity>
                                     )
                                 })}
                             </View>
-                            <View onLayout={event => {this.positionsComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
-                                { dailyReadiness.current_sport_name !== null && selectedSportPositions && selectedSportPositions.length > 0 ?
-                                    <View>
-                                        <Spacer size={70} />
-                                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                            {'What is your primary position in '}
-                                            <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                                {PlanLogic.handleFunctionalStrengthOptions({ sport_name: dailyReadiness.current_sport_name, }).sessionName.toLowerCase()}
-                                            </Text>
-                                            {'?'}
+                        </View>
+                        <View onLayout={event => {this.positionsComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                            { dailyReadiness.current_sport_name !== null && selectedSportPositions && selectedSportPositions.length > 0 ?
+                                <View>
+                                    <Spacer size={70} />
+                                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                        {'What is your primary position in '}
+                                        <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                            {PlanLogic.handleFunctionalStrengthOptions({ sport_name: dailyReadiness.current_sport_name, }).sessionName.toLowerCase()}
                                         </Text>
-                                        <Spacer size={10} />
+                                        {'?'}
+                                    </Text>
+                                    <Spacer size={10} />
+                                    <View style={{alignSelf: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}}>
                                         { _.map(selectedSportPositions, (position, i) => {
+                                            let isSelected = dailyReadiness.current_position === i;
                                             return(
-                                                <View key={i}>
-                                                    <Button
-                                                        backgroundColor={dailyReadiness.current_position === i ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                                                        buttonStyle={{
-                                                            alignSelf:       'center',
-                                                            borderRadius:    5,
-                                                            paddingVertical: 5,
-                                                            width:           AppSizes.screen.widthTwoThirds,
-                                                        }}
-                                                        color={dailyReadiness.current_position === i ? AppColors.white : AppColors.zeplin.darkGrey}
-                                                        fontFamily={AppStyles.oswaldRegular.fontFamily}
-                                                        fontWeight={AppStyles.oswaldRegular.fontWeight}
-                                                        onPress={() => {
-                                                            handleFormChange('current_position', i);
-                                                            this._scrollTo(0, false, true);
-                                                        }}
-                                                        outlined={dailyReadiness.current_position === i ? false : true}
-                                                        raised={false}
-                                                        textStyle={{ fontSize: AppFonts.scaleFont(14), }}
-                                                        title={position.toUpperCase()}
-                                                    />
-                                                    <Spacer size={8} />
-                                                </View>
+                                                <TouchableOpacity
+                                                    key={i}
+                                                    onPress={() => {
+                                                        handleFormChange('current_position', i);
+                                                        this._scrollToBottom(this.scrollViewActivityTargetRef);
+                                                    }}
+                                                    style={[
+                                                        styles.step0Circle,
+                                                        styles.shadowEffect,
+                                                        Platform.OS === 'ios' ? {} : {elevation: 2,},
+                                                        ((i + 1) % 3 === 0) ? {} : {marginRight: AppSizes.padding,},
+                                                        isSelected ? {backgroundColor: AppColors.zeplin.yellow,} : {},
+                                                    ]}
+                                                >
+                                                    <Text oswaldMedium style={{color: isSelected ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>
+                                                        {position.toUpperCase()}
+                                                    </Text>
+                                                </TouchableOpacity>
                                             )
                                         })}
                                     </View>
-                                    :
-                                    null
-                                }
-                            </View>
-                            <View onLayout={event => {this.myComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
-                                <Spacer size={100} />
-                                <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                                    {questionCounter+=1}
-                                </Text>
-                                <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                    {'Would you like to add functional strength to your training plan today?'}
-                                </Text>
-                                <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}]}>
-                                    {functionalStrengthTodaySubtext}
-                                </Text>
-                                <Spacer size={10} />
-                                <Button
-                                    backgroundColor={dailyReadiness.wants_functional_strength ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                                    buttonStyle={{
-                                        alignSelf:       'center',
-                                        borderRadius:    5,
-                                        paddingVertical: 5,
-                                        width:           AppSizes.screen.widthTwoThirds,
-                                    }}
-                                    color={dailyReadiness.wants_functional_strength ? AppColors.white : AppColors.zeplin.darkGrey}
-                                    fontFamily={AppStyles.robotoMedium.fontFamily}
-                                    fontWeight={AppStyles.robotoMedium.fontWeight}
-                                    onPress={() => {
-                                        handleFormChange('wants_functional_strength', true);
-                                        this._scrollTo(1);
-                                    }}
-                                    outlined={dailyReadiness.wants_functional_strength ? false : true}
-                                    raised={false}
-                                    textStyle={{ fontSize: AppFonts.scaleFont(14), }}
-                                    title={'YES'}
-                                />
-                                <Spacer size={10} />
-                                <Button
-                                    backgroundColor={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? AppColors.white : AppColors.primary.yellow.hundredPercent}
-                                    buttonStyle={{
-                                        alignSelf:       'center',
-                                        borderRadius:    5,
-                                        paddingVertical: 5,
-                                        width:           AppSizes.screen.widthTwoThirds,
-                                    }}
-                                    color={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? AppColors.zeplin.darkGrey : AppColors.white}
-                                    fontFamily={AppStyles.robotoMedium.fontFamily}
-                                    fontWeight={AppStyles.robotoMedium.fontWeight}
-                                    onPress={() => {
-                                        handleFormChange('wants_functional_strength', false);
-                                        this._scrollTo(1);
-                                    }}
-                                    outlined={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? true : false}
-                                    raised={false}
-                                    textStyle={{ fontSize: AppFonts.scaleFont(14), }}
-                                    title={'NO'}
-                                />
-                            </View>
-                            <Spacer size={50} />
+                                </View>
+                                :
+                                null
+                            }
                         </View>
-                        :
-                        null
-                    }
-                    <View onLayout={event => {this.myComponents[isFirstFunctionalStrength ? 1 : 0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
+                        <View onLayout={event => {this.myActivityTargetComponents[0] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,}}}>
+                            <Spacer size={100} />
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                {'Would you like to add functional strength to your training plan today?'}
+                            </Text>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}]}>
+                                {functionalStrengthTodaySubtext}
+                            </Text>
+                            <Spacer size={10} />
+                            <View style={{alignSelf: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}}>
+                                <TouchableOpacity
+                                    onPress={() => handleFormChange('wants_functional_strength', true)}
+                                    style={[
+                                        styles.step0Circle,
+                                        styles.shadowEffect,
+                                        Platform.OS === 'ios' ? {} : {elevation: 2,},
+                                        {marginRight: AppSizes.padding,},
+                                        dailyReadiness.wants_functional_strength ? {backgroundColor: AppColors.zeplin.yellow,} : {},
+                                    ]}
+                                >
+                                    <Text oswaldMedium style={{color: dailyReadiness.wants_functional_strength ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>
+                                        {'YES'}
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => handleFormChange('wants_functional_strength', false)}
+                                    style={[
+                                        styles.step0Circle,
+                                        styles.shadowEffect,
+                                        Platform.OS === 'ios' ? {} : {elevation: 2,},
+                                        dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? {} : {backgroundColor: AppColors.zeplin.yellow,},
+                                    ]}
+                                >
+                                    <Text oswaldMedium style={{color: dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? AppColors.zeplin.blueGrey : AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>
+                                        {'NO'}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                         <Spacer size={50} />
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {questionCounter+=1}
-                        </Text>
+                        <BackNextButtons
+                            isValid={isFormValidItems.isFunctionalStrengthValid}
+                            onBackClick={() => this._renderNextPage(1, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                            onNextClick={() => this._renderNextPage(1, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                        />
+                    </ScrollView>
+
+                    <View style={{flex: 1,}}>
+                        <ProgressPill currentStep={1} totalSteps={5} />
+                        <Spacer size={50} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {'How ready do you feel to train?'}
+                            {'How mentally ready do you feel?'}
                         </Text>
                         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
                             { _.map(MyPlanConstants.overallReadiness, (value, key) => {
@@ -362,23 +456,15 @@ class ReadinessSurvey extends Component {
                                         keyLabel={key}
                                         opacity={opacity}
                                         sorenessPainMappingLength={MyPlanConstants.overallReadiness.length}
-                                        updateStateAndForm={() => {
-                                            handleFormChange('readiness', (key * 2));
-                                            this._scrollTo(isFirstFunctionalStrength ? 2 : 1);
-                                        }}
+                                        updateStateAndForm={() => handleFormChange('readiness', (key * 2))}
                                         valueLabel={value}
                                     />
                                 )
                             })}
                         </View>
-                    </View>
-                    <View onLayout={event => {this.myComponents[isFirstFunctionalStrength ? 2 : 1] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
-                        <Spacer size={100} />
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {questionCounter+=1}
-                        </Text>
+                        <Spacer size={50} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {'How well rested do you feel?'}
+                            {'How rested do you feel?'}
                         </Text>
                         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}>
                             { _.map(MyPlanConstants.sleepQuality, (value, key) => {
@@ -393,140 +479,644 @@ class ReadinessSurvey extends Component {
                                         keyLabel={key}
                                         opacity={opacity}
                                         sorenessPainMappingLength={MyPlanConstants.sleepQuality.length}
-                                        updateStateAndForm={() => {
-                                            handleFormChange('sleep_quality', (key * 2));
-                                            this._scrollTo(isFirstFunctionalStrength ? 3 : 2);
-                                        }}
+                                        updateStateAndForm={() => handleFormChange('sleep_quality', (key * 2))}
                                         valueLabel={value}
                                     />
                                 )
                             })}
                         </View>
+                        <BackNextButtons
+                            isValid={isFormValidItems.areQuestionsValid}
+                            onBackClick={() => this._renderNextPage(2, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                            onNextClick={() => this._renderNextPage(2, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                        />
                     </View>
-                    { isSecondFunctionalStrength ?
-                        <View onLayout={event => {this.myComponents[2] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}>
-                            <Spacer size={100} />
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                                {questionCounter+=1}
-                            </Text>
-                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                {'Would you like to add functional strength to your training plan today?'}
-                            </Text>
-                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}]}>
-                                {functionalStrengthTodaySubtext}
-                            </Text>
-                            <Spacer size={10} />
-                            <Button
-                                backgroundColor={dailyReadiness.wants_functional_strength ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                                buttonStyle={{
-                                    alignSelf:       'center',
-                                    borderRadius:    5,
-                                    paddingVertical: 5,
-                                    width:           AppSizes.screen.widthTwoThirds,
-                                }}
-                                color={dailyReadiness.wants_functional_strength ? AppColors.white : AppColors.zeplin.darkGrey}
-                                fontFamily={AppStyles.robotoMedium.fontFamily}
-                                fontWeight={AppStyles.robotoMedium.fontWeight}
-                                onPress={() => {
-                                    handleFormChange('wants_functional_strength', true);
-                                    this._scrollTo(3);
-                                }}
-                                outlined={dailyReadiness.wants_functional_strength ? false : true}
-                                raised={false}
-                                textStyle={{ fontSize: AppFonts.scaleFont(14), }}
-                                title={'YES'}
-                            />
-                            <Spacer size={10} />
-                            <Button
-                                backgroundColor={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? AppColors.white : AppColors.primary.yellow.hundredPercent}
-                                buttonStyle={{
-                                    alignSelf:       'center',
-                                    borderRadius:    5,
-                                    paddingVertical: 5,
-                                    width:           AppSizes.screen.widthTwoThirds,
-                                }}
-                                color={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? AppColors.zeplin.darkGrey : AppColors.white}
-                                fontFamily={AppStyles.robotoMedium.fontFamily}
-                                fontWeight={AppStyles.robotoMedium.fontWeight}
-                                onPress={() => {
-                                    handleFormChange('wants_functional_strength', false);
-                                    this._scrollTo(3);
-                                }}
-                                outlined={dailyReadiness.wants_functional_strength || dailyReadiness.wants_functional_strength === null ? true : false}
-                                raised={false}
-                                textStyle={{ fontSize: AppFonts.scaleFont(14), }}
-                                title={'NO'}
-                            />
+
+                    <View style={{flex: 1,}}>
+                        <ProgressPill currentStep={2} totalSteps={5} />
+                        <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Have you already trained today?'}</Text>
+                            <Spacer size={20} />
+                            { Platform.OS === 'ios' ?
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between', width: (AppSizes.screen.width - (AppSizes.paddingXLrg * 2))}}>
+                                    <TouchableHighlight
+                                        onPress={() => handleFormChange('already_trained_number', false)}
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, {
+                                            backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                        }]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'NO'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        onPress={() => {
+                                            this._resetSportBuilder();
+                                            handleFormChange('already_trained_number', 1);
+                                        }}
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, {
+                                            backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                        }]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number === 1 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'ONCE'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        onPress={() => this.pickerTrainedAlreadyRefs.togglePicker(true)}
+                                        style={[
+                                            AppStyles.xLrgCircle,
+                                            styles.shadowEffect,
+                                            {
+                                                backgroundColor: dailyReadiness.already_trained_number > 1 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                            }
+                                        ]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number > 1 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'+ MORE'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                </View>
+                                :
+                                <View>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between', width: (AppSizes.screen.width - (AppSizes.paddingXLrg * 2))}}>
+                                        <TouchableHighlight
+                                            onPress={() => handleFormChange('already_trained_number', false)}
+                                            style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                                backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                            }]}
+                                            underlayColor={AppColors.transparent}
+                                        >
+                                            <Text
+                                                oswaldMedium
+                                                style={[
+                                                    AppStyles.textCenterAligned,
+                                                    {
+                                                        color:    dailyReadiness.already_trained_number === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                        fontSize: AppFonts.scaleFont(17),
+                                                    }
+                                                ]}
+                                            >
+                                                {'NO'}
+                                            </Text>
+                                        </TouchableHighlight>
+                                        <TouchableHighlight
+                                            onPress={() => handleFormChange('already_trained_number', 1)}
+                                            style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                                backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                            }]}
+                                            underlayColor={AppColors.transparent}
+                                        >
+                                            <Text
+                                                oswaldMedium
+                                                style={[
+                                                    AppStyles.textCenterAligned,
+                                                    {
+                                                        color:    dailyReadiness.already_trained_number === 1 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                        fontSize: AppFonts.scaleFont(17),
+                                                    }
+                                                ]}
+                                            >
+                                                {'ONE\nTIME'}
+                                            </Text>
+                                        </TouchableHighlight>
+                                        { this.state.androidShowMoreOptions ?
+                                            <TouchableHighlight
+                                                onPress={() => handleFormChange('already_trained_number', 2)}
+                                                style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                                    backgroundColor: dailyReadiness.already_trained_number === 2 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                                }]}
+                                                underlayColor={AppColors.transparent}
+                                            >
+                                                <Text
+                                                    oswaldMedium
+                                                    style={[
+                                                        AppStyles.textCenterAligned,
+                                                        {
+                                                            color:    dailyReadiness.already_trained_number === 2 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                            fontSize: AppFonts.scaleFont(17),
+                                                        }
+                                                    ]}
+                                                >
+                                                    {'TWO\nTIMES'}
+                                                </Text>
+                                            </TouchableHighlight>
+                                            :
+                                            <TouchableHighlight
+                                                onPress={() => this.setState({ androidShowMoreOptions: true, })}
+                                                style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                                    backgroundColor: dailyReadiness.already_trained_number === 2 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                                }]}
+                                                underlayColor={AppColors.transparent}
+                                            >
+                                                <Text
+                                                    oswaldMedium
+                                                    style={[
+                                                        AppStyles.textCenterAligned,
+                                                        {
+                                                            color:    dailyReadiness.already_trained_number === 2 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                            fontSize: AppFonts.scaleFont(17),
+                                                        }
+                                                    ]}
+                                                >
+                                                    {'+ MORE'}
+                                                </Text>
+                                            </TouchableHighlight>
+                                        }
+                                    </View>
+                                </View>
+                            }
+                            { this.state.androidShowMoreOptions && Platform.OS === 'android' ?
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between', width: (AppSizes.screen.width - (AppSizes.paddingXLrg * 2)), paddingTop: AppSizes.padding,}}>
+                                    <TouchableHighlight
+                                        onPress={() => handleFormChange('already_trained_number', 3)}
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                            backgroundColor: dailyReadiness.already_trained_number === 3 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                        }]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number === 3 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'THREE\nTIMES'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        onPress={() => handleFormChange('already_trained_number', 4)}
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                            backgroundColor: dailyReadiness.already_trained_number === 4 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                        }]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number === 4 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'FOUR\nTIMES'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        onPress={() => handleFormChange('already_trained_number', 5)}
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                            backgroundColor: dailyReadiness.already_trained_number === 5 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                        }]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number === 5 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'FIVE\nTIMES'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                </View>
+                                :
+                                null
+                            }
+                            { Platform.OS === 'ios' ?
+                                <FathomPicker
+                                    enabled={true}
+                                    hideIcon={true}
+                                    items={MyPlanConstants.alreadyTrainedNumber}
+                                    onValueChange={value => {
+                                        this._resetSportBuilder();
+                                        handleFormChange('already_trained_number', value);
+                                    }}
+                                    placeholder={{
+                                        label: 'Select a Value',
+                                        value: null,
+                                    }}
+                                    placeholderTextColor={AppColors.white}
+                                    ref={ref => {this.pickerTrainedAlreadyRefs = ref;}}
+                                    style={{
+                                        inputAndroid:          [styles.pickerSelect, {color: AppColors.zeplin.blueGrey,}],
+                                        inputAndroidContainer: [styles.pickerSelectAndroidContainer],
+                                        inputIOS:              [styles.pickerSelect, {color: AppColors.white,}],
+                                        placeholderColor:      AppColors.white,
+                                        underline:             {borderTopColor: AppColors.white, borderTopWidth: 0,},
+                                    }}
+                                    useNativeAndroidPickerStyle={false}
+                                    value={dailyReadiness.already_trained_number}
+                                />
+                                :
+                                null
+                            }
                         </View>
-                        :
-                        null
-                    }
-                    <Spacer size={100} />
-                    { _.map(newSoreBodyParts, (bodyPart, i) =>
-                        <View onLayout={event => {this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (i + 3) : (i + 2)] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 100}}} key={i}>
-                            <SoreBodyPart
-                                bodyPart={bodyPart}
-                                bodyPartSide={bodyPart.side}
-                                firstTimeExperience={user.first_time_experience}
-                                handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                    handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
-                                    if(shouldScroll) {
-                                        this._scrollTo(isFirstFunctionalStrength || isSecondFunctionalStrength ? (i + 4) : (i + 3));
+                        <BackNextButtons
+                            isValid={isFormValidItems.isTrainedTodayValid}
+                            onBackClick={() => this._renderNextPage(3, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                            onNextClick={() => this._renderNextPage(3, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts)}
+                        />
+                    </View>
+
+                    { dailyReadiness.sessions && dailyReadiness.sessions.length > 0 ? _.map(dailyReadiness.sessions, (session, index) => {
+                        const { isRPEValid, isSportValid, sportText, } = PlanLogic.handleSingleSessionValidation(session, this.sportScheduleBuilderRefs[index]);
+                        return(
+                            <ScrollView
+                                contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
+                                key={index}
+                                ref={ref => {this.scrollViewSportBuilderRefs[index] = ref;}}
+                            >
+                                <ProgressPill currentStep={3} totalSteps={5} />
+                                <Spacer size={20} />
+                                <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>
+                                    {'Build the sentence'}
+                                </Text>
+                                <Spacer size={20} />
+                                <SportScheduleBuilder
+                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                        handleFormChange(`sessions[${index}].${location}`, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                    }}
+                                    postSession={session}
+                                    ref={ref => {this.sportScheduleBuilderRefs[index] = ref;}}
+                                    scrollTo={() => this._scrollTo(this.myRPEComponents[index], this.scrollViewSportBuilderRefs[index])}
+                                    scrollToTop={() => this._scrollToTop(this.scrollViewSportBuilderRefs[index])}
+                                    typicalSessions={typicalSessions}
+                                />
+                                <Spacer size={40} />
+                                <View
+                                    onLayout={event => {this.myRPEComponents[index] = {x: event.nativeEvent.layout.x, y: (event.nativeEvent.layout.y - 5)}}}
+                                    style={{flex: 1, justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg}}
+                                >
+                                    { isSportValid ?
+                                        <View>
+                                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                                {'How was your '}
+                                                <Text robotoMedium style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                                    {sportText}
+                                                </Text>
+                                                {'?'}
+                                            </Text>
+                                            <View style={{flex: 1, paddingTop: AppSizes.paddingSml,}}>
+                                                { _.map(MyPlanConstants.postSessionFeel, (value, key) => {
+                                                    let isSelected = dailyReadiness.sessions[index].post_session_survey.RPE === key;
+                                                    let opacity = isSelected ? 1 : (key * 0.1);
+                                                    return(
+                                                        <TouchableHighlight
+                                                            key={value+key}
+                                                            onPress={() => {
+                                                                handleFormChange(`sessions[${index}].post_session_survey.RPE`, key);
+                                                                this._scrollToBottom(this.scrollViewSportBuilderRefs[index]);
+                                                            }}
+                                                            underlayColor={AppColors.transparent}
+                                                        >
+                                                            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingVertical: AppSizes.paddingXSml,}}>
+                                                                <View style={{alignItems: 'flex-end', alignSelf: 'center', flex: 4, justifyContent: 'center',}}>
+                                                                    <ScaleButton
+                                                                        isSelected={isSelected}
+                                                                        keyLabel={key}
+                                                                        opacity={opacity}
+                                                                        sorenessPainMappingLength={MyPlanConstants.postSessionFeel.length}
+                                                                        updateStateAndForm={() => {
+                                                                            handleFormChange(`sessions[${index}].post_session_survey.RPE`, key);
+                                                                            this._scrollToBottom(this.scrollViewSportBuilderRefs[index]);
+                                                                        }}
+                                                                    />
+                                                                </View>
+                                                                <View style={{flex: 6, justifyContent: 'center', paddingLeft: AppSizes.padding,}}>
+                                                                    <Text
+                                                                        oswaldMedium
+                                                                        style={{
+                                                                            color:    isSelected ? AppColors.zeplin.yellow : AppColors.zeplin.darkGrey,
+                                                                            fontSize: AppFonts.scaleFont(isSelected ? 22 : 14),
+                                                                        }}
+                                                                    >
+                                                                        {value.toUpperCase()}
+                                                                    </Text>
+                                                                </View>
+                                                            </View>
+                                                        </TouchableHighlight>
+                                                    )
+                                                })}
+                                            </View>
+                                        </View>
+                                        :
+                                        null
                                     }
-                                }}
-                                handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
-                                index={isFirstFunctionalStrength ? (i + 5) : isSecondFunctionalStrength ? (i + 4) : (i + 3)}
-                                isPrevSoreness={true}
-                                surveyObject={dailyReadiness}
-                                toggleSlideUpPanel={this._toggleSlideUpPanel}
-                            />
-                            <Spacer size={100} />
-                        </View>
-                    )}
-                    <View onLayout={event => {this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (newSoreBodyParts.length + 3) : (newSoreBodyParts.length + 2)] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50, height: event.nativeEvent.layout.height}}}>
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGreyText, fontSize: AppFonts.scaleFont(15),}]}>
-                            {isFirstFunctionalStrength ? (newSoreBodyParts.length + 5) : isSecondFunctionalStrength ? (newSoreBodyParts.length + 4) : (newSoreBodyParts.length + 3)}
-                        </Text>
+                                    <Spacer size={20} />
+                                </View>
+                                <BackNextButtons
+                                    isValid={isRPEValid && isSportValid}
+                                    onBackClick={() => this._renderNextPage(4, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, index)}
+                                    onNextClick={() => isRPEValid && isSportValid ? this._renderNextPage(4, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, index) : null}
+                                />
+                            </ScrollView>
+                        )
+                    }) : <View />}
+
+                    <ScrollView
+                        bounces={false}
+                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
+                        nestedScrollEnabled={true}
+                        overScrollMode={'never'}
+                        ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
+                    >
+                        <ProgressPill currentStep={4} totalSteps={5} />
+                        { _.map(newSoreBodyParts, (bodyPart, i) =>
+                            <View key={i} onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}>
+                                <Spacer size={50} />
+                                <SoreBodyPart
+                                    bodyPart={bodyPart}
+                                    bodyPartSide={bodyPart.side}
+                                    firstTimeExperience={user.first_time_experience}
+                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                        handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                        if(shouldScroll && newSoreBodyParts.length !== (i + 1) && (newSoreBodyParts.length - 1) !== (i + 1)) {
+                                            this._scrollTo(this.myPrevSorenessComponents[i + 1], this.scrollViewPrevSorenessRef);
+                                        } else if(shouldScroll) {
+                                            this._scrollToBottom(this.scrollViewPrevSorenessRef);
+                                        }
+                                    }}
+                                    handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                    isPrevSoreness={true}
+                                    surveyObject={dailyReadiness}
+                                    toggleSlideUpPanel={this._toggleSlideUpPanel}
+                                />
+                                <Spacer size={50} />
+                            </View>
+                        )}
+                        <BackNextButtons
+                            isValid={isFormValidItems.isPrevSorenessValid}
+                            onBackClick={() => this._renderNextPage(5, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                            onNextClick={() => this._renderNextPage(5, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                        />
+                    </ScrollView>
+
+                    <ScrollView
+                        bounces={false}
+                        nestedScrollEnabled={true}
+                        onMomentumScrollEnd={event => this._scrollViewEndDrag(event)}
+                        overScrollMode={'never'}
+                        ref={ref => {this.myAreasOfSorenessComponent = ref;}}
+                        style={{flex: 1,}}
+                    >
+                        <ProgressPill currentStep={4} totalSteps={5} />
+                        <Spacer size={50} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
                         </Text>
                         <AreasOfSoreness
-                            handleAreaOfSorenessClick={(body, isAllGood) => { this.setState({ isActionButtonVisible: true, }); handleAreaOfSorenessClick(body, true, isAllGood); }}
+                            handleAreaOfSorenessClick={(body, isAllGood) => {
+                                if(!this.state.isCloseToBottom) {
+                                    this.setState({ isActionButtonVisible: true, });
+                                }
+                                handleAreaOfSorenessClick(body, true, isAllGood);
+                            }}
                             handleFormChange={handleFormChange}
                             handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
-                            scrollToBottom={this._scrollToBottom}
+                            scrollToBottom={() => {
+                                this._scrollToBottom(this.myAreasOfSorenessComponent);
+                                this.setState({ isCloseToBottom: true, });
+                            }}
                             soreBodyParts={soreBodyParts}
                             soreBodyPartsState={dailyReadiness.soreness}
                             surveyObject={dailyReadiness}
                             toggleSlideUpPanel={this._toggleSlideUpPanel}
                             user={user}
                         />
+                        <Spacer size={10} />
+                        <BackNextButtons
+                            isValid={isFormValidItems.selectAreasOfSorenessValid}
+                            onBackClick={() => {
+                                this.setState({ isActionButtonVisible: false, });
+                                this._renderNextPage(6, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked);
+                            }}
+                            onNextClick={() => {
+                                this.setState({ isActionButtonVisible: false, });
+                                this._renderNextPage(6, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked);
+                            }}
+                        />
+                    </ScrollView>
+
+                    <ScrollView
+                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
+                        nestedScrollEnabled={true}
+                        ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
+                    >
+                        <ProgressPill currentStep={4} totalSteps={5} />
+                        {_.map(areaOfSorenessClicked, (area, i) => (
+                            <View
+                                key={`AreasOfSoreness1${i}`}
+                                onLayout={event => {this.myClickedSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50, height: event.nativeEvent.layout.height,}}}
+                                style={[AppStyles.paddingVertical]}
+                            >
+                                <SoreBodyPart
+                                    bodyPart={MyPlanConstants.bodyPartMapping[area.body_part]}
+                                    bodyPartSide={area.side}
+                                    firstTimeExperience={user.first_time_experience}
+                                    handleFormChange={handleFormChange}
+                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                        handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                        if(shouldScroll && areaOfSorenessClicked.length !== (i + 1) && (areaOfSorenessClicked.length - 1) !== (i + 1)) {
+                                            this._scrollTo(this.myClickedSorenessComponents[i + 1], this.scrollViewClickedSorenessRef);
+                                        } else if(shouldScroll) {
+                                            this._scrollToBottom(this.scrollViewClickedSorenessRef);
+                                        }
+                                    }}
+                                    handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                    surveyObject={dailyReadiness}
+                                    toggleSlideUpPanel={this._toggleSlideUpPanel}
+                                />
+                            </View>
+                        ))}
+                        <BackNextButtons
+                            isValid={isFormValidItems.areAreasOfSorenessValid}
+                            onBackClick={() => this._renderNextPage(7, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked)}
+                            onNextClick={() => this._renderNextPage(7, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked)}
+                        />
+                    </ScrollView>
+
+                    <View style={{flex: 1,}}>
+                        <ProgressPill currentStep={5} totalSteps={5} />
+                        <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Will you train later today?'}</Text>
+                            <Spacer size={20} />
+                            <View
+                                style={{
+                                    flexDirection:  'row',
+                                    justifyContent: 'space-between',
+                                    width:          220,
+                                }}
+                            >
+                                <TouchableHighlight
+                                    onPress={() => handleFormChange('sessions_planned', true)}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.sessions_planned === true ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.sessions_planned === true ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'YES'}
+                                    </Text>
+                                </TouchableHighlight>
+                                <Spacer size={20} />
+                                <TouchableHighlight
+                                    onPress={() => handleFormChange('sessions_planned', false)}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.sessions_planned === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.sessions_planned === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'NO'}
+                                    </Text>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+                        <BackNextButtons
+                            handleFormSubmit={() => handleFormSubmit()}
+                            isValid={isFormValidItems.willTrainLaterValid}
+                            onBackClick={() => this._renderNextPage(8, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked)}
+                            onNextClick={() => this._renderNextPage(8, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                            showSubmitBtn={!isSecondFunctionalStrength}
+                        />
                     </View>
-                    <Button
-                        backgroundColor={isFormValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                        buttonStyle={{
-                            alignSelf:       'center',
-                            borderRadius:    5,
-                            marginBottom:    AppSizes.padding,
-                            paddingVertical: AppSizes.paddingMed,
-                            width:           AppSizes.screen.widthTwoThirds,
-                        }}
-                        color={isFormValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                        fontFamily={AppStyles.robotoMedium.fontFamily}
-                        fontWeight={AppStyles.robotoMedium.fontWeight}
-                        onPress={() => isFormValid ? handleFormSubmit() : null}
-                        outlined
-                        textStyle={{ fontSize: AppFonts.scaleFont(18), }}
-                        title={isFormValid ? 'Submit' : 'Select an Option'}
-                    />
-                </ScrollView>
+
+                    <View style={{flex: 1,}}>
+                        <ProgressPill currentStep={5} totalSteps={5} />
+                        <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                {'Would you like to add functional strength to your training plan today?'}
+                            </Text>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}]}>
+                                {functionalStrengthTodaySubtext}
+                            </Text>
+                            <Spacer size={20} />
+                            <View
+                                style={{
+                                    flexDirection:  'row',
+                                    justifyContent: 'space-between',
+                                    width:          220,
+                                }}
+                            >
+                                <TouchableHighlight
+                                    onPress={() => handleFormChange('wants_functional_strength', true)}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.wants_functional_strength === true ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.wants_functional_strength === true ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'YES'}
+                                    </Text>
+                                </TouchableHighlight>
+                                <Spacer size={20} />
+                                <TouchableHighlight
+                                    onPress={() => handleFormChange('wants_functional_strength', false)}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.wants_functional_strength === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.wants_functional_strength === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'NO'}
+                                    </Text>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+                        <BackNextButtons
+                            handleFormSubmit={() => handleFormSubmit()}
+                            isValid={isFormValidItems.isSecondFunctionalStrengthValid}
+                            onBackClick={() => this._renderNextPage(9, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                            onNextClick={() => this._renderNextPage(9, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                            showSubmitBtn={true}
+                        />
+                    </View>
+
+                </Pages>
+
                 { isFABVisible ?
                     <ActionButton
-                        buttonColor={AppColors.primary.yellow.hundredPercent}
+                        buttonColor={AppColors.zeplin.yellow}
                         degrees={0}
                         hideShadow
-                        onPress={() => this._fabScrollClicked(this.myComponents[isFirstFunctionalStrength || isSecondFunctionalStrength ? (newSoreBodyParts.length + 3) : (newSoreBodyParts.length + 2)])}
+                        onPress={() => {this._scrollToBottom(this.myAreasOfSorenessComponent); this.setState({ isActionButtonVisible: false, isCloseToBottom: true, });}}
                         renderIcon={() =>
                             <TabIcon
                                 color={AppColors.white}
@@ -540,12 +1130,14 @@ class ReadinessSurvey extends Component {
                     :
                     null
                 }
+
                 <SlideUpPanel
                     expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
                     isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
                     isSlideUpPanelExpanded={this.state.isSlideUpPanelExpanded}
                     toggleSlideUpPanel={isExpanded => this._toggleSlideUpPanel(isExpanded)}
                 />
+
             </View>
         )
     }

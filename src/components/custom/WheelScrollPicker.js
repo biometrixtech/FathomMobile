@@ -14,6 +14,7 @@
               this._handleScrollFormChange('timeValueGroups', 'hours', data, selectedIndex);
           }}
           wrapperBackground={AppColors.transparent}
+          wrapperFlex={2}
           wrapperHeight={180}
       />
   *
@@ -43,7 +44,7 @@ class WheelScrollPicker extends Component {
         this.onScrollBeginDrag = this.onScrollBeginDrag.bind(this);
         this.onScrollEndDrag = this.onScrollEndDrag.bind(this);
         this.state = {
-            selectedIndex: this.props.selectedIndex ? this.props.selectedIndex : 1,
+            selectedIndex: this.props.selectedIndex ? this.props.selectedIndex : 0,
         }
     }
 
@@ -185,7 +186,7 @@ class WheelScrollPicker extends Component {
                 style={{
                     alignSelf:       'center',
                     backgroundColor: this.props.wrapperBackground,
-                    flex:            1,
+                    flex:            this.props.wrapperFlex,
                     height:          this.props.wrapperHeight,
                 }}
             >
@@ -241,6 +242,7 @@ WheelScrollPicker.propTypes = {
     selectedIndex:        PropTypes.number,
     style:                PropTypes.object,
     wrapperBackground:    PropTypes.string,
+    wrapperFlex:          PropTypes.number,
     wrapperHeight:        PropTypes.number,
     wrapperWidth:         PropTypes.number,
 };
@@ -257,6 +259,7 @@ WheelScrollPicker.defaultProps = {
     onScrollEndDrag:      () => {},
     scrollEnabled:        true,
     wrapperBackground:    '#FFFFFF',
+    wrapperFlex:          1,
     wrapperHeight:        180,
     wrapperWidth:         (deviceWidth / 6),
 };

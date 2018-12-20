@@ -17,7 +17,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -30,6 +30,26 @@ import _ from 'lodash';
 // Components
 import { SoreBodyPart, } from './';
 
+/* Styles ==================================================================== */
+const styles = StyleSheet.create({
+    shadowEffect: {
+        shadowColor:   'rgba(0, 0, 0, 0.16)',
+        shadowOffset:  { height: 3, width: 0, },
+        shadowOpacity: 1,
+        shadowRadius:  6,
+    },
+    allGoodCircle: {
+        alignSelf:         'center',
+        borderRadius:      85 / 2,
+        height:            85,
+        justifyContent:    'center',
+        marginBottom:      20,
+        paddingHorizontal: AppSizes.paddingSml,
+        width:             85,
+    },
+});
+
+/* Component ==================================================================== */
 const TooltipContent = ({ handleTooltipClose, text, }) => (
     <View style={{padding: AppSizes.padding,}}>
         <Text robotoLight style={{color: AppColors.black, fontSize: AppFonts.scaleFont(15),}}>
@@ -89,7 +109,7 @@ class AreasOfSoreness extends Component {
         let { areaOfSorenessClicked, groupedNewBodyPartMap, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState);
         return(
             <View>
-                <Spacer size={30} />
+                <Spacer size={20} />
                 <Tooltip
                     animated
                     content={
@@ -113,39 +133,30 @@ class AreasOfSoreness extends Component {
                                     if(!user.first_time_experience.includes('all_good_body_part_tooltip') && this.state.isAllGood) {
                                         this.setState({ isAllGoodTooltipOpen: true, });
                                     }
-                                    if(user.first_time_experience.includes('all_good_body_part_tooltip')) {
+                                    if(user.first_time_experience.includes('all_good_body_part_tooltip') && this.state.isAllGood) {
                                         scrollToBottom();
                                     }
                                     handleAreaOfSorenessClick(false, true);
                                 });
                             }
                         }}
-                        style={{
-                            alignSelf:       'center',
-                            backgroundColor: !this.state.isAllGood ? AppColors.white : AppColors.primary.yellow.hundredPercent,
-                            borderColor:     !this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent,
-                            borderRadius:    5,
-                            borderWidth:     1,
-                            paddingVertical: 5,
-                            width:           AppSizes.screen.widthTwoThirds,
-                        }}
+                        style={[styles.shadowEffect, styles.allGoodCircle, {backgroundColor: !this.state.isAllGood ? AppColors.zeplin.superLight : AppColors.zeplin.yellow,}]}
                     >
                         <Text
                             oswaldMedium
                             style={{
-                                color:     !this.state.isAllGood ? AppColors.zeplin.darkGrey : AppColors.white,
-                                fontSize:  AppFonts.scaleFont(18),
+                                color:     !this.state.isAllGood ? AppColors.zeplin.blueGrey : AppColors.white,
+                                fontSize:  AppFonts.scaleFont(22),
                                 textAlign: 'center',
                             }}
                         >
-                            {'NO, ALL GOOD'}
+                            {'NO,\n'}
+                            <Text oswaldMedium style={{color: !this.state.isAllGood ? AppColors.zeplin.blueGrey : AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{'ALL GOOD'}</Text>
                         </Text>
                     </TouchableOpacity>
                 </Tooltip>
-                <Spacer size={25} />
-                <Text oswaldRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{'OR'}</Text>
-                <Spacer size={5} />
-                <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}>{'Tap to select body part(s)'}</Text>
+                <Spacer size={15} />
+                <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}>{'Or tap to select body part(s)'}</Text>
                 <Spacer size={30} />
                 {_.map(groupedNewBodyPartMap, (object, key) => {
                     let bodyPartMap = _.orderBy(object, ['order'], ['asc']);
@@ -195,24 +206,6 @@ class AreasOfSoreness extends Component {
                         </View>
                     )
                 })}
-                <Spacer size={50} />
-                <View onLayout={event => {this.soreBodyPartRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,}}}>
-                    {_.map(areaOfSorenessClicked, (area, i) => {
-                        return(
-                            <View key={`AreasOfSoreness1${i}`} style={[AppStyles.paddingVertical]}>
-                                <SoreBodyPart
-                                    bodyPart={MyPlanConstants.bodyPartMapping[area.body_part]}
-                                    bodyPartSide={area.side}
-                                    firstTimeExperience={user.first_time_experience}
-                                    handleFormChange={handleFormChange}
-                                    handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
-                                    surveyObject={surveyObject}
-                                    toggleSlideUpPanel={toggleSlideUpPanel}
-                                />
-                            </View>
-                        )
-                    })}
-                </View>
             </View>
         )
     }
