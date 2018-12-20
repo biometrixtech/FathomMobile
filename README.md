@@ -10,6 +10,7 @@ This is a starter [React Native app](https://facebook.github.io/react-native/). 
 
 ## Docs
 
+1. [Custom Features](/docs/custom-features.md)
 1. [Features](#features)
 1. **Before you start**
    1. [Getting Started with React Native](/docs/react-native.md)
