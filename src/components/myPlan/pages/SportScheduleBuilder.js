@@ -288,7 +288,7 @@ class SportScheduleBuilder extends Component {
                                 })}
                                 <TouchableOpacity
                                     onPress={() => this._nextStep(1)}
-                                    style={[styles.step0Circle, styles.shadowEffect, {alignSelf: (typicalSessions.length % 4 === 0) || (typicalSessions.length % 5 === 0) ? 'center' : 'flex-start',}]}
+                                    style={[styles.step0Circle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {alignSelf: (typicalSessions.length % 4 === 0) || (typicalSessions.length % 5 === 0) ? 'center' : 'flex-start',}]}
                                 >
                                     <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{'+ MORE OPTIONS'}</Text>
                                 </TouchableOpacity>
@@ -388,6 +388,7 @@ class SportScheduleBuilder extends Component {
                                                         selectedIndex={durationValueGroups.hours}
                                                         onValueChange={(data, selectedIndex) => this._handleScrollFormChange('durationValueGroups', 'hours', data, selectedIndex)}
                                                         wrapperBackground={AppColors.transparent}
+                                                        wrapperFlex={3}
                                                         wrapperHeight={180}
                                                     />
                                                     <WheelScrollPicker
@@ -415,6 +416,7 @@ class SportScheduleBuilder extends Component {
                                                         selectedIndex={durationValueGroups.minutes}
                                                         onValueChange={(data, selectedIndex) => this._handleScrollFormChange('durationValueGroups', 'minutes', data, selectedIndex)}
                                                         wrapperBackground={AppColors.transparent}
+                                                        wrapperFlex={3}
                                                         wrapperHeight={180}
                                                     />
                                                     <WheelScrollPicker

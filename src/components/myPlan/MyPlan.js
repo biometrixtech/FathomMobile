@@ -191,6 +191,7 @@ class MyPlan extends Component {
             loading: false,
         };
         this._postSessionSurveyModalRef = {};
+        this._readinessSurveyModalRef = {};
         this._singleExerciseItemRef = {};
         this.renderTab = this.renderTab.bind(this);
     }
@@ -423,20 +424,23 @@ class MyPlan extends Component {
         let newPrepareObject = Object.assign({}, this.state.prepare, {
             isReadinessSurveyCompleted: true,
         });
-        this.setState(
-            {
-                dailyReadiness: {
-                    readiness:     0,
-                    sleep_quality: 0,
-                    soreness:      [],
+        this._readinessSurveyModalRef.close();
+        _.delay(() => {
+            this.setState(
+                {
+                    dailyReadiness: {
+                        readiness:     0,
+                        sleep_quality: 0,
+                        soreness:      [],
+                    },
+                    isPrepCalculating:          this.state.dailyReadiness.sessions_planned ? true : false,
+                    isReadinessSurveyModalOpen: false,
+                    isRecoverCalculating:       this.state.dailyReadiness.sessions_planned ? false : true,
+                    prepare:                    newPrepareObject,
                 },
-                isPrepCalculating:          this.state.dailyReadiness.sessions_planned ? true : false,
-                isReadinessSurveyModalOpen: false,
-                isRecoverCalculating:       this.state.dailyReadiness.sessions_planned ? false : true,
-                prepare:                    newPrepareObject,
-            },
-            () => { if(!newDailyReadiness.sessions_planned) { this._goToScrollviewPage(2); } },
-        );
+                () => { if(!newDailyReadiness.sessions_planned) { this._goToScrollviewPage(2); } },
+            );
+        }, 500);
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
                 this.props.clearCompletedExercises();
@@ -483,24 +487,27 @@ class MyPlan extends Component {
         let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
-        this.setState(
-            {
-                train:                        newTrainObject,
-                isPostSessionSurveyModalOpen: false,
-                isRecoverCalculating:         true,
-                postSession:                  {
-                    description:                    '',
-                    duration:                       0,
-                    event_date:                     null,
-                    session_type:                   null,
-                    sport_name:                     null,
-                    strength_and_conditioning_type: null,
-                    RPE:                            null,
-                    soreness:                       [],
+        this._postSessionSurveyModalRef.close();
+        _.delay(() => {
+            this.setState(
+                {
+                    train:                        newTrainObject,
+                    isPostSessionSurveyModalOpen: false,
+                    isRecoverCalculating:         true,
+                    postSession:                  {
+                        description:                    '',
+                        duration:                       0,
+                        event_date:                     null,
+                        session_type:                   null,
+                        sport_name:                     null,
+                        strength_and_conditioning_type: null,
+                        RPE:                            null,
+                        soreness:                       [],
+                    },
                 },
-            },
-            () => this._goToScrollviewPage(2),
-        );
+                () => this._goToScrollviewPage(2),
+            );
+        }, 500);
         this.props.postSessionSurvey(postSession)
             .then(response => {
                 this.props.clearCompletedExercises();
@@ -1095,6 +1102,7 @@ class MyPlan extends Component {
                             backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isReadinessSurveyModalOpen}
+                            ref={ref => {this._readinessSurveyModalRef = ref;}}
                             swipeToClose={false}
                         >
                             <ReadinessSurvey

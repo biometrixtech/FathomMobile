@@ -98,6 +98,7 @@ class ReadinessSurvey extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            androidShowMoreOptions: false,
             isActionButtonVisible:  false,
             isCloseToBottom:        false,
             isSlideUpPanelExpanded: true,
@@ -609,91 +610,117 @@ class ReadinessSurvey extends Component {
                                                 {'ONE\nTIME'}
                                             </Text>
                                         </TouchableHighlight>
-                                        <TouchableHighlight
-                                            onPress={() => handleFormChange('already_trained_number', 2)}
-                                            style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
-                                                backgroundColor: dailyReadiness.already_trained_number === 2 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
-                                            }]}
-                                            underlayColor={AppColors.transparent}
-                                        >
-                                            <Text
-                                                oswaldMedium
-                                                style={[
-                                                    AppStyles.textCenterAligned,
-                                                    {
-                                                        color:    dailyReadiness.already_trained_number === 2 ? AppColors.white : AppColors.zeplin.blueGrey,
-                                                        fontSize: AppFonts.scaleFont(17),
-                                                    }
-                                                ]}
+                                        { this.state.androidShowMoreOptions ?
+                                            <TouchableHighlight
+                                                onPress={() => handleFormChange('already_trained_number', 2)}
+                                                style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                                    backgroundColor: dailyReadiness.already_trained_number === 2 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                                }]}
+                                                underlayColor={AppColors.transparent}
                                             >
-                                                {'TWO\nTIMES'}
-                                            </Text>
-                                        </TouchableHighlight>
-                                    </View>
-                                    <Spacer size={20} />
-                                    <View style={{flexDirection: 'row', justifyContent: 'space-between', width: (AppSizes.screen.width - (AppSizes.paddingXLrg * 2))}}>
-                                        <TouchableHighlight
-                                            onPress={() => handleFormChange('already_trained_number', 3)}
-                                            style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
-                                                backgroundColor: dailyReadiness.already_trained_number === 3 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
-                                            }]}
-                                            underlayColor={AppColors.transparent}
-                                        >
-                                            <Text
-                                                oswaldMedium
-                                                style={[
-                                                    AppStyles.textCenterAligned,
-                                                    {
-                                                        color:    dailyReadiness.already_trained_number === 3 ? AppColors.white : AppColors.zeplin.blueGrey,
-                                                        fontSize: AppFonts.scaleFont(17),
-                                                    }
-                                                ]}
+                                                <Text
+                                                    oswaldMedium
+                                                    style={[
+                                                        AppStyles.textCenterAligned,
+                                                        {
+                                                            color:    dailyReadiness.already_trained_number === 2 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                            fontSize: AppFonts.scaleFont(17),
+                                                        }
+                                                    ]}
+                                                >
+                                                    {'TWO\nTIMES'}
+                                                </Text>
+                                            </TouchableHighlight>
+                                            :
+                                            <TouchableHighlight
+                                                onPress={() => this.setState({ androidShowMoreOptions: true, })}
+                                                style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                                    backgroundColor: dailyReadiness.already_trained_number === 2 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                                }]}
+                                                underlayColor={AppColors.transparent}
                                             >
-                                                {'THREE\nTIMES'}
-                                            </Text>
-                                        </TouchableHighlight>
-                                        <TouchableHighlight
-                                            onPress={() => handleFormChange('already_trained_number', 4)}
-                                            style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
-                                                backgroundColor: dailyReadiness.already_trained_number === 4 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
-                                            }]}
-                                            underlayColor={AppColors.transparent}
-                                        >
-                                            <Text
-                                                oswaldMedium
-                                                style={[
-                                                    AppStyles.textCenterAligned,
-                                                    {
-                                                        color:    dailyReadiness.already_trained_number === 4 ? AppColors.white : AppColors.zeplin.blueGrey,
-                                                        fontSize: AppFonts.scaleFont(17),
-                                                    }
-                                                ]}
-                                            >
-                                                {'FOUR\nTIMES'}
-                                            </Text>
-                                        </TouchableHighlight>
-                                        <TouchableHighlight
-                                            onPress={() => handleFormChange('already_trained_number', 5)}
-                                            style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
-                                                backgroundColor: dailyReadiness.already_trained_number === 5 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
-                                            }]}
-                                            underlayColor={AppColors.transparent}
-                                        >
-                                            <Text
-                                                oswaldMedium
-                                                style={[
-                                                    AppStyles.textCenterAligned,
-                                                    {
-                                                        color:    dailyReadiness.already_trained_number === 5 ? AppColors.white : AppColors.zeplin.blueGrey,
-                                                        fontSize: AppFonts.scaleFont(17),
-                                                    }
-                                                ]}
-                                            >
-                                                {'FIVE\nTIMES'}
-                                            </Text>
-                                        </TouchableHighlight>
+                                                <Text
+                                                    oswaldMedium
+                                                    style={[
+                                                        AppStyles.textCenterAligned,
+                                                        {
+                                                            color:    dailyReadiness.already_trained_number === 2 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                            fontSize: AppFonts.scaleFont(17),
+                                                        }
+                                                    ]}
+                                                >
+                                                    {'+ MORE'}
+                                                </Text>
+                                            </TouchableHighlight>
+                                        }
                                     </View>
                                 </View>
+                            }
+                            { this.state.androidShowMoreOptions && Platform.OS === 'android' ?
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between', width: (AppSizes.screen.width - (AppSizes.paddingXLrg * 2)), paddingTop: AppSizes.padding,}}>
+                                    <TouchableHighlight
+                                        onPress={() => handleFormChange('already_trained_number', 3)}
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                            backgroundColor: dailyReadiness.already_trained_number === 3 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                        }]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number === 3 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'THREE\nTIMES'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        onPress={() => handleFormChange('already_trained_number', 4)}
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                            backgroundColor: dailyReadiness.already_trained_number === 4 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                        }]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number === 4 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'FOUR\nTIMES'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        onPress={() => handleFormChange('already_trained_number', 5)}
+                                        style={[AppStyles.xLrgCircle, styles.shadowEffect, {elevation: 2,}, {
+                                            backgroundColor: dailyReadiness.already_trained_number === 5 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                        }]}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text
+                                            oswaldMedium
+                                            style={[
+                                                AppStyles.textCenterAligned,
+                                                {
+                                                    color:    dailyReadiness.already_trained_number === 5 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                    fontSize: AppFonts.scaleFont(17),
+                                                }
+                                            ]}
+                                        >
+                                            {'FIVE\nTIMES'}
+                                        </Text>
+                                    </TouchableHighlight>
+                                </View>
+                                :
+                                null
                             }
                             { Platform.OS === 'ios' ?
                                 <FathomPicker

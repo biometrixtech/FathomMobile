@@ -35,20 +35,15 @@ class ExerciseItem extends Component {
         return(
             <View style={[{borderTopWidth: 1, borderTopColor: AppColors.zeplin.lightGrey, marginHorizontal: 10}]}>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
-                    <TouchableOpacity
+                    <TabIcon
+                        containerStyle={[{flex: 1, justifyContent: 'center',}]}
+                        icon={completedExercises.includes(exercise.library_id) ? 'ios-checkbox' : 'ios-checkbox-outline'}
+                        iconStyle={[{color: completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.zeplin.light,}]}
                         onPress={() => handleCompleteExercise(exercise.library_id)}
-                        style={[AppStyles.paddingVerticalXSml, {flex: 1, justifyContent: 'center',}]}
-                    >
-                        <TabIcon
-                            containerStyle={[{alignSelf: 'center'}]}
-                            icon={completedExercises.includes(exercise.library_id) ? 'ios-checkbox' : 'ios-checkbox-outline'}
-                            iconStyle={[{color: completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.zeplin.light,}]}
-                            onPress={() => handleCompleteExercise(exercise.library_id)}
-                            reverse={false}
-                            size={30}
-                            type={'ionicon'}
-                        />
-                    </TouchableOpacity>
+                        reverse={false}
+                        size={30}
+                        type={'ionicon'}
+                    />
                     <TouchableOpacity
                         onPress={() => toggleSelectedExercise(exercise, true)}
                         style={[AppStyles.paddingHorizontalMed, {flex: 2, justifyContent: 'center',}]}
