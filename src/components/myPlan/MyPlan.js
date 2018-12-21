@@ -34,7 +34,7 @@ import { store } from '../../store';
 
 // Components
 import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
-import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } from './pages';
+import { ActiveRecoveryBlocks, DefaultListGap, Exercises, PostSessionSurvey, ReadinessSurvey, RenderMyPlanTab, SingleExerciseItem } from './pages';
 
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
@@ -72,28 +72,6 @@ const customStyles = StyleSheet.create({
         borderBottomRightRadius: 5,
         flex:                    1,
         padding:                 AppSizes.padding,
-    },
-    recoverBlocksDisabledWrapper: {
-        backgroundColor: AppColors.white,
-        borderColor:     AppColors.zeplin.lightGrey,
-        borderRadius:    5,
-        borderWidth:     1,
-        flex:            1,
-        marginRight:     9,
-        paddingBottom:   10,
-        paddingLeft:     10,
-        paddingTop:      7,
-    },
-    recoverBlocksActiveWrapper: {
-        backgroundColor: AppColors.zeplin.superLight,
-        borderColor:     AppColors.zeplin.superLight,
-        borderRadius:    5,
-        borderWidth:     1,
-        flex:            1,
-        marginRight:     9,
-        paddingBottom:   10,
-        paddingLeft:     10,
-        paddingTop:      7,
     },
     shadowEffect: {
         shadowColor:   'rgba(0, 0, 0, 0.16)',
@@ -406,6 +384,7 @@ class MyPlan extends Component {
     }
 
     _handleReadinessSurveySubmit = () => {
+        // TODO: MOVE TO LOGIC FILE AND UNIT TEST BELOW
         let newDailyReadiness = {};
         newDailyReadiness.user_id = this.props.user.id;
         newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
@@ -453,6 +432,7 @@ class MyPlan extends Component {
     }
 
     _handlePostSessionSurveySubmit = () => {
+        // TODO: MOVE TO LOGIC FILE AND UNIT TEST BELOW
         /*
          * update for the componentWillReceiveProps call will only
          * result in a tabPage auto change if a postPracticeSurvey
@@ -756,8 +736,37 @@ class MyPlan extends Component {
         });
     }
 
+    // TODO: MOVE TO CUSTOM FILE
     renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) {
-        let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
+        return(
+            <RenderMyPlanTab
+                isPostSessionSurveyModalOpen={this.state.isPostSessionSurveyModalOpen}
+                isReadinessSurveyModalOpen={this.state.isReadinessSurveyModalOpen}
+                isTabActive={isTabActive}
+                key={`${name}_${page}`}
+                loading={this.state.loading}
+                name={name}
+                onLayoutHandler={onLayoutHandler}
+                onPressHandler={onPressHandler}
+                page={page}
+                plan={this.props.plan}
+                statePages={{
+                    page0: this.state.page0,
+                    page1: this.state.page1,
+                    page2: this.state.page2,
+                }}
+                subtitle={subtitle}
+                tabView={this.tabView}
+                updatePageState={(page0, page1, page2) =>
+                    this.setState({
+                        page0,
+                        page1,
+                        page2,
+                    })
+                }
+            />
+        );
+        /*let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
         isTabActive = isTabActive;
         const textStyle = AppStyles.tabHeaders;
         const fontSize = isTabActive ? AppFonts.scaleFont(20) : AppFonts.scaleFont(16);
@@ -830,57 +839,10 @@ class MyPlan extends Component {
                     }
                 </View>
             </View>
-        </TouchableWithoutFeedback>;
+        </TouchableWithoutFeedback>;*/
     }
 
-    renderDefaultListGap = (size = 10) => {
-        return(
-            <View style={{ flexDirection: 'row' }}>
-                <View style={{ borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent, marginLeft: 10, width: AppFonts.scaleFont(24) / 2}} />
-                <Spacer size={size}/>
-            </View>
-        )
-    }
-
-    renderActiveRecoveryBlocks = (recoveryObj, after, isCalculating) => {
-        let isDisabled = !recoveryObj && !recoveryObj.minutes_duration && !recoveryObj.impact_score;
-        return(
-            <View style={{ flexDirection: 'row', }}>
-                <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
-                    <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'WHEN'}</Text>
-                    <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
-                </View>
-                <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
-                    <Text oswaldMedium style={{ color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, paddingBottom: 5, fontSize: AppFonts.scaleFont(14),}}>{'ACTIVE TIME'}</Text>
-                    <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
-                        <View style={{backgroundColor: isDisabled ? AppColors.zeplin.light : AppColors.transparent, borderRadius: 3,}}>
-                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(28),}}>
-                                {isDisabled ? '00' : `${recoveryObj && recoveryObj.minutes_duration ? parseFloat(recoveryObj.minutes_duration).toFixed(1) : '0'}`}
-                            </Text>
-                        </View>
-                        <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: isDisabled ? 0 : AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
-                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(12),}}>{'MINS'}</Text>
-                        </View>
-                    </View>
-                </View>
-                <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper, {marginRight: 10,}] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, {marginRight: 10,}, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
-                    <Text oswaldMedium style={{ color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, paddingBottom: 5, fontSize: AppFonts.scaleFont(14),}}>{'IMPACT SCORE'}</Text>
-                    <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
-                        <View style={{backgroundColor: isDisabled ? AppColors.zeplin.light : AppColors.transparent, borderRadius: 3,}}>
-                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(28),}}>
-                                {isDisabled ? '00' : `${recoveryObj && recoveryObj.impact_score ? parseFloat(recoveryObj.impact_score).toFixed(1) : '0'}`}
-                            </Text>
-                        </View>
-                        <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: isDisabled ? 0 : AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
-                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(12),}}>{'/ 5'}</Text>
-                        </View>
-                    </View>
-                </View>
-            </View>
-        );
-    }
-
-    renderPrepare = (index) => {
+    renderPrepare = index => {
         let { isPageLoading, isPrepCalculating, prepare, } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
         let { plan, } = this.props;
@@ -925,7 +887,9 @@ class MyPlan extends Component {
                             title={'READINESS SURVEY'}
                             titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                         />
-                        {this.renderDefaultListGap(24)}
+                        <DefaultListGap
+                            size={24}
+                        />
                     </View>
                     :
                     null
@@ -951,14 +915,16 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                {this.renderActiveRecoveryBlocks(false)}
+                                <ActiveRecoveryBlocks />
                             </View>
                         </View>
                     : disabled && isPrepCalculating ?
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                {this.renderActiveRecoveryBlocks(false, false, isPrepCalculating)}
+                                <ActiveRecoveryBlocks
+                                    isCalculating={isPrepCalculating}
+                                />
                                 <Spacer size={12}/>
                                 <Button
                                     backgroundColor={AppColors.white}
@@ -997,7 +963,9 @@ class MyPlan extends Component {
                             <View style={{ flex: 1, flexDirection: 'row' }}>
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                 <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                    {this.renderActiveRecoveryBlocks(recoveryObj)}
+                                    <ActiveRecoveryBlocks
+                                        recoveryObj={recoveryObj}
+                                    />
                                     <Spacer size={12}/>
                                     <Button
                                         backgroundColor={AppColors.primary.yellow.hundredPercent}
@@ -1030,7 +998,9 @@ class MyPlan extends Component {
                                 <View style={{flexDirection: 'row',}}>
                                     <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
-                                        {this.renderActiveRecoveryBlocks(recoveryObj)}
+                                        <ActiveRecoveryBlocks
+                                            recoveryObj={recoveryObj}
+                                        />
                                         <Spacer size={20}/>
                                         <Text
                                             onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed }) }) }
@@ -1082,7 +1052,9 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{flex: 1, paddingLeft: 30, paddingRight: 15}}>
-                                {this.renderActiveRecoveryBlocks(recoveryObj)}
+                                <ActiveRecoveryBlocks
+                                    recoveryObj={recoveryObj}
+                                />
                             </View>
                         </View>
                     :
@@ -1217,7 +1189,9 @@ class MyPlan extends Component {
                             <View style={{ flex: 1, flexDirection: 'row', }}>
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                 <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                    {this.renderActiveRecoveryBlocks(false, true)}
+                                    <ActiveRecoveryBlocks
+                                        after={true}
+                                    />
                                 </View>
                             </View>
                             <Spacer size={25}/>
@@ -1238,7 +1212,10 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                {this.renderActiveRecoveryBlocks(false, true, isRecoverCalculating)}
+                                <ActiveRecoveryBlocks
+                                    after={true}
+                                    isCalculating={isRecoverCalculating}
+                                />
                                 <Spacer size={12}/>
                                 <Button
                                     backgroundColor={AppColors.white}
@@ -1277,7 +1254,10 @@ class MyPlan extends Component {
                             <View style={{ flex: 1, flexDirection: 'row', }}>
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                 <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                    {this.renderActiveRecoveryBlocks(recoveryObj, true)}
+                                    <ActiveRecoveryBlocks
+                                        after={true}
+                                        recoveryObj={recoveryObj}
+                                    />
                                     <Spacer size={12}/>
                                     <Button
                                         backgroundColor={AppColors.primary.yellow.hundredPercent}
@@ -1309,7 +1289,10 @@ class MyPlan extends Component {
                                 <View style={{flexDirection: 'row',}}>
                                     <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
-                                        {this.renderActiveRecoveryBlocks(recoveryObj, true)}
+                                        <ActiveRecoveryBlocks
+                                            after={true}
+                                            recoveryObj={recoveryObj}
+                                        />
                                         <Spacer size={20}/>
                                         <Text
                                             onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) }) }
@@ -1356,7 +1339,10 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row', }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                {this.renderActiveRecoveryBlocks(recoveryObj, true)}
+                                <ActiveRecoveryBlocks
+                                    after={true}
+                                    recoveryObj={recoveryObj}
+                                />
                             </View>
                         </View>
                     :
@@ -1497,21 +1483,10 @@ class MyPlan extends Component {
                           <View style={{ flex: 1, flexDirection: 'row', }}>
                               <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: this.state.isFunctionalStrengthCollapsed ? AppColors.zeplin.lightGrey : AppColors.white, }}/>
                               <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                  <View style={{ flexDirection: 'row' }}>
-                                      <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, borderRadius: 5 }}>
-                                          <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
-                                          <Text oswaldMedium style={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20) }}>{'ANYTIME DURING THE DAY'}</Text>
-                                      </View>
-                                      <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, borderRadius: 5 }}>
-                                          <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
-                                          <View style={{ alignItems: 'center', flexDirection: 'row', flex: 1, }}>
-                                              <Text h1 oswaldMedium style={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32) }}>{`${parseFloat(functionalStrength.minutes_duration).toFixed(1)}`}</Text>
-                                              <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
-                                                  <Text h7 oswaldMedium style={{ color: AppColors.zeplin.greyText, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
-                                              </View>
-                                          </View>
-                                      </View>
-                                  </View>
+                                  <ActiveRecoveryBlocks
+                                      isFunctionalStrength={true}
+                                      recoveryObj={functionalStrength}
+                                  />
                                   <Spacer size={this.state.isFunctionalStrengthCollapsed ? 12 : 20}/>
                                   { this.state.isFunctionalStrengthCollapsed ?
                                       <Button
@@ -1593,7 +1568,9 @@ class MyPlan extends Component {
                                     title={cleanedPostSessionName}
                                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                                 />
-                                { this.renderDefaultListGap(24) }
+                                <DefaultListGap
+                                    size={24}
+                                />
                             </View>
                         );
                     })
