@@ -1601,7 +1601,7 @@ class MyPlan extends Component {
                                 size:  AppFonts.scaleFont(30),
                             }}
                             textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
-                            title={'LOG COMPLETED ACTIVITY'}
+                            title={'Log completed activity'}
                         />
                         <Spacer size={10} />
                         { !offDaySelected ?
@@ -1626,7 +1626,7 @@ class MyPlan extends Component {
                                     size:  AppFonts.scaleFont(30),
                                 }}
                                 textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
-                                title={'OFF DAY'}
+                                title={'Off day'}
                             />
                             :
                             null
