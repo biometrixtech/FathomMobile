@@ -56,6 +56,12 @@ class WheelScrollPicker extends Component {
         }
     };
 
+    componentDidUpdate = (prevProps, prevState) => {
+        if(prevProps.selectedIndex !== this.props.selectedIndex) {
+            this.scrollToIndex(this.props.selectedIndex);
+        }
+    }
+
     componentWillUnmount = () => {
         if (this.timer) {
             clearTimeout(this.timer);
@@ -74,7 +80,8 @@ class WheelScrollPicker extends Component {
         const item = <Text
             style={[isSelected ? AppStyles.robotoBold : AppStyles.robotoRegular, {
                 color:     isSelected ? this.props.activeItemColor : this.props.itemColor,
-                fontSize:  AppFonts.scaleFont(18),
+                fontSize:  this.props.activeItemFontSize,
+                opacity:   this.props.activeItemFontOpacity,
                 textAlign: 'center',
             }]}
         >
@@ -192,7 +199,7 @@ class WheelScrollPicker extends Component {
             >
                 <View
                     style={{
-                        backgroundColor: AppColors.primary.yellow.hundredPercent,
+                        backgroundColor: this.props.highlightColor || AppColors.primary.yellow.hundredPercent,
                         borderColor:     this.props.highlightColor,
                         borderWidth:     this.props.highlightBorderWidth,
                         height:          this.props.itemHeight,
@@ -226,42 +233,46 @@ class WheelScrollPicker extends Component {
 }
 
 WheelScrollPicker.propTypes = {
-    activeItemColor:      PropTypes.string,
-    activeItemHighlight:  PropTypes.string,
-    dataSource:           PropTypes.array,
-    highlightBorderWidth: PropTypes.number,
-    highlightColor:       PropTypes.string,
-    highlightWidth:       PropTypes.number,
-    itemColor:            PropTypes.string,
-    itemHeight:           PropTypes.number,
-    onMomentumScrollEnd:  PropTypes.func,
-    onScrollEndDrag:      PropTypes.func,
-    onValueChange:        PropTypes.func,
-    renderItem:           PropTypes.func,
-    scrollEnabled:        PropTypes.bool,
-    selectedIndex:        PropTypes.number,
-    style:                PropTypes.object,
-    wrapperBackground:    PropTypes.string,
-    wrapperFlex:          PropTypes.number,
-    wrapperHeight:        PropTypes.number,
-    wrapperWidth:         PropTypes.number,
+    activeItemColor:       PropTypes.string,
+    activeItemFontOpacity: PropTypes.number,
+    activeItemFontSize:    PropTypes.number,
+    activeItemHighlight:   PropTypes.string,
+    dataSource:            PropTypes.array,
+    highlightBorderWidth:  PropTypes.number,
+    highlightColor:        PropTypes.string,
+    highlightWidth:        PropTypes.number,
+    itemColor:             PropTypes.string,
+    itemHeight:            PropTypes.number,
+    onMomentumScrollEnd:   PropTypes.func,
+    onScrollEndDrag:       PropTypes.func,
+    onValueChange:         PropTypes.func,
+    renderItem:            PropTypes.func,
+    scrollEnabled:         PropTypes.bool,
+    selectedIndex:         PropTypes.number,
+    style:                 PropTypes.object,
+    wrapperBackground:     PropTypes.string,
+    wrapperFlex:           PropTypes.number,
+    wrapperHeight:         PropTypes.number,
+    wrapperWidth:          PropTypes.number,
 };
 
 WheelScrollPicker.defaultProps = {
-    activeItemColor:      '#222121',
-    dataSource:           [1, 2, 3],
-    highlightColor:       '#333',
-    highlightBorderWidth: 2,
-    highlightWidth:       deviceWidth,
-    itemColor:            '#B4B4B4',
-    itemHeight:           60,
-    onMomentumScrollEnd:  () => {},
-    onScrollEndDrag:      () => {},
-    scrollEnabled:        true,
-    wrapperBackground:    '#FFFFFF',
-    wrapperFlex:          1,
-    wrapperHeight:        180,
-    wrapperWidth:         (deviceWidth / 6),
+    activeItemColor:       '#222121',
+    activeItemFontOpacity: 1,
+    activeItemFontSize:    AppFonts.scaleFont(18),
+    dataSource:            [1, 2, 3],
+    highlightColor:        '#333',
+    highlightBorderWidth:  2,
+    highlightWidth:        deviceWidth,
+    itemColor:             '#B4B4B4',
+    itemHeight:            60,
+    onMomentumScrollEnd:   () => {},
+    onScrollEndDrag:       () => {},
+    scrollEnabled:         true,
+    wrapperBackground:     '#FFFFFF',
+    wrapperFlex:           1,
+    wrapperHeight:         180,
+    wrapperWidth:          (deviceWidth / 6),
 };
 
 /* Export Component ==================================================================== */

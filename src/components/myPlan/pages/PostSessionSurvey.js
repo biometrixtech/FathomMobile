@@ -24,7 +24,7 @@ import { Pages, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
 // Components
-import { AreasOfSoreness, BackNextButtons, ProgressPill, ScaleButton, SlideUpPanel, SoreBodyPart, SportScheduleBuilder, } from './';
+import { AreasOfSoreness, BackNextButtons, ProgressPill, ScaleButton, SoreBodyPart, SportScheduleBuilder, SurveySlideUpPanel, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -365,7 +365,7 @@ class PostSessionSurvey extends Component {
                     :
                     null
                 }
-                <SlideUpPanel
+                <SurveySlideUpPanel
                     expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
                     isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
                     isSlideUpPanelExpanded={this.state.isSlideUpPanelExpanded}

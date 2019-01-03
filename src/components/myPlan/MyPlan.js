@@ -34,7 +34,7 @@ import { store } from '../../store';
 
 // Components
 import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
-import { ActiveRecoveryBlocks, DefaultListGap, Exercises, PostSessionSurvey, ReadinessSurvey, RenderMyPlanTab, SingleExerciseItem } from './pages';
+import { ActiveRecoveryBlocks, ActiveTimeSlideUpPanel, DefaultListGap, Exercises, PostSessionSurvey, ReadinessSurvey, RenderMyPlanTab, SingleExerciseItem } from './pages';
 
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
@@ -135,8 +135,10 @@ class MyPlan extends Component {
             isPageLoading:                    false,
             isPostSessionSurveyModalOpen:     false,
             isPrepCalculating:                false,
+            isPrepareSlideUpPanelOpen:        false,
             isReadinessSurveyModalOpen:       false,
             isRecoverCalculating:             false,
+            isRecoverSlideUpPanelOpen:        false,
             isSelectedExerciseModalOpen:      false,
             page0:                            {},
             page1:                            {},
@@ -157,12 +159,14 @@ class MyPlan extends Component {
                 isReadinessSurveyCollapsed: false,
                 isReadinessSurveyCompleted: false,
             },
-            recover: {
+            prepareSelectedActiveTime: 2,
+            recover:                   {
                 finished:                  false,
                 isActiveRecoveryCollapsed: true,
             },
-            selectedExercise: {},
-            train:            {
+            recoverSelectedActiveTime: 2,
+            selectedExercise:          {},
+            train:                     {
                 completedPostPracticeSurvey: false,
                 postPracticeSurveys:         [],
             },
@@ -736,7 +740,24 @@ class MyPlan extends Component {
         });
     }
 
-    // TODO: MOVE TO CUSTOM FILE
+    _togglePrepareSlideUpPanel = () => {
+        this.setState({
+            isPrepareSlideUpPanelOpen: !this.state.isPrepareSlideUpPanelOpen,
+        });
+    }
+
+    _toggleRecoverSlideUpPanel = () => {
+        this.setState({
+            isRecoverSlideUpPanelOpen: !this.state.isRecoverSlideUpPanelOpen,
+        });
+    }
+
+    _changeSelectedActiveTime = (selectedIndex, prepareOrRecover) => {
+        this.setState({
+            [prepareOrRecover]: selectedIndex,
+        });
+    }
+
     renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) {
         return(
             <RenderMyPlanTab
@@ -766,80 +787,6 @@ class MyPlan extends Component {
                 }
             />
         );
-        /*let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
-        isTabActive = isTabActive;
-        const textStyle = AppStyles.tabHeaders;
-        const fontSize = isTabActive ? AppFonts.scaleFont(20) : AppFonts.scaleFont(16);
-        let { page0, page1, page2 } = this.state;
-        let flag = dailyPlanObj && page === dailyPlanObj.nav_bar_indicator ? true : false;
-        let currentPage = this.tabView ? this.tabView.state.currentPage : 0;
-        let page0Width = currentPage === 0 ? AppSizes.screen.widthThreeQuarters : currentPage === 1 ? AppSizes.screen.widthQuarter : 0;
-        let page1Width = currentPage === 0 || currentPage === 2 ? AppSizes.screen.widthQuarter : AppSizes.screen.widthHalf;
-        let page2Width = currentPage === 2 ? AppSizes.screen.widthThreeQuarters : currentPage === 1 ? AppSizes.screen.widthQuarter : 0;
-        let page0ExtraStyles = currentPage === 0 ? {paddingLeft: AppSizes.screen.widthQuarter} : {};
-        let page1ExtraStyles = {};
-        let page2ExtraStyles = currentPage === 2 ? {paddingRight: AppSizes.screen.widthQuarter} : {};
-        let page0Styles = [AppStyles.leftTabBar, page0ExtraStyles, {width: page0Width,}];
-        let page1Styles = [AppStyles.centerTabBar, page1ExtraStyles, {width: page1Width,}];
-        let page2Styles = [AppStyles.rightTabBar, page2ExtraStyles, {width: page2Width,}];
-        let textBorderWidth = 4;
-        let iconSize = 10;
-        let iconLeftPadding = 2;
-        let iconBottomPadding = textBorderWidth;
-        let extraIconContainerStyle = isTabActive ?
-            {
-                marginBottom: iconBottomPadding,
-            }
-            :
-            {};
-        // making sure we can only drag horizontally if our modals are closed and nothing is loading
-        let isScrollLocked = !this.state.isReadinessSurveyModalOpen && !this.state.isPostSessionSurveyModalOpen && !this.state.loading ? false : true;
-        return <TouchableWithoutFeedback
-            key={`${name}_${page}`}
-            accessible={true}
-            accessibilityLabel={name}
-            accessibilityTraits='button'
-            onPress={() => isScrollLocked ? null : onPressHandler(page)}
-            onLayout={onLayoutHandler}
-        >
-            <View style={[page === 0 ? page0Styles : page === 1 ? page1Styles : page2Styles]}>
-                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
-                    <View>
-                        <Text
-                            oswaldMedium
-                            onLayout={event =>
-                                this.setState({
-                                    page0: page === 0 ? event.nativeEvent.layout : page0,
-                                    page1: page === 1 ? event.nativeEvent.layout : page1,
-                                    page2: page === 2 ? event.nativeEvent.layout : page2,
-                                })
-                            }
-                            style={[
-                                textStyle,
-                                {
-                                    color: isTabActive ? AppColors.zeplin.darkNavy : AppColors.zeplin.lightSlate,
-                                    fontSize,
-                                }
-                            ]}
-                        >
-                            {name}
-                        </Text>
-                    </View>
-                    {
-                        flag ?
-                            <TabIcon
-                                containerStyle={[AppStyles.indicatorContainerStyles, extraIconContainerStyle, {paddingLeft: iconLeftPadding,}]}
-                                size={iconSize}
-                                selected
-                                color={AppColors.primary.yellow.hundredPercent}
-                                icon={'fiber-manual-record'}
-                            />
-                            :
-                            null
-                    }
-                </View>
-            </View>
-        </TouchableWithoutFeedback>;*/
     }
 
     renderPrepare = index => {
@@ -965,6 +912,7 @@ class MyPlan extends Component {
                                 <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
                                     <ActiveRecoveryBlocks
                                         recoveryObj={recoveryObj}
+                                        toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
                                     />
                                     <Spacer size={12}/>
                                     <Button
@@ -1000,6 +948,7 @@ class MyPlan extends Component {
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
                                         <ActiveRecoveryBlocks
                                             recoveryObj={recoveryObj}
+                                            toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
                                         />
                                         <Spacer size={20}/>
                                         <Text
@@ -1137,6 +1086,12 @@ class MyPlan extends Component {
                         style={[AppStyles.activityIndicator]}
                     /> : null
                 }
+                <ActiveTimeSlideUpPanel
+                    changeSelectedActiveTime={(selectedIndex) => this._changeSelectedActiveTime(selectedIndex, 'prepareSelectedActiveTime')}
+                    isSlideUpPanelOpen={this.state.isPrepareSlideUpPanelOpen}
+                    selectedActiveTime={this.state.prepareSelectedActiveTime}
+                    toggleSlideUpPanel={() => this._togglePrepareSlideUpPanel()}
+                />
             </ScrollView>
         );
     };
@@ -1257,6 +1212,7 @@ class MyPlan extends Component {
                                     <ActiveRecoveryBlocks
                                         after={true}
                                         recoveryObj={recoveryObj}
+                                        toggleActiveTimeSlideUpPanel={this._toggleRecoverSlideUpPanel}
                                     />
                                     <Spacer size={12}/>
                                     <Button
@@ -1292,6 +1248,7 @@ class MyPlan extends Component {
                                         <ActiveRecoveryBlocks
                                             after={true}
                                             recoveryObj={recoveryObj}
+                                            toggleActiveTimeSlideUpPanel={this._toggleRecoverSlideUpPanel}
                                         />
                                         <Spacer size={20}/>
                                         <Text
@@ -1385,6 +1342,13 @@ class MyPlan extends Component {
                         :
                         null
                 }
+                <ActiveTimeSlideUpPanel
+                    changeSelectedActiveTime={(selectedIndex) => this._changeSelectedActiveTime(selectedIndex, 'recoverSelectedActiveTime')}
+                    isRecover={true}
+                    isSlideUpPanelOpen={this.state.isRecoverSlideUpPanelOpen}
+                    selectedActiveTime={this.state.recoverSelectedActiveTime}
+                    toggleSlideUpPanel={() => this._toggleRecoverSlideUpPanel()}
+                />
             </ScrollView>
         );
     };

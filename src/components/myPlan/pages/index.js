@@ -3,6 +3,7 @@
  */
 
 import ActiveRecoveryBlocks from './ActiveRecoveryBlocks';
+import ActiveTimeSlideUpPanel from './ActiveTimeSlideUpPanel';
 import AreasOfSoreness from './AreasOfSoreness';
 import BackNextButtons from './BackNextButtons';
 import DefaultListGap from './DefaultListGap';
@@ -14,12 +15,13 @@ import ReadinessSurvey from './ReadinessSurvey';
 import RenderMyPlanTab from './RenderMyPlanTab';
 import ScaleButton from './ScaleButton';
 import SingleExerciseItem from './SingleExerciseItem';
-import SlideUpPanel from './SlideUpPanel';
 import SoreBodyPart from './SoreBodyPart';
 import SportScheduleBuilder from './SportScheduleBuilder';
+import SurveySlideUpPanel from './SurveySlideUpPanel';
 
 export {
     ActiveRecoveryBlocks,
+    ActiveTimeSlideUpPanel,
     AreasOfSoreness,
     BackNextButtons,
     DefaultListGap,
@@ -31,7 +33,7 @@ export {
     RenderMyPlanTab,
     ScaleButton,
     SingleExerciseItem,
-    SlideUpPanel,
     SoreBodyPart,
     SportScheduleBuilder,
+    SurveySlideUpPanel,
 };

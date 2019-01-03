@@ -1,7 +1,7 @@
 /**
- * SlideUpPanel
+ * Survey's SlideUpPanel
  *
-     <SlideUpPanel
+     <SurveySlideUpPanel
           expandSlideUpPanel={this.setState({ isSlideUpPanelExpanded: true, })}
           isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
           isSlideUpPanelExpanded={this.state.isSlideUpPanelExpanded}
@@ -23,7 +23,7 @@ import { Spacer, TabIcon, Text, } from '../../custom';
 const sorenessVSPainMessage = MyPlanConstants.sorenessVSPainMessage();
 
 /* Component ==================================================================== */
-const SlideUpPanel = ({
+const SurveySlideUpPanel = ({
     expandSlideUpPanel,
     isSlideUpPanelOpen,
     isSlideUpPanelExpanded,
@@ -109,16 +109,16 @@ const SlideUpPanel = ({
     </SlidingUpPanel>
 );
 
-SlideUpPanel.propTypes = {
+SurveySlideUpPanel.propTypes = {
     expandSlideUpPanel:     PropTypes.func.isRequired,
     isSlideUpPanelOpen:     PropTypes.bool.isRequired,
     isSlideUpPanelExpanded: PropTypes.bool.isRequired,
     toggleSlideUpPanel:     PropTypes.func.isRequired,
 };
 
-SlideUpPanel.defaultProps = {};
+SurveySlideUpPanel.defaultProps = {};
 
-SlideUpPanel.componentName = 'SlideUpPanel';
+SurveySlideUpPanel.componentName = 'SurveySlideUpPanel';
 
 /* Export Component ================================================================== */
-export default SlideUpPanel;
+export default SurveySlideUpPanel;

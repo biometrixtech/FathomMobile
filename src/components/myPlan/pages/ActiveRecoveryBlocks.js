@@ -5,16 +5,17 @@
         after={true}
         isCalculating={true}
         recoveryObj={recoveryObj}
+        toggleActiveTimeSlideUpPanel={this._toggleActiveTimeSlideUpPanel}
     />
  *
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Platform, StyleSheet, View, } from 'react-native';
+import { Platform, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, } from '../../../constants';
-import { Text, } from '../../custom';
+import { TabIcon, Text, } from '../../custom';
 
 /* Styles ==================================================================== */
 const customStyles = StyleSheet.create({
@@ -54,6 +55,7 @@ const ActiveRecoveryBlocks = ({
     isCalculating,
     isFunctionalStrength,
     recoveryObj,
+    toggleActiveTimeSlideUpPanel,
 }) => {
     if(isFunctionalStrength) {
         return(
@@ -83,19 +85,37 @@ const ActiveRecoveryBlocks = ({
                 <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'WHEN'}</Text>
                 <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
             </View>
-            <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
-                <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'ACTIVE TIME'}</Text>
-                <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
-                    <View style={{backgroundColor: isDisabled ? AppColors.zeplin.light : AppColors.transparent, borderRadius: 3,}}>
-                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(28),}}>
-                            {isDisabled ? '00' : `${recoveryObj && recoveryObj.minutes_duration ? parseFloat(recoveryObj.minutes_duration).toFixed(1) : '0'}`}
-                        </Text>
+            <TouchableHighlight
+                onPress={() => toggleActiveTimeSlideUpPanel ? toggleActiveTimeSlideUpPanel() : null}
+                style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}
+                underlayColor={isDisabled ? AppColors.white : AppColors.zeplin.superLight}
+            >
+                <View style={{flex: 1,}}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingRight: AppSizes.paddingSml,}}>
+                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14),}}>{'ACTIVE TIME'}</Text>
+                        { isDisabled && !toggleActiveTimeSlideUpPanel ?
+                            null
+                            :
+                            <TabIcon
+                                color={AppColors.zeplin.yellow}
+                                icon={'pencil'}
+                                size={AppFonts.scaleFont(16)}
+                                type={'material-community'}
+                            />
+                        }
                     </View>
-                    <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: isDisabled ? 0 : AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
-                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(12),}}>{'MINS'}</Text>
+                    <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
+                        <View style={{backgroundColor: isDisabled ? AppColors.zeplin.light : AppColors.transparent, borderRadius: 3,}}>
+                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(28),}}>
+                                {isDisabled ? '00' : `${recoveryObj && recoveryObj.minutes_duration ? parseFloat(recoveryObj.minutes_duration).toFixed(1) : '0'}`}
+                            </Text>
+                        </View>
+                        <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: isDisabled ? 0 : AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
+                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(12),}}>{'MINS'}</Text>
+                        </View>
                     </View>
                 </View>
-            </View>
+            </TouchableHighlight>
             <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper, {marginRight: 10,}] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, {marginRight: 10,}, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
                 <Text oswaldMedium style={{ color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, paddingBottom: 5, fontSize: AppFonts.scaleFont(14),}}>{'IMPACT SCORE'}</Text>
                 <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
@@ -121,13 +141,15 @@ ActiveRecoveryBlocks.propTypes = {
         PropTypes.object,
         PropTypes.bool,
     ]),
+    toggleActiveTimeSlideUpPanel: PropTypes.func,
 };
 
 ActiveRecoveryBlocks.defaultProps = {
-    after:                false,
-    isCalculating:        false,
-    isFunctionalStrength: false,
-    recoveryObj:          false,
+    after:                        false,
+    isCalculating:                false,
+    isFunctionalStrength:         false,
+    recoveryObj:                  false,
+    toggleActiveTimeSlideUpPanel: null,
 };
 
 ActiveRecoveryBlocks.componentName = 'ActiveRecoveryBlocks';
