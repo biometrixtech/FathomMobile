@@ -141,20 +141,22 @@ class MyPlan extends Component {
                 // won't be submitted, help with UI
                 already_trained_number:    null,
             },
-            isCompletedAMPMRecoveryModalOpen: true,
-            isFunctionalStrengthCollapsed:    true,
-            isPageLoading:                    false,
-            isPostSessionSurveyModalOpen:     false,
-            isPrepCalculating:                false,
-            isPrepareSlideUpPanelOpen:        false,
-            isReadinessSurveyModalOpen:       false,
-            isRecoverCalculating:             false,
-            isRecoverSlideUpPanelOpen:        false,
-            isSelectedExerciseModalOpen:      false,
-            page0:                            {},
-            page1:                            {},
-            page2:                            {},
-            postSession:                      {
+            isCompletedAMPMRecoveryModalOpen:     true,
+            isFunctionalStrengthCollapsed:        true,
+            isPageLoading:                        false,
+            isPostSessionSurveyModalOpen:         false,
+            isPrepCalculating:                    false,
+            isPrepareSessionsCompletionModalOpen: false,
+            isPrepareSlideUpPanelOpen:            false,
+            isReadinessSurveyModalOpen:           false,
+            isRecoverCalculating:                 false,
+            isRecoverSlideUpPanelOpen:            false,
+            isSelectedExerciseModalOpen:          false,
+            isTrainSessionsCompletionModalOpen:   false,
+            page0:                                {},
+            page1:                                {},
+            page2:                                {},
+            postSession:                          {
                 RPE:                            null,
                 description:                    '',
                 duration:                       0,
@@ -423,16 +425,19 @@ class MyPlan extends Component {
             this.setState(
                 {
                     dailyReadiness: {
-                        readiness:     0,
-                        sleep_quality: 0,
-                        soreness:      [],
+                        readiness:        0,
+                        sessions:         newDailyReadiness.sessions,
+                        sessions_planned: newDailyReadiness.sessions_planned,
+                        sleep_quality:    0,
+                        soreness:         [],
                     },
-                    isPrepCalculating:          this.state.dailyReadiness.sessions_planned ? true : false,
-                    isReadinessSurveyModalOpen: false,
-                    isRecoverCalculating:       this.state.dailyReadiness.sessions_planned ? false : true,
-                    prepare:                    newPrepareObject,
+                    isPrepCalculating:                    this.state.dailyReadiness.sessions_planned ? true : false,
+                    isPrepareSessionsCompletionModalOpen: newDailyReadiness.sessions.length !== 0,
+                    isReadinessSurveyModalOpen:           false,
+                    isRecoverCalculating:                 this.state.dailyReadiness.sessions_planned ? false : true,
+                    prepare:                              newPrepareObject,
                 },
-                () => { if(!newDailyReadiness.sessions_planned) { this._goToScrollviewPage(2); } },
+                () => { if(!newDailyReadiness.sessions_planned && newDailyReadiness.sessions.length === 0) { this._goToScrollviewPage(2); } },
             );
         }, 500);
         this.props.postReadinessSurvey(newDailyReadiness)
@@ -486,21 +491,21 @@ class MyPlan extends Component {
         _.delay(() => {
             this.setState(
                 {
-                    train:                        newTrainObject,
-                    isPostSessionSurveyModalOpen: false,
-                    isRecoverCalculating:         true,
-                    postSession:                  {
+                    train:                              newTrainObject,
+                    isPostSessionSurveyModalOpen:       false,
+                    isRecoverCalculating:               true,
+                    isTrainSessionsCompletionModalOpen: true,
+                    postSession:                        {
                         RPE:                            null,
                         description:                    '',
                         duration:                       0,
                         event_date:                     null,
                         session_type:                   null,
                         soreness:                       [],
-                        sport_name:                     null,
-                        strength_and_conditioning_type: null,
+                        sport_name:                     postSession.sport_name ? postSession.sport_name : null,
+                        strength_and_conditioning_type: postSession.strength_and_conditioning_type ? postSession.strength_and_conditioning_type : null,
                     },
                 },
-                () => this._goToScrollviewPage(2),
             );
         }, 500);
         this.props.postSessionSurvey(postSession)
@@ -769,6 +774,55 @@ class MyPlan extends Component {
         });
     }
 
+    _closePrepareSessionsCompletionModal = () => {
+        const { dailyReadiness, } = this.state;
+        if(!dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
+            this.setState(
+                {
+                    dailyReadiness: {
+                        readiness:        0,
+                        sessions:         [],
+                        sessions_planned: false,
+                        sleep_quality:    0,
+                        soreness:         [],
+                    },
+                    isPrepareSessionsCompletionModalOpen: false,
+                },
+                () => this._goToScrollviewPage(2)
+            );
+        } else if(dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
+            this.setState({
+                dailyReadiness: {
+                    readiness:        0,
+                    sessions:         [],
+                    sessions_planned: false,
+                    sleep_quality:    0,
+                    soreness:         [],
+                },
+                isPrepareSessionsCompletionModalOpen: false,
+            });
+        }
+    }
+
+    _closeTrainSessionsCompletionModal = () => {
+        this.setState(
+            {
+                isTrainSessionsCompletionModalOpen: false,
+                postSession:                        {
+                    RPE:                            null,
+                    description:                    '',
+                    duration:                       0,
+                    event_date:                     null,
+                    session_type:                   null,
+                    soreness:                       [],
+                    sport_name:                     null,
+                    strength_and_conditioning_type: null,
+                },
+            },
+            () => this._goToScrollviewPage(2)
+        );
+    }
+
     renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) {
         return(
             <RenderMyPlanTab
@@ -801,7 +855,7 @@ class MyPlan extends Component {
     }
 
     renderPrepare = index => {
-        let { isPageLoading, isPrepCalculating, prepare, } = this.state;
+        let { dailyReadiness, isPageLoading, isPrepCalculating, prepare, } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
         let { plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
@@ -1130,29 +1184,9 @@ class MyPlan extends Component {
                     }}
                 />
                 <SessionsCompletionModal
-                    isModalOpen={false}
-                    sessions={[
-                      {
-                          sport_name:                     0, // this exists for session_type = 0,2,3,6
-                          strength_and_conditioning_type: null, // this only exists for session_type=1
-                      },
-                      {
-                          sport_name:                     null, // this exists for session_type = 0,2,3,6
-                          strength_and_conditioning_type: 2, // this only exists for session_type=1
-                      },
-                      {
-                          sport_name:                     16, // this exists for session_type = 0,2,3,6
-                          strength_and_conditioning_type: null, // this only exists for session_type=1
-                      },
-                      // {
-                      //     sport_name:                     null, // this exists for session_type = 0,2,3,6
-                      //     strength_and_conditioning_type: 4, // this only exists for session_type=1
-                      // },
-                      // {
-                      //     sport_name:                     24, // this exists for session_type = 0,2,3,6
-                      //     strength_and_conditioning_type: null, // this only exists for session_type=1
-                      // },
-                    ]}
+                    isModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
+                    onClose={this._closePrepareSessionsCompletionModal}
+                    sessions={dailyReadiness.sessions}
                 />
             </ScrollView>
         );
@@ -1760,6 +1794,14 @@ class MyPlan extends Component {
                         :
                         null
                 }
+                <SessionsCompletionModal
+                    isModalOpen={this.state.isTrainSessionsCompletionModalOpen}
+                    onClose={this._closeTrainSessionsCompletionModal}
+                    sessions={[{
+                        sport_name:                     this.state.postSession.sport_name,
+                        strength_and_conditioning_type: this.state.postSession.strength_and_conditioning_type,
+                    }]}
+                />
             </ScrollView>
         );
     };

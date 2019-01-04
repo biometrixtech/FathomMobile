@@ -588,14 +588,13 @@ const userSelectedActiveTimeMessage = () => {
 
 const randomizeSessionsCompletionModalText = () => {
     const header = [
-        'GREAT SESSION!',
         'NICE WORK!',
         'WAY TO GO!',
         'WAY TO WORK!',
     ];
     const subtext = [
         'Remember to vary your workout types to reduce over-use injuries!',
-        'Try to varying your training intensity to help you build resilience',
+        'Try to varying your training intensity to help you build resilience.',
     ];
     return {
         header:  _.shuffle(header)[0],

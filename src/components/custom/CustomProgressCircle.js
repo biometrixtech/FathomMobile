@@ -19,16 +19,17 @@ const styles = StyleSheet.create({
 
 export class CustomProgressCircle extends Component {
   static propTypes = {
-      animated:      PropTypes.bool,
-      borderColor:   PropTypes.string,
-      borderWidth:   PropTypes.number,
-      color:         PropTypes.string,
-      children:      PropTypes.node,
-      direction:     PropTypes.oneOf(['clockwise', 'counter-clockwise']),
-      fill:          PropTypes.string,
-      formatText:    PropTypes.string,
-      indeterminate: PropTypes.bool,
-      progress:      PropTypes.oneOfType([
+      animated:          PropTypes.bool,
+      borderColor:       PropTypes.string,
+      borderWidth:       PropTypes.number,
+      children:          PropTypes.node,
+      childrenViewStyle: PropTypes.object,
+      color:             PropTypes.string,
+      direction:         PropTypes.oneOf(['clockwise', 'counter-clockwise']),
+      fill:              PropTypes.string,
+      formatText:        PropTypes.string,
+      indeterminate:     PropTypes.bool,
+      progress:          PropTypes.oneOfType([
           PropTypes.number,
           PropTypes.instanceOf(Animated.Value),
       ]),
@@ -44,15 +45,16 @@ export class CustomProgressCircle extends Component {
   };
 
   static defaultProps = {
-      borderWidth: 1,
-      color:       'rgba(0, 122, 255, 1)',
-      direction:   'clockwise',
-      formatText:  '',
-      endAngle:    0.9,
-      progress:    0,
-      showsText:   false,
-      size:        40,
-      thickness:   3,
+      borderWidth:       1,
+      childrenViewStyle: {},
+      color:             'rgba(0, 122, 255, 1)',
+      direction:         'clockwise',
+      formatText:        '',
+      endAngle:          0.9,
+      progress:          0,
+      showsText:         false,
+      size:              40,
+      thickness:         3,
   };
 
   constructor(props, context) {
@@ -76,8 +78,9 @@ export class CustomProgressCircle extends Component {
           animated,
           borderColor,
           borderWidth,
-          color,
           children,
+          childrenViewStyle,
+          color,
           direction,
           endAngle,
           fill,
@@ -196,7 +199,11 @@ export class CustomProgressCircle extends Component {
               ) : (
                   false
               )}
-              {children}
+              <View
+                  style={childrenViewStyle}
+              >
+                  {children}
+              </View>
           </View>
       );
   }

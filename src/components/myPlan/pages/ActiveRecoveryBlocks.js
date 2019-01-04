@@ -164,15 +164,16 @@ class ActiveRecoveryBlocks extends Component {
                         underlayColor={isDisabled ? AppColors.white : AppColors.zeplin.superLight}
                     >
                         <View style={{flex: 1,}}>
-                            <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingRight: AppSizes.paddingSml,}}>
-                                <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14),}}>{'ACTIVE TIME'}</Text>
+                            <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingRight: AppSizes.paddingSml,}}>
+                                <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), }}>{'ACTIVE TIME'}</Text>
                                 { isDisabled && !toggleActiveTimeSlideUpPanel ?
                                     null
                                     :
                                     <TabIcon
                                         color={AppColors.zeplin.yellow}
                                         icon={'pencil'}
-                                        size={AppFonts.scaleFont(16)}
+                                        iconStyle={[{paddingLeft: AppSizes.paddingSml,}]}
+                                        size={24}
                                         type={'material-community'}
                                     />
                                 }
