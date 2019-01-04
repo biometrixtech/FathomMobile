@@ -713,30 +713,30 @@ const helperFunctions = {
 
     getStrengthConditioningTypes: () => {
         return [
-            { index: 0, order: 1, label: 'Endurance', },
-            { index: 1, order: 2, label: 'Power', },
-            { index: 2, order: 3, label: 'Speed & Agility', },
-            { index: 3, order: 4, label: 'Strength', },
-            { index: 4, order: 5, label: 'Cross Training', },
+            { index: 0, order: 1, label: 'Endurance', icon: 'ios-fitness', iconType: 'ionicon', },
+            { index: 1, order: 2, label: 'Power', icon: 'ios-fitness', iconType: 'ionicon', },
+            { index: 2, order: 3, label: 'Speed & Agility', icon: 'ios-fitness', iconType: 'ionicon', },
+            { index: 3, order: 4, label: 'Strength', icon: 'ios-fitness', iconType: 'ionicon', },
+            { index: 4, order: 5, label: 'Cross Training', icon: 'ios-fitness', iconType: 'ionicon', },
         ];
     },
 
     getTeamSports: () => {
         return [
-            { index: 0, order: 1, label: 'Basketball', positions: ['Center', 'Forward', 'Guard'], },
-            { index: 1, order: 2, label: 'Baseball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], },
-            { index: 3, order: 3, label: 'Cycling', positions: false, },
-            { index: 17, order: 4, label: 'Distance Running', positions: false, },
-            { index: 4, order: 5, label: 'Field Hockey', positions: ['Goalie', 'Fullback', 'Midfielder', 'Forward'], },
-            { index: 5, order: 6, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], },
-            { index: 10, order: 7, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], },
-            { index: 15, order: 8, label: 'Pool Sports', positions: false, },
-            { index: 11, order: 9, label: 'Rowing', positions: false, },
-            { index: 9, order: 10, label: 'Skate Sports', positions: false, },
-            { index: 14, order: 11, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], },
-            { index: 2, order: 12, label: 'Softball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], },
-            { index: 16, order: 13, label: 'Tennis', positions: false, },
-            { index: 24, order: 14, label: 'Track & Field', positions: ['Sprinter', 'Jumper', 'Thrower', 'Distance'], },
+            { index: 0, order: 1, label: 'Basketball', positions: ['Center', 'Forward', 'Guard'], icon: 'basketball', iconType: 'material-community', },
+            { index: 1, order: 2, label: 'Baseball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], icon: 'baseball', iconType: 'material-community', },
+            { index: 3, order: 3, label: 'Cycling', positions: false, icon: 'ios-bicycle', iconType: 'ionicon', },
+            { index: 17, order: 4, label: 'Distance Running', positions: false, icon: 'run', iconType: 'material-community', },
+            { index: 4, order: 5, label: 'Field Hockey', positions: ['Goalie', 'Fullback', 'Midfielder', 'Forward'], icon: 'hockey-sticks', iconType: 'material-community', },
+            { index: 5, order: 6, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], icon: 'football', iconType: 'material-community', },
+            { index: 10, order: 7, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], icon: 'volleyball', iconType: 'material-community', },
+            { index: 15, order: 8, label: 'Pool Sports', positions: false, icon: 'pool', iconType: 'material-community', },
+            { index: 11, order: 9, label: 'Rowing', positions: false, icon: 'rowing', iconType: 'material-community', },
+            { index: 9, order: 10, label: 'Skate Sports', positions: false, icon: 'hockey-sticks', iconType: 'material-community', },
+            { index: 14, order: 11, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], icon: 'ios-football', iconType: 'ionicon', },
+            { index: 2, order: 12, label: 'Softball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], icon: 'baseball', iconType: 'material-community', },
+            { index: 16, order: 13, label: 'Tennis', positions: false, icon: 'md-tennisball', iconType: 'ionicon', },
+            { index: 24, order: 14, label: 'Track & Field', positions: ['Sprinter', 'Jumper', 'Thrower', 'Distance'], icon: 'run-fast', iconType: 'material-community', },
         ];
     },
 
