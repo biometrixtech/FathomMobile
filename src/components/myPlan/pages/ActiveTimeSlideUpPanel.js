@@ -65,12 +65,13 @@ const ActiveTimeSlideUpPanel = ({
                             selectedIndex={1}
                             onValueChange={(data, selectedIndex) => null}
                             wrapperBackground={AppColors.transparent}
-                            wrapperFlex={1}
+                            wrapperFlex={2}
                             wrapperHeight={180}
                         />
                         <WheelScrollPicker
                             activeItemColor={AppColors.white}
                             activeItemHighlight={AppColors.zeplin.seaBlue}
+                            addRecommendedTextAtIndex={2}
                             dataSource={MyPlanConstants.selectedActiveTimes().timeLabels}
                             highlightBorderWidth={2}
                             highlightColor={AppColors.zeplin.seaBlue}
@@ -80,24 +81,7 @@ const ActiveTimeSlideUpPanel = ({
                             selectedIndex={selectedActiveTime}
                             onValueChange={(data, selectedIndex) => changeSelectedActiveTime(selectedIndex)}
                             wrapperBackground={AppColors.transparent}
-                            wrapperFlex={4}
-                            wrapperHeight={180}
-                        />
-                        <WheelScrollPicker
-                            activeItemColor={AppColors.white}
-                            activeItemFontOpacity={0.5}
-                            activeItemFontSize={AppFonts.scaleFont(15)}
-                            activeItemHighlight={AppColors.zeplin.seaBlue}
-                            dataSource={MyPlanConstants.selectedActiveTimes().recommendedLabels}
-                            highlightBorderWidth={2}
-                            highlightColor={AppColors.zeplin.seaBlue}
-                            itemColor={AppColors.zeplin.lightSlate}
-                            itemHeight={AppFonts.scaleFont(18) + AppSizes.paddingSml}
-                            scrollEnabled={false}
-                            selectedIndex={selectedActiveTime}
-                            onValueChange={(data, selectedIndex) => null}
-                            wrapperBackground={AppColors.transparent}
-                            wrapperFlex={4}
+                            wrapperFlex={6}
                             wrapperHeight={180}
                         />
                         <WheelScrollPicker
@@ -112,7 +96,7 @@ const ActiveTimeSlideUpPanel = ({
                             selectedIndex={1}
                             onValueChange={(data, selectedIndex) => null}
                             wrapperBackground={AppColors.transparent}
-                            wrapperFlex={1}
+                            wrapperFlex={2}
                             wrapperHeight={180}
                         />
                     </View>
