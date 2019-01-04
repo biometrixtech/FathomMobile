@@ -15,6 +15,7 @@ import { StyleSheet, View, } from 'react-native';
 // import third-party libraries
 import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
+import LottieView from 'lottie-react-native';
 import Modal from 'react-native-modalbox';
 
 // // Consts and Libs
@@ -61,13 +62,17 @@ class SessionsCompletionModal extends Component {
             },
             progressCounter: 0,
         };
+        this.animation = {};
     }
 
     componentDidUpdate = (prevProps, prevState) => {
         if(prevProps.isModalOpen !== this.props.isModalOpen) {
             _.delay(() => {
                 for (let i = 0; i <= 1; i = i + 0.1) {
-                    this.setState({ progressCounter: parseFloat(i.toFixed(1)), });
+                    this.setState(
+                        { progressCounter: parseFloat(i.toFixed(1)), },
+                        () => { if(this.state.progressCounter === 1 && this.animation) { this.animation.play(); } }
+                    );
                 }
             }, 1000);
         }
@@ -138,6 +143,13 @@ class SessionsCompletionModal extends Component {
                                                         {},
                                             ]}
                                         >
+                                            <LottieView
+                                                loop={false}
+                                                ref={animation => {
+                                                    this.animation = animation;
+                                                }}
+                                                source={require('../../../../assets/animation/confetti.json')}
+                                            />
                                             <ProgressCircle
                                                 animated={true}
                                                 borderWidth={0}
