@@ -12,7 +12,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, } from 'react-native';
+import { Platform, View, } from 'react-native';
 
 // import third-party libraries
 import Modal from 'react-native-modalbox';
@@ -71,7 +71,7 @@ const ActiveTimeSlideUpPanel = ({
                         <WheelScrollPicker
                             activeItemColor={AppColors.white}
                             activeItemHighlight={AppColors.zeplin.seaBlue}
-                            dataSource={['5 mintues', '10 mintues', '15 mintues', '20 mintues']}
+                            dataSource={MyPlanConstants.selectedActiveTimes().timeLabels}
                             highlightBorderWidth={2}
                             highlightColor={AppColors.zeplin.seaBlue}
                             itemColor={AppColors.zeplin.lightSlate}
@@ -88,7 +88,7 @@ const ActiveTimeSlideUpPanel = ({
                             activeItemFontOpacity={0.5}
                             activeItemFontSize={AppFonts.scaleFont(15)}
                             activeItemHighlight={AppColors.zeplin.seaBlue}
-                            dataSource={[' ', ' ', 'Recommended', ' ']}
+                            dataSource={MyPlanConstants.selectedActiveTimes().recommendedLabels}
                             highlightBorderWidth={2}
                             highlightColor={AppColors.zeplin.seaBlue}
                             itemColor={AppColors.zeplin.lightSlate}
@@ -128,6 +128,7 @@ const ActiveTimeSlideUpPanel = ({
                         title={'Confirm'}
                     />
                 </View>
+                <Spacer size={Platform.OS === 'ios' ? 0 : 30} />
             </View>
         </SlidingUpPanel>
     </Modal>

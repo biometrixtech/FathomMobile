@@ -34,7 +34,17 @@ import { store } from '../../store';
 
 // Components
 import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
-import { ActiveRecoveryBlocks, ActiveTimeSlideUpPanel, DefaultListGap, Exercises, PostSessionSurvey, ReadinessSurvey, RenderMyPlanTab, SingleExerciseItem } from './pages';
+import {
+    ActiveRecoveryBlocks,
+    ActiveTimeSlideUpPanel,
+    DefaultListGap,
+    Exercises,
+    PostSessionSurvey,
+    ReadinessSurvey,
+    RenderMyPlanTab,
+    SessionsCompletionModal,
+    SingleExerciseItem,
+} from './pages';
 
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
@@ -100,6 +110,7 @@ class MyPlan extends Component {
             PropTypes.string,
         ]),
         patchActiveRecovery:     PropTypes.func.isRequired,
+        patchActiveTime:         PropTypes.func.isRequired,
         patchFunctionalStrength: PropTypes.func.isRequired,
         plan:                    PropTypes.object.isRequired,
         postReadinessSurvey:     PropTypes.func.isRequired,
@@ -792,7 +803,7 @@ class MyPlan extends Component {
     renderPrepare = index => {
         let { isPageLoading, isPrepCalculating, prepare, } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
-        let { plan, } = this.props;
+        let { plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         // assuming AM/PM is switching to something for prepared vs recover
         let recoveryObj = dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
@@ -865,7 +876,7 @@ class MyPlan extends Component {
                                 <ActiveRecoveryBlocks />
                             </View>
                         </View>
-                    : disabled && isPrepCalculating ?
+                    : disabled || isPrepCalculating ?
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
@@ -911,8 +922,10 @@ class MyPlan extends Component {
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                 <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
                                     <ActiveRecoveryBlocks
+                                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                                         recoveryObj={recoveryObj}
                                         toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
+                                        user={user}
                                     />
                                     <Spacer size={12}/>
                                     <Button
@@ -947,8 +960,10 @@ class MyPlan extends Component {
                                     <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
                                         <ActiveRecoveryBlocks
+                                            handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                                             recoveryObj={recoveryObj}
                                             toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
+                                            user={user}
                                         />
                                         <Spacer size={20}/>
                                         <Text
@@ -1090,7 +1105,54 @@ class MyPlan extends Component {
                     changeSelectedActiveTime={(selectedIndex) => this._changeSelectedActiveTime(selectedIndex, 'prepareSelectedActiveTime')}
                     isSlideUpPanelOpen={this.state.isPrepareSlideUpPanelOpen}
                     selectedActiveTime={this.state.prepareSelectedActiveTime}
-                    toggleSlideUpPanel={() => this._togglePrepareSlideUpPanel()}
+                    toggleSlideUpPanel={() => {
+                        let selectedActiveTime = MyPlanConstants.selectedActiveTimes(this.state.prepareSelectedActiveTime).selectedTime;
+                        // send api if selected active time is different from reducer
+                        if(recoveryObj.minutes_duration !== selectedActiveTime) {
+                            // trigger calculating
+                            this.setState(
+                                { isPrepCalculating: true, },
+                                () => {
+                                    // send api
+                                    this.props.patchActiveTime(user.id, selectedActiveTime)
+                                        .then(response => {
+                                            this.props.clearCompletedExercises();
+                                            this.props.clearCompletedFSExercises();
+                                        })
+                                        .catch(() => {
+                                            AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
+                                        });
+                                }
+                            );
+                        }
+                        // hide slide up panel
+                        this._togglePrepareSlideUpPanel();
+                    }}
+                />
+                <SessionsCompletionModal
+                    isModalOpen={false}
+                    sessions={[
+                      {
+                          sport_name:                     0, // this exists for session_type = 0,2,3,6
+                          strength_and_conditioning_type: null, // this only exists for session_type=1
+                      },
+                      {
+                          sport_name:                     null, // this exists for session_type = 0,2,3,6
+                          strength_and_conditioning_type: 2, // this only exists for session_type=1
+                      },
+                      {
+                          sport_name:                     16, // this exists for session_type = 0,2,3,6
+                          strength_and_conditioning_type: null, // this only exists for session_type=1
+                      },
+                      // {
+                      //     sport_name:                     null, // this exists for session_type = 0,2,3,6
+                      //     strength_and_conditioning_type: 4, // this only exists for session_type=1
+                      // },
+                      // {
+                      //     sport_name:                     24, // this exists for session_type = 0,2,3,6
+                      //     strength_and_conditioning_type: null, // this only exists for session_type=1
+                      // },
+                    ]}
                 />
             </ScrollView>
         );
@@ -1099,7 +1161,7 @@ class MyPlan extends Component {
     renderRecover = (index) => {
         let { isPageLoading, isRecoverCalculating, recover, } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
-        let { plan, } = this.props;
+        let { plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery ? dailyPlanObj.post_recovery : false;
         let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
@@ -1211,8 +1273,10 @@ class MyPlan extends Component {
                                 <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
                                     <ActiveRecoveryBlocks
                                         after={true}
+                                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                                         recoveryObj={recoveryObj}
                                         toggleActiveTimeSlideUpPanel={this._toggleRecoverSlideUpPanel}
+                                        user={user}
                                     />
                                     <Spacer size={12}/>
                                     <Button
@@ -1247,8 +1311,10 @@ class MyPlan extends Component {
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
                                         <ActiveRecoveryBlocks
                                             after={true}
+                                            handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                                             recoveryObj={recoveryObj}
                                             toggleActiveTimeSlideUpPanel={this._toggleRecoverSlideUpPanel}
+                                            user={user}
                                         />
                                         <Spacer size={20}/>
                                         <Text
@@ -1347,7 +1413,29 @@ class MyPlan extends Component {
                     isRecover={true}
                     isSlideUpPanelOpen={this.state.isRecoverSlideUpPanelOpen}
                     selectedActiveTime={this.state.recoverSelectedActiveTime}
-                    toggleSlideUpPanel={() => this._toggleRecoverSlideUpPanel()}
+                    toggleSlideUpPanel={() => {
+                        let selectedActiveTime = MyPlanConstants.selectedActiveTimes(this.state.recoverSelectedActiveTime).selectedTime;
+                        // send api if selected active time is different from reducer
+                        if(recoveryObj.minutes_duration !== selectedActiveTime) {
+                            // trigger calculating
+                            this.setState(
+                                { isRecoverCalculating: true, },
+                                () => {
+                                    // send api
+                                    this.props.patchActiveTime(user.id, selectedActiveTime)
+                                        .then(response => {
+                                            this.props.clearCompletedExercises();
+                                            this.props.clearCompletedFSExercises();
+                                        })
+                                        .catch(() => {
+                                            AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
+                                        });
+                                }
+                            );
+                        }
+                        // hide slide up panel
+                        this._toggleRecoverSlideUpPanel();
+                    }}
                 />
             </ScrollView>
         );

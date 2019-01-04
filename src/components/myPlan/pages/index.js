@@ -14,6 +14,7 @@ import ProgressPill from './ProgressPill';
 import ReadinessSurvey from './ReadinessSurvey';
 import RenderMyPlanTab from './RenderMyPlanTab';
 import ScaleButton from './ScaleButton';
+import SessionsCompletionModal from './SessionsCompletionModal';
 import SingleExerciseItem from './SingleExerciseItem';
 import SoreBodyPart from './SoreBodyPart';
 import SportScheduleBuilder from './SportScheduleBuilder';
@@ -32,6 +33,7 @@ export {
     ReadinessSurvey,
     RenderMyPlanTab,
     ScaleButton,
+    SessionsCompletionModal,
     SingleExerciseItem,
     SoreBodyPart,
     SportScheduleBuilder,

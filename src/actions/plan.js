@@ -243,6 +243,24 @@ const patchActiveRecovery = (user_id, completed_exercises, recovery_type) => {
 };
 
 /**
+  * Patch Active Time
+  */
+const patchActiveTime = (user_id, active_time) => {
+    let bodyObj = {};
+    bodyObj.user_id = user_id;
+    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    bodyObj.active_time = active_time;
+    return dispatch => AppAPI.active_time.patch(false, bodyObj)
+        .then(myPlanData => {
+            return Promise.resolve(myPlanData);
+        })
+        .catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+};
+
+/**
   * Pre Readiness
   */
 const preReadiness = (user_id) => {
@@ -430,6 +448,7 @@ export default {
     markStartedRecovery,
     noSessions,
     patchActiveRecovery,
+    patchActiveTime,
     patchFunctionalStrength,
     postReadinessSurvey,
     postSessionSurvey,
