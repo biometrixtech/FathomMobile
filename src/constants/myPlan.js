@@ -156,11 +156,11 @@ function sorenessPainScaleMapping(type, value, isJoint) {
 const exerciseListOrder = [
     {
         index: 'inhibit_exercises',
-        title: 'INHIBIT',
+        title: 'FOAM ROLL',
     },
     {
         index: 'lengthen_exercises',
-        title: 'LENGTHEN',
+        title: 'STRETCH',
     },
     {
         index: 'activate_exercises',
@@ -606,7 +606,7 @@ const selectedActiveTimes = (selectedIndex = 2) => {
     let possibleActiveTimes = [5, 10, 15, 20];
     return {
         recommendedLabels: [' ', ' ', 'Recommended', ' '],
-        timeLabels:        ['5 mintues', '10 mintues', '15 mintues', '20 mintues'],
+        timeLabels:        ['5 minutes', '10 minutes', '15 minutes', '20 minutes'],
         selectedTime:      possibleActiveTimes[selectedIndex],
     }
 }
