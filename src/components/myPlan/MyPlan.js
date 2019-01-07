@@ -945,6 +945,7 @@ class MyPlan extends Component {
                                 <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
                                     <ActiveRecoveryBlocks
                                         handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                                        isSessionsModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
                                         recoveryObj={recoveryObj}
                                         toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
                                         user={user}
@@ -983,6 +984,7 @@ class MyPlan extends Component {
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
                                         <ActiveRecoveryBlocks
                                             handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                                            isSessionsModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
                                             recoveryObj={recoveryObj}
                                             toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
                                             user={user}

@@ -5,6 +5,7 @@
         after={true}
         handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
         isCalculating={true}
+        isSessionsModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
         recoveryObj={recoveryObj}
         toggleActiveTimeSlideUpPanel={this._toggleActiveTimeSlideUpPanel}
         user={user}
@@ -87,9 +88,10 @@ class ActiveRecoveryBlocks extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        const { user, } = this.props;
+        const { isSessionsModalOpen, user, } = this.props;
         if(!this.state.isAllGoodTooltipOpen && user) {
-            if(user && !user.first_time_experience.includes('active_time_tooltip')) {
+            if(user && !isSessionsModalOpen) {
+            // if(user && !user.first_time_experience.includes('active_time_tooltip') && !isSessionsModalOpen) {
                 _.delay(() => {
                     this.setState({ isAllGoodTooltipOpen: true, });
                 }, 500);
@@ -214,6 +216,7 @@ ActiveRecoveryBlocks.propTypes = {
     handleUpdateFirstTimeExperience: PropTypes.func,
     isCalculating:                   PropTypes.bool,
     isFunctionalStrength:            PropTypes.bool,
+    isSessionsModalOpen:             PropTypes.bool,
     recoveryObj:                     PropTypes.oneOfType([
         PropTypes.object,
         PropTypes.bool,
@@ -227,6 +230,7 @@ ActiveRecoveryBlocks.defaultProps = {
     handleUpdateFirstTimeExperience: null,
     isCalculating:                   false,
     isFunctionalStrength:            false,
+    isSessionsModalOpen:             false,
     recoveryObj:                     false,
     toggleActiveTimeSlideUpPanel:    null,
     user:                            null,
