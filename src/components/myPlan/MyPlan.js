@@ -258,7 +258,7 @@ class MyPlan extends Component {
                     this.props.getSoreBodyParts()
                         .then(soreBodyParts => {
                             let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                            newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
+                            newDailyReadiness.soreness = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
                             this.setState({ dailyReadiness: newDailyReadiness });
                             this._toggleReadinessSurvey();
                             if(hideSplashScreen) {
@@ -566,7 +566,7 @@ class MyPlan extends Component {
                 .then(() => this.props.getSoreBodyParts())
                 .then(soreBodyParts => {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
-                    newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
+                    newDailyReadiness.soreness = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
                     this.setState({
                         isPostSessionSurveyModalOpen: true,
                         loading:                      false,
@@ -652,7 +652,7 @@ class MyPlan extends Component {
                 this.props.getSoreBodyParts()
                     .then(soreBodyParts => {
                         let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                        newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
+                        newDailyReadiness.soreness = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
                         this.setState({ dailyReadiness: newDailyReadiness });
                     })
                     .catch(err => {
