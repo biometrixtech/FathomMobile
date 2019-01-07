@@ -67,11 +67,12 @@ class SessionsCompletionModal extends Component {
 
     componentDidUpdate = (prevProps, prevState) => {
         if(prevProps.isModalOpen !== this.props.isModalOpen) {
+            console.log('this.animation',this.animation);
             _.delay(() => {
                 for (let i = 0; i <= 1; i = i + 0.1) {
                     this.setState(
                         { progressCounter: parseFloat(i.toFixed(1)), },
-                        () => { if(this.state.progressCounter === 1 && this.animation) { this.animation.play(); } }
+                        () => { if(this.state.progressCounter === 1 && this.animation && this.animation.play) { this.animation.play(); } }
                     );
                 }
             }, 1000);

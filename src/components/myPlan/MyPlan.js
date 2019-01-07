@@ -506,8 +506,8 @@ class MyPlan extends Component {
                         event_date:                     null,
                         session_type:                   null,
                         soreness:                       [],
-                        sport_name:                     postSession.sport_name ? postSession.sport_name : null,
-                        strength_and_conditioning_type: postSession.strength_and_conditioning_type ? postSession.strength_and_conditioning_type : null,
+                        sport_name:                     this.state.postSession.sport_name || this.state.postSession.sport_name === 0 ? this.state.postSession.sport_name : null,
+                        strength_and_conditioning_type: this.state.postSession.strength_and_conditioning_type || this.state.postSession.strength_and_conditioning_type === 0 ? this.state.postSession.strength_and_conditioning_type : null,
                     },
                 },
             );

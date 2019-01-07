@@ -90,8 +90,7 @@ class ActiveRecoveryBlocks extends Component {
     componentDidUpdate = (prevProps, prevState) => {
         const { isSessionsModalOpen, user, } = this.props;
         if(!this.state.isAllGoodTooltipOpen && user) {
-            if(user && !isSessionsModalOpen) {
-            // if(user && !user.first_time_experience.includes('active_time_tooltip') && !isSessionsModalOpen) {
+            if(user && !user.first_time_experience.includes('active_time_tooltip') && !isSessionsModalOpen) {
                 _.delay(() => {
                     this.setState({ isAllGoodTooltipOpen: true, });
                 }, 500);

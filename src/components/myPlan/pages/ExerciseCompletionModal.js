@@ -76,7 +76,7 @@ class ExerciseCompletionModal extends Component {
                     newProgressCounters[group] = (exerciseGroup.completed / exerciseGroup.total);
                     this.setState(
                         { progressCounters: newProgressCounters, },
-                        () => { if(this.state.progressCounters[group] === 1 && this.animation[group]) { this.animation[group].play(); } }
+                        () => { if(this.state.progressCounters[group] === 1 && this.animation[group] && this.animation[group].play) { this.animation[group].play(); } }
                     )
                 });
             }, 1000);
