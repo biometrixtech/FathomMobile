@@ -171,7 +171,7 @@ class ActiveRecoveryBlocks extends Component {
                                     null
                                     :
                                     <TabIcon
-                                        color={AppColors.zeplin.yellow}
+                                        color={recoveryObj.completed ? AppColors.zeplin.lightSlate : AppColors.zeplin.yellow}
                                         icon={'pencil'}
                                         iconStyle={[{paddingLeft: AppSizes.paddingSml,}]}
                                         size={24}
