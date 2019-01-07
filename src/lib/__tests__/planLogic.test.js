@@ -1176,7 +1176,7 @@ it('Coaches Dashboard Search Area Render Logic - With Insights', () => {
 it('Coaches Dashboard Section Render Loop Logic - Dipesh Gautam', () => {
     let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
     let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Dipesh', 'Gautam', 0, '1', false);
-    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Dipesh', 'Gautam', '#5EB123', item);
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Dipesh', 'Gautam', '#2EA985', item);
     expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
 });
 
@@ -1247,7 +1247,7 @@ it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
 
 it('Athlete Card Modal Render Logic - No Information - Dipesh', () => {
     let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(0, 'Dipesh', 'Gautam');
-    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*DIPESH GAUTAM', '#5EB123', 'Train as normal');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*DIPESH GAUTAM', '#2EA985', 'Train as normal');
     expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
 });
 
