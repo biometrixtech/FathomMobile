@@ -26,7 +26,7 @@ import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } 
 import { Button, ProgressCircle, Spacer, TabIcon, Text, } from '../../custom';
 
 const modalWidth = (AppSizes.screen.width * 0.9);
-const sessionIconWidth = (modalWidth / 3);
+let sessionIconWidth = (modalWidth / 3);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -160,6 +160,9 @@ class ExerciseCompletionModal extends Component {
                                 {_.map(completionModalExerciseList, (exerciseGroup, group) => {
                                     let thickness = 5;
                                     let iconViewWrapperWidth = (sessionIconWidth - (thickness * 2));
+                                    if(Object.keys(completionModalExerciseList).length === 1 || Object.keys(completionModalExerciseList).length === 2) {
+                                        sessionIconWidth = (modalWidth * 0.50);
+                                    }
                                     return(
                                         <View
                                             key={group}
