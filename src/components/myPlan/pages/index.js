@@ -7,6 +7,7 @@ import ActiveTimeSlideUpPanel from './ActiveTimeSlideUpPanel';
 import AreasOfSoreness from './AreasOfSoreness';
 import BackNextButtons from './BackNextButtons';
 import DefaultListGap from './DefaultListGap';
+import ExerciseCompletionModal from './ExerciseCompletionModal';
 import ExerciseItem from './ExerciseItem';
 import Exercises from './Exercises';
 import PostSessionSurvey from './PostSessionSurvey';
@@ -26,6 +27,7 @@ export {
     AreasOfSoreness,
     BackNextButtons,
     DefaultListGap,
+    ExerciseCompletionModal,
     ExerciseItem,
     Exercises,
     PostSessionSurvey,

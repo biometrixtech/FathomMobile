@@ -1,10 +1,13 @@
 /**
- * SessionsCompletionModal
+ * ExerciseCompletionModal
  *
-    <SessionsCompletionModal
+    <ExerciseCompletionModal
+        completedExercises={completedExercises}
+        exerciseList={exerciseList}
         isModalOpen={this.state.isModalOpen}
         onClose={this._closePrepareSessionsCompletionModal}
-        sessions={[]}
+        onComplete={this._completePrepareExerciseCompletionModal}
+        user={user}
     />
  *
  */
@@ -22,9 +25,8 @@ import Modal from 'react-native-modalbox';
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
 import { Button, ProgressCircle, Spacer, TabIcon, Text, } from '../../custom';
 
-const modalText = MyPlanConstants.randomizeSessionsCompletionModalText();
 const modalWidth = (AppSizes.screen.width * 0.9);
-let sessionIconWidth = (modalWidth / 3);
+const sessionIconWidth = (modalWidth / 3);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -53,29 +55,43 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-class SessionsCompletionModal extends Component {
+class ExerciseCompletionModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
             modalStyle: {
                 height: 200,
             },
-            progressCounter: 0,
+            progressCounters: {},
         };
-        this.animation = {};
+        this.animation = [];
     }
 
     componentDidUpdate = (prevProps, prevState) => {
         if(prevProps.isModalOpen !== this.props.isModalOpen) {
             _.delay(() => {
-                for (let i = 0; i <= 1; i = i + 0.1) {
+                const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises);
+                let newProgressCounters = _.cloneDeep(this.state.progressCounters);
+                _.map(completionModalExerciseList, (exerciseGroup, group) => {
+                    newProgressCounters[group] = (exerciseGroup.completed / exerciseGroup.total);
                     this.setState(
-                        { progressCounter: parseFloat(i.toFixed(1)), },
-                        () => { if(this.state.progressCounter === 1 && this.animation) { this.animation.play(); } }
-                    );
-                }
+                        { progressCounters: newProgressCounters, },
+                        () => { if(this.state.progressCounters[group] === 1 && this.animation[group]) { this.animation[group].play(); } }
+                    )
+                });
             }, 1000);
         }
+    }
+
+    componentWillMount = () => {
+        const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises);
+        let newProgressCounters = _.cloneDeep(this.state.progressCounters);
+        _.map(completionModalExerciseList, (exerciseGroup, group) => {
+            newProgressCounters[group] = 0;
+            this.setState({
+                progressCounters: newProgressCounters,
+            })
+        });
     }
 
     _resizeModal = ev => {
@@ -86,17 +102,34 @@ class SessionsCompletionModal extends Component {
         }
     }
 
+    _closeModal = callback => {
+        this.setState(
+            {
+                modalStyle: {
+                    height: 200,
+                },
+                progressCounters: {},
+            },
+            () => {
+                this.animation = [];
+                callback();
+            }
+        );
+    }
+
     render = () => {
         const {
+            completedExercises,
+            exerciseList,
+            isFS,
             isModalOpen,
             onClose,
-            sessions,
+            onComplete,
+            user,
         } = this.props;
-        const { modalStyle, progressCounter, } = this.state;
-        let filteredIconSessions = _.filter(sessions, session => {
-            return (session.sport_name || session.sport_name === 0) ||
-                (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
-        });
+        const { modalStyle, progressCounters, } = this.state;
+        const isCompleted = completedExercises.length === exerciseList.totalLength;
+        const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(exerciseList, completedExercises);
         return(
             <Modal
                 backdropColor={AppColors.zeplin.darkNavy}
@@ -124,48 +157,25 @@ class SessionsCompletionModal extends Component {
                         <View onLayout={ev => this._resizeModal(ev)}>
                             <Spacer size={AppSizes.paddingXLrg} />
                             <View style={[styles.iconRowWrapper]}>
-                                {_.map(filteredIconSessions, (session, i) => {
-                                    let selectedSession = session.sport_name || session.sport_name === 0 ?
-                                        _.filter(MyPlanConstants.teamSports, ['index', session.sport_name])[0]
-                                        :
-                                        _.filter(MyPlanConstants.strengthConditioningTypes, ['index', session.strength_and_conditioning_type])[0];
+                                {_.map(completionModalExerciseList, (exerciseGroup, group) => {
                                     let thickness = 5;
                                     let iconViewWrapperWidth = (sessionIconWidth - (thickness * 2));
-                                    let iconSize = AppFonts.scaleFont(60);
-                                    if(filteredIconSessions.length === 1 || filteredIconSessions.length === 2) {
-                                        sessionIconWidth = (modalWidth * 0.50);
-                                        iconSize = AppFonts.scaleFont(90);
-                                    }
                                     return(
                                         <View
-                                            key={i}
-                                            style={[
-                                                {alignItems: 'center', justifyContent: 'center', width: sessionIconWidth,},
-                                                i === 3 ?
-                                                    {marginTop: AppSizes.paddingSml, marginLeft: (sessionIconWidth / 2),}
-                                                    : i === 4 ?
-                                                        {marginTop: AppSizes.paddingSml, marginRight: (sessionIconWidth / 2),}
-                                                        :
-                                                        {},
-                                            ]}
+                                            key={group}
+                                            style={{alignItems: 'center', justifyContent: 'center', width: sessionIconWidth,}}
                                         >
-                                            <LottieView
-                                                loop={false}
-                                                ref={animation => {
-                                                    this.animation = animation;
-                                                }}
-                                                source={require('../../../../assets/animation/confetti.json')}
-                                            />
                                             <ProgressCircle
                                                 animated={true}
                                                 borderWidth={0}
                                                 children={
-                                                    <View style={{alignItems: 'center', justifyContent: 'center', width: iconViewWrapperWidth,}}>
-                                                        <TabIcon
-                                                            color={progressCounter === 1 ? AppColors.zeplin.yellow : AppColors.white}
-                                                            icon={selectedSession.icon}
-                                                            size={iconSize}
-                                                            type={selectedSession.iconType}
+                                                    <View style={{flex: 1, width: iconViewWrapperWidth,}}>
+                                                        <LottieView
+                                                            loop={false}
+                                                            ref={animation => {
+                                                                this.animation[group] = animation;
+                                                            }}
+                                                            source={require('../../../../assets/animation/stars.json')}
                                                         />
                                                     </View>
                                                 }
@@ -178,9 +188,9 @@ class SessionsCompletionModal extends Component {
                                                     right:          0,
                                                     top:            0,
                                                 }}
-                                                color={AppColors.zeplin.seaBlue}
+                                                color={isFS ? AppColors.zeplin.seaBlue : AppColors.zeplin.success}
                                                 indeterminate={false}
-                                                progress={progressCounter}
+                                                progress={progressCounters[group]}
                                                 showsText={false}
                                                 size={(sessionIconWidth - AppSizes.paddingLrg)}
                                                 strokeCap={'round'}
@@ -188,38 +198,72 @@ class SessionsCompletionModal extends Component {
                                                 thickness={thickness}
                                                 unfilledColor={AppColors.zeplin.slate}
                                             />
+                                            <Spacer size={AppSizes.paddingSml} />
+                                            <Text oswaldMedium style={{color: isFS ? AppColors.zeplin.seaBlue : AppColors.zeplin.success, fontSize: AppFonts.scaleFont(13),}}>
+                                                {group}
+                                            </Text>
                                         </View>
-                                    );
+                                    )
                                 })}
                             </View>
-                            <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(25), textAlign: 'center',}}>{modalText.header}</Text>
-                            <Spacer size={AppSizes.paddingSml} />
-                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>{modalText.subtext}</Text>
+                            <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>
+                                {`${isCompleted ? 'GREAT WORK' : 'ALMOST DONE'} ${user.personal_data.first_name.toUpperCase()}!`}
+                            </Text>
                             <Spacer size={AppSizes.padding} />
+                            { !isCompleted ?
+                                <Button
+                                    backgroundColor={AppColors.zeplin.yellow}
+                                    buttonStyle={{alignSelf: 'center', borderRadius: 5, width: (modalWidth - (AppSizes.padding * 2)),}}
+                                    containerViewStyle={{marginLeft: 0, marginRight: 0}}
+                                    color={AppColors.white}
+                                    fontFamily={AppStyles.robotoBold.fontFamily}
+                                    fontWeight={AppStyles.robotoBold.fontWeight}
+                                    leftIcon={{
+                                        color: AppColors.zeplin.yellow,
+                                        name:  'chevron-right',
+                                        size:  AppFonts.scaleFont(24),
+                                        style: {flex: 1,},
+                                    }}
+                                    outlined={false}
+                                    onPress={() => this._closeModal(() => onClose())}
+                                    raised={false}
+                                    rightIcon={{
+                                        color: AppColors.white,
+                                        name:  'chevron-right',
+                                        size:  AppFonts.scaleFont(24),
+                                        style: {flex: 1,},
+                                    }}
+                                    textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                                    title={'Finish what I started'}
+                                />
+                                :
+                                null
+                            }
+                            <Spacer size={isCompleted ? 0 : AppSizes.padding} />
                             <Button
-                                backgroundColor={AppColors.zeplin.yellow}
+                                backgroundColor={isCompleted ? AppColors.zeplin.yellow : AppColors.transparent}
                                 buttonStyle={{alignSelf: 'center', borderRadius: 5, width: (modalWidth - (AppSizes.padding * 2)),}}
                                 containerViewStyle={{marginLeft: 0, marginRight: 0}}
-                                color={AppColors.white}
+                                color={isCompleted ? AppColors.white : AppColors.zeplin.yellow}
                                 fontFamily={AppStyles.robotoBold.fontFamily}
                                 fontWeight={AppStyles.robotoBold.fontWeight}
                                 leftIcon={{
-                                    color: AppColors.zeplin.yellow,
+                                    color: AppColors.transparent,
                                     name:  'chevron-right',
                                     size:  AppFonts.scaleFont(24),
                                     style: {flex: 1,},
                                 }}
-                                outlined={false}
-                                onPress={() => onClose()}
+                                outline={isCompleted ? false : true}
+                                onPress={() => this._closeModal(() => onComplete())}
                                 raised={false}
                                 rightIcon={{
-                                    color: AppColors.white,
+                                    color: isCompleted ? AppColors.white : AppColors.transparent,
                                     name:  'chevron-right',
                                     size:  AppFonts.scaleFont(24),
                                     style: {flex: 1,},
                                 }}
                                 textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
-                                title={'Continue'}
+                                title={'Complete'}
                             />
                             <Spacer size={AppSizes.paddingXLrg} />
                         </View>
@@ -230,15 +274,21 @@ class SessionsCompletionModal extends Component {
     }
 }
 
-SessionsCompletionModal.propTypes = {
-    isModalOpen: PropTypes.bool.isRequired,
-    onClose:     PropTypes.func.isRequired,
-    sessions:    PropTypes.array.isRequired,
+ExerciseCompletionModal.propTypes = {
+    completedExercises: PropTypes.array.isRequired,
+    exerciseList:       PropTypes.object.isRequired,
+    isFS:               PropTypes.bool,
+    isModalOpen:        PropTypes.bool.isRequired,
+    onClose:            PropTypes.func.isRequired,
+    onComplete:         PropTypes.func.isRequired,
+    user:               PropTypes.object.isRequired,
 };
 
-SessionsCompletionModal.defaultProps = {};
+ExerciseCompletionModal.defaultProps = {
+    isFS: false,
+};
 
-SessionsCompletionModal.componentName = 'SessionsCompletionModal';
+ExerciseCompletionModal.componentName = 'ExerciseCompletionModal';
 
 /* Export Component ================================================================== */
-export default SessionsCompletionModal;
+export default ExerciseCompletionModal;

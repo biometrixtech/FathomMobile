@@ -121,7 +121,7 @@ const zeplin = {
     seaBlue:                '#0B7B88', // 11, 123, 136
     shadow:                 '#e4e4e4',
     slate:                  '#50535B',
-    success:                '#5EB123',
+    success:                '#2EA985',
     superLight:             '#F5F5F5',
     warning:                '#EBBA2D',
     yellow:                 '#EBBA2D',

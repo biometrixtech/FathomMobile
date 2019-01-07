@@ -108,9 +108,10 @@ export class CustomProgressCircle extends Component {
       const Surface = rotation ? AnimatedSurface : ART.Surface;
       const Shape = animated ? AnimatedArc : Arc;
       const progressValue = animated ? this.progressValue : progress;
-      const angle = animated
-          ? Animated.multiply(progress, CIRCLE)
-          : progress * CIRCLE;
+      const angle = animated ?
+          Animated.multiply(progress, CIRCLE)
+          :
+          progress * CIRCLE;
       return (
           <View style={[styles.container, style]} {...restProps}>
               <Surface

@@ -38,6 +38,7 @@ import {
     ActiveRecoveryBlocks,
     ActiveTimeSlideUpPanel,
     DefaultListGap,
+    ExerciseCompletionModal,
     Exercises,
     PostSessionSurvey,
     ReadinessSurvey,
@@ -143,13 +144,16 @@ class MyPlan extends Component {
             },
             isCompletedAMPMRecoveryModalOpen:     true,
             isFunctionalStrengthCollapsed:        true,
+            isFSExerciseCompletionModalOpen:      false,
             isPageLoading:                        false,
             isPostSessionSurveyModalOpen:         false,
             isPrepCalculating:                    false,
+            isPrepareExerciseCompletionModalOpen: false,
             isPrepareSessionsCompletionModalOpen: false,
             isPrepareSlideUpPanelOpen:            false,
             isReadinessSurveyModalOpen:           false,
             isRecoverCalculating:                 false,
+            isRecoverExerciseCompletionModalOpen: false,
             isRecoverSlideUpPanelOpen:            false,
             isSelectedExerciseModalOpen:          false,
             isTrainSessionsCompletionModalOpen:   false,
@@ -713,42 +717,6 @@ class MyPlan extends Component {
         this.props.setCompletedFSExercises(newCompletedExercises);
     }
 
-    _handleFunctionalStrengthFormSubmit = () => {
-        let functionalStrength = this.props.plan.dailyPlan[0].functional_strength_session;
-        let completedFSExercises = store.getState().plan.completedFSExercises;
-        let isFSCompletedValid = MyPlanConstants.isFSCompletedValid(functionalStrength, completedFSExercises);
-        if(isFSCompletedValid) {
-            this.setState({ loading: true });
-            this.props.patchFunctionalStrength(this.props.user.id, completedFSExercises)
-                .then(() => {
-                    this.props.clearCompletedFSExercises();
-                    this.setState({
-                        isFunctionalStrengthCollapsed: true,
-                        loading:                       false,
-                    });
-                })
-                .catch(() => {
-                    this.setState({ loading: false, });
-                    AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
-                })
-        } else {
-            Alert.alert(
-                'Are You Done?',
-                'Please complete all exercises in Warm-up, Dynamic Movements and Stability to finish Functional Strength.',
-                [
-                    {
-                        text: 'Finish Now',
-                    },
-                    {
-                        text:    'Finish Later',
-                        onPress: () => this.setState({ isFunctionalStrengthCollapsed: true, }),
-                    },
-                ],
-                { cancelable: true }
-            );
-        }
-    }
-
     _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
         this.setState({
             isSelectedExerciseModalOpen: isModalOpen,
@@ -1042,27 +1010,7 @@ class MyPlan extends Component {
                                     handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'pre')}
                                     isLoading={this.state.loading}
                                     isPrep={true}
-                                    toggleCompletedAMPMRecoveryModal={() => {
-                                        this.setState({ loading: true });
-                                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
-                                            .then(res => {
-                                                let newDailyPlanObj = store.getState().plan.dailyPlan[0];
-                                                this.setState(
-                                                    {
-                                                        loading: false,
-                                                        prepare: Object.assign({}, this.state.prepare, {
-                                                            finishedRecovery:          true,
-                                                            isActiveRecoveryCollapsed: true,
-                                                        }),
-                                                    },
-                                                    () => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(newDailyPlanObj)),
-                                                )
-                                            })
-                                            .catch(() => {
-                                                this.setState({ loading: false });
-                                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
-                                            });
-                                    }}
+                                    toggleCompletedAMPMRecoveryModal={() => this.setState({ isPrepareExerciseCompletionModalOpen: true, })}
                                     toggleSelectedExercise={this._toggleSelectedExercise}
                                 />
                             </View>
@@ -1187,6 +1135,34 @@ class MyPlan extends Component {
                     isModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
                     onClose={this._closePrepareSessionsCompletionModal}
                     sessions={dailyReadiness.sessions}
+                />
+                <ExerciseCompletionModal
+                    completedExercises={completedExercises}
+                    exerciseList={exerciseList}
+                    isModalOpen={this.state.isPrepareExerciseCompletionModalOpen}
+                    onClose={() => this.setState({ isPrepareExerciseCompletionModalOpen: false, })}
+                    onComplete={() => {
+                        this.setState({ isPrepareExerciseCompletionModalOpen: false, loading: true, });
+                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
+                            .then(res => {
+                                let newDailyPlanObj = store.getState().plan.dailyPlan[0];
+                                this.setState(
+                                    {
+                                        loading: false,
+                                        prepare: Object.assign({}, this.state.prepare, {
+                                            finishedRecovery:          true,
+                                            isActiveRecoveryCollapsed: true,
+                                        }),
+                                    },
+                                    () => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(newDailyPlanObj)),
+                                )
+                            })
+                            .catch(() => {
+                                this.setState({ loading: false });
+                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
+                            });
+                    }}
+                    user={user}
                 />
             </ScrollView>
         );
@@ -1372,23 +1348,7 @@ class MyPlan extends Component {
                                     exerciseList={exerciseList}
                                     handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'post')}
                                     isLoading={this.state.loading}
-                                    toggleCompletedAMPMRecoveryModal={() => {
-                                        this.setState({ loading: true });
-                                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'post')
-                                            .then(() =>
-                                                this.setState({
-                                                    loading: false,
-                                                    recover: Object.assign({}, this.state.recover, {
-                                                        finished:                  !!completedExercises.length,
-                                                        isActiveRecoveryCollapsed: true,
-                                                    })
-                                                })
-                                            )
-                                            .catch(() => {
-                                                this.setState({ loading: false });
-                                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
-                                            });
-                                    }}
+                                    toggleCompletedAMPMRecoveryModal={() => this.setState({ isRecoverExerciseCompletionModalOpen: true, })}
                                     toggleSelectedExercise={this._toggleSelectedExercise}
                                 />
                             </View>
@@ -1470,6 +1430,30 @@ class MyPlan extends Component {
                         // hide slide up panel
                         this._toggleRecoverSlideUpPanel();
                     }}
+                />
+                <ExerciseCompletionModal
+                    completedExercises={completedExercises}
+                    exerciseList={exerciseList}
+                    isModalOpen={this.state.isRecoverExerciseCompletionModalOpen}
+                    onClose={() => this.setState({ isRecoverExerciseCompletionModalOpen: false, })}
+                    onComplete={() => {
+                        this.setState({ isRecoverExerciseCompletionModalOpen: false, loading: true, });
+                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'post')
+                            .then(() =>
+                                this.setState({
+                                    loading: false,
+                                    recover: Object.assign({}, this.state.recover, {
+                                        finished:                  !!completedExercises.length,
+                                        isActiveRecoveryCollapsed: true,
+                                    })
+                                })
+                            )
+                            .catch(() => {
+                                this.setState({ loading: false });
+                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
+                            });
+                    }}
+                    user={user}
                 />
             </ScrollView>
         );
@@ -1628,7 +1612,7 @@ class MyPlan extends Component {
                         isFSCompletedValid={isFSCompletedValid}
                         isFunctionalStrength={true}
                         isLoading={this.state.loading}
-                        toggleCompletedAMPMRecoveryModal={() => this._handleFunctionalStrengthFormSubmit()}
+                        toggleCompletedAMPMRecoveryModal={() => this.setState({ isFSExerciseCompletionModalOpen: true, })}
                         toggleSelectedExercise={this._toggleSelectedExercise}
                     />
                     :
@@ -1671,8 +1655,8 @@ class MyPlan extends Component {
                             buttonStyle={{justifyContent: 'space-between',}}
                             color={logActivityButtonColor}
                             containerViewStyle={{marginLeft: 22, marginRight: 22,}}
-                            fontFamily={AppStyles.oswaldMedium.fontFamily}
-                            fontWeight={AppStyles.oswaldMedium.fontWeight}
+                            fontFamily={AppStyles.robotoBold.fontFamily}
+                            fontWeight={AppStyles.robotoBold.fontWeight}
                             leftIcon={{
                                 color: logActivityButtonColor,
                                 name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
@@ -1696,8 +1680,8 @@ class MyPlan extends Component {
                                 buttonStyle={{justifyContent: 'space-between',}}
                                 color={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText}
                                 containerViewStyle={{marginLeft: 22, marginRight: 22,}}
-                                fontFamily={AppStyles.oswaldMedium.fontFamily}
-                                fontWeight={AppStyles.oswaldMedium.fontWeight}
+                                fontFamily={AppStyles.robotoBold.fontFamily}
+                                fontWeight={AppStyles.robotoBold.fontWeight}
                                 leftIcon={{
                                     color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
                                     name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
@@ -1801,6 +1785,29 @@ class MyPlan extends Component {
                         sport_name:                     this.state.postSession.sport_name,
                         strength_and_conditioning_type: this.state.postSession.strength_and_conditioning_type,
                     }]}
+                />
+                <ExerciseCompletionModal
+                    completedExercises={completedFSExercises}
+                    exerciseList={fsExerciseList}
+                    isFS={true}
+                    isModalOpen={this.state.isFSExerciseCompletionModalOpen}
+                    onClose={() => this.setState({ isFSExerciseCompletionModalOpen: false, })}
+                    onComplete={() => {
+                        this.setState({ isFSExerciseCompletionModalOpen: false, loading: true, });
+                        this.props.patchFunctionalStrength(this.props.user.id, completedFSExercises)
+                            .then(() => {
+                                this.props.clearCompletedFSExercises();
+                                this.setState({
+                                    isFunctionalStrengthCollapsed: true,
+                                    loading:                       false,
+                                });
+                            })
+                            .catch(() => {
+                                this.setState({ loading: false, });
+                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
+                            })
+                    }}
+                    user={user}
                 />
             </ScrollView>
         );

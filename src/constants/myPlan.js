@@ -611,6 +611,23 @@ const selectedActiveTimes = (selectedIndex = 2) => {
     }
 }
 
+function completionModalExerciseList(exerciseList, completedExercises) {
+    let cleanedExerciseList = {};
+    _.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) => {
+        if(exerciseIndex.length > 0) {
+            cleanedExerciseList[index] = {};
+            cleanedExerciseList[index].completed = 0;
+            cleanedExerciseList[index].total = exerciseIndex.length;
+            _.map(exerciseIndex, (exercise, i) => {
+                if(completedExercises.includes(exercise.library_id)) {
+                    cleanedExerciseList[index].completed += 1;
+                }
+            });
+        }
+    });
+    return cleanedExerciseList;
+}
+
 export default {
     allGoodBodyPartMessage,
     alreadyTrainedNumber,
@@ -623,6 +640,7 @@ export default {
     cleanedPostSessionName,
     coachesDashboardSortBy,
     coachesDashboardCardsData,
+    completionModalExerciseList,
     durationOptionGroups,
     exerciseListButtonStyles,
     fathomSliderText,
