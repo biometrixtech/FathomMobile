@@ -518,7 +518,9 @@ const helperFunctions = {
                     body_part: bodyPartIndex,
                     side:      side,
                 }
-            ]
+            ],
+            hist_sore_status: [],
+            clear_candidates: [],
         };
     },
 
@@ -669,6 +671,8 @@ const helperFunctions = {
             current_position,
             current_sport_name,
             functional_strength_eligible,
+            hist_sore_status: [],
+            clear_candidates: [],
         };
     },
 
@@ -1320,7 +1324,7 @@ it('Readiness Survey Render Logic - On Enter, No Previous Soreness (NOT FS Eligi
 
 it('Readiness Survey Render Logic - On Enter, No Previous Soreness (NOT FS Eligible & In the Morning)', () => {
     let dailyReadiness = helperFunctions.getDailyReadinessDefaultState();
-    let soreBodyParts = {body_parts: [], completed_functional_strength_sessions: 0, current_position: 2, current_sport_name: 14, functional_strength_eligible: false};
+    let soreBodyParts = {body_parts: [], completed_functional_strength_sessions: 0, current_position: 2, current_sport_name: 14, functional_strength_eligible: false, hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
     let isFormValidItems = helperFunctions.readinessSurveyRenderLogicFormValidItems(false, false, true, true, false, false, false, true)
     let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('', false, false, isFormValidItems, false, [], 'MORNING', []);
@@ -1353,7 +1357,7 @@ it('Sore Body Part Render Logic - On Enter, Left Glute', () => {
 
 it('Post Session Survey Render Logic - Sport Builder Done, RPE Selected & All Good Selected, NO Previous Soreness', () => {
     let postSession = helperFunctions.getPostSessionSurveyPostSession(4, [], '2018-11-14T15:30:00Z');
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: true}};
     let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, true), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
@@ -1361,7 +1365,7 @@ it('Post Session Survey Render Logic - Sport Builder Done, RPE Selected & All Go
 
 it('Post Session Survey Render Logic - Sport Builder Done & RPE Selected, NO Previous Soreness', () => {
     let postSession = helperFunctions.getPostSessionSurveyPostSession(4, [], '2018-11-14T15:30:00Z');
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
     let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
@@ -1369,7 +1373,7 @@ it('Post Session Survey Render Logic - Sport Builder Done & RPE Selected, NO Pre
 
 it('Post Session Survey Render Logic - Sport Builder Done, NO Previous Soreness', () => {
     let postSession = helperFunctions.getPostSessionSurveyPostSession(0, [], '2018-11-14T15:30:00Z');
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
     let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
@@ -1377,28 +1381,28 @@ it('Post Session Survey Render Logic - Sport Builder Done, NO Previous Soreness'
 
 it('Post Session Survey Render Logic - On Enter, NO Previous Soreness', () => {
     let postSession = helperFunctions.getPostSessionSurveyPostSession(0, [], '');
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
     let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
 });
 
 it('Area Of Soreness Render Logic - On Enter, NO Previous Soreness', () => {
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let soreBodyPartsState = [];
     let expectedResult = {areaOfSorenessClicked: [], groupedNewBodyPartMap: helperFunctions.getAreaOfSorenessFullGroupedBodyPartMap()};
     expect(PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState)).toEqual(expectedResult);
 });
 
 it('Area Of Soreness Render Logic - Selected Abs, NO Previous Soreness', () => {
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let soreBodyPartsState = helperFunctions.getAreaOfSorenessAddingNonBilateralBodyPartStateObject(3).soreness;
     let expectedResult = {areaOfSorenessClicked: helperFunctions.getAreaOfSorenessAddingNonBilateralBodyPartStateObject(3).soreness, groupedNewBodyPartMap: helperFunctions.getAreaOfSorenessFullGroupedBodyPartMap()};
     expect(PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState)).toEqual(expectedResult);
 });
 
 it('Area Of Soreness Render Logic - Selected Glutes, NO Previous Soreness', () => {
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let soreBodyPartsState = helperFunctions.getAreaOfSorenessAddingBilateralBodyPartExpectedResult(14);
     let expectedResult = {areaOfSorenessClicked: helperFunctions.getAreaOfSorenessAddingBilateralBodyPartExpectedResult(14), groupedNewBodyPartMap: helperFunctions.getAreaOfSorenessFullGroupedBodyPartMap()};
     expect(PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState)).toEqual(expectedResult);

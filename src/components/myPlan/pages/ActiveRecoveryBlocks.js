@@ -98,11 +98,13 @@ class ActiveRecoveryBlocks extends Component {
         }
     }
 
-    _handleTooltipClose = callback => {
+    _handleTooltipClose = () => {
+        const { handleUpdateFirstTimeExperience, toggleActiveTimeSlideUpPanel, } = this.props;
+        handleUpdateFirstTimeExperience('active_time_tooltip');
         this.setState(
             { isAllGoodTooltipOpen: false, },
             () => {
-                callback();
+                toggleActiveTimeSlideUpPanel();
             }
         );
     }
@@ -110,7 +112,6 @@ class ActiveRecoveryBlocks extends Component {
     render = () => {
         const {
             after,
-            handleUpdateFirstTimeExperience,
             isFunctionalStrength,
             recoveryObj,
             toggleActiveTimeSlideUpPanel,
@@ -145,13 +146,19 @@ class ActiveRecoveryBlocks extends Component {
                 </View>
                 <Tooltip
                     animated
-                    childrenViewStyle={[Platform.OS === 'ios' ? {flex: 1,} : {flex: 1, elevation: 2,},]}
+                    childrenViewStyle={
+                        isDisabled ?
+                            [customStyles.recoverBlocksDisabledWrapper]
+                            :
+                            [
+                                customStyles.recoverBlocksActiveWrapper,
+                                customStyles.shadowEffect,
+                                Platform.OS === 'ios' ? {} : {elevation: 2,}
+                            ]
+                    }
                     content={
                         <TooltipContent
-                            handleTooltipClose={() => this._handleTooltipClose(() => {
-                                toggleActiveTimeSlideUpPanel();
-                                handleUpdateFirstTimeExperience('active_time_tooltip');
-                            })}
+                            handleTooltipClose={() => this._handleTooltipClose()}
                             text={MyPlanConstants.userSelectedActiveTimeMessage()}
                         />
                     }
@@ -161,7 +168,16 @@ class ActiveRecoveryBlocks extends Component {
                 >
                     <TouchableHighlight
                         onPress={() => toggleActiveTimeSlideUpPanel ? toggleActiveTimeSlideUpPanel() : null}
-                        style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}
+                        style={[
+                            this.state.isAllGoodTooltipOpen && Platform.OS === 'android' ?
+                                [
+                                    customStyles.recoverBlocksActiveWrapper,
+                                    customStyles.shadowEffect,
+                                    Platform.OS === 'ios' ? {} : {elevation: 2,}
+                                ]
+                                :
+                                {flex: 1,}
+                        ]}
                         underlayColor={isDisabled ? AppColors.white : AppColors.zeplin.superLight}
                     >
                         <View style={{flex: 1,}}>

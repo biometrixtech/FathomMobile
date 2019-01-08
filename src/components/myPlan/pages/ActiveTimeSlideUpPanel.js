@@ -54,13 +54,13 @@ const ActiveTimeSlideUpPanel = ({
                     <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), textAlign: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>{`Please select how long you want your ${isRecover ? 'Active Recovery': 'Mobilize'} session to last.`}</Text>
                     <View style={{flex: 1, flexDirection: 'row', marginVertical: 0,}}>
                         <WheelScrollPicker
-                            activeItemColor={AppColors.white}
+                            activeItemColor={AppColors.zeplin.light}
                             activeItemHighlight={AppColors.zeplin.seaBlue}
                             dataSource={[' ', ' ', ' ', ' ']}
                             highlightBorderWidth={2}
                             highlightColor={AppColors.zeplin.seaBlue}
-                            itemColor={AppColors.zeplin.lightSlate}
-                            itemHeight={AppFonts.scaleFont(18) + AppSizes.paddingSml}
+                            itemColor={AppColors.zeplin.light}
+                            itemHeight={AppFonts.scaleFont(18) + AppSizes.padding}
                             scrollEnabled={false}
                             selectedIndex={1}
                             onValueChange={(data, selectedIndex) => null}
@@ -69,14 +69,14 @@ const ActiveTimeSlideUpPanel = ({
                             wrapperHeight={180}
                         />
                         <WheelScrollPicker
-                            activeItemColor={AppColors.white}
+                            activeItemColor={AppColors.zeplin.light}
                             activeItemHighlight={AppColors.zeplin.seaBlue}
                             addRecommendedTextAtIndex={2}
                             dataSource={MyPlanConstants.selectedActiveTimes().timeLabels}
                             highlightBorderWidth={2}
                             highlightColor={AppColors.zeplin.seaBlue}
-                            itemColor={AppColors.zeplin.lightSlate}
-                            itemHeight={AppFonts.scaleFont(18) + AppSizes.paddingSml}
+                            itemColor={AppColors.zeplin.light}
+                            itemHeight={AppFonts.scaleFont(18) + AppSizes.padding}
                             scrollEnabled={true}
                             selectedIndex={selectedActiveTime}
                             onValueChange={(data, selectedIndex) => changeSelectedActiveTime(selectedIndex)}
@@ -85,13 +85,13 @@ const ActiveTimeSlideUpPanel = ({
                             wrapperHeight={180}
                         />
                         <WheelScrollPicker
-                            activeItemColor={AppColors.white}
+                            activeItemColor={AppColors.zeplin.light}
                             activeItemHighlight={AppColors.zeplin.seaBlue}
                             dataSource={[' ', ' ', ' ', ' ']}
                             highlightBorderWidth={2}
                             highlightColor={AppColors.zeplin.seaBlue}
-                            itemColor={AppColors.zeplin.lightSlate}
-                            itemHeight={AppFonts.scaleFont(18) + AppSizes.paddingSml}
+                            itemColor={AppColors.zeplin.light}
+                            itemHeight={AppFonts.scaleFont(18) + AppSizes.padding}
                             scrollEnabled={false}
                             selectedIndex={1}
                             onValueChange={(data, selectedIndex) => null}

@@ -62,19 +62,26 @@ class SessionsCompletionModal extends Component {
             },
             progressCounter: 0,
         };
-        this.animation = {};
+        this.animation = [];
     }
 
     componentDidUpdate = (prevProps, prevState) => {
         if(prevProps.isModalOpen !== this.props.isModalOpen) {
-            console.log('this.animation',this.animation);
+            let filteredIconSessions = _.filter(this.props.sessions, session => {
+                return (session.sport_name || session.sport_name === 0) ||
+                    (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
+            });
             _.delay(() => {
-                for (let i = 0; i <= 1; i = i + 0.1) {
-                    this.setState(
-                        { progressCounter: parseFloat(i.toFixed(1)), },
-                        () => { if(this.state.progressCounter === 1 && this.animation && this.animation.play) { this.animation.play(); } }
-                    );
-                }
+                this.setState(
+                    { progressCounter: 1, },
+                    () => {
+                        _.map(filteredIconSessions, (session, i) => {
+                            if(this.state.progressCounter === 1 && this.animation[i] && this.animation[i].play) {
+                                this.animation[i].play();
+                            }
+                        })
+                    }
+                );
             }, 1000);
         }
     }
@@ -150,13 +157,6 @@ class SessionsCompletionModal extends Component {
                                                         {},
                                             ]}
                                         >
-                                            <LottieView
-                                                loop={false}
-                                                ref={animation => {
-                                                    this.animation = animation;
-                                                }}
-                                                source={require('../../../../assets/animation/confetti.json')}
-                                            />
                                             <ProgressCircle
                                                 animated={true}
                                                 borderWidth={0}
@@ -188,6 +188,13 @@ class SessionsCompletionModal extends Component {
                                                 textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(40),}}
                                                 thickness={thickness}
                                                 unfilledColor={AppColors.zeplin.slate}
+                                            />
+                                            <LottieView
+                                                loop={false}
+                                                ref={animation => {
+                                                    this.animation[i] = animation;
+                                                }}
+                                                source={require('../../../../assets/animation/confetti.json')}
                                             />
                                         </View>
                                     );

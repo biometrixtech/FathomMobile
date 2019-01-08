@@ -316,6 +316,11 @@ class MyPlan extends Component {
         GATracker.setUser(this.props.user.id);
         GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
         GATracker.setAppName(`Fathom-${store.getState().init.environment}`);
+
+        // TODO: REMOVE
+        // _.delay(() => {
+        //     this.setState({ isPrepareSessionsCompletionModalOpen: true, });
+        // }, 1000)
     }
 
     componentWillReceiveProps = (nextProps) => {
@@ -441,7 +446,6 @@ class MyPlan extends Component {
                     isRecoverCalculating:                 this.state.dailyReadiness.sessions_planned ? false : true,
                     prepare:                              newPrepareObject,
                 },
-                () => { if(!newDailyReadiness.sessions_planned && newDailyReadiness.sessions.length === 0) { this._goToScrollviewPage(2); } },
             );
         }, 500);
         this.props.postReadinessSurvey(newDailyReadiness)
@@ -542,7 +546,7 @@ class MyPlan extends Component {
         let newUserPayloadObj = {};
         newUserPayloadObj.first_time_experience = [value];
         let newUserObj = _.cloneDeep(this.props.user);
-        newUserObj.first_time_experience = [value];
+        newUserObj.first_time_experience.push(value);
         // update reducer as API might take too long to return a value
         store.dispatch({
             type: DispatchActions.USER_REPLACE,
@@ -1137,6 +1141,11 @@ class MyPlan extends Component {
                     isModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
                     onClose={this._closePrepareSessionsCompletionModal}
                     sessions={dailyReadiness.sessions}
+                    // sessions={[
+                    //     {sport_name: 0},
+                    //     {strength_and_conditioning_type: 0},
+                    //     {sport_name: 4},
+                    // ]}
                 />
                 <ExerciseCompletionModal
                     completedExercises={completedExercises}
