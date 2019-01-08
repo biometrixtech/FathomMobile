@@ -333,6 +333,8 @@ class MyPlan extends Component {
             this.props.plan.dailyPlan[0] &&
             nextProps.plan.dailyPlan[0] &&
             nextProps.plan.dailyPlan[0].landing_screen !== this.props.plan.dailyPlan[0].landing_screen &&
+            !this.state.isPrepareSessionsCompletionModalOpen &&
+            !this.state.isTrainSessionsCompletionModalOpen &&
             (
                 nextProps.plan.dailyPlan[0].post_recovery_completed ||
                 nextProps.plan.dailyPlan[0].pre_recovery_completed

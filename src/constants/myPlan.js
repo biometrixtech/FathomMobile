@@ -298,7 +298,7 @@ const availableSessionTypes = [
 const strengthConditioningTypes = [
     { index: 0, order: 1, label: 'Endurance', icon: 'ios-fitness', iconType: 'ionicon', },
     { index: 1, order: 2, label: 'Power', icon: 'ios-fitness', iconType: 'ionicon', },
-    { index: 2, order: 3, label: 'Speed & Agility', icon: 'ios-fitness', iconType: 'ionicon', },
+    { index: 2, order: 3, label: 'Speed & Agility', icon: 'run-fast', iconType: 'material-community', },
     { index: 3, order: 4, label: 'Strength', icon: 'ios-fitness', iconType: 'ionicon', },
     { index: 4, order: 5, label: 'Cross Training', icon: 'ios-fitness', iconType: 'ionicon', },
 ];
