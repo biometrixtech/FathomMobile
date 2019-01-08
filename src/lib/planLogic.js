@@ -114,8 +114,8 @@ const PlanLogic = {
         let newSorenessFields = _.cloneDeep(stateObject.soreness);
         // logic
         if(!areaClicked && isAllGood) {
+            let combinedSoreBodyParts = PlanLogic.handleNewSoreBodyPartLogic(soreBodyPartsPlan);
             let soreBodyParts = _.filter(stateObject.soreness, stateObjectSoreBodyPart => {
-                let combinedSoreBodyParts = _.concat(_.cloneDeep(soreBodyPartsPlan.body_parts), _.cloneDeep(soreBodyPartsPlan.hist_sore_status));
                 let isPrev = _.filter(combinedSoreBodyParts, o => o.body_part === stateObjectSoreBodyPart.body_part && o.side === stateObjectSoreBodyPart.side).length > 0;
                 return isPrev;
             });
@@ -250,7 +250,7 @@ const PlanLogic = {
             }
         });
         let bodyImage = body.image[0] || body.image[2];
-        let combinedSoreBodyParts = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
+        let combinedSoreBodyParts = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
         let bodyIndexInState = _.findIndex(combinedSoreBodyParts, a => a.body_part === body.index);
         if(body.bilateral && bodyIndexInState > -1) {
             let newBodyImageIndex = combinedSoreBodyParts[bodyIndexInState].side === 1 ? 2 : 1;
@@ -279,7 +279,7 @@ const PlanLogic = {
       * - AreasOfSoreness
       */
     handleAreaOfSorenessRenderLogic: (soreBodyParts, soreBodyPartsState) => {
-        let combinedSoreBodyParts = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
+        let combinedSoreBodyParts = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
         let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, (u, i) => _.findIndex(soreBodyParts, o => o.body_part === i) === -1);
         let newBodyPartMap = _.filter(filteredBodyPartMap, o => {
             let itemStateFiltered = _.filter(combinedSoreBodyParts, {body_part: o.index});
@@ -300,13 +300,12 @@ const PlanLogic = {
       * - PostSessionSurvey
       */
     handlePostSessionSurveyRenderLogic: (postSession, soreBodyParts, areasOfSorenessRef) => {
+        let combinedSoreBodyParts = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
         let filteredAreasOfSoreness = _.filter(postSession.soreness, o => {
-            let combinedSoreBodyParts = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
             let doesItInclude = _.filter(combinedSoreBodyParts, a => a.body_part === o.body_part && a.side === o.side);
             return doesItInclude.length === 0;
         });
         let filteredSoreBodyParts = _.filter(postSession.soreness, o => {
-            let combinedSoreBodyParts = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
             let doesItInclude = _.filter(combinedSoreBodyParts, a => a.body_part === o.body_part && a.side === o.side);
             return doesItInclude.length > 0;
         });
@@ -321,8 +320,7 @@ const PlanLogic = {
             isPrevSorenessValid:        (areSoreBodyPartsValid || postSession.soreness.length === 0),
             selectAreasOfSorenessValid: areasOfSorenessRef && areasOfSorenessRef.state ? filteredAreasOfSoreness.length > 0 || areasOfSorenessRef.state.isAllGood : false,
         };
-        let newSoreBodyParts = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
-        newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
+        let newSoreBodyParts = combinedSoreBodyParts;
         return {
             isFormValid,
             isFormValidItems,
@@ -339,13 +337,12 @@ const PlanLogic = {
         let split_evening = 17; // 24hr time to split the evening
         let cutoffForNewDay = 3;
         let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'AFTERNOON' : hourOfDay >= split_evening || hourOfDay < cutoffForNewDay ? 'EVENING' : 'MORNING';
+        let combinedSoreBodyParts = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
         let filteredAreasOfSoreness = _.filter(dailyReadiness.soreness, o => {
-            let combinedSoreBodyParts = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
             let doesItInclude = _.filter(combinedSoreBodyParts, a => a.body_part === o.body_part && a.side === o.side);
             return doesItInclude.length === 0;
         });
         let filteredSoreBodyParts = _.filter(dailyReadiness.soreness, o => {
-            let combinedSoreBodyParts = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
             let doesItInclude = _.filter(combinedSoreBodyParts, a => a.body_part === o.body_part && a.side === o.side);
             return doesItInclude.length > 0;
         });
@@ -394,8 +391,7 @@ const PlanLogic = {
             selectAreasOfSorenessValid:      areasOfSorenessRef && areasOfSorenessRef.state ? filteredAreasOfSoreness.length > 0 || areasOfSorenessRef.state.isAllGood : false,
             willTrainLaterValid:             dailyReadiness.sessions_planned !== null,
         };
-        let newSoreBodyParts = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
-        newSoreBodyParts = _.orderBy(newSoreBodyParts, ['body_part', 'side'], ['asc', 'asc']);
+        let newSoreBodyParts = combinedSoreBodyParts;
         return {
             functionalStrengthTodaySubtext,
             isFirstFunctionalStrength,
@@ -406,6 +402,22 @@ const PlanLogic = {
             partOfDay,
             selectedSportPositions,
         };
+    },
+
+    /**
+      * New Combination of Sore Body Parts Logic
+      * - ReadinessSurvey & PostSessionSurvey
+      */
+    // TODO: UNIT TEST ME
+    handleNewSoreBodyPartLogic: (soreBodyParts) => {
+        let clearCandidates = _.cloneDeep(soreBodyParts.clear_candidates);
+        clearCandidates = _.map(clearCandidates, candidate => {
+            let newCandidate = _.cloneDeep(candidate);
+            newCandidate.isClearCandidate = true;
+            return newCandidate;
+        });
+        let combinedSoreBodyParts = _.concat(clearCandidates, _.cloneDeep(soreBodyParts.hist_sore_status), _.cloneDeep(soreBodyParts.body_parts));
+        return combinedSoreBodyParts;
     },
 
     /**

@@ -104,22 +104,39 @@ class SoreBodyPart extends Component {
         let isBodyPartJoint = bodyPartGroup === 'joint';
         return(
             <View>
-                { isPrevSoreness ?
-                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                        {`How ${helpingVerb} your `}
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {bodyPartName}
+                { bodyPart.isClearCandidate ?
+                    <View style={[AppStyles.paddingVerticalSml]}>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}]}>
+                            {'You have\'t mentioned '}
+                            <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{bodyPart.pain ? 'pain' : 'soreness'}</Text>
+                            {' in your '}
+                            <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{bodyPartName}</Text>
+                            {' recently.'}
                         </Text>
-                        {' felt?'}
-                    </Text>
-                    :
-                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
-                        {'My '}
-                        <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>
-                            {bodyPartName}
+                        <Spacer size={AppSizes.padding} />
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>
+                            {'How has it felt '}
+                            <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}}>
+                                {`${bodyPart.status.includes('acute') ? 'few days' : 'last week'}?`}
+                            </Text>
                         </Text>
-                        {` ${bodyPartName === 'Abdominals' ? 'feel...' : 'feels..'}`}
-                    </Text>
+                    </View>
+                    : isPrevSoreness ?
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>
+                            {`How ${helpingVerb} your `}
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>
+                                {bodyPartName}
+                            </Text>
+                            {' felt?'}
+                        </Text>
+                        :
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
+                            {'My '}
+                            <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>
+                                {bodyPartName}
+                            </Text>
+                            {` ${bodyPartName === 'Abdominals' ? 'feel...' : 'feels..'}`}
+                        </Text>
                 }
                 <View style={[AppStyles.containerCentered]}>
                     { bodyPartMap ?
@@ -127,7 +144,7 @@ class SoreBodyPart extends Component {
                             firstTimeExperience={firstTimeExperience}
                             handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
                             image={bodyPartMap.image[bodyPartSide]}
-                            style={{width: 100, height: 100}}
+                            style={{width: 150, height: 150}}
                         />
                         :
                         null

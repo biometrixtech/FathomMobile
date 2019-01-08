@@ -258,7 +258,7 @@ class MyPlan extends Component {
                     this.props.getSoreBodyParts()
                         .then(soreBodyParts => {
                             let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                            newDailyReadiness.soreness = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
+                            newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
                             this.setState({ dailyReadiness: newDailyReadiness });
                             this._toggleReadinessSurvey();
                             if(hideSplashScreen) {
@@ -416,7 +416,8 @@ class MyPlan extends Component {
         newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
         newDailyReadiness.sleep_quality = this.state.dailyReadiness.sleep_quality;
         newDailyReadiness.readiness = this.state.dailyReadiness.readiness;
-        newDailyReadiness.soreness = this.state.dailyReadiness.soreness.filter(u => u.severity && u.severity > 0);
+        newDailyReadiness.clear_candidates = _.filter(this.state.dailyReadiness.soreness, {isClearCandidate: true});
+        newDailyReadiness.soreness = _.filter(this.state.dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate);
         newDailyReadiness.wants_functional_strength = this.state.dailyReadiness.wants_functional_strength;
         newDailyReadiness.sessions = this.state.dailyReadiness.sessions;
         newDailyReadiness.sessions_planned = this.state.dailyReadiness.sessions_planned;
@@ -469,7 +470,8 @@ class MyPlan extends Component {
         let newPostSessionSurvey = {};
         newPostSessionSurvey.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
         newPostSessionSurvey.RPE = this.state.postSession.RPE;
-        newPostSessionSurvey.soreness = this.state.postSession.soreness.filter(u => u.severity && u.severity > 0);
+        newPostSessionSurvey.clear_candidates = _.filter(this.state.postSession.soreness, {isClearCandidate: true});
+        newPostSessionSurvey.soreness = _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate);
         let postSession = {
             event_date:          this.state.postSession.event_date,
             session_type:        this.state.postSession.session_type,
@@ -570,7 +572,7 @@ class MyPlan extends Component {
                 .then(() => this.props.getSoreBodyParts())
                 .then(soreBodyParts => {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
-                    newDailyReadiness.soreness = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
+                    newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
                     this.setState({
                         isPostSessionSurveyModalOpen: true,
                         loading:                      false,
@@ -656,7 +658,7 @@ class MyPlan extends Component {
                 this.props.getSoreBodyParts()
                     .then(soreBodyParts => {
                         let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                        newDailyReadiness.soreness = _.concat(_.cloneDeep(soreBodyParts.body_parts), _.cloneDeep(soreBodyParts.hist_sore_status));
+                        newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
                         this.setState({ dailyReadiness: newDailyReadiness });
                     })
                     .catch(err => {

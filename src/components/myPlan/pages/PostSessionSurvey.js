@@ -229,7 +229,7 @@ class PostSessionSurvey extends Component {
                         { _.map(newSoreBodyParts, (bodyPart, i) =>
                             <View key={i} onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}>
                                 <SoreBodyPart
-                                    bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
+                                    bodyPart={bodyPart}//MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
                                     bodyPartSide={bodyPart.side}
                                     firstTimeExperience={user.first_time_experience}
                                     handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
