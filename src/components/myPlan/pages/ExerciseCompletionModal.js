@@ -74,12 +74,16 @@ class ExerciseCompletionModal extends Component {
             _.delay(() => {
                 const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises);
                 let newProgressCounters = _.cloneDeep(this.state.progressCounters);
+                let index = 0;
                 _.map(completionModalExerciseList, (exerciseGroup, group) => {
-                    newProgressCounters[group] = (exerciseGroup.completed / exerciseGroup.total);
-                    this.setState(
-                        { progressCounters: newProgressCounters, },
-                        () => { if(this.state.progressCounters[group] === 1 && this.animation[group] && this.animation[group].play) { this.animation[group].play(); } }
-                    )
+                    _.delay(() => {
+                        newProgressCounters[group] = (exerciseGroup.completed / exerciseGroup.total);
+                        this.setState(
+                            { progressCounters: newProgressCounters, },
+                            () => { if(this.state.progressCounters[group] === 1 && this.animation[group] && this.animation[group].play) { this.animation[group].play(); } }
+                        );
+                    }, 500 * index);
+                    index = index + 1;
                 });
             }, 1000);
         }
@@ -92,7 +96,7 @@ class ExerciseCompletionModal extends Component {
             newProgressCounters[group] = 0;
             this.setState({
                 progressCounters: newProgressCounters,
-            })
+            });
         });
     }
 

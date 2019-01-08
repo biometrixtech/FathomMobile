@@ -594,7 +594,8 @@ const randomizeSessionsCompletionModalText = () => {
     ];
     const subtext = [
         'Remember to vary your workout types to reduce over-use injuries!',
-        'Try to varying your training intensity to help you build resilience.',
+        'Try varying your training intensity to help you build resilience!',
+        'Take time for yourself today and prioritize Recovery.',
     ];
     return {
         header:  _.shuffle(header)[0],

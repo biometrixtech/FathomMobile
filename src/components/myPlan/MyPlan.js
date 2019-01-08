@@ -316,11 +316,6 @@ class MyPlan extends Component {
         GATracker.setUser(this.props.user.id);
         GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
         GATracker.setAppName(`Fathom-${store.getState().init.environment}`);
-
-        // TODO: REMOVE
-        // _.delay(() => {
-        //     this.setState({ isPrepareSessionsCompletionModalOpen: true, });
-        // }, 1000)
     }
 
     componentWillReceiveProps = (nextProps) => {
@@ -333,8 +328,6 @@ class MyPlan extends Component {
             this.props.plan.dailyPlan[0] &&
             nextProps.plan.dailyPlan[0] &&
             nextProps.plan.dailyPlan[0].landing_screen !== this.props.plan.dailyPlan[0].landing_screen &&
-            !this.state.isPrepareSessionsCompletionModalOpen &&
-            !this.state.isTrainSessionsCompletionModalOpen &&
             (
                 nextProps.plan.dailyPlan[0].post_recovery_completed ||
                 nextProps.plan.dailyPlan[0].pre_recovery_completed
@@ -1145,11 +1138,6 @@ class MyPlan extends Component {
                     isModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
                     onClose={this._closePrepareSessionsCompletionModal}
                     sessions={dailyReadiness.sessions}
-                    // sessions={[
-                    //     {sport_name: 0},
-                    //     {strength_and_conditioning_type: 0},
-                    //     {sport_name: 4},
-                    // ]}
                 />
                 <ExerciseCompletionModal
                     completedExercises={completedExercises}
@@ -1838,6 +1826,8 @@ class MyPlan extends Component {
             this.tabView &&
             !this.state.isReadinessSurveyModalOpen &&
             !this.state.isPostSessionSurveyModalOpen &&
+            !this.state.isPrepareSessionsCompletionModalOpen &&
+            !this.state.isTrainSessionsCompletionModalOpen &&
             !this.state.loading &&
             pageIndex
         ) {

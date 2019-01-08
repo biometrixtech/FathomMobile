@@ -169,7 +169,7 @@ class ActiveRecoveryBlocks extends Component {
                     <TouchableHighlight
                         onPress={() => toggleActiveTimeSlideUpPanel ? toggleActiveTimeSlideUpPanel() : null}
                         style={[
-                            this.state.isAllGoodTooltipOpen && Platform.OS === 'android' ?
+                            this.state.isAllGoodTooltipOpen ?
                                 [
                                     customStyles.recoverBlocksActiveWrapper,
                                     customStyles.shadowEffect,

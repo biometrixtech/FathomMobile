@@ -24,7 +24,10 @@ import { Button, ProgressCircle, Spacer, TabIcon, Text, } from '../../custom';
 
 const modalText = MyPlanConstants.randomizeSessionsCompletionModalText();
 const modalWidth = (AppSizes.screen.width * 0.9);
+const thickness = 5;
+let iconSize = AppFonts.scaleFont(60);
 let sessionIconWidth = (modalWidth / 3);
+let iconViewWrapperWidth = (sessionIconWidth - (thickness * 2));
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -57,12 +60,17 @@ class SessionsCompletionModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            modalStyle: {
+            isConfettiAnimationVisible:  true,
+            isConfettiAnimation2Visible: true,
+            isConfettiAnimation3Visible: true,
+            modalStyle:                  {
                 height: 200,
             },
-            progressCounter: 0,
+            progressCounters: {},
         };
-        this.animation = [];
+        this.animation = {};
+        this.animation2 = {};
+        this.animation3 = {};
     }
 
     componentDidUpdate = (prevProps, prevState) => {
@@ -72,18 +80,47 @@ class SessionsCompletionModal extends Component {
                     (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
             });
             _.delay(() => {
-                this.setState(
-                    { progressCounter: 1, },
-                    () => {
-                        _.map(filteredIconSessions, (session, i) => {
-                            if(this.state.progressCounter === 1 && this.animation[i] && this.animation[i].play) {
-                                this.animation[i].play();
+                let newProgressCounters = _.cloneDeep(this.state.progressCounters);
+                _.map(filteredIconSessions, (session, i) => {
+                    _.delay(() => {
+                        newProgressCounters[i] = 1;
+                        this.setState(
+                            { progressCounters: newProgressCounters, },
+                            () => {
+                                let isLast = Object.keys(this.state.progressCounters).length === (i + 1);
+                                if(
+                                    isLast &&
+                                    this.animation &&
+                                    this.animation.play &&
+                                    this.animation2 &&
+                                    this.animation2.play &&
+                                    this.animation3 &&
+                                    this.animation3.play
+                                ) {
+                                    this.animation.play();
+                                    this.animation2.play();
+                                    this.animation3.play();
+                                }
                             }
-                        })
-                    }
-                );
+                        );
+                    }, 500 * i);
+                });
             }, 1000);
         }
+    }
+
+    componentWillMount = () => {
+        let filteredIconSessions = _.filter(this.props.sessions, session => {
+            return (session.sport_name || session.sport_name === 0) ||
+                (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
+        });
+        let newProgressCounters = _.cloneDeep(this.state.progressCounters);
+        _.map(filteredIconSessions, (session, i) => {
+            newProgressCounters[i] = 0;
+            this.setState({
+                progressCounters: newProgressCounters,
+            });
+        });
     }
 
     _resizeModal = ev => {
@@ -100,11 +137,21 @@ class SessionsCompletionModal extends Component {
             onClose,
             sessions,
         } = this.props;
-        const { modalStyle, progressCounter, } = this.state;
+        const {
+            isConfettiAnimationVisible,
+            isConfettiAnimation2Visible,
+            isConfettiAnimation3Visible,
+            modalStyle,
+            progressCounters,
+        } = this.state;
         let filteredIconSessions = _.filter(sessions, session => {
             return (session.sport_name || session.sport_name === 0) ||
                 (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
         });
+        if(filteredIconSessions.length === 1 || filteredIconSessions.length === 2) {
+            sessionIconWidth = (modalWidth * 0.50);
+            iconSize = AppFonts.scaleFont(90);
+        }
         return(
             <Modal
                 backdropColor={AppColors.zeplin.darkNavy}
@@ -137,22 +184,15 @@ class SessionsCompletionModal extends Component {
                                         _.filter(MyPlanConstants.teamSports, ['index', session.sport_name])[0]
                                         :
                                         _.filter(MyPlanConstants.strengthConditioningTypes, ['index', session.strength_and_conditioning_type])[0];
-                                    let thickness = 5;
-                                    let iconViewWrapperWidth = (sessionIconWidth - (thickness * 2));
-                                    let iconSize = AppFonts.scaleFont(60);
-                                    if(filteredIconSessions.length === 1 || filteredIconSessions.length === 2) {
-                                        sessionIconWidth = (modalWidth * 0.50);
-                                        iconSize = AppFonts.scaleFont(90);
-                                    }
                                     return(
                                         <View
                                             key={i}
                                             style={[
                                                 {alignItems: 'center', justifyContent: 'center', width: sessionIconWidth,},
                                                 i === 3 ?
-                                                    {marginTop: AppSizes.paddingSml, marginLeft: (sessionIconWidth / 2),}
+                                                    {marginTop: AppSizes.paddingSml, marginLeft: filteredIconSessions.length === 5 ? (sessionIconWidth / 2) : 0,}
                                                     : i === 4 ?
-                                                        {marginTop: AppSizes.paddingSml, marginRight: (sessionIconWidth / 2),}
+                                                        {marginTop: AppSizes.paddingSml, marginRight: filteredIconSessions.length === 5 ? (sessionIconWidth / 2) : 0,}
                                                         :
                                                         {},
                                             ]}
@@ -163,7 +203,7 @@ class SessionsCompletionModal extends Component {
                                                 children={
                                                     <View style={{alignItems: 'center', justifyContent: 'center', width: iconViewWrapperWidth,}}>
                                                         <TabIcon
-                                                            color={progressCounter === 1 ? AppColors.zeplin.yellow : AppColors.white}
+                                                            color={progressCounters[i] === 1 ? AppColors.zeplin.yellow : AppColors.white}
                                                             icon={selectedSession.icon}
                                                             size={iconSize}
                                                             type={selectedSession.iconType}
@@ -181,20 +221,13 @@ class SessionsCompletionModal extends Component {
                                                 }}
                                                 color={AppColors.zeplin.seaBlue}
                                                 indeterminate={false}
-                                                progress={progressCounter}
+                                                progress={progressCounters[i]}
                                                 showsText={false}
                                                 size={(sessionIconWidth - AppSizes.paddingLrg)}
                                                 strokeCap={'round'}
                                                 textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(40),}}
                                                 thickness={thickness}
                                                 unfilledColor={AppColors.zeplin.slate}
-                                            />
-                                            <LottieView
-                                                loop={false}
-                                                ref={animation => {
-                                                    this.animation[i] = animation;
-                                                }}
-                                                source={require('../../../../assets/animation/confetti.json')}
                                             />
                                         </View>
                                     );
@@ -204,10 +237,48 @@ class SessionsCompletionModal extends Component {
                             <Spacer size={AppSizes.paddingSml} />
                             <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>{modalText.subtext}</Text>
                             <Spacer size={AppSizes.padding} />
+                            { isConfettiAnimationVisible ?
+                                <LottieView
+                                    loop={false}
+                                    onAnimationFinish={() => this.setState({ isConfettiAnimationVisible: false, })}
+                                    ref={animation => {
+                                        this.animation = animation;
+                                    }}
+                                    source={require('../../../../assets/animation/confetti.json')}
+                                />
+                                :
+                                null
+                            }
+                            { isConfettiAnimation2Visible ?
+                                <LottieView
+                                    loop={false}
+                                    onAnimationFinish={() => this.setState({ isConfettiAnimation2Visible: false, })}
+                                    ref={animation => {
+                                        this.animation2 = animation;
+                                    }}
+                                    source={require('../../../../assets/animation/confetti.json')}
+                                    speed={2}
+                                />
+                                :
+                                null
+                            }
+                            { isConfettiAnimation3Visible ?
+                                <LottieView
+                                    loop={false}
+                                    onAnimationFinish={() => this.setState({ isConfettiAnimation3Visible: false, })}
+                                    ref={animation => {
+                                        this.animation3 = animation;
+                                    }}
+                                    source={require('../../../../assets/animation/confetti.json')}
+                                    speed={3}
+                                />
+                                :
+                                null
+                            }
                             <Button
                                 backgroundColor={AppColors.zeplin.yellow}
                                 buttonStyle={{alignSelf: 'center', borderRadius: 5, width: (modalWidth - (AppSizes.padding * 2)),}}
-                                containerViewStyle={{marginLeft: 0, marginRight: 0}}
+                                containerViewStyle={{marginLeft: 0, marginRight: 0, zIndex: 10,}}
                                 color={AppColors.white}
                                 fontFamily={AppStyles.robotoBold.fontFamily}
                                 fontWeight={AppStyles.robotoBold.fontWeight}
