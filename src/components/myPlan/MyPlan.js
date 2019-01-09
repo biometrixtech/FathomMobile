@@ -364,11 +364,16 @@ class MyPlan extends Component {
         this.setState(
             {
                 ...this.state,
-                isPostSessionSurveyModalOpen: false,
-                isReadinessSurveyModalOpen:   false,
-                isSelectedExerciseModalOpen:  false,
-                loading:                      false,
-                selectedExercise:             {},
+                isFSExerciseCompletionModalOpen:      false,
+                isPostSessionSurveyModalOpen:         false,
+                isPrepareExerciseCompletionModalOpen: false,
+                isPrepareSessionsCompletionModalOpen: false,
+                isReadinessSurveyModalOpen:           false,
+                isRecoverExerciseCompletionModalOpen: false,
+                isSelectedExerciseModalOpen:          false,
+                isTrainSessionsCompletionModalOpen:   false,
+                loading:                              false,
+                selectedExercise:                     {},
             },
             () => {
                 // continue current logic
@@ -1138,7 +1143,13 @@ class MyPlan extends Component {
                 <SessionsCompletionModal
                     isModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
                     onClose={this._closePrepareSessionsCompletionModal}
-                    sessions={dailyReadiness.sessions}
+                    // sessions={dailyReadiness.sessions}
+                    sessions={[
+                        {strength_and_conditioning_type: 0}, // Endurance
+                        {strength_and_conditioning_type: 4}, // Cross Training
+                        {sport_name: 9}, // Skate Sports
+                        {sport_name: 10}, // Lacrosse
+                    ]}
                 />
                 <ExerciseCompletionModal
                     completedExercises={completedExercises}

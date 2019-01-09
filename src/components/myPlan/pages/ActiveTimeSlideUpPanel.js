@@ -56,7 +56,7 @@ const ActiveTimeSlideUpPanel = ({
                         <WheelScrollPicker
                             activeItemColor={AppColors.zeplin.light}
                             activeItemHighlight={AppColors.zeplin.seaBlue}
-                            dataSource={[' ', ' ', ' ', ' ']}
+                            dataSource={[' ', ' ', ' ', ' ', ' ', ' ']}
                             highlightBorderWidth={2}
                             highlightColor={AppColors.zeplin.seaBlue}
                             itemColor={AppColors.zeplin.light}
@@ -87,7 +87,7 @@ const ActiveTimeSlideUpPanel = ({
                         <WheelScrollPicker
                             activeItemColor={AppColors.zeplin.light}
                             activeItemHighlight={AppColors.zeplin.seaBlue}
-                            dataSource={[' ', ' ', ' ', ' ']}
+                            dataSource={[' ', ' ', ' ', ' ', ' ', ' ']}
                             highlightBorderWidth={2}
                             highlightColor={AppColors.zeplin.seaBlue}
                             itemColor={AppColors.zeplin.light}

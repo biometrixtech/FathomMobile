@@ -25,7 +25,6 @@ import { Button, ProgressCircle, Spacer, TabIcon, Text, } from '../../custom';
 const modalText = MyPlanConstants.randomizeSessionsCompletionModalText();
 const modalWidth = (AppSizes.screen.width * 0.9);
 const thickness = 5;
-let iconSize = AppFonts.scaleFont(60);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -183,6 +182,7 @@ class SessionsCompletionModal extends Component {
             return (session.sport_name || session.sport_name === 0) ||
                 (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
         });
+        let iconSize = AppFonts.scaleFont(60);
         let sessionIconWidth = (modalWidth / 3);
         let iconViewWrapperWidth = (sessionIconWidth - (thickness * 2));
         if(filteredIconSessions.length === 1 || filteredIconSessions.length === 2) {

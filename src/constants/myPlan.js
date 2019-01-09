@@ -296,11 +296,11 @@ const availableSessionTypes = [
 ];
 
 const strengthConditioningTypes = [
-    { index: 0, order: 1, label: 'Endurance', icon: 'ios-fitness', iconType: 'ionicon', },
+    { index: 0, order: 1, label: 'Endurance', icon: 'run', iconType: 'material-community', },
     { index: 1, order: 2, label: 'Power', icon: 'ios-fitness', iconType: 'ionicon', },
     { index: 2, order: 3, label: 'Speed & Agility', icon: 'run-fast', iconType: 'material-community', },
     { index: 3, order: 4, label: 'Strength', icon: 'ios-fitness', iconType: 'ionicon', },
-    { index: 4, order: 5, label: 'Cross Training', icon: 'ios-fitness', iconType: 'ionicon', },
+    { index: 4, order: 5, label: 'Cross Training', icon: 'checkbox-multiple-marked-outline', iconType: 'material-community', },
 ];
 
 const teamSports = [
@@ -313,8 +313,8 @@ const teamSports = [
     { index: 6, order: null, label: 'General Fitness', positions: false, },
     { index: 7, order: null, label: 'Golf', positions: false, },
     { index: 8, order: null, label: 'Gymnastics', positions: false, },
-    { index: 9, order: 10, label: 'Skate Sports', positions: false, icon: 'hockey-sticks', iconType: 'material-community', },
-    { index: 10, order: 7, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], icon: 'volleyball', iconType: 'material-community', },
+    { index: 9, order: 10, label: 'Skate Sports', positions: false, icon: 'run-fast', iconType: 'material-community', },
+    { index: 10, order: 7, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], icon: 'checkbox-marked-outline', iconType: 'material-community', },
     { index: 11, order: 9, label: 'Rowing', positions: false, icon: 'rowing', iconType: 'material-community', },
     { index: 12, order: null, label: 'Rugby', positions: false, },
     { index: 13, order: null, label: 'Diving', positions: false, },
@@ -604,10 +604,10 @@ const randomizeSessionsCompletionModalText = () => {
 };
 
 const selectedActiveTimes = (selectedIndex = 2) => {
-    let possibleActiveTimes = [5, 10, 15, 20];
+    let possibleActiveTimes = [5, 10, 15, 20, 25, 30];
     return {
-        recommendedLabels: [' ', ' ', 'Recommended', ' '],
-        timeLabels:        ['5 minutes', '10 minutes', '15 minutes', '20 minutes'],
+        recommendedLabels: [' ', ' ', 'Recommended', ' ', ' ', ' '],
+        timeLabels:        ['5 minutes', '10 minutes', '15 minutes', '20 minutes', '25 minutes', '30 minutes'],
         selectedTime:      possibleActiveTimes[selectedIndex],
     }
 }
