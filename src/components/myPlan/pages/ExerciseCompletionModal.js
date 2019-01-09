@@ -27,8 +27,6 @@ import { Button, ProgressCircle, Spacer, TabIcon, Text, } from '../../custom';
 
 const modalWidth = (AppSizes.screen.width * 0.9);
 const thickness = 5;
-let sessionIconWidth = ((modalWidth / 3) - 5);
-let iconViewWrapperWidth = (sessionIconWidth - (thickness * 2));
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -109,18 +107,21 @@ class ExerciseCompletionModal extends Component {
     }
 
     _closeModal = callback => {
-        this.setState(
-            {
-                modalStyle: {
-                    height: 200,
+        const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises);
+        let newProgressCounters = _.cloneDeep(this.state.progressCounters);
+        _.map(completionModalExerciseList, (exerciseGroup, group) => {
+            newProgressCounters[group] = 0;
+            this.setState(
+                {
+                    modalStyle: {
+                        height: 200,
+                    },
+                    progressCounters: newProgressCounters,
                 },
-                progressCounters: {},
-            },
-            () => {
-                this.animation = [];
-                callback();
-            }
-        );
+                () => { if(this.animation[group] && this.animation[group].reset) { this.animation[group].reset(); } }
+            );
+        });
+        callback();
     }
 
     render = () => {
@@ -136,6 +137,8 @@ class ExerciseCompletionModal extends Component {
         const { modalStyle, progressCounters, } = this.state;
         const isCompleted = completedExercises.length === exerciseList.totalLength;
         const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(exerciseList, completedExercises);
+        let sessionIconWidth = ((modalWidth / 3) - 5);
+        let iconViewWrapperWidth = (sessionIconWidth - (thickness * 2));
         if(Object.keys(completionModalExerciseList).length === 1 || Object.keys(completionModalExerciseList).length === 2) {
             sessionIconWidth = (modalWidth * 0.50);
         }

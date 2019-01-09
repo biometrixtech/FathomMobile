@@ -26,8 +26,6 @@ const modalText = MyPlanConstants.randomizeSessionsCompletionModalText();
 const modalWidth = (AppSizes.screen.width * 0.9);
 const thickness = 5;
 let iconSize = AppFonts.scaleFont(60);
-let sessionIconWidth = (modalWidth / 3);
-let iconViewWrapperWidth = (sessionIconWidth - (thickness * 2));
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -131,10 +129,47 @@ class SessionsCompletionModal extends Component {
         }
     }
 
+    _onClose = () => {
+        const { onClose, } = this.props;
+        let filteredIconSessions = _.filter(this.props.sessions, session => {
+            return (session.sport_name || session.sport_name === 0) ||
+                (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
+        });
+        let newProgressCounters = _.cloneDeep(this.state.progressCounters);
+        _.map(filteredIconSessions, (session, i) => {
+            newProgressCounters[i] = 0;
+            this.setState(
+                {
+                    isConfettiAnimationVisible:  true,
+                    isConfettiAnimation2Visible: true,
+                    isConfettiAnimation3Visible: true,
+                    modalStyle:                  {
+                        height: 200,
+                    },
+                    progressCounters: newProgressCounters,
+                },
+                () => {
+                    if(
+                        this.animation &&
+                        this.animation.reset &&
+                        this.animation2 &&
+                        this.animation2.reset &&
+                        this.animation3 &&
+                        this.animation3.reset
+                    ) {
+                        this.animation.reset();
+                        this.animation2.reset();
+                        this.animation3.reset();
+                    }
+                }
+            );
+        });
+        onClose();
+    }
+
     render = () => {
         const {
             isModalOpen,
-            onClose,
             sessions,
         } = this.props;
         const {
@@ -148,6 +183,8 @@ class SessionsCompletionModal extends Component {
             return (session.sport_name || session.sport_name === 0) ||
                 (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
         });
+        let sessionIconWidth = (modalWidth / 3);
+        let iconViewWrapperWidth = (sessionIconWidth - (thickness * 2));
         if(filteredIconSessions.length === 1 || filteredIconSessions.length === 2) {
             sessionIconWidth = (modalWidth * 0.50);
             iconSize = AppFonts.scaleFont(90);
@@ -289,7 +326,7 @@ class SessionsCompletionModal extends Component {
                                     style: {flex: 1,},
                                 }}
                                 outlined={false}
-                                onPress={() => onClose()}
+                                onPress={() => this._onClose()}
                                 raised={false}
                                 rightIcon={{
                                     color: AppColors.white,
