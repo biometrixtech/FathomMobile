@@ -115,7 +115,7 @@ class SoreBodyPart extends Component {
                         </Text>
                         <Spacer size={AppSizes.padding} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>
-                            {'How has it felt the last'}
+                            {'How has it felt the last '}
                             <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}}>
                                 {`${bodyPart.status.includes('acute') ? 'few days' : 'week'}?`}
                             </Text>

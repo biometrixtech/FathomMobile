@@ -1134,39 +1134,47 @@ class MyPlan extends Component {
                         this._togglePrepareSlideUpPanel();
                     }}
                 />
-                <SessionsCompletionModal
-                    isModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
-                    onClose={this._closePrepareSessionsCompletionModal}
-                    sessions={dailyReadiness.sessions}
-                />
-                <ExerciseCompletionModal
-                    completedExercises={completedExercises}
-                    exerciseList={exerciseList}
-                    isModalOpen={this.state.isPrepareExerciseCompletionModalOpen}
-                    onClose={() => this.setState({ isPrepareExerciseCompletionModalOpen: false, })}
-                    onComplete={() => {
-                        this.setState({ isPrepareExerciseCompletionModalOpen: false, loading: true, });
-                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
-                            .then(res => {
-                                let newDailyPlanObj = store.getState().plan.dailyPlan[0];
-                                this.setState(
-                                    {
-                                        loading: false,
-                                        prepare: Object.assign({}, this.state.prepare, {
-                                            finishedRecovery:          true,
-                                            isActiveRecoveryCollapsed: true,
-                                        }),
-                                    },
-                                    () => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(newDailyPlanObj)),
-                                )
-                            })
-                            .catch(() => {
-                                this.setState({ loading: false });
-                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
-                            });
-                    }}
-                    user={user}
-                />
+                { this.state.isPrepareSessionsCompletionModalOpen ?
+                    <SessionsCompletionModal
+                        isModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
+                        onClose={this._closePrepareSessionsCompletionModal}
+                        sessions={dailyReadiness.sessions}
+                    />
+                    :
+                    null
+                }
+                { this.state.isPrepareExerciseCompletionModalOpen ?
+                    <ExerciseCompletionModal
+                        completedExercises={completedExercises}
+                        exerciseList={exerciseList}
+                        isModalOpen={this.state.isPrepareExerciseCompletionModalOpen}
+                        onClose={() => this.setState({ isPrepareExerciseCompletionModalOpen: false, })}
+                        onComplete={() => {
+                            this.setState({ isPrepareExerciseCompletionModalOpen: false, loading: true, });
+                            this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
+                                .then(res => {
+                                    let newDailyPlanObj = store.getState().plan.dailyPlan[0];
+                                    this.setState(
+                                        {
+                                            loading: false,
+                                            prepare: Object.assign({}, this.state.prepare, {
+                                                finishedRecovery:          true,
+                                                isActiveRecoveryCollapsed: true,
+                                            }),
+                                        },
+                                        () => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(newDailyPlanObj)),
+                                    )
+                                })
+                                .catch(() => {
+                                    this.setState({ loading: false });
+                                    AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
+                                });
+                        }}
+                        user={user}
+                    />
+                    :
+                    null
+                }
             </ScrollView>
         );
     };
@@ -1434,30 +1442,34 @@ class MyPlan extends Component {
                         this._toggleRecoverSlideUpPanel();
                     }}
                 />
-                <ExerciseCompletionModal
-                    completedExercises={completedExercises}
-                    exerciseList={exerciseList}
-                    isModalOpen={this.state.isRecoverExerciseCompletionModalOpen}
-                    onClose={() => this.setState({ isRecoverExerciseCompletionModalOpen: false, })}
-                    onComplete={() => {
-                        this.setState({ isRecoverExerciseCompletionModalOpen: false, loading: true, });
-                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'post')
-                            .then(() =>
-                                this.setState({
-                                    loading: false,
-                                    recover: Object.assign({}, this.state.recover, {
-                                        finished:                  !!completedExercises.length,
-                                        isActiveRecoveryCollapsed: true,
+                { this.state.isRecoverExerciseCompletionModalOpen ?
+                    <ExerciseCompletionModal
+                        completedExercises={completedExercises}
+                        exerciseList={exerciseList}
+                        isModalOpen={this.state.isRecoverExerciseCompletionModalOpen}
+                        onClose={() => this.setState({ isRecoverExerciseCompletionModalOpen: false, })}
+                        onComplete={() => {
+                            this.setState({ isRecoverExerciseCompletionModalOpen: false, loading: true, });
+                            this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'post')
+                                .then(() =>
+                                    this.setState({
+                                        loading: false,
+                                        recover: Object.assign({}, this.state.recover, {
+                                            finished:                  !!completedExercises.length,
+                                            isActiveRecoveryCollapsed: true,
+                                        })
                                     })
-                                })
-                            )
-                            .catch(() => {
-                                this.setState({ loading: false });
-                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
-                            });
-                    }}
-                    user={user}
-                />
+                                )
+                                .catch(() => {
+                                    this.setState({ loading: false });
+                                    AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
+                                });
+                        }}
+                        user={user}
+                    />
+                    :
+                    null
+                }
             </ScrollView>
         );
     };
@@ -1781,37 +1793,45 @@ class MyPlan extends Component {
                         :
                         null
                 }
-                <SessionsCompletionModal
-                    isModalOpen={this.state.isTrainSessionsCompletionModalOpen}
-                    onClose={this._closeTrainSessionsCompletionModal}
-                    sessions={[{
-                        sport_name:                     this.state.postSession.sport_name,
-                        strength_and_conditioning_type: this.state.postSession.strength_and_conditioning_type,
-                    }]}
-                />
-                <ExerciseCompletionModal
-                    completedExercises={completedFSExercises}
-                    exerciseList={fsExerciseList}
-                    isFS={true}
-                    isModalOpen={this.state.isFSExerciseCompletionModalOpen}
-                    onClose={() => this.setState({ isFSExerciseCompletionModalOpen: false, })}
-                    onComplete={() => {
-                        this.setState({ isFSExerciseCompletionModalOpen: false, loading: true, });
-                        this.props.patchFunctionalStrength(this.props.user.id, completedFSExercises)
-                            .then(() => {
-                                this.props.clearCompletedFSExercises();
-                                this.setState({
-                                    isFunctionalStrengthCollapsed: true,
-                                    loading:                       false,
-                                });
-                            })
-                            .catch(() => {
-                                this.setState({ loading: false, });
-                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
-                            })
-                    }}
-                    user={user}
-                />
+                { this.state.isTrainSessionsCompletionModalOpen ?
+                    <SessionsCompletionModal
+                        isModalOpen={this.state.isTrainSessionsCompletionModalOpen}
+                        onClose={this._closeTrainSessionsCompletionModal}
+                        sessions={[{
+                            sport_name:                     this.state.postSession.sport_name,
+                            strength_and_conditioning_type: this.state.postSession.strength_and_conditioning_type,
+                        }]}
+                    />
+                    :
+                    null
+                }
+                { this.state.isFSExerciseCompletionModalOpen ?
+                    <ExerciseCompletionModal
+                        completedExercises={completedFSExercises}
+                        exerciseList={fsExerciseList}
+                        isFS={true}
+                        isModalOpen={this.state.isFSExerciseCompletionModalOpen}
+                        onClose={() => this.setState({ isFSExerciseCompletionModalOpen: false, })}
+                        onComplete={() => {
+                            this.setState({ isFSExerciseCompletionModalOpen: false, loading: true, });
+                            this.props.patchFunctionalStrength(this.props.user.id, completedFSExercises)
+                                .then(() => {
+                                    this.props.clearCompletedFSExercises();
+                                    this.setState({
+                                        isFunctionalStrengthCollapsed: true,
+                                        loading:                       false,
+                                    });
+                                })
+                                .catch(() => {
+                                    this.setState({ loading: false, });
+                                    AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
+                                })
+                        }}
+                        user={user}
+                    />
+                    :
+                    null
+                }
             </ScrollView>
         );
     };
