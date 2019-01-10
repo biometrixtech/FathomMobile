@@ -364,16 +364,11 @@ class MyPlan extends Component {
         this.setState(
             {
                 ...this.state,
-                isFSExerciseCompletionModalOpen:      false,
-                isPostSessionSurveyModalOpen:         false,
-                isPrepareExerciseCompletionModalOpen: false,
-                isPrepareSessionsCompletionModalOpen: false,
-                isReadinessSurveyModalOpen:           false,
-                isRecoverExerciseCompletionModalOpen: false,
-                isSelectedExerciseModalOpen:          false,
-                isTrainSessionsCompletionModalOpen:   false,
-                loading:                              false,
-                selectedExercise:                     {},
+                isPostSessionSurveyModalOpen: false,
+                isReadinessSurveyModalOpen:   false,
+                isSelectedExerciseModalOpen:  false,
+                loading:                      false,
+                selectedExercise:             {},
             },
             () => {
                 // continue current logic
