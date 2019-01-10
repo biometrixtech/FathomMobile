@@ -1143,13 +1143,7 @@ class MyPlan extends Component {
                 <SessionsCompletionModal
                     isModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
                     onClose={this._closePrepareSessionsCompletionModal}
-                    // sessions={dailyReadiness.sessions}
-                    sessions={[
-                        {strength_and_conditioning_type: 0}, // Endurance
-                        {strength_and_conditioning_type: 4}, // Cross Training
-                        {sport_name: 9}, // Skate Sports
-                        {sport_name: 10}, // Lacrosse
-                    ]}
+                    sessions={dailyReadiness.sessions}
                 />
                 <ExerciseCompletionModal
                     completedExercises={completedExercises}
