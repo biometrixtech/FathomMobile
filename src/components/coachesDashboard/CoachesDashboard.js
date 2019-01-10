@@ -477,7 +477,7 @@ class CoachesDashboard extends Component {
                     </View>
                     : !isThisWeek && complianceColor === AppColors.zeplin.error ?
                         <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
-                            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(18),}]}>{`${compliance.completed.length} ${compliance.completed.length === 1 ? 'SURVEY' : 'SURVEYS'} COMPLETED`}</Text>
+                            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(18),}]}>{`${compliance.complete.length} ${compliance.complete.length === 1 ? 'SURVEY' : 'SURVEYS'} COMPLETED`}</Text>
                             <Spacer size={20} />
                             <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{todayInsufficientDataText}</Text>
                             <Spacer size={20} />

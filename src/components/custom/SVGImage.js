@@ -187,10 +187,10 @@ class SVGImage extends Component {
                 borderColor:    this.props.selected ? AppColors.primary.yellow.hundredPercent : AppColors.white,
                 borderRadius:   AppSizes.screen.widthQuarter + 5,
                 borderWidth:    Platform.OS === 'ios' ? 5 : 6,
-                height:         AppSizes.screen.widthQuarter + 5,
+                height:         this.props.style.height ? this.props.style.height : (AppSizes.screen.widthQuarter + 5),
                 justifyContent: 'center',
                 overflow:       'hidden',
-                width:          AppSizes.screen.widthQuarter + 5,
+                width:          this.props.style.width ? this.props.style.width : (AppSizes.screen.widthQuarter + 5),
             }}>
                 <Image
                     resizeMode={'contain'}

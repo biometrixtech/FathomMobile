@@ -24,7 +24,7 @@ import { Pages, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
 // Components
-import { AreasOfSoreness, BackNextButtons, ProgressPill, ScaleButton, SlideUpPanel, SoreBodyPart, SportScheduleBuilder, } from './';
+import { AreasOfSoreness, BackNextButtons, ProgressPill, ScaleButton, SoreBodyPart, SportScheduleBuilder, SurveySlideUpPanel, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -229,7 +229,7 @@ class PostSessionSurvey extends Component {
                         { _.map(newSoreBodyParts, (bodyPart, i) =>
                             <View key={i} onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}>
                                 <SoreBodyPart
-                                    bodyPart={MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
+                                    bodyPart={bodyPart}//MyPlanConstants.bodyPartMapping[bodyPart.body_part]}
                                     bodyPartSide={bodyPart.side}
                                     firstTimeExperience={user.first_time_experience}
                                     handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
@@ -365,10 +365,10 @@ class PostSessionSurvey extends Component {
                     :
                     null
                 }
-                <SlideUpPanel
+                <SurveySlideUpPanel
                     expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
-                    isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
                     isSlideUpPanelExpanded={this.state.isSlideUpPanelExpanded}
+                    isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
                     toggleSlideUpPanel={isExpanded => this._toggleSlideUpPanel(isExpanded)}
                 />
             </View>

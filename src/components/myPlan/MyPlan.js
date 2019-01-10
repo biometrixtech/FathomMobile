@@ -34,7 +34,18 @@ import { store } from '../../store';
 
 // Components
 import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
-import { Exercises, PostSessionSurvey, ReadinessSurvey, SingleExerciseItem } from './pages';
+import {
+    ActiveRecoveryBlocks,
+    ActiveTimeSlideUpPanel,
+    DefaultListGap,
+    ExerciseCompletionModal,
+    Exercises,
+    PostSessionSurvey,
+    ReadinessSurvey,
+    RenderMyPlanTab,
+    SessionsCompletionModal,
+    SingleExerciseItem,
+} from './pages';
 
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
@@ -73,28 +84,6 @@ const customStyles = StyleSheet.create({
         flex:                    1,
         padding:                 AppSizes.padding,
     },
-    recoverBlocksDisabledWrapper: {
-        backgroundColor: AppColors.white,
-        borderColor:     AppColors.zeplin.lightGrey,
-        borderRadius:    5,
-        borderWidth:     1,
-        flex:            1,
-        marginRight:     9,
-        paddingBottom:   10,
-        paddingLeft:     10,
-        paddingTop:      7,
-    },
-    recoverBlocksActiveWrapper: {
-        backgroundColor: AppColors.zeplin.superLight,
-        borderColor:     AppColors.zeplin.superLight,
-        borderRadius:    5,
-        borderWidth:     1,
-        flex:            1,
-        marginRight:     9,
-        paddingBottom:   10,
-        paddingLeft:     10,
-        paddingTop:      7,
-    },
     shadowEffect: {
         shadowColor:   'rgba(0, 0, 0, 0.16)',
         shadowOffset:  { height: 3, width: 0, },
@@ -122,6 +111,7 @@ class MyPlan extends Component {
             PropTypes.string,
         ]),
         patchActiveRecovery:     PropTypes.func.isRequired,
+        patchActiveTime:         PropTypes.func.isRequired,
         patchFunctionalStrength: PropTypes.func.isRequired,
         plan:                    PropTypes.object.isRequired,
         postReadinessSurvey:     PropTypes.func.isRequired,
@@ -152,18 +142,25 @@ class MyPlan extends Component {
                 // won't be submitted, help with UI
                 already_trained_number:    null,
             },
-            isCompletedAMPMRecoveryModalOpen: true,
-            isFunctionalStrengthCollapsed:    true,
-            isPageLoading:                    false,
-            isPostSessionSurveyModalOpen:     false,
-            isPrepCalculating:                false,
-            isReadinessSurveyModalOpen:       false,
-            isRecoverCalculating:             false,
-            isSelectedExerciseModalOpen:      false,
-            page0:                            {},
-            page1:                            {},
-            page2:                            {},
-            postSession:                      {
+            isCompletedAMPMRecoveryModalOpen:     true,
+            isFunctionalStrengthCollapsed:        true,
+            isFSExerciseCompletionModalOpen:      false,
+            isPageLoading:                        false,
+            isPostSessionSurveyModalOpen:         false,
+            isPrepCalculating:                    false,
+            isPrepareExerciseCompletionModalOpen: false,
+            isPrepareSessionsCompletionModalOpen: false,
+            isPrepareSlideUpPanelOpen:            false,
+            isReadinessSurveyModalOpen:           false,
+            isRecoverCalculating:                 false,
+            isRecoverExerciseCompletionModalOpen: false,
+            isRecoverSlideUpPanelOpen:            false,
+            isSelectedExerciseModalOpen:          false,
+            isTrainSessionsCompletionModalOpen:   false,
+            page0:                                {},
+            page1:                                {},
+            page2:                                {},
+            postSession:                          {
                 RPE:                            null,
                 description:                    '',
                 duration:                       0,
@@ -179,12 +176,14 @@ class MyPlan extends Component {
                 isReadinessSurveyCollapsed: false,
                 isReadinessSurveyCompleted: false,
             },
-            recover: {
+            prepareSelectedActiveTime: 2,
+            recover:                   {
                 finished:                  false,
                 isActiveRecoveryCollapsed: true,
             },
-            selectedExercise: {},
-            train:            {
+            recoverSelectedActiveTime: 2,
+            selectedExercise:          {},
+            train:                     {
                 completedPostPracticeSurvey: false,
                 postPracticeSurveys:         [],
             },
@@ -259,7 +258,7 @@ class MyPlan extends Component {
                     this.props.getSoreBodyParts()
                         .then(soreBodyParts => {
                             let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                            newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
+                            newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
                             this.setState({ dailyReadiness: newDailyReadiness });
                             this._toggleReadinessSurvey();
                             if(hideSplashScreen) {
@@ -406,12 +405,14 @@ class MyPlan extends Component {
     }
 
     _handleReadinessSurveySubmit = () => {
+        // TODO: MOVE TO LOGIC FILE AND UNIT TEST BELOW
         let newDailyReadiness = {};
         newDailyReadiness.user_id = this.props.user.id;
         newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
         newDailyReadiness.sleep_quality = this.state.dailyReadiness.sleep_quality;
         newDailyReadiness.readiness = this.state.dailyReadiness.readiness;
-        newDailyReadiness.soreness = this.state.dailyReadiness.soreness.filter(u => u.severity && u.severity > 0);
+        newDailyReadiness.clear_candidates = _.filter(this.state.dailyReadiness.soreness, {isClearCandidate: true});
+        newDailyReadiness.soreness = _.filter(this.state.dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate);
         newDailyReadiness.wants_functional_strength = this.state.dailyReadiness.wants_functional_strength;
         newDailyReadiness.sessions = this.state.dailyReadiness.sessions;
         newDailyReadiness.sessions_planned = this.state.dailyReadiness.sessions_planned;
@@ -429,16 +430,19 @@ class MyPlan extends Component {
             this.setState(
                 {
                     dailyReadiness: {
-                        readiness:     0,
-                        sleep_quality: 0,
-                        soreness:      [],
+                        readiness:        0,
+                        sessions:         newDailyReadiness.sessions,
+                        sessions_planned: newDailyReadiness.sessions_planned,
+                        sleep_quality:    0,
+                        soreness:         [],
                     },
-                    isPrepCalculating:          this.state.dailyReadiness.sessions_planned ? true : false,
-                    isReadinessSurveyModalOpen: false,
-                    isRecoverCalculating:       this.state.dailyReadiness.sessions_planned ? false : true,
-                    prepare:                    newPrepareObject,
+                    isPrepCalculating:                    this.state.dailyReadiness.sessions_planned ? true : false,
+                    isPrepareSessionsCompletionModalOpen: newDailyReadiness.sessions.length !== 0,
+                    isReadinessSurveyModalOpen:           false,
+                    isRecoverCalculating:                 this.state.dailyReadiness.sessions_planned ? false : true,
+                    prepare:                              newPrepareObject,
                 },
-                () => { if(!newDailyReadiness.sessions_planned) { this._goToScrollviewPage(2); } },
+                () => { if(!newDailyReadiness.sessions_planned && newDailyReadiness.sessions.length === 0) { this._goToScrollviewPage(2); } },
             );
         }, 500);
         this.props.postReadinessSurvey(newDailyReadiness)
@@ -453,6 +457,7 @@ class MyPlan extends Component {
     }
 
     _handlePostSessionSurveySubmit = () => {
+        // TODO: MOVE TO LOGIC FILE AND UNIT TEST BELOW
         /*
          * update for the componentWillReceiveProps call will only
          * result in a tabPage auto change if a postPracticeSurvey
@@ -461,7 +466,8 @@ class MyPlan extends Component {
         let newPostSessionSurvey = {};
         newPostSessionSurvey.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
         newPostSessionSurvey.RPE = this.state.postSession.RPE;
-        newPostSessionSurvey.soreness = this.state.postSession.soreness.filter(u => u.severity && u.severity > 0);
+        newPostSessionSurvey.clear_candidates = _.filter(this.state.postSession.soreness, {isClearCandidate: true});
+        newPostSessionSurvey.soreness = _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate);
         let postSession = {
             event_date:          this.state.postSession.event_date,
             session_type:        this.state.postSession.session_type,
@@ -491,21 +497,21 @@ class MyPlan extends Component {
         _.delay(() => {
             this.setState(
                 {
-                    train:                        newTrainObject,
-                    isPostSessionSurveyModalOpen: false,
-                    isRecoverCalculating:         true,
-                    postSession:                  {
+                    train:                              newTrainObject,
+                    isPostSessionSurveyModalOpen:       false,
+                    isRecoverCalculating:               true,
+                    isTrainSessionsCompletionModalOpen: true,
+                    postSession:                        {
                         RPE:                            null,
                         description:                    '',
                         duration:                       0,
                         event_date:                     null,
                         session_type:                   null,
                         soreness:                       [],
-                        sport_name:                     null,
-                        strength_and_conditioning_type: null,
+                        sport_name:                     this.state.postSession.sport_name || this.state.postSession.sport_name === 0 ? this.state.postSession.sport_name : null,
+                        strength_and_conditioning_type: this.state.postSession.strength_and_conditioning_type || this.state.postSession.strength_and_conditioning_type === 0 ? this.state.postSession.strength_and_conditioning_type : null,
                     },
                 },
-                () => this._goToScrollviewPage(2),
             );
         }, 500);
         this.props.postSessionSurvey(postSession)
@@ -538,7 +544,7 @@ class MyPlan extends Component {
         let newUserPayloadObj = {};
         newUserPayloadObj.first_time_experience = [value];
         let newUserObj = _.cloneDeep(this.props.user);
-        newUserObj.first_time_experience = [value];
+        newUserObj.first_time_experience.push(value);
         // update reducer as API might take too long to return a value
         store.dispatch({
             type: DispatchActions.USER_REPLACE,
@@ -562,7 +568,7 @@ class MyPlan extends Component {
                 .then(() => this.props.getSoreBodyParts())
                 .then(soreBodyParts => {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
-                    newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
+                    newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
                     this.setState({
                         isPostSessionSurveyModalOpen: true,
                         loading:                      false,
@@ -648,7 +654,7 @@ class MyPlan extends Component {
                 this.props.getSoreBodyParts()
                     .then(soreBodyParts => {
                         let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                        newDailyReadiness.soreness = _.cloneDeep(soreBodyParts.body_parts);
+                        newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
                         this.setState({ dailyReadiness: newDailyReadiness });
                     })
                     .catch(err => {
@@ -713,42 +719,6 @@ class MyPlan extends Component {
         this.props.setCompletedFSExercises(newCompletedExercises);
     }
 
-    _handleFunctionalStrengthFormSubmit = () => {
-        let functionalStrength = this.props.plan.dailyPlan[0].functional_strength_session;
-        let completedFSExercises = store.getState().plan.completedFSExercises;
-        let isFSCompletedValid = MyPlanConstants.isFSCompletedValid(functionalStrength, completedFSExercises);
-        if(isFSCompletedValid) {
-            this.setState({ loading: true });
-            this.props.patchFunctionalStrength(this.props.user.id, completedFSExercises)
-                .then(() => {
-                    this.props.clearCompletedFSExercises();
-                    this.setState({
-                        isFunctionalStrengthCollapsed: true,
-                        loading:                       false,
-                    });
-                })
-                .catch(() => {
-                    this.setState({ loading: false, });
-                    AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
-                })
-        } else {
-            Alert.alert(
-                'Are You Done?',
-                'Please complete all exercises in Warm-up, Dynamic Movements and Stability to finish Functional Strength.',
-                [
-                    {
-                        text: 'Finish Now',
-                    },
-                    {
-                        text:    'Finish Later',
-                        onPress: () => this.setState({ isFunctionalStrengthCollapsed: true, }),
-                    },
-                ],
-                { cancelable: true }
-            );
-        }
-    }
-
     _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
         this.setState({
             isSelectedExerciseModalOpen: isModalOpen,
@@ -756,134 +726,108 @@ class MyPlan extends Component {
         });
     }
 
-    renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) {
-        let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
-        isTabActive = isTabActive;
-        const textStyle = AppStyles.tabHeaders;
-        const fontSize = isTabActive ? AppFonts.scaleFont(20) : AppFonts.scaleFont(16);
-        let { page0, page1, page2 } = this.state;
-        let flag = dailyPlanObj && page === dailyPlanObj.nav_bar_indicator ? true : false;
-        let currentPage = this.tabView ? this.tabView.state.currentPage : 0;
-        let page0Width = currentPage === 0 ? AppSizes.screen.widthThreeQuarters : currentPage === 1 ? AppSizes.screen.widthQuarter : 0;
-        let page1Width = currentPage === 0 || currentPage === 2 ? AppSizes.screen.widthQuarter : AppSizes.screen.widthHalf;
-        let page2Width = currentPage === 2 ? AppSizes.screen.widthThreeQuarters : currentPage === 1 ? AppSizes.screen.widthQuarter : 0;
-        let page0ExtraStyles = currentPage === 0 ? {paddingLeft: AppSizes.screen.widthQuarter} : {};
-        let page1ExtraStyles = {};
-        let page2ExtraStyles = currentPage === 2 ? {paddingRight: AppSizes.screen.widthQuarter} : {};
-        let page0Styles = [AppStyles.leftTabBar, page0ExtraStyles, {width: page0Width,}];
-        let page1Styles = [AppStyles.centerTabBar, page1ExtraStyles, {width: page1Width,}];
-        let page2Styles = [AppStyles.rightTabBar, page2ExtraStyles, {width: page2Width,}];
-        let textBorderWidth = 4;
-        let iconSize = 10;
-        let iconLeftPadding = 2;
-        let iconBottomPadding = textBorderWidth;
-        let extraIconContainerStyle = isTabActive ?
+    _togglePrepareSlideUpPanel = () => {
+        this.setState({
+            isPrepareSlideUpPanelOpen: !this.state.isPrepareSlideUpPanelOpen,
+        });
+    }
+
+    _toggleRecoverSlideUpPanel = () => {
+        this.setState({
+            isRecoverSlideUpPanelOpen: !this.state.isRecoverSlideUpPanelOpen,
+        });
+    }
+
+    _changeSelectedActiveTime = (selectedIndex, prepareOrRecover) => {
+        this.setState({
+            [prepareOrRecover]: selectedIndex,
+        });
+    }
+
+    _closePrepareSessionsCompletionModal = () => {
+        const { dailyReadiness, } = this.state;
+        if(!dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
+            this.setState(
+                {
+                    dailyReadiness: {
+                        readiness:        0,
+                        sessions:         [],
+                        sessions_planned: false,
+                        sleep_quality:    0,
+                        soreness:         [],
+                    },
+                    isPrepareSessionsCompletionModalOpen: false,
+                },
+                () => this._goToScrollviewPage(2)
+            );
+        } else if(dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
+            this.setState({
+                dailyReadiness: {
+                    readiness:        0,
+                    sessions:         [],
+                    sessions_planned: false,
+                    sleep_quality:    0,
+                    soreness:         [],
+                },
+                isPrepareSessionsCompletionModalOpen: false,
+            });
+        }
+    }
+
+    _closeTrainSessionsCompletionModal = () => {
+        this.setState(
             {
-                marginBottom: iconBottomPadding,
-            }
-            :
-            {};
-        // making sure we can only drag horizontally if our modals are closed and nothing is loading
-        let isScrollLocked = !this.state.isReadinessSurveyModalOpen && !this.state.isPostSessionSurveyModalOpen && !this.state.loading ? false : true;
-        return <TouchableWithoutFeedback
-            key={`${name}_${page}`}
-            accessible={true}
-            accessibilityLabel={name}
-            accessibilityTraits='button'
-            onPress={() => isScrollLocked ? null : onPressHandler(page)}
-            onLayout={onLayoutHandler}
-        >
-            <View style={[page === 0 ? page0Styles : page === 1 ? page1Styles : page2Styles]}>
-                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
-                    <View>
-                        <Text
-                            oswaldMedium
-                            onLayout={event =>
-                                this.setState({
-                                    page0: page === 0 ? event.nativeEvent.layout : page0,
-                                    page1: page === 1 ? event.nativeEvent.layout : page1,
-                                    page2: page === 2 ? event.nativeEvent.layout : page2,
-                                })
-                            }
-                            style={[
-                                textStyle,
-                                {
-                                    color: isTabActive ? AppColors.zeplin.darkNavy : AppColors.zeplin.lightSlate,
-                                    fontSize,
-                                }
-                            ]}
-                        >
-                            {name}
-                        </Text>
-                    </View>
-                    {
-                        flag ?
-                            <TabIcon
-                                containerStyle={[AppStyles.indicatorContainerStyles, extraIconContainerStyle, {paddingLeft: iconLeftPadding,}]}
-                                size={iconSize}
-                                selected
-                                color={AppColors.primary.yellow.hundredPercent}
-                                icon={'fiber-manual-record'}
-                            />
-                            :
-                            null
-                    }
-                </View>
-            </View>
-        </TouchableWithoutFeedback>;
-    }
-
-    renderDefaultListGap = (size = 10) => {
-        return(
-            <View style={{ flexDirection: 'row' }}>
-                <View style={{ borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent, marginLeft: 10, width: AppFonts.scaleFont(24) / 2}} />
-                <Spacer size={size}/>
-            </View>
-        )
-    }
-
-    renderActiveRecoveryBlocks = (recoveryObj, after, isCalculating) => {
-        let isDisabled = !recoveryObj && !recoveryObj.minutes_duration && !recoveryObj.impact_score;
-        return(
-            <View style={{ flexDirection: 'row', }}>
-                <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
-                    <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'WHEN'}</Text>
-                    <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
-                </View>
-                <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
-                    <Text oswaldMedium style={{ color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, paddingBottom: 5, fontSize: AppFonts.scaleFont(14),}}>{'ACTIVE TIME'}</Text>
-                    <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
-                        <View style={{backgroundColor: isDisabled ? AppColors.zeplin.light : AppColors.transparent, borderRadius: 3,}}>
-                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(28),}}>
-                                {isDisabled ? '00' : `${recoveryObj && recoveryObj.minutes_duration ? parseFloat(recoveryObj.minutes_duration).toFixed(1) : '0'}`}
-                            </Text>
-                        </View>
-                        <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: isDisabled ? 0 : AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
-                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(12),}}>{'MINS'}</Text>
-                        </View>
-                    </View>
-                </View>
-                <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper, {marginRight: 10,}] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, {marginRight: 10,}, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
-                    <Text oswaldMedium style={{ color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, paddingBottom: 5, fontSize: AppFonts.scaleFont(14),}}>{'IMPACT SCORE'}</Text>
-                    <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
-                        <View style={{backgroundColor: isDisabled ? AppColors.zeplin.light : AppColors.transparent, borderRadius: 3,}}>
-                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(28),}}>
-                                {isDisabled ? '00' : `${recoveryObj && recoveryObj.impact_score ? parseFloat(recoveryObj.impact_score).toFixed(1) : '0'}`}
-                            </Text>
-                        </View>
-                        <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: isDisabled ? 0 : AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
-                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(12),}}>{'/ 5'}</Text>
-                        </View>
-                    </View>
-                </View>
-            </View>
+                isTrainSessionsCompletionModalOpen: false,
+                postSession:                        {
+                    RPE:                            null,
+                    description:                    '',
+                    duration:                       0,
+                    event_date:                     null,
+                    session_type:                   null,
+                    soreness:                       [],
+                    sport_name:                     null,
+                    strength_and_conditioning_type: null,
+                },
+            },
+            () => this._goToScrollviewPage(2)
         );
     }
 
-    renderPrepare = (index) => {
-        let { isPageLoading, isPrepCalculating, prepare, } = this.state;
+    renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) {
+        return(
+            <RenderMyPlanTab
+                isPostSessionSurveyModalOpen={this.state.isPostSessionSurveyModalOpen}
+                isReadinessSurveyModalOpen={this.state.isReadinessSurveyModalOpen}
+                isTabActive={isTabActive}
+                key={`${name}_${page}`}
+                loading={this.state.loading}
+                name={name}
+                onLayoutHandler={onLayoutHandler}
+                onPressHandler={onPressHandler}
+                page={page}
+                plan={this.props.plan}
+                statePages={{
+                    page0: this.state.page0,
+                    page1: this.state.page1,
+                    page2: this.state.page2,
+                }}
+                subtitle={subtitle}
+                tabView={this.tabView}
+                updatePageState={(page0, page1, page2) =>
+                    this.setState({
+                        page0,
+                        page1,
+                        page2,
+                    })
+                }
+            />
+        );
+    }
+
+    renderPrepare = index => {
+        let { dailyReadiness, isPageLoading, isPrepCalculating, prepare, } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
-        let { plan, } = this.props;
+        let { plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         // assuming AM/PM is switching to something for prepared vs recover
         let recoveryObj = dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
@@ -925,7 +869,9 @@ class MyPlan extends Component {
                             title={'READINESS SURVEY'}
                             titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                         />
-                        {this.renderDefaultListGap(24)}
+                        <DefaultListGap
+                            size={24}
+                        />
                     </View>
                     :
                     null
@@ -951,14 +897,16 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                {this.renderActiveRecoveryBlocks(false)}
+                                <ActiveRecoveryBlocks />
                             </View>
                         </View>
-                    : disabled && isPrepCalculating ?
+                    : disabled || isPrepCalculating ?
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                {this.renderActiveRecoveryBlocks(false, false, isPrepCalculating)}
+                                <ActiveRecoveryBlocks
+                                    isCalculating={isPrepCalculating}
+                                />
                                 <Spacer size={12}/>
                                 <Button
                                     backgroundColor={AppColors.white}
@@ -997,7 +945,13 @@ class MyPlan extends Component {
                             <View style={{ flex: 1, flexDirection: 'row' }}>
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                 <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                    {this.renderActiveRecoveryBlocks(recoveryObj)}
+                                    <ActiveRecoveryBlocks
+                                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                                        isSessionsModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
+                                        recoveryObj={recoveryObj}
+                                        toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
+                                        user={user}
+                                    />
                                     <Spacer size={12}/>
                                     <Button
                                         backgroundColor={AppColors.primary.yellow.hundredPercent}
@@ -1030,7 +984,13 @@ class MyPlan extends Component {
                                 <View style={{flexDirection: 'row',}}>
                                     <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
-                                        {this.renderActiveRecoveryBlocks(recoveryObj)}
+                                        <ActiveRecoveryBlocks
+                                            handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                                            isSessionsModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
+                                            recoveryObj={recoveryObj}
+                                            toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
+                                            user={user}
+                                        />
                                         <Spacer size={20}/>
                                         <Text
                                             onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed }) }) }
@@ -1054,27 +1014,7 @@ class MyPlan extends Component {
                                     handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'pre')}
                                     isLoading={this.state.loading}
                                     isPrep={true}
-                                    toggleCompletedAMPMRecoveryModal={() => {
-                                        this.setState({ loading: true });
-                                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
-                                            .then(res => {
-                                                let newDailyPlanObj = store.getState().plan.dailyPlan[0];
-                                                this.setState(
-                                                    {
-                                                        loading: false,
-                                                        prepare: Object.assign({}, this.state.prepare, {
-                                                            finishedRecovery:          true,
-                                                            isActiveRecoveryCollapsed: true,
-                                                        }),
-                                                    },
-                                                    () => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(newDailyPlanObj)),
-                                                )
-                                            })
-                                            .catch(() => {
-                                                this.setState({ loading: false });
-                                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
-                                            });
-                                    }}
+                                    toggleCompletedAMPMRecoveryModal={() => this.setState({ isPrepareExerciseCompletionModalOpen: true, })}
                                     toggleSelectedExercise={this._toggleSelectedExercise}
                                 />
                             </View>
@@ -1082,7 +1022,9 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{flex: 1, paddingLeft: 30, paddingRight: 15}}>
-                                {this.renderActiveRecoveryBlocks(recoveryObj)}
+                                <ActiveRecoveryBlocks
+                                    recoveryObj={recoveryObj}
+                                />
                             </View>
                         </View>
                     :
@@ -1165,6 +1107,67 @@ class MyPlan extends Component {
                         style={[AppStyles.activityIndicator]}
                     /> : null
                 }
+                <ActiveTimeSlideUpPanel
+                    changeSelectedActiveTime={(selectedIndex) => this._changeSelectedActiveTime(selectedIndex, 'prepareSelectedActiveTime')}
+                    isSlideUpPanelOpen={this.state.isPrepareSlideUpPanelOpen}
+                    selectedActiveTime={this.state.prepareSelectedActiveTime}
+                    toggleSlideUpPanel={() => {
+                        let selectedActiveTime = MyPlanConstants.selectedActiveTimes(this.state.prepareSelectedActiveTime).selectedTime;
+                        // send api if selected active time is different from reducer
+                        if(recoveryObj.minutes_duration !== selectedActiveTime) {
+                            // trigger calculating
+                            this.setState(
+                                { isPrepCalculating: true, },
+                                () => {
+                                    // send api
+                                    this.props.patchActiveTime(user.id, selectedActiveTime)
+                                        .then(response => {
+                                            this.props.clearCompletedExercises();
+                                            this.props.clearCompletedFSExercises();
+                                        })
+                                        .catch(() => {
+                                            AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
+                                        });
+                                }
+                            );
+                        }
+                        // hide slide up panel
+                        this._togglePrepareSlideUpPanel();
+                    }}
+                />
+                <SessionsCompletionModal
+                    isModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
+                    onClose={this._closePrepareSessionsCompletionModal}
+                    sessions={dailyReadiness.sessions}
+                />
+                <ExerciseCompletionModal
+                    completedExercises={completedExercises}
+                    exerciseList={exerciseList}
+                    isModalOpen={this.state.isPrepareExerciseCompletionModalOpen}
+                    onClose={() => this.setState({ isPrepareExerciseCompletionModalOpen: false, })}
+                    onComplete={() => {
+                        this.setState({ isPrepareExerciseCompletionModalOpen: false, loading: true, });
+                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
+                            .then(res => {
+                                let newDailyPlanObj = store.getState().plan.dailyPlan[0];
+                                this.setState(
+                                    {
+                                        loading: false,
+                                        prepare: Object.assign({}, this.state.prepare, {
+                                            finishedRecovery:          true,
+                                            isActiveRecoveryCollapsed: true,
+                                        }),
+                                    },
+                                    () => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(newDailyPlanObj)),
+                                )
+                            })
+                            .catch(() => {
+                                this.setState({ loading: false });
+                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
+                            });
+                    }}
+                    user={user}
+                />
             </ScrollView>
         );
     };
@@ -1172,7 +1175,7 @@ class MyPlan extends Component {
     renderRecover = (index) => {
         let { isPageLoading, isRecoverCalculating, recover, } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
-        let { plan, } = this.props;
+        let { plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery ? dailyPlanObj.post_recovery : false;
         let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
@@ -1217,7 +1220,9 @@ class MyPlan extends Component {
                             <View style={{ flex: 1, flexDirection: 'row', }}>
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                 <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                    {this.renderActiveRecoveryBlocks(false, true)}
+                                    <ActiveRecoveryBlocks
+                                        after={true}
+                                    />
                                 </View>
                             </View>
                             <Spacer size={25}/>
@@ -1238,7 +1243,10 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                {this.renderActiveRecoveryBlocks(false, true, isRecoverCalculating)}
+                                <ActiveRecoveryBlocks
+                                    after={true}
+                                    isCalculating={isRecoverCalculating}
+                                />
                                 <Spacer size={12}/>
                                 <Button
                                     backgroundColor={AppColors.white}
@@ -1277,7 +1285,13 @@ class MyPlan extends Component {
                             <View style={{ flex: 1, flexDirection: 'row', }}>
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                 <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                    {this.renderActiveRecoveryBlocks(recoveryObj, true)}
+                                    <ActiveRecoveryBlocks
+                                        after={true}
+                                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                                        recoveryObj={recoveryObj}
+                                        toggleActiveTimeSlideUpPanel={this._toggleRecoverSlideUpPanel}
+                                        user={user}
+                                    />
                                     <Spacer size={12}/>
                                     <Button
                                         backgroundColor={AppColors.primary.yellow.hundredPercent}
@@ -1309,7 +1323,13 @@ class MyPlan extends Component {
                                 <View style={{flexDirection: 'row',}}>
                                     <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
-                                        {this.renderActiveRecoveryBlocks(recoveryObj, true)}
+                                        <ActiveRecoveryBlocks
+                                            after={true}
+                                            handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                                            recoveryObj={recoveryObj}
+                                            toggleActiveTimeSlideUpPanel={this._toggleRecoverSlideUpPanel}
+                                            user={user}
+                                        />
                                         <Spacer size={20}/>
                                         <Text
                                             onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) }) }
@@ -1332,23 +1352,7 @@ class MyPlan extends Component {
                                     exerciseList={exerciseList}
                                     handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'post')}
                                     isLoading={this.state.loading}
-                                    toggleCompletedAMPMRecoveryModal={() => {
-                                        this.setState({ loading: true });
-                                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'post')
-                                            .then(() =>
-                                                this.setState({
-                                                    loading: false,
-                                                    recover: Object.assign({}, this.state.recover, {
-                                                        finished:                  !!completedExercises.length,
-                                                        isActiveRecoveryCollapsed: true,
-                                                    })
-                                                })
-                                            )
-                                            .catch(() => {
-                                                this.setState({ loading: false });
-                                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
-                                            });
-                                    }}
+                                    toggleCompletedAMPMRecoveryModal={() => this.setState({ isRecoverExerciseCompletionModalOpen: true, })}
                                     toggleSelectedExercise={this._toggleSelectedExercise}
                                 />
                             </View>
@@ -1356,7 +1360,10 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row', }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                {this.renderActiveRecoveryBlocks(recoveryObj, true)}
+                                <ActiveRecoveryBlocks
+                                    after={true}
+                                    recoveryObj={recoveryObj}
+                                />
                             </View>
                         </View>
                     :
@@ -1399,6 +1406,59 @@ class MyPlan extends Component {
                         :
                         null
                 }
+                <ActiveTimeSlideUpPanel
+                    changeSelectedActiveTime={(selectedIndex) => this._changeSelectedActiveTime(selectedIndex, 'recoverSelectedActiveTime')}
+                    isRecover={true}
+                    isSlideUpPanelOpen={this.state.isRecoverSlideUpPanelOpen}
+                    selectedActiveTime={this.state.recoverSelectedActiveTime}
+                    toggleSlideUpPanel={() => {
+                        let selectedActiveTime = MyPlanConstants.selectedActiveTimes(this.state.recoverSelectedActiveTime).selectedTime;
+                        // send api if selected active time is different from reducer
+                        if(recoveryObj.minutes_duration !== selectedActiveTime) {
+                            // trigger calculating
+                            this.setState(
+                                { isRecoverCalculating: true, },
+                                () => {
+                                    // send api
+                                    this.props.patchActiveTime(user.id, selectedActiveTime)
+                                        .then(response => {
+                                            this.props.clearCompletedExercises();
+                                            this.props.clearCompletedFSExercises();
+                                        })
+                                        .catch(() => {
+                                            AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
+                                        });
+                                }
+                            );
+                        }
+                        // hide slide up panel
+                        this._toggleRecoverSlideUpPanel();
+                    }}
+                />
+                <ExerciseCompletionModal
+                    completedExercises={completedExercises}
+                    exerciseList={exerciseList}
+                    isModalOpen={this.state.isRecoverExerciseCompletionModalOpen}
+                    onClose={() => this.setState({ isRecoverExerciseCompletionModalOpen: false, })}
+                    onComplete={() => {
+                        this.setState({ isRecoverExerciseCompletionModalOpen: false, loading: true, });
+                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'post')
+                            .then(() =>
+                                this.setState({
+                                    loading: false,
+                                    recover: Object.assign({}, this.state.recover, {
+                                        finished:                  !!completedExercises.length,
+                                        isActiveRecoveryCollapsed: true,
+                                    })
+                                })
+                            )
+                            .catch(() => {
+                                this.setState({ loading: false });
+                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
+                            });
+                    }}
+                    user={user}
+                />
             </ScrollView>
         );
     };
@@ -1497,21 +1557,10 @@ class MyPlan extends Component {
                           <View style={{ flex: 1, flexDirection: 'row', }}>
                               <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: this.state.isFunctionalStrengthCollapsed ? AppColors.zeplin.lightGrey : AppColors.white, }}/>
                               <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                                  <View style={{ flexDirection: 'row' }}>
-                                      <View style={{ flex: 1, marginRight: 9, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, borderRadius: 5 }}>
-                                          <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'WHEN'}</Text>
-                                          <Text oswaldMedium style={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20) }}>{'ANYTIME DURING THE DAY'}</Text>
-                                      </View>
-                                      <View style={{ flex: 1, marginRight: 10, paddingTop: 7, paddingLeft: 13, paddingBottom: 10, backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, borderRadius: 5 }}>
-                                          <Text h7 oswaldMedium style={{ color: AppColors.zeplin.lightGrey, paddingBottom: 5, fontSize: AppFonts.scaleFont(12) }}>{'ACTIVE TIME'}</Text>
-                                          <View style={{ alignItems: 'center', flexDirection: 'row', flex: 1, }}>
-                                              <Text h1 oswaldMedium style={{ color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32) }}>{`${parseFloat(functionalStrength.minutes_duration).toFixed(1)}`}</Text>
-                                              <View style={{alignItems: 'flex-end', flex: 1, height: AppStyles.h1.lineHeight, }}>
-                                                  <Text h7 oswaldMedium style={{ color: AppColors.zeplin.greyText, fontSize: AppFonts.scaleFont(12), position: 'absolute', bottom: 8, left: 2, }}>{'MINS'}</Text>
-                                              </View>
-                                          </View>
-                                      </View>
-                                  </View>
+                                  <ActiveRecoveryBlocks
+                                      isFunctionalStrength={true}
+                                      recoveryObj={functionalStrength}
+                                  />
                                   <Spacer size={this.state.isFunctionalStrengthCollapsed ? 12 : 20}/>
                                   { this.state.isFunctionalStrengthCollapsed ?
                                       <Button
@@ -1567,7 +1616,7 @@ class MyPlan extends Component {
                         isFSCompletedValid={isFSCompletedValid}
                         isFunctionalStrength={true}
                         isLoading={this.state.loading}
-                        toggleCompletedAMPMRecoveryModal={() => this._handleFunctionalStrengthFormSubmit()}
+                        toggleCompletedAMPMRecoveryModal={() => this.setState({ isFSExerciseCompletionModalOpen: true, })}
                         toggleSelectedExercise={this._toggleSelectedExercise}
                     />
                     :
@@ -1593,7 +1642,9 @@ class MyPlan extends Component {
                                     title={cleanedPostSessionName}
                                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                                 />
-                                { this.renderDefaultListGap(24) }
+                                <DefaultListGap
+                                    size={24}
+                                />
                             </View>
                         );
                     })
@@ -1608,8 +1659,8 @@ class MyPlan extends Component {
                             buttonStyle={{justifyContent: 'space-between',}}
                             color={logActivityButtonColor}
                             containerViewStyle={{marginLeft: 22, marginRight: 22,}}
-                            fontFamily={AppStyles.oswaldMedium.fontFamily}
-                            fontWeight={AppStyles.oswaldMedium.fontWeight}
+                            fontFamily={AppStyles.robotoBold.fontFamily}
+                            fontWeight={AppStyles.robotoBold.fontWeight}
                             leftIcon={{
                                 color: logActivityButtonColor,
                                 name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
@@ -1624,7 +1675,7 @@ class MyPlan extends Component {
                                 size:  AppFonts.scaleFont(30),
                             }}
                             textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
-                            title={'LOG COMPLETED ACTIVITY'}
+                            title={'Log completed activity'}
                         />
                         <Spacer size={10} />
                         { !offDaySelected ?
@@ -1633,8 +1684,8 @@ class MyPlan extends Component {
                                 buttonStyle={{justifyContent: 'space-between',}}
                                 color={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText}
                                 containerViewStyle={{marginLeft: 22, marginRight: 22,}}
-                                fontFamily={AppStyles.oswaldMedium.fontFamily}
-                                fontWeight={AppStyles.oswaldMedium.fontWeight}
+                                fontFamily={AppStyles.robotoBold.fontFamily}
+                                fontWeight={AppStyles.robotoBold.fontWeight}
                                 leftIcon={{
                                     color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
                                     name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
@@ -1649,7 +1700,7 @@ class MyPlan extends Component {
                                     size:  AppFonts.scaleFont(30),
                                 }}
                                 textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
-                                title={'OFF DAY'}
+                                title={'Off day'}
                             />
                             :
                             null
@@ -1731,6 +1782,37 @@ class MyPlan extends Component {
                         :
                         null
                 }
+                <SessionsCompletionModal
+                    isModalOpen={this.state.isTrainSessionsCompletionModalOpen}
+                    onClose={this._closeTrainSessionsCompletionModal}
+                    sessions={[{
+                        sport_name:                     this.state.postSession.sport_name,
+                        strength_and_conditioning_type: this.state.postSession.strength_and_conditioning_type,
+                    }]}
+                />
+                <ExerciseCompletionModal
+                    completedExercises={completedFSExercises}
+                    exerciseList={fsExerciseList}
+                    isFS={true}
+                    isModalOpen={this.state.isFSExerciseCompletionModalOpen}
+                    onClose={() => this.setState({ isFSExerciseCompletionModalOpen: false, })}
+                    onComplete={() => {
+                        this.setState({ isFSExerciseCompletionModalOpen: false, loading: true, });
+                        this.props.patchFunctionalStrength(this.props.user.id, completedFSExercises)
+                            .then(() => {
+                                this.props.clearCompletedFSExercises();
+                                this.setState({
+                                    isFunctionalStrengthCollapsed: true,
+                                    loading:                       false,
+                                });
+                            })
+                            .catch(() => {
+                                this.setState({ loading: false, });
+                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
+                            })
+                    }}
+                    user={user}
+                />
             </ScrollView>
         );
     };
@@ -1745,6 +1827,8 @@ class MyPlan extends Component {
             this.tabView &&
             !this.state.isReadinessSurveyModalOpen &&
             !this.state.isPostSessionSurveyModalOpen &&
+            !this.state.isPrepareSessionsCompletionModalOpen &&
+            !this.state.isTrainSessionsCompletionModalOpen &&
             !this.state.loading &&
             pageIndex
         ) {

@@ -11,7 +11,7 @@
 
 // what {version} are we on?
 const metaAPIVersion = '/meta/1_0';
-const plansAPIVersion = '/plans/2_0';
+const plansAPIVersion = '/plans/2_1';
 const usersAPIVersion = '/users/2_1';
 
 export default {
@@ -49,6 +49,7 @@ export default {
         ['update_user',        `${usersAPIVersion}/user/{userId}`],
         // My Plan specific routes
         ['active_recovery',       `${plansAPIVersion}/active_recovery`], // POST/PATCH
+        ['active_time',           `${plansAPIVersion}/active_recovery/active_time`], // PATCH
         ['app_logs',              `${plansAPIVersion}/misc/app_logs`], // POST
         ['clear_user_data',       `${plansAPIVersion}/misc/clear_user_data`], // POST
         ['coach_dashboard',       `${plansAPIVersion}/coach/{user_id}/dashboard`], // GET
