@@ -518,7 +518,9 @@ const helperFunctions = {
                     body_part: bodyPartIndex,
                     side:      side,
                 }
-            ]
+            ],
+            hist_sore_status: [],
+            clear_candidates: [],
         };
     },
 
@@ -669,6 +671,8 @@ const helperFunctions = {
             current_position,
             current_sport_name,
             functional_strength_eligible,
+            hist_sore_status: [],
+            clear_candidates: [],
         };
     },
 
@@ -713,30 +717,30 @@ const helperFunctions = {
 
     getStrengthConditioningTypes: () => {
         return [
-            { index: 0, order: 1, label: 'Endurance', },
-            { index: 1, order: 2, label: 'Power', },
-            { index: 2, order: 3, label: 'Speed & Agility', },
-            { index: 3, order: 4, label: 'Strength', },
-            { index: 4, order: 5, label: 'Cross Training', },
+            { index: 0, order: 1, label: 'Endurance', icon: 'run', iconType: 'material-community', },
+            { index: 1, order: 2, label: 'Power', icon: 'ios-fitness', iconType: 'ionicon', },
+            { index: 2, order: 3, label: 'Speed & Agility', icon: 'run-fast', iconType: 'material-community', },
+            { index: 3, order: 4, label: 'Strength', icon: 'ios-fitness', iconType: 'ionicon', },
+            { index: 4, order: 5, label: 'Cross Training', icon: 'checkbox-multiple-marked-outline', iconType: 'material-community', },
         ];
     },
 
     getTeamSports: () => {
         return [
-            { index: 0, order: 1, label: 'Basketball', positions: ['Center', 'Forward', 'Guard'], },
-            { index: 1, order: 2, label: 'Baseball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], },
-            { index: 3, order: 3, label: 'Cycling', positions: false, },
-            { index: 17, order: 4, label: 'Distance Running', positions: false, },
-            { index: 4, order: 5, label: 'Field Hockey', positions: ['Goalie', 'Fullback', 'Midfielder', 'Forward'], },
-            { index: 5, order: 6, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], },
-            { index: 10, order: 7, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], },
-            { index: 15, order: 8, label: 'Pool Sports', positions: false, },
-            { index: 11, order: 9, label: 'Rowing', positions: false, },
-            { index: 9, order: 10, label: 'Skate Sports', positions: false, },
-            { index: 14, order: 11, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], },
-            { index: 2, order: 12, label: 'Softball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], },
-            { index: 16, order: 13, label: 'Tennis', positions: false, },
-            { index: 24, order: 14, label: 'Track & Field', positions: ['Sprinter', 'Jumper', 'Thrower', 'Distance'], },
+            { index: 0, order: 1, label: 'Basketball', positions: ['Center', 'Forward', 'Guard'], icon: 'basketball', iconType: 'material-community', },
+            { index: 1, order: 2, label: 'Baseball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], icon: 'baseball', iconType: 'material-community', },
+            { index: 3, order: 3, label: 'Cycling', positions: false, icon: 'ios-bicycle', iconType: 'ionicon', },
+            { index: 17, order: 4, label: 'Distance Running', positions: false, icon: 'run', iconType: 'material-community', },
+            { index: 4, order: 5, label: 'Field Hockey', positions: ['Goalie', 'Fullback', 'Midfielder', 'Forward'], icon: 'hockey-sticks', iconType: 'material-community', },
+            { index: 5, order: 6, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], icon: 'football', iconType: 'material-community', },
+            { index: 10, order: 7, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], icon: 'checkbox-marked-outline', iconType: 'material-community', },
+            { index: 15, order: 8, label: 'Pool Sports', positions: false, icon: 'pool', iconType: 'material-community', },
+            { index: 11, order: 9, label: 'Rowing', positions: false, icon: 'rowing', iconType: 'material-community', },
+            { index: 9, order: 10, label: 'Skate Sports', positions: false, icon: 'run-fast', iconType: 'material-community', },
+            { index: 14, order: 11, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], icon: 'ios-football', iconType: 'ionicon', },
+            { index: 2, order: 12, label: 'Softball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], icon: 'baseball', iconType: 'material-community', },
+            { index: 16, order: 13, label: 'Tennis', positions: false, icon: 'md-tennisball', iconType: 'ionicon', },
+            { index: 24, order: 14, label: 'Track & Field', positions: ['Sprinter', 'Jumper', 'Thrower', 'Distance'], icon: 'run-fast', iconType: 'material-community', },
         ];
     },
 
@@ -782,7 +786,7 @@ const helperFunctions = {
         return {
             athletes:   [{}, {}, {}, {}, {}, {}, {}],
             compliance: {
-                completed: [
+                complete: [
                     {first_name: 'Dipesh', last_name: 'Gautam'},
                     {first_name: 'Mazen', last_name: 'Chami'},
                 ],
@@ -1176,7 +1180,7 @@ it('Coaches Dashboard Search Area Render Logic - With Insights', () => {
 it('Coaches Dashboard Section Render Loop Logic - Dipesh Gautam', () => {
     let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
     let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Dipesh', 'Gautam', 0, '1', false);
-    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Dipesh', 'Gautam', '#5EB123', item);
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Dipesh', 'Gautam', '#2EA985', item);
     expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
 });
 
@@ -1199,12 +1203,12 @@ it('Coaches Dashboard Render Logic - 1 Team', () => {
     let selectedTeamIndex = 0;
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
-        coachesDashboardData[selectedTeamIndex].compliance.completed,
+        coachesDashboardData[selectedTeamIndex].compliance.complete,
         '#C8432A',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
-        coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
-        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
         coachesDashboardData[selectedTeamIndex],
         coachesDashboardData[selectedTeamIndex].compliance.training_compliance
     );
@@ -1216,12 +1220,12 @@ it('Coaches Dashboard Render Logic - 2 Teams, First Team Selected', () => {
     let selectedTeamIndex = 0;
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
-        coachesDashboardData[selectedTeamIndex].compliance.completed,
+        coachesDashboardData[selectedTeamIndex].compliance.complete,
         '#C8432A',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
-        coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
-        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
         coachesDashboardData[selectedTeamIndex],
         coachesDashboardData[selectedTeamIndex].compliance.training_compliance
     );
@@ -1233,12 +1237,12 @@ it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
     let selectedTeamIndex = 1;
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
-        coachesDashboardData[selectedTeamIndex].compliance.completed,
+        coachesDashboardData[selectedTeamIndex].compliance.complete,
         '#C8432A',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
-        coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
-        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
         coachesDashboardData[selectedTeamIndex],
         coachesDashboardData[selectedTeamIndex].compliance.training_compliance
     );
@@ -1247,7 +1251,7 @@ it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
 
 it('Athlete Card Modal Render Logic - No Information - Dipesh', () => {
     let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(0, 'Dipesh', 'Gautam');
-    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*DIPESH GAUTAM', '#5EB123', 'Train as normal');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*DIPESH GAUTAM', '#2EA985', 'Train as normal');
     expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
 });
 
@@ -1320,7 +1324,7 @@ it('Readiness Survey Render Logic - On Enter, No Previous Soreness (NOT FS Eligi
 
 it('Readiness Survey Render Logic - On Enter, No Previous Soreness (NOT FS Eligible & In the Morning)', () => {
     let dailyReadiness = helperFunctions.getDailyReadinessDefaultState();
-    let soreBodyParts = {body_parts: [], completed_functional_strength_sessions: 0, current_position: 2, current_sport_name: 14, functional_strength_eligible: false};
+    let soreBodyParts = {body_parts: [], completed_functional_strength_sessions: 0, current_position: 2, current_sport_name: 14, functional_strength_eligible: false, hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
     let isFormValidItems = helperFunctions.readinessSurveyRenderLogicFormValidItems(false, false, true, true, false, false, false, true)
     let expectedResult = helperFunctions.readinessSurveyRenderLogicExpectedResult('', false, false, isFormValidItems, false, [], 'MORNING', []);
@@ -1353,7 +1357,7 @@ it('Sore Body Part Render Logic - On Enter, Left Glute', () => {
 
 it('Post Session Survey Render Logic - Sport Builder Done, RPE Selected & All Good Selected, NO Previous Soreness', () => {
     let postSession = helperFunctions.getPostSessionSurveyPostSession(4, [], '2018-11-14T15:30:00Z');
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: true}};
     let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, true), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
@@ -1361,7 +1365,7 @@ it('Post Session Survey Render Logic - Sport Builder Done, RPE Selected & All Go
 
 it('Post Session Survey Render Logic - Sport Builder Done & RPE Selected, NO Previous Soreness', () => {
     let postSession = helperFunctions.getPostSessionSurveyPostSession(4, [], '2018-11-14T15:30:00Z');
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
     let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
@@ -1369,7 +1373,7 @@ it('Post Session Survey Render Logic - Sport Builder Done & RPE Selected, NO Pre
 
 it('Post Session Survey Render Logic - Sport Builder Done, NO Previous Soreness', () => {
     let postSession = helperFunctions.getPostSessionSurveyPostSession(0, [], '2018-11-14T15:30:00Z');
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
     let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
@@ -1377,28 +1381,28 @@ it('Post Session Survey Render Logic - Sport Builder Done, NO Previous Soreness'
 
 it('Post Session Survey Render Logic - On Enter, NO Previous Soreness', () => {
     let postSession = helperFunctions.getPostSessionSurveyPostSession(0, [], '');
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
     let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
 });
 
 it('Area Of Soreness Render Logic - On Enter, NO Previous Soreness', () => {
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let soreBodyPartsState = [];
     let expectedResult = {areaOfSorenessClicked: [], groupedNewBodyPartMap: helperFunctions.getAreaOfSorenessFullGroupedBodyPartMap()};
     expect(PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState)).toEqual(expectedResult);
 });
 
 it('Area Of Soreness Render Logic - Selected Abs, NO Previous Soreness', () => {
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let soreBodyPartsState = helperFunctions.getAreaOfSorenessAddingNonBilateralBodyPartStateObject(3).soreness;
     let expectedResult = {areaOfSorenessClicked: helperFunctions.getAreaOfSorenessAddingNonBilateralBodyPartStateObject(3).soreness, groupedNewBodyPartMap: helperFunctions.getAreaOfSorenessFullGroupedBodyPartMap()};
     expect(PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState)).toEqual(expectedResult);
 });
 
 it('Area Of Soreness Render Logic - Selected Glutes, NO Previous Soreness', () => {
-    let soreBodyParts = {body_parts: []};
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let soreBodyPartsState = helperFunctions.getAreaOfSorenessAddingBilateralBodyPartExpectedResult(14);
     let expectedResult = {areaOfSorenessClicked: helperFunctions.getAreaOfSorenessAddingBilateralBodyPartExpectedResult(14), groupedNewBodyPartMap: helperFunctions.getAreaOfSorenessFullGroupedBodyPartMap()};
     expect(PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState)).toEqual(expectedResult);

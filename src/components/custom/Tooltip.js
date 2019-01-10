@@ -38,6 +38,7 @@ type Props = {
     backgroundColor: string,
     backgroundStyle: StyleSheet.Styles,
     children: Node,
+    childrenViewStyle: StyleSheet.Styles,
     content: Node,
     contentStyle: StyleSheet.Styles,
     displayArea: RectType,
@@ -83,17 +84,18 @@ type ExtendedStylesProps = {
 
 class Tooltip extends Component<Props, State> {
   static defaultProps = {
-      animated:         false,
-      arrowSize:        DEFAULT_ARROW_SIZE,
-      backgroundColor:  'rgba(0,0,0,0.5)',
-      children:         null,
-      content:          <View />,
-      displayArea:      DEFAULT_DISPLAY_AREA,
-      isVisible:        false,
-      onChildLongPress: null,
-      onChildPress:     null,
-      onClose:          null,
-      placement:        'auto',
+      animated:          false,
+      arrowSize:         DEFAULT_ARROW_SIZE,
+      backgroundColor:   'rgba(0,0,0,0.5)',
+      children:          null,
+      childrenViewStyle: {},
+      content:           <View />,
+      displayArea:       DEFAULT_DISPLAY_AREA,
+      isVisible:         false,
+      onChildLongPress:  null,
+      onChildPress:      null,
+      onClose:           null,
+      placement:         'auto',
   };
 
   constructor(props: Props) {
@@ -472,7 +474,7 @@ class Tooltip extends Component<Props, State> {
           return null;
       }
       const { measurementsFinished, placement } = this.state;
-      const { backgroundColor, children, content, isVisible, onClose } = this.props;
+      const { backgroundColor, children, childrenViewStyle, content, isVisible, onClose } = this.props;
       const extendedStyles = this._getExtendedStyles();
       const contentStyle = [styles.content, ...extendedStyles.content];
       const arrowColor = StyleSheet.flatten(contentStyle).backgroundColor;
@@ -518,6 +520,7 @@ class Tooltip extends Component<Props, State> {
                       this.childWrapper = r;
                   }}
                   onLayout={this.measureChildRect}
+                  style={childrenViewStyle}
               >
                   {children}
               </View>

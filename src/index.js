@@ -25,6 +25,11 @@ class Root extends Component {
     constructor(props) {
         super(props);
 
+        this._networkMonitor = new NetworkMonitor(this.props.store);
+        this._dropdown = null;
+    }
+
+    componentDidMount = () => {
         /**
          * Setting up Push Notifications here as this encapsulates
          * all of the embedded components so we'll be able to receive
@@ -41,12 +46,6 @@ class Root extends Component {
             // ANDROID ONLY: GCM or FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)
             senderID:           Platform.OS === 'ios' ? null : '394820950629', // Both the Android and iOS senderID in Firebase
         });
-
-        this._networkMonitor = new NetworkMonitor(this.props.store);
-        this._dropdown = null;
-    }
-
-    componentDidMount = () => {
         /*
          * Maintenance Window
          */

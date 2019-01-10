@@ -6,7 +6,7 @@
  */
 
 // import RN components
-import { Image } from 'react-native';
+import { Image, Platform, } from 'react-native';
 
 // const & libs
 import { Actions , AppColors, } from './';
@@ -156,11 +156,11 @@ function sorenessPainScaleMapping(type, value, isJoint) {
 const exerciseListOrder = [
     {
         index: 'inhibit_exercises',
-        title: 'INHIBIT',
+        title: 'FOAM ROLL',
     },
     {
         index: 'lengthen_exercises',
-        title: 'LENGTHEN',
+        title: 'STRETCH',
     },
     {
         index: 'activate_exercises',
@@ -296,39 +296,39 @@ const availableSessionTypes = [
 ];
 
 const strengthConditioningTypes = [
-    { index: 0, order: 1, label: 'Endurance', },
-    { index: 1, order: 2, label: 'Power', },
-    { index: 2, order: 3, label: 'Speed & Agility', },
-    { index: 3, order: 4, label: 'Strength', },
-    { index: 4, order: 5, label: 'Cross Training', },
+    { index: 0, order: 1, label: 'Endurance', icon: 'run', iconType: 'material-community', },
+    { index: 1, order: 2, label: 'Power', icon: `${Platform.OS === 'android' ? 'md' : 'ios'}-fitness`, iconType: 'ionicon', },
+    { index: 2, order: 3, label: 'Speed & Agility', icon: 'run-fast', iconType: 'material-community', },
+    { index: 3, order: 4, label: 'Strength', icon: `${Platform.OS === 'android' ? 'md' : 'ios'}-fitness`, iconType: 'ionicon', },
+    { index: 4, order: 5, label: 'Cross Training', icon: 'checkbox-multiple-marked-outline', iconType: 'material-community', },
 ];
 
 const teamSports = [
-    { index: 0, order: 1, label: 'Basketball', positions: ['Center', 'Forward', 'Guard'], },
-    { index: 1, order: 2, label: 'Baseball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], },
-    { index: 2, order: 12, label: 'Softball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], },
-    { index: 3, order: 3, label: 'Cycling', positions: false, },
-    { index: 4, order: 5, label: 'Field Hockey', positions: ['Goalie', 'Fullback', 'Midfielder', 'Forward'], },
-    { index: 5, order: 6, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], },
+    { index: 0, order: 1, label: 'Basketball', positions: ['Center', 'Forward', 'Guard'], icon: 'basketball', iconType: 'material-community', },
+    { index: 1, order: 2, label: 'Baseball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], icon: 'baseball', iconType: 'material-community', },
+    { index: 2, order: 12, label: 'Softball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], icon: 'baseball', iconType: 'material-community', },
+    { index: 3, order: 3, label: 'Cycling', positions: false, icon: 'ios-bicycle', iconType: 'ionicon', },
+    { index: 4, order: 5, label: 'Field Hockey', positions: ['Goalie', 'Fullback', 'Midfielder', 'Forward'], icon: 'hockey-sticks', iconType: 'material-community', },
+    { index: 5, order: 6, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], icon: 'football', iconType: 'material-community', },
     { index: 6, order: null, label: 'General Fitness', positions: false, },
     { index: 7, order: null, label: 'Golf', positions: false, },
     { index: 8, order: null, label: 'Gymnastics', positions: false, },
-    { index: 9, order: 10, label: 'Skate Sports', positions: false, },
-    { index: 10, order: 7, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], },
-    { index: 11, order: 9, label: 'Rowing', positions: false, },
+    { index: 9, order: 10, label: 'Skate Sports', positions: false, icon: 'run-fast', iconType: 'material-community', },
+    { index: 10, order: 7, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], icon: 'checkbox-marked-outline', iconType: 'material-community', },
+    { index: 11, order: 9, label: 'Rowing', positions: false, icon: 'rowing', iconType: 'material-community', },
     { index: 12, order: null, label: 'Rugby', positions: false, },
     { index: 13, order: null, label: 'Diving', positions: false, },
-    { index: 14, order: 11, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], },
-    { index: 15, order: 8, label: 'Pool Sports', positions: false, },
-    { index: 16, order: 13, label: 'Tennis', positions: false, },
-    { index: 17, order: 4, label: 'Distance Running', positions: false, },
+    { index: 14, order: 11, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], icon: 'ios-football', iconType: 'ionicon', },
+    { index: 15, order: 8, label: 'Pool Sports', positions: false, icon: 'pool', iconType: 'material-community', },
+    { index: 16, order: 13, label: 'Tennis', positions: false, icon: 'md-tennisball', iconType: 'ionicon', },
+    { index: 17, order: 4, label: 'Distance Running', positions: false, icon: 'run', iconType: 'material-community', },
     { index: 18, order: null, label: 'Sprints', positions: false, },
     { index: 19, order: null, label: 'Jumps', positions: false, },
     { index: 20, order: null, label: 'Throws', positions: false, },
     { index: 21, order: null, label: 'Volleyball', positions: false, },
     { index: 22, order: null, label: 'Wrestling', positions: false, },
     { index: 23, order: null, label: 'Weightlifting', positions: false, },
-    { index: 24, order: 14, label: 'Track & Field', positions: ['Sprinter', 'Jumper', 'Thrower', 'Distance'], },
+    { index: 24, order: 14, label: 'Track & Field', positions: ['Sprinter', 'Jumper', 'Thrower', 'Distance'], icon: 'run-fast', iconType: 'material-community', },
 ];
 
 const getTimeHours = () => {
@@ -582,6 +582,53 @@ const fathomSliderText = [
     'Max effort',
 ];
 
+const userSelectedActiveTimeMessage = () => {
+    return 'Tap to adjust your active time to best fit your schedule.';
+};
+
+const randomizeSessionsCompletionModalText = () => {
+    const header = [
+        'NICE WORK!',
+        'WAY TO GO!',
+        'WAY TO WORK!',
+    ];
+    const subtext = [
+        'Remember to vary your workout types to reduce over-use injuries!',
+        'Try varying your training intensity to help you build resilience!',
+        'Take time for yourself today and prioritize Recovery.',
+    ];
+    return {
+        header:  _.shuffle(header)[0],
+        subtext: _.shuffle(subtext)[0],
+    };
+};
+
+const selectedActiveTimes = (selectedIndex = 2) => {
+    let possibleActiveTimes = [5, 10, 15, 20, 25, 30];
+    return {
+        recommendedLabels: [' ', ' ', 'Recommended', ' ', ' ', ' '],
+        timeLabels:        ['5 minutes', '10 minutes', '15 minutes', '20 minutes', '25 minutes', '30 minutes'],
+        selectedTime:      possibleActiveTimes[selectedIndex],
+    }
+}
+
+function completionModalExerciseList(exerciseList, completedExercises) {
+    let cleanedExerciseList = {};
+    _.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) => {
+        if(exerciseIndex.length > 0) {
+            cleanedExerciseList[index] = {};
+            cleanedExerciseList[index].completed = 0;
+            cleanedExerciseList[index].total = exerciseIndex.length;
+            _.map(exerciseIndex, (exercise, i) => {
+                if(completedExercises.includes(exercise.library_id)) {
+                    cleanedExerciseList[index].completed += 1;
+                }
+            });
+        }
+    });
+    return cleanedExerciseList;
+}
+
 export default {
     allGoodBodyPartMessage,
     alreadyTrainedNumber,
@@ -594,6 +641,7 @@ export default {
     cleanedPostSessionName,
     coachesDashboardSortBy,
     coachesDashboardCardsData,
+    completionModalExerciseList,
     durationOptionGroups,
     exerciseListButtonStyles,
     fathomSliderText,
@@ -603,7 +651,9 @@ export default {
     overallReadiness,
     painSorenessMessage,
     postSessionFeel,
+    randomizeSessionsCompletionModalText,
     scrollableTabViewPage,
+    selectedActiveTimes,
     sessionTypes,
     sleepQuality,
     sorenessPainScaleMapping,
@@ -611,4 +661,5 @@ export default {
     strengthConditioningTypes,
     teamSports,
     timeOptionGroups,
+    userSelectedActiveTimeMessage,
 };

@@ -18,6 +18,7 @@ const MyPlan = ({
     noSessions,
     notification,
     patchActiveRecovery,
+    patchActiveTime,
     patchFunctionalStrength,
     plan,
     postReadinessSurvey,
@@ -43,6 +44,7 @@ const MyPlan = ({
         noSessions={noSessions}
         notification={notification}
         patchActiveRecovery={patchActiveRecovery}
+        patchActiveTime={patchActiveTime}
         patchFunctionalStrength={patchFunctionalStrength}
         plan={plan}
         postReadinessSurvey={postReadinessSurvey}
@@ -74,6 +76,7 @@ MyPlan.propTypes = {
         PropTypes.string,
     ]).isRequired,
     patchActiveRecovery:     PropTypes.func.isRequired,
+    patchActiveTime:         PropTypes.func.isRequired,
     patchFunctionalStrength: PropTypes.func.isRequired,
     plan:                    PropTypes.object.isRequired,
     postReadinessSurvey:     PropTypes.func.isRequired,
@@ -110,6 +113,7 @@ const mapDispatchToProps = {
     markStartedRecovery:           PlanActions.markStartedRecovery,
     noSessions:                    PlanActions.noSessions,
     patchActiveRecovery:           PlanActions.patchActiveRecovery,
+    patchActiveTime:               PlanActions.patchActiveTime,
     patchFunctionalStrength:       PlanActions.patchFunctionalStrength,
     postReadinessSurvey:           PlanActions.postReadinessSurvey,
     postSessionSurvey:             PlanActions.postSessionSurvey,

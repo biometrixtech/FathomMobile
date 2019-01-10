@@ -2,30 +2,42 @@
  * MyPlan Elements
  */
 
+import ActiveRecoveryBlocks from './ActiveRecoveryBlocks';
+import ActiveTimeSlideUpPanel from './ActiveTimeSlideUpPanel';
 import AreasOfSoreness from './AreasOfSoreness';
 import BackNextButtons from './BackNextButtons';
+import DefaultListGap from './DefaultListGap';
+import ExerciseCompletionModal from './ExerciseCompletionModal';
 import ExerciseItem from './ExerciseItem';
 import Exercises from './Exercises';
 import PostSessionSurvey from './PostSessionSurvey';
 import ProgressPill from './ProgressPill';
 import ReadinessSurvey from './ReadinessSurvey';
+import RenderMyPlanTab from './RenderMyPlanTab';
 import ScaleButton from './ScaleButton';
+import SessionsCompletionModal from './SessionsCompletionModal';
 import SingleExerciseItem from './SingleExerciseItem';
-import SlideUpPanel from './SlideUpPanel';
 import SoreBodyPart from './SoreBodyPart';
 import SportScheduleBuilder from './SportScheduleBuilder';
+import SurveySlideUpPanel from './SurveySlideUpPanel';
 
 export {
+    ActiveRecoveryBlocks,
+    ActiveTimeSlideUpPanel,
     AreasOfSoreness,
     BackNextButtons,
+    DefaultListGap,
+    ExerciseCompletionModal,
     ExerciseItem,
     Exercises,
     PostSessionSurvey,
     ProgressPill,
     ReadinessSurvey,
+    RenderMyPlanTab,
     ScaleButton,
+    SessionsCompletionModal,
     SingleExerciseItem,
-    SlideUpPanel,
     SoreBodyPart,
     SportScheduleBuilder,
+    SurveySlideUpPanel,
 };

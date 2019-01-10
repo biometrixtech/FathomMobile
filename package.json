@@ -1,6 +1,6 @@
 {
   "name": "fathom",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "private": true,
   "author": "Mazen Chami",
   "scripts": {
@@ -35,6 +35,7 @@
   "dependencies": {
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.10",
+    "lottie-react-native": "^2.5.11",
     "moment": "^2.22.2",
     "prop-types": "^15.6.2",
     "react": "16.4.1",

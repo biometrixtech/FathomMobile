@@ -124,10 +124,15 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 15
-        versionName "2.3.0"
+        versionCode 16
+        versionName "2.4.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
+        }
+    }
+    configurations.all {
+        resolutionStrategy {
+            force 'com.airbnb.android:lottie:2.5.5'
         }
     }
     splits {
@@ -193,6 +198,7 @@ dependencies {
     implementation project(':react-native-fabric')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-ble-manager')
+    implementation project(':lottie-react-native')
     implementation project(':react-native-device-info')
     implementation project(':react-native-android-location-services-dialog-box')
     implementation project(':react-native-google-analytics-bridge')
