@@ -167,9 +167,10 @@ class CustomText extends Component {
                 this.props.children + ' ';
             return(
                 <View>
-                    <Text {...this.textProps()}>
+                    <Text allowFontScaling={false} {...this.textProps()}>
                         {truncatedText}
                         <Text
+                            allowFontScaling={false}
                             onPress={this._toggleTruncatedText}
                             style={{color: AppColors.primary.yellow.hundredPercent, textDecorationLine: 'underline'}}
                         >
@@ -179,7 +180,7 @@ class CustomText extends Component {
                 </View>
             );
         }
-        return(<Text {...this.textProps()}>{this.props.children}</Text>);
+        return(<Text allowFontScaling={false} {...this.textProps()}>{this.props.children}</Text>);
     };
 }
 
