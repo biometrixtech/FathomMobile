@@ -46,9 +46,9 @@ const styles = StyleSheet.create({
     },
     shadowEffect: {
         shadowColor:   'rgba(0, 0, 0, 0.16)',
-        shadowOffset:  { width: 0, height: 10 },
-        shadowRadius:  15,
+        shadowOffset:  { height: 10, width: 0, },
         shadowOpacity: 1,
+        shadowRadius:  15,
     },
 });
 

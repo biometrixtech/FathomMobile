@@ -21,8 +21,8 @@ const DefaultListGap = ({
     <View style={{flexDirection: 'row',}}>
         <View
             style={{
-                borderRightWidth: 1,
                 borderRightColor: AppColors.primary.grey.thirtyPercent,
+                borderRightWidth: 1,
                 marginLeft:       10,
                 width:            AppFonts.scaleFont(24) / 2}}
         />

@@ -367,8 +367,8 @@ class PostSessionSurvey extends Component {
                 }
                 <SurveySlideUpPanel
                     expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
-                    isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
                     isSlideUpPanelExpanded={this.state.isSlideUpPanelExpanded}
+                    isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
                     toggleSlideUpPanel={isExpanded => this._toggleSlideUpPanel(isExpanded)}
                 />
             </View>

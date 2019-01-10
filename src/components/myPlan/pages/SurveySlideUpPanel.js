@@ -3,8 +3,8 @@
  *
      <SurveySlideUpPanel
           expandSlideUpPanel={this.setState({ isSlideUpPanelExpanded: true, })}
-          isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
           isSlideUpPanelExpanded={this.state.isSlideUpPanelExpanded}
+          isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
           toggleSlideUpPanel={this._toggleSlideUpPanel()}
      />
  *
@@ -25,8 +25,8 @@ const sorenessVSPainMessage = MyPlanConstants.sorenessVSPainMessage();
 /* Component ==================================================================== */
 const SurveySlideUpPanel = ({
     expandSlideUpPanel,
-    isSlideUpPanelOpen,
     isSlideUpPanelExpanded,
+    isSlideUpPanelOpen,
     toggleSlideUpPanel,
 }) => (
     <SlidingUpPanel
@@ -111,8 +111,8 @@ const SurveySlideUpPanel = ({
 
 SurveySlideUpPanel.propTypes = {
     expandSlideUpPanel:     PropTypes.func.isRequired,
-    isSlideUpPanelOpen:     PropTypes.bool.isRequired,
     isSlideUpPanelExpanded: PropTypes.bool.isRequired,
+    isSlideUpPanelOpen:     PropTypes.bool.isRequired,
     toggleSlideUpPanel:     PropTypes.func.isRequired,
 };
 
