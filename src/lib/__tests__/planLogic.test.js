@@ -786,7 +786,7 @@ const helperFunctions = {
         return {
             athletes:   [{}, {}, {}, {}, {}, {}, {}],
             compliance: {
-                completed: [
+                complete: [
                     {first_name: 'Dipesh', last_name: 'Gautam'},
                     {first_name: 'Mazen', last_name: 'Chami'},
                 ],
@@ -1203,12 +1203,12 @@ it('Coaches Dashboard Render Logic - 1 Team', () => {
     let selectedTeamIndex = 0;
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
-        coachesDashboardData[selectedTeamIndex].compliance.completed,
+        coachesDashboardData[selectedTeamIndex].compliance.complete,
         '#C8432A',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
-        coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
-        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
         coachesDashboardData[selectedTeamIndex],
         coachesDashboardData[selectedTeamIndex].compliance.training_compliance
     );
@@ -1220,12 +1220,12 @@ it('Coaches Dashboard Render Logic - 2 Teams, First Team Selected', () => {
     let selectedTeamIndex = 0;
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
-        coachesDashboardData[selectedTeamIndex].compliance.completed,
+        coachesDashboardData[selectedTeamIndex].compliance.complete,
         '#C8432A',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
-        coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
-        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
         coachesDashboardData[selectedTeamIndex],
         coachesDashboardData[selectedTeamIndex].compliance.training_compliance
     );
@@ -1237,12 +1237,12 @@ it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
     let selectedTeamIndex = 1;
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
-        coachesDashboardData[selectedTeamIndex].compliance.completed,
+        coachesDashboardData[selectedTeamIndex].compliance.complete,
         '#C8432A',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
-        coachesDashboardData[selectedTeamIndex].compliance.completed.length,
+        coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
-        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.completed.length),
+        (coachesDashboardData[selectedTeamIndex].compliance.incomplete.length + coachesDashboardData[selectedTeamIndex].compliance.complete.length),
         coachesDashboardData[selectedTeamIndex],
         coachesDashboardData[selectedTeamIndex].compliance.training_compliance
     );

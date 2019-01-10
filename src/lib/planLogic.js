@@ -550,11 +550,11 @@ const PlanLogic = {
         let selectedTeam = coachesTeams[selectedTeamIndex];
         // compliance modal data
         let complianceObj = selectedTeam ? selectedTeam.compliance : {completed: [], incomplete: [], training_compliance: {}};
-        let numOfCompletedAthletes = complianceObj ? complianceObj.completed.length : 0;
+        let numOfCompletedAthletes = complianceObj ? complianceObj.complete.length : 0;
         let numOfIncompletedAthletes = complianceObj ? complianceObj.incomplete.length : 0;
         let numOfTotalAthletes = numOfCompletedAthletes + numOfIncompletedAthletes;
         let incompleteAtheltes = complianceObj ? complianceObj.incomplete : [];
-        let completedAtheltes = complianceObj ? complianceObj.completed : [];
+        let completedAtheltes = complianceObj ? complianceObj.complete : [];
         let completedPercent = (numOfCompletedAthletes / numOfTotalAthletes) * 100;
         let complianceColor = completedPercent <= 49 ?
             AppColors.zeplin.error
@@ -582,8 +582,8 @@ const PlanLogic = {
       * - CoachesDashboard
       */
     handleRenderCoachesDashboardSection: (athletes, item, compliance) => {
-        let didUserCompleteReadinessSurvey = compliance && compliance.completed ?
-            _.filter(compliance.completed, ['user_id', item.user_id]).length > 0
+        let didUserCompleteReadinessSurvey = compliance && compliance.complete ?
+            _.filter(compliance.complete, ['user_id', item.user_id]).length > 0
             :
             false;
         let athleteName = `${didUserCompleteReadinessSurvey ? '' : '*'}${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`;
