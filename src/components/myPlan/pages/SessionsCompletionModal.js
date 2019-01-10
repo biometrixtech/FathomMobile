@@ -145,21 +145,12 @@ class SessionsCompletionModal extends Component {
                     modalStyle:                  {
                         height: 200,
                     },
-                    progressCounters: newProgressCounters,
+                    progressCounters: {},
                 },
                 () => {
-                    if(
-                        this.animation &&
-                        this.animation.reset &&
-                        this.animation2 &&
-                        this.animation2.reset &&
-                        this.animation3 &&
-                        this.animation3.reset
-                    ) {
-                        this.animation.reset();
-                        this.animation2.reset();
-                        this.animation3.reset();
-                    }
+                    this.animation = {};
+                    this.animation2 = {};
+                    this.animation3 = {};
                 }
             );
         });

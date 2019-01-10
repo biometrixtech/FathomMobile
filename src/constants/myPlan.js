@@ -6,7 +6,7 @@
  */
 
 // import RN components
-import { Image } from 'react-native';
+import { Image, Platform, } from 'react-native';
 
 // const & libs
 import { Actions , AppColors, } from './';
@@ -297,9 +297,9 @@ const availableSessionTypes = [
 
 const strengthConditioningTypes = [
     { index: 0, order: 1, label: 'Endurance', icon: 'run', iconType: 'material-community', },
-    { index: 1, order: 2, label: 'Power', icon: 'ios-fitness', iconType: 'ionicon', },
+    { index: 1, order: 2, label: 'Power', icon: `${Platform.OS === 'android' ? 'md' : 'ios'}-fitness`, iconType: 'ionicon', },
     { index: 2, order: 3, label: 'Speed & Agility', icon: 'run-fast', iconType: 'material-community', },
-    { index: 3, order: 4, label: 'Strength', icon: 'ios-fitness', iconType: 'ionicon', },
+    { index: 3, order: 4, label: 'Strength', icon: `${Platform.OS === 'android' ? 'md' : 'ios'}-fitness`, iconType: 'ionicon', },
     { index: 4, order: 5, label: 'Cross Training', icon: 'checkbox-multiple-marked-outline', iconType: 'material-community', },
 ];
 
