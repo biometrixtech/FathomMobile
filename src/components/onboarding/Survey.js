@@ -144,7 +144,7 @@ class Survey extends Component {
                             <TouchableHighlight
                                 onPress={() => this._handleFormChange('form_values.typical_weekly_sessions', '0-1')}
                                 style={{backgroundColor: form_values.typical_weekly_sessions === '0-1' ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, paddingVertical: AppSizes.padding, width: AppSizes.screen.widthThreeQuarters,}}
-                                underlayColor={AppColors.transparent}
+                                underlayColor={AppColors.zeplin.yellow}
                             >
                                 <Text robotoRegular style={{color: form_values.typical_weekly_sessions === '0-1' ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'0-1 workouts/week'}</Text>
                             </TouchableHighlight>
@@ -152,7 +152,7 @@ class Survey extends Component {
                             <TouchableHighlight
                                 onPress={() => this._handleFormChange('form_values.typical_weekly_sessions', '2-4')}
                                 style={{backgroundColor: form_values.typical_weekly_sessions === '2-4' ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, paddingVertical: AppSizes.padding, width: AppSizes.screen.widthThreeQuarters,}}
-                                underlayColor={AppColors.transparent}
+                                underlayColor={AppColors.zeplin.yellow}
                             >
                                 <Text robotoRegular style={{color: form_values.typical_weekly_sessions === '2-4' ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'2-4 workouts/week'}</Text>
                             </TouchableHighlight>
@@ -160,7 +160,7 @@ class Survey extends Component {
                             <TouchableHighlight
                                 onPress={() => this._handleFormChange('form_values.typical_weekly_sessions', '5+')}
                                 style={{backgroundColor: form_values.typical_weekly_sessions === '5+' ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, paddingVertical: AppSizes.padding, width: AppSizes.screen.widthThreeQuarters,}}
-                                underlayColor={AppColors.transparent}
+                                underlayColor={AppColors.zeplin.yellow}
                             >
                                 <Text robotoRegular style={{color: form_values.typical_weekly_sessions === '5+' ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'5+ workouts/week'}</Text>
                             </TouchableHighlight>
@@ -212,15 +212,17 @@ class Survey extends Component {
                             { showTextInput && !form_values.wearable_devices.includes('No') ?
                                 <FormInput
                                     autoCapitalize={'none'}
+                                    autoCorrect={false}
                                     blurOnSubmit={true}
                                     clearButtonMode={'never'}
                                     containerStyle={[{borderBottomColor: AppColors.zeplin.darkSlate, paddingBottom: AppSizes.paddingXSml,}]}
-                                    inputStyle={[{color: AppColors.zeplin.yellow, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,}]}
+                                    inputStyle={[{...AppStyles.robotoRegular, color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center', width: AppSizes.screen.widthTwoThirds,}]}
                                     keyboardType={'default'}
                                     onChangeText={(text) => this._handleFormChange('otherField', text)}
-                                    placeholder={'other'}
+                                    placeholder={''}
                                     placeholderTextColor={AppColors.zeplin.darkSlate}
                                     returnKeyType={'done'}
+                                    underlineColorAndroid={'transparent'}
                                     value={otherField}
                                 />
                                 :
