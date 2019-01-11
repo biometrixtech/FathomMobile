@@ -538,7 +538,7 @@ const helperFunctions = {
     getAreaOfSorenessFullGroupedBodyPartMap: () => {
         return {
             back: [
-                {index: 12, order: 11, label: 'Lower Back', location: 'back', group: 'joint', image: {0: 'LowBack.svg'}, bilateral: false, helping_verb: 'has'},
+                {index: 12, order: 11, label: 'Lower Back', location: 'back', group: 'muscle', image: {0: 'LowBack.svg'}, bilateral: false, helping_verb: 'has'},
                 {index: 14, order: 12, label: 'Glutes', location: 'back', group: 'muscle', image: {0: 'Glute.svg', 1: 'L_Glute.svg', 2: 'R_Glute.svg'}, bilateral: true, helping_verb: 'has'},
                 {index: 15, order: 13, label: 'Hamstrings', location: 'back', group: 'muscle', image: {0: 'Hamstring.svg', 1: 'L_Hamstring.svg', 2: 'R_Hamstring.svg'}, bilateral: true, helping_verb: 'has'},
                 {index: 16, order: 14, label: 'Calves', location: 'back', group: 'muscle', image: {0: 'Calf.svg', 1: 'L_Calf.svg', 2: 'R_Calf.svg'}, bilateral: true, helping_verb: 'has'},
@@ -584,7 +584,7 @@ const helperFunctions = {
     soreBodyPartLowerBack: () => {
         let lowerBack = {
             bilateral:    false,
-            group:        'joint',
+            group:        'muscle',
             helping_verb: 'has',
             image:        {0: 'LowBack.svg'},
             index:        12,
@@ -1343,7 +1343,7 @@ it('Sore Body Part Render Logic - On Enter, Lower Back (SORE Selected)', () => {
     let bodyPart = helperFunctions.handleSoreBodyParts(12, 0).body_parts[0];
     let bodyPartSide = 0;
     let pageStateType = '';
-    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartLowerBack(), 'Lower Back', 'joint', 'has', helperFunctions.jointLevelsOfSoreness());
+    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartLowerBack(), 'Lower Back', 'muscle', 'has', []);
     expect(PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, pageStateType)).toEqual(expectedResult);
 });
 
