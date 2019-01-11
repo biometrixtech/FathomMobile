@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ImageBackground, KeyboardAvoidingView, Platform, StyleSheet, TouchableHighlight, View, } from 'react-native';
+import { ImageBackground, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -108,6 +108,9 @@ class Survey extends Component {
     }
 
     _onDone = () => {
+        // close keyboard
+        Keyboard.dismiss();
+        // setup logic & make calls
         let payload = _.cloneDeep(this.state.form_values);
         if(this.state.otherField.length > 0 && !payload.wearable_devices.includes('No')) {
             payload.wearable_devices.push(this.state.otherField);
