@@ -55,14 +55,19 @@ class Onboarding extends Component {
     static componentName = 'Onboarding';
 
     static propTypes = {
-        authorizeUser:  PropTypes.func.isRequired,
-        createUser:     PropTypes.func.isRequired,
-        finalizeLogin:  PropTypes.func.isRequired,
-        network:        PropTypes.object.isRequired,
-        onFormSubmit:   PropTypes.func.isRequired,
-        registerDevice: PropTypes.func.isRequired,
-        updateUser:     PropTypes.func.isRequired,
-        user:           PropTypes.object.isRequired,
+        authorizeUser:    PropTypes.func.isRequired,
+        createUser:       PropTypes.func.isRequired,
+        finalizeLogin:    PropTypes.func.isRequired,
+        getMyPlan:        PropTypes.func.isRequired,
+        getSoreBodyParts: PropTypes.func.isRequired,
+        lastOpened:       PropTypes.object.isRequired,
+        network:          PropTypes.object.isRequired,
+        onFormSubmit:     PropTypes.func.isRequired,
+        preReadiness:     PropTypes.func.isRequired,
+        registerDevice:   PropTypes.func.isRequired,
+        setAppLogs:       PropTypes.func.isRequired,
+        updateUser:       PropTypes.func.isRequired,
+        user:             PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -369,6 +374,31 @@ class Onboarding extends Component {
             .then(response => {
                 let { authorization, user } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
+                    .then(() => {
+                        let clearMyPlan = (
+                            this.props.lastOpened.userId !== user.id ||
+                            moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')
+                        ) ?
+                            true
+                            :
+                            false;
+                        return this.props.getMyPlan(user.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
+                            .then(res => {
+                                return this.props.getSoreBodyParts()
+                                    .then(soreBodyParts => {
+                                        this.props.setAppLogs();
+                                        return this.props.preReadiness(user.id);
+                                    })
+                                    .catch(err => {
+                                        const error = AppAPI.handleError(err);
+                                        return this.setState({ loading: false, resultMsg: { error }, });
+                                    });
+                            })
+                            .catch(error => {
+                                const err = AppAPI.handleError(error);
+                                return this.setState({ loading: false, resultMsg: { err }, });
+                            });
+                    })
                     .then(() => this.props.finalizeLogin(user, credentials, authorization));
             })
             .then(userRes => this.setState({

@@ -80,19 +80,24 @@ class Login extends Component {
     static componentName = 'Login';
 
     static propTypes = {
-        authorizeUser:  PropTypes.func.isRequired,
-        certificate:    PropTypes.object,
-        device:         PropTypes.object,
-        email:          PropTypes.string,
-        environment:    PropTypes.string,
-        finalizeLogin:  PropTypes.func.isRequired,
-        network:        PropTypes.object.isRequired,
-        onFormSubmit:   PropTypes.func,
-        password:       PropTypes.string,
-        registerDevice: PropTypes.func.isRequired,
-        setEnvironment: PropTypes.func,
-        token:          PropTypes.string,
-        user:           PropTypes.object.isRequired,
+        authorizeUser:    PropTypes.func.isRequired,
+        certificate:      PropTypes.object,
+        device:           PropTypes.object,
+        email:            PropTypes.string,
+        environment:      PropTypes.string,
+        finalizeLogin:    PropTypes.func.isRequired,
+        getMyPlan:        PropTypes.func.isRequired,
+        getSoreBodyParts: PropTypes.func.isRequired,
+        lastOpened:       PropTypes.object.isRequired,
+        network:          PropTypes.object.isRequired,
+        onFormSubmit:     PropTypes.func,
+        password:         PropTypes.string,
+        preReadiness:     PropTypes.func.isRequired,
+        registerDevice:   PropTypes.func.isRequired,
+        setAppLogs:       PropTypes.func.isRequired,
+        setEnvironment:   PropTypes.func,
+        token:            PropTypes.string,
+        user:             PropTypes.object.isRequired,
     }
 
     static defaultProps = {
@@ -218,6 +223,32 @@ class Login extends Component {
                     .then(response => {
                         let { authorization, user } = response;
                         return this.props.registerDevice(this.props.certificate, this.props.device, user)
+                            .then(() => {
+                                let clearMyPlan = (
+                                    this.props.lastOpened.userId !== user.id ||
+                                    moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')
+                                ) ?
+                                    true
+                                    :
+                                    false;
+                                return this.props.getMyPlan(user.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
+                                    .then(res => {
+                                        if(res.daily_plans[0].daily_readiness_survey_completed) {
+                                            return res;
+                                        }
+                                        return this.props.getSoreBodyParts()
+                                            .then(soreBodyParts => {
+                                                this.props.setAppLogs();
+                                                return this.props.preReadiness(user.id);
+                                            })
+                                            .catch(err => {
+                                                this.hideSplash();
+                                            });
+                                    })
+                                    .catch(error => {
+                                        this.hideSplash();
+                                    });
+                            })
                             .then(() => this.props.finalizeLogin(user, credentials, authorization));
                     })
                     .then(() => this.setState({

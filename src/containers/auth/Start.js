@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { init, user as UserActions } from '../../actions';
+import { init, plan as PlanActions, user as UserActions } from '../../actions';
 
 const Start = ({
     Layout,
@@ -13,14 +13,19 @@ const Start = ({
     environment,
     expires,
     finalizeLogin,
+    getMyPlan,
+    getSoreBodyParts,
     getUser,
     jwt,
+    lastOpened,
     network,
     onFormSubmit,
     password,
+    preReadiness,
     registerDevice,
     scheduledMaintenance,
     sessionToken,
+    setAppLogs,
     user,
 }) => (
     <Layout
@@ -31,14 +36,19 @@ const Start = ({
         environment={environment}
         expires={expires}
         finalizeLogin={finalizeLogin}
+        getMyPlan={getMyPlan}
+        getSoreBodyParts={getSoreBodyParts}
         getUser={getUser}
         jwt={jwt}
+        lastOpened={lastOpened}
         network={network}
         onFormSubmit={onFormSubmit}
         password={password}
+        preReadiness={preReadiness}
         registerDevice={registerDevice}
         scheduledMaintenance={scheduledMaintenance}
         sessionToken={sessionToken}
+        setAppLogs={setAppLogs}
         user={user}
     />
 );
@@ -52,14 +62,19 @@ Start.propTypes = {
     environment:          PropTypes.string,
     expires:              PropTypes.string,
     finalizeLogin:        PropTypes.func.isRequired,
+    getMyPlan:            PropTypes.func.isRequired,
+    getSoreBodyParts:     PropTypes.func.isRequired,
     getUser:              PropTypes.func.isRequired,
     jwt:                  PropTypes.string,
+    lastOpened:           PropTypes.object.isRequired,
     network:              PropTypes.object.isRequired,
     onFormSubmit:         PropTypes.func.isRequired,
     password:             PropTypes.string,
+    preReadiness:         PropTypes.func.isRequired,
     registerDevice:       PropTypes.func.isRequired,
     scheduledMaintenance: PropTypes.object,
     sessionToken:         PropTypes.string,
+    setAppLogs:           PropTypes.func.isRequired,
     user:                 PropTypes.object.isRequired,
 };
 
@@ -82,6 +97,7 @@ const mapStateToProps = state => ({
     email:                state.init.email || null,
     expires:              state.init.expires || null,
     jwt:                  state.init.jwt || null,
+    lastOpened:           state.plan.lastOpened,
     network:              state.network,
     password:             state.init.password || null,
     scheduledMaintenance: state.init.scheduledMaintenance || null,
@@ -90,11 +106,15 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    authorizeUser:  init.authorizeUser,
-    finalizeLogin:  init.finalizeLogin,
-    getUser:        UserActions.getUser,
-    onFormSubmit:   init.startLogin,
-    registerDevice: init.registerDevice,
+    authorizeUser:    init.authorizeUser,
+    finalizeLogin:    init.finalizeLogin,
+    getMyPlan:        PlanActions.getMyPlan,
+    getSoreBodyParts: PlanActions.getSoreBodyParts,
+    getUser:          UserActions.getUser,
+    onFormSubmit:     init.startLogin,
+    preReadiness:     PlanActions.preReadiness,
+    registerDevice:   init.registerDevice,
+    setAppLogs:       PlanActions.setAppLogs,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Start);

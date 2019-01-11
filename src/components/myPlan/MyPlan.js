@@ -199,7 +199,45 @@ class MyPlan extends Component {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => true);
         }
-        this._handleEnteringApp(true);
+        // we've already fetched MyPlan, make necessary state updates
+        let planObj = this.props.plan.dailyPlan[0] || {};
+        if(planObj.daily_readiness_survey_completed) {
+            let postPracticeSurveys = planObj.training_sessions.map(session => session.post_session_survey
+                ? {
+                    isPostPracticeSurveyCollapsed: true,
+                    isPostPracticeSurveyCompleted: true,
+                } : {
+                    isPostPracticeSurveyCollapsed: false,
+                    isPostPracticeSurveyCompleted: false,
+                }
+            );
+            this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(planObj));
+            this.setState({
+                prepare: Object.assign({}, this.state.prepare, {
+                    finishedRecovery:           planObj.pre_recovery_completed || this.state.prepare.finishedRecovery,
+                    isActiveRecoveryCollapsed:  planObj.pre_recovery_completed || this.state.prepare.isActiveRecoveryCollapsed,
+                    isReadinessSurveyCollapsed: true,
+                }),
+                recover: Object.assign({}, this.state.recover, {
+                    isActiveRecoveryCollapsed: planObj.post_recovery && !planObj.pre_recovery ? false : true,
+                }),
+                train: Object.assign({}, this.state.train, {
+                    completedPostPracticeSurvey: postPracticeSurveys[0] ? postPracticeSurveys[0].isPostPracticeSurveyCompleted : {},
+                    postPracticeSurveys
+                }),
+            });
+        } else {
+            let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+            newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(this.props.plan.soreBodyParts);
+            this.setState({
+                dailyReadiness:             newDailyReadiness,
+                isReadinessSurveyModalOpen: true,
+                prepare:                    Object.assign({}, this.state.prepare, {
+                    isActiveRecoveryCollapsed:  true,
+                    isReadinessSurveyCollapsed: false,
+                }),
+            });
+        }
     }
 
     _handleEnteringApp = (hideSplashScreen, callback) => {
@@ -349,13 +387,11 @@ class MyPlan extends Component {
             true
             :
             false;
+        console.log('nextAppState',nextAppState);
         if(nextAppState === 'active' && this.props.notification) {
             this._handleEnteringApp(false, () => this._handlePushNotification(this.props));
-        } else if(nextAppState === 'active' && !this.props.lastOpened.date || clearMyPlan) {
-            if(this.tabView) {
-                this.tabView.goToPage(0);
-            }
-            this._handleEnteringApp(false);
+        } else if(nextAppState === 'active' && (!this.props.lastOpened.date || clearMyPlan)) {
+            Actions.reset('key1');
         }
     }
 
@@ -377,6 +413,8 @@ class MyPlan extends Component {
                     if(pushNotificationUpdate.stateName !== '' || pushNotificationUpdate.newStateFields !== '') {
                         this.setState({
                             [pushNotificationUpdate.stateName]: pushNotificationUpdate.newStateFields,
+                            isPrepCalculating:                  false,
+                            isRecoverCalculating:               false,
                         });
                     }
                     if(pushNotificationUpdate.updateExerciseList) {
