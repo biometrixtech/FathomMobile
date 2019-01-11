@@ -176,6 +176,8 @@ const UTIL = {
             } else if(userObj.onboarding_status && !userObj.onboarding_status.includes('tutorial-tutorial') && userObj.role === 'athlete') {
                 // NOTE: THIS IS THE LAST SCREEN PRIOR TO MYPLAN
                 RouterActions.tutorial({step: 'tutorial-tutorial'});
+            } else if(userObj.onboarding_status && !userObj.onboarding_status.includes('survey-questions')) {
+                RouterActions.survey();
             } else {
                 if(userObj.role === 'coach') {
                     RouterActions.coachesDashboard();

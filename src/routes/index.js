@@ -75,6 +75,9 @@ import TutorialComponent from '../components/onboarding/Tutorial';
 import CoachesDashboardContainer from '../containers/coachesDashboard/CoachesDashboard';
 import CoachesDashboardComponent from '../components/coachesDashboard/CoachesDashboard';
 
+import SurveyContainer from '../containers/onboarding/Survey';
+import SurveyComponent from '../components/onboarding/Survey';
+
 const Index = (
     <Router hideNavBar={true}>
         <Stack
@@ -124,6 +127,13 @@ const Index = (
                 component={TutorialContainer}
                 hideNavBar={true}
                 key={'tutorial'}
+                panHandlers={null}
+            />
+            <Scene
+                Layout={SurveyComponent}
+                component={SurveyContainer}
+                hideNavBar={true}
+                key={'survey'}
                 panHandlers={null}
             />
             <Scene

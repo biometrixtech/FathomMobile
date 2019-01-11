@@ -387,7 +387,6 @@ class MyPlan extends Component {
             true
             :
             false;
-        console.log('nextAppState',nextAppState);
         if(nextAppState === 'active' && this.props.notification) {
             this._handleEnteringApp(false, () => this._handlePushNotification(this.props));
         } else if(nextAppState === 'active' && (!this.props.lastOpened.date || clearMyPlan)) {
