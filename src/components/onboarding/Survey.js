@@ -135,7 +135,7 @@ class Survey extends Component {
                 <LinearGradient
                     colors={['#ffffff00', 'white']}
                     start={{x: 0.0, y: 0.0}}
-                    end={{x: 0.0, y: 0.25}}
+                    end={{x: 0.0, y: 0.15}}
                     style={[styles.linearGradientStyle]}
                 >
                     { !form_values.typical_weekly_sessions ?
