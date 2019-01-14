@@ -9,6 +9,7 @@ const Onboarding = ({
     authorizeUser,
     createUser,
     finalizeLogin,
+    getMyPlan,
     getSoreBodyParts,
     getUser,
     lastOpened,
@@ -24,6 +25,7 @@ const Onboarding = ({
         authorizeUser={authorizeUser}
         createUser={createUser}
         finalizeLogin={finalizeLogin}
+        getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
         getUser={getUser}
         lastOpened={lastOpened}
