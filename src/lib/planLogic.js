@@ -408,11 +408,10 @@ const PlanLogic = {
       * New Combination of Sore Body Parts Logic
       * - ReadinessSurvey & PostSessionSurvey
       */
-    // TODO: UNIT TEST ME
     handleNewSoreBodyPartLogic: (soreBodyParts) => {
-        let bodyParts = soreBodyParts.body_parts ? _.cloneDeep(soreBodyParts.body_parts) : [];
-        let histSoreStatus = soreBodyParts.hist_sore_status ? _.cloneDeep(soreBodyParts.hist_sore_status) : [];
-        let clearCandidates = soreBodyParts.clear_candidates ? _.cloneDeep(soreBodyParts.clear_candidates) : [];
+        let bodyParts = soreBodyParts && soreBodyParts.body_parts ? _.cloneDeep(soreBodyParts.body_parts) : [];
+        let histSoreStatus = soreBodyParts && soreBodyParts.hist_sore_status ? _.cloneDeep(soreBodyParts.hist_sore_status) : [];
+        let clearCandidates = soreBodyParts && soreBodyParts.clear_candidates ? _.cloneDeep(soreBodyParts.clear_candidates) : [];
         clearCandidates = _.map(clearCandidates, candidate => {
             let newCandidate = _.cloneDeep(candidate);
             newCandidate.isClearCandidate = true;

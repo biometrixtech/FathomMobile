@@ -2,6 +2,7 @@
 import 'react-native';
 
 // import third-party libraries
+import _ from 'lodash';
 import moment from 'moment';
 
 // import logic file(s)
@@ -935,9 +936,76 @@ const helperFunctions = {
             isSportValid,
             sportText,
         };
-    }
+    },
+
+    getSoreBodyPartsBodyParts: () => {
+        return {
+            body_parts:       [{body_part: 6, side: 1, pain: true, status: 'persistent_pain'}, {body_part: 6, side: 1, pain: true, status: 'persistent_pain'}],
+            hist_sore_status: [],
+            clear_candidates: [],
+        };
+    },
+
+    getSoreBodyPartsHistSoreStatus: () => {
+        return {
+            body_parts:       [],
+            hist_sore_status: [{body_part: 3, side: 0, pain: false, status: 'persistent_soreness'}, {body_part: 12, side: 0, pain: true, status: 'persistent_2_pain'}],
+            clear_candidates: [],
+        };
+    },
+
+    getSoreBodyPartsClearCandidates: () => {
+        return {
+            body_parts:       [],
+            hist_sore_status: [],
+            clear_candidates: [{body_part: 12, side: 0, pain: true, status: 'persistent_2_pain', isClearCandidate: true,}],
+        };
+    },
+
+    getAllSoreBodyParts: () => {
+        return {
+            body_parts:       [{body_part: 6, side: 1, pain: true, status: 'persistent_pain'}, {body_part: 6, side: 1, pain: true, status: 'persistent_pain'}],
+            hist_sore_status: [{body_part: 3, side: 0, pain: false, status: 'persistent_soreness'}],
+            clear_candidates: [{body_part: 12, side: 0, pain: true, status: 'persistent_2_pain', isClearCandidate: true,}],
+        };
+    },
 
 };
+
+it('New Sore Body Part Logic - Nothing Passed', () => {
+    let expectedResult = [];
+    expect(PlanLogic.handleNewSoreBodyPartLogic()).toEqual(expectedResult);
+});
+
+it('New Sore Body Part Logic - Empty Object', () => {
+    let soreBodyParts = {};
+    let expectedResult = [];
+    expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
+});
+
+it('New Sore Body Part Logic - Only Body Parts', () => {
+    let soreBodyParts = helperFunctions.getSoreBodyPartsBodyParts();
+    let expectedResult = _.concat(soreBodyParts.clear_candidates, soreBodyParts.hist_sore_status, soreBodyParts.body_parts);
+    expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
+});
+
+it('New Sore Body Part Logic - Only Hist Sore', () => {
+    let soreBodyParts = helperFunctions.getSoreBodyPartsHistSoreStatus();
+    let expectedResult = _.concat(soreBodyParts.clear_candidates, soreBodyParts.hist_sore_status, soreBodyParts.body_parts);
+    expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
+});
+
+it('New Sore Body Part Logic - Only Clear Candidates', () => {
+    let soreBodyParts = helperFunctions.getSoreBodyPartsClearCandidates();
+    let expectedResult = _.concat(soreBodyParts.clear_candidates, soreBodyParts.hist_sore_status, soreBodyParts.body_parts);
+    expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
+});
+
+it('New Sore Body Part Logic - All 3', () => {
+    let soreBodyParts = helperFunctions.getAllSoreBodyParts();
+    let expectedResult = _.concat(soreBodyParts.clear_candidates, soreBodyParts.hist_sore_status, soreBodyParts.body_parts);
+    expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
+});
 
 it('Post Session Survey Next Page & Validation Logic - Page 4 - Back & Valid', () => {
     let isFormValidItems = {areAreasOfSorenessValid: true};
