@@ -153,6 +153,9 @@ initialize() {
             yes | cp ./custom/javascript/SvgImage.js ./node_modules/react-native-remote-svg/SvgImage.js # handles the iOS patch too
             yes | cp ./custom/javascript/ScrollableTabBar.js ./node_modules/react-native-scrollable-tab-view/ScrollableTabBar.js
 
+            # libraries patches
+            sed -i '' 's/useNativeDriver: true,/useNativeDriver: false,/g' ./node_modules/react-native-modalbox/index.js
+
             # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
             android_nvm_location=`find ~/ -name '.nvm' -type d -print -quit`
             nvm_string='/.nvm'

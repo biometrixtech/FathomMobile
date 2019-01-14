@@ -146,14 +146,18 @@ class MyPlan extends Component {
             isFunctionalStrengthCollapsed:        true,
             isFSExerciseCompletionModalOpen:      false,
             isPageLoading:                        false,
+            isPostSessionSurveyModalContentOpen:  false,
             isPostSessionSurveyModalOpen:         false,
             isPrepCalculating:                    false,
             isPrepareExerciseCompletionModalOpen: false,
             isPrepareSessionsCompletionModalOpen: false,
+            isPrepareSlideUpPanelContentOpen:     false,
             isPrepareSlideUpPanelOpen:            false,
+            isReadinessSurveyModalContentOpen:    false,
             isReadinessSurveyModalOpen:           false,
             isRecoverCalculating:                 false,
             isRecoverExerciseCompletionModalOpen: false,
+            isRecoverSlideUpPanelContentOpen:     false,
             isRecoverSlideUpPanelOpen:            false,
             isSelectedExerciseModalOpen:          false,
             isTrainSessionsCompletionModalOpen:   false,
@@ -230,9 +234,10 @@ class MyPlan extends Component {
             let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
             newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(this.props.plan.soreBodyParts);
             this.setState({
-                dailyReadiness:             newDailyReadiness,
-                isReadinessSurveyModalOpen: true,
-                prepare:                    Object.assign({}, this.state.prepare, {
+                dailyReadiness:                    newDailyReadiness,
+                isReadinessSurveyModalContentOpen: true,
+                isReadinessSurveyModalOpen:        true,
+                prepare:                           Object.assign({}, this.state.prepare, {
                     isActiveRecoveryCollapsed:  true,
                     isReadinessSurveyCollapsed: false,
                 }),
@@ -399,11 +404,13 @@ class MyPlan extends Component {
         this.setState(
             {
                 ...this.state,
-                isPostSessionSurveyModalOpen: false,
-                isReadinessSurveyModalOpen:   false,
-                isSelectedExerciseModalOpen:  false,
-                loading:                      false,
-                selectedExercise:             {},
+                isPostSessionSurveyModalContentOpen: false,
+                isPostSessionSurveyModalOpen:        false,
+                isReadinessSurveyModalContentOpen:   false,
+                isReadinessSurveyModalOpen:          false,
+                isSelectedExerciseModalOpen:         false,
+                loading:                             false,
+                selectedExercise:                    {},
             },
             () => {
                 // continue current logic
@@ -462,7 +469,6 @@ class MyPlan extends Component {
         let newPrepareObject = Object.assign({}, this.state.prepare, {
             isReadinessSurveyCompleted: true,
         });
-        this._readinessSurveyModalRef.close();
         _.delay(() => {
             this.setState(
                 {
@@ -479,7 +485,14 @@ class MyPlan extends Component {
                     isRecoverCalculating:                 this.state.dailyReadiness.sessions_planned ? false : true,
                     prepare:                              newPrepareObject,
                 },
-                () => { if(!newDailyReadiness.sessions_planned && newDailyReadiness.sessions.length === 0) { this._goToScrollviewPage(2); } },
+                () => {
+                    this.setState(
+                        { isReadinessSurveyModalContentOpen: false, },
+                        () => {
+                            if(!newDailyReadiness.sessions_planned && newDailyReadiness.sessions.length === 0) { this._goToScrollviewPage(2); }
+                        }
+                    );
+                },
             );
         }, 500);
         this.props.postReadinessSurvey(newDailyReadiness)
@@ -530,7 +543,6 @@ class MyPlan extends Component {
         let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
-        this._postSessionSurveyModalRef.close();
         _.delay(() => {
             this.setState(
                 {
@@ -549,6 +561,9 @@ class MyPlan extends Component {
                         strength_and_conditioning_type: this.state.postSession.strength_and_conditioning_type || this.state.postSession.strength_and_conditioning_type === 0 ? this.state.postSession.strength_and_conditioning_type : null,
                     },
                 },
+                () => {
+                    this.setState({ isPostSessionSurveyModalContentOpen: false, });
+                }
             );
         }, 500);
         this.props.postSessionSurvey(postSession)
@@ -607,9 +622,10 @@ class MyPlan extends Component {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
                     newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
                     this.setState({
-                        isPostSessionSurveyModalOpen: true,
-                        loading:                      false,
-                        postSession:                  newDailyReadiness,
+                        isPostSessionSurveyModalContentOpen: true,
+                        isPostSessionSurveyModalOpen:        true,
+                        loading:                             false,
+                        postSession:                         newDailyReadiness,
                     });
                 })
                 .catch(err => {
@@ -617,9 +633,10 @@ class MyPlan extends Component {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
                     newDailyReadiness.soreness = [];
                     this.setState({
-                        isPostSessionSurveyModalOpen: true,
-                        loading:                      false,
-                        postSession:                  newDailyReadiness,
+                        isPostSessionSurveyModalContentOpen: true,
+                        isPostSessionSurveyModalOpen:        true,
+                        loading:                             false,
+                        postSession:                         newDailyReadiness,
                     });
                     AppUtil.handleAPIErrorAlert(ErrorMessages.preReadiness);
                 });
@@ -633,13 +650,17 @@ class MyPlan extends Component {
             newPostSession.strength_and_conditioning_type = null;
             newPostSession.RPE = null;
             this.props.clearCompletedExercises();
-            this._postSessionSurveyModalRef.close();
             _.delay(() => {
-                this.setState({
-                    isPostSessionSurveyModalOpen: false,
-                    loading:                      false,
-                    postSession:                  newPostSession,
-                });
+                this.setState(
+                    {
+                        isPostSessionSurveyModalOpen: false,
+                        loading:                      false,
+                        postSession:                  newPostSession,
+                    },
+                    () => {
+                        this.setState({ isPostSessionSurveyModalContentOpen: false, });
+                    }
+                );
             }, 500);
         }
     }
@@ -648,7 +669,7 @@ class MyPlan extends Component {
         this.setState({ isPageLoading: true, });
         this.props.setAppLogs();
         this.props.preReadiness(this.props.user.id)
-            .then(() => this.setState({ isReadinessSurveyModalOpen: true, isPageLoading: false, }))
+            .then(() => this.setState({ isReadinessSurveyModalContentOpen: true, isReadinessSurveyModalOpen: true, isPageLoading: false, }))
             .catch(() => {
                 this.setState({ isPageLoading: false, });
                 AppUtil.handleAPIErrorAlert(ErrorMessages.preReadiness);
@@ -752,15 +773,37 @@ class MyPlan extends Component {
     }
 
     _togglePrepareSlideUpPanel = () => {
-        this.setState({
-            isPrepareSlideUpPanelOpen: !this.state.isPrepareSlideUpPanelOpen,
-        });
+        const { isPrepareSlideUpPanelOpen, } = this.state;
+        if(isPrepareSlideUpPanelOpen) { // is open, close
+            this.setState(
+                { isPrepareSlideUpPanelOpen: false, },
+                () => {
+                    this.setState({ isPrepareSlideUpPanelContentOpen: false, });
+                }
+            );
+        } else { // is closed, open
+            this.setState({
+                isPrepareSlideUpPanelContentOpen: true,
+                isPrepareSlideUpPanelOpen:        true,
+            });
+        }
     }
 
     _toggleRecoverSlideUpPanel = () => {
-        this.setState({
-            isRecoverSlideUpPanelOpen: !this.state.isRecoverSlideUpPanelOpen,
-        });
+        const { isRecoverSlideUpPanelOpen, } = this.state;
+        if(isRecoverSlideUpPanelOpen) { // is open, close
+            this.setState(
+                { isRecoverSlideUpPanelOpen: false, },
+                () => {
+                    this.setState({ isRecoverSlideUpPanelContentOpen: false, });
+                }
+            );
+        } else { // is closed, open
+            this.setState({
+                isRecoverSlideUpPanelContentOpen: true,
+                isRecoverSlideUpPanelOpen:        true,
+            });
+        }
     }
 
     _changeSelectedActiveTime = (selectedIndex, prepareOrRecover) => {
@@ -1060,18 +1103,17 @@ class MyPlan extends Component {
                         </View>
                     </View>
                 }
-                {
-                    this.state.isReadinessSurveyModalOpen
-                        ?
-                        <Modal
-                            backdropColor={AppColors.zeplin.darkNavy}
-                            backdropOpacity={0.8}
-                            backdropPressToClose={false}
-                            coverScreen={true}
-                            isOpen={this.state.isReadinessSurveyModalOpen}
-                            ref={ref => {this._readinessSurveyModalRef = ref;}}
-                            swipeToClose={false}
-                        >
+                <Modal
+                    backdropColor={AppColors.zeplin.darkNavy}
+                    backdropOpacity={0.8}
+                    backdropPressToClose={false}
+                    coverScreen={true}
+                    isOpen={this.state.isReadinessSurveyModalOpen}
+                    ref={ref => {this._readinessSurveyModalRef = ref;}}
+                    swipeToClose={false}
+                >
+                    { this.state.isReadinessSurveyModalContentOpen ?
+                        <View style={{flex: 1,}}>
                             <ReadinessSurvey
                                 dailyReadiness={this.state.dailyReadiness}
                                 handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
@@ -1089,10 +1131,11 @@ class MyPlan extends Component {
                                     style={[AppStyles.activityIndicator]}
                                 /> : null
                             }
-                        </Modal>
+                        </View>
                         :
                         null
-                }
+                    }
+                </Modal>
                 {
                     this.state.isSelectedExerciseModalOpen
                         ?
@@ -1134,6 +1177,7 @@ class MyPlan extends Component {
                 }
                 <ActiveTimeSlideUpPanel
                     changeSelectedActiveTime={(selectedIndex) => this._changeSelectedActiveTime(selectedIndex, 'prepareSelectedActiveTime')}
+                    isSlideUpPanelContentOpen={this.state.isPrepareSlideUpPanelContentOpen}
                     isSlideUpPanelOpen={this.state.isPrepareSlideUpPanelOpen}
                     selectedActiveTime={this.state.prepareSelectedActiveTime}
                     toggleSlideUpPanel={() => {
@@ -1434,6 +1478,7 @@ class MyPlan extends Component {
                 <ActiveTimeSlideUpPanel
                     changeSelectedActiveTime={(selectedIndex) => this._changeSelectedActiveTime(selectedIndex, 'recoverSelectedActiveTime')}
                     isRecover={true}
+                    isSlideUpPanelContentOpen={this.state.isRecoverSlideUpPanelContentOpen}
                     isSlideUpPanelOpen={this.state.isRecoverSlideUpPanelOpen}
                     selectedActiveTime={this.state.recoverSelectedActiveTime}
                     toggleSlideUpPanel={() => {
@@ -1734,18 +1779,17 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                {
-                    this.state.isPostSessionSurveyModalOpen
-                        ?
-                        <Modal
-                            backdropColor={AppColors.zeplin.darkNavy}
-                            backdropOpacity={0.8}
-                            backdropPressToClose={false}
-                            coverScreen={true}
-                            isOpen={this.state.isPostSessionSurveyModalOpen}
-                            ref={ref => {this._postSessionSurveyModalRef = ref;}}
-                            swipeToClose={false}
-                        >
+                <Modal
+                    backdropColor={AppColors.zeplin.darkNavy}
+                    backdropOpacity={0.8}
+                    backdropPressToClose={false}
+                    coverScreen={true}
+                    isOpen={this.state.isPostSessionSurveyModalOpen}
+                    ref={ref => {this._postSessionSurveyModalRef = ref;}}
+                    swipeToClose={false}
+                >
+                    { this.state.isPostSessionSurveyModalContentOpen ?
+                        <View style={{flex: 1,}}>
                             <PostSessionSurvey
                                 handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                                 handleFormChange={this._handlePostSessionFormChange}
@@ -1764,10 +1808,11 @@ class MyPlan extends Component {
                                     style={[AppStyles.activityIndicator]}
                                 /> : null
                             }
-                        </Modal>
+                        </View>
                         :
                         null
-                }
+                    }
+                </Modal>
                 { this.state.loading ?
                     <ActivityIndicator
                         color={AppColors.primary.yellow.hundredPercent}
