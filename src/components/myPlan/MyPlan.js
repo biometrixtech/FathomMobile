@@ -679,7 +679,9 @@ class MyPlan extends Component {
                 if(shouldClearCompletedExercises) {
                     this.props.clearCompletedExercises();
                 }
+                let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
                 this.setState({
+                    dailyReadiness:       newDailyReadiness,
                     isPageLoading:        false,
                     isPrepCalculating:    false,
                     isRecoverCalculating: false,
@@ -687,20 +689,6 @@ class MyPlan extends Component {
                     recover:              newRecover,
                     train:                newTrain,
                 });
-                // pull areas of soreness
-                this.props.getSoreBodyParts()
-                    .then(soreBodyParts => {
-                        let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                        newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
-                        this.setState({ dailyReadiness: newDailyReadiness });
-                    })
-                    .catch(err => {
-                        // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
-                        let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                        newDailyReadiness.soreness = [];
-                        this.setState({ dailyReadiness: newDailyReadiness });
-                        AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
-                    });
             })
             .catch(error => {
                 this.setState({ isPageLoading: false, });
