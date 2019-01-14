@@ -410,13 +410,15 @@ const PlanLogic = {
       */
     // TODO: UNIT TEST ME
     handleNewSoreBodyPartLogic: (soreBodyParts) => {
-        let clearCandidates = _.cloneDeep(soreBodyParts.clear_candidates);
+        let bodyParts = soreBodyParts.body_parts ? _.cloneDeep(soreBodyParts.body_parts) : [];
+        let histSoreStatus = soreBodyParts.hist_sore_status ? _.cloneDeep(soreBodyParts.hist_sore_status) : [];
+        let clearCandidates = soreBodyParts.clear_candidates ? _.cloneDeep(soreBodyParts.clear_candidates) : [];
         clearCandidates = _.map(clearCandidates, candidate => {
             let newCandidate = _.cloneDeep(candidate);
             newCandidate.isClearCandidate = true;
             return newCandidate;
         });
-        let combinedSoreBodyParts = _.concat(clearCandidates, _.cloneDeep(soreBodyParts.hist_sore_status), _.cloneDeep(soreBodyParts.body_parts));
+        let combinedSoreBodyParts = _.concat(clearCandidates, histSoreStatus, bodyParts);
         return combinedSoreBodyParts;
     },
 

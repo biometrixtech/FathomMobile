@@ -242,11 +242,13 @@ class Login extends Component {
                                                 return this.props.preReadiness(user.id);
                                             })
                                             .catch(err => {
-                                                this.hideSplash();
+                                                const error = AppAPI.handleError(err);
+                                                return this.setState({ resultMsg: { error } });
                                             });
                                     })
                                     .catch(error => {
-                                        this.hideSplash();
+                                        const err = AppAPI.handleError(error);
+                                        return this.setState({ resultMsg: { err } });
                                     });
                             })
                             .then(() => this.props.finalizeLogin(user, credentials, authorization));
