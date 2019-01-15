@@ -274,7 +274,7 @@ class Tooltip extends Component<Props, State> {
                   } else if (contentSize.width !== null) {
                       this._updateGeometry({ contentSize });
                   }
-                  // this.setState({ measurementsFinished: true });
+                  this.setState({ measurementsFinished: true });
               },
           );
       });
