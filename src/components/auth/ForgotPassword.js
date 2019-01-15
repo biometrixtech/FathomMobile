@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Keyboard, View, StyleSheet, TouchableOpacity, } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -30,6 +30,18 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
+const Wrapper = props => Platform.OS === 'ios' ?
+    (
+        <KeyboardAvoidingView behavior={'padding'} style={{backgroundColor: AppColors.white, flex: 1, justifyContent: 'space-between',}}>
+            {props.children}
+        </KeyboardAvoidingView>
+    ) :
+    (
+        <View style={{backgroundColor: AppColors.white, flex: 1, justifyContent: 'space-between',}}>
+            {props.children}
+        </View>
+    );
+
 class ForgotPassword extends Component {
     static componentName = 'ForgotPassword';
 
@@ -146,8 +158,8 @@ class ForgotPassword extends Component {
 
     render = () => {
         return (
-            <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: AppColors.white}}>
-                <View >
+            <Wrapper>
+                <View>
                     <ProgressBar
                         currentStep={1}
                         totalSteps={3}
@@ -215,7 +227,7 @@ class ForgotPassword extends Component {
                     textStyle={{ fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                     title={'Reset'}
                 />
-            </View>
+            </Wrapper>
         );
     }
 }

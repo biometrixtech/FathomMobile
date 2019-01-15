@@ -437,6 +437,20 @@ const setAppLogs = () => {
         });
 };
 
+/**
+  * Post Survey
+  */
+const postSurvey = (userId, payload) => {
+    return dispatch => AppAPI.survey.post({userId}, payload)
+        .then(data => {
+            return Promise.resolve(data);
+        })
+        .catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+}
+
 export default {
     clearCompletedExercises,
     clearCompletedFSExercises,
@@ -453,6 +467,7 @@ export default {
     postReadinessSurvey,
     postSessionSurvey,
     postSingleSensorData,
+    postSurvey,
     preReadiness,
     setAppLogs,
     setCompletedExercises,

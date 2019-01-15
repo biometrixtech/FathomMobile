@@ -106,11 +106,9 @@ const onboardingUtils = {
         if(user.personal_data.first_name.length > 0) { count = count + 1; }
         if(user.personal_data.last_name.length > 0) { count = count + 1; }
         if(
-            user.password.length >= 8
-            && user.password.length <= 16
-            && numbersRegex.test(user.password)
-            && upperCaseLettersRegex.test(user.password)
-            && lowerCaseLettersRegex.test(user.password)
+            user.password.length >= 8 &&
+            user.password.length <= 16 &&
+            numbersRegex.test(user.password)
         ) { count = count + 1; }
         if( this.isEmailValid(user.personal_data.email) ) { count = count + 1; }
         if(user.personal_data.zip_code.length > 0) { count = count + 1; }
@@ -150,7 +148,7 @@ const onboardingUtils = {
     isPasswordValid(password) {
         // Password Validation
         // - 8-16 characters
-        // - Must include uppercase letter, lowercase letter, and a number
+        // - Must include a number
         // - NOT include spaces
         const numbersRegex = /[0-9]/g;
         const upperCaseLettersRegex = /[A-Z]/g;
@@ -160,13 +158,10 @@ const onboardingUtils = {
         if (
             !password ||
             password.length < 8 ||
-            password.length > 16 ||
-            !numbersRegex.test(password) ||
-            !upperCaseLettersRegex.test(password) ||
-            !lowerCaseLettersRegex.test(password)
+            !numbersRegex.test(password)
         ) {
             isValid = false;
-            errorsArray.push('Your password must be 8-16 characters, include an uppercase letter, a lowercase letter, and a number')
+            errorsArray.push('Your password must be 8-16 characters and include a number.')
         }
         return {
             errorsArray,
@@ -175,7 +170,7 @@ const onboardingUtils = {
     },
 
     getPasswordRules() {
-        return 'Your password must be 8-16 characters, include an uppercase letter, a lowercase letter, and a number';
+        return 'Your password must be 8-16 characters and include a number.';
     },
 
     hasWhiteSpaces(str) {

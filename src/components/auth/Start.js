@@ -12,6 +12,7 @@ import { Actions, } from 'react-native-router-flux';
 import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
 import SplashScreen from 'react-native-splash-screen';
+import moment from 'moment';
 
 // Consts and Libs
 import { AppAPI, AppUtil, } from '../../lib/';
@@ -43,14 +44,19 @@ class Start extends Component {
         environment:          PropTypes.string,
         expires:              PropTypes.string,
         finalizeLogin:        PropTypes.func.isRequired,
+        getMyPlan:            PropTypes.func.isRequired,
+        getSoreBodyParts:     PropTypes.func.isRequired,
         getUser:              PropTypes.func.isRequired,
         jwt:                  PropTypes.string,
+        lastOpened:           PropTypes.object.isRequired,
         network:              PropTypes.object.isRequired,
         onFormSubmit:         PropTypes.func,
         password:             PropTypes.string,
+        preReadiness:         PropTypes.func.isRequired,
         registerDevice:       PropTypes.func.isRequired,
         scheduledMaintenance: PropTypes.object,
         sessionToken:         PropTypes.string,
+        setAppLogs:           PropTypes.func.isRequired,
         user:                 PropTypes.object.isRequired,
     }
 
@@ -167,12 +173,38 @@ class Start extends Component {
                 }
                 return this.props.registerDevice(this.props.certificate, this.props.device, userObj);
             })
+            .then(() => {
+                let clearMyPlan = (
+                    this.props.lastOpened.userId !== userObj.id ||
+                    moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')
+                ) ?
+                    true
+                    :
+                    false;
+                return this.props.getMyPlan(userObj.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
+                    .then(response => {
+                        if(response.daily_plans[0].daily_readiness_survey_completed) {
+                            return response;
+                        }
+                        return this.props.getSoreBodyParts()
+                            .then(soreBodyParts => {
+                                this.props.setAppLogs();
+                                return this.props.preReadiness(userObj.id);
+                            })
+                            .catch(err => {
+                                this.hideSplash();
+                            });
+                    })
+                    .catch(error => {
+                        this.hideSplash();
+                    });
+            })
             .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
             .then(() => {
                 AppUtil.routeOnLogin(userObj);
                 setTimeout(() => {
                     SplashScreen.hide();
-                }, 100);
+                }, 500);
             })
             .catch((err) => {
                 this.hideSplash();

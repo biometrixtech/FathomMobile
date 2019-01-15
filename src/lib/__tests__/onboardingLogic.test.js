@@ -9,7 +9,7 @@ it('Password Validation - Empty String', () => {
 });
 
 it('Password Validation - Invalid String', () => {
-    let passwordString = 'fathom123!';
+    let passwordString = 'fathom!';
     expect(onboardingUtils.isPasswordValid(passwordString).isValid).toEqual(false);
 });
 
