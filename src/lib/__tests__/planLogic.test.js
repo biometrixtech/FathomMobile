@@ -2,6 +2,7 @@
 import 'react-native';
 
 // import third-party libraries
+import _ from 'lodash';
 import moment from 'moment';
 
 // import logic file(s)
@@ -538,7 +539,7 @@ const helperFunctions = {
     getAreaOfSorenessFullGroupedBodyPartMap: () => {
         return {
             back: [
-                {index: 12, order: 11, label: 'Lower Back', location: 'back', group: 'joint', image: {0: 'LowBack.svg'}, bilateral: false, helping_verb: 'has'},
+                {index: 12, order: 11, label: 'Lower Back', location: 'back', group: 'muscle', image: {0: 'LowBack.svg'}, bilateral: false, helping_verb: 'has'},
                 {index: 14, order: 12, label: 'Glutes', location: 'back', group: 'muscle', image: {0: 'Glute.svg', 1: 'L_Glute.svg', 2: 'R_Glute.svg'}, bilateral: true, helping_verb: 'has'},
                 {index: 15, order: 13, label: 'Hamstrings', location: 'back', group: 'muscle', image: {0: 'Hamstring.svg', 1: 'L_Hamstring.svg', 2: 'R_Hamstring.svg'}, bilateral: true, helping_verb: 'has'},
                 {index: 16, order: 14, label: 'Calves', location: 'back', group: 'muscle', image: {0: 'Calf.svg', 1: 'L_Calf.svg', 2: 'R_Calf.svg'}, bilateral: true, helping_verb: 'has'},
@@ -584,7 +585,7 @@ const helperFunctions = {
     soreBodyPartLowerBack: () => {
         let lowerBack = {
             bilateral:    false,
-            group:        'joint',
+            group:        'muscle',
             helping_verb: 'has',
             image:        {0: 'LowBack.svg'},
             index:        12,
@@ -935,9 +936,76 @@ const helperFunctions = {
             isSportValid,
             sportText,
         };
-    }
+    },
+
+    getSoreBodyPartsBodyParts: () => {
+        return {
+            body_parts:       [{body_part: 6, side: 1, pain: true, status: 'persistent_pain'}, {body_part: 6, side: 1, pain: true, status: 'persistent_pain'}],
+            hist_sore_status: [],
+            clear_candidates: [],
+        };
+    },
+
+    getSoreBodyPartsHistSoreStatus: () => {
+        return {
+            body_parts:       [],
+            hist_sore_status: [{body_part: 3, side: 0, pain: false, status: 'persistent_soreness'}, {body_part: 12, side: 0, pain: true, status: 'persistent_2_pain'}],
+            clear_candidates: [],
+        };
+    },
+
+    getSoreBodyPartsClearCandidates: () => {
+        return {
+            body_parts:       [],
+            hist_sore_status: [],
+            clear_candidates: [{body_part: 12, side: 0, pain: true, status: 'persistent_2_pain', isClearCandidate: true,}],
+        };
+    },
+
+    getAllSoreBodyParts: () => {
+        return {
+            body_parts:       [{body_part: 6, side: 1, pain: true, status: 'persistent_pain'}, {body_part: 6, side: 1, pain: true, status: 'persistent_pain'}],
+            hist_sore_status: [{body_part: 3, side: 0, pain: false, status: 'persistent_soreness'}],
+            clear_candidates: [{body_part: 12, side: 0, pain: true, status: 'persistent_2_pain', isClearCandidate: true,}],
+        };
+    },
 
 };
+
+it('New Sore Body Part Logic - Nothing Passed', () => {
+    let expectedResult = [];
+    expect(PlanLogic.handleNewSoreBodyPartLogic()).toEqual(expectedResult);
+});
+
+it('New Sore Body Part Logic - Empty Object', () => {
+    let soreBodyParts = {};
+    let expectedResult = [];
+    expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
+});
+
+it('New Sore Body Part Logic - Only Body Parts', () => {
+    let soreBodyParts = helperFunctions.getSoreBodyPartsBodyParts();
+    let expectedResult = _.concat(soreBodyParts.clear_candidates, soreBodyParts.hist_sore_status, soreBodyParts.body_parts);
+    expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
+});
+
+it('New Sore Body Part Logic - Only Hist Sore', () => {
+    let soreBodyParts = helperFunctions.getSoreBodyPartsHistSoreStatus();
+    let expectedResult = _.concat(soreBodyParts.clear_candidates, soreBodyParts.hist_sore_status, soreBodyParts.body_parts);
+    expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
+});
+
+it('New Sore Body Part Logic - Only Clear Candidates', () => {
+    let soreBodyParts = helperFunctions.getSoreBodyPartsClearCandidates();
+    let expectedResult = _.concat(soreBodyParts.clear_candidates, soreBodyParts.hist_sore_status, soreBodyParts.body_parts);
+    expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
+});
+
+it('New Sore Body Part Logic - All 3', () => {
+    let soreBodyParts = helperFunctions.getAllSoreBodyParts();
+    let expectedResult = _.concat(soreBodyParts.clear_candidates, soreBodyParts.hist_sore_status, soreBodyParts.body_parts);
+    expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
+});
 
 it('Post Session Survey Next Page & Validation Logic - Page 4 - Back & Valid', () => {
     let isFormValidItems = {areAreasOfSorenessValid: true};
@@ -1343,7 +1411,7 @@ it('Sore Body Part Render Logic - On Enter, Lower Back (SORE Selected)', () => {
     let bodyPart = helperFunctions.handleSoreBodyParts(12, 0).body_parts[0];
     let bodyPartSide = 0;
     let pageStateType = '';
-    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartLowerBack(), 'Lower Back', 'joint', 'has', helperFunctions.jointLevelsOfSoreness());
+    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartLowerBack(), 'Lower Back', 'muscle', 'has', []);
     expect(PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, pageStateType)).toEqual(expectedResult);
 });
 

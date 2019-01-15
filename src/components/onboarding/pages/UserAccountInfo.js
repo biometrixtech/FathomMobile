@@ -155,7 +155,11 @@ class UserAccountInfo extends Component {
                                 containerStyle={{marginLeft: 0, paddingLeft: 10}}
                                 onChangeText={(text) => clearCoachContent('', () => handleFormChange('password', text))}
                                 onSubmitEditing={() => {
-                                    setAccordionSection(0, 1);
+                                    if(onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid) {
+                                        setAccordionSection(0, 1);
+                                    } else {
+                                        updateErrorMessage();
+                                    }
                                 }}
                                 placeholder={'Password'}
                                 placeholderTextColor={AppColors.zeplin.lightGrey}

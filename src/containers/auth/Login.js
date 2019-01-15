@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { init, } from '../../actions';
+import { init, plan as PlanActions, } from '../../actions';
 
 const Login = ({
     Layout,
@@ -18,11 +18,16 @@ const Login = ({
     email,
     environment,
     finalizeLogin,
+    getMyPlan,
+    getSoreBodyParts,
+    lastOpened,
     network,
     onFormSubmit,
     password,
+    preReadiness,
     registerDevice,
     scheduledMaintenance,
+    setAppLogs,
     setEnvironment,
     token,
     user,
@@ -34,11 +39,16 @@ const Login = ({
         email={email}
         environment={environment}
         finalizeLogin={finalizeLogin}
+        getMyPlan={getMyPlan}
+        getSoreBodyParts={getSoreBodyParts}
+        lastOpened={lastOpened}
         network={network}
         onFormSubmit={onFormSubmit}
         password={password}
+        preReadiness={preReadiness}
         registerDevice={registerDevice}
         scheduledMaintenance={scheduledMaintenance}
+        setAppLogs={setAppLogs}
         setEnvironment={setEnvironment}
         token={token}
         user={user}
@@ -53,11 +63,16 @@ Login.propTypes = {
     email:                PropTypes.string,
     environment:          PropTypes.string,
     finalizeLogin:        PropTypes.func.isRequired,
+    getMyPlan:            PropTypes.func.isRequired,
+    getSoreBodyParts:     PropTypes.func.isRequired,
+    lastOpened:           PropTypes.object.isRequired,
     network:              PropTypes.object.isRequired,
     onFormSubmit:         PropTypes.func.isRequired,
     password:             PropTypes.string,
+    preReadiness:         PropTypes.func.isRequired,
     registerDevice:       PropTypes.func.isRequired,
     scheduledMaintenance: PropTypes.object,
+    setAppLogs:           PropTypes.func.isRequired,
     setEnvironment:       PropTypes.func.isRequired,
     token:                PropTypes.string,
     user:                 PropTypes.object.isRequired,
@@ -78,6 +93,7 @@ const mapStateToProps = state => ({
     device:               state.init.device || null,
     environment:          state.init.environment || 'PROD',
     email:                state.init.email || null,
+    lastOpened:           state.plan.lastOpened,
     network:              state.network,
     password:             state.init.password || null,
     scheduledMaintenance: state.init.scheduledMaintenance || null,
@@ -86,11 +102,15 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    authorizeUser:  init.authorizeUser,
-    finalizeLogin:  init.finalizeLogin,
-    onFormSubmit:   init.startLogin,
-    registerDevice: init.registerDevice,
-    setEnvironment: init.setEnvironment,
+    authorizeUser:    init.authorizeUser,
+    finalizeLogin:    init.finalizeLogin,
+    getMyPlan:        PlanActions.getMyPlan,
+    getSoreBodyParts: PlanActions.getSoreBodyParts,
+    onFormSubmit:     init.startLogin,
+    preReadiness:     PlanActions.preReadiness,
+    registerDevice:   init.registerDevice,
+    setAppLogs:       PlanActions.setAppLogs,
+    setEnvironment:   init.setEnvironment,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

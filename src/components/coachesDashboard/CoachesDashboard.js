@@ -302,7 +302,7 @@ class CoachesDashboard extends Component {
                         </Text>
                         <Spacer size={15} />
                         { selectedAthletePage === 0 ?
-                            <View>
+                            <View style={{flex: 1,}}>
                                 <View style={{flexDirection: 'row', paddingHorizontal: AppSizes.paddingLrg,}}>
                                     <TabIcon
                                         containerStyle={[AppStyles.containerCentered,]}
@@ -340,7 +340,7 @@ class CoachesDashboard extends Component {
                                 </ScrollView>
                             </View>
                             :
-                            <View>
+                            <View style={{flex: 1,}}>
                                 <View style={{flexDirection: 'row', paddingHorizontal: AppSizes.paddingLrg,}}>
                                     <TabIcon
                                         containerStyle={[AppStyles.containerCentered,]}

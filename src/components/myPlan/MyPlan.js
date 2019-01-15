@@ -199,7 +199,47 @@ class MyPlan extends Component {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => true);
         }
-        this._handleEnteringApp(true);
+        // we've already fetched MyPlan, make necessary state updates
+        let planObj = this.props.plan.dailyPlan[0] || {};
+        if(planObj.daily_readiness_survey_completed) {
+            let postPracticeSurveys = planObj.training_sessions.map(session => session.post_session_survey
+                ? {
+                    isPostPracticeSurveyCollapsed: true,
+                    isPostPracticeSurveyCompleted: true,
+                } : {
+                    isPostPracticeSurveyCollapsed: false,
+                    isPostPracticeSurveyCompleted: false,
+                }
+            );
+            _.delay(() => {
+                this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(planObj));
+            }, 500);
+            this.setState({
+                prepare: Object.assign({}, this.state.prepare, {
+                    finishedRecovery:           planObj.pre_recovery_completed || this.state.prepare.finishedRecovery,
+                    isActiveRecoveryCollapsed:  planObj.pre_recovery_completed || this.state.prepare.isActiveRecoveryCollapsed,
+                    isReadinessSurveyCollapsed: true,
+                }),
+                recover: Object.assign({}, this.state.recover, {
+                    isActiveRecoveryCollapsed: planObj.post_recovery && !planObj.pre_recovery ? false : true,
+                }),
+                train: Object.assign({}, this.state.train, {
+                    completedPostPracticeSurvey: postPracticeSurveys[0] ? postPracticeSurveys[0].isPostPracticeSurveyCompleted : {},
+                    postPracticeSurveys
+                }),
+            });
+        } else {
+            let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+            newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(this.props.plan.soreBodyParts);
+            this.setState({
+                dailyReadiness:             newDailyReadiness,
+                isReadinessSurveyModalOpen: true,
+                prepare:                    Object.assign({}, this.state.prepare, {
+                    isActiveRecoveryCollapsed:  true,
+                    isReadinessSurveyCollapsed: false,
+                }),
+            });
+        }
     }
 
     _handleEnteringApp = (hideSplashScreen, callback) => {
@@ -351,11 +391,8 @@ class MyPlan extends Component {
             false;
         if(nextAppState === 'active' && this.props.notification) {
             this._handleEnteringApp(false, () => this._handlePushNotification(this.props));
-        } else if(nextAppState === 'active' && !this.props.lastOpened.date || clearMyPlan) {
-            if(this.tabView) {
-                this.tabView.goToPage(0);
-            }
-            this._handleEnteringApp(false);
+        } else if(nextAppState === 'active' && (!this.props.lastOpened.date || clearMyPlan)) {
+            Actions.reset('key1');
         }
     }
 
@@ -377,6 +414,8 @@ class MyPlan extends Component {
                     if(pushNotificationUpdate.stateName !== '' || pushNotificationUpdate.newStateFields !== '') {
                         this.setState({
                             [pushNotificationUpdate.stateName]: pushNotificationUpdate.newStateFields,
+                            isPrepCalculating:                  false,
+                            isRecoverCalculating:               false,
                         });
                     }
                     if(pushNotificationUpdate.updateExerciseList) {
@@ -425,7 +464,6 @@ class MyPlan extends Component {
         let newPrepareObject = Object.assign({}, this.state.prepare, {
             isReadinessSurveyCompleted: true,
         });
-        this._readinessSurveyModalRef.close();
         _.delay(() => {
             this.setState(
                 {
@@ -493,7 +531,6 @@ class MyPlan extends Component {
         let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
-        this._postSessionSurveyModalRef.close();
         _.delay(() => {
             this.setState(
                 {
@@ -596,13 +633,14 @@ class MyPlan extends Component {
             newPostSession.strength_and_conditioning_type = null;
             newPostSession.RPE = null;
             this.props.clearCompletedExercises();
-            this._postSessionSurveyModalRef.close();
             _.delay(() => {
-                this.setState({
-                    isPostSessionSurveyModalOpen: false,
-                    loading:                      false,
-                    postSession:                  newPostSession,
-                });
+                this.setState(
+                    {
+                        isPostSessionSurveyModalOpen: false,
+                        loading:                      false,
+                        postSession:                  newPostSession,
+                    },
+                );
             }, 500);
         }
     }
@@ -642,7 +680,9 @@ class MyPlan extends Component {
                 if(shouldClearCompletedExercises) {
                     this.props.clearCompletedExercises();
                 }
+                let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
                 this.setState({
+                    dailyReadiness:       newDailyReadiness,
                     isPageLoading:        false,
                     isPrepCalculating:    false,
                     isRecoverCalculating: false,
@@ -650,20 +690,6 @@ class MyPlan extends Component {
                     recover:              newRecover,
                     train:                newTrain,
                 });
-                // pull areas of soreness
-                this.props.getSoreBodyParts()
-                    .then(soreBodyParts => {
-                        let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                        newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
-                        this.setState({ dailyReadiness: newDailyReadiness });
-                    })
-                    .catch(err => {
-                        // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
-                        let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                        newDailyReadiness.soreness = [];
-                        this.setState({ dailyReadiness: newDailyReadiness });
-                        AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
-                    });
             })
             .catch(error => {
                 this.setState({ isPageLoading: false, });
@@ -1035,38 +1061,36 @@ class MyPlan extends Component {
                         </View>
                     </View>
                 }
-                {
-                    this.state.isReadinessSurveyModalOpen
-                        ?
-                        <Modal
-                            backdropColor={AppColors.zeplin.darkNavy}
-                            backdropOpacity={0.8}
-                            backdropPressToClose={false}
-                            coverScreen={true}
-                            isOpen={this.state.isReadinessSurveyModalOpen}
-                            ref={ref => {this._readinessSurveyModalRef = ref;}}
-                            swipeToClose={false}
-                        >
-                            <ReadinessSurvey
-                                dailyReadiness={this.state.dailyReadiness}
-                                handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
-                                handleFormChange={this._handleDailyReadinessFormChange}
-                                handleFormSubmit={this._handleReadinessSurveySubmit}
-                                handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                                soreBodyParts={this.props.plan.soreBodyParts}
-                                typicalSessions={this.props.plan.typicalSessions}
-                                user={this.props.user}
-                            />
-                            { this.state.loading ?
-                                <ActivityIndicator
-                                    color={AppColors.primary.yellow.hundredPercent}
-                                    size={'large'}
-                                    style={[AppStyles.activityIndicator]}
-                                /> : null
-                            }
-                        </Modal>
-                        :
-                        null
+                { this.state.isReadinessSurveyModalOpen ?
+                    <Modal
+                        backdropColor={AppColors.zeplin.darkNavy}
+                        backdropOpacity={0.8}
+                        backdropPressToClose={false}
+                        coverScreen={true}
+                        isOpen={this.state.isReadinessSurveyModalOpen}
+                        ref={ref => {this._readinessSurveyModalRef = ref;}}
+                        swipeToClose={false}
+                    >
+                        <ReadinessSurvey
+                            dailyReadiness={this.state.dailyReadiness}
+                            handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+                            handleFormChange={this._handleDailyReadinessFormChange}
+                            handleFormSubmit={this._handleReadinessSurveySubmit}
+                            handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                            soreBodyParts={this.props.plan.soreBodyParts}
+                            typicalSessions={this.props.plan.typicalSessions}
+                            user={this.props.user}
+                        />
+                        { this.state.loading ?
+                            <ActivityIndicator
+                                color={AppColors.primary.yellow.hundredPercent}
+                                size={'large'}
+                                style={[AppStyles.activityIndicator]}
+                            /> : null
+                        }
+                    </Modal>
+                    :
+                    null
                 }
                 {
                     this.state.isSelectedExerciseModalOpen
@@ -1709,39 +1733,37 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                {
-                    this.state.isPostSessionSurveyModalOpen
-                        ?
-                        <Modal
-                            backdropColor={AppColors.zeplin.darkNavy}
-                            backdropOpacity={0.8}
-                            backdropPressToClose={false}
-                            coverScreen={true}
-                            isOpen={this.state.isPostSessionSurveyModalOpen}
-                            ref={ref => {this._postSessionSurveyModalRef = ref;}}
-                            swipeToClose={false}
-                        >
-                            <PostSessionSurvey
-                                handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
-                                handleFormChange={this._handlePostSessionFormChange}
-                                handleFormSubmit={this._handlePostSessionSurveySubmit}
-                                handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
-                                handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                                postSession={this.state.postSession}
-                                soreBodyParts={this.props.plan.soreBodyParts}
-                                typicalSessions={this.props.plan.typicalSessions}
-                                user={user}
-                            />
-                            { this.state.loading ?
-                                <ActivityIndicator
-                                    color={AppColors.primary.yellow.hundredPercent}
-                                    size={'large'}
-                                    style={[AppStyles.activityIndicator]}
-                                /> : null
-                            }
-                        </Modal>
-                        :
-                        null
+                { this.state.isPostSessionSurveyModalOpen ?
+                    <Modal
+                        backdropColor={AppColors.zeplin.darkNavy}
+                        backdropOpacity={0.8}
+                        backdropPressToClose={false}
+                        coverScreen={true}
+                        isOpen={this.state.isPostSessionSurveyModalOpen}
+                        ref={ref => {this._postSessionSurveyModalRef = ref;}}
+                        swipeToClose={false}
+                    >
+                        <PostSessionSurvey
+                            handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+                            handleFormChange={this._handlePostSessionFormChange}
+                            handleFormSubmit={this._handlePostSessionSurveySubmit}
+                            handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
+                            handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                            postSession={this.state.postSession}
+                            soreBodyParts={this.props.plan.soreBodyParts}
+                            typicalSessions={this.props.plan.typicalSessions}
+                            user={user}
+                        />
+                        { this.state.loading ?
+                            <ActivityIndicator
+                                color={AppColors.primary.yellow.hundredPercent}
+                                size={'large'}
+                                style={[AppStyles.activityIndicator]}
+                            /> : null
+                        }
+                    </Modal>
+                    :
+                    null
                 }
                 { this.state.loading ?
                     <ActivityIndicator
