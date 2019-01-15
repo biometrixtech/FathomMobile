@@ -22,6 +22,7 @@ import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import { GoogleAnalyticsTracker, } from 'react-native-google-analytics-bridge';
 import _ from 'lodash';
+import LottieView from 'lottie-react-native';
 import Modal from 'react-native-modalbox';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import SplashScreen from 'react-native-splash-screen';
@@ -676,7 +677,9 @@ class MyPlan extends Component {
                 let newTrain = Object.assign({}, this.state.train, {
                     postPracticeSurveys: dailyPlanObj ? dailyPlanObj.training_sessions : [],
                 });
-                this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
+                _.delay(() => {
+                    this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
+                }, 500);
                 if(shouldClearCompletedExercises) {
                     this.props.clearCompletedExercises();
                 }
@@ -772,9 +775,23 @@ class MyPlan extends Component {
 
     _closePrepareSessionsCompletionModal = () => {
         const { dailyReadiness, } = this.state;
-        if(!dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
-            this.setState(
-                {
+        _.delay(() => {
+            if(!dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
+                this.setState(
+                    {
+                        dailyReadiness: {
+                            readiness:        0,
+                            sessions:         [],
+                            sessions_planned: false,
+                            sleep_quality:    0,
+                            soreness:         [],
+                        },
+                        isPrepareSessionsCompletionModalOpen: false,
+                    },
+                    () => this._goToScrollviewPage(2)
+                );
+            } else if(dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
+                this.setState({
                     dailyReadiness: {
                         readiness:        0,
                         sessions:         [],
@@ -783,21 +800,9 @@ class MyPlan extends Component {
                         soreness:         [],
                     },
                     isPrepareSessionsCompletionModalOpen: false,
-                },
-                () => this._goToScrollviewPage(2)
-            );
-        } else if(dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
-            this.setState({
-                dailyReadiness: {
-                    readiness:        0,
-                    sessions:         [],
-                    sessions_planned: false,
-                    sleep_quality:    0,
-                    soreness:         [],
-                },
-                isPrepareSessionsCompletionModalOpen: false,
-            });
-        }
+                });
+            }
+        }, 500);
     }
 
     _closeTrainSessionsCompletionModal = () => {
@@ -815,7 +820,7 @@ class MyPlan extends Component {
                     strength_and_conditioning_type: null,
                 },
             },
-            () => this._goToScrollviewPage(2)
+            () => _.delay(() => { this._goToScrollviewPage(2) }, 500)
         );
     }
 
@@ -885,12 +890,13 @@ class MyPlan extends Component {
                             disabled={false}
                             hideChevron={true}
                             leftIcon={
-                                <TabIcon
-                                    containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                                    size={AppFonts.scaleFont(24)}
-                                    color={AppColors.zeplin.yellow}
-                                    icon={'check-circle'}
-                                />
+                                <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                                    <LottieView
+                                        autoPlay={true}
+                                        loop={false}
+                                        source={require('../../../assets/animation/checkmark-circle.json')}
+                                    />
+                                </View>
                             }
                             title={'READINESS SURVEY'}
                             titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
@@ -907,12 +913,21 @@ class MyPlan extends Component {
                     disabled={disabled}
                     hideChevron={true}
                     leftIcon={
-                        <TabIcon
-                            containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                            size={isCompleted ? AppFonts.scaleFont(24) : 20}
-                            color={isCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
-                            icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
-                        />
+                        isCompleted ?
+                            <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                                <LottieView
+                                    autoPlay={true}
+                                    loop={false}
+                                    source={require('../../../assets/animation/checkmark-circle.json')}
+                                />
+                            </View>
+                            :
+                            <TabIcon
+                                color={isCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
+                                containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
+                                size={isCompleted ? AppFonts.scaleFont(24) : AppFonts.scaleFont(20)}
+                            />
                     }
                     title={'MOBILIZE'}
                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
@@ -1227,12 +1242,21 @@ class MyPlan extends Component {
                     disabled={disabled}
                     hideChevron={true}
                     leftIcon={
-                        <TabIcon
-                            containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                            size={isCompleted ? AppFonts.scaleFont(24) : 20}
-                            color={isCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
-                            icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
-                        />
+                        isCompleted ?
+                            <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                                <LottieView
+                                    autoPlay={true}
+                                    loop={false}
+                                    source={require('../../../assets/animation/checkmark-circle.json')}
+                                />
+                            </View>
+                            :
+                            <TabIcon
+                                color={isCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
+                                containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
+                                size={isCompleted ? AppFonts.scaleFont(24) : 20}
+                            />
                     }
                     title={'ACTIVE RECOVERY'}
                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
@@ -1541,12 +1565,13 @@ class MyPlan extends Component {
                             disabled={!isDailyReadinessSurveyCompleted}
                             hideChevron={true}
                             leftIcon={
-                                <TabIcon
-                                    containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                                    size={AppFonts.scaleFont(24)}
-                                    color={AppColors.primary.yellow.hundredPercent}
-                                    icon={'check-circle'}
-                                />
+                                <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                                    <LottieView
+                                        autoPlay={true}
+                                        loop={false}
+                                        source={require('../../../assets/animation/checkmark-circle.json')}
+                                    />
+                                </View>
                             }
                             title={'OFF DAY'}
                             titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
@@ -1569,10 +1594,10 @@ class MyPlan extends Component {
                               hideChevron={true}
                               leftIcon={
                                   <TabIcon
-                                      containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                                      size={20}
                                       color={AppColors.black}
+                                      containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
                                       icon={'fiber-manual-record'}
+                                      size={20}
                                   />
                               }
                               title={'FUNCTIONAL STRENGTH'}
@@ -1656,12 +1681,13 @@ class MyPlan extends Component {
                                     disabled={!isDailyReadinessSurveyCompleted}
                                     hideChevron={true}
                                     leftIcon={
-                                        <TabIcon
-                                            containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                                            size={AppFonts.scaleFont(24)}
-                                            color={AppColors.primary.yellow.hundredPercent}
-                                            icon={'check-circle'}
-                                        />
+                                        <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                                            <LottieView
+                                                autoPlay={true}
+                                                loop={false}
+                                                source={require('../../../assets/animation/checkmark-circle.json')}
+                                            />
+                                        </View>
                                     }
                                     title={cleanedPostSessionName}
                                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
