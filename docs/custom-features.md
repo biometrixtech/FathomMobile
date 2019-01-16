@@ -29,6 +29,7 @@ Installed React-Native libraries that we're utilizing
 | [React-Native](https://facebook.github.io/react-native/docs/components-and-apis) | Access to all React-Native's components and APIs. | Throughout App |
 | [Scrollable Tab View](https://github.com/ptomasroos/react-native-scrollable-tab-view) | Tabbed navigation that you can swipe between, each tab can have its own ScrollView and maintain its own scroll position between swipes. Pleasantly animated. Customizable tab bar. | 1. Coaches Dashboard<br/>2. MyPlan |
 | [Sliding Up Panel](https://github.com/octopitus/rn-sliding-up-panel) | Draggable sliding up panel implemented in React-Native. | 1. Post Session Survey<br/>2. Readiness Survey |
+| [Snap Carousel](https://github.com/archriss/react-native-snap-carousel) | Swiper component for React-Native featuring previews, multiple layouts, parallax images, performant handling of huge numbers of items, and RTL support. Compatible with Android & iOS. | Exercises Page |
 | [Splash Screen](https://github.com/crazycodeboy/react-native-splash-screen) | A splash screen for React-Native, hide when application loaded ,it works on iOS and Android. | Start Page |
 | [Vector Icons](https://github.com/oblador/react-native-vector-icons) | Customizable Icons for React-Native with support for NavBar/TabBar/ToolbarAndroid, image source and full styling. | Installed so we can access ALL icons from [director](https://oblador.github.io/react-native-vector-icons/) |
 | [Video](https://github.com/react-native-community/react-native-video) | A <Video> component for React-Native | 1. Single Exercises<br/>2. Tutorials |
@@ -64,7 +65,6 @@ Components installed once for usage but not currently being used
 | [Progress](https://github.com/oblador/react-native-progress) | Progress indicators and spinners for React-Native using ReactART. |
 | [Remote SVG](https://github.com/seekshiva/react-native-remote-svg) | Image component that supports SVG filetype in [React-Native](https://facebook.github.io/react-native/). |
 | [Sectioned Multi Select](https://github.com/renrizzolo/react-native-sectioned-multi-select) | A multi (or single) select component with support for sub categories, search, chips. It's intended for long-ish lists, as it opens in a Modal (I might make this optional in the future).<br/><br/>This is based on [RN Multiple Select](https://github.com/toystars/react-native-multiple-select). The problems I had were that I needed it to be in a modal, because of nested ScrollViews not working on Android, and I needed to display categories with sub-categories. |
-| [Snap Carousel](https://github.com/archriss/react-native-snap-carousel) | Swiper component for React-Native featuring previews, multiple layouts, parallax images, performant handling of huge numbers of items, and RTL support. Compatible with Android & iOS. |
 
 ---
 

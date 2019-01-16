@@ -263,8 +263,8 @@ function cleanExercise(exercise) {
             `${cleanedExercise.sets_assigned} x ${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
             :
             '';
-    cleanedExercise.dosage = `${cleanedDosage}${cleanedExercise.bilateral ? ' | Both Sides' : ''}`;
-    cleanedExercise.longDosage = `${cleanedLongDosage}${cleanedExercise.bilateral ? ' | Both Sides' : ''}`;
+    cleanedExercise.dosage = `${cleanedDosage}${cleanedExercise.bilateral ? ' | Each Side' : ''}`;
+    cleanedExercise.longDosage = `${cleanedLongDosage}${cleanedExercise.bilateral ? ' | Each Side' : ''}`;
     cleanedExercise.imageUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.gif`;
     cleanedExercise.thumbnailUrl = `https://dd4o7zw7l62dt.cloudfront.net/${exercise.library_id}.png`;
     // cleanedExercise.thumbnailUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.png`;

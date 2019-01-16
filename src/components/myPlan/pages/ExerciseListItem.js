@@ -1,7 +1,7 @@
 /**
- * ExerciseItem
+ * Exercise List Item
  *
-    <ExerciseItem
+    <ExerciseListItem
         completedExercises={completedExercises}
         exercise={exercise}
         handleCompleteExercise={handleCompleteExercise}
@@ -19,7 +19,7 @@ import { AppColors, AppFonts, AppStyles, MyPlan } from '../../../constants';
 import { TabIcon, Text } from '../../custom';
 
 /* Component ==================================================================== */
-class ExerciseItem extends Component {
+class ExerciseListItem extends Component {
     constructor(props) {
         super(props);
         let cleanedExercise = MyPlan.cleanExercise(this.props.exercise);
@@ -93,7 +93,7 @@ class ExerciseItem extends Component {
     }
 }
 
-ExerciseItem.propTypes = {
+ExerciseListItem.propTypes = {
     completedExercises:     PropTypes.array.isRequired,
     exercise:               PropTypes.object.isRequired,
     handleCompleteExercise: PropTypes.func.isRequired,
@@ -101,9 +101,9 @@ ExerciseItem.propTypes = {
     toggleSelectedExercise: PropTypes.func.isRequired,
 };
 
-ExerciseItem.defaultProps = {};
+ExerciseListItem.defaultProps = {};
 
-ExerciseItem.componentName = 'ExerciseItem';
+ExerciseListItem.componentName = 'ExerciseListItem';
 
 /* Export Component ================================================================== */
-export default ExerciseItem;
+export default ExerciseListItem;

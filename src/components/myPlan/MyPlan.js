@@ -40,6 +40,7 @@ import {
     ActiveTimeSlideUpPanel,
     DefaultListGap,
     ExerciseCompletionModal,
+    ExerciseList,
     Exercises,
     PostSessionSurvey,
     ReadinessSurvey,
@@ -1049,7 +1050,7 @@ class MyPlan extends Component {
                                         </Text>
                                     </View>
                                 </View>
-                                <Exercises
+                                <ExerciseList
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
                                     handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'pre')}
@@ -1112,25 +1113,29 @@ class MyPlan extends Component {
                         ?
                         <Modal
                             backdropColor={AppColors.zeplin.darkNavy}
-                            backdropOpacity={0.8}
-                            backdropPressToClose={true}
+                            backdropOpacity={0.9}
+                            backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
-                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
-                            swipeToClose={true}
+                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.zeplin.darkBlue,}]}
+                            swipeToClose={false}
                         >
                             { this.state.selectedExercise.library_id ?
-                                <SingleExerciseItem
+                                <Exercises
                                     completedExercises={completedExercises}
-                                    exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={exerciseId => {
+                                    exerciseList={exerciseList}
+                                    handleCompleteExercise={(exerciseId, hasNextExercise) => {
                                         this._handleCompleteExercise(exerciseId, 'pre');
-                                        this._singleExerciseItemRef.close();
+                                        if(!hasNextExercise) {
+                                            this._singleExerciseItemRef.close()
+                                        }
                                     }}
-                                    selectedExercise={this.state.selectedExercise.library_id}
+                                    handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                                    selectedExercise={this.state.selectedExercise}
+                                    user={this.props.user}
                                 />
                                 :
                                 null
@@ -1395,7 +1400,7 @@ class MyPlan extends Component {
                                         </Text>
                                     </View>
                                 </View>
-                                <Exercises
+                                <ExerciseList
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
                                     handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'post')}
@@ -1427,25 +1432,29 @@ class MyPlan extends Component {
                         ?
                         <Modal
                             backdropColor={AppColors.zeplin.darkNavy}
-                            backdropOpacity={0.8}
-                            backdropPressToClose={true}
+                            backdropOpacity={0.9}
+                            backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
-                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
-                            swipeToClose={true}
+                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.zeplin.darkBlue,}]}
+                            swipeToClose={false}
                         >
                             { this.state.selectedExercise.library_id ?
-                                <SingleExerciseItem
+                                <Exercises
                                     completedExercises={completedExercises}
-                                    exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={exerciseId => {
+                                    exerciseList={exerciseList}
+                                    handleCompleteExercise={(exerciseId, hasNextExercise) => {
                                         this._handleCompleteExercise(exerciseId, 'post');
-                                        this._singleExerciseItemRef.close();
+                                        if(!hasNextExercise) {
+                                            this._singleExerciseItemRef.close()
+                                        }
                                     }}
-                                    selectedExercise={this.state.selectedExercise.library_id}
+                                    handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                                    selectedExercise={this.state.selectedExercise}
+                                    user={this.props.user}
                                 />
                                 :
                                 null
@@ -1658,7 +1667,7 @@ class MyPlan extends Component {
                       null
                 }
                 { functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed && !this.state.isFunctionalStrengthCollapsed ?
-                    <Exercises
+                    <ExerciseList
                         completedExercises={completedFSExercises}
                         exerciseList={fsExerciseList}
                         handleCompleteExercise={this._handleCompleteFSExercise}

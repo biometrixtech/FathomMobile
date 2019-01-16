@@ -760,7 +760,48 @@ const PlanLogic = {
             isValid,
             pageNum,
         };
-    }
+    },
+
+    /**
+      * Exercises Render Logic
+      * - Exercises
+      */
+    // TODO: UNIT TEST ME
+    handleExercisesRenderLogic: (exerciseList, selectedExercise) => {
+        const cleanedExerciseList = exerciseList.cleanedExerciseList;
+        // const totalLength = exerciseList.totalLength;
+        /*eslint dot-notation: 0*/
+        let flatListExercises = _.concat(cleanedExerciseList['FOAM ROLL'], cleanedExerciseList['STRETCH'], cleanedExerciseList['ACTIVATE']);
+        let availableSectionsCount = 0;
+        let firstItem = _.findIndex(flatListExercises, o => o.library_id === selectedExercise.library_id);
+        _.map(exerciseList.cleanedExerciseList, (exerciseArray, index) => {
+            if(exerciseArray.length > 0) {
+                availableSectionsCount = availableSectionsCount + 1;
+            }
+        });
+        return {
+            availableSectionsCount,
+            cleanedExerciseList,
+            // exercise:             MyPlanConstants.cleanExercise(selectedExercise),
+            // exercisesTotalLength: totalLength,
+            firstItem,
+            flatListExercises,
+        };
+    },
+
+    /**
+      * Exercises Timer Logic
+      * - Exercises
+      */
+    // TODO: UNIT TEST ME
+    handleExercisesTimerLogic: (exercise) => {
+        return {
+            number_of_sets:    exercise.bilateral ? 2 : 1,
+            seconds_per_set:   exercise.seconds_per_set,
+            switch_sides_time: 5,
+            up_next_interval:  10,
+        };
+    },
 
 };
 
