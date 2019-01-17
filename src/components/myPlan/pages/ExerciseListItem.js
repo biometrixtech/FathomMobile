@@ -37,9 +37,9 @@ class ExerciseListItem extends Component {
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
                     <TabIcon
                         containerStyle={[{flex: 1, justifyContent: 'center',}]}
-                        icon={completedExercises.includes(exercise.library_id) ? 'ios-checkbox' : 'ios-checkbox-outline'}
-                        iconStyle={[{color: completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.zeplin.light,}]}
-                        onPress={() => handleCompleteExercise(exercise.library_id)}
+                        icon={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? 'ios-checkbox' : 'ios-checkbox-outline'}
+                        iconStyle={[{color: completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.light,}]}
+                        onPress={() => handleCompleteExercise(exercise.library_id, exercise.set_number)}
                         reverse={false}
                         size={30}
                         type={'ionicon'}
@@ -62,7 +62,7 @@ class ExerciseListItem extends Component {
                         <Text
                             oswaldMedium
                             style={{
-                                color:    completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.black,
+                                color:    completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.black,
                                 flexWrap: 'wrap',
                                 fontSize: AppFonts.scaleFont(16),
                             }}
@@ -72,7 +72,7 @@ class ExerciseListItem extends Component {
                         <Text
                             robotoMedium
                             style={{
-                                color:    completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.zeplin.blueGrey,
+                                color:    completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.blueGrey,
                                 fontSize: AppFonts.scaleFont(15),
                             }}
                         >
@@ -80,7 +80,7 @@ class ExerciseListItem extends Component {
                         </Text>
                     </TouchableOpacity>
                     <TabIcon
-                        color={completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.black}
+                        color={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.black}
                         containerStyle={[{flex: 1, justifyContent: 'center',}]}
                         icon={'arrow-right'}
                         onPress={() => toggleSelectedExercise(exercise, true)}

@@ -700,13 +700,14 @@ class MyPlan extends Component {
             });
     }
 
-    _handleCompleteExercise = (exerciseId, recovery_type) => {
+    _handleCompleteExercise = (exerciseId, setNumber, recovery_type) => {
+        let newExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
         // add or remove exercise
         let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
-        if(newCompletedExercises && newCompletedExercises.indexOf(exerciseId) > -1) {
-            newCompletedExercises.splice(newCompletedExercises.indexOf(exerciseId), 1)
+        if(newCompletedExercises && newCompletedExercises.indexOf(newExerciseId) > -1) {
+            newCompletedExercises.splice(newCompletedExercises.indexOf(newExerciseId), 1)
         } else {
-            newCompletedExercises.push(exerciseId);
+            newCompletedExercises.push(newExerciseId);
         }
         // Mark Recovery as started, if logic passes
         let clonedPlan = _.cloneDeep(this.props.plan);
@@ -1053,7 +1054,7 @@ class MyPlan extends Component {
                                 <ExerciseList
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
-                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'pre')}
+                                    handleCompleteExercise={(exerciseId, setNumber) => this._handleCompleteExercise(exerciseId, setNumber, 'pre')}
                                     isLoading={this.state.loading}
                                     isPrep={true}
                                     toggleCompletedAMPMRecoveryModal={() => this.setState({ isPrepareExerciseCompletionModalOpen: true, })}
@@ -1128,8 +1129,8 @@ class MyPlan extends Component {
                                     closeModal={() => this._singleExerciseItemRef.close()}
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
-                                    handleCompleteExercise={(exerciseId, hasNextExercise) => {
-                                        this._handleCompleteExercise(exerciseId, 'pre');
+                                    handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {
+                                        this._handleCompleteExercise(exerciseId, setNumber, 'pre');
                                         if(!hasNextExercise) {
                                             this._singleExerciseItemRef.close();
                                             _.delay(() => {
@@ -1195,7 +1196,13 @@ class MyPlan extends Component {
                     onClose={() => this.setState({ isPrepareExerciseCompletionModalOpen: false, })}
                     onComplete={() => {
                         this.setState({ isPrepareExerciseCompletionModalOpen: false, loading: true, });
-                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
+                        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
+                        newCompletedExercises = _.map(newCompletedExercises, exId => {
+                            let newExerciseId = _.cloneDeep(exId);
+                            newExerciseId = newExerciseId.substring(0, newExerciseId.indexOf('-'));
+                            return newExerciseId;
+                        });
+                        this.props.patchActiveRecovery(this.props.user.id, newCompletedExercises, 'pre')
                             .then(res => {
                                 let newDailyPlanObj = store.getState().plan.dailyPlan[0];
                                 this.setState(
@@ -1407,7 +1414,7 @@ class MyPlan extends Component {
                                 <ExerciseList
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
-                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'post')}
+                                    handleCompleteExercise={(exerciseId, setNumber) => this._handleCompleteExercise(exerciseId, setNumber, 'post')}
                                     isLoading={this.state.loading}
                                     toggleCompletedAMPMRecoveryModal={() => this.setState({ isRecoverExerciseCompletionModalOpen: true, })}
                                     toggleSelectedExercise={this._toggleSelectedExercise}
@@ -1451,8 +1458,8 @@ class MyPlan extends Component {
                                     closeModal={() => this._singleExerciseItemRef.close()}
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
-                                    handleCompleteExercise={(exerciseId, hasNextExercise) => {
-                                        this._handleCompleteExercise(exerciseId, 'post');
+                                    handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {
+                                        this._handleCompleteExercise(exerciseId, setNumber, 'post');
                                         if(!hasNextExercise) {
                                             this._singleExerciseItemRef.close();
                                             _.delay(() => {
@@ -1507,7 +1514,13 @@ class MyPlan extends Component {
                     onClose={() => this.setState({ isRecoverExerciseCompletionModalOpen: false, })}
                     onComplete={() => {
                         this.setState({ isRecoverExerciseCompletionModalOpen: false, loading: true, });
-                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'post')
+                        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
+                        newCompletedExercises = _.map(newCompletedExercises, exId => {
+                            let newExerciseId = _.cloneDeep(exId);
+                            newExerciseId = newExerciseId.substring(0, newExerciseId.indexOf('-'));
+                            return newExerciseId;
+                        });
+                        this.props.patchActiveRecovery(this.props.user.id, newCompletedExercises, 'post')
                             .then(() =>
                                 this.setState({
                                     loading: false,

@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
 const ProgressPills = ({ availableSectionsCount, cleanedExerciseList, completedExercises, }) => (
     <View style={[styles.progressPillsWrapper,]}>
         {_.map(cleanedExerciseList, (exerciseList, index) => {
-            let progressLength = (_.filter(exerciseList, o => completedExercises.indexOf(o.library_id) > -1).length / exerciseList.length);
+            let progressLength = (_.filter(exerciseList, o => completedExercises.indexOf(`${o.library_id}-${o.set_number}`) > -1).length / exerciseList.length);
             let progressWidth = progressLength ? parseInt(progressLength * 100, 10) : 0;
             return(
                 exerciseList.length > 0 ?
@@ -214,12 +214,12 @@ class Exercises extends PureComponent {
                         <Spacer size={10} />
                         <TabIcon
                             containerStyle={[{alignSelf: 'center',}]}
-                            icon={completedExercises.includes(exercise.library_id) ? 'ios-checkbox' : 'ios-checkbox-outline'}
-                            iconStyle={[{color: completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.zeplin.light,}]}
+                            icon={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? 'ios-checkbox' : 'ios-checkbox-outline'}
+                            iconStyle={[{color: completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.light,}]}
                             onPress={() => {
-                                handleCompleteExercise(exercise.library_id, nextExercise);
+                                handleCompleteExercise(exercise.library_id, exercise.set_number, nextExercise);
                                 _.delay(() => {
-                                    if(nextExercise && !completedExercises.includes(exercise.library_id)) {
+                                    if(nextExercise && !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`)) {
                                         this._carousel.snapToNext();
                                     }
                                 }, 500);
@@ -229,7 +229,7 @@ class Exercises extends PureComponent {
                             type={'ionicon'}
                         />
                         <Spacer size={10} />
-                        { nextExercise ?
+                        {/* nextExercise ?
                             <View style={{alignItems: 'flex-end', flexDirection: 'row', justifyContent: 'flex-end', marginBottom: AppSizes.paddingSml,}}>
                                 <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(12), paddingRight: AppSizes.paddingSml,}}>{`UP NEXT: ${nextExercise.displayName}`}</Text>
                                 <Image
@@ -240,7 +240,7 @@ class Exercises extends PureComponent {
                             </View>
                             :
                             null
-                        }
+                        */}
                     </View>
                 </View>
             </View>
