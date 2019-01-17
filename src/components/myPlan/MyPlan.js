@@ -1202,6 +1202,7 @@ class MyPlan extends Component {
                             newExerciseId = newExerciseId.substring(0, newExerciseId.indexOf('-'));
                             return newExerciseId;
                         });
+                        newCompletedExercises = _.uniq(newCompletedExercises);
                         this.props.patchActiveRecovery(this.props.user.id, newCompletedExercises, 'pre')
                             .then(res => {
                                 let newDailyPlanObj = store.getState().plan.dailyPlan[0];
@@ -1520,6 +1521,7 @@ class MyPlan extends Component {
                             newExerciseId = newExerciseId.substring(0, newExerciseId.indexOf('-'));
                             return newExerciseId;
                         });
+                        newCompletedExercises = _.uniq(newCompletedExercises);
                         this.props.patchActiveRecovery(this.props.user.id, newCompletedExercises, 'post')
                             .then(() =>
                                 this.setState({

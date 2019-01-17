@@ -769,7 +769,6 @@ const PlanLogic = {
     // TODO: UNIT TEST ME
     handleExercisesRenderLogic: (exerciseList, selectedExercise) => {
         const cleanedExerciseList = exerciseList.cleanedExerciseList;
-        // const totalLength = exerciseList.totalLength;
         /*eslint dot-notation: 0*/
         let flatListExercises = _.concat(cleanedExerciseList['FOAM ROLL'], cleanedExerciseList['STRETCH'], cleanedExerciseList['ACTIVATE']);
         let availableSectionsCount = 0;
@@ -782,8 +781,6 @@ const PlanLogic = {
         return {
             availableSectionsCount,
             cleanedExerciseList,
-            // exercise:             MyPlanConstants.cleanExercise(selectedExercise),
-            // exercisesTotalLength: totalLength,
             firstItem,
             flatListExercises,
         };
@@ -795,13 +792,9 @@ const PlanLogic = {
       */
     // TODO: UNIT TEST ME
     handleExercisesTimerLogic: (exercise) => {
-        // exercise.reps_assigned
-            // total rep timer time = (((exercise.seconds_per_rep * exercise.reps_assigned) * 1.2) + (pre + switch))
-        // exercise.sets_assigned
         return {
             number_of_sets:    exercise.bilateral ? 2 : 1,
             pre_start_time:    5,
-            seconds_per_rep:   exercise.seconds_per_rep,
             seconds_per_set:   exercise.seconds_per_set,
             switch_sides_time: 5,
             up_next_interval:  10,

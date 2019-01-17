@@ -14,17 +14,16 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
 import Carousel from 'react-native-snap-carousel';
-import Video from 'react-native-video';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Checkbox, Spacer, TabIcon, Text, Tooltip, } from '../../custom';
-import { Error, } from '../../general';
+import { AppColors, AppFonts, AppSizes, MyPlan as MyPlanConstants, } from '../../../constants';
+import { Spacer, Text, Tooltip, } from '../../custom';
+import { ExercisesExercise, } from './';
 import { PlanLogic, } from '../../../lib';
 
 /* Styles ==================================================================== */
@@ -101,16 +100,15 @@ class Exercises extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            currentSlideIndex:        0,
-            isDescriptionToolTipOpen: false,
-            timers:                   [],
+            currentSlideIndex: 0,
+            timers:            [],
         };
         this._carousel = {};
         this._renderItem = this._renderItem.bind(this);
     }
 
     componentDidMount = () => {
-        const { exerciseList, selectedExercise, user, } = this.props;
+        const { exerciseList, selectedExercise, } = this.props;
         let { flatListExercises, } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise);
         _.map(flatListExercises, (exercise, index) => {
             const { number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval, } = PlanLogic.handleExercisesTimerLogic(exercise);
@@ -128,9 +126,6 @@ class Exercises extends PureComponent {
         });
         _.delay(() => {
             this.setState({ currentSlideIndex: this._carousel.currentIndex, });
-            if(!user.first_time_experience.includes('exercise_description_tooltip')) {
-                this.setState({ isDescriptionToolTipOpen: true, });
-            }
         }, 750);
     }
 
@@ -139,111 +134,26 @@ class Exercises extends PureComponent {
         const { currentSlideIndex, timers, } = this.state;
         const exercise = MyPlanConstants.cleanExercise(item);
         const nextExercise = nextItem ? MyPlanConstants.cleanExercise(nextItem) : null;
-        if(timers[index] && timers[index].seconds_per_set) {
-            // console.log(timers[index]);
-            // timer
-        } else {
-            // no timers
-        }
         return(
-            <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center',}}>
-                <View style={{backgroundColor: AppColors.white, borderRadius: 4,}}>
-                    <Spacer size={5} />
-                    <TabIcon
-                        containerStyle={[{left: 10, position: 'absolute', top: 10, width: 20, zIndex: 100,}]}
-                        color={AppColors.zeplin.lightSlate}
-                        icon={'close'}
-                        onPress={() => closeModal()}
-                        raised={false}
-                        size={20}
-                        type={'material-community'}
-                    />
-                    { exercise.videoUrl.length > 0 ?
-                        <Video
-                            paused={currentSlideIndex === index ? false : true}
-                            repeat={true}
-                            resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                            source={{uri: exercise.videoUrl}}
-                            style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: (AppSizes.screen.width * 0.85), width: (AppSizes.screen.width * 0.85),}]}
-                        />
-                        :
-                        <Error type={'URL not defined.'} />
-                    }
-                    <View style={{paddingHorizontal: AppSizes.paddingMed, width: AppSizes.screen.width * 0.85,}}>
-                        <Spacer size={10} />
-                        <View style={{alignSelf: 'flex-end',}}>
-                            <Tooltip
-                                animated
-                                backgroundColor={AppColors.transparent}
-                                content={
-                                    <TooltipContent
-                                        handleTooltipClose={() =>
-                                            this.setState(
-                                                { isDescriptionToolTipOpen: false, },
-                                                () => {
-                                                    if(!user.first_time_experience.includes('exercise_description_tooltip')) {
-                                                        handleUpdateFirstTimeExperience('exercise_description_tooltip');
-                                                    }
-                                                }
-                                            )
-                                        }
-                                        text={exercise.description}
-                                    />
-                                }
-                                contentStyle={{backgroundColor: AppColors.zeplin.success,}}
-                                isVisible={this.state.isDescriptionToolTipOpen && currentSlideIndex === index}
-                                onClose={() => this.setState({ isDescriptionToolTipOpen: false, })}
-                                tooltipStyle={{left: 0, width: AppSizes.screen.widthThreeQuarters,}}
-                            >
-                                <TabIcon
-                                    color={AppColors.zeplin.shadow}
-                                    icon={'help'}
-                                    iconStyle={[{marginHorizontal: AppSizes.paddingSml,}]}
-                                    onPress={() => this.setState({ isDescriptionToolTipOpen: true, })}
-                                    reverse={false}
-                                    type={'material'}
-                                />
-                            </Tooltip>
-                        </View>
-                        <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(28),}]}>
-                            {exercise.displayName}
-                        </Text>
-                        <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(14),}]}>
-                            {exercise.longDosage.toUpperCase()}
-                        </Text>
-                        <Spacer size={10} />
-                        <TabIcon
-                            containerStyle={[{alignSelf: 'center',}]}
-                            icon={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? 'ios-checkbox' : 'ios-checkbox-outline'}
-                            iconStyle={[{color: completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.light,}]}
-                            onPress={() => {
-                                handleCompleteExercise(exercise.library_id, exercise.set_number, nextExercise);
-                                _.delay(() => {
-                                    if(nextExercise && !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`)) {
-                                        this._carousel.snapToNext();
-                                    }
-                                }, 500);
-                            }}
-                            reverse={false}
-                            size={50}
-                            type={'ionicon'}
-                        />
-                        <Spacer size={10} />
-                        {/* nextExercise ?
-                            <View style={{alignItems: 'flex-end', flexDirection: 'row', justifyContent: 'flex-end', marginBottom: AppSizes.paddingSml,}}>
-                                <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(12), paddingRight: AppSizes.paddingSml,}}>{`UP NEXT: ${nextExercise.displayName}`}</Text>
-                                <Image
-                                    resizeMode={'contain'}
-                                    source={{uri: nextExercise.thumbnailUrl}}
-                                    style={{height: 50, width: 50,}}
-                                />
-                            </View>
-                            :
-                            null
-                        */}
-                    </View>
-                </View>
-            </View>
+            <ExercisesExercise
+                closeModal={closeModal}
+                completedExercises={completedExercises}
+                currentSlideIndex={currentSlideIndex}
+                exercise={exercise}
+                exerciseTimer={timers[index] && timers[index].seconds_per_set ? timers[index] : null}
+                handleCompleteExercise={(exerciseId, setNumber, nextExerciseObj) => {
+                    handleCompleteExercise(exerciseId, setNumber, nextExerciseObj);
+                    _.delay(() => {
+                        if(nextExercise && !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`)) {
+                            this._carousel.snapToNext();
+                        }
+                    }, 500);
+                }}
+                handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
+                index={index}
+                nextExercise={nextExercise}
+                user={user}
+            />
         );
     }
 
@@ -252,15 +162,9 @@ class Exercises extends PureComponent {
         let {
             availableSectionsCount,
             cleanedExerciseList,
-            // exercise,
-            // exercisesTotalLength,
             firstItem,
             flatListExercises,
         } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise);
-        // console.log('cleanedExerciseList',cleanedExerciseList);
-        // console.log('exercise',exercise);
-        // console.log('exercisesTotalLength',exercisesTotalLength);
-        // console.log('flatListExercises',flatListExercises);
         return(
             <View style={{backgroundColor: AppColors.transparent, flex: 1, flexDirection: 'column',}}>
                 <View style={{flex: 1,}}>
@@ -278,17 +182,10 @@ class Exercises extends PureComponent {
                         itemWidth={AppSizes.screen.width * 0.85}
                         lockScrollWhileSnapping={true}
                         maxToRenderPerBatch={10}
-                        onBeforeSnapToItem={slideIndex => {
-                            console.log('slideIndex-onBeforeSnapToItem',slideIndex,this.state.currentSlideIndex);
-                        }}
-                        onSnapToItem={slideIndex => {
-                            console.log('slideIndex-onSnapToItem',slideIndex,this.state.currentSlideIndex);
-                            this.setState({ currentSlideIndex: slideIndex, });
-                        }}
+                        onSnapToItem={slideIndex => this.setState({ currentSlideIndex: slideIndex, })}
                         ref={c => {this._carousel = c;}}
                         removeClippedSubviews={true}
                         renderItem={obj => this._renderItem(obj, flatListExercises[(obj.index + 1)])}
-                        // scrollEnabled={false}
                         sliderWidth={AppSizes.screen.width}
                         windowSize={10}
                     />
