@@ -2,7 +2,7 @@
  * Exercises
  *
     <Exercises
-        closeModal={this._singleExerciseItemRef()}
+        closeModal={() => this._singleExerciseItemRef.close()}
         completedExercises={completedExercises}
         exerciseList={exerciseList}
         handleCompleteExercise={this._handleCompleteExercise}
@@ -106,15 +106,17 @@ class Exercises extends PureComponent {
             timers:                   [],
         };
         this._carousel = {};
+        this._renderItem = this._renderItem.bind(this);
     }
 
     componentDidMount = () => {
         const { exerciseList, selectedExercise, user, } = this.props;
         let { flatListExercises, } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise);
         _.map(flatListExercises, (exercise, index) => {
-            const { number_of_sets, seconds_per_set, switch_sides_time, up_next_interval, } = PlanLogic.handleExercisesTimerLogic(exercise);
+            const { number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval, } = PlanLogic.handleExercisesTimerLogic(exercise);
             let newTimer = {};
             newTimer.number_of_sets = number_of_sets;
+            newTimer.pre_start_time = pre_start_time;
             newTimer.seconds_per_set = seconds_per_set;
             newTimer.switch_sides_time = switch_sides_time;
             newTimer.up_next_interval = up_next_interval;
@@ -133,7 +135,7 @@ class Exercises extends PureComponent {
     }
 
     _renderItem = ({item, index}, nextItem) => {
-        const { completedExercises, handleCompleteExercise, handleUpdateFirstTimeExperience, user, } = this.props;
+        const { closeModal, completedExercises, handleCompleteExercise, handleUpdateFirstTimeExperience, user, } = this.props;
         const { currentSlideIndex, timers, } = this.state;
         const exercise = MyPlanConstants.cleanExercise(item);
         const nextExercise = nextItem ? MyPlanConstants.cleanExercise(nextItem) : null;
@@ -144,9 +146,18 @@ class Exercises extends PureComponent {
             // no timers
         }
         return(
-            <View style={{backgroundColor: AppColors.transparent, flex: 1,}}>
+            <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center',}}>
                 <View style={{backgroundColor: AppColors.white, borderRadius: 4,}}>
                     <Spacer size={5} />
+                    <TabIcon
+                        containerStyle={[{left: 10, position: 'absolute', top: 10, width: 20, zIndex: 100,}]}
+                        color={AppColors.zeplin.lightSlate}
+                        icon={'close'}
+                        onPress={() => closeModal()}
+                        raised={false}
+                        size={20}
+                        type={'material-community'}
+                    />
                     { exercise.videoUrl.length > 0 ?
                         <Video
                             paused={currentSlideIndex === index ? false : true}
@@ -180,7 +191,7 @@ class Exercises extends PureComponent {
                                     />
                                 }
                                 contentStyle={{backgroundColor: AppColors.zeplin.success,}}
-                                isVisible={this.state.isDescriptionToolTipOpen}
+                                isVisible={this.state.isDescriptionToolTipOpen && currentSlideIndex === index}
                                 onClose={() => this.setState({ isDescriptionToolTipOpen: false, })}
                                 tooltipStyle={{left: 0, width: AppSizes.screen.widthThreeQuarters,}}
                             >
@@ -267,14 +278,19 @@ class Exercises extends PureComponent {
                         itemWidth={AppSizes.screen.width * 0.85}
                         lockScrollWhileSnapping={true}
                         maxToRenderPerBatch={10}
+                        onBeforeSnapToItem={slideIndex => {
+                            console.log('slideIndex-onBeforeSnapToItem',slideIndex,this.state.currentSlideIndex);
+                        }}
+                        onSnapToItem={slideIndex => {
+                            console.log('slideIndex-onSnapToItem',slideIndex,this.state.currentSlideIndex);
+                            this.setState({ currentSlideIndex: slideIndex, });
+                        }}
                         ref={c => {this._carousel = c;}}
                         removeClippedSubviews={true}
                         renderItem={obj => this._renderItem(obj, flatListExercises[(obj.index + 1)])}
-                        sliderWidth={AppSizes.screen.width}
-
-                        onBeforeSnapToItem={slideIndex => console.log('slideIndex-onBeforeSnapToItem',slideIndex,this.state.currentSlideIndex)}
-                        onSnapToItem={slideIndex => {console.log('slideIndex-onSnapToItem',slideIndex,this.state.currentSlideIndex); this.setState({ currentSlideIndex: slideIndex, });}}
                         // scrollEnabled={false}
+                        sliderWidth={AppSizes.screen.width}
+                        windowSize={10}
                     />
                 </View>
             </View>
@@ -283,6 +299,7 @@ class Exercises extends PureComponent {
 }
 
 Exercises.propTypes = {
+    closeModal:                      PropTypes.func.isRequired,
     completedExercises:              PropTypes.array.isRequired,
     exerciseList:                    PropTypes.object.isRequired,
     handleCompleteExercise:          PropTypes.func.isRequired,

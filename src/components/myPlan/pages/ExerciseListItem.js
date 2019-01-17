@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import { Image, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppStyles, MyPlan } from '../../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan } from '../../../constants';
 import { TabIcon, Text } from '../../custom';
 
 /* Component ==================================================================== */
@@ -33,7 +33,7 @@ class ExerciseListItem extends Component {
     render = () => {
         const { completedExercises, exercise, handleCompleteExercise, isLastItem, toggleSelectedExercise, } = this.props;
         return(
-            <View style={[{borderTopWidth: 1, borderTopColor: AppColors.zeplin.lightGrey, marginHorizontal: 10}]}>
+            <View style={[{borderTopColor: AppColors.zeplin.lightGrey, borderTopWidth: 1, marginHorizontal: AppSizes.paddingSml,}]}>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
                     <TabIcon
                         containerStyle={[{flex: 1, justifyContent: 'center',}]}

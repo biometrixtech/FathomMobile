@@ -1113,7 +1113,7 @@ class MyPlan extends Component {
                         ?
                         <Modal
                             backdropColor={AppColors.zeplin.darkNavy}
-                            backdropOpacity={0.9}
+                            backdropOpacity={0.8}
                             backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
@@ -1125,12 +1125,16 @@ class MyPlan extends Component {
                         >
                             { this.state.selectedExercise.library_id ?
                                 <Exercises
+                                    closeModal={() => this._singleExerciseItemRef.close()}
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
                                     handleCompleteExercise={(exerciseId, hasNextExercise) => {
                                         this._handleCompleteExercise(exerciseId, 'pre');
                                         if(!hasNextExercise) {
-                                            this._singleExerciseItemRef.close()
+                                            this._singleExerciseItemRef.close();
+                                            _.delay(() => {
+                                                this.setState({ isPrepareExerciseCompletionModalOpen: true, });
+                                            }, 750);
                                         }
                                     }}
                                     handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
@@ -1432,7 +1436,7 @@ class MyPlan extends Component {
                         ?
                         <Modal
                             backdropColor={AppColors.zeplin.darkNavy}
-                            backdropOpacity={0.9}
+                            backdropOpacity={0.8}
                             backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
@@ -1444,12 +1448,16 @@ class MyPlan extends Component {
                         >
                             { this.state.selectedExercise.library_id ?
                                 <Exercises
+                                    closeModal={() => this._singleExerciseItemRef.close()}
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
                                     handleCompleteExercise={(exerciseId, hasNextExercise) => {
                                         this._handleCompleteExercise(exerciseId, 'post');
                                         if(!hasNextExercise) {
-                                            this._singleExerciseItemRef.close()
+                                            this._singleExerciseItemRef.close();
+                                            _.delay(() => {
+                                                this.setState({ isRecoverExerciseCompletionModalOpen: true, });
+                                            }, 750);
                                         }
                                     }}
                                     handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}

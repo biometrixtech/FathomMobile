@@ -82,7 +82,7 @@ class ExerciseList extends Component {
                         exerciseIndex.length > 0 ?
                             <View key={index}>
                                 { index === 'FOAM ROLL' ?
-                                    <View style={{flexDirection: 'row',}}>
+                                    <View style={{flexDirection: 'row', marginLeft: (AppSizes.paddingMed / 2),}}>
                                         <Tooltip
                                             animated
                                             content={
@@ -95,11 +95,11 @@ class ExerciseList extends Component {
                                             tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
                                         >
                                             <View style={{backgroundColor: this.state.isToolTipOpen ? AppColors.white : AppColors.transparent, borderRadius: this.state.isToolTipOpen ? 5 : 0, flexDirection: 'row',}}>
-                                                <Text robotoRegular style={[AppStyles.paddingVerticalSml, {fontSize: AppFonts.scaleFont(15), marginLeft: AppSizes.paddingMed, marginRight: AppSizes.paddingXSml,}]}>{index}</Text>
+                                                <Text robotoRegular style={[AppStyles.paddingVerticalSml, {fontSize: AppFonts.scaleFont(15), marginLeft: (AppSizes.paddingMed / 2), marginRight: AppSizes.paddingXSml,}]}>{index}</Text>
                                                 <TabIcon
                                                     color={AppColors.zeplin.shadow}
                                                     icon={'help'}
-                                                    iconStyle={[{marginRight: AppSizes.paddingMed,}]}
+                                                    iconStyle={[{marginRight: (AppSizes.paddingMed / 2),}]}
                                                     onPress={() => this.setState({ isToolTipOpen: true, },)}
                                                     reverse={false}
                                                     size={20}
