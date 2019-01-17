@@ -17,7 +17,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, View, } from 'react-native';
+import { Image, Platform, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -69,6 +69,10 @@ class ExercisesExercise extends PureComponent {
             startSwitchSidesInterval:  false,
             switchSideTime:            0,
         };
+        this._resetTimer = this._resetTimer.bind(this);
+        this._startPreExerciseCountdown = this._startPreExerciseCountdown.bind(this);
+        this._startSwitchSideCountdown = this._startSwitchSideCountdown.bind(this);
+        this._startTimer = this._startTimer.bind(this);
     }
 
     componentDidMount = () => {
@@ -81,30 +85,32 @@ class ExercisesExercise extends PureComponent {
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
-        const { completedExercises, currentSlideIndex, exercise, index, user, } = this.props;
+        const { completedExercises, currentSlideIndex, exercise, exerciseTimer, index, user, } = this.props;
         if(
-            prevProps.currentSlideIndex !== currentSlideIndex &&
-            currentSlideIndex !== index &&
+            exerciseTimer &&
             user.first_time_experience.includes('exercise_description_tooltip')
         ) {
-            // reset timer
-            this._resetTimer();
-        } else if(
-            prevProps.currentSlideIndex !== currentSlideIndex &&
-            currentSlideIndex === index &&
-            !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) &&
-            user.first_time_experience.includes('exercise_description_tooltip')
-        ) {
-            // start timer
-            this._startTimer();
-        } else if(
-            prevProps.currentSlideIndex !== currentSlideIndex &&
-            currentSlideIndex === index &&
-            completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) &&
-            user.first_time_experience.includes('exercise_description_tooltip')
-        ) {
-            // timer should be in done state
-            this.setState({ areAllTimersCompleted: true, });
+            if(
+                prevProps.currentSlideIndex !== currentSlideIndex &&
+                currentSlideIndex !== index
+            ) {
+                // reset timer
+                this._resetTimer();
+            } else if(
+                prevProps.currentSlideIndex !== currentSlideIndex &&
+                currentSlideIndex === index &&
+                !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`)
+            ) {
+                // start timer
+                this._startTimer();
+            } else if(
+                prevProps.currentSlideIndex !== currentSlideIndex &&
+                currentSlideIndex === index &&
+                completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`)
+            ) {
+                // timer should be in done state
+                this.setState({ areAllTimersCompleted: true, });
+            }
         }
     }
 
@@ -117,7 +123,8 @@ class ExercisesExercise extends PureComponent {
         }, 1000);
     }
 
-    _resetTimer = (restartTimer = false) => {
+    _resetTimer = (restartTimer = false, shouldCloseModal = false) => {
+        const {  closeModal, } = this.props;
         this.setState(
             {
                 areAllTimersCompleted:     false,
@@ -132,7 +139,10 @@ class ExercisesExercise extends PureComponent {
             () => {
                 this.setState(
                     { startPreExerciseCountdown: restartTimer, },
-                    () => { if(restartTimer) { this._startPreExerciseCountdown(); } },
+                    () => {
+                        if(restartTimer) { this._startPreExerciseCountdown(); }
+                        if(shouldCloseModal) { closeModal(); }
+                    },
                 );
             },
         );
@@ -140,11 +150,12 @@ class ExercisesExercise extends PureComponent {
 
     _startPreExerciseCountdown = () => {
         const { exerciseTimer, } = this.props;
+        let preStartTime = exerciseTimer && exerciseTimer.pre_start_time ? exerciseTimer.pre_start_time : 0;
         _.delay(() => {
             this.setState(
-                { preExerciseTime: (this.state.preExerciseTime + 1 / exerciseTimer.pre_start_time), },
+                { preExerciseTime: (this.state.preExerciseTime + 1 / preStartTime), },
                 () => {
-                    if((this.state.preExerciseTime * exerciseTimer.pre_start_time) !== exerciseTimer.pre_start_time) {
+                    if((this.state.preExerciseTime * preStartTime) !== preStartTime) {
                         this._startPreExerciseCountdown();
                     } else {
                         _.delay(() => this.setState({ startFirstSet: true, startPreExerciseCountdown: false, }), 500);
@@ -156,11 +167,12 @@ class ExercisesExercise extends PureComponent {
 
     _startSwitchSideCountdown = () => {
         const { exerciseTimer, } = this.props;
+        let switchSidesTime = exerciseTimer && exerciseTimer.switch_sides_time ? exerciseTimer.switch_sides_time : 0;
         _.delay(() => {
             this.setState(
-                { switchSideTime: (this.state.switchSideTime + 1 / exerciseTimer.switch_sides_time), },
+                { switchSideTime: (this.state.switchSideTime + 1 / switchSidesTime), },
                 () => {
-                    if((this.state.switchSideTime * exerciseTimer.switch_sides_time) !== exerciseTimer.switch_sides_time) {
+                    if((this.state.switchSideTime * switchSidesTime) !== switchSidesTime) {
                         this._startSwitchSideCountdown();
                     } else {
                         _.delay(() => this.setState({ startSwitchSidesInterval: false, startSecondSet: true, }), 500);
@@ -172,7 +184,6 @@ class ExercisesExercise extends PureComponent {
 
     render = () => {
         const {
-            closeModal,
             completedExercises,
             currentSlideIndex,
             exercise,
@@ -193,6 +204,7 @@ class ExercisesExercise extends PureComponent {
             startSwitchSidesInterval,
             switchSideTime,
         } = this.state;
+        let cleanedPreExerciseTime = exerciseTimer && exerciseTimer.pre_start_time ? parseInt(preExerciseTime * exerciseTimer.pre_start_time, 10) : 0;
         return(
             <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center',}}>
                 <View style={{backgroundColor: AppColors.white, borderRadius: 4,}}>
@@ -201,7 +213,7 @@ class ExercisesExercise extends PureComponent {
                         containerStyle={[{left: 10, position: 'absolute', top: 10, width: 20, zIndex: 100,}]}
                         color={AppColors.zeplin.lightSlate}
                         icon={'close'}
-                        onPress={() => closeModal()}
+                        onPress={() => this._resetTimer(false, true)}
                         raised={false}
                         size={20}
                         type={'material-community'}
@@ -232,7 +244,9 @@ class ExercisesExercise extends PureComponent {
                                                     if(!user.first_time_experience.includes('exercise_description_tooltip')) {
                                                         handleUpdateFirstTimeExperience('exercise_description_tooltip');
                                                     }
-                                                    this._startTimer();
+                                                    if(exerciseTimer) {
+                                                        this._startTimer();
+                                                    }
                                                 }
                                             )
                                         }
@@ -283,7 +297,7 @@ class ExercisesExercise extends PureComponent {
                                         animated={true}
                                         borderWidth={0}
                                         color={AppColors.zeplin.seaBlue}
-                                        formatText={`${parseInt(preExerciseTime * exerciseTimer.pre_start_time, 10)}`}
+                                        formatText={`${cleanedPreExerciseTime}`}
                                         indeterminate={false}
                                         progress={preExerciseTime}
                                         showsText={true}

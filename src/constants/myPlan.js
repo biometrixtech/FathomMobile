@@ -626,7 +626,7 @@ function completionModalExerciseList(exerciseList, completedExercises) {
             cleanedExerciseList[index].completed = 0;
             cleanedExerciseList[index].total = exerciseIndex.length;
             _.map(exerciseIndex, (exercise, i) => {
-                if(completedExercises.includes(exercise.library_id)) {
+                if(completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`)) {
                     cleanedExerciseList[index].completed += 1;
                 }
             });

@@ -14,7 +14,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { StyleSheet, View, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -22,7 +22,7 @@ import Carousel from 'react-native-snap-carousel';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Spacer, Text, Tooltip, } from '../../custom';
+import { Spacer, Text, } from '../../custom';
 import { ExercisesExercise, } from './';
 import { PlanLogic, } from '../../../lib';
 
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
 
 /* Component ==================================================================== */
 const ProgressPills = ({ availableSectionsCount, cleanedExerciseList, completedExercises, }) => (
-    <View style={[styles.progressPillsWrapper,]}>
+    <View style={[styles.progressPillsWrapper, availableSectionsCount === 2 ? {paddingHorizontal: AppSizes.paddingLrg,} : {}]}>
         {_.map(cleanedExerciseList, (exerciseList, index) => {
             let progressLength = (_.filter(exerciseList, o => completedExercises.indexOf(`${o.library_id}-${o.set_number}`) > -1).length / exerciseList.length);
             let progressWidth = progressLength ? parseInt(progressLength * 100, 10) : 0;
@@ -62,37 +62,11 @@ const ProgressPills = ({ availableSectionsCount, cleanedExerciseList, completedE
                         <View style={[styles.progressPill, {width: '90%',}]}>
                             <View style={[styles.progressPill, {backgroundColor: AppColors.zeplin.seaBlue, width: `${progressWidth}%`,}]} />
                         </View>
-                        <Spacer size={AppSizes.paddingSml} />
                     </View>
                     :
                     null
             );
         })}
-    </View>
-);
-
-const TooltipContent = ({ handleTooltipClose, text, }) => (
-    <View style={{backgroundColor: AppColors.zeplin.success, padding: AppSizes.paddingSml,}}>
-        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(13),}}>{text}</Text>
-        <Spacer size={10} />
-        <View style={{flex: 1, flexDirection: 'row',}}>
-            <View style={{flex: 2,}} />
-            <View style={{flex: 6,}} />
-            <TouchableOpacity
-                onPress={handleTooltipClose}
-                style={{flex: 2,}}
-            >
-                <Text
-                    robotoMedium
-                    style={{
-                        color:    AppColors.white,
-                        fontSize: AppFonts.scaleFont(15),
-                    }}
-                >
-                    {'GOT IT'}
-                </Text>
-            </TouchableOpacity>
-        </View>
     </View>
 );
 
@@ -120,9 +94,7 @@ class Exercises extends PureComponent {
             newTimer.up_next_interval = up_next_interval;
             let newTimers = this.state.timers;
             newTimers.push(newTimer);
-            _.delay(() => {
-                this.setState({ timers: newTimers, });
-            }, 500 * index);
+            this.setState({ timers: newTimers, });
         });
         _.delay(() => {
             this.setState({ currentSlideIndex: this._carousel.currentIndex, });
