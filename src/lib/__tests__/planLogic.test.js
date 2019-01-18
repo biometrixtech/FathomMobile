@@ -984,13 +984,13 @@ const helperFunctions = {
 
 it('Exercises Timer Logic - Nothing Passed', () => {
     let exercises = {};
-    let expectedResult = helperFunctions.getExerciseTimersExecptedResult(1, 5, 30, 5 ,10);
+    let expectedResult = helperFunctions.getExerciseTimersExecptedResult(1, 5, null, 5 ,10);
     expect(PlanLogic.handleExercisesTimerLogic(exercises)).toEqual(expectedResult);
 });
 
 it('Exercises Timer Logic - Bilateral Exercise', () => {
     let exercises = {bilateral: true,};
-    let expectedResult = helperFunctions.getExerciseTimersExecptedResult(2, 5, 30, 5 ,10);
+    let expectedResult = helperFunctions.getExerciseTimersExecptedResult(2, 5, null, 5 ,10);
     expect(PlanLogic.handleExercisesTimerLogic(exercises)).toEqual(expectedResult);
 });
 

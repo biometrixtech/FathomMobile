@@ -82,20 +82,6 @@ class Exercises extends PureComponent {
     }
 
     componentDidMount = () => {
-        const { exerciseList, selectedExercise, } = this.props;
-        let { flatListExercises, } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise);
-        _.map(flatListExercises, (exercise, index) => {
-            const { number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval, } = PlanLogic.handleExercisesTimerLogic(exercise);
-            let newTimer = {};
-            newTimer.number_of_sets = number_of_sets;
-            newTimer.pre_start_time = pre_start_time;
-            newTimer.seconds_per_set = seconds_per_set;
-            newTimer.switch_sides_time = switch_sides_time;
-            newTimer.up_next_interval = up_next_interval;
-            let newTimers = this.state.timers;
-            newTimers.push(newTimer);
-            this.setState({ timers: newTimers, });
-        });
         _.delay(() => {
             this.setState({ currentSlideIndex: this._carousel.currentIndex, });
         }, 750);
@@ -103,16 +89,18 @@ class Exercises extends PureComponent {
 
     _renderItem = ({item, index}, nextItem) => {
         const { closeModal, completedExercises, handleCompleteExercise, handleUpdateFirstTimeExperience, user, } = this.props;
-        const { currentSlideIndex, timers, } = this.state;
+        const { currentSlideIndex, } = this.state;
         const exercise = MyPlanConstants.cleanExercise(item);
         const nextExercise = nextItem ? MyPlanConstants.cleanExercise(nextItem) : null;
+        const { number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval, } = PlanLogic.handleExercisesTimerLogic(exercise);
+        let timer = { number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval };
         return(
             <ExercisesExercise
                 closeModal={closeModal}
                 completedExercises={completedExercises}
                 currentSlideIndex={currentSlideIndex}
                 exercise={exercise}
-                exerciseTimer={timers[index] && timers[index].seconds_per_set ? timers[index] : null}
+                exerciseTimer={timer && timer.seconds_per_set ? timer : null}
                 handleCompleteExercise={(exerciseId, setNumber, nextExerciseObj) => {
                     handleCompleteExercise(exerciseId, setNumber, nextExerciseObj, !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`));
                     _.delay(() => {
