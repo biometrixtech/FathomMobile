@@ -970,7 +970,35 @@ const helperFunctions = {
         };
     },
 
+    getExerciseTimersExecptedResult: (number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval) => {
+        return {
+            number_of_sets,
+            pre_start_time,
+            seconds_per_set,
+            switch_sides_time,
+            up_next_interval,
+        }
+    },
+
 };
+
+it('Exercises Timer Logic - Nothing Passed', () => {
+    let exercises = {};
+    let expectedResult = helperFunctions.getExerciseTimersExecptedResult(1, 5, 30, 5 ,10);
+    expect(PlanLogic.handleExercisesTimerLogic(exercises)).toEqual(expectedResult);
+});
+
+it('Exercises Timer Logic - Bilateral Exercise', () => {
+    let exercises = {bilateral: true,};
+    let expectedResult = helperFunctions.getExerciseTimersExecptedResult(2, 5, 30, 5 ,10);
+    expect(PlanLogic.handleExercisesTimerLogic(exercises)).toEqual(expectedResult);
+});
+
+it('Exercises Timer Logic - Bilateral & Timed Exercise', () => {
+    let exercises = {bilateral: true, seconds_per_set: 60,};
+    let expectedResult = helperFunctions.getExerciseTimersExecptedResult(2, 5, 60, 5 ,10);
+    expect(PlanLogic.handleExercisesTimerLogic(exercises)).toEqual(expectedResult);
+});
 
 it('New Sore Body Part Logic - Nothing Passed', () => {
     let expectedResult = [];
