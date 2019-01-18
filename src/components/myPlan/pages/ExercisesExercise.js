@@ -67,12 +67,12 @@ class ExercisesExercise extends PureComponent {
             preExerciseTime:           0,
             showAnimation:             false,
             startFirstSet:             false,
-            startPreExerciseCountdown: false,
+            startPreExerciseCountdown: true,
             startSecondSet:            false,
             startSwitchSidesInterval:  false,
             switchSideTime:            0,
             timer:                     null,
-            timerSeconds:              0,
+            timerSeconds:              5,
         };
         this._cleanTime = this._cleanTime.bind(this);
         this._firstSetTick = this._firstSetTick.bind(this);
@@ -211,21 +211,16 @@ class ExercisesExercise extends PureComponent {
                 preExerciseTime:           0,
                 showAnimation:             false,
                 startFirstSet:             false,
-                startPreExerciseCountdown: false,
+                startPreExerciseCountdown: true,
                 startSecondSet:            false,
                 startSwitchSidesInterval:  false,
                 switchSideTime:            0,
                 timer:                     null,
-                timerSeconds:              0,
+                timerSeconds:              5,
             },
             () => {
-                this.setState(
-                    { startPreExerciseCountdown: restartTimer, },
-                    () => {
-                        if(restartTimer) { this._startPreExerciseCountdown(); }
-                        if(shouldCloseModal) { closeModal(); }
-                    },
-                );
+                if(restartTimer) { this._startPreExerciseCountdown(); }
+                if(shouldCloseModal) { closeModal(); }
             },
         );
     }
@@ -240,7 +235,7 @@ class ExercisesExercise extends PureComponent {
         const { exerciseTimer, } = this.props;
         let preStartTime = exerciseTimer && exerciseTimer.pre_start_time ? exerciseTimer.pre_start_time : 0;
         if((preExerciseTime * preStartTime) !== preStartTime) {
-            this.setState({ preExerciseTime: (this.state.preExerciseTime + 1 / preStartTime), timerSeconds: (timerSeconds + 1), });
+            this.setState({ preExerciseTime: (this.state.preExerciseTime + 1 / preStartTime), timerSeconds: (timerSeconds - 1), });
         } else {
             clearInterval(timer);
             _.delay(() => {
@@ -340,7 +335,6 @@ class ExercisesExercise extends PureComponent {
             switchSideTime,
             timerSeconds,
         } = this.state;
-        let cleanedPreExerciseTime = exerciseTimer && exerciseTimer.pre_start_time ? parseInt(preExerciseTime * exerciseTimer.pre_start_time, 10) : 0;
         return(
             <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center',}}>
                 <View style={{backgroundColor: AppColors.white, borderRadius: 4,}}>
@@ -456,7 +450,7 @@ class ExercisesExercise extends PureComponent {
                                             animated={true}
                                             borderWidth={0}
                                             color={AppColors.zeplin.seaBlue}
-                                            formatText={`${cleanedPreExerciseTime}`}
+                                            formatText={`${timerSeconds}`}
                                             indeterminate={false}
                                             progress={preExerciseTime}
                                             showsText={true}
