@@ -1129,9 +1129,9 @@ class MyPlan extends Component {
                                     closeModal={() => this._singleExerciseItemRef.close()}
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
-                                    handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {
+                                    handleCompleteExercise={(exerciseId, setNumber, hasNextExercise, isUnChecked) => {
                                         this._handleCompleteExercise(exerciseId, setNumber, 'pre');
-                                        if(!hasNextExercise) {
+                                        if(!hasNextExercise && isUnChecked) {
                                             this._singleExerciseItemRef.close();
                                             _.delay(() => {
                                                 this.setState({ isPrepareExerciseCompletionModalOpen: true, });

@@ -114,12 +114,12 @@ class Exercises extends PureComponent {
                 exercise={exercise}
                 exerciseTimer={timers[index] && timers[index].seconds_per_set ? timers[index] : null}
                 handleCompleteExercise={(exerciseId, setNumber, nextExerciseObj) => {
-                    handleCompleteExercise(exerciseId, setNumber, nextExerciseObj);
+                    handleCompleteExercise(exerciseId, setNumber, nextExerciseObj, !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`));
                     _.delay(() => {
                         if(nextExercise && !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`)) {
                             this._carousel.snapToNext();
                         }
-                    }, 500);
+                    }, 250);
                 }}
                 handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
                 index={index}

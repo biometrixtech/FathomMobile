@@ -31,7 +31,6 @@ Installed React-Native libraries that we're utilizing
 | [Sliding Up Panel](https://github.com/octopitus/rn-sliding-up-panel) | Draggable sliding up panel implemented in React-Native. | 1. Post Session Survey<br/>2. Readiness Survey |
 | [Snap Carousel](https://github.com/archriss/react-native-snap-carousel) | Swiper component for React-Native featuring previews, multiple layouts, parallax images, performant handling of huge numbers of items, and RTL support. Compatible with Android & iOS. | Exercises Page |
 | [Splash Screen](https://github.com/crazycodeboy/react-native-splash-screen) | A splash screen for React-Native, hide when application loaded ,it works on iOS and Android. | Start Page |
-| [Timer](https://github.com/noelyoo/react-native-timer-countdown) | A customizable countdown component for React Native (iOS and Android). | Exercises Exercise. |
 | [Vector Icons](https://github.com/oblador/react-native-vector-icons) | Customizable Icons for React-Native with support for NavBar/TabBar/ToolbarAndroid, image source and full styling. | Installed so we can access ALL icons from [director](https://oblador.github.io/react-native-vector-icons/) |
 | [Video](https://github.com/react-native-community/react-native-video) | A <Video> component for React-Native | 1. Single Exercises<br/>2. Tutorials |
 

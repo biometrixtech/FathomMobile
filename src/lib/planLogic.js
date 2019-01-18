@@ -795,7 +795,7 @@ const PlanLogic = {
         return {
             number_of_sets:    exercise.bilateral ? 2 : 1,
             pre_start_time:    5,
-            seconds_per_set:   exercise.seconds_per_set,
+            seconds_per_set:   2,//exercise.seconds_per_set,
             switch_sides_time: 5,
             up_next_interval:  10,
         };
