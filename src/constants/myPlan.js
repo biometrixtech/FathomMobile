@@ -325,8 +325,8 @@ const teamSports = [
     { index: 18, order: null, label: 'Sprints', positions: false, },
     { index: 19, order: null, label: 'Jumps', positions: false, },
     { index: 20, order: null, label: 'Throws', positions: false, },
-    { index: 21, order: 15, label: 'Volleyball', positions: ['Hitter', 'Setter', 'Middle Blocker', 'Libero'], },
-    { index: 22, order: 16, label: 'Wrestling', positions: false, },
+    { index: 21, order: 16, label: 'Volleyball', positions: ['Hitter', 'Setter', 'Middle Blocker', 'Libero'], },
+    { index: 22, order: 17, label: 'Wrestling', positions: false, },
     { index: 23, order: null, label: 'Weightlifting', positions: false, },
     { index: 24, order: 15, label: 'Track & Field', positions: ['Sprinter', 'Jumper', 'Thrower', 'Distance'], icon: 'run-fast', iconType: 'material-community', },
 ];
