@@ -734,7 +734,7 @@ const helperFunctions = {
             { index: 17, order: 4, label: 'Distance Running', positions: false, icon: 'run', iconType: 'material-community', },
             { index: 4, order: 5, label: 'Field Hockey', positions: ['Goalie', 'Fullback', 'Midfielder', 'Forward'], icon: 'hockey-sticks', iconType: 'material-community', },
             { index: 5, order: 6, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], icon: 'football', iconType: 'material-community', },
-            { index: 7, order: 7, label: 'Golf', positions: false, },
+            { index: 7, order: 7, label: 'Golf', positions: false, icon: 'golf', iconType: 'material-community', },
             { index: 10, order: 8, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], icon: 'checkbox-marked-outline', iconType: 'material-community', },
             { index: 15, order: 9, label: 'Pool Sports', positions: false, icon: 'pool', iconType: 'material-community', },
             { index: 11, order: 10, label: 'Rowing', positions: false, icon: 'rowing', iconType: 'material-community', },
@@ -743,8 +743,8 @@ const helperFunctions = {
             { index: 2, order: 13, label: 'Softball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], icon: 'baseball', iconType: 'material-community', },
             { index: 16, order: 14, label: 'Tennis', positions: false, icon: 'md-tennisball', iconType: 'ionicon', },
             { index: 24, order: 15, label: 'Track & Field', positions: ['Sprinter', 'Jumper', 'Thrower', 'Distance'], icon: 'run-fast', iconType: 'material-community', },
-            { index: 21, order: 16, label: 'Volleyball', positions: ['Hitter', 'Setter', 'Middle Blocker', 'Libero'], },
-            { index: 22, order: 17, label: 'Wrestling', positions: false, },
+            { index: 21, order: 16, label: 'Volleyball', positions: ['Hitter', 'Setter', 'Middle Blocker', 'Libero'], icon: 'volleyball', iconType: 'material-community', },
+            { index: 22, order: 17, label: 'Wrestling', positions: false, icon: 'checkbox-multiple-marked-outline', iconType: 'material-community', },
         ];
     },
 
