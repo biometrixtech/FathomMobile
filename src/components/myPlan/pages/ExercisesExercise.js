@@ -11,6 +11,7 @@
         handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
         index={index}
         nextExercise={nextExercise}
+        progressPillsHeight={progressPillsHeight}
         user={user}
     />
  *
@@ -64,6 +65,7 @@ class ExercisesExercise extends PureComponent {
             isDescriptionToolTipOpen:  false,
             isMounted:                 false,
             isPaused:                  false,
+            modalHeight:               0,
             preExerciseTime:           0,
             showAnimation:             false,
             startFirstSet:             false,
@@ -210,6 +212,7 @@ class ExercisesExercise extends PureComponent {
                 areAllTimersCompleted:     completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? true : false,
                 isDescriptionToolTipOpen:  false,
                 isPaused:                  false,
+                modalHeight:               0,
                 preExerciseTime:           0,
                 showAnimation:             false,
                 startFirstSet:             false,
@@ -313,6 +316,16 @@ class ExercisesExercise extends PureComponent {
         return minutes+':'+secs;
     }
 
+    _resizeModal = ev => {
+        let oldHeight = this.state.modalHeight;
+        let newHeight = parseInt(ev.nativeEvent.layout.height, 10);
+        if(oldHeight !== newHeight) {
+            this.setState({
+                modalHeight: newHeight,
+            });
+        }
+    }
+
     render = () => {
         const {
             completedExercises,
@@ -323,12 +336,14 @@ class ExercisesExercise extends PureComponent {
             handleUpdateFirstTimeExperience,
             index,
             nextExercise,
+            progressPillsHeight,
             user,
         } = this.props;
         const {
             areAllTimersCompleted,
             isDescriptionToolTipOpen,
             isPaused,
+            modalHeight,
             preExerciseTime,
             showAnimation,
             startFirstSet,
@@ -338,9 +353,13 @@ class ExercisesExercise extends PureComponent {
             switchSideTime,
             timerSeconds,
         } = this.state;
+        let displayNameFontSize = ((progressPillsHeight + modalHeight) === AppSizes.screen.height) ? AppFonts.scaleFont(22) : AppFonts.scaleFont(28);
         return(
             <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center',}}>
-                <View style={{backgroundColor: AppColors.white, borderRadius: 4,}}>
+                <View
+                    onLayout={ev => this._resizeModal(ev)}
+                    style={{backgroundColor: AppColors.white, borderRadius: 4,}}
+                >
                     <Spacer size={5} />
                     <TabIcon
                         containerStyle={[{right: 10, position: 'absolute', top: 10, width: 26, zIndex: 100,}]}
@@ -365,8 +384,9 @@ class ExercisesExercise extends PureComponent {
                     <View style={{paddingHorizontal: AppSizes.paddingMed, width: AppSizes.screen.width * 0.85,}}>
                         <Spacer size={10} />
                         <View style={{flexDirection: 'row',}}>
-                            <View style={{flex: 9,}}>
-                                <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(28),}]}>
+                            <View style={{flex: 1,}} />
+                            <View style={{flex: 8,}}>
+                                <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkNavy, fontSize: displayNameFontSize,}]}>
                                     {exercise.displayName}
                                 </Text>
                             </View>

@@ -74,8 +74,9 @@ class Exercises extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            currentSlideIndex: 0,
-            timers:            [],
+            currentSlideIndex:   0,
+            progressPillsHeight: 0,
+            timers:              [],
         };
         this._carousel = {};
         this._renderItem = this._renderItem.bind(this);
@@ -87,7 +88,7 @@ class Exercises extends PureComponent {
         }, 750);
     }
 
-    _renderItem = ({item, index}, nextItem) => {
+    _renderItem = ({item, index}, nextItem, progressPillsHeight) => {
         const { closeModal, completedExercises, handleCompleteExercise, handleUpdateFirstTimeExperience, user, } = this.props;
         const { currentSlideIndex, } = this.state;
         const exercise = MyPlanConstants.cleanExercise(item);
@@ -112,9 +113,20 @@ class Exercises extends PureComponent {
                 handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
                 index={index}
                 nextExercise={nextExercise}
+                progressPillsHeight={progressPillsHeight}
                 user={user}
             />
         );
+    }
+
+    _resizeModal = ev => {
+        let oldHeight = this.state.progressPillsHeight;
+        let newHeight = parseInt(ev.nativeEvent.layout.height, 10);
+        if(oldHeight !== newHeight) {
+            this.setState({
+                progressPillsHeight: newHeight,
+            });
+        }
     }
 
     render = () => {
@@ -122,12 +134,15 @@ class Exercises extends PureComponent {
         let {
             availableSectionsCount,
             cleanedExerciseList,
-            firstItem,
             flatListExercises,
+            firstItemIndex,
         } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise);
         return(
             <View style={{backgroundColor: AppColors.transparent, flex: 1, flexDirection: 'column',}}>
-                <View style={{flex: 1,}}>
+                <View
+                    onLayout={ev => this._resizeModal(ev)}
+                    style={{flex: 1,}}
+                >
                     <ProgressPills
                         availableSectionsCount={availableSectionsCount}
                         cleanedExerciseList={cleanedExerciseList}
@@ -137,17 +152,17 @@ class Exercises extends PureComponent {
                 <View style={{flex: 9,}}>
                     <Carousel
                         data={flatListExercises}
-                        firstItem={firstItem}
-                        initialNumToRender={10}
+                        firstItem={firstItemIndex}
+                        initialNumToRender={5}
                         itemWidth={AppSizes.screen.width * 0.85}
                         lockScrollWhileSnapping={true}
-                        maxToRenderPerBatch={10}
+                        maxToRenderPerBatch={5}
                         onSnapToItem={slideIndex => this.setState({ currentSlideIndex: slideIndex, })}
                         ref={c => {this._carousel = c;}}
                         removeClippedSubviews={true}
-                        renderItem={obj => this._renderItem(obj, flatListExercises[(obj.index + 1)])}
+                        renderItem={obj => this._renderItem(obj, flatListExercises[(obj.index + 1)], this.state.progressPillsHeight)}
                         sliderWidth={AppSizes.screen.width}
-                        windowSize={10}
+                        windowSize={5}
                     />
                 </View>
             </View>
