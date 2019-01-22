@@ -54,6 +54,7 @@
     "react-native-elements": "^0.19.1",
     "react-native-fabric": "0.5.1",
     "react-native-google-analytics-bridge": "^6.1.0",
+    "react-native-keep-awake": "3",
     "react-native-keyboard-aware-scrollview": "^2.0.0",
     "react-native-linear-gradient": "2.4.0",
     "react-native-modal-dropdown": "^0.6.2",
