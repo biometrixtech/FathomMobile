@@ -197,7 +197,8 @@ class Login extends Component {
       */
     login = () => {
         // Get new credentials and update
-        const credentials = this.state.form_values;
+        let credentials = _.cloneDeep(this.state.form_values);
+        credentials.email = _.toLower(credentials.email);
 
         // close keyboard
         Keyboard.dismiss();
