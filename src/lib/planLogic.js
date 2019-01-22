@@ -771,13 +771,8 @@ const PlanLogic = {
         const cleanedExerciseList = exerciseList.cleanedExerciseList;
         /*eslint dot-notation: 0*/
         let flatListExercises = _.concat(cleanedExerciseList['FOAM ROLL'], cleanedExerciseList['STRETCH'], cleanedExerciseList['ACTIVATE']);
-        // let tmpFirstItemIndex = _.findIndex(flatListExercises, o => o.library_id+'-'+o.set_number === selectedExercise.library_id+'-'+selectedExercise.set_number);
-        // let startPosition = (tmpFirstItemIndex - 2) < 0 ? 0 : (tmpFirstItemIndex - 2);
-        // let endPosition = (tmpFirstItemIndex + 3) > (flatListExercises.length - 1) ? flatListExercises.length : (tmpFirstItemIndex + 3);
-        // let newFlatListExercises = _.slice(flatListExercises, startPosition, endPosition);
         let availableSectionsCount = 0;
         let firstItemIndex = _.findIndex(flatListExercises, o => o.library_id+'-'+o.set_number === selectedExercise.library_id+'-'+selectedExercise.set_number);
-        // let firstItemIndex = _.findIndex(newFlatListExercises, o => o.library_id+'-'+o.set_number === selectedExercise.library_id+'-'+selectedExercise.set_number);
         _.map(exerciseList.cleanedExerciseList, (exerciseArray, index) => {
             if(exerciseArray.length > 0) {
                 availableSectionsCount = availableSectionsCount + 1;
@@ -787,7 +782,6 @@ const PlanLogic = {
             availableSectionsCount,
             cleanedExerciseList,
             flatListExercises,
-            // flatListExercises: newFlatListExercises,
             firstItemIndex,
         };
     },

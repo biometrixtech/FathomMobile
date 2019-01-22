@@ -1,7 +1,7 @@
 /**
  * MyPlan View
  */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -95,7 +95,7 @@ const customStyles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-class MyPlan extends PureComponent {
+class MyPlan extends Component {
     static componentName = 'MyPlanView';
 
     static propTypes = {

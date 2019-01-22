@@ -89,11 +89,7 @@ class ExercisesExercise extends PureComponent {
     }
 
     componentDidMount = () => {
-        const { completedExercises, exercise, user, } = this.props;
-        if(!user.first_time_experience.includes('exercise_description_tooltip')) {
-            // show tooltip, that'll then start timer
-            this.setState({ isDescriptionToolTipOpen: true, });
-        }
+        const { completedExercises, exercise, } = this.props;
         this.setState({
             areAllTimersCompleted:     completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? true : false,
             isMounted:                 true,
@@ -107,7 +103,16 @@ class ExercisesExercise extends PureComponent {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         const { completedExercises, currentSlideIndex, exercise, exerciseTimer, index, user, } = this.props;
-        const { showAnimation, } = this.state;
+        const { isMounted, showAnimation, } = this.state;
+        if(
+            prevProps.currentSlideIndex !== currentSlideIndex &&
+            currentSlideIndex === index &&
+            !user.first_time_experience.includes('exercise_description_tooltip') &&
+            isMounted
+        ) {
+            // show tooltip, that'll then start timer
+            _.delay(() => this.setState({ isDescriptionToolTipOpen: true, }), 1000);
+        } else
         if(
             exerciseTimer &&
             user.first_time_experience.includes('exercise_description_tooltip')
@@ -398,7 +403,7 @@ class ExercisesExercise extends PureComponent {
                                     }
                                     contentStyle={{backgroundColor: AppColors.zeplin.success,}}
                                     isVisible={isDescriptionToolTipOpen && currentSlideIndex === index}
-                                    onClose={() => this.setState({ isDescriptionToolTipOpen: false, })}
+                                    // onClose={() => this.setState({ isDescriptionToolTipOpen: false, })}
                                     tooltipStyle={{left: 0, width: AppSizes.screen.widthThreeQuarters,}}
                                 >
                                     <TabIcon
@@ -415,10 +420,10 @@ class ExercisesExercise extends PureComponent {
                             {exercise.longDosage.toUpperCase()}
                         </Text>
                         <Spacer size={10} />
-                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
-                            <View>
-                                { exerciseTimer ?
-                                    areAllTimersCompleted ?
+                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: exerciseTimer ? 'space-between' : 'center',}}>
+                            { exerciseTimer ?
+                                <View>
+                                    { areAllTimersCompleted ?
                                         <TabIcon
                                             color={AppColors.zeplin.shadow}
                                             containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
@@ -458,13 +463,14 @@ class ExercisesExercise extends PureComponent {
                                                     size={AppFonts.scaleFont(40)}
                                                     type={'material'}
                                                 />
-                                    :
-                                    null
-                                }
-                            </View>
-                            <View>
-                                { exerciseTimer ?
-                                    isPaused && !startPreExerciseCountdown && !startSwitchSidesInterval ?
+                                    }
+                                </View>
+                                :
+                                null
+                            }
+                            { exerciseTimer ?
+                                <View>
+                                    { isPaused && !startPreExerciseCountdown && !startSwitchSidesInterval ?
                                         <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{this._cleanTime(timerSeconds)}</Text>
                                         : startPreExerciseCountdown ?
                                             <ProgressCircle
@@ -517,10 +523,11 @@ class ExercisesExercise extends PureComponent {
                                                                 thickness={5}
                                                                 unfilledColor={AppColors.zeplin.superLight}
                                                             />
-                                    :
-                                    null
-                                }
-                            </View>
+                                    }
+                                </View>
+                                :
+                                null
+                            }
                             <View>
                                 { showAnimation ?
                                     <LottieView
