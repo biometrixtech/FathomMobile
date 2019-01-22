@@ -107,7 +107,7 @@ class ExercisesExercise extends PureComponent {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         const { completedExercises, currentSlideIndex, exercise, exerciseTimer, index, user, } = this.props;
-        const { isMounted, showAnimation, } = this.state;
+        const { showAnimation, } = this.state;
         if(
             exerciseTimer &&
             user.first_time_experience.includes('exercise_description_tooltip')
@@ -134,15 +134,6 @@ class ExercisesExercise extends PureComponent {
                 this.setState({ areAllTimersCompleted: true, startPreExerciseCountdown: false, });
             }
             if(
-                prevState.isMounted !== isMounted &&
-                isMounted &&
-                currentSlideIndex === 0 &&
-                index === 0 &&
-                !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`)
-            ) {
-                // start timer
-                this._startTimer();
-            } else if(
                 prevState.showAnimation !== showAnimation &&
                 showAnimation
             ) {
@@ -474,7 +465,7 @@ class ExercisesExercise extends PureComponent {
                             <View>
                                 { exerciseTimer ?
                                     isPaused && !startPreExerciseCountdown && !startSwitchSidesInterval ?
-                                        <Text oswaldMedium style={{color: AppColors.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{this._cleanTime(timerSeconds)}</Text>
+                                        <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{this._cleanTime(timerSeconds)}</Text>
                                         : startPreExerciseCountdown ?
                                             <ProgressCircle
                                                 animated={true}
@@ -491,7 +482,7 @@ class ExercisesExercise extends PureComponent {
                                                 unfilledColor={AppColors.zeplin.superLight}
                                             />
                                             : startFirstSet ?
-                                                <Text oswaldMedium style={{color: AppColors.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{this._cleanTime(timerSeconds)}</Text>
+                                                <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{this._cleanTime(timerSeconds)}</Text>
                                                 : startSwitchSidesInterval ?
                                                     <ProgressCircle
                                                         animated={true}
@@ -508,9 +499,9 @@ class ExercisesExercise extends PureComponent {
                                                         unfilledColor={AppColors.zeplin.superLight}
                                                     />
                                                     : startSecondSet ?
-                                                        <Text oswaldMedium style={{color: AppColors.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{this._cleanTime(timerSeconds)}</Text>
+                                                        <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{this._cleanTime(timerSeconds)}</Text>
                                                         : areAllTimersCompleted ?
-                                                            <Text oswaldMedium style={{color: AppColors.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{'00:00'}</Text>
+                                                            <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{'00:00'}</Text>
                                                             :
                                                             <ProgressCircle
                                                                 animated={true}
@@ -580,7 +571,7 @@ class ExercisesExercise extends PureComponent {
 ExercisesExercise.propTypes = {
     closeModal:                      PropTypes.func.isRequired,
     completedExercises:              PropTypes.array.isRequired,
-    currentSlideIndex:               PropTypes.number.isRequired,
+    currentSlideIndex:               PropTypes.number,
     exercise:                        PropTypes.object.isRequired,
     exerciseTimer:                   PropTypes.object,
     handleCompleteExercise:          PropTypes.func.isRequired,
@@ -591,8 +582,9 @@ ExercisesExercise.propTypes = {
 };
 
 ExercisesExercise.defaultProps = {
-    exerciseTimer: null,
-    nextExercise:  null,
+    currentSlideIndex: null,
+    exerciseTimer:     null,
+    nextExercise:      null,
 };
 
 ExercisesExercise.componentName = 'ExercisesExercise';

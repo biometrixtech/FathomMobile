@@ -74,8 +74,9 @@ class Exercises extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            currentSlideIndex:   0,
+            currentSlideIndex:   null,
             progressPillsHeight: 0,
+            selectedExercise:    this.props.selectedExercise,
             timers:              [],
         };
         this._carousel = {};
@@ -130,7 +131,8 @@ class Exercises extends PureComponent {
     }
 
     render = () => {
-        const { completedExercises, exerciseList, selectedExercise, } = this.props;
+        const { completedExercises, exerciseList, } = this.props;
+        const { selectedExercise, } = this.state;
         let {
             availableSectionsCount,
             cleanedExerciseList,
@@ -153,16 +155,22 @@ class Exercises extends PureComponent {
                     <Carousel
                         data={flatListExercises}
                         firstItem={firstItemIndex}
-                        initialNumToRender={5}
                         itemWidth={AppSizes.screen.width * 0.85}
                         lockScrollWhileSnapping={true}
-                        maxToRenderPerBatch={5}
-                        onSnapToItem={slideIndex => this.setState({ currentSlideIndex: slideIndex, })}
+                        onSnapToItem={slideIndex =>
+                            this.setState({
+                                currentSlideIndex: slideIndex,
+                                selectedExercise:  flatListExercises[slideIndex],
+                            })
+                        }
                         ref={c => {this._carousel = c;}}
-                        removeClippedSubviews={true}
                         renderItem={obj => this._renderItem(obj, flatListExercises[(obj.index + 1)], this.state.progressPillsHeight)}
                         sliderWidth={AppSizes.screen.width}
-                        windowSize={5}
+
+                        // removeClippedSubviews={true}
+                        // initialNumToRender={4}
+                        // maxToRenderPerBatch={4}
+                        // windowSize={4}
                     />
                 </View>
             </View>

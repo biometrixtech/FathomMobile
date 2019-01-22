@@ -1141,6 +1141,8 @@ class MyPlan extends Component {
                                     handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                                     selectedExercise={this.state.selectedExercise}
                                     user={this.props.user}
+
+                                    updateSelectedExercise={selectedExercise => this.setState({selectedExercise,})}
                                 />
                                 :
                                 null
