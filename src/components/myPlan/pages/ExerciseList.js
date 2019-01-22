@@ -92,6 +92,7 @@ class ExerciseList extends Component {
                                                 />
                                             }
                                             isVisible={this.state.isToolTipOpen}
+                                            onClose={() => {}}
                                             tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
                                         >
                                             <View style={{backgroundColor: this.state.isToolTipOpen ? AppColors.white : AppColors.transparent, borderRadius: this.state.isToolTipOpen ? 5 : 0, flexDirection: 'row',}}>

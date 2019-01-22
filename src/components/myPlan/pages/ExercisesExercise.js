@@ -403,7 +403,7 @@ class ExercisesExercise extends PureComponent {
                                     }
                                     contentStyle={{backgroundColor: AppColors.zeplin.success,}}
                                     isVisible={isDescriptionToolTipOpen && currentSlideIndex === index}
-                                    // onClose={() => this.setState({ isDescriptionToolTipOpen: false, })}
+                                    onClose={() => {}}
                                     tooltipStyle={{left: 0, width: AppSizes.screen.widthThreeQuarters,}}
                                 >
                                     <TabIcon
