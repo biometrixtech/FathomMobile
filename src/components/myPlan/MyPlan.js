@@ -1122,7 +1122,7 @@ class MyPlan extends Component {
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
                             style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent,}]}
-                            swipeToClose={false}
+                            swipeToClose={true}
                         >
                             { this.state.selectedExercise.library_id ?
                                 <Exercises

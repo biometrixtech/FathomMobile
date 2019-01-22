@@ -19,6 +19,7 @@ import { StyleSheet, View, } from 'react-native';
 // import third-party libraries
 import _ from 'lodash';
 import Carousel from 'react-native-snap-carousel';
+import KeepAwake from 'react-native-keep-awake';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -84,9 +85,14 @@ class Exercises extends PureComponent {
     }
 
     componentDidMount = () => {
+        KeepAwake.activate();
         _.delay(() => {
             this.setState({ currentSlideIndex: this._carousel.currentIndex, });
         }, 750);
+    }
+
+    componentWillUnmount = () => {
+        KeepAwake.deactivate();
     }
 
     _renderItem = ({item, index}, nextItem, progressPillsHeight) => {
