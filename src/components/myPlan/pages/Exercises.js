@@ -161,8 +161,10 @@ class Exercises extends PureComponent {
                     <Carousel
                         data={flatListExercises}
                         firstItem={firstItemIndex}
+                        initialNumToRender={flatListExercises.length}
                         itemWidth={AppSizes.screen.width * 0.85}
                         lockScrollWhileSnapping={true}
+                        maxToRenderPerBatch={flatListExercises.length}
                         onSnapToItem={slideIndex =>
                             this.setState({
                                 currentSlideIndex: slideIndex,
@@ -170,13 +172,10 @@ class Exercises extends PureComponent {
                             })
                         }
                         ref={c => {this._carousel = c;}}
+                        removeClippedSubviews={true}
                         renderItem={obj => this._renderItem(obj, flatListExercises[(obj.index + 1)], this.state.progressPillsHeight)}
                         sliderWidth={AppSizes.screen.width}
-
-                        // removeClippedSubviews={true}
-                        // initialNumToRender={4}
-                        // maxToRenderPerBatch={4}
-                        // windowSize={4}
+                        windowSize={flatListExercises.length}
                     />
                 </View>
             </View>

@@ -1,7 +1,7 @@
 /**
  * MyPlan View
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -95,7 +95,7 @@ const customStyles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-class MyPlan extends Component {
+class MyPlan extends PureComponent {
     static componentName = 'MyPlanView';
 
     static propTypes = {
@@ -1122,7 +1122,7 @@ class MyPlan extends Component {
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
                             style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent,}]}
-                            swipeToClose={true}
+                            swipeToClose={false}
                         >
                             { this.state.selectedExercise.library_id ?
                                 <Exercises
