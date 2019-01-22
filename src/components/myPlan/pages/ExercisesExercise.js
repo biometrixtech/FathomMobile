@@ -112,8 +112,7 @@ class ExercisesExercise extends PureComponent {
         ) {
             // show tooltip, that'll then start timer
             _.delay(() => this.setState({ isDescriptionToolTipOpen: true, }), 1000);
-        } else
-        if(
+        } else if(
             exerciseTimer &&
             user.first_time_experience.includes('exercise_description_tooltip')
         ) {
@@ -227,8 +226,10 @@ class ExercisesExercise extends PureComponent {
     }
 
     _startPreExerciseCountdown = () => {
-        let timer = setInterval(this._preExerciseTick, 1000);
-        this.setState({ timer, });
+        if(!this.state.isPaused && this.props.exerciseTimer) {
+            let timer = setInterval(this._preExerciseTick, 1000);
+            this.setState({ timer, });
+        }
     }
 
     _preExerciseTick = () => {
@@ -252,8 +253,10 @@ class ExercisesExercise extends PureComponent {
     }
 
     _startSwitchSideCountdown = () => {
-        let timer = setInterval(this._switchSidesTick, 1000);
-        this.setState({ timer, });
+        if(!this.state.isPaused && this.props.exerciseTimer) {
+            let timer = setInterval(this._switchSidesTick, 1000);
+            this.setState({ timer, });
+        }
     }
 
     _switchSidesTick = () => {
@@ -284,7 +287,7 @@ class ExercisesExercise extends PureComponent {
             isPaused:                 shouldPause,
         }, () => {
             _.delay(() => {
-                let newTimer = timer;
+                let newTimer = null;
                 if(!shouldPause) {
                     if(startFirstSet) {
                         newTimer = setInterval(this._firstSetTick, 1000);
