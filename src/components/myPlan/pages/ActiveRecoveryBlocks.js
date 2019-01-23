@@ -146,16 +146,7 @@ class ActiveRecoveryBlocks extends Component {
                 </View>
                 <Tooltip
                     animated
-                    childrenViewStyle={[
-                        {flex: 1,},
-                        isDisabled ?
-                            []
-                            :
-                            [
-                                customStyles.shadowEffect,
-                                Platform.OS === 'ios' ? {} : {elevation: 2,},
-                            ]
-                    ]}
+                    childrenViewStyle={[{flex: 1,}, isDisabled ? [] : [customStyles.shadowEffect,]]}
                     content={
                         <TooltipContent
                             handleTooltipClose={() => this._handleTooltipClose()}
@@ -176,10 +167,10 @@ class ActiveRecoveryBlocks extends Component {
                     >
                         <TouchableHighlight
                             onPress={() => toggleActiveTimeSlideUpPanel ? toggleActiveTimeSlideUpPanel() : null}
-                            style={[Platform.OS === 'ios' ? {} : {elevation: 2,}, {flex: 1,}]}
+                            style={{flex: 1,}}
                             underlayColor={isDisabled ? AppColors.white : AppColors.zeplin.superLight}
                         >
-                            <View style={[Platform.OS === 'ios' ? {} : {elevation: 2,}, {flex: 1,}]}>
+                            <View style={{flex: 1,}}>
                                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingRight: AppSizes.paddingSml,}}>
                                     <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), }}>{'ACTIVE TIME'}</Text>
                                     { isDisabled && !toggleActiveTimeSlideUpPanel ?
