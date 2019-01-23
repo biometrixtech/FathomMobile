@@ -778,9 +778,9 @@ class CoachesDashboard extends Component {
         const { coachesDashboardData, } = this.props;
         const {
             coachesTeams,
-            completedAtheltes,
+            completedAthletes,
             complianceColor,
-            incompleteAtheltes,
+            incompleteAthletes,
             numOfCompletedAthletes,
             numOfIncompletedAthletes,
             numOfTotalAthletes,
@@ -835,9 +835,9 @@ class CoachesDashboard extends Component {
                         swipeToClose={false}
                     >
                         <AthleteComplianceModal
-                            completedAtheltes={completedAtheltes}
+                            completedAthletes={completedAthletes}
                             complianceColor={complianceColor}
-                            incompleteAtheltes={incompleteAtheltes}
+                            incompleteAthletes={incompleteAthletes}
                             numOfCompletedAthletes={numOfCompletedAthletes}
                             numOfIncompletedAthletes={numOfIncompletedAthletes}
                             numOfTotalAthletes={numOfTotalAthletes}

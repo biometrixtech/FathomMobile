@@ -822,12 +822,12 @@ const helperFunctions = {
         ];
     },
 
-    getCoachesDashboardRenderLogicExpectedResult: (coachesTeams, completedAtheltes, complianceColor, incompleteAtheltes, numOfCompletedAthletes, numOfIncompletedAthletes, numOfTotalAthletes, selectedTeam, trainingCompliance) => {
+    getCoachesDashboardRenderLogicExpectedResult: (coachesTeams, completedAthletes, complianceColor, incompleteAthletes, numOfCompletedAthletes, numOfIncompletedAthletes, numOfTotalAthletes, selectedTeam, trainingCompliance) => {
         return {
             coachesTeams,
-            completedAtheltes,
+            completedAthletes,
             complianceColor,
-            incompleteAtheltes,
+            incompleteAthletes,
             numOfCompletedAthletes,
             numOfIncompletedAthletes,
             numOfTotalAthletes,

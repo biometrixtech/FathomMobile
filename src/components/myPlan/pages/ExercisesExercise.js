@@ -105,7 +105,7 @@ class ExercisesExercise extends PureComponent {
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
-        const { completedExercises, currentSlideIndex, exercise, exerciseTimer, index, user, } = this.props;
+        const { completedExercises, currentSlideIndex, exercise, exerciseTimer, index, toggleScrollStatus, user, } = this.props;
         const { isMounted, showAnimation, } = this.state;
         if(
             prevProps.currentSlideIndex !== currentSlideIndex &&
@@ -114,6 +114,7 @@ class ExercisesExercise extends PureComponent {
             isMounted
         ) {
             // show tooltip, that'll then start timer
+            toggleScrollStatus();
             _.delay(() => this.setState({ isDescriptionToolTipOpen: true, }), 1000);
         } else if(
             exerciseTimer &&

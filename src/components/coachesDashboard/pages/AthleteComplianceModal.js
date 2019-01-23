@@ -2,9 +2,9 @@
  * AthleteComplianceModal
  *
     <AthleteComplianceModal
-        completedAtheltes={completedAtheltes}
+        completedAthletes={completedAthletes}
         complianceColor={complianceColor}
-        incompleteAtheltes={incompleteAtheltes}
+        incompleteAthletes={incompleteAthletes}
         numOfCompletedAthletes={numOfCompletedAthletes}
         numOfIncompletedAthletes={numOfIncompletedAthletes}
         numOfTotalAthletes={numOfTotalAthletes}
@@ -57,8 +57,8 @@ class AthleteComplianceModal extends Component {
     constructor(props) {
         super(props);
         let {
-            completedAtheltes,
-            incompleteAtheltes,
+            completedAthletes,
+            incompleteAthletes,
             numOfCompletedAthletes,
             numOfIncompletedAthletes,
             numOfTotalAthletes,
@@ -69,7 +69,7 @@ class AthleteComplianceModal extends Component {
             readinessAccordionSections: [0],
             readinessSections:          [
                 {
-                    content:        incompleteAtheltes,
+                    content:        incompleteAthletes,
                     leftIcon:       'alert-circle',
                     leftIconColor:  AppColors.zeplin.error,
                     leftIconFamily: 'material-community',
@@ -77,7 +77,7 @@ class AthleteComplianceModal extends Component {
                     subtitle:       `${numOfIncompletedAthletes}/${numOfTotalAthletes}`,
                 },
                 {
-                    content:  completedAtheltes,
+                    content:  completedAthletes,
                     title:    'SURVEYS COMPLETED',
                     subtitle: `${numOfCompletedAthletes}/${numOfTotalAthletes}`,
                 },
@@ -233,9 +233,9 @@ class AthleteComplianceModal extends Component {
 }
 
 AthleteComplianceModal.propTypes = {
-    completedAtheltes:        PropTypes.array.isRequired,
+    completedAthletes:        PropTypes.array.isRequired,
     complianceColor:          PropTypes.string.isRequired,
-    incompleteAtheltes:       PropTypes.array.isRequired,
+    incompleteAthletes:       PropTypes.array.isRequired,
     numOfCompletedAthletes:   PropTypes.number.isRequired,
     numOfIncompletedAthletes: PropTypes.number.isRequired,
     numOfTotalAthletes:       PropTypes.number.isRequired,
