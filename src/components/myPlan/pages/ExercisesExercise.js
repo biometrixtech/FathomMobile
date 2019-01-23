@@ -280,7 +280,13 @@ class ExercisesExercise extends PureComponent {
     }
 
     _pauseTimer = (shouldPause, openTooltip = false) => {
-        const { startFirstSet, startPreExerciseCountdown, startSecondSet, startSwitchSidesInterval, timer, } = this.state;
+        const {
+            startFirstSet,
+            startPreExerciseCountdown,
+            startSecondSet,
+            startSwitchSidesInterval,
+            timer,
+        } = this.state;
         clearInterval(timer);
         this.setState({
             isDescriptionToolTipOpen: openTooltip,
@@ -396,7 +402,11 @@ class ExercisesExercise extends PureComponent {
                                     content={
                                         <TooltipContent
                                             handleTooltipClose={() => {
-                                                this._pauseTimer(false, false);
+                                                if(exerciseTimer && exerciseTimer.seconds_per_set) {
+                                                    this._pauseTimer(false, false);
+                                                } else {
+                                                    this.setState({ isDescriptionToolTipOpen: false, });
+                                                }
                                                 if(!user.first_time_experience.includes('exercise_description_tooltip')) {
                                                     handleUpdateFirstTimeExperience('exercise_description_tooltip');
                                                 }
