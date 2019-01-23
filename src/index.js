@@ -8,7 +8,7 @@ import { NetInfo, Platform, PushNotificationIOS, View, } from 'react-native';
 import { Actions, AppColors, AppSizes, AppStyles, ErrorMessages, } from './constants';
 import { AppUtil, } from './lib';
 import Routes from './routes';
-import { TabIcon, } from './components/custom';
+import { TabIcon, Text, } from './components/custom';
 
 // import third-party libraries
 import { Actions as RouterActions, Router, Stack, } from 'react-native-router-flux';
@@ -24,7 +24,9 @@ class Root extends Component {
 
     constructor(props) {
         super(props);
-
+        this.state = {
+            hasError: false,
+        };
         this._networkMonitor = new NetworkMonitor(this.props.store);
         this._dropdown = null;
     }
@@ -60,6 +62,18 @@ class Root extends Component {
 
     componentWillUnmount = () => {
         this._networkMonitor.stop();
+    }
+
+    componentDidCatch = (error, info) => {
+        // Example 'componentStack':
+        //   in ComponentThatThrows (created by App)
+        //   in ErrorBoundary (created by App)
+        //   in div (created by App)
+        //   in App
+        // logComponentStackToMyService(info.componentStack);
+        // this.setState({ hasError: true, });
+        // console.log(error);
+        // console.log(info);
     }
 
     _showDropdownAlert = () => {
@@ -139,6 +153,13 @@ class Root extends Component {
     }
 
     render = () => {
+        if(this.state.hasError) {
+            return(
+                <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                    <Text oswaldMedium style={{color: AppColors.zeplin.yellow,}}>{'ERROR'}</Text>
+                </View>
+            )
+        }
         return(
             <View style={{flex: 1,}}>
                 <Provider store={this.props.store}>

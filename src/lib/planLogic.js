@@ -554,8 +554,8 @@ const PlanLogic = {
         let numOfCompletedAthletes = complianceObj && complianceObj.complete ? complianceObj.complete.length : 0;
         let numOfIncompletedAthletes = complianceObj ? complianceObj.incomplete.length : 0;
         let numOfTotalAthletes = numOfCompletedAthletes + numOfIncompletedAthletes;
-        let incompleteAtheltes = complianceObj ? complianceObj.incomplete : [];
-        let completedAtheltes = complianceObj && complianceObj.complete ? complianceObj.complete : [];
+        let incompleteAthletes = complianceObj ? complianceObj.incomplete : [];
+        let completedAthletes = complianceObj && complianceObj.complete ? complianceObj.complete : [];
         let completedPercent = (numOfCompletedAthletes / numOfTotalAthletes) * 100;
         let complianceColor = completedPercent <= 49 ?
             AppColors.zeplin.error
@@ -567,9 +567,9 @@ const PlanLogic = {
         let trainingCompliance = complianceObj ? complianceObj.training_compliance : [];
         return {
             coachesTeams,
-            completedAtheltes,
+            completedAthletes,
             complianceColor,
-            incompleteAtheltes,
+            incompleteAthletes,
             numOfCompletedAthletes,
             numOfIncompletedAthletes,
             numOfTotalAthletes,
@@ -760,7 +760,45 @@ const PlanLogic = {
             isValid,
             pageNum,
         };
-    }
+    },
+
+    /**
+      * Exercises Render Logic
+      * - Exercises
+      */
+    // TODO: UNIT TEST ME
+    handleExercisesRenderLogic: (exerciseList, selectedExercise) => {
+        const cleanedExerciseList = exerciseList.cleanedExerciseList;
+        /*eslint dot-notation: 0*/
+        let flatListExercises = _.concat(cleanedExerciseList['FOAM ROLL'], cleanedExerciseList['STRETCH'], cleanedExerciseList['ACTIVATE']);
+        let availableSectionsCount = 0;
+        let firstItemIndex = _.findIndex(flatListExercises, o => o.library_id+'-'+o.set_number === selectedExercise.library_id+'-'+selectedExercise.set_number);
+        _.map(exerciseList.cleanedExerciseList, (exerciseArray, index) => {
+            if(exerciseArray.length > 0) {
+                availableSectionsCount = availableSectionsCount + 1;
+            }
+        });
+        return {
+            availableSectionsCount,
+            cleanedExerciseList,
+            flatListExercises,
+            firstItemIndex,
+        };
+    },
+
+    /**
+      * Exercises Timer Logic
+      * - Exercises
+      */
+    handleExercisesTimerLogic: (exercise) => {
+        return {
+            number_of_sets:    exercise.bilateral ? 2 : 1,
+            pre_start_time:    5,
+            seconds_per_set:   exercise.seconds_per_set || null,
+            switch_sides_time: 5,
+            up_next_interval:  10,
+        };
+    },
 
 };
 

@@ -8,8 +8,10 @@ import AreasOfSoreness from './AreasOfSoreness';
 import BackNextButtons from './BackNextButtons';
 import DefaultListGap from './DefaultListGap';
 import ExerciseCompletionModal from './ExerciseCompletionModal';
-import ExerciseItem from './ExerciseItem';
+import ExerciseList from './ExerciseList';
+import ExerciseListItem from './ExerciseListItem';
 import Exercises from './Exercises';
+import ExercisesExercise from './ExercisesExercise';
 import PostSessionSurvey from './PostSessionSurvey';
 import ProgressPill from './ProgressPill';
 import ReadinessSurvey from './ReadinessSurvey';
@@ -28,8 +30,10 @@ export {
     BackNextButtons,
     DefaultListGap,
     ExerciseCompletionModal,
-    ExerciseItem,
+    ExerciseList,
+    ExerciseListItem,
     Exercises,
+    ExercisesExercise,
     PostSessionSurvey,
     ProgressPill,
     ReadinessSurvey,

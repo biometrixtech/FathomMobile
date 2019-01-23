@@ -22,6 +22,7 @@ import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import { GoogleAnalyticsTracker, } from 'react-native-google-analytics-bridge';
 import _ from 'lodash';
+import LottieView from 'lottie-react-native';
 import Modal from 'react-native-modalbox';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import SplashScreen from 'react-native-splash-screen';
@@ -39,6 +40,7 @@ import {
     ActiveTimeSlideUpPanel,
     DefaultListGap,
     ExerciseCompletionModal,
+    ExerciseList,
     Exercises,
     PostSessionSurvey,
     ReadinessSurvey,
@@ -676,7 +678,9 @@ class MyPlan extends Component {
                 let newTrain = Object.assign({}, this.state.train, {
                     postPracticeSurveys: dailyPlanObj ? dailyPlanObj.training_sessions : [],
                 });
-                this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
+                _.delay(() => {
+                    this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
+                }, 500);
                 if(shouldClearCompletedExercises) {
                     this.props.clearCompletedExercises();
                 }
@@ -696,13 +700,14 @@ class MyPlan extends Component {
             });
     }
 
-    _handleCompleteExercise = (exerciseId, recovery_type) => {
+    _handleCompleteExercise = (exerciseId, setNumber, recovery_type) => {
+        let newExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
         // add or remove exercise
         let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
-        if(newCompletedExercises && newCompletedExercises.indexOf(exerciseId) > -1) {
-            newCompletedExercises.splice(newCompletedExercises.indexOf(exerciseId), 1)
+        if(newCompletedExercises && newCompletedExercises.indexOf(newExerciseId) > -1) {
+            newCompletedExercises.splice(newCompletedExercises.indexOf(newExerciseId), 1)
         } else {
-            newCompletedExercises.push(exerciseId);
+            newCompletedExercises.push(newExerciseId);
         }
         // Mark Recovery as started, if logic passes
         let clonedPlan = _.cloneDeep(this.props.plan);
@@ -772,9 +777,23 @@ class MyPlan extends Component {
 
     _closePrepareSessionsCompletionModal = () => {
         const { dailyReadiness, } = this.state;
-        if(!dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
-            this.setState(
-                {
+        _.delay(() => {
+            if(!dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
+                this.setState(
+                    {
+                        dailyReadiness: {
+                            readiness:        0,
+                            sessions:         [],
+                            sessions_planned: false,
+                            sleep_quality:    0,
+                            soreness:         [],
+                        },
+                        isPrepareSessionsCompletionModalOpen: false,
+                    },
+                    () => this._goToScrollviewPage(2)
+                );
+            } else if(dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
+                this.setState({
                     dailyReadiness: {
                         readiness:        0,
                         sessions:         [],
@@ -783,21 +802,9 @@ class MyPlan extends Component {
                         soreness:         [],
                     },
                     isPrepareSessionsCompletionModalOpen: false,
-                },
-                () => this._goToScrollviewPage(2)
-            );
-        } else if(dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
-            this.setState({
-                dailyReadiness: {
-                    readiness:        0,
-                    sessions:         [],
-                    sessions_planned: false,
-                    sleep_quality:    0,
-                    soreness:         [],
-                },
-                isPrepareSessionsCompletionModalOpen: false,
-            });
-        }
+                });
+            }
+        }, 500);
     }
 
     _closeTrainSessionsCompletionModal = () => {
@@ -815,7 +822,7 @@ class MyPlan extends Component {
                     strength_and_conditioning_type: null,
                 },
             },
-            () => this._goToScrollviewPage(2)
+            () => _.delay(() => { this._goToScrollviewPage(2) }, 500)
         );
     }
 
@@ -885,12 +892,13 @@ class MyPlan extends Component {
                             disabled={false}
                             hideChevron={true}
                             leftIcon={
-                                <TabIcon
-                                    containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                                    size={AppFonts.scaleFont(24)}
-                                    color={AppColors.zeplin.yellow}
-                                    icon={'check-circle'}
-                                />
+                                <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                                    <LottieView
+                                        autoPlay={true}
+                                        loop={false}
+                                        source={require('../../../assets/animation/checkmark-circle.json')}
+                                    />
+                                </View>
                             }
                             title={'READINESS SURVEY'}
                             titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
@@ -907,12 +915,21 @@ class MyPlan extends Component {
                     disabled={disabled}
                     hideChevron={true}
                     leftIcon={
-                        <TabIcon
-                            containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                            size={isCompleted ? AppFonts.scaleFont(24) : 20}
-                            color={isCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
-                            icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
-                        />
+                        isCompleted ?
+                            <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                                <LottieView
+                                    autoPlay={true}
+                                    loop={false}
+                                    source={require('../../../assets/animation/checkmark-circle.json')}
+                                />
+                            </View>
+                            :
+                            <TabIcon
+                                color={isCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
+                                containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
+                                size={isCompleted ? AppFonts.scaleFont(24) : AppFonts.scaleFont(20)}
+                            />
                     }
                     title={'MOBILIZE'}
                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
@@ -1034,10 +1051,10 @@ class MyPlan extends Component {
                                         </Text>
                                     </View>
                                 </View>
-                                <Exercises
+                                <ExerciseList
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
-                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'pre')}
+                                    handleCompleteExercise={(exerciseId, setNumber) => this._handleCompleteExercise(exerciseId, setNumber, 'pre')}
                                     isLoading={this.state.loading}
                                     isPrep={true}
                                     toggleCompletedAMPMRecoveryModal={() => this.setState({ isPrepareExerciseCompletionModalOpen: true, })}
@@ -1096,26 +1113,36 @@ class MyPlan extends Component {
                     this.state.isSelectedExerciseModalOpen
                         ?
                         <Modal
-                            backdropColor={AppColors.zeplin.darkNavy}
-                            backdropOpacity={0.8}
-                            backdropPressToClose={true}
+                            backdropColor={AppColors.zeplin.darkBlue}
+                            backdropOpacity={0.9}
+                            backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
-                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
-                            swipeToClose={true}
+                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent,}]}
+                            swipeToClose={false}
                         >
                             { this.state.selectedExercise.library_id ?
-                                <SingleExerciseItem
+                                <Exercises
+                                    closeModal={() => this._singleExerciseItemRef.close()}
                                     completedExercises={completedExercises}
-                                    exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={exerciseId => {
-                                        this._handleCompleteExercise(exerciseId, 'pre');
-                                        this._singleExerciseItemRef.close();
+                                    exerciseList={exerciseList}
+                                    handleCompleteExercise={(exerciseId, setNumber, hasNextExercise, isUnChecked) => {
+                                        this._handleCompleteExercise(exerciseId, setNumber, 'pre');
+                                        if(!hasNextExercise && isUnChecked) {
+                                            this._singleExerciseItemRef.close();
+                                            _.delay(() => {
+                                                this.setState({ isPrepareExerciseCompletionModalOpen: true, });
+                                            }, 750);
+                                        }
                                     }}
-                                    selectedExercise={this.state.selectedExercise.library_id}
+                                    handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                                    selectedExercise={this.state.selectedExercise}
+                                    user={this.props.user}
+
+                                    updateSelectedExercise={selectedExercise => this.setState({selectedExercise,})}
                                 />
                                 :
                                 null
@@ -1171,7 +1198,14 @@ class MyPlan extends Component {
                     onClose={() => this.setState({ isPrepareExerciseCompletionModalOpen: false, })}
                     onComplete={() => {
                         this.setState({ isPrepareExerciseCompletionModalOpen: false, loading: true, });
-                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'pre')
+                        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
+                        newCompletedExercises = _.map(newCompletedExercises, exId => {
+                            let newExerciseId = _.cloneDeep(exId);
+                            newExerciseId = newExerciseId.substring(0, newExerciseId.indexOf('-'));
+                            return newExerciseId;
+                        });
+                        newCompletedExercises = _.uniq(newCompletedExercises);
+                        this.props.patchActiveRecovery(this.props.user.id, newCompletedExercises, 'pre')
                             .then(res => {
                                 let newDailyPlanObj = store.getState().plan.dailyPlan[0];
                                 this.setState(
@@ -1227,12 +1261,21 @@ class MyPlan extends Component {
                     disabled={disabled}
                     hideChevron={true}
                     leftIcon={
-                        <TabIcon
-                            containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                            size={isCompleted ? AppFonts.scaleFont(24) : 20}
-                            color={isCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
-                            icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
-                        />
+                        isCompleted ?
+                            <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                                <LottieView
+                                    autoPlay={true}
+                                    loop={false}
+                                    source={require('../../../assets/animation/checkmark-circle.json')}
+                                />
+                            </View>
+                            :
+                            <TabIcon
+                                color={isCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
+                                containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
+                                size={isCompleted ? AppFonts.scaleFont(24) : 20}
+                            />
                     }
                     title={'ACTIVE RECOVERY'}
                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
@@ -1371,10 +1414,10 @@ class MyPlan extends Component {
                                         </Text>
                                     </View>
                                 </View>
-                                <Exercises
+                                <ExerciseList
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
-                                    handleCompleteExercise={exerciseId => this._handleCompleteExercise(exerciseId, 'post')}
+                                    handleCompleteExercise={(exerciseId, setNumber) => this._handleCompleteExercise(exerciseId, setNumber, 'post')}
                                     isLoading={this.state.loading}
                                     toggleCompletedAMPMRecoveryModal={() => this.setState({ isRecoverExerciseCompletionModalOpen: true, })}
                                     toggleSelectedExercise={this._toggleSelectedExercise}
@@ -1402,26 +1445,35 @@ class MyPlan extends Component {
                     this.state.isSelectedExerciseModalOpen
                         ?
                         <Modal
-                            backdropColor={AppColors.zeplin.darkNavy}
-                            backdropOpacity={0.8}
-                            backdropPressToClose={true}
+                            backdropColor={AppColors.zeplin.darkBlue}
+                            backdropOpacity={0.9}
+                            backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
-                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
-                            swipeToClose={true}
+                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent,}]}
+                            swipeToClose={false}
                         >
                             { this.state.selectedExercise.library_id ?
-                                <SingleExerciseItem
+                                <Exercises
+                                    closeModal={() => this._toggleSelectedExercise(false, false)}//this._singleExerciseItemRef.close()}
                                     completedExercises={completedExercises}
-                                    exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={exerciseId => {
-                                        this._handleCompleteExercise(exerciseId, 'post');
-                                        this._singleExerciseItemRef.close();
+                                    exerciseList={exerciseList}
+                                    handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {
+                                        this._handleCompleteExercise(exerciseId, setNumber, 'post');
+                                        if(!hasNextExercise) {
+                                            // this._singleExerciseItemRef.close();
+                                            this._toggleSelectedExercise(false, false);
+                                            _.delay(() => {
+                                                this.setState({ isRecoverExerciseCompletionModalOpen: true, });
+                                            }, 750);
+                                        }
                                     }}
-                                    selectedExercise={this.state.selectedExercise.library_id}
+                                    handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                                    selectedExercise={this.state.selectedExercise}
+                                    user={this.props.user}
                                 />
                                 :
                                 null
@@ -1466,7 +1518,14 @@ class MyPlan extends Component {
                     onClose={() => this.setState({ isRecoverExerciseCompletionModalOpen: false, })}
                     onComplete={() => {
                         this.setState({ isRecoverExerciseCompletionModalOpen: false, loading: true, });
-                        this.props.patchActiveRecovery(this.props.user.id, store.getState().plan.completedExercises, 'post')
+                        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
+                        newCompletedExercises = _.map(newCompletedExercises, exId => {
+                            let newExerciseId = _.cloneDeep(exId);
+                            newExerciseId = newExerciseId.substring(0, newExerciseId.indexOf('-'));
+                            return newExerciseId;
+                        });
+                        newCompletedExercises = _.uniq(newCompletedExercises);
+                        this.props.patchActiveRecovery(this.props.user.id, newCompletedExercises, 'post')
                             .then(() =>
                                 this.setState({
                                     loading: false,
@@ -1541,12 +1600,13 @@ class MyPlan extends Component {
                             disabled={!isDailyReadinessSurveyCompleted}
                             hideChevron={true}
                             leftIcon={
-                                <TabIcon
-                                    containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                                    size={AppFonts.scaleFont(24)}
-                                    color={AppColors.primary.yellow.hundredPercent}
-                                    icon={'check-circle'}
-                                />
+                                <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                                    <LottieView
+                                        autoPlay={true}
+                                        loop={false}
+                                        source={require('../../../assets/animation/checkmark-circle.json')}
+                                    />
+                                </View>
                             }
                             title={'OFF DAY'}
                             titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
@@ -1569,10 +1629,10 @@ class MyPlan extends Component {
                               hideChevron={true}
                               leftIcon={
                                   <TabIcon
-                                      containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                                      size={20}
                                       color={AppColors.black}
+                                      containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
                                       icon={'fiber-manual-record'}
+                                      size={20}
                                   />
                               }
                               title={'FUNCTIONAL STRENGTH'}
@@ -1633,7 +1693,7 @@ class MyPlan extends Component {
                       null
                 }
                 { functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed && !this.state.isFunctionalStrengthCollapsed ?
-                    <Exercises
+                    <ExerciseList
                         completedExercises={completedFSExercises}
                         exerciseList={fsExerciseList}
                         handleCompleteExercise={this._handleCompleteFSExercise}
@@ -1656,12 +1716,13 @@ class MyPlan extends Component {
                                     disabled={!isDailyReadinessSurveyCompleted}
                                     hideChevron={true}
                                     leftIcon={
-                                        <TabIcon
-                                            containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
-                                            size={AppFonts.scaleFont(24)}
-                                            color={AppColors.primary.yellow.hundredPercent}
-                                            icon={'check-circle'}
-                                        />
+                                        <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                                            <LottieView
+                                                autoPlay={true}
+                                                loop={false}
+                                                source={require('../../../assets/animation/checkmark-circle.json')}
+                                            />
+                                        </View>
                                     }
                                     title={cleanedPostSessionName}
                                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}

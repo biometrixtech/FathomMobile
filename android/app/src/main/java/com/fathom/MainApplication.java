@@ -18,6 +18,7 @@ import com.facebook.soloader.SoLoader;
 import it.innove.BleManagerPackage;
 import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import com.airbnb.android.react.lottie.LottiePackage;
+import com.corbt.keepawake.KCKeepAwakePackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +46,8 @@ public class MainApplication extends Application implements ReactApplication {
           new VectorIconsPackage(),
           new BleManagerPackage(),
           new GoogleAnalyticsBridgePackage(),
-          new LottiePackage()
+          new LottiePackage(),
+          new KCKeepAwakePackage()
       );
     }
 
