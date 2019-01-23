@@ -189,8 +189,24 @@ const postSessionFeel = [
 function cleanExerciseList(recoveryObj) {
     let totalLength = 0;
     let cleanedExerciseList = {};
+    let largestSetCount = {};
     _.map(exerciseListOrder, list => {
-        let exerciseArray = _.orderBy(recoveryObj[list.index], ['position_order'], ['asc']);
+        largestSetCount[list.index] = 0;
+        _.map(recoveryObj[list.index], exercise => {
+            if(exercise.sets_assigned > largestSetCount[list.index]) {
+                largestSetCount[list.index] = exercise.sets_assigned;
+            }
+        });
+        let exerciseArray = [];
+        for(let i = 1; i <= largestSetCount[list.index]; i += 1) {
+            _.map(recoveryObj[list.index], exercise => {
+                let newExercise = _.cloneDeep(exercise);
+                if(newExercise.sets_assigned >= i) {
+                    newExercise.set_number = i;
+                    exerciseArray.push(newExercise);
+                }
+            });
+        }
         totalLength += exerciseArray.length;
         cleanedExerciseList[list.title] = exerciseArray;
     });
@@ -251,20 +267,10 @@ function cleanExercise(exercise) {
     cleanedExercise.library_id = exercise.library_id;
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise.name.toUpperCase()}`;
-    let cleanedDosage = cleanedExercise.sets_assigned === 1 ?
-        `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
-        : cleanedExercise.sets_assigned > 1 ?
-            `${cleanedExercise.sets_assigned} x ${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
-            :
-            '';
-    let cleanedLongDosage = cleanedExercise.sets_assigned === 1 ?
-        `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
-        : cleanedExercise.sets_assigned > 1 ?
-            `${cleanedExercise.sets_assigned} x ${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`
-            :
-            '';
-    cleanedExercise.dosage = `${cleanedDosage}${cleanedExercise.bilateral ? ' | Both Sides' : ''}`;
-    cleanedExercise.longDosage = `${cleanedLongDosage}${cleanedExercise.bilateral ? ' | Both Sides' : ''}`;
+    let cleanedDosage = `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`;
+    let cleanedLongDosage = `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`;
+    cleanedExercise.dosage = `${cleanedDosage}${cleanedExercise.bilateral ? ' | Each Side' : ''}`;
+    cleanedExercise.longDosage = `${cleanedLongDosage}${cleanedExercise.bilateral ? ' | Each Side' : ''}`;
     cleanedExercise.imageUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.gif`;
     cleanedExercise.thumbnailUrl = `https://dd4o7zw7l62dt.cloudfront.net/${exercise.library_id}.png`;
     // cleanedExercise.thumbnailUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.png`;
@@ -620,7 +626,7 @@ function completionModalExerciseList(exerciseList, completedExercises) {
             cleanedExerciseList[index].completed = 0;
             cleanedExerciseList[index].total = exerciseIndex.length;
             _.map(exerciseIndex, (exercise, i) => {
-                if(completedExercises.includes(exercise.library_id)) {
+                if(completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`)) {
                     cleanedExerciseList[index].completed += 1;
                 }
             });

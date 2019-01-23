@@ -22,6 +22,7 @@ Installed React-Native libraries that we're utilizing
 | [Easy Toast](https://github.com/crazycodeboy/react-native-easy-toast) | A React-Native module to show toast like android, it works on iOS and Android. | Toast message to user (mainly internal) |
 | [Easter Egg](https://github.com/FuYaoDe/react-native-egg) | Implementation simple gestures detection achieve trigger easter egg, You can also use it as a gesture switch. | (INTERNAL) Toggle environment |
 | [Elements](https://react-native-training.github.io/react-native-elements) | USED MAINLY IN CUSTOM SECTION. Customizing [RN Elements](https://react-native-training.github.io/react-native-elements/docs/0.19.1/overview.html) | Button, Card, Checkbox, FormInput, FormLabel, Icon, List, ListItem, Text |
+| [Keep Awake](https://github.com/corbt/react-native-keep-awake) | This React-Native package allows you to prevent the screen from going to sleep while your app is active. It's useful for things like navigation or video playback, where the user expects the app to remain visible over long periods without touch interaction. | Exercises Modal |
 | [Linear Gradient](https://github.com/react-native-community/react-native-linear-gradient) | A <LinearGradient> component for React-Native | 1. Coach<br/>2. Readiness Survey Welcome page<br/>3. Splash Screen |
 | [Lottie](https://github.com/react-native-community/lottie-react-native) | Lottie is a mobile library for Android and iOS that parses Adobe After Effects animations exported as JSON with bodymovin and renders them natively on mobile! | 1. MyPlan - SessionsCompletionModal & ExerciseCompletionModal |
 | [Modal](https://github.com/maxs15/react-native-modalbox) | A React-Native component, easy, fully customizable, implementing the 'swipe down to close' feature. | 1. Login<br/>2. Coaches Dashboard<br/>3. Bluetooth Connect<br/>4. MyPlan<br/>5. Exercises<br/>6. On-boarding<br/>7. Join A Team |
@@ -29,6 +30,7 @@ Installed React-Native libraries that we're utilizing
 | [React-Native](https://facebook.github.io/react-native/docs/components-and-apis) | Access to all React-Native's components and APIs. | Throughout App |
 | [Scrollable Tab View](https://github.com/ptomasroos/react-native-scrollable-tab-view) | Tabbed navigation that you can swipe between, each tab can have its own ScrollView and maintain its own scroll position between swipes. Pleasantly animated. Customizable tab bar. | 1. Coaches Dashboard<br/>2. MyPlan |
 | [Sliding Up Panel](https://github.com/octopitus/rn-sliding-up-panel) | Draggable sliding up panel implemented in React-Native. | 1. Post Session Survey<br/>2. Readiness Survey |
+| [Snap Carousel](https://github.com/archriss/react-native-snap-carousel) | Swiper component for React-Native featuring previews, multiple layouts, parallax images, performant handling of huge numbers of items, and RTL support. Compatible with Android & iOS. | Exercises Page |
 | [Splash Screen](https://github.com/crazycodeboy/react-native-splash-screen) | A splash screen for React-Native, hide when application loaded ,it works on iOS and Android. | Start Page |
 | [Vector Icons](https://github.com/oblador/react-native-vector-icons) | Customizable Icons for React-Native with support for NavBar/TabBar/ToolbarAndroid, image source and full styling. | Installed so we can access ALL icons from [director](https://oblador.github.io/react-native-vector-icons/) |
 | [Video](https://github.com/react-native-community/react-native-video) | A <Video> component for React-Native | 1. Single Exercises<br/>2. Tutorials |
@@ -64,7 +66,6 @@ Components installed once for usage but not currently being used
 | [Progress](https://github.com/oblador/react-native-progress) | Progress indicators and spinners for React-Native using ReactART. |
 | [Remote SVG](https://github.com/seekshiva/react-native-remote-svg) | Image component that supports SVG filetype in [React-Native](https://facebook.github.io/react-native/). |
 | [Sectioned Multi Select](https://github.com/renrizzolo/react-native-sectioned-multi-select) | A multi (or single) select component with support for sub categories, search, chips. It's intended for long-ish lists, as it opens in a Modal (I might make this optional in the future).<br/><br/>This is based on [RN Multiple Select](https://github.com/toystars/react-native-multiple-select). The problems I had were that I needed it to be in a modal, because of nested ScrollViews not working on Android, and I needed to display categories with sub-categories. |
-| [Snap Carousel](https://github.com/archriss/react-native-snap-carousel) | Swiper component for React-Native featuring previews, multiple layouts, parallax images, performant handling of huge numbers of items, and RTL support. Compatible with Android & iOS. |
 
 ---
 
