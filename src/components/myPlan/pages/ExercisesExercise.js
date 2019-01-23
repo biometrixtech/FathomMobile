@@ -410,7 +410,7 @@ class ExercisesExercise extends PureComponent {
                                     tooltipStyle={{left: 0, width: AppSizes.screen.widthThreeQuarters,}}
                                 >
                                     <TabIcon
-                                        color={AppColors.zeplin.shadow}
+                                        color={AppColors.zeplin.lightSlate}
                                         icon={'help'}
                                         onPress={() => this._pauseTimer(true, true)}
                                         reverse={false}
@@ -428,7 +428,7 @@ class ExercisesExercise extends PureComponent {
                                 <View>
                                     { areAllTimersCompleted ?
                                         <TabIcon
-                                            color={AppColors.zeplin.shadow}
+                                            color={AppColors.zeplin.lightSlate}
                                             containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                             icon={'restore'}
                                             onPress={() => this._resetTimer(true)}
@@ -438,7 +438,7 @@ class ExercisesExercise extends PureComponent {
                                         />
                                         : isPaused ?
                                             <TabIcon
-                                                color={AppColors.zeplin.shadow}
+                                                color={AppColors.zeplin.lightSlate}
                                                 containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                                 icon={'play-arrow'}
                                                 onPress={() => this._pauseTimer(false)}
@@ -448,7 +448,7 @@ class ExercisesExercise extends PureComponent {
                                             />
                                             : !isPaused && (startPreExerciseCountdown || startFirstSet || startSwitchSidesInterval || startSecondSet) ?
                                                 <TabIcon
-                                                    color={AppColors.zeplin.shadow}
+                                                    color={AppColors.zeplin.lightSlate}
                                                     containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                                     icon={'pause'}
                                                     onPress={() => this._pauseTimer(true)}
@@ -458,10 +458,9 @@ class ExercisesExercise extends PureComponent {
                                                 />
                                                 :
                                                 <TabIcon
-                                                    color={AppColors.zeplin.shadow}
+                                                    color={AppColors.zeplin.lightSlate}
                                                     containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                                     icon={'play-arrow'}
-                                                    // onPress={() => this._pauseTimer(false)}
                                                     reverse={false}
                                                     size={AppFonts.scaleFont(40)}
                                                     type={'material'}
@@ -538,13 +537,13 @@ class ExercisesExercise extends PureComponent {
                                         ref={animation => {
                                             this.animation = animation;
                                         }}
-                                        source={require('../../../../assets/animation/pulse-darksimple.json')}
+                                        source={require('../../../../assets/animation/pulse-lightSlate.json')}
                                     />
                                     :
                                     null
                                 }
                                 <TabIcon
-                                    color={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.light}
+                                    color={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.lightSlate}
                                     containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                     icon={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? 'ios-checkbox' : 'ios-checkbox-outline'}
                                     onPress={() => {
