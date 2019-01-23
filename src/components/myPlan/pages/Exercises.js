@@ -76,6 +76,7 @@ class Exercises extends PureComponent {
         super(props);
         this.state = {
             currentSlideIndex:   null,
+            isScrollEnabled:     true,
             progressPillsHeight: 0,
             selectedExercise:    this.props.selectedExercise,
             timers:              [],
@@ -121,6 +122,7 @@ class Exercises extends PureComponent {
                 index={index}
                 nextExercise={nextExercise}
                 progressPillsHeight={progressPillsHeight}
+                toggleScrollStatus={() => this.setState({ isScrollEnabled: !this.state.isScrollEnabled, })}
                 user={user}
             />
         );
@@ -138,7 +140,7 @@ class Exercises extends PureComponent {
 
     render = () => {
         const { completedExercises, exerciseList, } = this.props;
-        const { selectedExercise, } = this.state;
+        const { isScrollEnabled, selectedExercise, } = this.state;
         let {
             availableSectionsCount,
             cleanedExerciseList,
@@ -174,6 +176,7 @@ class Exercises extends PureComponent {
                         ref={c => {this._carousel = c;}}
                         removeClippedSubviews={true}
                         renderItem={obj => this._renderItem(obj, flatListExercises[(obj.index + 1)], this.state.progressPillsHeight)}
+                        scrollEnabled={isScrollEnabled}
                         sliderWidth={AppSizes.screen.width}
                         windowSize={flatListExercises.length}
                     />

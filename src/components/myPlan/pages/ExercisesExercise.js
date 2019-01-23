@@ -12,6 +12,7 @@
         index={index}
         nextExercise={nextExercise}
         progressPillsHeight={progressPillsHeight}
+        toggleScrollStatus={() => this.setState({ isScrollEnabled: !this.state.isScrollEnabled, })}
         user={user}
     />
  *
@@ -27,31 +28,33 @@ import Video from 'react-native-video';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
-import { ProgressCircle, Spacer, TabIcon, Text, Tooltip, } from '../../custom';
+import { ProgressCircle, Spacer, TabIcon, Text, } from '../../custom';
 import { Error, } from '../../general';
 
 /* Component ==================================================================== */
 const TooltipContent = ({ handleTooltipClose, text, }) => (
-    <View style={{backgroundColor: AppColors.zeplin.success, padding: AppSizes.paddingSml,}}>
-        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(13),}}>{text}</Text>
-        <Spacer size={10} />
-        <View style={{flex: 1, flexDirection: 'row',}}>
-            <View style={{flex: 2,}} />
-            <View style={{flex: 6,}} />
-            <TouchableOpacity
-                onPress={handleTooltipClose}
-                style={{flex: 2,}}
-            >
-                <Text
-                    robotoMedium
-                    style={{
-                        color:    AppColors.white,
-                        fontSize: AppFonts.scaleFont(15),
-                    }}
+    <View style={{flex: 1, justifyContent: 'center',}}>
+        <View style={{backgroundColor: AppColors.zeplin.success, borderRadius: 4, padding: AppSizes.paddingSml,}}>
+            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(13),}}>{text}</Text>
+            <Spacer size={10} />
+            <View style={{flexDirection: 'row',}}>
+                <View style={{flex: 2,}} />
+                <View style={{flex: 6,}} />
+                <TouchableOpacity
+                    onPress={handleTooltipClose}
+                    style={{flex: 2,}}
                 >
-                    {'GOT IT'}
-                </Text>
-            </TouchableOpacity>
+                    <Text
+                        robotoMedium
+                        style={{
+                            color:    AppColors.white,
+                            fontSize: AppFonts.scaleFont(15),
+                        }}
+                    >
+                        {'GOT IT'}
+                    </Text>
+                </TouchableOpacity>
+            </View>
         </View>
     </View>
 );
@@ -342,6 +345,7 @@ class ExercisesExercise extends PureComponent {
             index,
             nextExercise,
             progressPillsHeight,
+            toggleScrollStatus,
             user,
         } = this.props;
         const {
@@ -365,6 +369,26 @@ class ExercisesExercise extends PureComponent {
                     onLayout={ev => this._resizeModal(ev)}
                     style={{backgroundColor: AppColors.white, borderRadius: 4,}}
                 >
+                    { isDescriptionToolTipOpen && currentSlideIndex === index ?
+                        <View style={{borderRadius: 4, height: '100%', right: 0, paddingHorizontal: AppSizes.padding, position: 'absolute', top: 0, width: '100%', zIndex: 200,}}>
+                            <TooltipContent
+                                handleTooltipClose={() => {
+                                    toggleScrollStatus();
+                                    if(exerciseTimer && exerciseTimer.seconds_per_set) {
+                                        this._pauseTimer(false, false);
+                                    } else {
+                                        this.setState({ isDescriptionToolTipOpen: false, });
+                                    }
+                                    if(!user.first_time_experience.includes('exercise_description_tooltip')) {
+                                        handleUpdateFirstTimeExperience('exercise_description_tooltip');
+                                    }
+                                }}
+                                text={exercise.description}
+                            />
+                        </View>
+                        :
+                        null
+                    }
                     <Spacer size={5} />
                     <TabIcon
                         containerStyle={[{right: 10, position: 'absolute', top: 10, width: 26, zIndex: 100,}]}
@@ -396,37 +420,13 @@ class ExercisesExercise extends PureComponent {
                                 </Text>
                             </View>
                             <View style={{flex: 1,}}>
-                                <Tooltip
-                                    animated
-                                    backgroundColor={AppColors.transparent}
-                                    content={
-                                        <TooltipContent
-                                            handleTooltipClose={() => {
-                                                if(exerciseTimer && exerciseTimer.seconds_per_set) {
-                                                    this._pauseTimer(false, false);
-                                                } else {
-                                                    this.setState({ isDescriptionToolTipOpen: false, });
-                                                }
-                                                if(!user.first_time_experience.includes('exercise_description_tooltip')) {
-                                                    handleUpdateFirstTimeExperience('exercise_description_tooltip');
-                                                }
-                                            }}
-                                            text={exercise.description}
-                                        />
-                                    }
-                                    contentStyle={{backgroundColor: AppColors.zeplin.success,}}
-                                    isVisible={isDescriptionToolTipOpen && currentSlideIndex === index}
-                                    onClose={() => {}}
-                                    tooltipStyle={{left: 0, width: AppSizes.screen.widthThreeQuarters,}}
-                                >
-                                    <TabIcon
-                                        color={AppColors.zeplin.lightSlate}
-                                        icon={'help'}
-                                        onPress={() => this._pauseTimer(true, true)}
-                                        reverse={false}
-                                        type={'material'}
-                                    />
-                                </Tooltip>
+                                <TabIcon
+                                    color={AppColors.zeplin.lightSlate}
+                                    icon={'help'}
+                                    onPress={() => {toggleScrollStatus(); this._pauseTimer(true, true);}}
+                                    reverse={false}
+                                    type={'material'}
+                                />
                             </View>
                         </View>
                         <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(14),}]}>
@@ -597,6 +597,8 @@ ExercisesExercise.propTypes = {
     handleUpdateFirstTimeExperience: PropTypes.func.isRequired,
     index:                           PropTypes.number.isRequired,
     nextExercise:                    PropTypes.object,
+    progressPillsHeight:             PropTypes.number.isRequired,
+    toggleScrollStatus:              PropTypes.func.isRequired,
     user:                            PropTypes.object.isRequired,
 };
 
