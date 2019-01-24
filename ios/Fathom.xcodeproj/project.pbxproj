@@ -45,6 +45,8 @@
 		72918B1A21E0043000295BE4 /* libLottie.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72918B1921E0042900295BE4 /* libLottie.a */; };
 		72918B1B21E0044200295BE4 /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72918B1321E0042900295BE4 /* Lottie.framework */; };
 		72918B1C21E0044200295BE4 /* Lottie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 72918B1321E0042900295BE4 /* Lottie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		72B5D17E21FA03DF0029D757 /* libRCTAppleHealthKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72B5D14F21FA03BB0029D757 /* libRCTAppleHealthKit.a */; };
+		72B5D1D821FA083A0029D757 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72B5D1D721FA083A0029D757 /* HealthKit.framework */; };
 		72D182B221F77A7900EAA5E4 /* libKCKeepAwake.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72D1827C21F77A5900EAA5E4 /* libKCKeepAwake.a */; };
 		72DC998C2167C303001553ED /* libRCTGoogleAnalyticsBridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DC99622167C2DA001553ED /* libRCTGoogleAnalyticsBridge.a */; };
 		75884C08269B4F0BAB9B13BD /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E26B7E1A16864A6AA55DD0DC /* Roboto-BoldItalic.ttf */; };
@@ -359,6 +361,13 @@
 			remoteGlobalIDString = 62CA59B71E3C173B002D7188;
 			remoteInfo = Lottie_iOS;
 		};
+		72B5D14E21FA03BB0029D757 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 72B5D13D21FA03BB0029D757 /* RCTAppleHealthKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3774C88D1D2092F20000B3F3;
+			remoteInfo = RCTAppleHealthKit;
+		};
 		72D1827B21F77A5900EAA5E4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 72D1827221F77A5800EAA5E4 /* KCKeepAwake.xcodeproj */;
@@ -581,6 +590,8 @@
 		62A8EA882B184930825FDE66 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		72918ACC21E0033800295BE4 /* LottieReactNative.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LottieReactNative.xcodeproj; path = "../node_modules/lottie-react-native/src/ios/LottieReactNative.xcodeproj"; sourceTree = "<group>"; };
 		72918B0B21E0042900295BE4 /* Lottie.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Lottie.xcodeproj; path = "../node_modules/lottie-ios/Lottie.xcodeproj"; sourceTree = "<group>"; };
+		72B5D13D21FA03BB0029D757 /* RCTAppleHealthKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAppleHealthKit.xcodeproj; path = "../node_modules/rn-apple-healthkit/RCTAppleHealthKit.xcodeproj"; sourceTree = "<group>"; };
+		72B5D1D721FA083A0029D757 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		72D1827221F77A5800EAA5E4 /* KCKeepAwake.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = KCKeepAwake.xcodeproj; path = "../node_modules/react-native-keep-awake/ios/KCKeepAwake.xcodeproj"; sourceTree = "<group>"; };
 		72DC99522167C2DA001553ED /* RCTGoogleAnalyticsBridge.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGoogleAnalyticsBridge.xcodeproj; path = "../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/RCTGoogleAnalyticsBridge.xcodeproj"; sourceTree = "<group>"; };
 		76BC50C5ED02443CB1D32E96 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
@@ -634,6 +645,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72B5D17E21FA03DF0029D757 /* libRCTAppleHealthKit.a in Frameworks */,
 				72D182B221F77A7900EAA5E4 /* libKCKeepAwake.a in Frameworks */,
 				72918B1A21E0043000295BE4 /* libLottie.a in Frameworks */,
 				C97D70C51E2377B200C3C793 /* libsqlite3.0.tbd in Frameworks */,
@@ -662,6 +674,7 @@
 				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
+				72B5D1D821FA083A0029D757 /* HealthKit.framework in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
@@ -861,6 +874,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		72B5D13E21FA03BB0029D757 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				72B5D14F21FA03BB0029D757 /* libRCTAppleHealthKit.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		72D1827321F77A5800EAA5E4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -907,6 +928,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				72B5D13D21FA03BB0029D757 /* RCTAppleHealthKit.xcodeproj */,
 				72D1827221F77A5800EAA5E4 /* KCKeepAwake.xcodeproj */,
 				72918B0B21E0042900295BE4 /* Lottie.xcodeproj */,
 				72918ACC21E0033800295BE4 /* LottieReactNative.xcodeproj */,
@@ -994,6 +1016,7 @@
 		C97D70A11E23777B00C3C793 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				72B5D1D721FA083A0029D757 /* HealthKit.framework */,
 				C97D70C41E2377B200C3C793 /* libsqlite3.0.tbd */,
 				C97D70C21E2377A300C3C793 /* libz.tbd */,
 				C97D70C01E23779800C3C793 /* SystemConfiguration.framework */,
@@ -1124,6 +1147,9 @@
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
+							com.apple.HealthKit = {
+								enabled = 1;
+							};
 							com.apple.Push = {
 								enabled = 1;
 							};
@@ -1174,6 +1200,10 @@
 				{
 					ProductGroup = 5E91572E1DD0AC6500FF2AA8 /* Products */;
 					ProjectRef = 5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */;
+				},
+				{
+					ProductGroup = 72B5D13E21FA03BB0029D757 /* Products */;
+					ProjectRef = 72B5D13D21FA03BB0029D757 /* RCTAppleHealthKit.xcodeproj */;
 				},
 				{
 					ProductGroup = ADBDB9201DFEBF0600ED6528 /* Products */;
@@ -1510,6 +1540,13 @@
 			fileType = archive.ar;
 			path = libLottie.a;
 			remoteRef = 72918B1821E0042900295BE4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		72B5D14F21FA03BB0029D757 /* libRCTAppleHealthKit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTAppleHealthKit.a;
+			remoteRef = 72B5D14E21FA03BB0029D757 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		72D1827C21F77A5900EAA5E4 /* libKCKeepAwake.a */ = {
