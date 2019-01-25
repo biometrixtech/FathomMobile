@@ -23,6 +23,7 @@ const Settings = ({
     logout,
     network,
     user,
+    updateUser,
     userJoinAccount,
 }) => (
     <Layout
@@ -32,6 +33,7 @@ const Settings = ({
         logout={logout}
         network={network}
         user={user}
+        updateUser={updateUser}
         userJoinAccount={userJoinAccount}
     />
 );
@@ -44,6 +46,7 @@ Settings.propTypes = {
     logout:                         PropTypes.func.isRequired,
     network:                        PropTypes.object.isRequired,
     user:                           PropTypes.object.isRequired,
+    updateUser:                     PropTypes.func.isRequired,
     userJoinAccount:                PropTypes.func.isRequired,
 };
 
@@ -60,6 +63,7 @@ const mapDispatchToProps = {
     deleteUserSensorData:           ble.deleteUserSensorData,
     deleteAllSingleSensorPractices: ble.deleteAllSingleSensorPractices,
     logout:                         init.logout,
+    updateUser:                     userActions.updateUser,
     userJoinAccount:                userActions.userJoinAccount,
 };
 

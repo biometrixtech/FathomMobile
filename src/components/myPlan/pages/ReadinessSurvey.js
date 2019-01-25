@@ -7,6 +7,7 @@
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handleReadinessSurveySubmit}
         handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+        handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
         soreBodyParts={this.state.soreBodyParts}
         typicalSessions={this.props.plan.typicalSessions}
         user={user}
@@ -20,6 +21,7 @@ import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, 
 // Consts and Libs
 import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
 import { Button, FathomPicker, Pages, Spacer, TabIcon, Text, } from '../../custom';
+import { EnableAppleHealthKit, } from '../../general';
 import { PlanLogic, } from '../../../lib';
 
 // Components
@@ -178,6 +180,11 @@ class ReadinessSurvey extends Component {
                 sportScheduleBuilderRef._resetStep();
             }
         });
+    }
+
+    _handleEnableAppleHealthKit = (firstTimeExperienceValue, healthKitFlag) => {
+        this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue);
+        this.props.handleUpdateUserHealthKitFlag(healthKitFlag);
     }
 
     render = () => {
@@ -1138,19 +1145,26 @@ class ReadinessSurvey extends Component {
                     toggleSlideUpPanel={isExpanded => this._toggleSlideUpPanel(isExpanded)}
                 />
 
+                <EnableAppleHealthKit
+                    handleSkip={value => handleUpdateFirstTimeExperience(value)}
+                    handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
+                    isModalOpen={!user.first_time_experience.includes('apple_healthkit') && !user.apple_healthkit_paired && Platform.OS === 'ios'}
+                />
+
             </View>
         )
     }
 }
 
 ReadinessSurvey.propTypes = {
-    dailyReadiness:            PropTypes.object.isRequired,
-    handleAreaOfSorenessClick: PropTypes.func.isRequired,
-    handleFormChange:          PropTypes.func.isRequired,
-    handleFormSubmit:          PropTypes.func.isRequired,
-    soreBodyParts:             PropTypes.object.isRequired,
-    typicalSessions:           PropTypes.array,
-    user:                      PropTypes.object.isRequired,
+    dailyReadiness:                  PropTypes.object.isRequired,
+    handleAreaOfSorenessClick:       PropTypes.func.isRequired,
+    handleFormChange:                PropTypes.func.isRequired,
+    handleFormSubmit:                PropTypes.func.isRequired,
+    handleUpdateFirstTimeExperience: PropTypes.func.isRequired,
+    soreBodyParts:                   PropTypes.object.isRequired,
+    typicalSessions:                 PropTypes.array,
+    user:                            PropTypes.object.isRequired,
 };
 
 ReadinessSurvey.defaultProps = {

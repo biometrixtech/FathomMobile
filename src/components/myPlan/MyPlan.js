@@ -578,12 +578,27 @@ class MyPlan extends Component {
         }
     }
 
-    _handleUpdateFirstTimeExperience = (value) => {
+    _handleUpdateFirstTimeExperience = value => {
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.first_time_experience = [value];
         let newUserObj = _.cloneDeep(this.props.user);
         newUserObj.first_time_experience.push(value);
+        // update reducer as API might take too long to return a value
+        store.dispatch({
+            type: DispatchActions.USER_REPLACE,
+            data: newUserObj
+        });
+        // update user object
+        this.props.updateUser(newUserPayloadObj, this.props.user.id);
+    }
+
+    _handleUpdateUserHealthKitFlag = flag => {
+        // setup variables
+        let newUserPayloadObj = {};
+        newUserPayloadObj.apple_healthkit_paired = flag;
+        let newUserObj = _.cloneDeep(this.props.user);
+        newUserObj.apple_healthkit_paired = flag;
         // update reducer as API might take too long to return a value
         store.dispatch({
             type: DispatchActions.USER_REPLACE,
@@ -1094,6 +1109,7 @@ class MyPlan extends Component {
                             handleFormChange={this._handleDailyReadinessFormChange}
                             handleFormSubmit={this._handleReadinessSurveySubmit}
                             handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                            handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
                             soreBodyParts={this.props.plan.soreBodyParts}
                             typicalSessions={this.props.plan.typicalSessions}
                             user={this.props.user}

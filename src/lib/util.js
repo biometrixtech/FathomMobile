@@ -13,12 +13,16 @@ import { Actions as DispatchActions, } from '../constants';
 import { Actions as RouterActions, } from 'react-native-router-flux';
 import { AppColors, AppStyles } from '../constants';
 import { store } from '../store';
+import AppleHealthKit from 'rn-apple-healthkit';
 import DeviceInfo from 'react-native-device-info';
 import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 import uuidByString from 'uuid-by-string';
 
 import { init as InitActions, } from '../actions';
+
+// get the available permissions from AppleHealthKit.Constants object
+const PERMS = AppleHealthKit.Constants.Permissions;
 
 /**
  * Global Util Functions
@@ -186,6 +190,27 @@ const UTIL = {
                 }
             }
         }
+    },
+
+    initAppleHealthKit: () => {
+        let appleHealthKitPerms = {
+            permissions: {
+                read: [
+                    PERMS.BiologicalSex,
+                    PERMS.DateOfBirth,
+                    PERMS.HeartRate,
+                    PERMS.Height,
+                    PERMS.SleepAnalysis,
+                    PERMS.Weight,
+                    PERMS.Workout,
+                ],
+                write: [],
+            }
+        };
+        AppleHealthKit.initHealthKit(appleHealthKitPerms, (err: String, results: Object) => {
+            if(err) { return false; }
+            return true;
+        });
     },
 
     /**
