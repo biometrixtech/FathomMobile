@@ -596,9 +596,9 @@ class MyPlan extends Component {
     _handleUpdateUserHealthKitFlag = flag => {
         // setup variables
         let newUserPayloadObj = {};
-        newUserPayloadObj.apple_healthkit_paired = flag;
+        newUserPayloadObj.health_enabled = flag;
         let newUserObj = _.cloneDeep(this.props.user);
-        newUserObj.apple_healthkit_paired = flag;
+        newUserObj.health_enabled = flag;
         // update reducer as API might take too long to return a value
         store.dispatch({
             type: DispatchActions.USER_REPLACE,

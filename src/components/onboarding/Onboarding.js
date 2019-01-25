@@ -91,13 +91,13 @@ class Onboarding extends Component {
                 user: {
                     // agreed_terms_of_use:   false, // boolean
                     // agreed_privacy_policy: false, // boolean
-                    account_code:           '',
-                    apple_healthkit_paired: user.apple_healthkit_paired ? user.apple_healthkit_paired : false,
-                    cleared_to_play:        false, // boolean
-                    first_time_experience:  user.first_time_experience ? user.first_time_experience : [],
-                    onboarding_status:      user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    password:               '',
-                    biometric_data:         {
+                    account_code:            '',
+                    health_enabled: user.health_enabled ? user.health_enabled : false,
+                    cleared_to_play:         false, // boolean
+                    first_time_experience:   user.first_time_experience ? user.first_time_experience : [],
+                    onboarding_status:       user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
+                    password:                '',
+                    biometric_data:          {
                         height: {
                             in: user.biometric_data && user.biometric_data.height.ft_in ?
                                 ((user.biometric_data.height.ft_in[0] * 12) + user.biometric_data.height.ft_in[1]).toString()
@@ -343,7 +343,7 @@ class Onboarding extends Component {
         if(newUser.account_code && newUser.account_code.length > 0) {
             userObj.account_code = newUser.account_code.toUpperCase();
         }
-        userObj.apple_healthkit_paired = newUser.apple_healthkit_paired;
+        userObj.health_enabled = newUser.health_enabled;
         userObj.first_time_experience = newUser.first_time_experience;
         // create or update, if no errors
         if(errorsArray.length === 0) {
@@ -423,7 +423,7 @@ class Onboarding extends Component {
         this.setState(
             { isHealthKitModalOpen: false, },
             () => {
-                this._handleUserFormChange('apple_healthkit_paired', healthKitFlag);
+                this._handleUserFormChange('health_enabled', healthKitFlag);
                 this._handleUserFormChange('first_time_experience', [firstTimeExperienceValue]);
             },
         );
@@ -440,8 +440,6 @@ class Onboarding extends Component {
             step,
             totalSteps,
         } = this.state;
-        console.log('apple_healthkit_paired',this.state.form_fields.user.apple_healthkit_paired);
-        console.log('first_time_experience',this.state.form_fields.user.first_time_experience);
         return (
             <View style={[styles.background]}>
                 <ProgressBar

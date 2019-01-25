@@ -4,7 +4,7 @@
     <EnableAppleHealthKit
         handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
         handleSkip={this._handleHealthKitSkip}
-        isModalOpen={!user.first_time_experience.includes('apple_healthkit') && !user.apple_healthkit_paired && Platform.OS === 'ios'}
+        isModalOpen={!user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios'}
     />
  *
  */

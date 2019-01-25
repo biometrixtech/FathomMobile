@@ -98,9 +98,9 @@ class Settings extends Component {
             AppUtil.initAppleHealthKit();
             // setup variables
             let newUserPayloadObj = {};
-            newUserPayloadObj.apple_healthkit_paired = true;
+            newUserPayloadObj.health_enabled = true;
             let newUserObj = _.cloneDeep(this.props.user);
-            newUserObj.apple_healthkit_paired = true;
+            newUserObj.health_enabled = true;
             // update reducer as API might take too long to return a value
             store.dispatch({
                 type: DispatchActions.USER_REPLACE,
@@ -449,10 +449,8 @@ class Settings extends Component {
                         }
                         rightIcon={
                             <Switch
-                                // thumbColor={'green'}
-                                // trackColor={{false: 'red', true: 'green'}}
                                 onValueChange={value => this._toggleHealthKitSwitch(value)}
-                                value={this.props.user.apple_healthkit_paired}
+                                value={this.props.user.health_enabled}
                             />
                         }
                         title={'APPLE HEALTH'}
