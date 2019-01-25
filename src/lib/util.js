@@ -192,8 +192,8 @@ const UTIL = {
         }
     },
 
-    initAppleHealthKit: () => {
-        let appleHealthKitPerms = {
+    getAppleHealthKitPerms: () => {
+        return {
             permissions: {
                 read: [
                     PERMS.BiologicalSex,
@@ -207,10 +207,100 @@ const UTIL = {
                 write: [],
             }
         };
+    },
+
+    initAppleHealthKit: () => {
+        let appleHealthKitPerms = UTIL.getAppleHealthKitPerms();
         AppleHealthKit.initHealthKit(appleHealthKitPerms, (err: String, results: Object) => {
             if(err) { return false; }
             return true;
         });
+    },
+
+    getAppleHealthKitData: (lastSyncDate, numberOfDaysAgo = 35) => {
+        // grab permissions
+        let appleHealthKitPerms = UTIL.getAppleHealthKitPerms();
+
+        // set start and end dates
+        let daysAgo = moment().subtract(numberOfDaysAgo, 'd').set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
+        let today3AM = moment().set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
+        let now = moment().toISOString();
+        // NOTE: when sending now to API, `${now.split('.')[0]}Z}`
+
+        if(lastSyncDate) {
+            // need to make 1 call
+            // 1- today3AM - now (store locally for RS or PSS)
+            if(
+                lastSyncDate &&
+                moment().diff(moment(lastSyncDate), 'days') > 0
+            ) {
+                let syncDate = moment(lastSyncDate).set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
+                // need to another call
+                // 1- if lastSyncDate is not today, syncDate - today3AM (send specific API)
+            }
+        } else {
+            // need to make 2 calls
+            // 1- today3AM - now (workout, & hr) (store locally for RS or PSS)
+            // 2- daysAgo - today3AM (workout, hr, & sleep) (send specific API)
+        }
+
+        // workout, hr, & sleep promise calls
+        let workoutOptions = {
+            startDate: daysAgo,
+            endDate:   today3AM,
+        };
+        let workoutValues = new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getWorkout(workoutOptions, (workoutError: Object, workoutResults: Array<Object>) => {
+                    if(workoutError) { reject(workoutError); }
+                    console.log('workoutResults',workoutResults);
+                    resolve(workoutResults);
+                });
+            });
+        });
+        let heartRateOptions = {
+            startDate: daysAgo,
+            endDate:   today3AM,
+        };
+        let heartRateSamples = new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getHeartRateSamples(heartRateOptions, (hrError: Object, hrResults: Array<Object>) => {
+                    if(hrError) { reject(hrError); }
+                    console.log('hrResults',hrResults);
+                    resolve(hrResults);
+                });
+            });
+        });
+        let sleepOptions = {
+            startDate: daysAgo,
+            endDate:   today3AM,
+        };
+        let sleepSamples = new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getSleepSamples(sleepOptions, (sleepError: Object, sleepResults: Array<Object>) => {
+                    if(sleepError) { reject(sleepError); }
+                    console.log('sleepResults',sleepResults);
+                    resolve(sleepResults);
+                });
+            });
+        });
+        // combine all promises
+        Promise
+            .all([workoutValues, heartRateSamples, sleepSamples])
+            .then(values => {
+                // [0] = workoutValues, [1] = heartRateSamples, [2] = sleepSamples
+                // workoutValues.length === 0 ?
+                //    do nothing
+                //    :
+                //    clean data as needed to put in ...?
+                console.log('values',values);
+            })
+            .catch(err => {
+                console.log('err',err);
+            });
     },
 
     /**
