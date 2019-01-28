@@ -444,25 +444,27 @@ class Onboarding extends Component {
         Promise
             .all(personalDataPromises)
             .then(values => {
-                // [0] = height, [1] = weight, [2] = dob, [3] = sex
-                let newUser = _.cloneDeep(this.state.form_fields.user);
-                if(values[0].value && values[0].value > 0) {
-                    newUser.biometric_data.height.in = values[0].value.toString();
+                if(values.length > 0) {
+                    // [0] = height, [1] = weight, [2] = dob, [3] = sex
+                    let newUser = _.cloneDeep(this.state.form_fields.user);
+                    if(values[0].value && values[0].value > 0) {
+                        newUser.biometric_data.height.in = values[0].value.toString();
+                    }
+                    if(values[1].value && values[1].value > 0) {
+                        newUser.biometric_data.mass.lb = values[1].value.toString();
+                    }
+                    if(values[2].value && values[2].value.length > 0 && values[2].age && values[2].age > 0) {
+                        newUser.personal_data.birth_date = moment(values[2].value).format('MM/DD/YYYY');
+                    }
+                    if(
+                        values[3].value &&
+                        values[3].value.length > 0 &&
+                        (values[3].value === 'male' || values[3].value === 'female' || values[3].value === 'other')
+                    ) {
+                        newUser.biometric_data.sex = values[3].value;
+                    }
+                    this.setState({ form_fields: { user: newUser, } });
                 }
-                if(values[1].value && values[1].value > 0) {
-                    newUser.biometric_data.mass.lb = values[1].value.toString();
-                }
-                if(values[2].value && values[2].value.length > 0 && values[2].age && values[2].age > 0) {
-                    newUser.personal_data.birth_date = moment(values[2].value).format('MM/DD/YYYY');
-                }
-                if(
-                    values[3].value &&
-                    values[3].value.length > 0 &&
-                    (values[3].value === 'male' || values[3].value === 'female' || values[3].value === 'other')
-                ) {
-                    newUser.biometric_data.sex = values[3].value;
-                }
-                this.setState({ form_fields: { user: newUser, } });
             })
             .catch(err => console.log('err',err));
     }

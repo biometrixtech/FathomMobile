@@ -5,7 +5,7 @@
  * @Last Modified time: 2018-06-28 11:41:51
  */
 
-import { Alert, AsyncStorage } from 'react-native';
+import { Alert, AsyncStorage, Platform, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -210,21 +210,27 @@ const UTIL = {
     },
 
     initAppleHealthKit: () => {
-        let appleHealthKitPerms = UTIL.getAppleHealthKitPerms();
-        AppleHealthKit.initHealthKit(appleHealthKitPerms, (err: String, results: Object) => {
-            if(err) { return false; }
-            return true;
-        });
+        if(Platform.OS === 'ios') {
+            let appleHealthKitPerms = UTIL.getAppleHealthKitPerms();
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (err: String, results: Object) => {
+                if(err) { return false; }
+                return true;
+            });
+        }
+        return false;
     },
 
     getAppleHealthKitPersonalData: () => {
         // grab permissions
-        let appleHealthKitPerms = UTIL.getAppleHealthKitPerms();
-        let height = UTIL._getHealthHeight(appleHealthKitPerms);
-        let weight = UTIL._getWeightHeight(appleHealthKitPerms);
-        let dob = UTIL._getDOBHeight(appleHealthKitPerms);
-        let sex = UTIL._getSexHeight(appleHealthKitPerms);
-        return [height, weight, dob, sex];
+        if(Platform.OS === 'ios') {
+            let appleHealthKitPerms = UTIL.getAppleHealthKitPerms();
+            let height = UTIL._getHealthHeight(appleHealthKitPerms);
+            let weight = UTIL._getWeightHeight(appleHealthKitPerms);
+            let dob = UTIL._getDOBHeight(appleHealthKitPerms);
+            let sex = UTIL._getSexHeight(appleHealthKitPerms);
+            return [height, weight, dob, sex];
+        }
+        return [];
     },
 
     _getHealthHeight: appleHealthKitPerms => {
@@ -283,56 +289,58 @@ const UTIL = {
     },
 
     getAppleHealthKitData: (lastSyncDate, numberOfDaysAgo = 35) => {
-        // grab permissions
-        let appleHealthKitPerms = UTIL.getAppleHealthKitPerms();
-        // set start and end dates
-        let daysAgo = moment().subtract(numberOfDaysAgo, 'd').set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
-        let today3AM = moment().set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
-        let yesterday5PM = moment().subtract(1, 'd').set('hour', 17).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
-        let now = moment().toISOString();
-        // setup variables
-        let reducersPromisesArray = [];
-        let apiPromisesArray = [];
-        // combine promises and trigger next step
-        if(lastSyncDate) {
-            // need to make 1 call
-            // 1- today3AM - now (workout, & hr) (store locally for RS or PSS)
-            reducersPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now));
-            reducersPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now));
-            // 2- yesterday5PM - now (sleep) (store locally for RS)
-            reducersPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, yesterday5PM, now));
-            // trigger API or reducer storage
-            UTIL._handlePromises(reducersPromisesArray, false);
-            if(
-                lastSyncDate &&
-                moment().diff(moment(lastSyncDate), 'days') > 0
-            ) {
-                let syncDate = moment(lastSyncDate).set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
-                // need to another call
-                // 1- if lastSyncDate is not today, syncDate - today3AM (workout & hr) (send specific API)
-                apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, syncDate, today3AM));
-                apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, syncDate, today3AM));
-                // 2- syncDate - yesterday5PM (sleep) (send specific API)
-                apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, syncDate, yesterday5PM));
+        if(Platform.OS === 'ios') {
+            // grab permissions
+            let appleHealthKitPerms = UTIL.getAppleHealthKitPerms();
+            // set start and end dates
+            let daysAgo = moment().subtract(numberOfDaysAgo, 'd').set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
+            let today3AM = moment().set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
+            let yesterday5PM = moment().subtract(1, 'd').set('hour', 17).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
+            let now = moment().toISOString();
+            // setup variables
+            let reducersPromisesArray = [];
+            let apiPromisesArray = [];
+            // combine promises and trigger next step
+            if(lastSyncDate) {
+                // need to make 1 call
+                // 1- today3AM - now (workout, & hr) (store locally for RS or PSS)
+                reducersPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now));
+                reducersPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now));
+                // 2- yesterday5PM - now (sleep) (store locally for RS)
+                reducersPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, yesterday5PM, now));
+                // trigger API or reducer storage
+                UTIL._handlePromises(reducersPromisesArray, false);
+                if(
+                    lastSyncDate &&
+                    moment().diff(moment(lastSyncDate), 'days') > 0
+                ) {
+                    let syncDate = moment(lastSyncDate).set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
+                    // need to another call
+                    // 1- if lastSyncDate is not today, syncDate - today3AM (workout & hr) (send specific API)
+                    apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, syncDate, today3AM));
+                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, syncDate, today3AM));
+                    // 2- syncDate - yesterday5PM (sleep) (send specific API)
+                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, syncDate, yesterday5PM));
+                    // trigger API or reducer storage
+                    UTIL._handlePromises(apiPromisesArray, true);
+                }
+            } else {
+                // need to make 2 calls
+                // 1- today3AM - now (workout & hr) (store locally for RS or PSS)
+                reducersPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now));
+                reducersPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now));
+                // 2- yesterday5PM - now (sleep) (store locally for RS)
+                reducersPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, yesterday5PM, now));
+                // trigger API or reducer storage
+                UTIL._handlePromises(reducersPromisesArray, false);
+                // 3- daysAgo - today3AM (workout & hr) (send specific API)
+                apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, daysAgo, today3AM));
+                apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, daysAgo, today3AM));
+                // 4- daysAgo - yesterday5PM (sleep) (send specific API)
+                apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, yesterday5PM));
                 // trigger API or reducer storage
                 UTIL._handlePromises(apiPromisesArray, true);
             }
-        } else {
-            // need to make 2 calls
-            // 1- today3AM - now (workout & hr) (store locally for RS or PSS)
-            reducersPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now));
-            reducersPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now));
-            // 2- yesterday5PM - now (sleep) (store locally for RS)
-            reducersPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, yesterday5PM, now));
-            // trigger API or reducer storage
-            UTIL._handlePromises(reducersPromisesArray, false);
-            // 3- daysAgo - today3AM (workout & hr) (send specific API)
-            apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, daysAgo, today3AM));
-            apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, daysAgo, today3AM));
-            // 4- daysAgo - yesterday5PM (sleep) (send specific API)
-            apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, yesterday5PM));
-            // trigger API or reducer storage
-            UTIL._handlePromises(apiPromisesArray, true);
         }
     },
 
