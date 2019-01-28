@@ -11,6 +11,7 @@ const MyPlan = ({
     clearCompletedFSExercises,
     getMyPlan,
     getSoreBodyParts,
+    healthData,
     lastOpened,
     markStartedFunctionalStrength,
     markStartedRecovery,
@@ -37,6 +38,7 @@ const MyPlan = ({
         clearCompletedFSExercises={clearCompletedFSExercises}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
+        healthData={healthData}
         lastOpened={lastOpened}
         markStartedFunctionalStrength={markStartedFunctionalStrength}
         markStartedRecovery={markStartedRecovery}
@@ -66,6 +68,7 @@ MyPlan.propTypes = {
     clearCompletedFSExercises:     PropTypes.func.isRequired,
     getMyPlan:                     PropTypes.func.isRequired,
     getSoreBodyParts:              PropTypes.func.isRequired,
+    healthData:                    PropTypes.object.isRequired,
     lastOpened:                    PropTypes.object.isRequired,
     markStartedFunctionalStrength: PropTypes.func.isRequired,
     markStartedRecovery:           PropTypes.func.isRequired,
@@ -96,6 +99,7 @@ MyPlan.defaultProps = {
 
 const mapStateToProps = state => ({
     ble:                  state.ble,
+    healthData:           state.plan.healthData,
     lastOpened:           state.plan.lastOpened,
     network:              state.network,
     notification:         state.init.notification,

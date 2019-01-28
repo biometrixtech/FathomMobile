@@ -223,6 +223,9 @@ class Login extends Component {
                 }, false)
                     .then(response => {
                         let { authorization, user } = response;
+                        if(user.health_enabled) { // TODO: still need to flesh out?
+                            AppUtil.getAppleHealthKitData(user.health_sync_date);
+                        }
                         return this.props.registerDevice(this.props.certificate, this.props.device, user)
                             .then(() => {
                                 let clearMyPlan = (

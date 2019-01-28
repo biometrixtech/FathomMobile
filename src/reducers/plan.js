@@ -53,6 +53,13 @@ export default function planReducer(state = initialState, action) {
         return Object.assign({}, state, {
             typicalSessions: action.data,
         });
+    case Actions.SET_HEALTH_DATA:
+        return Object.assign({}, state, {
+            healthData: {
+                sleep:    action.sleepData || [],
+                workouts: action.workoutData || [],
+            },
+        });
     case Actions.POST_READINESS_SURVEY:
         return Object.assign({}, state, {});
     case Actions.POST_SESSION_SURVEY:

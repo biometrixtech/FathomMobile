@@ -103,6 +103,7 @@ class MyPlan extends Component {
         clearCompletedExercises:       PropTypes.func.isRequired,
         clearCompletedFSExercises:     PropTypes.func.isRequired,
         getSoreBodyParts:              PropTypes.func.isRequired,
+        healthData:                    PropTypes.object.isRequired,
         lastOpened:                    PropTypes.object.isRequired,
         markStartedFunctionalStrength: PropTypes.func.isRequired,
         markStartedRecovery:           PropTypes.func.isRequired,
@@ -381,6 +382,9 @@ class MyPlan extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
+        if(!_.isEqual(prevProps.healthData, this.props.healthData)) { // TODO: flesh out!
+            console.log('new healthdata logged',this.props.healthData);
+        }
     }
 
     _handleAppStateChange = (nextAppState) => {
@@ -395,6 +399,16 @@ class MyPlan extends Component {
             this._handleEnteringApp(false, () => this._handlePushNotification(this.props));
         } else if(nextAppState === 'active' && (!this.props.lastOpened.date || clearMyPlan)) {
             Actions.reset('key1');
+        } else if(
+            nextAppState === 'active' &&
+            this.props.user.health_enabled &&
+            (
+                !this.props.user.health_sync_date ||
+                (moment(this.props.user.health_sync_date).diff(moment(), 'minutes') > 7)
+            )
+        ) {
+            // TODO: still need to flesh out!
+            AppUtil.getAppleHealthKitData(this.props.user.health_sync_date);
         }
     }
 

@@ -167,7 +167,7 @@ class Start extends Component {
                 return this.props.getUser(userObj.id);
             })
             .then(response => {
-                if(response.user.health_enabled) {
+                if(response.user.health_enabled) { // TODO: still need to flesh out?
                     AppUtil.getAppleHealthKitData(response.user.health_sync_date);
                 }
                 userObj = response.user;
