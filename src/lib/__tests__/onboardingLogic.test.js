@@ -431,7 +431,7 @@ it('Is User Account Information Validation - system_type, injury_status, zip_cod
     user.biometric_data.sex = 'other'; // 'male', 'female', 'other'
     user.biometric_data.mass.lb = '200';
     user.biometric_data.height.in = '';
-    expect(onboardingUtils.isUserAboutValid(user).isValid).toEqual(false);
+    expect(onboardingUtils.isUserAboutValid(user).isValid).toEqual(true);
 });
 
 it('Is User Account Information Validation - valid fields', () => {
@@ -495,7 +495,7 @@ it('Is User Account Information Validation - valid fields NOT zip_code', () => {
     user.biometric_data.sex = 'other'; // 'male', 'female', 'other'
     user.biometric_data.mass.lb = '200';
     user.biometric_data.height.in = '72';
-    expect(onboardingUtils.isUserAboutValid(user).isValid).toEqual(false);
+    expect(onboardingUtils.isUserAboutValid(user).isValid).toEqual(true);
 });
 
 it('Is User Account Information Validation - valid fields NOT injury_status', () => {
@@ -511,7 +511,7 @@ it('Is User Account Information Validation - valid fields NOT injury_status', ()
     user.biometric_data.sex = 'other'; // 'male', 'female', 'other'
     user.biometric_data.mass.lb = '200';
     user.biometric_data.height.in = '72';
-    expect(onboardingUtils.isUserAboutValid(user).isValid).toEqual(false);
+    expect(onboardingUtils.isUserAboutValid(user).isValid).toEqual(true);
 });
 
 it('Is User Account Information Validation - valid fields NOT system_type', () => {
@@ -527,5 +527,5 @@ it('Is User Account Information Validation - valid fields NOT system_type', () =
     user.biometric_data.sex = 'other'; // 'male', 'female', 'other'
     user.biometric_data.mass.lb = '200';
     user.biometric_data.height.in = '72';
-    expect(onboardingUtils.isUserAboutValid(user).isValid).toEqual(false);
+    expect(onboardingUtils.isUserAboutValid(user).isValid).toEqual(true);
 });
