@@ -25,7 +25,7 @@ import { UserAccount, } from './pages/';
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: AppColors.primary.white.hundredPercent,
+        backgroundColor: AppColors.white,
         flex:            1,
         height:          AppSizes.screen.height,
         width:           AppSizes.screen.width,
@@ -91,13 +91,13 @@ class Onboarding extends Component {
                 user: {
                     // agreed_terms_of_use:   false, // boolean
                     // agreed_privacy_policy: false, // boolean
-                    account_code:            '',
-                    health_enabled: user.health_enabled ? user.health_enabled : false,
-                    cleared_to_play:         false, // boolean
-                    first_time_experience:   user.first_time_experience ? user.first_time_experience : [],
-                    onboarding_status:       user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    password:                '',
-                    biometric_data:          {
+                    account_code:          '',
+                    health_enabled:        user.health_enabled ? user.health_enabled : false,
+                    cleared_to_play:       false, // boolean
+                    first_time_experience: user.first_time_experience ? user.first_time_experience : [],
+                    onboarding_status:     user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
+                    password:              '',
+                    biometric_data:        {
                         height: {
                             in: user.biometric_data && user.biometric_data.height.ft_in ?
                                 ((user.biometric_data.height.ft_in[0] * 12) + user.biometric_data.height.ft_in[1]).toString()
@@ -161,6 +161,10 @@ class Onboarding extends Component {
     componentWillMount = () => {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => true);
+        }
+        // for current users
+        if(this.props.user && this.props.user.health_enabled) {
+            this._updateStateFromHealthKit();
         }
     }
 
@@ -358,6 +362,9 @@ class Onboarding extends Component {
                         return this.setState({ resultMsg: { error }, loading: false });
                     });
             }
+            if(userObj.health_enabled) { // TODO: still need to flesh out?
+                AppUtil.getAppleHealthKitData(userObj.health_sync_date);
+            }
             return this.props.createUser(userObj)
                 .then(response => this._handleLoginFinalize(userObj))
                 .catch(err => {
@@ -425,8 +432,39 @@ class Onboarding extends Component {
             () => {
                 this._handleUserFormChange('health_enabled', healthKitFlag);
                 this._handleUserFormChange('first_time_experience', [firstTimeExperienceValue]);
+                if(healthKitFlag) {
+                    this._updateStateFromHealthKit();
+                }
             },
         );
+    }
+
+    _updateStateFromHealthKit = () => {
+        let personalDataPromises = AppUtil.getAppleHealthKitPersonalData();
+        Promise
+            .all(personalDataPromises)
+            .then(values => {
+                // [0] = height, [1] = weight, [2] = dob, [3] = sex
+                let newUser = _.cloneDeep(this.state.form_fields.user);
+                if(values[0].value && values[0].value > 0) {
+                    newUser.biometric_data.height.in = values[0].value.toString();
+                }
+                if(values[1].value && values[1].value > 0) {
+                    newUser.biometric_data.mass.lb = values[1].value.toString();
+                }
+                if(values[2].value && values[2].value.length > 0 && values[2].age && values[2].age > 0) {
+                    newUser.personal_data.birth_date = moment(values[2].value).format('MM/DD/YYYY');
+                }
+                if(
+                    values[3].value &&
+                    values[3].value.length > 0 &&
+                    (values[3].value === 'male' || values[3].value === 'female' || values[3].value === 'other')
+                ) {
+                    newUser.biometric_data.sex = values[3].value;
+                }
+                this.setState({ form_fields: { user: newUser, } });
+            })
+            .catch(err => console.log('err',err));
     }
 
     render = () => {
@@ -483,7 +521,7 @@ class Onboarding extends Component {
                 </Modal>*/}
                 { this.state.loading ?
                     <ActivityIndicator
-                        color={AppColors.primary.yellow.hundredPercent}
+                        color={AppColors.zeplin.yellow}
                         size={'large'}
                         style={[AppStyles.activityIndicator]}
                     /> : null

@@ -48,9 +48,9 @@ const onboardingUtils = {
         const possibleGenders = UserAccount.possibleGenders.map(gender => gender.value); // ['male', 'female', 'other'];
         if(
             user.personal_data.birth_date.length > 0 &&
-            (user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) &&
-            possibleInjuryStatuses.includes(user.injury_status) &&
-            (possibleSystemTypes.includes(user.system_type) || !user.system_type) &&
+            // (user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) &&
+            // possibleInjuryStatuses.includes(user.injury_status) &&
+            // (possibleSystemTypes.includes(user.system_type) || !user.system_type) &&
             possibleGenders.includes(user.biometric_data.sex)
         ) {
             errorsArray = [];
@@ -60,11 +60,11 @@ const onboardingUtils = {
             errorsArray.push(newError);
             isValid = false;
         }
-        if(user.personal_data.zip_code.length !== 5) {
+        /*if(user.personal_data.zip_code.length !== 5) {
             const newError = 'Please enter a valid Zip Code';
             errorsArray.push(newError);
             isValid = false;
-        }
+        }*/
         if((user.biometric_data.mass.lb.length === 0 || user.biometric_data.mass.lb === 0)) {
             const newError = 'Please enter a valid Weight';
             errorsArray.push(newError);
@@ -111,19 +111,19 @@ const onboardingUtils = {
             numbersRegex.test(user.password)
         ) { count = count + 1; }
         if( this.isEmailValid(user.personal_data.email) ) { count = count + 1; }
-        if(user.personal_data.zip_code.length > 0) { count = count + 1; }
+        // if(user.personal_data.zip_code.length > 0) { count = count + 1; }
         if(user.personal_data.birth_date.length > 0) { count = count + 1; }
-        if(user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) { count = count + 1; }
+        // if(user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) { count = count + 1; }
         if(user.biometric_data.mass.lb.length > 0 || user.biometric_data.mass.lb > 0) { count = count + 1; }
-        if(possibleInjuryStatuses.includes(user.injury_status)) { count = count + 1; }
-        if(possibleSystemTypes.includes(user.system_type)) { count = count + 1; }
+        // if(possibleInjuryStatuses.includes(user.injury_status)) { count = count + 1; }
+        // if(possibleSystemTypes.includes(user.system_type)) { count = count + 1; }
         if(possibleGenders.includes(user.biometric_data.sex)) { count = count + 1; }
         // return count
         return count;
     },
 
     getTotalSteps(user) {
-        return 12;
+        return 7;
     },
 
     isPhoneNumberValid(phoneNumber) {

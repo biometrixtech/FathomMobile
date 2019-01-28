@@ -217,86 +217,208 @@ const UTIL = {
         });
     },
 
+    getAppleHealthKitPersonalData: () => {
+        // grab permissions
+        let appleHealthKitPerms = UTIL.getAppleHealthKitPerms();
+        let height = UTIL._getHealthHeight(appleHealthKitPerms);
+        let weight = UTIL._getWeightHeight(appleHealthKitPerms);
+        let dob = UTIL._getDOBHeight(appleHealthKitPerms);
+        let sex = UTIL._getSexHeight(appleHealthKitPerms);
+        return [height, weight, dob, sex];
+    },
+
+    _getHealthHeight: appleHealthKitPerms => {
+        return new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getLatestHeight(null, (heightError: String, heightResults: Object) => {
+                    if(heightError) { reject(heightError); }
+                    // console.log('heightResults',heightResults);
+                    resolve(heightResults);
+                });
+            });
+        });
+    },
+
+    _getWeightHeight: appleHealthKitPerms => {
+        let weightOptions = {
+            unit: 'pound',
+        };
+        return new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getLatestWeight(weightOptions, (weightError: Object, weightResults: Object) => {
+                    if(weightError) { reject(weightError); }
+                    // console.log('weightResults',weightResults);
+                    resolve(weightResults);
+                });
+            });
+        });
+    },
+
+    _getDOBHeight: appleHealthKitPerms => {
+        return new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getDateOfBirth(null, (dobError: Object, dobResults: Object) => {
+                    if(dobError) { reject(dobError); }
+                    // console.log('dobResults',dobResults);
+                    resolve(dobResults);
+                });
+            });
+        });
+    },
+
+    _getSexHeight: appleHealthKitPerms => {
+        return new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getBiologicalSex(null, (sexError: Object, sexResults: Object) => {
+                    if(sexError) { reject(sexError); }
+                    // console.log('sexResults',sexResults);
+                    resolve(sexResults);
+                });
+            });
+        });
+    },
+
     getAppleHealthKitData: (lastSyncDate, numberOfDaysAgo = 35) => {
         // grab permissions
         let appleHealthKitPerms = UTIL.getAppleHealthKitPerms();
-
         // set start and end dates
         let daysAgo = moment().subtract(numberOfDaysAgo, 'd').set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
         let today3AM = moment().set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
+        let yesterday5PM = moment().subtract(1, 'd').set('hour', 17).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
         let now = moment().toISOString();
-        // NOTE: when sending now to API, `${now.split('.')[0]}Z}`
-
+        // setup variables
+        let reducersPromisesArray = [];
+        let apiPromisesArray = [];
+        // combine promises and trigger next step
         if(lastSyncDate) {
             // need to make 1 call
-            // 1- today3AM - now (store locally for RS or PSS)
+            // 1- today3AM - now (workout, & hr) (store locally for RS or PSS)
+            reducersPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now));
+            reducersPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now));
+            // 2- yesterday5PM - now (sleep) (store locally for RS)
+            reducersPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, yesterday5PM, now));
+            // trigger API or reducer storage
+            UTIL._handlePromises(reducersPromisesArray, false);
             if(
                 lastSyncDate &&
                 moment().diff(moment(lastSyncDate), 'days') > 0
             ) {
                 let syncDate = moment(lastSyncDate).set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
                 // need to another call
-                // 1- if lastSyncDate is not today, syncDate - today3AM (send specific API)
+                // 1- if lastSyncDate is not today, syncDate - today3AM (workout & hr) (send specific API)
+                apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, syncDate, today3AM));
+                apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, syncDate, today3AM));
+                // 2- syncDate - yesterday5PM (sleep) (send specific API)
+                apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, syncDate, yesterday5PM));
+                // trigger API or reducer storage
+                UTIL._handlePromises(apiPromisesArray, true);
             }
         } else {
             // need to make 2 calls
-            // 1- today3AM - now (workout, & hr) (store locally for RS or PSS)
-            // 2- daysAgo - today3AM (workout, hr, & sleep) (send specific API)
+            // 1- today3AM - now (workout & hr) (store locally for RS or PSS)
+            reducersPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now));
+            reducersPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now));
+            // 2- yesterday5PM - now (sleep) (store locally for RS)
+            reducersPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, yesterday5PM, now));
+            // trigger API or reducer storage
+            UTIL._handlePromises(reducersPromisesArray, false);
+            // 3- daysAgo - today3AM (workout & hr) (send specific API)
+            apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, daysAgo, today3AM));
+            apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, daysAgo, today3AM));
+            // 4- daysAgo - yesterday5PM (sleep) (send specific API)
+            apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, yesterday5PM));
+            // trigger API or reducer storage
+            UTIL._handlePromises(apiPromisesArray, true);
         }
+    },
 
-        // workout, hr, & sleep promise calls
+    _getWorkoutSamples: (appleHealthKitPerms, startDate, endDate) => {
         let workoutOptions = {
-            startDate: daysAgo,
-            endDate:   today3AM,
+            startDate,
+            endDate,
         };
-        let workoutValues = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
                 if(initError) { reject(initError); }
                 AppleHealthKit.getWorkout(workoutOptions, (workoutError: Object, workoutResults: Array<Object>) => {
                     if(workoutError) { reject(workoutError); }
-                    console.log('workoutResults',workoutResults);
+                    // console.log('workoutResults',workoutResults);
                     resolve(workoutResults);
                 });
             });
         });
+    },
+
+    _getHeartRateSamples: (appleHealthKitPerms, startDate, endDate) => {
         let heartRateOptions = {
-            startDate: daysAgo,
-            endDate:   today3AM,
+            startDate,
+            endDate,
         };
-        let heartRateSamples = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
                 if(initError) { reject(initError); }
                 AppleHealthKit.getHeartRateSamples(heartRateOptions, (hrError: Object, hrResults: Array<Object>) => {
                     if(hrError) { reject(hrError); }
-                    console.log('hrResults',hrResults);
+                    // console.log('hrResults',hrResults);
                     resolve(hrResults);
                 });
             });
         });
+    },
+
+    _getSleepSamples: (appleHealthKitPerms, startDate, endDate) => {
         let sleepOptions = {
-            startDate: daysAgo,
-            endDate:   today3AM,
+            startDate,
+            endDate,
         };
-        let sleepSamples = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
                 if(initError) { reject(initError); }
                 AppleHealthKit.getSleepSamples(sleepOptions, (sleepError: Object, sleepResults: Array<Object>) => {
                     if(sleepError) { reject(sleepError); }
-                    console.log('sleepResults',sleepResults);
+                    // console.log('sleepResults',sleepResults);
                     resolve(sleepResults);
                 });
             });
         });
-        // combine all promises
+    },
+
+    _handlePromises: (promisesArray, sendAPI) => {
+        // NOTE: when sending now to API, `${now.split('.')[0]}Z}`
         Promise
-            .all([workoutValues, heartRateSamples, sleepSamples])
+            .all(promisesArray)
             .then(values => {
+                console.log(sendAPI,values);
                 // [0] = workoutValues, [1] = heartRateSamples, [2] = sleepSamples
-                // workoutValues.length === 0 ?
-                //    do nothing
-                //    :
-                //    clean data as needed to put in ...?
-                console.log('values',values);
+                let possibleSleepValues = ['ASLEEP', 'INBED', 'UNKNOWN'];
+                if(values[0].length > 0) {
+                    let cleanedWorkoutValues = [];
+                    let filteredHeartRateValues = [];
+                    _.map(values[0], (workout, index) => {
+                        // console.log('workout',workout);
+                        let newWorkout = _.cloneDeep(workout);
+                        filteredHeartRateValues = _.filter(values[1], hr => moment(workout.start) <= moment(hr.startDate) && moment(workout.end) >= moment(hr.endDate));
+                        // console.log('filteredHeartRateValues',filteredHeartRateValues);
+                        newWorkout.hrValues = filteredHeartRateValues;
+                        cleanedWorkoutValues.push(newWorkout);
+                    });
+                    let filteredSleepValues = _.filter(values[2], s => possibleSleepValues.includes(s.value));
+                    // console.log('filteredSleepValues',filteredSleepValues);
+                    if(sendAPI) {
+                        // send api
+                    } else {
+                        // store in reducer
+                        store.dispatch({
+                            type:        DispatchActions.SET_HEALTH_DATA,
+                            sleepData:   filteredSleepValues,
+                            workoutData: cleanedWorkoutValues,
+                        });
+                    }
+                }
             })
             .catch(err => {
                 console.log('err',err);
