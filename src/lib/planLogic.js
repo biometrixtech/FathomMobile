@@ -223,22 +223,6 @@ const PlanLogic = {
     },
 
     /**
-      * Cleaning of Sport Text String
-      * - SportScheduleBuilder
-      */
-    handleGetFinalSportTextString: (selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration) => {
-        let selectedSessionType = filteredSessionType && filteredSessionType.length > 0 ? filteredSessionType[0].label.toLowerCase() : postSession.session_type === 1 ? 'training' : '';
-        let sportText = step === 0 || step === 1 ? 'activity type' : step === 2 ? `${selectedSport} ` : `${selectedSport} ${selectedSessionType}`;
-        let startTimeText = (step === 3 || step === 4) && !isFormValid ? 'time' : (step === 3 || step === 4) && isFormValid ? `${selectedStartTime.format('h:mm')}` : '';
-        let durationText = step === 3 && !isFormValid ? 'duration' : `${selectedDuration}`;
-        return {
-            durationText,
-            sportText,
-            startTimeText,
-        };
-    },
-
-    /**
       * Data for Areas of Soreness Body Part
       * - AreasOfSoreness
       */
@@ -309,7 +293,7 @@ const PlanLogic = {
             let doesItInclude = _.filter(combinedSoreBodyParts, a => a.body_part === o.body_part && a.side === o.side);
             return doesItInclude.length > 0;
         });
-        let areQuestionsValid = postSession.RPE > 0 && postSession.event_date;
+        let areQuestionsValid = postSession.RPE >= 0 && postSession.event_date ? true : false;
         let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length === filteredSoreBodyParts.length : true;
         let areAreasOfSorenessValid = (
             _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0
@@ -317,6 +301,7 @@ const PlanLogic = {
         let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;
         let isFormValidItems = {
             areAreasOfSorenessValid,
+            areQuestionsValid,
             isPrevSorenessValid:        (areSoreBodyPartsValid || postSession.soreness.length === 0),
             selectAreasOfSorenessValid: areasOfSorenessRef && areasOfSorenessRef.state ? filteredAreasOfSoreness.length > 0 || areasOfSorenessRef.state.isAllGood : false,
         };
@@ -409,9 +394,9 @@ const PlanLogic = {
       * - ReadinessSurvey & PostSessionSurvey
       */
     handleNewSoreBodyPartLogic: (soreBodyParts) => {
-        let bodyParts = soreBodyParts && soreBodyParts.body_parts ? _.cloneDeep(soreBodyParts.body_parts) : [];
-        let histSoreStatus = soreBodyParts && soreBodyParts.hist_sore_status ? _.cloneDeep(soreBodyParts.hist_sore_status) : [];
-        let clearCandidates = soreBodyParts && soreBodyParts.clear_candidates ? _.cloneDeep(soreBodyParts.clear_candidates) : [];
+        let bodyParts = soreBodyParts && soreBodyParts.body_parts && soreBodyParts.body_parts.length > 0 ? _.cloneDeep(soreBodyParts.body_parts) : [];
+        let histSoreStatus = soreBodyParts && soreBodyParts.hist_sore_status && soreBodyParts.hist_sore_status.length > 0 ? _.cloneDeep(soreBodyParts.hist_sore_status) : [];
+        let clearCandidates = soreBodyParts && soreBodyParts.clear_candidates && soreBodyParts.clear_candidates.length > 0 ? _.cloneDeep(soreBodyParts.clear_candidates) : [];
         clearCandidates = _.map(clearCandidates, candidate => {
             let newCandidate = _.cloneDeep(candidate);
             newCandidate.isClearCandidate = true;
@@ -462,32 +447,18 @@ const PlanLogic = {
       * - SportScheduleBuilder
       */
     handleSportScheduleBuilderRenderLogic: (postSession, pageState) => {
-        let filteredTeamSports = _.filter(MyPlanConstants.teamSports, o => o.order && o.order > 0);
-        let teamSports = _.orderBy(filteredTeamSports, ['order'], ['asc']);
-        let filteredStrengthConditioningTypes = _.filter(MyPlanConstants.strengthConditioningTypes, o => o.order && o.order > 0);
-        let strengthConditioningTypes = _.orderBy(filteredStrengthConditioningTypes, ['order'], ['asc']);
-        let filteredSessionTypes = _.filter(MyPlanConstants.availableSessionTypes, o => o.order && o.order > 0);
-        let sessionTypes = _.orderBy(filteredSessionTypes, ['order'], ['asc']);
-        let filteredSport = postSession.sport_name || postSession.sport_name === 0 ? _.filter(teamSports, ['index', postSession.sport_name]) : postSession.strength_and_conditioning_type || postSession.strength_and_conditioning_type === 0 ? _.filter(strengthConditioningTypes, ['index', postSession.strength_and_conditioning_type]) : null;
-        let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0].label.toLowerCase().replace(' training', '') : '';
-        let filteredSessionType = postSession.session_type || postSession.session_type === 0 ? _.filter(sessionTypes, ['index', postSession.session_type]) : null;
-        let dateTimeDurationFromState = PlanLogic.handleGetDateTimeDurationFromState(pageState.durationValueGroups, pageState.isFormValid, pageState.timeValueGroups);
-        let selectedStartTime = dateTimeDurationFromState.event_date;
-        let selectedDuration = dateTimeDurationFromState.duration;
-        let getFinalSportTextString = PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, pageState.isFormValid, pageState.step, selectedStartTime, selectedDuration);
-        let sportText = getFinalSportTextString.sportText;
-        let startTimeText = getFinalSportTextString.startTimeText;
-        let durationText = getFinalSportTextString.durationText;
-        let isSport = postSession.sport_name > 0 || postSession.sport_name === 0 ? true : false;
-        let filteredSportSessionTypes = isSport ? _.filter(sessionTypes, type => !type.ignoreSelection) : sessionTypes;
+        let filteredSport = postSession.sport_name || postSession.sport_name === 0 ?
+            _.filter(MyPlanConstants.teamSports, ['index', postSession.sport_name])
+            : postSession.strength_and_conditioning_type || postSession.strength_and_conditioning_type === 0 ?
+                _.filter(MyPlanConstants.strengthConditioningTypes, ['index', postSession.strength_and_conditioning_type])
+                :
+                null;
+        let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
+        let sportText = pageState.step === 1 && selectedSport ? selectedSport.label.toLowerCase() : '';
+        let sportImage = pageState.step === 1 && selectedSport ? selectedSport.imagePath : '';
         return {
-            durationText,
-            filteredSportSessionTypes,
-            selectedSport,
+            sportImage,
             sportText,
-            startTimeText,
-            strengthConditioningTypes,
-            teamSports,
         };
     },
 
@@ -733,27 +704,20 @@ const PlanLogic = {
       * Next Page & Validation Logic
       * - PostSessionSurvey
       */
-    handlePostSessionSurveyNextPage: (postSession, currentPage, isFormValidItems, isBackBtn, newSoreBodyParts, areaOfSorenessClicked) => {
+    handlePostSessionSurveyNextPage: (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid) => {
         let isValid = false;
         let pageNum = 0;
-        if(currentPage === 0) { // Sport Builder
-            pageNum = 1;
-            isValid = isFormValidItems.isSportValid;
-        } else if(currentPage === 1) { // RPE
-            pageNum = isBackBtn ? 0 : (newSoreBodyParts && newSoreBodyParts.length > 0) ? 2 : 3;
-            isValid = isFormValidItems.isRPEValid;
-        } else if(currentPage === 2) { // Previous Soreness
-            pageNum = isBackBtn ? 1 : 3;
+        if(currentPage === 0) { // 0. Apple HealthKit (xN) OR Session + RPE/Duration
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 1 : 2;
+            isValid = isFormValidItems.areQuestionsValid || isHealthKitValid;
+        } else if(currentPage === 1) { // 1. Follow Up Pain & Soreness
+            pageNum = 2;
             isValid = isFormValidItems.isPrevSorenessValid;
-        } else if(currentPage === 3) { // Areas of Soreness
-            if(isBackBtn) {
-                pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 2 : 1;
-            } else {
-                pageNum = areaOfSorenessClicked.length > 0 ? 4 : 3;
-            }
+        } else if(currentPage === 2) { // 2. Areas of Soreness
+            pageNum = 3;
             isValid = isFormValidItems.selectAreasOfSorenessValid;
-        } else if(currentPage === 4) { // Areas of Soreness Selected
-            pageNum = isBackBtn ? 3 : 4;
+        } else if(currentPage === 3) { // 3. Areas of Soreness Selected
+            pageNum = 3;
             isValid = isFormValidItems.areAreasOfSorenessValid;
         }
         return {
@@ -797,6 +761,30 @@ const PlanLogic = {
             seconds_per_set:   exercise.seconds_per_set || null,
             switch_sides_time: 5,
             up_next_interval:  10,
+        };
+    },
+
+    /**
+      * HealthKit Workout Page Render Logic
+      * - HealthKitWorkouts
+      */
+    // TODO: UNIT TEST ME
+    handleHealthKitWorkoutPageRenderLogic: (workout) => {
+        let hourOfDay = moment(workout.event_date).get('hour');
+        let split_afternoon = 12; // 24hr time to split the afternoon
+        let split_evening = 17; // 24hr time to split the evening
+        let cutoffForNewDay = 3;
+        let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'afternoon' : hourOfDay >= split_evening || hourOfDay < cutoffForNewDay ? 'evening' : 'morning';
+        let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
+        let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
+        let sportDuration = workout.duration;
+        let sportText = selectedSport ? selectedSport.label.toLowerCase() : '';
+        let sportImage = selectedSport ? selectedSport.imagePath : '';
+        return {
+            partOfDay,
+            sportDuration,
+            sportImage,
+            sportText,
         };
     },
 

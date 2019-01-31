@@ -9,7 +9,7 @@ import { Alert, AsyncStorage, Platform, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
-import { Actions as DispatchActions, } from '../constants';
+import { Actions as DispatchActions, MyPlan as MyPlanConstants, } from '../constants';
 import { Actions as RouterActions, } from 'react-native-router-flux';
 import { AppColors, AppStyles } from '../constants';
 import { store } from '../store';
@@ -192,7 +192,7 @@ const UTIL = {
         }
     },
 
-    getAppleHealthKitPerms: () => {
+    _getAppleHealthKitPerms: () => {
         return {
             permissions: {
                 read: [
@@ -211,7 +211,7 @@ const UTIL = {
 
     initAppleHealthKit: () => {
         if(Platform.OS === 'ios') {
-            let appleHealthKitPerms = UTIL.getAppleHealthKitPerms();
+            let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
             AppleHealthKit.initHealthKit(appleHealthKitPerms, (err: String, results: Object) => {
                 if(err) { return false; }
                 return true;
@@ -223,7 +223,7 @@ const UTIL = {
     getAppleHealthKitPersonalData: () => {
         // grab permissions
         if(Platform.OS === 'ios') {
-            let appleHealthKitPerms = UTIL.getAppleHealthKitPerms();
+            let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
             let height = UTIL._getHealthHeight(appleHealthKitPerms);
             let weight = UTIL._getWeightHeight(appleHealthKitPerms);
             let dob = UTIL._getDOBHeight(appleHealthKitPerms);
@@ -288,15 +288,22 @@ const UTIL = {
         });
     },
 
+    _getAppleHealthTimes: (lastSyncDate, numberOfDaysAgo) => {
+        return {
+            daysAgo:      moment().subtract(numberOfDaysAgo, 'd').set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString(),
+            now:          moment().toISOString(),
+            syncDate:     lastSyncDate && moment().diff(moment(lastSyncDate), 'days') > 0 ? moment(lastSyncDate).set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString() : null,
+            today3AM:     moment().set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString(),
+            yesterday5PM: moment().subtract(1, 'd').set('hour', 17).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString(),
+        };
+    },
+
     getAppleHealthKitData: (lastSyncDate, numberOfDaysAgo = 35) => {
         if(Platform.OS === 'ios') {
             // grab permissions
-            let appleHealthKitPerms = UTIL.getAppleHealthKitPerms();
+            let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
             // set start and end dates
-            let daysAgo = moment().subtract(numberOfDaysAgo, 'd').set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
-            let today3AM = moment().set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
-            let yesterday5PM = moment().subtract(1, 'd').set('hour', 17).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
-            let now = moment().toISOString();
+            let { daysAgo, now, syncDate, today3AM, yesterday5PM, } = UTIL._getAppleHealthTimes(lastSyncDate, numberOfDaysAgo);
             // setup variables
             let reducersPromisesArray = [];
             let apiPromisesArray = [];
@@ -312,9 +319,9 @@ const UTIL = {
                 UTIL._handlePromises(reducersPromisesArray, false);
                 if(
                     lastSyncDate &&
-                    moment().diff(moment(lastSyncDate), 'days') > 0
+                    moment().diff(moment(lastSyncDate), 'days') > 0 &&
+                    syncDate
                 ) {
-                    let syncDate = moment(lastSyncDate).set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
                     // need to another call
                     // 1- if lastSyncDate is not today, syncDate - today3AM (workout & hr) (send specific API)
                     apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, syncDate, today3AM));
@@ -403,34 +410,119 @@ const UTIL = {
                 console.log(sendAPI,values);
                 // [0] = workoutValues, [1] = heartRateSamples, [2] = sleepSamples
                 let possibleSleepValues = ['ASLEEP', 'INBED', 'UNKNOWN'];
-                if(values[0].length > 0) {
-                    let cleanedWorkoutValues = [];
-                    let filteredHeartRateValues = [];
-                    _.map(values[0], (workout, index) => {
-                        // console.log('workout',workout);
-                        let newWorkout = _.cloneDeep(workout);
-                        filteredHeartRateValues = _.filter(values[1], hr => moment(workout.start) <= moment(hr.startDate) && moment(workout.end) >= moment(hr.endDate));
-                        // console.log('filteredHeartRateValues',filteredHeartRateValues);
-                        newWorkout.hrValues = filteredHeartRateValues;
-                        cleanedWorkoutValues.push(newWorkout);
+                let cleanedWorkoutValues = UTIL._cleanWorkoutObject(values[0], values[1]);
+                let filteredSleepValues = _.filter(values[2], s => possibleSleepValues.includes(s.value));
+                if(sendAPI) {
+                    // send api
+                    // TODO:
+                } else {
+                    // store in reducer
+                    store.dispatch({
+                        type:        DispatchActions.SET_HEALTH_DATA,
+                        sleepData:   filteredSleepValues,
+                        workoutData: cleanedWorkoutValues,
                     });
-                    let filteredSleepValues = _.filter(values[2], s => possibleSleepValues.includes(s.value));
-                    // console.log('filteredSleepValues',filteredSleepValues);
-                    if(sendAPI) {
-                        // send api
-                    } else {
-                        // store in reducer
-                        store.dispatch({
-                            type:        DispatchActions.SET_HEALTH_DATA,
-                            sleepData:   filteredSleepValues,
-                            workoutData: cleanedWorkoutValues,
-                        });
-                    }
                 }
             })
             .catch(err => {
                 console.log('err',err);
             });
+    },
+
+    getAppleHealthKitFirstTimeData: (numberOfDaysAgo = 35, callback) => {
+        if(Platform.OS === 'ios') {
+            // grab permissions
+            let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
+            // set start and end dates
+            let { daysAgo, now, today3AM, yesterday5PM, } = UTIL._getAppleHealthTimes(null, numberOfDaysAgo);
+            // setup variables
+            let reducersPromisesArray = [];
+            let apiPromisesArray = [];
+            // combine promises and trigger next step
+            // need to make 2 calls
+            // 1- today3AM - now (workout & hr) (store locally for RS or PSS)
+            reducersPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now));
+            reducersPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now));
+            // 2- yesterday5PM - now (sleep) (store locally for RS)
+            reducersPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, yesterday5PM, now));
+            // trigger API or reducer storage
+            return UTIL._handleReturnedPromises(reducersPromisesArray, false, () => {
+                // 3- daysAgo - today3AM (workout & hr) (send specific API)
+                apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, daysAgo, today3AM));
+                apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, daysAgo, today3AM));
+                // 4- daysAgo - yesterday5PM (sleep) (send specific API)
+                apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, yesterday5PM));
+                // trigger API or reducer storage
+                UTIL._handleReturnedPromises(apiPromisesArray, true);
+                callback();
+            });
+        }
+    },
+
+    _handleReturnedPromises: (promisesArray, sendAPI, callback) => {
+        return Promise
+            .all(promisesArray)
+            .then(values => {
+                // [0] = workoutValues, [1] = heartRateSamples, [2] = sleepSamples
+                let possibleSleepValues = ['ASLEEP', 'INBED', 'UNKNOWN'];
+                let cleanedWorkoutValues = UTIL._cleanWorkoutObject(values[0], values[1]);
+                let filteredSleepValues = _.filter(values[2], s => possibleSleepValues.includes(s.value));
+                if(sendAPI) {
+                    // send api
+                    // TODO:
+                    if(callback) {
+                        callback();
+                    }
+                } else {
+                    // store in reducer
+                    store.dispatch({
+                        type:        DispatchActions.SET_HEALTH_DATA,
+                        sleepData:   filteredSleepValues,
+                        workoutData: cleanedWorkoutValues,
+                    });
+                    if(callback) {
+                        callback();
+                    }
+                }
+            })
+            .catch(err => {
+                console.log('err',err);
+                if(callback) {
+                    callback();
+                }
+            });
+    },
+
+    _cleanWorkoutObject: (workouts, heartRates) => {
+        let cleanedWorkoutValues = [];
+        if(workouts.length > 0) {
+            let filteredHeartRateValues = [];
+            _.map(workouts, (workout, index) => {
+                let newWorkout = {};
+                filteredHeartRateValues = _.filter(heartRates, hr => moment(workout.start) <= moment(hr.startDate) && moment(workout.end) >= moment(hr.endDate));
+                let otherIndex = _.filter(MyPlanConstants.teamSports, ['label', 'Other'])[0].index;
+                let sportName = _.filter(MyPlanConstants.teamSports, (sport, i) => workout.activityName.toLowerCase() === sport.label.toLowerCase().replace(' ', '').replace(' ', '').replace(' ', '').replace('&', 'and'));
+                newWorkout.sport_name = sportName[0] ? sportName[0].index : otherIndex;
+                newWorkout.event_date = `${workout.start.split('.')[0]}Z`;
+                newWorkout.end_date = `${workout.end.split('.')[0]}Z`;
+                newWorkout.distance = workout.distance;
+                newWorkout.calories = workout.calories;
+                newWorkout.session_type = 6;
+                newWorkout.source = 1;
+                newWorkout.description = '';
+                newWorkout.duration = moment(workout.end).diff(workout.start, 'minutes');
+                newWorkout.deleted = false;
+                newWorkout.hr_data = filteredHeartRateValues;
+                newWorkout.post_session_survey = {
+                    clear_candidates: [],
+                    event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                    RPE:              null,
+                    soreness:         [],
+                }
+                cleanedWorkoutValues.push(newWorkout);
+            });
+        }
+        return cleanedWorkoutValues;
     },
 
     /**

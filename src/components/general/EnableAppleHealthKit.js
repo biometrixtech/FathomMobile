@@ -4,6 +4,7 @@
     <EnableAppleHealthKit
         handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
         handleSkip={this._handleHealthKitSkip}
+        isLoading={this.state.isAppleHealthKitLoading}
         isModalOpen={!user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios'}
     />
  *
@@ -18,7 +19,6 @@ import Modal from 'react-native-modalbox';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { AppUtil, } from '../../lib';
 
 // Components
 import { Button, Spacer, Text, } from '../custom';
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
 const EnableAppleHealthKit = ({
     handleEnableAppleHealthKit,
     handleSkip,
+    isLoading,
     isModalOpen,
 }) => {
     if(isModalOpen) {
@@ -72,7 +73,7 @@ const EnableAppleHealthKit = ({
                             <View style={{flex: 1, justifyContent: 'space-between',}}>
                                 <View style={{flex: 1,}}>
                                     <TouchableHighlight
-                                        onPress={() => handleSkip('apple_healthkit')}
+                                        onPress={() => isLoading ? null : handleSkip('apple_healthkit')}
                                         underlayColor={AppColors.transparent}
                                     >
                                         <Text robotoBold style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15), textAlign: 'right',}}>{'Skip'}</Text>
@@ -102,10 +103,13 @@ const EnableAppleHealthKit = ({
                                                 color={AppColors.white}
                                                 fontFamily={AppStyles.robotoBold.fontFamily}
                                                 fontWeight={AppStyles.robotoBold.fontWeight}
+                                                loading={isLoading}
+                                                loadingRight={isLoading}
                                                 outlined={false}
                                                 onPress={() => {
-                                                    AppUtil.initAppleHealthKit();
-                                                    handleEnableAppleHealthKit('apple_healthkit', true);
+                                                    if(!isLoading) {
+                                                        handleEnableAppleHealthKit('apple_healthkit', true);
+                                                    }
                                                 }}
                                                 raised={false}
                                                 textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
@@ -127,10 +131,13 @@ const EnableAppleHealthKit = ({
 EnableAppleHealthKit.propTypes = {
     handleEnableAppleHealthKit: PropTypes.func.isRequired,
     handleSkip:                 PropTypes.func.isRequired,
+    isLoading:                  PropTypes.bool,
     isModalOpen:                PropTypes.bool.isRequired,
 };
 
-EnableAppleHealthKit.defaultProps = {};
+EnableAppleHealthKit.defaultProps = {
+    isLoading: false,
+};
 
 EnableAppleHealthKit.componentName = 'EnableAppleHealthKit';
 

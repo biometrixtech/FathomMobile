@@ -5,8 +5,10 @@
         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handlePostSessionSurveySubmit}
+        handleHealthDataFormChange={this._handleHealthDataFormChange}
         handleTogglePostSessionSurvey={this._handleTogglePostSessionSurvey}
         handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+        healthKitWorkouts={healthData.workouts.length > 0 ? healthData.workouts : null}
         postSession={this.state.postSession}
         soreBodyParts={this.state.soreBodyParts}
         typicalSessions={this.props.plan.typicalSessions}
@@ -16,15 +18,23 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, TouchableHighlight, View, } from 'react-native';
+import { ScrollView, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
+import { AppColors, AppFonts, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
 import { Pages, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
 // Components
-import { AreasOfSoreness, BackNextButtons, ProgressPill, ScaleButton, SoreBodyPart, SportScheduleBuilder, SurveySlideUpPanel, } from './';
+import {
+    AreasOfSoreness,
+    BackNextButtons,
+    HealthKitWorkouts,
+    ProgressPill,
+    SoreBodyPart,
+    SportScheduleBuilder,
+    SurveySlideUpPanel,
+} from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -52,10 +62,9 @@ class PostSessionSurvey extends Component {
         this.sportScheduleBuilderRef = {};
     }
 
-    _renderNextPage = (currentPage, isFormValidItems, isBackBtn, newSoreBodyParts, areaOfSorenessClicked) => {
-        const { postSession, } = this.props;
-        let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(postSession, currentPage, isFormValidItems, isBackBtn, newSoreBodyParts, areaOfSorenessClicked);
-        if(isValid || isBackBtn) {
+    _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid) => {
+        let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid);
+        if(isValid) {
             this.pages.progress = pageNum;
             this.setState({ pageIndex: pageNum, });
         }
@@ -104,13 +113,26 @@ class PostSessionSurvey extends Component {
         });
     }
 
+    _checkNextStep = (currentStep, isHealthKitValid) => {
+        const {
+            postSession,
+            soreBodyParts,
+        } = this.props;
+        let { isFormValidItems, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
+        _.delay(() => {
+            this._renderNextPage(currentStep, isFormValidItems, newSoreBodyParts, false, isHealthKitValid);
+        }, 500);
+    }
+
     render = () => {
         const {
             handleAreaOfSorenessClick,
             handleFormChange,
             handleFormSubmit,
+            handleHealthDataFormChange,
             handleTogglePostSessionSurvey,
             handleUpdateFirstTimeExperience,
+            healthKitWorkouts,
             postSession,
             soreBodyParts,
             typicalSessions,
@@ -130,101 +152,49 @@ class PostSessionSurvey extends Component {
                 >
 
                     <ScrollView
-                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
+                        contentContainerStyle={{flexGrow: 1,}}
+                        keyboardShouldPersistTaps={'always'}
                         ref={ref => {this.scrollViewSportBuilderRef = ref;}}
                     >
-                        <ProgressPill currentStep={1} onClose={handleTogglePostSessionSurvey} totalSteps={3} />
+                        <ProgressPill currentStep={1} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
                         <Spacer size={20} />
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>
-                            {'Build the sentence'}
-                        </Text>
-                        <Spacer size={20} />
-                        <SportScheduleBuilder
-                            handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
-                            }}
-                            isPostSession={true}
-                            postSession={postSession}
-                            ref={ref => {this.sportScheduleBuilderRef = ref;}}
-                            scrollTo={() => null}
-                            scrollToTop={() => this._scrollToTop(this.scrollViewSportBuilderRef)}
-                            typicalSessions={typicalSessions}
-                        />
+                        { healthKitWorkouts.length > 0 ?
+                            <HealthKitWorkouts
+                                handleHealthDataFormChange={handleHealthDataFormChange}
+                                handleNextStep={isHealthKitValid => this._checkNextStep(0, isHealthKitValid)}
+                                handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
+                                scrollToArea={xyObject => {
+                                    this._scrollTo(xyObject, this.scrollViewSportBuilderRef);
+                                }}
+                                workouts={healthKitWorkouts}
+                            />
+                            :
+                            <SportScheduleBuilder
+                                handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                    handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                    if(location === 'RPE' && value >= 0) {
+                                        this._checkNextStep(0);
+                                    }
+                                }}
+                                isPostSession={true}
+                                postSession={postSession}
+                                ref={ref => {this.sportScheduleBuilderRef = ref;}}
+                                scrollTo={() => null}
+                                scrollToArea={xyObject => {
+                                    this._scrollTo(xyObject, this.scrollViewSportBuilderRef);
+                                }}
+                                scrollToTop={() => this._scrollToTop(this.scrollViewSportBuilderRef)}
+                                typicalSessions={typicalSessions}
+                            />
+                        }
                         <Spacer size={40} />
-                        <BackNextButtons
-                            isValid={isSportValid}
-                            onNextClick={() => this._renderNextPage(0, {isSportValid}, false)}
-                            showBackBtn={false}
-                        />
-                    </ScrollView>
-
-                    <ScrollView
-                        ref={ref => {this.scrollViewRPERef = ref;}}
-                        style={{flex: 1,}}
-                    >
-                        <ProgressPill currentStep={1} onClose={handleTogglePostSessionSurvey} totalSteps={3} />
-                        <Spacer size={20} />
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {'How was your '}
-                            <Text robotoMedium style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                {sportText}
-                            </Text>
-                            {'?'}
-                        </Text>
-                        <View style={{flex: 1, paddingTop: AppSizes.paddingSml,}}>
-                            { _.map(MyPlanConstants.postSessionFeel, (value, key) => {
-                                let isSelected = postSession.RPE === key;
-                                let opacity = isSelected ? 1 : (key * 0.1);
-                                return(
-                                    <TouchableHighlight
-                                        key={value+key}
-                                        onPress={() => {
-                                            handleFormChange('RPE', key);
-                                            this._scrollToBottom(this.scrollViewRPERef);
-                                        }}
-                                        underlayColor={AppColors.transparent}
-                                    >
-                                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingVertical: AppSizes.paddingXSml,}}>
-                                            <View style={{alignItems: 'flex-end', alignSelf: 'center', flex: 4, justifyContent: 'center',}}>
-                                                <ScaleButton
-                                                    isSelected={isSelected}
-                                                    keyLabel={key}
-                                                    opacity={opacity}
-                                                    sorenessPainMappingLength={MyPlanConstants.postSessionFeel.length}
-                                                    updateStateAndForm={() => {
-                                                        handleFormChange('RPE', key);
-                                                        this._scrollToBottom(this.scrollViewRPERef);
-                                                    }}
-                                                />
-                                            </View>
-                                            <View style={{flex: 6, justifyContent: 'center', paddingLeft: AppSizes.padding,}}>
-                                                <Text
-                                                    oswaldMedium
-                                                    style={{
-                                                        color:    isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.darkGrey,
-                                                        fontSize: AppFonts.scaleFont(isSelected ? 22 : 14),
-                                                    }}
-                                                >
-                                                    {value.toUpperCase()}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                    </TouchableHighlight>
-                                )
-                            })}
-                        </View>
-                        <BackNextButtons
-                            isValid={isRPEValid}
-                            onBackClick={() => this._renderNextPage(1, {isRPEValid}, true, newSoreBodyParts)}
-                            onNextClick={() => this._renderNextPage(1, {isRPEValid}, false, newSoreBodyParts)}
-                        />
                     </ScrollView>
 
                     <ScrollView
                         contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
                     >
-                        <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={3} />
+                        <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
                         <Spacer size={20} />
                         { _.map(newSoreBodyParts, (bodyPart, i) =>
                             <View key={i} onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}>
@@ -239,6 +209,7 @@ class PostSessionSurvey extends Component {
                                         } else if(shouldScroll) {
                                             this._scrollToBottom(this.scrollViewPrevSorenessRef);
                                         }
+                                        this._checkNextStep(1);
                                     }}
                                     handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                                     isPrevSoreness={true}
@@ -248,60 +219,56 @@ class PostSessionSurvey extends Component {
                                 <Spacer size={50} />
                             </View>
                         )}
-                        <BackNextButtons
-                            isValid={isFormValidItems.isPrevSorenessValid}
-                            onBackClick={() => this._renderNextPage(2, isFormValidItems, true)}
-                            onNextClick={() => this._renderNextPage(2, isFormValidItems, false)}
-                        />
                     </ScrollView>
 
                     <ScrollView
                         bounces={false}
+                        contentContainerStyle={[this.areasOfSorenessRef && this.areasOfSorenessRef.state && this.areasOfSorenessRef.state.showWholeArea ? {} : {flex: 1, justifyContent: 'space-between',}]}
                         nestedScrollEnabled={true}
                         onScrollEndDrag={event => this._scrollViewEndDrag(event)}
                         overScrollMode={'never'}
                         ref={ref => {this.myAreasOfSorenessComponent = ref;}}
                         style={{flex: 1,}}
                     >
-                        <ProgressPill currentStep={3} onClose={handleTogglePostSessionSurvey} totalSteps={3} />
-                        <Spacer size={20} />
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                            {`Is anything${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' else ' : ' '}bothering you?`}
-                        </Text>
-                        <AreasOfSoreness
-                            handleAreaOfSorenessClick={(body, isAllGood) => {
-                                if(!this.state.isCloseToBottom) {
-                                    this.setState({ isActionButtonVisible: true, });
-                                }
-                                handleAreaOfSorenessClick(body, false, isAllGood);
-                            }}
-                            handleFormChange={handleFormChange}
-                            handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
-                            ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
-                            scrollToBottom={() => {
-                                this._scrollToBottom(this.myAreasOfSorenessComponent);
-                                this.setState({ isCloseToBottom: true, });
-                            }}
-                            soreBodyParts={soreBodyParts}
-                            soreBodyPartsState={postSession.soreness}
-                            surveyObject={postSession}
-                            toggleSlideUpPanel={this._toggleSlideUpPanel}
-                            user={user}
-                        />
-                        <Spacer size={10} />
-                        <BackNextButtons
-                            handleFormSubmit={() => handleFormSubmit()}
-                            isValid={isFormValidItems.selectAreasOfSorenessValid}
-                            onBackClick={() => {
-                                this.setState({ isActionButtonVisible: false, });
-                                this._renderNextPage(3, isFormValidItems, true, newSoreBodyParts);
-                            }}
-                            onNextClick={() => {
-                                this.setState({ isActionButtonVisible: false, });
-                                this._renderNextPage(3, isFormValidItems, false, newSoreBodyParts, areaOfSorenessClicked);
-                            }}
-                            showSubmitBtn={areaOfSorenessClicked.length === 0}
-                        />
+                        <View style={{flex: 1,}}>
+                            <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
+                            <Spacer size={20} />
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                {`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' new '}pain or soreness?`}
+                            </Text>
+                            <AreasOfSoreness
+                                handleAreaOfSorenessClick={(body, isAllGood) => {
+                                    if(!this.state.isCloseToBottom) {
+                                        this.setState({ isActionButtonVisible: true, });
+                                    }
+                                    handleAreaOfSorenessClick(body, false, isAllGood);
+                                }}
+                                handleFormChange={handleFormChange}
+                                handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
+                                scrollToArea={xyObject => {
+                                    this._scrollTo(xyObject, this.myAreasOfSorenessComponent);
+                                    this.setState({ isCloseToBottom: true, });
+                                }}
+                                soreBodyParts={soreBodyParts}
+                                soreBodyPartsState={postSession.soreness}
+                                surveyObject={postSession}
+                                toggleSlideUpPanel={this._toggleSlideUpPanel}
+                                user={user}
+                            />
+                            <Spacer size={10} />
+                        </View>
+                        <View style={{flex: 1, justifyContent: 'flex-end',}}>
+                            <BackNextButtons
+                                handleFormSubmit={() => handleFormSubmit()}
+                                isValid={isFormValidItems.selectAreasOfSorenessValid}
+                                onNextClick={() => {
+                                    this.setState({ isActionButtonVisible: false, });
+                                    this._renderNextPage(2, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked);
+                                }}
+                                showSubmitBtn={areaOfSorenessClicked.length === 0}
+                            />
+                        </View>
                     </ScrollView>
 
                     <ScrollView
@@ -309,7 +276,7 @@ class PostSessionSurvey extends Component {
                         nestedScrollEnabled={true}
                         ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
                     >
-                        <ProgressPill currentStep={3} onClose={handleTogglePostSessionSurvey} totalSteps={3} />
+                        <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
                         {_.map(areaOfSorenessClicked, (area, i) => (
                             <View
                                 key={`AreasOfSoreness1${i}`}
@@ -338,8 +305,8 @@ class PostSessionSurvey extends Component {
                         <BackNextButtons
                             handleFormSubmit={() => handleFormSubmit()}
                             isValid={isFormValidItems.areAreasOfSorenessValid}
-                            onBackClick={() => this._renderNextPage(4, isFormValidItems, true)}
-                            onNextClick={() => this._renderNextPage(4, isFormValidItems, false)}
+                            onBackClick={() => this._renderNextPage(3, isFormValidItems)}
+                            onNextClick={() => this._renderNextPage(3, isFormValidItems)}
                             showSubmitBtn={true}
                         />
                     </ScrollView>
@@ -381,13 +348,16 @@ PostSessionSurvey.propTypes = {
     handleFormChange:              PropTypes.func.isRequired,
     handleFormSubmit:              PropTypes.func.isRequired,
     handleTogglePostSessionSurvey: PropTypes.func.isRequired,
+    healthKitWorkouts:             PropTypes.array,
     postSession:                   PropTypes.object.isRequired,
     soreBodyParts:                 PropTypes.object.isRequired,
     typicalSessions:               PropTypes.array.isRequired,
     user:                          PropTypes.object.isRequired,
 };
 
-PostSessionSurvey.defaultProps = {};
+PostSessionSurvey.defaultProps = {
+    healthKitWorkouts: null,
+};
 
 PostSessionSurvey.componentName = 'PostSessionSurvey';
 

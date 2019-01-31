@@ -1038,7 +1038,7 @@ it('New Sore Body Part Logic - All 3', () => {
     expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 4 - Back & Valid', () => {
+/*it('Post Session Survey Next Page & Validation Logic - Page 4 - Back & Valid', () => {
     let isFormValidItems = {areAreasOfSorenessValid: true};
     let expectedResult = {isValid: true, pageNum: 3,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 4, isFormValidItems, true, [], [])).toEqual(expectedResult);
@@ -1262,7 +1262,7 @@ it('Single Session Validation - Selected Sport, Session Type, Duration, & RPE (P
     let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(true);
     let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(true, true, 'soccer training');
     expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
-});
+});*/
 
 it('Coaches Dashboard Search Area Render Logic - No Insights', () => {
     let weeklyInsights = helperFunctions.getSearchAreaWeeklyInsights(false);
@@ -1366,7 +1366,7 @@ it('Athlete Card Modal Render Logic - With Information - Gabby', () => {
     expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
 });
 
-it('Sport Schedule Builder Render Logic - Valid Sport, RPE, & All Good', () => {
+/*it('Sport Schedule Builder Render Logic - Valid Sport, RPE, & All Good', () => {
     let postSession = helperFunctions.getPostSessionDefaultState(5, '', 20, '2018-11-15T15:30:00Z', 2, [], 0, null);
     let pageState = helperFunctions.readinessSurveyPageState({hours: 0, minutes: 3, label: 1}, true, 1, 3, {hours: 2, minutes: 2, amPM: 1});
     let expectedResult = helperFunctions.sportScheduleBuilderRenderLogicExpectedResult('15', helperFunctions.filteredSportSessionTypes(true), 'basketball', 'basketball competition', '3:30', helperFunctions.getStrengthConditioningTypes(), helperFunctions.getTeamSports());
@@ -1392,7 +1392,7 @@ it('Sport Schedule Builder Render Logic - On Enter', () => {
     let pageState = helperFunctions.readinessSurveyPageState({minutes: 3, label: 1}, false, 0, 0, {hours: 2, minutes: 2, amPM: 1});
     let expectedResult = helperFunctions.sportScheduleBuilderRenderLogicExpectedResult('', helperFunctions.filteredSportSessionTypes(), '', 'activity type', '', helperFunctions.getStrengthConditioningTypes(), helperFunctions.getTeamSports());
     expect(PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, pageState)).toEqual(expectedResult);
-});
+});*/
 
 it('Readiness Survey Render Logic - On Enter, No Previous Soreness (FS Eligible, NOT Valid Form, & In the Afternoon)', () => {
     let dailyReadiness = helperFunctions.getDailyReadinessDefaultState(null, null, 6, 8, [], null);
@@ -1454,7 +1454,7 @@ it('Sore Body Part Render Logic - On Enter, Left Glute', () => {
     expect(PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, pageStateType)).toEqual(expectedResult);
 });
 
-it('Post Session Survey Render Logic - Sport Builder Done, RPE Selected & All Good Selected, NO Previous Soreness', () => {
+/*it('Post Session Survey Render Logic - Sport Builder Done, RPE Selected & All Good Selected, NO Previous Soreness', () => {
     let postSession = helperFunctions.getPostSessionSurveyPostSession(4, [], '2018-11-14T15:30:00Z');
     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: true}};
@@ -1484,7 +1484,7 @@ it('Post Session Survey Render Logic - On Enter, NO Previous Soreness', () => {
     let areasOfSorenessRef = {state: {isAllGood: false}};
     let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
-});
+});*/
 
 it('Area Of Soreness Render Logic - On Enter, NO Previous Soreness', () => {
     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
@@ -1539,7 +1539,7 @@ it('Areas of Soreness Body Part - Selected Muscle (Abs)', () => {
     expect(PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, absBodyParts, soreBodyParts)).toEqual(expectedResult);
 });
 
-it('Sport Schedule Builder Cleaning of Sport Text - Selected Recent Sport - Pool Sports Competition', () => {
+/*it('Sport Schedule Builder Cleaning of Sport Text - Selected Recent Sport - Pool Sports Competition', () => {
     let selectedSport = 'pool sports';
     let filteredSessionType = [{index: 2, order: 2, label: 'Competition'}];
     let postSession = { session_type: 2 };
@@ -1645,7 +1645,7 @@ it('Sport Schedule Builder Cleaning of Sport Text - Empty Data', () => {
     let selectedDuration = '';
     let expectedResult = helperFunctions.handleGetFinalSportTextString('', 'activity type', '');
     expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
-});
+});*/
 
 it('Sport Schedule Builder Cleaning of Date and Time Duration from State - Form Is Valid with data #1', () => {
     let durationValueGroups = helperFunctions.getDefaultDurationValuesFromState(0, 11, 1).durationValueGroups;

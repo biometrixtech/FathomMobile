@@ -12,6 +12,7 @@ import ExerciseList from './ExerciseList';
 import ExerciseListItem from './ExerciseListItem';
 import Exercises from './Exercises';
 import ExercisesExercise from './ExercisesExercise';
+import HealthKitWorkouts from './HealthKitWorkouts';
 import PostSessionSurvey from './PostSessionSurvey';
 import ProgressPill from './ProgressPill';
 import ReadinessSurvey from './ReadinessSurvey';
@@ -34,6 +35,7 @@ export {
     ExerciseListItem,
     Exercises,
     ExercisesExercise,
+    HealthKitWorkouts,
     PostSessionSurvey,
     ProgressPill,
     ReadinessSurvey,

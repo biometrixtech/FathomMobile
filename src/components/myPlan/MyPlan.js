@@ -145,6 +145,7 @@ class MyPlan extends Component {
                 // won't be submitted, help with UI
                 already_trained_number:    null,
             },
+            healthData:                           props.healthData,
             isCompletedAMPMRecoveryModalOpen:     true,
             isFunctionalStrengthCollapsed:        true,
             isFSExerciseCompletionModalOpen:      false,
@@ -359,6 +360,12 @@ class MyPlan extends Component {
         GATracker.setUser(this.props.user.id);
         GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
         GATracker.setAppName(`Fathom-${store.getState().init.environment}`);
+        let planObj = this.props.plan.dailyPlan[0] || {};
+        if(planObj.daily_readiness_survey_completed) {
+            this._goToScrollviewPage(1, () => {
+                this._togglePostSessionSurveyModal();
+            });
+        }
     }
 
     componentWillReceiveProps = (nextProps) => {
@@ -384,6 +391,9 @@ class MyPlan extends Component {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
         if(!_.isEqual(prevProps.healthData, this.props.healthData)) { // TODO: flesh out!
             console.log('new healthdata logged',this.props.healthData);
+            this._goToScrollviewPage(1, () => {
+                this._togglePostSessionSurveyModal();
+            });
         }
     }
 
@@ -459,6 +469,23 @@ class MyPlan extends Component {
         });
     }
 
+    _handleHealthDataFormChange = (index, name, value, callback) => {
+        let newHealthData = _.cloneDeep(this.state.healthData.workouts);
+        let newFormFields = _.update(newHealthData[index], name, () => value);
+        if(name === 'deleted' && value === true) {
+            newFormFields = _.update(newHealthData[index], 'post_session_survey.RPE', () => null);
+        }
+        newHealthData[index] = newFormFields;
+        this.setState({
+            healthData: {
+                sleep:    this.state.healthData.sleep,
+                workouts: newHealthData,
+            },
+        }, () => {
+            if(callback) { callback(); }
+        });
+    }
+
     _handleReadinessSurveySubmit = () => {
         // TODO: MOVE TO LOGIC FILE AND UNIT TEST BELOW
         let newDailyReadiness = {};
@@ -517,23 +544,41 @@ class MyPlan extends Component {
          * result in a tabPage auto change if a postPracticeSurvey
          * has not already been completed
          */
-        let newPostSessionSurvey = {};
-        newPostSessionSurvey.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
-        newPostSessionSurvey.RPE = this.state.postSession.RPE;
-        newPostSessionSurvey.clear_candidates = _.filter(this.state.postSession.soreness, {isClearCandidate: true});
-        newPostSessionSurvey.soreness = _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate);
         let postSession = {
-            event_date:          this.state.postSession.event_date,
-            session_type:        this.state.postSession.session_type,
-            duration:            this.state.postSession.duration,
-            description:         this.state.postSession.description,
-            post_session_survey: newPostSessionSurvey,
-            user_id:             this.props.user.id,
+            event_date: `${moment().toISOString(true).split('.')[0]}Z`,
+            user_id:    this.props.user.id,
+            sessions:   [],
         };
-        if(this.state.postSession.session_type === 0 || this.state.postSession.session_type === 2 || this.state.postSession.session_type === 3 || this.state.postSession.session_type === 6) {
-            postSession.sport_name = this.state.postSession.sport_name;
-        } else if(this.state.postSession.session_type === 1) {
-            postSession.strength_and_conditioning_type = this.state.postSession.strength_and_conditioning_type;
+        if(this.state.healthData.workouts.length > 0) {
+            postSession.sessions = this.state.healthData.workouts;
+            let lastNonDeletedIndex = _.findLastIndex(postSession.sessions, ['deleted', false]);
+            postSession.sessions[lastNonDeletedIndex].post_session_survey = {
+                clear_candidates: _.filter(this.state.postSession.soreness, {isClearCandidate: true}),
+                event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                RPE:              postSession.sessions[lastNonDeletedIndex].post_session_survey.RPE,
+                soreness:         _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
+            };
+        } else {
+            let newSession = {
+                event_date:          this.state.postSession.event_date,
+                session_type:        6,
+                sport_name:          this.state.postSession.sport_name,
+                duration:            this.state.postSession.duration,
+                description:         '',
+                calories:            null,
+                distance:            null,
+                end_date:            null,
+                source:              0,
+                deleted:             false,
+                hr_data:             [],
+                post_session_survey: {
+                    clear_candidates: _.filter(this.state.postSession.soreness, {isClearCandidate: true}),
+                    event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                    RPE:              this.state.postSession.RPE,
+                    soreness:         _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
+                },
+            };
+            postSession.sessions.push(newSession);
         }
         let clonedPostPracticeSurveys = _.cloneDeep(this.state.train.postPracticeSurveys);
         let newSurvey = {};
@@ -547,6 +592,10 @@ class MyPlan extends Component {
         let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
+        console.log('postSession',postSession);
+        console.log('newTrainObject',newTrainObject);
+        return;
+        /*eslint no-unreachable: 0*/
         _.delay(() => {
             this.setState(
                 {
@@ -1831,6 +1880,7 @@ class MyPlan extends Component {
                         backdropPressToClose={false}
                         coverScreen={true}
                         isOpen={this.state.isPostSessionSurveyModalOpen}
+                        keyboardTopOffset={0}
                         ref={ref => {this._postSessionSurveyModalRef = ref;}}
                         swipeToClose={false}
                     >
@@ -1838,8 +1888,10 @@ class MyPlan extends Component {
                             handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                             handleFormChange={this._handlePostSessionFormChange}
                             handleFormSubmit={this._handlePostSessionSurveySubmit}
+                            handleHealthDataFormChange={this._handleHealthDataFormChange}
                             handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
                             handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                            healthKitWorkouts={this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : null}
                             postSession={this.state.postSession}
                             soreBodyParts={this.props.plan.soreBodyParts}
                             typicalSessions={this.props.plan.typicalSessions}

@@ -22,7 +22,7 @@ import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, 
 import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
 import { Button, FathomPicker, Pages, Spacer, TabIcon, Text, } from '../../custom';
 import { EnableAppleHealthKit, } from '../../general';
-import { PlanLogic, } from '../../../lib';
+import { AppUtil, PlanLogic, } from '../../../lib';
 
 // Components
 import { AreasOfSoreness, BackNextButtons, ProgressPill, ScaleButton, SoreBodyPart, SportScheduleBuilder, SurveySlideUpPanel, } from './';
@@ -100,12 +100,13 @@ class ReadinessSurvey extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            androidShowMoreOptions: false,
-            isActionButtonVisible:  false,
-            isCloseToBottom:        false,
-            isSlideUpPanelExpanded: true,
-            isSlideUpPanelOpen:     false,
-            pageIndex:              0,
+            androidShowMoreOptions:  false,
+            isActionButtonVisible:   false,
+            isAppleHealthKitLoading: false,
+            isCloseToBottom:         false,
+            isSlideUpPanelExpanded:  true,
+            isSlideUpPanelOpen:      false,
+            pageIndex:               0,
         };
         this.myActivityTargetComponents = [];
         this.myAreasOfSorenessComponent = {};
@@ -183,8 +184,12 @@ class ReadinessSurvey extends Component {
     }
 
     _handleEnableAppleHealthKit = (firstTimeExperienceValue, healthKitFlag) => {
-        this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue);
-        this.props.handleUpdateUserHealthKitFlag(healthKitFlag);
+        this.setState({ isAppleHealthKitLoading: true, });
+        AppUtil.getAppleHealthKitFirstTimeData(35, () => {
+            this.setState({ isAppleHealthKitLoading: false, });
+            this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue);
+            this.props.handleUpdateUserHealthKitFlag(healthKitFlag);
+        });
     }
 
     render = () => {
@@ -1148,6 +1153,7 @@ class ReadinessSurvey extends Component {
                 <EnableAppleHealthKit
                     handleSkip={value => handleUpdateFirstTimeExperience(value)}
                     handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
+                    isLoading={this.state.isAppleHealthKitLoading}
                     isModalOpen={!user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios'}
                 />
 

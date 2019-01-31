@@ -121,7 +121,7 @@ BackNextButtons.propTypes = {
 BackNextButtons.defaultProps = {
     handleFormSubmit: null,
     onBackClick:      null,
-    showBackBtn:      true,
+    showBackBtn:      false,
     showSubmitBtn:    false,
 };
 
