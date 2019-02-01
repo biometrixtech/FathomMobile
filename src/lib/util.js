@@ -429,7 +429,7 @@ const UTIL = {
                         type:              DispatchActions.SET_HEALTH_DATA,
                         hiddenWorkoutData: cleanedHiddenWorkoutValues,
                         sleepData:         filteredSleepValues,
-                        workoutData:       cleanedWorkoutValues,
+                        workoutData:       [],//cleanedWorkoutValues, // TODO: FIX ME
                     });
                     if(callback) {
                         return callback();

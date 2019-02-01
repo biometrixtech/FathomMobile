@@ -418,13 +418,14 @@ class SportScheduleBuilder extends Component {
                                     </Text>
                                     <View style={{flex: 1, paddingTop: AppSizes.paddingSml,}}>
                                         { _.map(MyPlanConstants.postSessionFeel, (value, key) => {
-                                            let isSelected = postSession.RPE === key;
+                                            let RPEValue = isPostSession ? postSession.RPE : postSession.post_session_survey.RPE;
+                                            let isSelected = RPEValue === key;
                                             let opacity = isSelected ? 1 : (key * 0.1);
                                             return(
                                                 <TouchableHighlight
                                                     key={value+key}
                                                     onPress={() => {
-                                                        handleFormChange('RPE', key);
+                                                        handleFormChange(isPostSession ? 'RPE' : 'post_session_survey.RPE', key);
                                                     }}
                                                     underlayColor={AppColors.transparent}
                                                 >
@@ -436,7 +437,7 @@ class SportScheduleBuilder extends Component {
                                                                 opacity={opacity}
                                                                 sorenessPainMappingLength={MyPlanConstants.postSessionFeel.length}
                                                                 updateStateAndForm={() => {
-                                                                    handleFormChange('RPE', key);
+                                                                    handleFormChange(isPostSession ? 'RPE' : 'post_session_survey.RPE', key);
                                                                 }}
                                                             />
                                                         </View>

@@ -165,6 +165,26 @@ class ReadinessSurvey extends Component {
         }, 500);
     }
 
+    _addSession = () => {
+        let newSession = {
+            description:         '',
+            duration:            null,
+            event_date:          null,
+            post_session_survey: {
+                RPE:        null,
+                event_date: null,
+                soreness:   [],
+            },
+            session_type:                   null,
+            sport_name:                     null,
+            strength_and_conditioning_type: null,
+        };
+        let newSessions = _.cloneDeep(this.props.dailyReadiness.sessions);
+        newSessions.push(newSession);
+        this.props.handleFormChange('sessions', newSessions);
+        this._checkNextStep(4);
+    }
+
     _scrollToBottom = scrollViewRef => {
         _.delay(() => {
             scrollViewRef.scrollToEnd({ animated: true, });
@@ -558,10 +578,49 @@ class ReadinessSurvey extends Component {
                         </View>
                     </View>
 
-                    <View style={{flex: 1,}}>
-                        <ProgressPill currentStep={1} totalSteps={3} />
-                        <Text>{'SportScheduleBuilder & RPE (xN)'}</Text>
-                    </View>
+                    { dailyReadiness.sessions && dailyReadiness.sessions.length > 0 ? _.map(dailyReadiness.sessions, (session, index) => {
+                        const { isRPEValid, isSportValid, sportText, } = PlanLogic.handleSingleSessionValidation(session, this.sportScheduleBuilderRefs[index]);
+                        return(
+                            <ScrollView
+                                contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
+                                key={index}
+                                ref={ref => {this.scrollViewSportBuilderRefs[index] = ref;}}
+                            >
+                                <ProgressPill currentStep={1} totalSteps={3} />
+                                <Spacer size={20} />
+                                <SportScheduleBuilder
+                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                        handleFormChange(`sessions[${index}].${location}`, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                        if(location === 'post_session_survey.RPE' && value >= 0) {
+                                            this._scrollToBottom(this.scrollViewSportBuilderRefs[index]);
+                                        }
+                                    }}
+                                    postSession={session}
+                                    ref={ref => {this.sportScheduleBuilderRefs[index] = ref;}}
+                                    scrollTo={() => null}
+                                    scrollToArea={xyObject => {
+                                        this._scrollTo(xyObject, this.scrollViewSportBuilderRefs[index]);
+                                    }}
+                                    scrollToTop={() => this._scrollToTop(this.scrollViewSportBuilderRefs[index])}
+                                    typicalSessions={typicalSessions}
+                                />
+                                <Spacer size={20} />
+                                { isRPEValid && isSportValid ?
+                                    <BackNextButtons
+                                        handleFormSubmit={() => this._checkNextStep(4)}
+                                        isValid={isRPEValid && isSportValid}
+                                        onBackClick={() => this._addSession()}
+                                        onNextClick={() => isRPEValid && isSportValid ? this._checkNextStep(4) : null}
+                                        showAddBtn={true}
+                                        showSubmitBtn={true}
+                                        submitBtnText={'Continue'}
+                                    />
+                                    :
+                                    null
+                                }
+                            </ScrollView>
+                        )
+                    }) : <View />}
 
                     <View style={{flex: 1,}}>
                         <ProgressPill currentStep={2} totalSteps={3} />

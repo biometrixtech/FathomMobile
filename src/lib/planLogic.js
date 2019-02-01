@@ -641,22 +641,35 @@ const PlanLogic = {
             isValid = isFormValidItems.isTrainedTodayValid;
         } else if(currentPage === 4) { // 4. SportScheduleBuilder & RPE (xN)
             // TODO: FIX
-            pageNum = 0;
-            isValid = true; // isFormValidItems.;
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length === 0) && (sportBuilderRPEIndex + 1) === dailyReadiness.sessions.length ?
+                (pageState.pageIndex + 2)
+                :
+                (pageState.pageIndex + 1);
+            isValid = true; // can only click if form is valid
         } else if(currentPage === 5) { // 5. train later?
-            pageNum = isSecondFunctionalStrength ? 6 : (newSoreBodyParts && newSoreBodyParts.length > 0) ? 7 : 8;
+            // pageNum = isSecondFunctionalStrength ? 6 : (newSoreBodyParts && newSoreBodyParts.length > 0) ? 7 : 8;
+            pageNum = isSecondFunctionalStrength ?
+                (pageState.pageIndex + 1)
+                : (newSoreBodyParts && newSoreBodyParts.length > 0) ?
+                    (pageState.pageIndex + 2)
+                    :
+                    (pageState.pageIndex + 3);
             isValid = isFormValidItems.willTrainLaterValid;
         } else if(currentPage === 6) { // 6. second fs
-            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 7 : 8;
+            // pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 7 : 8;
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? (pageState.pageIndex + 1) : (pageState.pageIndex + 2);
             isValid = isFormValidItems.isSecondFunctionalStrengthValid;
         } else if(currentPage === 7) { // 7. Follow Up Pain & Soreness
-            pageNum = 8;
+            // pageNum = 8;
+            pageNum = (pageState.pageIndex + 1);
             isValid = isFormValidItems.isPrevSorenessValid;
         } else if(currentPage === 8) { // 8. Areas of Soreness
-            pageNum = 9;
+            // pageNum = 9;
+            pageNum = (pageState.pageIndex + 1);
             isValid = isFormValidItems.selectAreasOfSorenessValid;
         } else if(currentPage === 9) { // 9. Areas of Soreness Selected
-            pageNum = 9;
+            // pageNum = 9;
+            pageNum = (pageState.pageIndex);
             isValid = isFormValidItems.areAreasOfSorenessValid;
         }
         /*if(currentPage === 0) { // 0. GOOD [TIME OF DAY], MAZEN!

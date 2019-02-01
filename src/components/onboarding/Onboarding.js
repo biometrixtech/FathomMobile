@@ -535,7 +535,7 @@ class Onboarding extends Component {
                 <EnableAppleHealthKit
                     handleSkip={() => this._handleEnableAppleHealthKit('apple_healthkit', false)}
                     handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
-                    isModalOpen={isHealthKitModalOpen}
+                    isModalOpen={isHealthKitModalOpen && Platform.OS === 'ios'}
                 />
             </View>
         );
