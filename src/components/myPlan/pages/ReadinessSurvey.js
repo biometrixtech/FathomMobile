@@ -6,8 +6,10 @@
         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handleReadinessSurveySubmit}
+        handleHealthDataFormChange={this._handleHealthDataFormChange}
         handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
         handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
+        healthKitWorkouts={this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : null}
         soreBodyParts={this.state.soreBodyParts}
         typicalSessions={this.props.plan.typicalSessions}
         user={user}
@@ -25,7 +27,16 @@ import { EnableAppleHealthKit, } from '../../general';
 import { AppUtil, PlanLogic, } from '../../../lib';
 
 // Components
-import { AreasOfSoreness, BackNextButtons, ProgressPill, ScaleButton, SoreBodyPart, SportScheduleBuilder, SurveySlideUpPanel, } from './';
+import {
+    AreasOfSoreness,
+    BackNextButtons,
+    HealthKitWorkouts,
+    ProgressPill,
+    ScaleButton,
+    SoreBodyPart,
+    SportScheduleBuilder,
+    SurveySlideUpPanel,
+} from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -116,6 +127,7 @@ class ReadinessSurvey extends Component {
         this.positionsComponents = [];
         this.scrollViewActivityTargetRef = {};
         this.scrollViewClickedSorenessRef = {};
+        this.scrollViewHealthKitRef = {};
         this.scrollViewPrevSorenessRef = {};
         this.scrollViewSportBuilderRefs = [];
         this.sportScheduleBuilderRefs = [];
@@ -130,13 +142,27 @@ class ReadinessSurvey extends Component {
         });
     }
 
-    _renderNextPage = (currentPage, isFormValidItems, isBackBtn, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked) => {
-        const { dailyReadiness, } = this.props;
-        let { isValid, pageNum, } = PlanLogic.handleReadinessSurveyNextPage(this.state, dailyReadiness, currentPage, isFormValidItems, isBackBtn, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked);
-        if(isValid || isBackBtn) {
+    _renderNextPage = (currentPage, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, isHealthKitValid) => {
+        const { dailyReadiness, healthKitWorkouts, } = this.props;
+        let { isValid, pageNum, } = PlanLogic.handleReadinessSurveyNextPage(this.state, dailyReadiness, currentPage, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid);
+        if(isValid) {
             this.pages.progress = pageNum;
             this.setState({ pageIndex: pageNum, });
         }
+    }
+
+    _checkNextStep = (currentPage, isHealthKitValid) => {
+        const { dailyReadiness, soreBodyParts, } = this.props;
+        let {
+            isFirstFunctionalStrength,
+            isFormValidItems,
+            isSecondFunctionalStrength,
+            newSoreBodyParts,
+        } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
+        let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, dailyReadiness.soreness);
+        _.delay(() => {
+            this._renderNextPage(currentPage, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked, isHealthKitValid);
+        }, 500);
     }
 
     _scrollToBottom = scrollViewRef => {
@@ -185,7 +211,7 @@ class ReadinessSurvey extends Component {
 
     _handleEnableAppleHealthKit = (firstTimeExperienceValue, healthKitFlag) => {
         this.setState({ isAppleHealthKitLoading: true, });
-        AppUtil.getAppleHealthKitFirstTimeData(35, () => {
+        AppUtil.getAppleHealthKitDataAsync(null, () => {
             this.setState({ isAppleHealthKitLoading: false, });
             this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue);
             this.props.handleUpdateUserHealthKitFlag(healthKitFlag);
@@ -198,7 +224,9 @@ class ReadinessSurvey extends Component {
             handleAreaOfSorenessClick,
             handleFormChange,
             handleFormSubmit,
+            handleHealthDataFormChange,
             handleUpdateFirstTimeExperience,
+            healthKitWorkouts,
             soreBodyParts,
             typicalSessions,
             user,
@@ -257,7 +285,7 @@ class ReadinessSurvey extends Component {
                                                 style: {flex: 1,},
                                             }}
                                             outlined={false}
-                                            onPress={() => this._renderNextPage(0, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                                            onPress={() => this._renderNextPage(0, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength)}
                                             raised={false}
                                             rightIcon={{
                                                 color: AppColors.white,
@@ -413,7 +441,10 @@ class ReadinessSurvey extends Component {
                             <Spacer size={10} />
                             <View style={{alignSelf: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}}>
                                 <TouchableOpacity
-                                    onPress={() => handleFormChange('wants_functional_strength', true)}
+                                    onPress={() => {
+                                        handleFormChange('wants_functional_strength', true);
+                                        this._checkNextStep(1);
+                                    }}
                                     style={[
                                         styles.step0Circle,
                                         styles.shadowEffect,
@@ -427,7 +458,10 @@ class ReadinessSurvey extends Component {
                                     </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    onPress={() => handleFormChange('wants_functional_strength', false)}
+                                    onPress={() => {
+                                        handleFormChange('wants_functional_strength', false);
+                                        this._checkNextStep(1);
+                                    }}
                                     style={[
                                         styles.step0Circle,
                                         styles.shadowEffect,
@@ -442,14 +476,348 @@ class ReadinessSurvey extends Component {
                             </View>
                         </View>
                         <Spacer size={50} />
-                        <BackNextButtons
-                            isValid={isFormValidItems.isFunctionalStrengthValid}
-                            onBackClick={() => this._renderNextPage(1, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength)}
-                            onNextClick={() => this._renderNextPage(1, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength)}
-                        />
+                    </ScrollView>
+
+                    <ScrollView
+                        contentContainerStyle={{flexGrow: 1,}}
+                        keyboardShouldPersistTaps={'always'}
+                        ref={ref => {this.scrollViewHealthKitRef = ref;}}
+                    >
+                        <ProgressPill currentStep={1} totalSteps={3} />
+                        <Spacer size={20} />
+                        { healthKitWorkouts && healthKitWorkouts.length > 0 ?
+                            <HealthKitWorkouts
+                                handleHealthDataFormChange={handleHealthDataFormChange}
+                                handleNextStep={isHealthKitValid => this._renderNextPage(2, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked, isHealthKitValid)}
+                                handleToggleSurvey={() => this._renderNextPage(2, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked, true)}
+                                scrollToArea={xyObject => {
+                                    this._scrollTo(xyObject, this.scrollViewHealthKitRef);
+                                }}
+                                workouts={healthKitWorkouts}
+                            />
+                            :
+                            null
+                        }
+                        <Spacer size={40} />
                     </ScrollView>
 
                     <View style={{flex: 1,}}>
+                        <ProgressPill currentStep={1} totalSteps={3} />
+                        <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Have you already trained today?'}</Text>
+                            <Spacer size={20} />
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: 220,}}>
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        handleFormChange('already_trained_number', false);
+                                        this._checkNextStep(3);
+                                    }}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.already_trained_number === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'NO'}
+                                    </Text>
+                                </TouchableHighlight>
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        this._resetSportBuilder();
+                                        handleFormChange('already_trained_number', 1);
+                                        this._checkNextStep(3);
+                                    }}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.already_trained_number === 1 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'YES'}
+                                    </Text>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+                    </View>
+
+                    <View style={{flex: 1,}}>
+                        <ProgressPill currentStep={1} totalSteps={3} />
+                        <Text>{'SportScheduleBuilder & RPE (xN)'}</Text>
+                    </View>
+
+                    <View style={{flex: 1,}}>
+                        <ProgressPill currentStep={2} totalSteps={3} />
+                        <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Will you train later today?'}</Text>
+                            <Spacer size={20} />
+                            <View
+                                style={{
+                                    flexDirection:  'row',
+                                    justifyContent: 'space-between',
+                                    width:          220,
+                                }}
+                            >
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        handleFormChange('sessions_planned', false);
+                                        this._checkNextStep(5);
+                                    }}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.sessions_planned === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.sessions_planned === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'NO'}
+                                    </Text>
+                                </TouchableHighlight>
+                                <Spacer size={20} />
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        handleFormChange('sessions_planned', true);
+                                        this._checkNextStep(5);
+                                    }}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.sessions_planned === true ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.sessions_planned === true ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'YES'}
+                                    </Text>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+                    </View>
+
+                    <View style={{flex: 1,}}>
+                        <ProgressPill currentStep={2} totalSteps={3} />
+                        <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                {'Would you like to add Functional Strength to your training plan today?'}
+                            </Text>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}]}>
+                                {functionalStrengthTodaySubtext}
+                            </Text>
+                            <Spacer size={20} />
+                            <View
+                                style={{
+                                    flexDirection:  'row',
+                                    justifyContent: 'space-between',
+                                    width:          220,
+                                }}
+                            >
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        handleFormChange('wants_functional_strength', true);
+                                        this._checkNextStep(6);
+                                    }}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.wants_functional_strength === true ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.wants_functional_strength === true ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'YES'}
+                                    </Text>
+                                </TouchableHighlight>
+                                <Spacer size={20} />
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        handleFormChange('wants_functional_strength', false);
+                                        this._checkNextStep(6);
+                                    }}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.wants_functional_strength === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.wants_functional_strength === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'NO'}
+                                    </Text>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+                    </View>
+
+                    <ScrollView
+                        bounces={false}
+                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
+                        nestedScrollEnabled={true}
+                        overScrollMode={'never'}
+                        ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
+                    >
+                        <ProgressPill currentStep={3} totalSteps={3} />
+                        <Spacer size={20} />
+                        { _.map(newSoreBodyParts, (bodyPart, i) =>
+                            <View key={i} onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}>
+                                <SoreBodyPart
+                                    bodyPart={bodyPart}
+                                    bodyPartSide={bodyPart.side}
+                                    firstTimeExperience={user.first_time_experience}
+                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                        handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                        if(shouldScroll && newSoreBodyParts.length !== (i + 1) && (newSoreBodyParts.length - 1) !== (i + 1)) {
+                                            this._scrollTo(this.myPrevSorenessComponents[i + 1], this.scrollViewPrevSorenessRef);
+                                        } else if(shouldScroll) {
+                                            this._scrollToBottom(this.scrollViewPrevSorenessRef);
+                                        }
+                                        this._checkNextStep(7);
+                                    }}
+                                    handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                    isPrevSoreness={true}
+                                    surveyObject={dailyReadiness}
+                                    toggleSlideUpPanel={this._toggleSlideUpPanel}
+                                />
+                                <Spacer size={50} />
+                            </View>
+                        )}
+                    </ScrollView>
+
+                    <ScrollView
+                        bounces={false}
+                        contentContainerStyle={[this.areasOfSorenessRef && this.areasOfSorenessRef.state && this.areasOfSorenessRef.state.showWholeArea ? {} : {flex: 1, justifyContent: 'space-between',}]}
+                        nestedScrollEnabled={true}
+                        onScrollEndDrag={event => this._scrollViewEndDrag(event)}
+                        overScrollMode={'never'}
+                        ref={ref => {this.myAreasOfSorenessComponent = ref;}}
+                        style={{flex: 1,}}
+                    >
+                        <View style={{flex: 1,}}>
+                            <ProgressPill currentStep={3} totalSteps={3} />
+                            <Spacer size={20} />
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                {`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' new '}pain or soreness?`}
+                            </Text>
+                            <AreasOfSoreness
+                                handleAreaOfSorenessClick={(body, isAllGood) => {
+                                    if(!this.state.isCloseToBottom) {
+                                        this.setState({ isActionButtonVisible: true, });
+                                    }
+                                    handleAreaOfSorenessClick(body, true, isAllGood);
+                                }}
+                                handleFormChange={handleFormChange}
+                                handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
+                                scrollToArea={xyObject => {
+                                    this._scrollTo(xyObject, this.myAreasOfSorenessComponent);
+                                    this.setState({ isCloseToBottom: true, });
+                                }}
+                                soreBodyParts={soreBodyParts}
+                                soreBodyPartsState={dailyReadiness.soreness}
+                                surveyObject={dailyReadiness}
+                                toggleSlideUpPanel={this._toggleSlideUpPanel}
+                                user={user}
+                            />
+                            <Spacer size={10} />
+                        </View>
+                        <View style={{flex: 1, justifyContent: 'flex-end',}}>
+                            <BackNextButtons
+                                handleFormSubmit={() => handleFormSubmit()}
+                                isValid={isFormValidItems.selectAreasOfSorenessValid}
+                                onNextClick={() => {
+                                    this.setState({ isActionButtonVisible: false, });
+                                    this._renderNextPage(8, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked);
+                                }}
+                                showSubmitBtn={areaOfSorenessClicked.length === 0}
+                            />
+                        </View>
+                    </ScrollView>
+
+                    <ScrollView
+                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
+                        nestedScrollEnabled={true}
+                        ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
+                    >
+                        <ProgressPill currentStep={3} totalSteps={3} />
+                        {_.map(areaOfSorenessClicked, (area, i) => (
+                            <View
+                                key={`AreasOfSoreness1${i}`}
+                                onLayout={event => {this.myClickedSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50, height: event.nativeEvent.layout.height,}}}
+                                style={[AppStyles.paddingVertical]}
+                            >
+                                <SoreBodyPart
+                                    bodyPart={MyPlanConstants.bodyPartMapping[area.body_part]}
+                                    bodyPartSide={area.side}
+                                    firstTimeExperience={user.first_time_experience}
+                                    handleFormChange={handleFormChange}
+                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                        handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                        if(shouldScroll && areaOfSorenessClicked.length !== (i + 1) && (areaOfSorenessClicked.length - 1) !== (i + 1)) {
+                                            this._scrollTo(this.myClickedSorenessComponents[i + 1], this.scrollViewClickedSorenessRef);
+                                        } else if(shouldScroll) {
+                                            this._scrollToBottom(this.scrollViewClickedSorenessRef);
+                                        }
+                                    }}
+                                    handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                    surveyObject={dailyReadiness}
+                                    toggleSlideUpPanel={this._toggleSlideUpPanel}
+                                />
+                            </View>
+                        ))}
+                        <BackNextButtons
+                            handleFormSubmit={() => handleFormSubmit()}
+                            isValid={isFormValidItems.areAreasOfSorenessValid}
+                            onNextClick={() => this._renderNextPage(9, isFormValidItems)}
+                            showSubmitBtn={true}
+                        />
+                    </ScrollView>
+
+                    {/*<View style={{flex: 1,}}>
                         <ProgressPill currentStep={1} totalSteps={5} />
                         <Spacer size={50} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
@@ -460,7 +828,7 @@ class ReadinessSurvey extends Component {
                                 if(key === 0) { return; }
                                 let isSelected = (dailyReadiness.readiness / 2) === key;
                                 let opacity = isSelected ? 1 : (key * 0.2);
-                                /*eslint consistent-return: 0*/
+                                // eslint consistent-return: 0
                                 return(
                                     <ScaleButton
                                         isSelected={isSelected}
@@ -483,7 +851,7 @@ class ReadinessSurvey extends Component {
                                 if(key === 0) { return; }
                                 let isSelected = (dailyReadiness.sleep_quality / 2) === key;
                                 let opacity = isSelected ? 1 : (key * 0.2);
-                                /*eslint consistent-return: 0*/
+                                // eslint consistent-return: 0
                                 return(
                                     <ScaleButton
                                         isSelected={isSelected}
@@ -499,8 +867,7 @@ class ReadinessSurvey extends Component {
                         </View>
                         <BackNextButtons
                             isValid={isFormValidItems.areQuestionsValid}
-                            onBackClick={() => this._renderNextPage(2, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength)}
-                            onNextClick={() => this._renderNextPage(2, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                            onNextClick={() => this._renderNextPage(2, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength)}
                         />
                     </View>
 
@@ -765,8 +1132,7 @@ class ReadinessSurvey extends Component {
                         </View>
                         <BackNextButtons
                             isValid={isFormValidItems.isTrainedTodayValid}
-                            onBackClick={() => this._renderNextPage(3, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength)}
-                            onNextClick={() => this._renderNextPage(3, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts)}
+                            onNextClick={() => this._renderNextPage(3, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts)}
                         />
                     </View>
 
@@ -858,8 +1224,7 @@ class ReadinessSurvey extends Component {
                                 </View>
                                 <BackNextButtons
                                     isValid={isRPEValid && isSportValid}
-                                    onBackClick={() => this._renderNextPage(4, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, index)}
-                                    onNextClick={() => isRPEValid && isSportValid ? this._renderNextPage(4, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, index) : null}
+                                    onNextClick={() => isRPEValid && isSportValid ? this._renderNextPage(4, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, index) : null}
                                 />
                             </ScrollView>
                         )
@@ -898,8 +1263,7 @@ class ReadinessSurvey extends Component {
                         )}
                         <BackNextButtons
                             isValid={isFormValidItems.isPrevSorenessValid}
-                            onBackClick={() => this._renderNextPage(5, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength)}
-                            onNextClick={() => this._renderNextPage(5, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                            onNextClick={() => this._renderNextPage(5, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength)}
                         />
                     </ScrollView>
 
@@ -939,13 +1303,9 @@ class ReadinessSurvey extends Component {
                         <Spacer size={10} />
                         <BackNextButtons
                             isValid={isFormValidItems.selectAreasOfSorenessValid}
-                            onBackClick={() => {
-                                this.setState({ isActionButtonVisible: false, });
-                                this._renderNextPage(6, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked);
-                            }}
                             onNextClick={() => {
                                 this.setState({ isActionButtonVisible: false, });
-                                this._renderNextPage(6, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked);
+                                this._renderNextPage(6, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked);
                             }}
                         />
                     </ScrollView>
@@ -983,8 +1343,7 @@ class ReadinessSurvey extends Component {
                         ))}
                         <BackNextButtons
                             isValid={isFormValidItems.areAreasOfSorenessValid}
-                            onBackClick={() => this._renderNextPage(7, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked)}
-                            onNextClick={() => this._renderNextPage(7, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked)}
+                            onNextClick={() => this._renderNextPage(7, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked)}
                         />
                     </ScrollView>
 
@@ -1046,8 +1405,7 @@ class ReadinessSurvey extends Component {
                         <BackNextButtons
                             handleFormSubmit={() => handleFormSubmit()}
                             isValid={isFormValidItems.willTrainLaterValid}
-                            onBackClick={() => this._renderNextPage(8, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked)}
-                            onNextClick={() => this._renderNextPage(8, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                            onNextClick={() => this._renderNextPage(8, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength)}
                             showSubmitBtn={!isSecondFunctionalStrength}
                         />
                     </View>
@@ -1115,11 +1473,10 @@ class ReadinessSurvey extends Component {
                         <BackNextButtons
                             handleFormSubmit={() => handleFormSubmit()}
                             isValid={isFormValidItems.isSecondFunctionalStrengthValid}
-                            onBackClick={() => this._renderNextPage(9, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength)}
-                            onNextClick={() => this._renderNextPage(9, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+                            onNextClick={() => this._renderNextPage(9, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength)}
                             showSubmitBtn={true}
                         />
-                    </View>
+                    </View>*/}
 
                 </Pages>
 
@@ -1167,14 +1524,17 @@ ReadinessSurvey.propTypes = {
     handleAreaOfSorenessClick:       PropTypes.func.isRequired,
     handleFormChange:                PropTypes.func.isRequired,
     handleFormSubmit:                PropTypes.func.isRequired,
+    handleHealthDataFormChange:      PropTypes.func.isRequired,
     handleUpdateFirstTimeExperience: PropTypes.func.isRequired,
+    healthKitWorkouts:               PropTypes.array,
     soreBodyParts:                   PropTypes.object.isRequired,
     typicalSessions:                 PropTypes.array,
     user:                            PropTypes.object.isRequired,
 };
 
 ReadinessSurvey.defaultProps = {
-    typicalSession: [],
+    healthKitWorkouts: null,
+    typicalSession:    [],
 };
 
 ReadinessSurvey.componentName = 'ReadinessSurvey';

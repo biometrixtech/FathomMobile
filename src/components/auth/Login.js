@@ -222,10 +222,14 @@ class Login extends Component {
                     password: credentials.password,
                 }, false)
                     .then(response => {
-                        let { authorization, user } = response;
-                        if(user.health_enabled) { // TODO: still need to flesh out?
-                            AppUtil.getAppleHealthKitData(user.health_sync_date);
+                        if(response.user.health_enabled) {
+                            AppUtil.getAppleHealthKitDataAsync(response.user.id, response.user.health_sync_date);
+                            return AppUtil.getAppleHealthKitData(response.user.id, response.user.health_sync_date, () => response);
                         }
+                        return response;
+                    })
+                    .then(response => {
+                        let { authorization, user } = response;
                         return this.props.registerDevice(this.props.certificate, this.props.device, user)
                             .then(() => {
                                 let clearMyPlan = (

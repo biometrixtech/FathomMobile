@@ -361,7 +361,11 @@ class MyPlan extends Component {
         GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
         GATracker.setAppName(`Fathom-${store.getState().init.environment}`);
         let planObj = this.props.plan.dailyPlan[0] || {};
-        if(planObj.daily_readiness_survey_completed) {
+        if(
+            planObj.daily_readiness_survey_completed &&
+            this.state.healthData.workouts &&
+            this.state.healthData.workouts.length > 0
+        ) { // TODO: flesh out!
             this._goToScrollviewPage(1, () => {
                 this._togglePostSessionSurveyModal();
             });
@@ -390,7 +394,6 @@ class MyPlan extends Component {
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
         if(!_.isEqual(prevProps.healthData, this.props.healthData)) { // TODO: flesh out!
-            console.log('new healthdata logged',this.props.healthData);
             this._goToScrollviewPage(1, () => {
                 this._togglePostSessionSurveyModal();
             });
@@ -417,8 +420,8 @@ class MyPlan extends Component {
                 (moment(this.props.user.health_sync_date).diff(moment(), 'minutes') > 7)
             )
         ) {
-            // TODO: still need to flesh out!
-            AppUtil.getAppleHealthKitData(this.props.user.health_sync_date);
+            console.log('OLAAAAA-_handleAppStateChange');
+            AppUtil.getAppleHealthKitData(this.props.user.id, this.props.user.health_sync_date);
         }
     }
 
@@ -488,25 +491,30 @@ class MyPlan extends Component {
 
     _handleReadinessSurveySubmit = () => {
         // TODO: MOVE TO LOGIC FILE AND UNIT TEST BELOW
-        let newDailyReadiness = {};
-        newDailyReadiness.user_id = this.props.user.id;
-        newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
-        newDailyReadiness.sleep_quality = this.state.dailyReadiness.sleep_quality;
-        newDailyReadiness.readiness = this.state.dailyReadiness.readiness;
-        newDailyReadiness.clear_candidates = _.filter(this.state.dailyReadiness.soreness, {isClearCandidate: true});
-        newDailyReadiness.soreness = _.filter(this.state.dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate);
-        newDailyReadiness.wants_functional_strength = this.state.dailyReadiness.wants_functional_strength;
-        newDailyReadiness.sessions = this.state.dailyReadiness.sessions;
-        newDailyReadiness.sessions_planned = this.state.dailyReadiness.sessions_planned;
+        let newPrepareObject = Object.assign({}, this.state.prepare, {
+            isReadinessSurveyCompleted: true,
+        });
+        let newDailyReadiness = {
+            date_time:                 `${moment().toISOString(true).split('.')[0]}Z`,
+            user_id:                   this.props.user.id,
+            soreness:                  _.filter(this.state.dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
+            clear_candidates:          _.filter(this.state.dailyReadiness.soreness, {isClearCandidate: true}),
+            sleep_quality:             this.state.dailyReadiness.sleep_quality,
+            readiness:                 this.state.dailyReadiness.readiness,
+            wants_functional_strength: this.state.dailyReadiness.wants_functional_strength,
+            sessions_planned:          this.state.dailyReadiness.sessions_planned,
+        };
         if(this.state.dailyReadiness.current_sport_name === 0 || this.state.dailyReadiness.current_sport_name > 0) {
             newDailyReadiness.current_sport_name = this.state.dailyReadiness.current_sport_name;
         }
         if(this.state.dailyReadiness.current_position === 0 || this.state.dailyReadiness.current_position > 0) {
             newDailyReadiness.current_position = this.state.dailyReadiness.current_position;
         }
-        let newPrepareObject = Object.assign({}, this.state.prepare, {
-            isReadinessSurveyCompleted: true,
-        });
+        newDailyReadiness.sessions = _.concat(this.state.healthData.workouts, this.state.dailyReadiness.sessions, this.state.healthData.hiddenWorkouts);
+        newDailyReadiness.sleep_data = this.state.healthData.sleep;
+        if(this.state.healthData.workouts.length > 0) {
+            newDailyReadiness.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
+        }
         _.delay(() => {
             this.setState(
                 {
@@ -528,6 +536,7 @@ class MyPlan extends Component {
         }, 500);
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
+                // TODO: clear health data?
                 this.props.clearCompletedExercises();
                 this.props.clearCompletedFSExercises();
             })
@@ -550,6 +559,7 @@ class MyPlan extends Component {
             sessions:   [],
         };
         if(this.state.healthData.workouts.length > 0) {
+            postSession.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
             postSession.sessions = this.state.healthData.workouts;
             let lastNonDeletedIndex = _.findLastIndex(postSession.sessions, ['deleted', false]);
             postSession.sessions[lastNonDeletedIndex].post_session_survey = {
@@ -592,10 +602,6 @@ class MyPlan extends Component {
         let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
-        console.log('postSession',postSession);
-        console.log('newTrainObject',newTrainObject);
-        return;
-        /*eslint no-unreachable: 0*/
         _.delay(() => {
             this.setState(
                 {
@@ -618,6 +624,7 @@ class MyPlan extends Component {
         }, 500);
         this.props.postSessionSurvey(postSession)
             .then(response => {
+                // TODO: clear health data?
                 this.props.clearCompletedExercises();
             })
             .catch(error => {
@@ -657,6 +664,7 @@ class MyPlan extends Component {
     }
 
     _handleUpdateUserHealthKitFlag = flag => {
+        console.log('OLAAAAA-_handleUpdateUserHealthKitFlag');
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.health_enabled = flag;
@@ -1163,6 +1171,7 @@ class MyPlan extends Component {
                         backdropPressToClose={false}
                         coverScreen={true}
                         isOpen={this.state.isReadinessSurveyModalOpen}
+                        keyboardTopOffset={0}
                         ref={ref => {this._readinessSurveyModalRef = ref;}}
                         swipeToClose={false}
                     >
@@ -1171,8 +1180,10 @@ class MyPlan extends Component {
                             handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                             handleFormChange={this._handleDailyReadinessFormChange}
                             handleFormSubmit={this._handleReadinessSurveySubmit}
+                            handleHealthDataFormChange={this._handleHealthDataFormChange}
                             handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                             handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
+                            healthKitWorkouts={this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : null}
                             soreBodyParts={this.props.plan.soreBodyParts}
                             typicalSessions={this.props.plan.typicalSessions}
                             user={this.props.user}
@@ -1197,6 +1208,7 @@ class MyPlan extends Component {
                             backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
+                            keyboardTopOffset={0}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
@@ -1529,6 +1541,7 @@ class MyPlan extends Component {
                             backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
+                            keyboardTopOffset={0}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
@@ -1924,6 +1937,7 @@ class MyPlan extends Component {
                             backdropPressToClose={true}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
+                            keyboardTopOffset={0}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}

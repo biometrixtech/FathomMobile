@@ -175,6 +175,10 @@ initialize() {
                 cd ../../../../
             } || continue
 
+            # extra iOS patches
+            yes | cp ./custom/javascript/Activities.js ./node_modules/rn-apple-healthkit/Constants/Activities.js
+            yes | cp ./custom/ios/RCTAppleHealthKit+TypesAndPermissions.m ./node_modules/rn-apple-healthkit/RCTAppleHealthKit/RCTAppleHealthKit+TypesAndPermissions.m
+
             # replacing xcode IP with your current computer IP
             currentip=`grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' ./ios/Fathom/AppDelegate.m`
             newip=$(for i in `ifconfig -l `; do ipconfig getifaddr $i ; done)

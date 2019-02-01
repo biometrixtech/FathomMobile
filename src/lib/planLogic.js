@@ -624,10 +624,42 @@ const PlanLogic = {
       * - ReadinessSurvey
       */
     // TODO: UNIT TEST ME
-    handleReadinessSurveyNextPage: (pageState, dailyReadiness, currentPage, isFormValidItems, isBackBtn, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked) => {
+    handleReadinessSurveyNextPage: (pageState, dailyReadiness, currentPage, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid) => {
         let pageNum = 0;
         let isValid = false;
-        if(currentPage === 0) { // 0. GOOD [TIME OF DAY], MAZEN!
+        if(currentPage === 0) { // 0. Begin
+            pageNum = isFirstFunctionalStrength ? 1 : healthKitWorkouts && healthKitWorkouts.length > 0 ? 2 : 3;
+            isValid = true;
+        } else if(currentPage === 1) { // 1. first fs
+            pageNum = healthKitWorkouts && healthKitWorkouts.length > 0 ? 2 : 3;
+            isValid = isFormValidItems.isFunctionalStrengthValid;
+        } else if(currentPage === 2) { // 2. Apple HealthKit (xN)
+            pageNum = 5;
+            isValid = isHealthKitValid;
+        } else if(currentPage === 3) { // 3. trained already
+            pageNum = dailyReadiness.already_trained_number === false ? 5 : 4;
+            isValid = isFormValidItems.isTrainedTodayValid;
+        } else if(currentPage === 4) { // 4. SportScheduleBuilder & RPE (xN)
+            // TODO: FIX
+            pageNum = 0;
+            isValid = true; // isFormValidItems.;
+        } else if(currentPage === 5) { // 5. train later?
+            pageNum = isSecondFunctionalStrength ? 6 : (newSoreBodyParts && newSoreBodyParts.length > 0) ? 7 : 8;
+            isValid = isFormValidItems.willTrainLaterValid;
+        } else if(currentPage === 6) { // 6. second fs
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 7 : 8;
+            isValid = isFormValidItems.isSecondFunctionalStrengthValid;
+        } else if(currentPage === 7) { // 7. Follow Up Pain & Soreness
+            pageNum = 8;
+            isValid = isFormValidItems.isPrevSorenessValid;
+        } else if(currentPage === 8) { // 8. Areas of Soreness
+            pageNum = 9;
+            isValid = isFormValidItems.selectAreasOfSorenessValid;
+        } else if(currentPage === 9) { // 9. Areas of Soreness Selected
+            pageNum = 9;
+            isValid = isFormValidItems.areAreasOfSorenessValid;
+        }
+        /*if(currentPage === 0) { // 0. GOOD [TIME OF DAY], MAZEN!
             pageNum = isFirstFunctionalStrength ? 1 : 2;
             isValid = true;
         } else if(currentPage === 1) { // 1. first FS
@@ -693,7 +725,7 @@ const PlanLogic = {
         } else if(currentPage === 9) { // 9. second FS
             pageNum = isBackBtn ? (pageState.pageIndex - 1) : pageState.pageIndex;
             isValid = isFormValidItems.isSecondFunctionalStrengthValid;
-        }
+        }*/
         return {
             isValid,
             pageNum,

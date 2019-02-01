@@ -4,7 +4,7 @@
     <HealthKitWorkouts
         handleHealthDataFormChange={handleHealthDataFormChange}
         handleNextStep={() => this._checkNextStep(0)}
-        handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
+        handleToggleSurvey={handleTogglePostSessionSurvey}
         scrollToArea={xyObject => {
             this._scrollTo(xyObject, this.scrollViewSportBuilderRef);
         }}
@@ -43,7 +43,7 @@ class HealthKitWorkouts extends Component {
         Keyboard.dismiss();
         let numberOfNonDeletedWorkouts = _.filter(this.props.workouts, ['deleted', false]);
         if(numberOfNonDeletedWorkouts.length === 0) {
-            this.props.handleTogglePostSessionSurvey();
+            this.props.handleToggleSurvey();
             // TODO: SEND API with deleted
         } else if((currentPage + 1) === this.props.workouts.length) {
             this.props.handleNextStep(true);
@@ -212,6 +212,8 @@ class HealthKitWorkouts extends Component {
 
 HealthKitWorkouts.propTypes = {
     handleHealthDataFormChange: PropTypes.func.isRequired,
+    handleNextStep:             PropTypes.func.isRequired,
+    handleToggleSurvey:         PropTypes.func.isRequired,
     scrollToArea:               PropTypes.func.isRequired,
     workouts:                   PropTypes.array.isRequired,
 };

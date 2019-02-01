@@ -442,9 +442,19 @@ const setAppLogs = () => {
   */
 const postSurvey = (userId, payload) => {
     return dispatch => AppAPI.survey.post({userId}, payload)
-        .then(data => {
-            return Promise.resolve(data);
-        })
+        .then(data => Promise.resolve(data))
+        .catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+}
+
+/**
+  * Post Health Data
+  */
+const postHealthData = (payload) => {
+    return AppAPI.health_data.post(false, payload)
+        .then(data => Promise.resolve(data))
         .catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
@@ -464,6 +474,7 @@ export default {
     patchActiveRecovery,
     patchActiveTime,
     patchFunctionalStrength,
+    postHealthData,
     postReadinessSurvey,
     postSessionSurvey,
     postSingleSensorData,

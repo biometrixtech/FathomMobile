@@ -158,11 +158,12 @@ class PostSessionSurvey extends Component {
                     >
                         <ProgressPill currentStep={1} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
                         <Spacer size={20} />
-                        { healthKitWorkouts.length > 0 ?
+                        { healthKitWorkouts && healthKitWorkouts.length > 0 ?
                             <HealthKitWorkouts
                                 handleHealthDataFormChange={handleHealthDataFormChange}
                                 handleNextStep={isHealthKitValid => this._checkNextStep(0, isHealthKitValid)}
-                                handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
+                                handleHealthDataFormChange
+                                handleToggleSurvey={handleTogglePostSessionSurvey}
                                 scrollToArea={xyObject => {
                                     this._scrollTo(xyObject, this.scrollViewSportBuilderRef);
                                 }}
@@ -305,7 +306,6 @@ class PostSessionSurvey extends Component {
                         <BackNextButtons
                             handleFormSubmit={() => handleFormSubmit()}
                             isValid={isFormValidItems.areAreasOfSorenessValid}
-                            onBackClick={() => this._renderNextPage(3, isFormValidItems)}
                             onNextClick={() => this._renderNextPage(3, isFormValidItems)}
                             showSubmitBtn={true}
                         />

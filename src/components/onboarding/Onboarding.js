@@ -320,8 +320,8 @@ class Onboarding extends Component {
         if(newUser.system_type) {
             userObj.system_type = newUser.system_type;
         }
-        userObj.injury_status = newUser.injury_status;
-        userObj.cleared_to_play = clearedToPlay;
+        // userObj.injury_status = newUser.injury_status;
+        // userObj.cleared_to_play = clearedToPlay;
         if(!newUser.onboarding_status.includes('account_setup')) {
             userObj.onboarding_status = ['account_setup'];
         }
@@ -340,10 +340,10 @@ class Onboarding extends Component {
         userObj.personal_data.birth_date = newUser.personal_data.birth_date;
         userObj.personal_data.first_name = _.trim(newUser.personal_data.first_name);
         userObj.personal_data.last_name = _.trim(newUser.personal_data.last_name);
-        userObj.personal_data.phone_number = newUser.personal_data.phone_number;
+        // userObj.personal_data.phone_number = newUser.personal_data.phone_number;
         userObj.personal_data.account_type = newUser.personal_data.account_type;
         userObj.personal_data.account_status = newUser.personal_data.account_status;
-        userObj.personal_data.zip_code = newUser.personal_data.zip_code;
+        // userObj.personal_data.zip_code = newUser.personal_data.zip_code;
         if(newUser.account_code && newUser.account_code.length > 0) {
             userObj.account_code = newUser.account_code.toUpperCase();
         }
@@ -362,10 +362,14 @@ class Onboarding extends Component {
                         return this.setState({ resultMsg: { error }, loading: false });
                     });
             }
-            if(userObj.health_enabled) { // TODO: still need to flesh out?
-                AppUtil.getAppleHealthKitData(userObj.health_sync_date);
-            }
             return this.props.createUser(userObj)
+                .then(response => {
+                    if(userObj.health_enabled) {
+                        AppUtil.getAppleHealthKitDataAsync(userObj.id, userObj.health_sync_date);
+                        return AppUtil.getAppleHealthKitData(userObj.id, userObj.health_sync_date, () => response);
+                    }
+                    return response;
+                })
                 .then(response => this._handleLoginFinalize(userObj))
                 .catch(err => {
                     const error = AppAPI.handleError(err);
