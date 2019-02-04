@@ -364,6 +364,7 @@ class ExercisesExercise extends PureComponent {
             timerSeconds,
         } = this.state;
         let displayNameFontSize = ((progressPillsHeight + modalHeight) === AppSizes.screen.height) ? AppFonts.scaleFont(22) : AppFonts.scaleFont(28);
+        let timerWrapperHeight = (AppFonts.scaleFont(56) + (AppSizes.padding * 2));
         if(
             currentSlideIndex !== index &&
             (currentSlideIndex - 1) !== index &&
@@ -441,7 +442,7 @@ class ExercisesExercise extends PureComponent {
                             {exercise.longDosage.toUpperCase()}
                         </Text>
                         <Spacer size={10} />
-                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: exerciseTimer ? 'space-between' : 'center',}}>
+                        <View style={{alignItems: 'center', flexDirection: 'row', height: timerWrapperHeight, justifyContent: exerciseTimer ? 'space-between' : 'center',}}>
                             { exerciseTimer ?
                                 <View>
                                     { areAllTimersCompleted ?
@@ -501,7 +502,7 @@ class ExercisesExercise extends PureComponent {
                                                 indeterminate={false}
                                                 progress={preExerciseTime}
                                                 showsText={true}
-                                                size={(AppFonts.scaleFont(56) + (AppSizes.padding * 2))}
+                                                size={timerWrapperHeight}
                                                 strokeCap={'round'}
                                                 textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(56),}}
                                                 thickness={5}
@@ -518,7 +519,7 @@ class ExercisesExercise extends PureComponent {
                                                         indeterminate={false}
                                                         progress={switchSideTime}
                                                         showsText={true}
-                                                        size={(AppFonts.scaleFont(56) + (AppSizes.padding * 2))}
+                                                        size={timerWrapperHeight}
                                                         strokeCap={'round'}
                                                         textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}
                                                         thickness={5}
@@ -537,7 +538,7 @@ class ExercisesExercise extends PureComponent {
                                                                 indeterminate={false}
                                                                 progress={0}
                                                                 showsText={true}
-                                                                size={(AppFonts.scaleFont(56) + (AppSizes.padding * 2))}
+                                                                size={timerWrapperHeight}
                                                                 strokeCap={'round'}
                                                                 textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(56),}}
                                                                 thickness={5}
