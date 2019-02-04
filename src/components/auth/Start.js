@@ -127,7 +127,6 @@ class Start extends Component {
     }
 
     _handleAppStateChange = nextAppState => {
-        console.log('nextAppState',nextAppState);
         if(nextAppState === 'active' && this.state.isLoggingIn) {
             SplashScreen.show();
         }
@@ -219,8 +218,10 @@ class Start extends Component {
             })
             .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
             .then(() => {
-                AppUtil.routeOnLogin(userObj);
-                this.setState({ isLoggingIn: false, });
+                this.setState(
+                    { isLoggingIn: false, },
+                    () => AppUtil.routeOnLogin(userObj),
+                );
                 setTimeout(() => {
                     SplashScreen.hide();
                 }, 500);
