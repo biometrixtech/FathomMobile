@@ -1886,6 +1886,7 @@
 				PRODUCT_NAME = Fathom;
 				PROVISIONING_PROFILE = "9ff616cb-6991-4405-97c3-cebf9f039ae3";
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom Dev Provisioning Profile";
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1933,7 +1934,7 @@
 				PROVISIONING_PROFILE = "72f40b08-bff6-4768-b2c3-e6a8c876faf7";
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom App Store Provisioning Profile";
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = 3;
+				TARGETED_DEVICE_FAMILY = 1;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -2101,6 +2102,7 @@
 				PRODUCT_NAME = Fathom;
 				PROVISIONING_PROFILE = "826571be-966a-4076-a5a9-15bfd6ad7eb7";
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom Ad Hoc Provisioning Profile";
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Staging;
