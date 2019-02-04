@@ -364,6 +364,13 @@ class ExercisesExercise extends PureComponent {
             timerSeconds,
         } = this.state;
         let displayNameFontSize = ((progressPillsHeight + modalHeight) === AppSizes.screen.height) ? AppFonts.scaleFont(22) : AppFonts.scaleFont(28);
+        if(
+            currentSlideIndex !== index &&
+            (currentSlideIndex - 1) !== index &&
+            (currentSlideIndex + 1) !== index
+        ) {
+            return(null);
+        }
         return(
             <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center',}}>
                 <View
