@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, AppState, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -80,10 +80,6 @@ class Start extends Component {
         };
     }
 
-    componentWillUnmount = () => {
-        AppState.removeEventListener('change', this._handleAppStateChange);
-    }
-
     componentWillMount = () => {
         if (Platform.OS === 'ios') {
             SplashScreen.hide();
@@ -91,49 +87,44 @@ class Start extends Component {
     }
 
     componentDidMount = () => {
-        AppState.addEventListener('change', this._handleAppStateChange);
-        setTimeout(() => {
-            if(
-                this.props.email !== null &&
-                this.props.password !== null &&
-                this.props.user.id &&
-                this.props.jwt &&
-                this.props.sessionToken &&
-                this.props.expires
-            ) {
-                this.setState(
-                    { isLoggingIn: true, },
-                    () => this.login(),
-                );
-            } else {
-                // clear user reducer
-                store.dispatch({
-                    type: DispatchActions.LOGOUT
-                })
-                // hide splash screen
-                this.hideSplash();
-                // check if we have a maintenance window to alert the user on
-                if(!this.props.scheduledMaintenance.addressed) {
-                    let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
-                    let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
-                    AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
-                }
-            }
-        }, 10);
+        this.setState(
+            { isLoggingIn: true, },
+            () => {
+                setTimeout(() => {
+                    if(
+                        this.props.email !== null &&
+                        this.props.password !== null &&
+                        this.props.user.id &&
+                        this.props.jwt &&
+                        this.props.sessionToken &&
+                        this.props.expires
+                    ) {
+                        this.login();
+                    } else {
+                        // clear user reducer
+                        store.dispatch({
+                            type: DispatchActions.LOGOUT
+                        })
+                        // hide splash screen
+                        this.hideSplash();
+                        // check if we have a maintenance window to alert the user on
+                        if(!this.props.scheduledMaintenance.addressed) {
+                            let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
+                            let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
+                            AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
+                        }
+                    }
+                }, 10);
+            },
+        );
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
-    _handleAppStateChange = nextAppState => {
-        if(nextAppState === 'active' && this.state.isLoggingIn) {
-            SplashScreen.show();
-        }
-    }
-
     hideSplash = () => {
-        this.setState({ splashScreen: false });
+        this.setState({ splashScreen: false, });
         SplashScreen.hide();
     }
 
@@ -236,8 +227,8 @@ class Start extends Component {
     }
 
     render = () => {
-        let { splashScreen } = this.state;
-        return Platform.OS === 'ios' && splashScreen ?
+        let { isLoggingIn, splashScreen, } = this.state;
+        return splashScreen && isLoggingIn ?
             <View style={{flex: 1,}}>
                 <ImageBackground
                     source={require('../../../assets/images/standard/background.png')}
