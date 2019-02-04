@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, AppState, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -75,8 +75,13 @@ class Start extends Component {
         super(props);
 
         this.state = {
+            isLoggingIn:  false,
             splashScreen: true,
         };
+    }
+
+    componentWillUnmount = () => {
+        AppState.removeEventListener('change', this._handleAppStateChange);
     }
 
     componentWillMount = () => {
@@ -86,6 +91,7 @@ class Start extends Component {
     }
 
     componentDidMount = () => {
+        AppState.addEventListener('change', this._handleAppStateChange);
         setTimeout(() => {
             if(
                 this.props.email !== null &&
@@ -95,7 +101,10 @@ class Start extends Component {
                 this.props.sessionToken &&
                 this.props.expires
             ) {
-                this.login();
+                this.setState(
+                    { isLoggingIn: true, },
+                    () => this.login(),
+                );
             } else {
                 // clear user reducer
                 store.dispatch({
@@ -115,6 +124,13 @@ class Start extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
+    }
+
+    _handleAppStateChange = nextAppState => {
+        console.log('nextAppState',nextAppState);
+        if(nextAppState === 'active' && this.state.isLoggingIn) {
+            SplashScreen.show();
+        }
     }
 
     hideSplash = () => {
@@ -192,16 +208,19 @@ class Start extends Component {
                                 return this.props.preReadiness(userObj.id);
                             })
                             .catch(err => {
+                                this.setState({ isLoggingIn: false, });
                                 this.hideSplash();
                             });
                     })
                     .catch(error => {
+                        this.setState({ isLoggingIn: false, });
                         this.hideSplash();
                     });
             })
             .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
             .then(() => {
                 AppUtil.routeOnLogin(userObj);
+                this.setState({ isLoggingIn: false, });
                 setTimeout(() => {
                     SplashScreen.hide();
                 }, 500);
@@ -210,6 +229,7 @@ class Start extends Component {
                 this.hideSplash();
                 const error = AppAPI.handleError(err);
                 console.log('err',error);
+                this.setState({ isLoggingIn: false, });
                 // this._routeToLogin();
             });
     }
