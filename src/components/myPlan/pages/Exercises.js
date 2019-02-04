@@ -89,7 +89,7 @@ class Exercises extends PureComponent {
         KeepAwake.activate();
         _.delay(() => {
             this.setState({ currentSlideIndex: this._carousel.currentIndex, });
-        }, 750);
+        }, 10);
     }
 
     componentWillUnmount = () => {

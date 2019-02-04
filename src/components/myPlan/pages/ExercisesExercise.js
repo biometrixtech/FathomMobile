@@ -366,6 +366,7 @@ class ExercisesExercise extends PureComponent {
         let displayNameFontSize = ((progressPillsHeight + modalHeight) === AppSizes.screen.height) ? AppFonts.scaleFont(22) : AppFonts.scaleFont(28);
         let timerWrapperHeight = (AppFonts.scaleFont(56) + (AppSizes.padding * 2));
         if(
+            !currentSlideIndex &&
             currentSlideIndex !== index &&
             (currentSlideIndex - 1) !== index &&
             (currentSlideIndex + 1) !== index
