@@ -23,6 +23,7 @@ import { Button, TabIcon, Text, } from '../../custom';
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     backNextWrapper: {
+        alignItems:        'center',
         flexDirection:     'row',
         justifyContent:    'space-between',
         paddingBottom:     AppSizes.paddingMed,
@@ -41,13 +42,13 @@ const BackNextButtons = ({
     showSubmitBtn,
     submitBtnText,
 }) => (
-    <View style={[styles.backNextWrapper,]}>
+    <View style={[styles.backNextWrapper]}>
         { showAddBtn ?
             <Button
-                backgroundColor={isValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {justifyContent: 'center',}]}
-                color={isValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                containerViewStyle={{ alignItems: 'center', justifyContent: 'center', flex: 1, }}//width: (AppSizes.screen.width * 0.4), }}
+                backgroundColor={AppColors.white}
+                buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {borderColor: AppColors.zeplin.yellow, borderWidth: 1, justifyContent: 'center',}]}
+                color={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
+                containerViewStyle={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
                 disabled={!isValid}
                 disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1,}}
                 fontFamily={AppStyles.robotoMedium.fontFamily}
@@ -59,8 +60,8 @@ const BackNextButtons = ({
                 }}
                 onPress={() => isValid && onBackClick ? onBackClick() : null}
                 raised={false}
-                textColor={isValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                textStyle={{ fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%', }}
+                textColor={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
+                textStyle={{fontSize: AppFonts.scaleFont(14), textAlign: 'center', width: '100%',}}
                 title={'Add another session'}
             />
             : showBackBtn ?
@@ -68,7 +69,7 @@ const BackNextButtons = ({
                     onPress={onBackClick}
                     style={[AppStyles.backNextCircleButtons, {
                         backgroundColor: AppColors.white,
-                        borderColor:     AppColors.primary.yellow.hundredPercent,
+                        borderColor:     AppColors.zeplin.yellow,
                         borderWidth:     1,
                     }]}
                     underlayColor={AppColors.transparent}
@@ -78,7 +79,7 @@ const BackNextButtons = ({
                         style={[
                             AppStyles.textCenterAligned,
                             {
-                                color:    AppColors.primary.yellow.hundredPercent,
+                                color:    AppColors.zeplin.yellow,
                                 fontSize: AppFonts.scaleFont(12),
                             }
                         ]}
@@ -91,10 +92,10 @@ const BackNextButtons = ({
         }
         { showSubmitBtn ?
             <Button
-                backgroundColor={isValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
+                backgroundColor={isValid ? AppColors.zeplin.yellow : AppColors.white}
                 buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {justifyContent: 'center',}]}
                 color={isValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                containerViewStyle={{ alignItems: 'center', justifyContent: 'center', flex: 1, }}//width: (AppSizes.screen.width * 0.4), }}
+                containerViewStyle={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
                 disabled={!isValid}
                 disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1,}}
                 fontFamily={AppStyles.robotoMedium.fontFamily}
@@ -102,15 +103,15 @@ const BackNextButtons = ({
                 onPress={() => isValid && handleFormSubmit ? handleFormSubmit() : null}
                 raised={false}
                 textColor={isValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                textStyle={{ fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%', }}
+                textStyle={{backgroundColor: 'green', fontSize: AppFonts.scaleFont(14), textAlign: 'center', width: '100%',}}
                 title={submitBtnText}
             />
             :
             <TouchableHighlight
                 onPress={isValid ? onNextClick : null}
                 style={[AppStyles.backNextCircleButtons, {
-                    backgroundColor: isValid ? AppColors.primary.yellow.hundredPercent : AppColors.white,
-                    borderColor:     isValid ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.lightGrey,
+                    backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white,
+                    borderColor:     isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey,
                     borderWidth:     1,
                 }]}
                 underlayColor={AppColors.transparent}
