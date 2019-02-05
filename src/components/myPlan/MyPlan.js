@@ -868,7 +868,7 @@ class MyPlan extends Component {
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed  ? true : false;
-        let isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+        let isReadinessSurveyCompleted = dailyPlanObdasdfj && dailyPlanObj.daily_readiness_survey_completed ? true : false; // TODO: FIX ME
         return (
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}

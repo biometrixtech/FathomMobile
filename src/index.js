@@ -2,20 +2,36 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Provider, } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
-import { NetInfo, Platform, PushNotificationIOS, View, } from 'react-native';
+import { Image, NetInfo, Platform, PushNotificationIOS, StyleSheet, View, } from 'react-native';
 
 // import components
-import { Actions, AppColors, AppSizes, AppStyles, ErrorMessages, } from './constants';
+import { Actions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, } from './constants';
 import { AppUtil, } from './lib';
+import { Spacer, TabIcon, Text, } from './components/custom';
+import { store } from './store';
 import Routes from './routes';
-import { TabIcon, Text, } from './components/custom';
 
 // import third-party libraries
 import { Actions as RouterActions, Router, Stack, } from 'react-native-router-flux';
 import { NetworkMonitor } from 'react-native-redux-connectivity';
 import DropdownAlert from 'react-native-dropdownalert';
+import Fabric from 'react-native-fabric';
 import PushNotification from 'react-native-push-notification';
 
+// setup consts
+const { Crashlytics } = Fabric;
+
+/* Styles ==================================================================== */
+const styles = StyleSheet.create({
+    shadowEffect: {
+        shadowColor:   'rgba(0, 0, 0, 0.16)',
+        shadowOffset:  { width: 0, height: 3 },
+        shadowOpacity: 1,
+        shadowRadius:  6,
+    },
+});
+
+/* Component ==================================================================== */
 class Root extends Component {
     static propTypes = {
         store:     PropTypes.shape({}).isRequired,
@@ -71,9 +87,14 @@ class Root extends Component {
         //   in div (created by App)
         //   in App
         // logComponentStackToMyService(info.componentStack);
-        // this.setState({ hasError: true, });
-        // console.log(error);
-        // console.log(info);
+        const userId = store.getState().user.id;
+        this.setState({ hasError: true, });
+        Crashlytics.setUserIdentifier(userId);
+        if(Platform.OS === 'ios') {
+            Crashlytics.recordError(error);
+        } else {
+            Crashlytics.logException(error);
+        }
     }
 
     _showDropdownAlert = () => {
@@ -155,8 +176,30 @@ class Root extends Component {
     render = () => {
         if(this.state.hasError) {
             return(
-                <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
-                    <Text oswaldMedium style={{color: AppColors.zeplin.yellow,}}>{'ERROR'}</Text>
+                <View style={{flex: 1, justifyContent: 'space-between', marginTop: AppSizes.statusBarHeight,}}>
+                    <View style={{alignItems: 'center', flex: 1,}}>
+                        <Image
+                            source={require('../assets/images/standard/fathom-gold-and-grey.png')}
+                            style={[AppStyles.navbarImageTitle]}
+                        />
+                    </View>
+                    <View style={{alignItems: 'center', flex: 9, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
+                        <View style={[styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {backgroundColor: AppColors.zeplin.superLight, borderRadius: 5,}]}>
+                            <View style={{backgroundColor: AppColors.zeplin.error, borderTopLeftRadius: 5, borderTopRightRadius: 5, paddingVertical: AppSizes.paddingXSml,}}>
+                                <TabIcon
+                                    color={AppColors.white}
+                                    icon={'alert'}
+                                    size={30}
+                                    type={'material-community'}
+                                />
+                            </View>
+                            <View style={{padding: AppSizes.padding,}}>
+                                <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(35), textAlign: 'center',}}>{'UH OH!'}</Text>
+                                <Spacer size={AppSizes.padding} />
+                                <Text robotoLight style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'We\'ve encountered an error. Please restart the app and try again.'}</Text>
+                            </View>
+                        </View>
+                    </View>
                 </View>
             )
         }
