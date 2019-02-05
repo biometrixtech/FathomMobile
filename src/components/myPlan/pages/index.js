@@ -22,6 +22,7 @@ import SingleExerciseItem from './SingleExerciseItem';
 import SoreBodyPart from './SoreBodyPart';
 import SportScheduleBuilder from './SportScheduleBuilder';
 import SurveySlideUpPanel from './SurveySlideUpPanel';
+import TimedExercise from './TimedExercise';
 
 export {
     ActiveRecoveryBlocks,
@@ -44,4 +45,5 @@ export {
     SoreBodyPart,
     SportScheduleBuilder,
     SurveySlideUpPanel,
+    TimedExercise,
 };

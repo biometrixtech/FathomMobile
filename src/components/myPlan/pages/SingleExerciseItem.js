@@ -55,7 +55,7 @@ class SingleExerciseItem extends Component {
                             style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: (AppSizes.screen.width * 0.9), width: (AppSizes.screen.width * 0.9),}]}
                         />
                         :
-                        <Error type={'URL not defined.'} />
+                        <Error type={'Video coming soon...'} />
                     }
                     <View style={{paddingHorizontal: AppSizes.paddingMed, width: AppSizes.screen.width * 0.9,}}>
                         <Spacer size={10} />
