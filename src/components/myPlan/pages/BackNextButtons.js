@@ -88,7 +88,7 @@ const BackNextButtons = ({
                     </Text>
                 </TouchableHighlight>
                 :
-                <View />
+                <View style={{flex: 1,}} />
         }
         { showSubmitBtn ?
             <Button
@@ -103,7 +103,7 @@ const BackNextButtons = ({
                 onPress={() => isValid && handleFormSubmit ? handleFormSubmit() : null}
                 raised={false}
                 textColor={isValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                textStyle={{backgroundColor: 'green', fontSize: AppFonts.scaleFont(14), textAlign: 'center', width: '100%',}}
+                textStyle={{fontSize: AppFonts.scaleFont(14), textAlign: 'center', width: '100%',}}
                 title={submitBtnText}
             />
             :

@@ -122,7 +122,7 @@ class SportScheduleBuilder extends Component {
             isFormValid:       false,
             pickerScrollCount: 0,
             showMoreOptions:   props.typicalSessions.length === 0 ? true : false,
-            step:              props.typicalSessions.length === 0 ? 1 : 0,
+            step:              0,
             timeValueGroups:   {
                 hours:   2,
                 minutes: 2,
@@ -214,40 +214,44 @@ class SportScheduleBuilder extends Component {
                             {'What activity did you do?'}
                         </Text>
                         <Spacer size={20} />
-                        <View style={{alignSelf: 'center', flex: 1, marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}}>
-                            { _.map(typicalSessions, (session, i) => {
-                                let filteredSession = session.sport_name || session.sport_name === 0 ?
-                                    _.filter(MyPlanConstants.teamSports, ['index', session.sport_name])[0]
-                                    : session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0 ?
-                                        _.filter(MyPlanConstants.strengthConditioningTypes, ['index', session.strength_and_conditioning_type])[0]
+                        { typicalSessions.length > 0 ?
+                            <View style={{alignSelf: 'center', flex: 1, marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}}>
+                                { _.map(typicalSessions, (session, i) => {
+                                    let filteredSession = session.sport_name || session.sport_name === 0 ?
+                                        _.filter(MyPlanConstants.teamSports, ['index', session.sport_name])[0]
+                                        : session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0 ?
+                                            _.filter(MyPlanConstants.strengthConditioningTypes, ['index', session.strength_and_conditioning_type])[0]
+                                            :
+                                            false;
+                                    let displayName = filteredSession ?
+                                        filteredSession.label
                                         :
-                                        false;
-                                let displayName = filteredSession ?
-                                    filteredSession.label
-                                    :
-                                    '';
-                                return(
-                                    <SportBlock
-                                        displayName={displayName}
-                                        filteredSession={filteredSession}
-                                        key={i}
-                                        onPress={() => {
-                                            this._nextStep(1);
-                                            handleFormChange('sport_name', session.sport_name);
-                                            handleFormChange('session_type', session.session_type);
-                                            handleFormChange('strength_and_conditioning_type', session.strength_and_conditioning_type);
-                                            handleFormChange('event_date', session.event_date);
-                                            handleFormChange('duration', session.duration);
-                                        }}
-                                    />
-                                )
-                            })}
-                            <SportBlock
-                                displayName={'More options'}
-                                filteredSession={{icon: 'add', iconType: 'material',}}
-                                onPress={() => this.setState({ showMoreOptions: !this.state.showMoreOptions, })}
-                            />
-                        </View>
+                                        '';
+                                    return(
+                                        <SportBlock
+                                            displayName={displayName}
+                                            filteredSession={filteredSession}
+                                            key={i}
+                                            onPress={() => {
+                                                this._nextStep(1);
+                                                handleFormChange('sport_name', session.sport_name);
+                                                handleFormChange('session_type', session.session_type);
+                                                handleFormChange('strength_and_conditioning_type', session.strength_and_conditioning_type);
+                                                handleFormChange('event_date', session.event_date);
+                                                handleFormChange('duration', session.duration);
+                                            }}
+                                        />
+                                    )
+                                })}
+                                <SportBlock
+                                    displayName={'More options'}
+                                    filteredSession={{icon: 'add', iconType: 'material',}}
+                                    onPress={() => this.setState({ showMoreOptions: !this.state.showMoreOptions, })}
+                                />
+                            </View>
+                            :
+                            null
+                        }
                         { showMoreOptions ?
                             <View>
                                 <Spacer size={30} />
