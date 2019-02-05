@@ -91,9 +91,9 @@ class Root extends Component {
         this.setState({ hasError: true, });
         Crashlytics.setUserIdentifier(userId);
         if(Platform.OS === 'ios') {
-            Crashlytics.recordError(error);
+            Crashlytics.recordError(`${error.toString()}`);
         } else {
-            Crashlytics.logException(error);
+            Crashlytics.logException(`${error.toString()}`);
         }
     }
 
@@ -183,7 +183,7 @@ class Root extends Component {
                             style={[AppStyles.navbarImageTitle]}
                         />
                     </View>
-                    <View style={{alignItems: 'center', flex: 9, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
+                    <View style={{alignItems: 'center', flex: 8, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
                         <View style={[styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {backgroundColor: AppColors.zeplin.superLight, borderRadius: 5,}]}>
                             <View style={{backgroundColor: AppColors.zeplin.error, borderTopLeftRadius: 5, borderTopRightRadius: 5, paddingVertical: AppSizes.paddingXSml,}}>
                                 <TabIcon
@@ -200,6 +200,7 @@ class Root extends Component {
                             </View>
                         </View>
                     </View>
+                    <View style={{alignItems: 'center', flex: 1,}} />
                 </View>
             )
         }
