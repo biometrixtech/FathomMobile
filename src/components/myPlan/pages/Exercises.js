@@ -105,7 +105,6 @@ class Exercises extends PureComponent {
         const nextExercise = nextItem ? MyPlanConstants.cleanExercise(nextItem) : null;
         const { number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval, } = PlanLogic.handleExercisesTimerLogic(exercise);
         let timer = { number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval };
-
         if(
             !currentSlideIndex &&
             currentSlideIndex !== index &&

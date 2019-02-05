@@ -19,7 +19,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Image, TouchableOpacity, View, } from 'react-native';
+import { Image, Platform, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -115,8 +115,8 @@ class TimedExercise extends PureComponent {
     }
 
     componentWillUnmount = () => {
-        // reset timer
-        this._resetTimer();
+        this.setState({ isMounted: false, });
+        clearInterval(this.state.timer);
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -124,12 +124,14 @@ class TimedExercise extends PureComponent {
         if(
             prevState.showAnimation !== showAnimation &&
             showAnimation &&
-            this.animation
+            this.state.isMounted &&
+            this.animation &&
+            this.animation.play
         ) {
             // pulse checkbox
             _.delay(() => {
                 this.animation.play();
-            }, 500);
+            }, Platform.OS === 'ios' ? 500 : 0);
         }
     }
 
