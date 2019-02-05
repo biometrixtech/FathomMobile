@@ -123,7 +123,8 @@ class TimedExercise extends PureComponent {
         const { showAnimation, } = this.state;
         if(
             prevState.showAnimation !== showAnimation &&
-            showAnimation
+            showAnimation &&
+            this.animation
         ) {
             // pulse checkbox
             _.delay(() => {
