@@ -83,7 +83,6 @@ export default {
     getSoreBodyParts:        'There was an error getting your plan specific data. Please try again!',
     postReadinessSurvey:     'There was an error saving your plan specific data. Please try again!',
     postSessionSurvey:       'There was an error saving your plan specific data. Please try again!',
-    preReadiness:            'There was an error getting your plan specific data. Please try again!',
     patchFunctionalStrength: 'There was an error saving your plan specific data. Please try again!',
     patchActiveRecovery:     'There was an error saving your plan specific data. Please try again!',
     noSessions:              'There was an error saving your plan specific data. Please try again!',

@@ -24,7 +24,6 @@ const MyPlan = ({
     plan,
     postReadinessSurvey,
     postSessionSurvey,
-    preReadiness,
     scheduledMaintenance,
     setAppLogs,
     setCompletedExercises,
@@ -51,7 +50,6 @@ const MyPlan = ({
         plan={plan}
         postReadinessSurvey={postReadinessSurvey}
         postSessionSurvey={postSessionSurvey}
-        preReadiness={preReadiness}
         scheduledMaintenance={scheduledMaintenance}
         setAppLogs={setAppLogs}
         setCompletedExercises={setCompletedExercises}
@@ -84,7 +82,6 @@ MyPlan.propTypes = {
     plan:                    PropTypes.object.isRequired,
     postReadinessSurvey:     PropTypes.func.isRequired,
     postSessionSurvey:       PropTypes.func.isRequired,
-    preReadiness:            PropTypes.func.isRequired,
     scheduledMaintenance:    PropTypes.object,
     setAppLogs:              PropTypes.func.isRequired,
     setCompletedExercises:   PropTypes.func.isRequired,
@@ -121,7 +118,6 @@ const mapDispatchToProps = {
     patchFunctionalStrength:       PlanActions.patchFunctionalStrength,
     postReadinessSurvey:           PlanActions.postReadinessSurvey,
     postSessionSurvey:             PlanActions.postSessionSurvey,
-    preReadiness:                  PlanActions.preReadiness,
     setAppLogs:                    PlanActions.setAppLogs,
     setCompletedExercises:         PlanActions.setCompletedExercises,
     setCompletedFSExercises:       PlanActions.setCompletedFSExercises,

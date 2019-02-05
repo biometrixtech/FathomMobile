@@ -15,7 +15,6 @@ const Onboarding = ({
     lastOpened,
     network,
     onFormSubmit,
-    preReadiness,
     registerDevice,
     setAppLogs,
     updateUser,
@@ -31,7 +30,6 @@ const Onboarding = ({
         lastOpened={lastOpened}
         network={network}
         onFormSubmit={onFormSubmit}
-        preReadiness={preReadiness}
         registerDevice={registerDevice}
         setAppLogs={setAppLogs}
         updateUser={updateUser}
@@ -49,7 +47,6 @@ Onboarding.propTypes = {
     lastOpened:       PropTypes.object.isRequired,
     network:          PropTypes.object.isRequired,
     onFormSubmit:     PropTypes.func.isRequired,
-    preReadiness:     PropTypes.func.isRequired,
     registerDevice:   PropTypes.func.isRequired,
     setAppLogs:       PropTypes.func.isRequired,
     updateUser:       PropTypes.func.isRequired,
@@ -71,7 +68,6 @@ const mapDispatchToProps = {
     getMyPlan:        PlanActions.getMyPlan,
     getSoreBodyParts: PlanActions.getSoreBodyParts,
     onFormSubmit:     InitActions.startLogin,
-    preReadiness:     PlanActions.preReadiness,
     registerDevice:   InitActions.registerDevice,
     setAppLogs:       PlanActions.setAppLogs,
     updateUser:       UserActions.updateUser,

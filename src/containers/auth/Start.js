@@ -21,7 +21,6 @@ const Start = ({
     network,
     onFormSubmit,
     password,
-    preReadiness,
     registerDevice,
     scheduledMaintenance,
     sessionToken,
@@ -44,7 +43,6 @@ const Start = ({
         network={network}
         onFormSubmit={onFormSubmit}
         password={password}
-        preReadiness={preReadiness}
         registerDevice={registerDevice}
         scheduledMaintenance={scheduledMaintenance}
         sessionToken={sessionToken}
@@ -70,7 +68,6 @@ Start.propTypes = {
     network:              PropTypes.object.isRequired,
     onFormSubmit:         PropTypes.func.isRequired,
     password:             PropTypes.string,
-    preReadiness:         PropTypes.func.isRequired,
     registerDevice:       PropTypes.func.isRequired,
     scheduledMaintenance: PropTypes.object,
     sessionToken:         PropTypes.string,
@@ -112,7 +109,6 @@ const mapDispatchToProps = {
     getSoreBodyParts: PlanActions.getSoreBodyParts,
     getUser:          UserActions.getUser,
     onFormSubmit:     init.startLogin,
-    preReadiness:     PlanActions.preReadiness,
     registerDevice:   init.registerDevice,
     setAppLogs:       PlanActions.setAppLogs,
 };

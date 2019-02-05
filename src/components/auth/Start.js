@@ -52,7 +52,6 @@ class Start extends Component {
         network:              PropTypes.object.isRequired,
         onFormSubmit:         PropTypes.func,
         password:             PropTypes.string,
-        preReadiness:         PropTypes.func.isRequired,
         registerDevice:       PropTypes.func.isRequired,
         scheduledMaintenance: PropTypes.object,
         sessionToken:         PropTypes.string,
@@ -196,18 +195,10 @@ class Start extends Component {
                     false;
                 return this.props.getMyPlan(userObj.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                     .then(response => {
-                        if(response.daily_plans[0].daily_readiness_survey_completed) {
-                            return response;
+                        if(!response.daily_plans[0].daily_readiness_survey_completed) {
+                            this.props.setAppLogs();
                         }
-                        return this.props.getSoreBodyParts()
-                            .then(soreBodyParts => {
-                                this.props.setAppLogs();
-                                return this.props.preReadiness(userObj.id);
-                            })
-                            .catch(err => {
-                                this.setState({ isLoggingIn: false, });
-                                this.hideSplash();
-                            });
+                        return response;
                     })
                     .catch(error => {
                         this.setState({ isLoggingIn: false, });

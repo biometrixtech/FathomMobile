@@ -24,7 +24,6 @@ const Login = ({
     network,
     onFormSubmit,
     password,
-    preReadiness,
     registerDevice,
     scheduledMaintenance,
     setAppLogs,
@@ -45,7 +44,6 @@ const Login = ({
         network={network}
         onFormSubmit={onFormSubmit}
         password={password}
-        preReadiness={preReadiness}
         registerDevice={registerDevice}
         scheduledMaintenance={scheduledMaintenance}
         setAppLogs={setAppLogs}
@@ -69,7 +67,6 @@ Login.propTypes = {
     network:              PropTypes.object.isRequired,
     onFormSubmit:         PropTypes.func.isRequired,
     password:             PropTypes.string,
-    preReadiness:         PropTypes.func.isRequired,
     registerDevice:       PropTypes.func.isRequired,
     scheduledMaintenance: PropTypes.object,
     setAppLogs:           PropTypes.func.isRequired,
@@ -107,7 +104,6 @@ const mapDispatchToProps = {
     getMyPlan:        PlanActions.getMyPlan,
     getSoreBodyParts: PlanActions.getSoreBodyParts,
     onFormSubmit:     init.startLogin,
-    preReadiness:     PlanActions.preReadiness,
     registerDevice:   init.registerDevice,
     setAppLogs:       PlanActions.setAppLogs,
     setEnvironment:   init.setEnvironment,

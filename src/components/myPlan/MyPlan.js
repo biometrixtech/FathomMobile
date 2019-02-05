@@ -119,7 +119,6 @@ class MyPlan extends Component {
         plan:                    PropTypes.object.isRequired,
         postReadinessSurvey:     PropTypes.func.isRequired,
         postSessionSurvey:       PropTypes.func.isRequired,
-        preReadiness:            PropTypes.func.isRequired,
         setAppLogs:              PropTypes.func.isRequired,
         setCompletedExercises:   PropTypes.func.isRequired,
         setCompletedFSExercises: PropTypes.func.isRequired,
@@ -304,7 +303,8 @@ class MyPlan extends Component {
                             let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
                             newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
                             this.setState({ dailyReadiness: newDailyReadiness });
-                            this._toggleReadinessSurvey();
+                            this.props.setAppLogs();
+                            this.setState({ isReadinessSurveyModalOpen: true, isPageLoading: false, });
                             if(hideSplashScreen) {
                                 SplashScreen.hide();
                             }
@@ -689,8 +689,7 @@ class MyPlan extends Component {
     _togglePostSessionSurveyModal = () => {
         this.setState({ loading: true, });
         if (!this.state.isPostSessionSurveyModalOpen) {
-            this.props.preReadiness(this.props.user.id)
-                .then(() => this.props.getSoreBodyParts())
+            this.props.getSoreBodyParts()
                 .then(soreBodyParts => {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
                     newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
@@ -709,7 +708,7 @@ class MyPlan extends Component {
                         loading:                      false,
                         postSession:                  newDailyReadiness,
                     });
-                    AppUtil.handleAPIErrorAlert(ErrorMessages.preReadiness);
+                    AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
                 });
         } else {
             let newPostSession = _.cloneDeep(this.state.postSession);
@@ -731,17 +730,6 @@ class MyPlan extends Component {
                 );
             }, 500);
         }
-    }
-
-    _toggleReadinessSurvey = () => {
-        this.setState({ isPageLoading: true, });
-        this.props.setAppLogs();
-        this.props.preReadiness(this.props.user.id)
-            .then(() => this.setState({ isReadinessSurveyModalOpen: true, isPageLoading: false, }))
-            .catch(() => {
-                this.setState({ isPageLoading: false, });
-                AppUtil.handleAPIErrorAlert(ErrorMessages.preReadiness);
-            });
     }
 
     _handleExerciseListRefresh = (shouldClearCompletedExercises, isFromPushNotification) => {

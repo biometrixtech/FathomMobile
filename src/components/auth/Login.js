@@ -92,7 +92,6 @@ class Login extends Component {
         network:          PropTypes.object.isRequired,
         onFormSubmit:     PropTypes.func,
         password:         PropTypes.string,
-        preReadiness:     PropTypes.func.isRequired,
         registerDevice:   PropTypes.func.isRequired,
         setAppLogs:       PropTypes.func.isRequired,
         setEnvironment:   PropTypes.func,
@@ -241,18 +240,10 @@ class Login extends Component {
                                     false;
                                 return this.props.getMyPlan(user.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                                     .then(res => {
-                                        if(res.daily_plans[0].daily_readiness_survey_completed) {
-                                            return res;
+                                        if(!res.daily_plans[0].daily_readiness_survey_completed) {
+                                            this.props.setAppLogs();
                                         }
-                                        return this.props.getSoreBodyParts()
-                                            .then(soreBodyParts => {
-                                                this.props.setAppLogs();
-                                                return this.props.preReadiness(user.id);
-                                            })
-                                            .catch(err => {
-                                                const error = AppAPI.handleError(err);
-                                                return this.setState({ resultMsg: { error } });
-                                            });
+                                        return res;
                                     })
                                     .catch(error => {
                                         const err = AppAPI.handleError(error);

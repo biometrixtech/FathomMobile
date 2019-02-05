@@ -49,12 +49,20 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
     }
     myPlanObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.get_my_plan.post(false, myPlanObj)
-        .then(myPlanData => {
+        .then(response => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
-                data: myPlanData,
+                data: response.daily_plans,
             });
-            return Promise.resolve(myPlanData);
+            dispatch({
+                type: Actions.GET_SORE_BODY_PARTS,
+                data: response.readiness,
+            });
+            dispatch({
+                type: Actions.SET_TYPICAL_SESSIONS,
+                data: response.typical_sessions,
+            });
+            return Promise.resolve(response);
         }).catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
@@ -202,12 +210,16 @@ const getSoreBodyParts = user_id => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.get_sore_body_parts.post(false, bodyObj)
-        .then(soreBodyParts => {
+        .then(response => {
             dispatch({
                 type: Actions.GET_SORE_BODY_PARTS,
-                data: soreBodyParts,
+                data: response.readiness,
             });
-            return Promise.resolve(soreBodyParts);
+            dispatch({
+                type: Actions.SET_TYPICAL_SESSIONS,
+                data: response.typical_sessions,
+            });
+            return Promise.resolve(response);
         }).catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
@@ -255,26 +267,6 @@ const patchActiveTime = (user_id, active_time) => {
             return Promise.resolve(myPlanData);
         })
         .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
-};
-
-/**
-  * Pre Readiness
-  */
-const preReadiness = (user_id) => {
-    let bodyObj = {};
-    bodyObj.user_id = user_id;
-    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
-    return dispatch => AppAPI.typical_sessions.post(false, bodyObj)
-        .then(typicalSessionData => {
-            dispatch({
-                type: Actions.SET_TYPICAL_SESSIONS,
-                data: typicalSessionData.typical_sessions,
-            });
-            return Promise.resolve(typicalSessionData);
-        }).catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });
@@ -479,7 +471,6 @@ export default {
     postSessionSurvey,
     postSingleSensorData,
     postSurvey,
-    preReadiness,
     setAppLogs,
     setCompletedExercises,
     setCompletedFSExercises,

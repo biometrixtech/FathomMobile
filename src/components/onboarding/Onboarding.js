@@ -64,7 +64,6 @@ class Onboarding extends Component {
         lastOpened:       PropTypes.object.isRequired,
         network:          PropTypes.object.isRequired,
         onFormSubmit:     PropTypes.func.isRequired,
-        preReadiness:     PropTypes.func.isRequired,
         registerDevice:   PropTypes.func.isRequired,
         setAppLogs:       PropTypes.func.isRequired,
         updateUser:       PropTypes.func.isRequired,
@@ -401,15 +400,8 @@ class Onboarding extends Component {
                             false;
                         return this.props.getMyPlan(user.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                             .then(res => {
-                                return this.props.getSoreBodyParts()
-                                    .then(soreBodyParts => {
-                                        this.props.setAppLogs();
-                                        return this.props.preReadiness(user.id);
-                                    })
-                                    .catch(err => {
-                                        const error = AppAPI.handleError(err);
-                                        return this.setState({ loading: false, resultMsg: { error }, });
-                                    });
+                                this.props.setAppLogs();
+                                return res;
                             })
                             .catch(error => {
                                 const err = AppAPI.handleError(error);
