@@ -365,7 +365,12 @@ class TimedExercise extends PureComponent {
                             <TabIcon
                                 color={AppColors.zeplin.lightSlate}
                                 icon={'help'}
-                                onPress={() => {toggleScrollStatus(); this._pauseTimer(true, true);}}
+                                onPress={() => {
+                                    if(preExerciseTime !== 0) {
+                                        toggleScrollStatus();
+                                        this._pauseTimer(true, true);
+                                    }
+                                }}
                                 reverse={false}
                                 type={'material'}
                             />
@@ -403,7 +408,7 @@ class TimedExercise extends PureComponent {
                                                 color={AppColors.zeplin.lightSlate}
                                                 containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                                 icon={'pause'}
-                                                onPress={() => this._pauseTimer(true)}
+                                                onPress={() => { if(preExerciseTime !== 0) { this._pauseTimer(true); } }}
                                                 reverse={false}
                                                 size={AppFonts.scaleFont(40)}
                                                 type={'material'}
