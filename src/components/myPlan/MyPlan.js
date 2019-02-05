@@ -1174,6 +1174,7 @@ class MyPlan extends Component {
                         keyboardTopOffset={0}
                         ref={ref => {this._readinessSurveyModalRef = ref;}}
                         swipeToClose={false}
+                        useNativeDriver={false}
                     >
                         <ReadinessSurvey
                             dailyReadiness={this.state.dailyReadiness}
@@ -1214,6 +1215,7 @@ class MyPlan extends Component {
                             ref={ref => {this._singleExerciseItemRef = ref;}}
                             style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent,}]}
                             swipeToClose={false}
+                            useNativeDriver={false}
                         >
                             { this.state.selectedExercise.library_id ?
                                 <Exercises
@@ -1547,17 +1549,17 @@ class MyPlan extends Component {
                             ref={ref => {this._singleExerciseItemRef = ref;}}
                             style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent,}]}
                             swipeToClose={false}
+                            useNativeDriver={false}
                         >
                             { this.state.selectedExercise.library_id ?
                                 <Exercises
-                                    closeModal={() => this._toggleSelectedExercise(false, false)}//this._singleExerciseItemRef.close()}
+                                    closeModal={() => this._singleExerciseItemRef.close()}
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
                                     handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {
                                         this._handleCompleteExercise(exerciseId, setNumber, 'post');
                                         if(!hasNextExercise) {
-                                            // this._singleExerciseItemRef.close();
-                                            this._toggleSelectedExercise(false, false);
+                                            this._singleExerciseItemRef.close();
                                             _.delay(() => {
                                                 this.setState({ isRecoverExerciseCompletionModalOpen: true, });
                                             }, 750);
@@ -1896,6 +1898,7 @@ class MyPlan extends Component {
                         keyboardTopOffset={0}
                         ref={ref => {this._postSessionSurveyModalRef = ref;}}
                         swipeToClose={false}
+                        useNativeDriver={false}
                     >
                         <PostSessionSurvey
                             handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
@@ -1943,6 +1946,7 @@ class MyPlan extends Component {
                             ref={ref => {this._singleExerciseItemRef = ref;}}
                             style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
                             swipeToClose={true}
+                            useNativeDriver={false}
                         >
                             { this.state.selectedExercise.library_id ?
                                 <SingleExerciseItem

@@ -75,6 +75,7 @@ class Start extends Component {
         super(props);
 
         this.state = {
+            isLoggingIn:  false,
             splashScreen: true,
         };
     }
@@ -86,31 +87,36 @@ class Start extends Component {
     }
 
     componentDidMount = () => {
-        setTimeout(() => {
-            if(
-                this.props.email !== null &&
-                this.props.password !== null &&
-                this.props.user.id &&
-                this.props.jwt &&
-                this.props.sessionToken &&
-                this.props.expires
-            ) {
-                this.login();
-            } else {
-                // clear user reducer
-                store.dispatch({
-                    type: DispatchActions.LOGOUT
-                })
-                // hide splash screen
-                this.hideSplash();
-                // check if we have a maintenance window to alert the user on
-                if(!this.props.scheduledMaintenance.addressed) {
-                    let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
-                    let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
-                    AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
-                }
-            }
-        }, 10);
+        this.setState(
+            { isLoggingIn: true, },
+            () => {
+                setTimeout(() => {
+                    if(
+                        this.props.email !== null &&
+                        this.props.password !== null &&
+                        this.props.user.id &&
+                        this.props.jwt &&
+                        this.props.sessionToken &&
+                        this.props.expires
+                    ) {
+                        this.login();
+                    } else {
+                        // clear user reducer
+                        store.dispatch({
+                            type: DispatchActions.LOGOUT
+                        })
+                        // hide splash screen
+                        this.hideSplash();
+                        // check if we have a maintenance window to alert the user on
+                        if(!this.props.scheduledMaintenance.addressed) {
+                            let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
+                            let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
+                            AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
+                        }
+                    }
+                }, 10);
+            },
+        );
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -118,7 +124,7 @@ class Start extends Component {
     }
 
     hideSplash = () => {
-        this.setState({ splashScreen: false });
+        this.setState({ splashScreen: false, });
         SplashScreen.hide();
     }
 
@@ -199,16 +205,21 @@ class Start extends Component {
                                 return this.props.preReadiness(userObj.id);
                             })
                             .catch(err => {
+                                this.setState({ isLoggingIn: false, });
                                 this.hideSplash();
                             });
                     })
                     .catch(error => {
+                        this.setState({ isLoggingIn: false, });
                         this.hideSplash();
                     });
             })
             .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
             .then(() => {
-                AppUtil.routeOnLogin(userObj);
+                this.setState(
+                    { isLoggingIn: false, },
+                    () => AppUtil.routeOnLogin(userObj),
+                );
                 setTimeout(() => {
                     SplashScreen.hide();
                 }, 500);
@@ -217,13 +228,14 @@ class Start extends Component {
                 this.hideSplash();
                 const error = AppAPI.handleError(err);
                 console.log('err',error);
+                this.setState({ isLoggingIn: false, });
                 // this._routeToLogin();
             });
     }
 
     render = () => {
-        let { splashScreen } = this.state;
-        return Platform.OS === 'ios' && splashScreen ?
+        let { isLoggingIn, splashScreen, } = this.state;
+        return splashScreen && isLoggingIn ?
             <View style={{flex: 1,}}>
                 <ImageBackground
                     source={require('../../../assets/images/standard/background.png')}
