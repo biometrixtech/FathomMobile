@@ -179,7 +179,7 @@ class TimedExercise extends PureComponent {
                 { startPreExerciseCountdown: true, },
                 () => this._startPreExerciseCountdown(),
             );
-        }, 1000);
+        }, 500);
     }
 
     _resetTimer = (restartTimer = false, shouldCloseModal = false) => {
@@ -366,7 +366,7 @@ class TimedExercise extends PureComponent {
                                 color={AppColors.zeplin.lightSlate}
                                 icon={'help'}
                                 onPress={() => {
-                                    if(preExerciseTime !== 0) {
+                                    if(preExerciseTime !== 0 || areAllTimersCompleted || !exerciseTimer) {
                                         toggleScrollStatus();
                                         this._pauseTimer(true, true);
                                     }

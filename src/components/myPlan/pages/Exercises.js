@@ -136,7 +136,7 @@ class Exercises extends PureComponent {
                             style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: (AppSizes.screen.width * 0.85), width: (AppSizes.screen.width * 0.85),}]}
                         />
                         :
-                        <Error type={'URL not defined.'} />
+                        <Error type={'Video coming soon...'} />
                     }
                     { currentSlideIndex === index ?
                         <TimedExercise
