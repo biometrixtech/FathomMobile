@@ -14,18 +14,20 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, } from 'react-native';
+import { Platform, StyleSheet, View, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
 import Carousel from 'react-native-snap-carousel';
 import KeepAwake from 'react-native-keep-awake';
+import Video from 'react-native-video';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Spacer, Text, } from '../../custom';
-import { ExercisesExercise, } from './';
+import { Spacer, TabIcon, Text, } from '../../custom';
+import { ExercisesExercise, TimedExercise, } from './';
 import { PlanLogic, } from '../../../lib';
+import { Error, } from '../../general';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -79,7 +81,8 @@ class Exercises extends PureComponent {
             isScrollEnabled:     true,
             progressPillsHeight: 0,
             selectedExercise:    this.props.selectedExercise,
-            timers:              [],
+            // timer related state items
+            timer:               null,
         };
         this._carousel = {};
         this._renderItem = this._renderItem.bind(this);
@@ -87,13 +90,12 @@ class Exercises extends PureComponent {
 
     componentDidMount = () => {
         KeepAwake.activate();
-        _.delay(() => {
-            this.setState({ currentSlideIndex: this._carousel.currentIndex, });
-        }, 10);
+        this.setState({ currentSlideIndex: this._carousel.currentIndex, });
     }
 
     componentWillUnmount = () => {
         KeepAwake.deactivate();
+        clearInterval(this.state.timer);
     }
 
     _renderItem = ({item, index}, nextItem, progressPillsHeight) => {
@@ -103,28 +105,71 @@ class Exercises extends PureComponent {
         const nextExercise = nextItem ? MyPlanConstants.cleanExercise(nextItem) : null;
         const { number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval, } = PlanLogic.handleExercisesTimerLogic(exercise);
         let timer = { number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval };
+
+        if(
+            !currentSlideIndex &&
+            currentSlideIndex !== index &&
+            (currentSlideIndex - 1) !== index &&
+            (currentSlideIndex + 1) !== index
+        ) {
+            return(null);
+        }
         return(
-            <ExercisesExercise
-                closeModal={closeModal}
-                completedExercises={completedExercises}
-                currentSlideIndex={currentSlideIndex}
-                exercise={exercise}
-                exerciseTimer={timer && timer.seconds_per_set ? timer : null}
-                handleCompleteExercise={(exerciseId, setNumber, nextExerciseObj) => {
-                    handleCompleteExercise(exerciseId, setNumber, nextExerciseObj, !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`));
-                    _.delay(() => {
-                        if(nextExercise && !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`)) {
-                            this._carousel.snapToNext();
-                        }
-                    }, 250);
-                }}
-                handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
-                index={index}
-                nextExercise={nextExercise}
-                progressPillsHeight={progressPillsHeight}
-                toggleScrollStatus={() => this.setState({ isScrollEnabled: !this.state.isScrollEnabled, })}
-                user={user}
-            />
+            <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center',}}>
+                <View style={{backgroundColor: AppColors.white, borderRadius: 4,}}>
+                    <Spacer size={5} />
+                    <TabIcon
+                        containerStyle={[{right: 10, position: 'absolute', top: 10, width: 26, zIndex: 100,}]}
+                        color={AppColors.zeplin.lightSlate}
+                        icon={'close'}
+                        onPress={() => {clearInterval(this.state.timer); closeModal();}}
+                        raised={false}
+                        size={26}
+                        type={'material-community'}
+                    />
+                    { exercise.videoUrl.length > 0 ?
+                        <Video
+                            paused={currentSlideIndex === index ? false : true}
+                            repeat={true}
+                            resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
+                            source={{uri: exercise.videoUrl}}
+                            style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: (AppSizes.screen.width * 0.85), width: (AppSizes.screen.width * 0.85),}]}
+                        />
+                        :
+                        <Error type={'URL not defined.'} />
+                    }
+                    { currentSlideIndex === index ?
+                        <TimedExercise
+                            closeModal={closeModal}
+                            completedExercises={completedExercises}
+                            currentSlideIndex={currentSlideIndex}
+                            exercise={exercise}
+                            exerciseTimer={timer && timer.seconds_per_set ? timer : null}
+                            handleCompleteExercise={(exerciseId, setNumber, nextExerciseObj) => {
+                                handleCompleteExercise(exerciseId, setNumber, nextExerciseObj, !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`));
+                                _.delay(() => {
+                                    if(nextExercise && !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`)) {
+                                        this._carousel.snapToNext();
+                                    }
+                                }, 250);
+                            }}
+                            handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
+                            index={index}
+                            nextExercise={nextExercise}
+                            progressPillsHeight={progressPillsHeight}
+                            toggleScrollStatus={() => this.setState({ isScrollEnabled: !this.state.isScrollEnabled, })}
+                            user={user}
+                        />
+                        :
+                        <ExercisesExercise
+                            completedExercises={completedExercises}
+                            exercise={exercise}
+                            exerciseTimer={timer && timer.seconds_per_set ? timer : null}
+                            progressPillsHeight={progressPillsHeight}
+                        />
+                    }
+                </View>
+            </View>
         );
     }
 
