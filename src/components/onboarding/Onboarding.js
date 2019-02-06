@@ -102,7 +102,7 @@ class Onboarding extends Component {
                                 : user.biometric_data && user.biometric_data.height.m ?
                                     onboardingUtils.metersToInches(user.biometric_data.height.m).toString()
                                     :
-                                    ''
+                                    0
                         },
                         mass: {
                             lb: user.biometric_data && user.biometric_data.mass.lb ?
@@ -211,8 +211,7 @@ class Onboarding extends Component {
         const { form_fields, step, } = this.state;
         let errorsArray = [];
         if(step === 2) { // enter user information
-            errorsArray = errorsArray.concat(onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray);
-            errorsArray = errorsArray.concat(onboardingUtils.isUserAboutValid(form_fields.user).errorsArray);
+            errorsArray = _.concat(onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray, onboardingUtils.isUserAboutValid(form_fields.user).errorsArray);
         }
         return errorsArray;
     }
@@ -324,9 +323,11 @@ class Onboarding extends Component {
             userObj.onboarding_status = ['account_setup'];
         }
         userObj.biometric_data = {};
-        userObj.biometric_data.height = {};
-        userObj.biometric_data.height.m = +(onboardingUtils.inchesToMeters(parseFloat(newUser.biometric_data.height.in))) + 0.1;
-        userObj.biometric_data.height.ft_in = [Math.floor(newUser.biometric_data.height.in / 12), newUser.biometric_data.height.in % 12];
+        if(newUser.biometric_data.height.in > 0) {
+            userObj.biometric_data.height = {};
+            userObj.biometric_data.height.m = +(onboardingUtils.inchesToMeters(parseFloat(newUser.biometric_data.height.in))) + 0.1;
+            userObj.biometric_data.height.ft_in = [Math.floor(newUser.biometric_data.height.in / 12), newUser.biometric_data.height.in % 12];
+        }
         userObj.biometric_data.mass = {};
         userObj.biometric_data.mass.kg = +(onboardingUtils.lbsToKgs(parseFloat(newUser.biometric_data.mass.lb))) + 0.1;
         userObj.biometric_data.mass.lb = +(parseFloat(newUser.biometric_data.mass.lb).toFixed(2)) + 0.1;
@@ -487,6 +488,7 @@ class Onboarding extends Component {
                     error={resultMsg.error}
                     handleFormChange={this._handleUserFormChange}
                     handleFormSubmit={this._handleFormSubmit}
+                    isFormValid={isFormValid}
                     isUpdatingUser={this.props.user.id ? true : false}
                     user={form_fields.user}
                 />

@@ -7,6 +7,7 @@
         error={this.state.resultMsg.error}
         handleFormChange={this._handleUserFormChange}
         handleFormSubmit={this._handleFormSubmit}
+        isFormValid={this.state.isFormValid}
         isUpdatingUser={this.props.user.id ? true : false}
         user={form_fields.user}
     />
@@ -223,6 +224,7 @@ class UserAccount extends Component {
             currentStep,
             handleFormChange,
             handleFormSubmit,
+            isFormValid,
             isUpdatingUser,
             user,
         } = this.props;
@@ -275,20 +277,20 @@ class UserAccount extends Component {
                         />
                         <View style={{flex: 1, paddingBottom: AppSizes.padding,}}>
                             <Button
-                                backgroundColor={this.state.isAboutFormValid && this.state.isInfoFormValid ? AppColors.zeplin.yellow : AppColors.white}
+                                backgroundColor={this.state.isAboutFormValid && this.state.isInfoFormValid && isFormValid ? AppColors.zeplin.yellow : AppColors.white}
                                 buttonStyle={{alignSelf: 'center', width: '75%',}}
                                 containerViewStyle={{flex: 1, justifyContent: 'flex-end', marginLeft: 0, marginRight: 10, width: '100%',}}
-                                color={this.state.isAboutFormValid && this.state.isInfoFormValid ? AppColors.white : AppColors.zeplin.light}
+                                color={this.state.isAboutFormValid && this.state.isInfoFormValid && isFormValid ? AppColors.white : AppColors.zeplin.light}
                                 fontFamily={AppStyles.robotoBold.fontFamily}
                                 fontWeight={AppStyles.robotoBold.fontWeight}
                                 leftIcon={{
-                                    color: this.state.isAboutFormValid && this.state.isInfoFormValid ? AppColors.zeplin.yellow : AppColors.white,
+                                    color: this.state.isAboutFormValid && this.state.isInfoFormValid && isFormValid ? AppColors.zeplin.yellow : AppColors.white,
                                     name:  'chevron-right',
                                     size:  AppFonts.scaleFont(24),
                                     style: {flex: 1,},
                                 }}
-                                outlined={this.state.isAboutFormValid && this.state.isInfoFormValid ? false : true}
-                                onPress={() => this.state.isAboutFormValid && this.state.isInfoFormValid ? handleFormSubmit() : null}
+                                outlined={this.state.isAboutFormValid && this.state.isInfoFormValid && isFormValid ? false : true}
+                                onPress={() => this.state.isAboutFormValid && this.state.isInfoFormValid && isFormValid ? handleFormSubmit() : null}
                                 raised={false}
                                 rightIcon={{
                                     color: AppColors.white,
@@ -315,6 +317,7 @@ UserAccount.propTypes = {
         PropTypes.string,
     ]),
     handleFormChange: PropTypes.func.isRequired,
+    isFormValid:      PropTypes.bool.isRequired,
     isUpdatingUser:   PropTypes.bool.isRequired,
     user:             PropTypes.object.isRequired,
 };
