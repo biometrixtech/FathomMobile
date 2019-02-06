@@ -768,7 +768,7 @@ class ReadinessSurvey extends Component {
 
                     <ScrollView
                         bounces={false}
-                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
+                        contentContainerStyle={{flexGrow: 1,}}
                         nestedScrollEnabled={true}
                         overScrollMode={'never'}
                         ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
@@ -776,30 +776,34 @@ class ReadinessSurvey extends Component {
                         { pageIndex === 7 &&
                             <View style={{flex: 1,}}>
                                 <ProgressPill currentStep={3} totalSteps={3} />
-                                <Spacer size={20} />
-                                { _.map(newSoreBodyParts, (bodyPart, i) =>
-                                    <View key={i} onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}>
-                                        <SoreBodyPart
-                                            bodyPart={bodyPart}
-                                            bodyPartSide={bodyPart.side}
-                                            firstTimeExperience={user.first_time_experience}
-                                            handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                                handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
-                                                if(shouldScroll && newSoreBodyParts.length !== (i + 1) && (newSoreBodyParts.length - 1) !== (i + 1)) {
-                                                    this._scrollTo(this.myPrevSorenessComponents[i + 1], this.scrollViewPrevSorenessRef);
-                                                } else if(shouldScroll) {
-                                                    this._scrollToBottom(this.scrollViewPrevSorenessRef);
-                                                }
-                                                this._checkNextStep(7);
-                                            }}
-                                            handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
-                                            isPrevSoreness={true}
-                                            surveyObject={dailyReadiness}
-                                            toggleSlideUpPanel={this._toggleSlideUpPanel}
-                                        />
-                                        <Spacer size={50} />
-                                    </View>
-                                )}
+                                <View style={{flexDirection: 'column', flexGrow: 1, paddingVertical: AppSizes.padding, justifyContent: 'center',}}>
+                                    { _.map(newSoreBodyParts, (bodyPart, i) =>
+                                        <View
+                                            key={i}
+                                            onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}
+                                            style={{paddingVertical: AppSizes.padding,}}
+                                        >
+                                            <SoreBodyPart
+                                                bodyPart={bodyPart}
+                                                bodyPartSide={bodyPart.side}
+                                                firstTimeExperience={user.first_time_experience}
+                                                handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                                    handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                                    if(shouldScroll && newSoreBodyParts.length !== (i + 1) && (newSoreBodyParts.length - 1) !== (i + 1)) {
+                                                        this._scrollTo(this.myPrevSorenessComponents[i + 1], this.scrollViewPrevSorenessRef);
+                                                    } else if(shouldScroll) {
+                                                        this._scrollToBottom(this.scrollViewPrevSorenessRef);
+                                                    }
+                                                    this._checkNextStep(7);
+                                                }}
+                                                handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                                isPrevSoreness={true}
+                                                surveyObject={dailyReadiness}
+                                                toggleSlideUpPanel={this._toggleSlideUpPanel}
+                                            />
+                                        </View>
+                                    )}
+                                </View>
                             </View>
                         }
                     </ScrollView>
