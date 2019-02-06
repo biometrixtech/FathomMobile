@@ -130,6 +130,7 @@ class SportScheduleBuilder extends Component {
             },
         };
         this._activityRPERef = {};
+        this._moreOptionsRef = {};
     }
 
     _nextStep = newStep => {
@@ -246,16 +247,16 @@ class SportScheduleBuilder extends Component {
                                 <SportBlock
                                     displayName={'More options'}
                                     filteredSession={{icon: 'add', iconType: 'material',}}
-                                    onPress={() => this.setState({ showMoreOptions: !this.state.showMoreOptions, })}
+                                    onPress={() => this.setState({ showMoreOptions: !this.state.showMoreOptions, }, () => scrollToArea(this._moreOptionsRef))}
                                 />
                             </View>
                             :
                             null
                         }
-                        { showMoreOptions ?
-                            <View>
-                                <Spacer size={30} />
-                                { _.map(cleanedActivitiesList, (activityItems, index) =>
+                        <View onLayout={event => {this._moreOptionsRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}}>
+                            <Spacer size={30} />
+                            { showMoreOptions ?
+                                _.map(cleanedActivitiesList, (activityItems, index) =>
                                     <View key={index}>
                                         <Text oswaldMedium style={{backgroundColor: AppColors.zeplin.lightSlate, color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}}>{index.toUpperCase()}</Text>
                                         {_.map(activityItems, (activity, i) =>
@@ -279,11 +280,11 @@ class SportScheduleBuilder extends Component {
                                             </TouchableOpacity>
                                         )}
                                     </View>
-                                )}
-                            </View>
-                            :
-                            null
-                        }
+                                )
+                                :
+                                null
+                            }
+                        </View>
                     </View>
                     : step === 1 ?
                         <View>
