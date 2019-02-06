@@ -5,6 +5,7 @@
         handleAreaOfSorenessClick={(body, isAllGood) => handleAreaOfSorenessClick(body, true, isAllGood)}
         handleFormChange={handleFormChange}
         handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+        headerTitle={`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' new '}pain or soreness?`}
         ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
         scrollToArea={this._scrollToArea}
         soreBodyParts={soreBodyParts}
@@ -62,6 +63,7 @@ class AreasOfSoreness extends Component {
             handleAreaOfSorenessClick,
             handleFormChange,
             handleUpdateFirstTimeExperience,
+            headerTitle,
             scrollToArea,
             soreBodyParts,
             soreBodyPartsState,
@@ -71,8 +73,12 @@ class AreasOfSoreness extends Component {
         } = this.props;
         let { areaOfSorenessClicked, groupedNewBodyPartMap, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState);
         return(
-            <View>
-                <Spacer size={20} />
+            <View style={{flex: 1,}}>
+                <Spacer size={AppSizes.padding} />
+                <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                    {headerTitle}
+                </Text>
+                <Spacer size={AppSizes.padding} />
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
                     <TouchableOpacity
                         onPress={() =>
@@ -97,7 +103,7 @@ class AreasOfSoreness extends Component {
                             {'NO'}
                         </Text>
                     </TouchableOpacity>
-                    <View style={{backgroundColor: 'red', width: AppSizes.padding,}} />
+                    <Spacer size={AppSizes.padding} />
                     <TouchableOpacity
                         onPress={() => {
                             this.setState({
@@ -123,10 +129,8 @@ class AreasOfSoreness extends Component {
                         </Text>
                     </TouchableOpacity>
                 </View>
-                <Spacer size={30} />
-                <View
-                    onLayout={event => {this._soreBodyPartRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}}
-                >
+                <Spacer size={AppSizes.paddingLrg} />
+                <View style={{backgroundColor: 'red',}} onLayout={event => {this._soreBodyPartRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}} >
                     { this.state.showWholeArea ?
                         _.map(groupedNewBodyPartMap, (object, key) => {
                             let bodyPartMap = _.orderBy(object, ['order'], ['asc']);
@@ -144,7 +148,7 @@ class AreasOfSoreness extends Component {
                                     >
                                         {key.length > 0 ? key.toUpperCase() : 'OTHER'}
                                     </Text>
-                                    <Spacer size={5} />
+                                    <Spacer size={AppSizes.paddingXSml} />
                                     <View style={[AppStyles.row, AppStyles.containerCentered, {flexWrap: 'wrap'}]}>
                                         {_.map(bodyPartMap, (body, index) => {
                                             let areasOfSorenessBodyPart = PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, body, soreBodyParts);
@@ -180,6 +184,7 @@ class AreasOfSoreness extends Component {
                         null
                     }
                 </View>
+                <Spacer size={AppSizes.paddingSml} />
             </View>
         )
     }
@@ -188,6 +193,7 @@ class AreasOfSoreness extends Component {
 AreasOfSoreness.propTypes = {
     handleAreaOfSorenessClick: PropTypes.func.isRequired,
     handleFormChange:          PropTypes.func.isRequired,
+    headerTitle:               PropTypes.string.isRequired,
     soreBodyParts:             PropTypes.object.isRequired,
     soreBodyPartsState:        PropTypes.array.isRequired,
     surveyObject:              PropTypes.object,
