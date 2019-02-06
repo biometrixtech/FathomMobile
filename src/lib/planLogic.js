@@ -779,7 +779,10 @@ const PlanLogic = {
     handleExercisesRenderLogic: (exerciseList, selectedExercise) => {
         const cleanedExerciseList = exerciseList.cleanedExerciseList;
         /*eslint dot-notation: 0*/
-        let flatListExercises = _.concat(cleanedExerciseList['FOAM ROLL'], cleanedExerciseList['STRETCH'], cleanedExerciseList['ACTIVATE']);
+        let foamRollExercises = cleanedExerciseList['FOAM ROLL'] ? cleanedExerciseList['FOAM ROLL'] : [];
+        let stretchExercises = cleanedExerciseList['STRETCH'] ? cleanedExerciseList['STRETCH'] : [];
+        let activateExercises = cleanedExerciseList['ACTIVATE'] ? cleanedExerciseList['ACTIVATE'] : [];
+        let flatListExercises = _.concat(foamRollExercises, stretchExercises, activateExercises);
         let availableSectionsCount = 0;
         let firstItemIndex = _.findIndex(flatListExercises, o => o.library_id+'-'+o.set_number === selectedExercise.library_id+'-'+selectedExercise.set_number);
         _.map(exerciseList.cleanedExerciseList, (exerciseArray, index) => {
