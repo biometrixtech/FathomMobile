@@ -257,7 +257,7 @@ class SportScheduleBuilder extends Component {
                                 <Spacer size={30} />
                                 { _.map(cleanedActivitiesList, (activityItems, index) =>
                                     <View key={index}>
-                                        <Text robotoMedium style={{backgroundColor: AppColors.zeplin.lightSlate, color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}}>{index}</Text>
+                                        <Text oswaldMedium style={{backgroundColor: AppColors.zeplin.lightSlate, color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}}>{index.toUpperCase()}</Text>
                                         {_.map(activityItems, (activity, i) =>
                                             <TouchableOpacity
                                                 key={i}
@@ -275,7 +275,7 @@ class SportScheduleBuilder extends Component {
                                                     source={activity.imagePath}
                                                     style={{height: 25, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.seaBlue, width: 25,}}
                                                 />
-                                                <Text oswaldMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15),}}>{activity.label}</Text>
+                                                <Text robotoMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15),}}>{activity.label}</Text>
                                             </TouchableOpacity>
                                         )}
                                     </View>
