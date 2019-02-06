@@ -293,11 +293,9 @@ const PlanLogic = {
             let doesItInclude = _.filter(combinedSoreBodyParts, a => a.body_part === o.body_part && a.side === o.side);
             return doesItInclude.length > 0;
         });
-        let areQuestionsValid = postSession.RPE >= 0 && postSession.event_date ? true : false;
+        let areQuestionsValid = postSession.RPE > 0 && postSession.event_date ? true : false;
         let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length === filteredSoreBodyParts.length : true;
-        let areAreasOfSorenessValid = (
-            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0
-        );
+        let areAreasOfSorenessValid = _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0;
         let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;
         let isFormValidItems = {
             areAreasOfSorenessValid,
@@ -333,9 +331,7 @@ const PlanLogic = {
         });
         let areQuestionsValid = dailyReadiness.readiness > 0 && dailyReadiness.sleep_quality > 0;
         let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length === filteredSoreBodyParts.length : true;
-        let areAreasOfSorenessValid = (
-            _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0
-        );
+        let areAreasOfSorenessValid = _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0;
         let foundSport = _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name);
         let selectedSportPositions = dailyReadiness.current_sport_name !== null && foundSport ? foundSport.positions : [];
         const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;

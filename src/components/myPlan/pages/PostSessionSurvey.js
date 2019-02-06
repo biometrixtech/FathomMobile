@@ -63,6 +63,7 @@ class PostSessionSurvey extends Component {
     }
 
     _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid) => {
+        console.log('_renderNextPage', currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked);
         let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid);
         if(isValid) {
             this.pages.scrollToPage(pageNum);
@@ -76,8 +77,9 @@ class PostSessionSurvey extends Component {
             soreBodyParts,
         } = this.props;
         let { isFormValidItems, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
+        let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, postSession.soreness);
         _.delay(() => {
-            this._renderNextPage(currentStep, isFormValidItems, newSoreBodyParts, false, isHealthKitValid);
+            this._renderNextPage(currentStep, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid);
         }, 500);
     }
 
@@ -241,10 +243,6 @@ class PostSessionSurvey extends Component {
                     >
                         <View style={{flex: 1,}}>
                             <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
-                            <Spacer size={20} />
-                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                {`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' new '}pain or soreness?`}
-                            </Text>
                             <AreasOfSoreness
                                 handleAreaOfSorenessClick={(body, isAllGood) => {
                                     if(!isCloseToBottom) {
@@ -254,6 +252,7 @@ class PostSessionSurvey extends Component {
                                 }}
                                 handleFormChange={handleFormChange}
                                 handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                headerTitle={`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' new '}pain or soreness?`}
                                 ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
                                 scrollToArea={xyObject => {
                                     this._scrollTo(xyObject, this.myAreasOfSorenessComponent);
@@ -265,7 +264,6 @@ class PostSessionSurvey extends Component {
                                 toggleSlideUpPanel={this._toggleSlideUpPanel}
                                 user={user}
                             />
-                            <Spacer size={10} />
                         </View>
                         <View style={{flex: 1, justifyContent: 'flex-end',}}>
                             <BackNextButtons

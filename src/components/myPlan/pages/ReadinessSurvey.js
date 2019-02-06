@@ -806,10 +806,6 @@ class ReadinessSurvey extends Component {
                     >
                         <View style={{flex: 1,}}>
                             <ProgressPill currentStep={3} totalSteps={3} />
-                            <Spacer size={20} />
-                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                                {`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' new '}pain or soreness?`}
-                            </Text>
                             <AreasOfSoreness
                                 handleAreaOfSorenessClick={(body, isAllGood) => {
                                     if(!isCloseToBottom) {
@@ -819,6 +815,7 @@ class ReadinessSurvey extends Component {
                                 }}
                                 handleFormChange={handleFormChange}
                                 handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                headerTitle={`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' new '}pain or soreness?`}
                                 ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
                                 scrollToArea={xyObject => {
                                     this._scrollTo(xyObject, this.myAreasOfSorenessComponent);
@@ -830,7 +827,6 @@ class ReadinessSurvey extends Component {
                                 toggleSlideUpPanel={this._toggleSlideUpPanel}
                                 user={user}
                             />
-                            <Spacer size={10} />
                         </View>
                         <View style={{flex: 1, justifyContent: 'flex-end',}}>
                             <BackNextButtons
