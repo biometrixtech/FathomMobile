@@ -36,14 +36,14 @@ const styles = StyleSheet.create({
     addSubmitWrapper: {
         flex:          1,
         flexDirection: 'row',
-        paddingBottom: AppSizes.paddingMed,
+        paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed,
     },
     backNextWrapper: {
         alignItems:        'center',
         flexDirection:     'row',
         justifyContent:    'space-between',
         paddingBottom:     AppSizes.paddingMed,
-        paddingHorizontal: AppSizes.paddingMed,
+        paddingHorizontal: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed,
     },
     submitBtn: {
         borderRadius:   5,

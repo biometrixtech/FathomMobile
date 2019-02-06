@@ -13,7 +13,12 @@ import { Dimensions, Platform } from 'react-native';
 const { width, height } = Dimensions.get('window');
 const screenHeight = width < height ? height : width;
 const screenWidth = width < height ? width : height;
-const isIphoneX = Platform.OS === 'ios' && (height > 800 || width > 800) ? true : false
+const isIphoneX = (
+    Platform.OS === 'ios' &&
+    !Platform.isPad &&
+    !Platform.isTVOS &&
+    (height > 800 || width > 800)
+);
 
 export default {
     // Window Dimensions
@@ -43,6 +48,8 @@ export default {
     navbarHeight:    Platform.OS === 'ios' ? 64 : 54, // header with title and nav bar buttons
     statusBarHeight: isIphoneX ? 44 : Platform.OS === 'ios' ? 20 : 0,  // time and icon indicators
     tabbarHeight:    51,
+
+    iphoneXBottomBarPadding: isIphoneX ? 30 : Platform.OS === 'ios' ? 20 : 0,
 
     padding:     20,
     paddingLrg:  30,
