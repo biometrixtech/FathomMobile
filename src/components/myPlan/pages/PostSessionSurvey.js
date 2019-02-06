@@ -63,7 +63,6 @@ class PostSessionSurvey extends Component {
     }
 
     _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid) => {
-        console.log('_renderNextPage', currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked);
         let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid);
         if(isValid) {
             this.pages.scrollToPage(pageNum);
