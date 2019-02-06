@@ -70,6 +70,17 @@ class PostSessionSurvey extends Component {
         }
     }
 
+    _checkNextStep = (currentStep, isHealthKitValid) => {
+        const {
+            postSession,
+            soreBodyParts,
+        } = this.props;
+        let { isFormValidItems, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
+        _.delay(() => {
+            this._renderNextPage(currentStep, isFormValidItems, newSoreBodyParts, false, isHealthKitValid);
+        }, 500);
+    }
+
     _scrollTo = (myComponentsLocation, scrollViewRef) => {
         if(myComponentsLocation) {
             _.delay(() => {
@@ -111,17 +122,6 @@ class PostSessionSurvey extends Component {
             isActionButtonVisible,
             isCloseToBottom,
         });
-    }
-
-    _checkNextStep = (currentStep, isHealthKitValid) => {
-        const {
-            postSession,
-            soreBodyParts,
-        } = this.props;
-        let { isFormValidItems, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
-        _.delay(() => {
-            this._renderNextPage(currentStep, isFormValidItems, newSoreBodyParts, false, isHealthKitValid);
-        }, 500);
     }
 
     render = () => {

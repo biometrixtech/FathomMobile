@@ -643,7 +643,6 @@ const PlanLogic = {
             pageNum = (pageState.pageIndex + 1);
             isValid = true; // can only click if form is valid
         } else if(currentPage === 5) { // 5. train later?
-            // pageNum = isSecondFunctionalStrength ? 6 : (newSoreBodyParts && newSoreBodyParts.length > 0) ? 7 : 8;
             pageNum = isSecondFunctionalStrength ?
                 (pageState.pageIndex + 1)
                 : (newSoreBodyParts && newSoreBodyParts.length > 0) ?
@@ -652,89 +651,18 @@ const PlanLogic = {
                     (pageState.pageIndex + 3);
             isValid = isFormValidItems.willTrainLaterValid;
         } else if(currentPage === 6) { // 6. second fs
-            // pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 7 : 8;
             pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? (pageState.pageIndex + 1) : (pageState.pageIndex + 2);
             isValid = isFormValidItems.isSecondFunctionalStrengthValid;
         } else if(currentPage === 7) { // 7. Follow Up Pain & Soreness
-            // pageNum = 8;
             pageNum = (pageState.pageIndex + 1);
             isValid = isFormValidItems.isPrevSorenessValid;
         } else if(currentPage === 8) { // 8. Areas of Soreness
-            // pageNum = 9;
             pageNum = (pageState.pageIndex + 1);
             isValid = isFormValidItems.selectAreasOfSorenessValid;
         } else if(currentPage === 9) { // 9. Areas of Soreness Selected
-            // pageNum = 9;
             pageNum = (pageState.pageIndex);
             isValid = isFormValidItems.areAreasOfSorenessValid;
         }
-        /*if(currentPage === 0) { // 0. GOOD [TIME OF DAY], MAZEN!
-            pageNum = isFirstFunctionalStrength ? 1 : 2;
-            isValid = true;
-        } else if(currentPage === 1) { // 1. first FS
-            pageNum = isBackBtn ? 0 : 2;
-            isValid = isFormValidItems.isFunctionalStrengthValid;
-        } else if(currentPage === 2) { // 2. questions
-            pageNum = isBackBtn && isFirstFunctionalStrength ? 1 : isBackBtn && !isFirstFunctionalStrength ? 0 : 3;
-            isValid = isFormValidItems.areQuestionsValid;
-        } else if(currentPage === 3) { // 3. trained already?
-            if(isBackBtn) {
-                pageNum = 2;
-            } else {
-                pageNum = dailyReadiness.already_trained_number === false && (newSoreBodyParts && newSoreBodyParts.length === 0) ?
-                    (pageState.pageIndex + 3)
-                    : dailyReadiness.already_trained_number === false && (newSoreBodyParts && newSoreBodyParts.length > 0) ?
-                        (pageState.pageIndex + 2)
-                        :
-                        (pageState.pageIndex + 1);
-            }
-            isValid = isFormValidItems.isTrainedTodayValid;
-        } else if(currentPage === 4) { // 4. SportScheduleBuilder & RPE
-            if(isBackBtn) {
-                pageNum = pageState.pageIndex - 1;
-            } else {
-                pageNum = (newSoreBodyParts && newSoreBodyParts.length === 0) && (sportBuilderRPEIndex + 1) === dailyReadiness.sessions.length ?
-                    (pageState.pageIndex + 2)
-                    :
-                    (pageState.pageIndex + 1);
-            }
-            isValid = true; // can only click if form is valid
-        } else if(currentPage === 5) { // 5. previous soreness
-            if(isBackBtn) {
-                pageNum = dailyReadiness.sessions.length === 0 ?
-                    (pageState.pageIndex - 2)
-                    :
-                    (pageState.pageIndex - 1);
-            } else {
-                pageNum = pageState.pageIndex + 1;
-            }
-            isValid = isFormValidItems.isPrevSorenessValid;
-        } else if(currentPage === 6) { // 6. areas of soreness - body parts
-            if(isBackBtn) {
-                pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ?
-                    (pageState.pageIndex - 1)
-                    : (newSoreBodyParts && newSoreBodyParts.length === 0) && dailyReadiness.sessions.length === 0 ?
-                        (pageState.pageIndex - 3)
-                        :
-                        (pageState.pageIndex - 2);
-            } else {
-                pageNum = areaOfSorenessClicked.length > 0 ? (pageState.pageIndex + 1) : (pageState.pageIndex + 2);
-            }
-            isValid = isFormValidItems.selectAreasOfSorenessValid;
-        } else if(currentPage === 7) { // 7. areas of soreness - selected body parts
-            pageNum = isBackBtn ? (pageState.pageIndex - 1) : (pageState.pageIndex + 1);
-            isValid = isFormValidItems.areAreasOfSorenessValid;
-        } else if(currentPage === 8) { // 8. train later today?
-            if(isBackBtn) {
-                pageNum = areaOfSorenessClicked.length > 0 ? (pageState.pageIndex - 1) : (pageState.pageIndex - 2);
-            } else {
-                pageNum = pageState.pageIndex + 1;
-            }
-            isValid = isFormValidItems.willTrainLaterValid;
-        } else if(currentPage === 9) { // 9. second FS
-            pageNum = isBackBtn ? (pageState.pageIndex - 1) : pageState.pageIndex;
-            isValid = isFormValidItems.isSecondFunctionalStrengthValid;
-        }*/
         return {
             isValid,
             pageNum,

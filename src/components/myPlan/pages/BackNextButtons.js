@@ -31,30 +31,6 @@ const styles = StyleSheet.create({
     },
 });
 
-// <Button
-//     backgroundColor={AppColors.white}
-//     // buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {borderColor: AppColors.zeplin.yellow, borderWidth: 1, justifyContent: 'center',}]}
-//     color={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
-//     // containerViewStyle={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
-//     containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 0,}}
-//     disabled={!isValid}
-//     disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1,}}
-//     fontFamily={AppStyles.robotoMedium.fontFamily}
-//     fontWeight={AppStyles.robotoMedium.fontWeight}
-//     leftIcon={{
-//         color: isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey,
-//         name:  'add',
-//         size:  AppFonts.scaleFont(18),
-//         style: {backgroundColor: 'green',},
-//     }}
-//     outlined
-//     onPress={() => isValid && onBackClick ? onBackClick() : null}
-//     raised={false}
-//     textColor={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
-//     // textStyle={{fontSize: AppFonts.scaleFont(14), textAlign: 'center', width: '100%',}}
-//     textStyle={{backgroundColor: 'red', flex: 9, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}
-//     title={'Add another session'}
-// />
 /* Component ==================================================================== */
 const BackNextButtons = ({
     handleFormSubmit,
