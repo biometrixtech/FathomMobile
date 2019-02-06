@@ -14,7 +14,6 @@ const Start = ({
     expires,
     finalizeLogin,
     getMyPlan,
-    getSoreBodyParts,
     getUser,
     jwt,
     lastOpened,
@@ -36,7 +35,6 @@ const Start = ({
         expires={expires}
         finalizeLogin={finalizeLogin}
         getMyPlan={getMyPlan}
-        getSoreBodyParts={getSoreBodyParts}
         getUser={getUser}
         jwt={jwt}
         lastOpened={lastOpened}
@@ -61,7 +59,6 @@ Start.propTypes = {
     expires:              PropTypes.string,
     finalizeLogin:        PropTypes.func.isRequired,
     getMyPlan:            PropTypes.func.isRequired,
-    getSoreBodyParts:     PropTypes.func.isRequired,
     getUser:              PropTypes.func.isRequired,
     jwt:                  PropTypes.string,
     lastOpened:           PropTypes.object.isRequired,
@@ -103,14 +100,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    authorizeUser:    init.authorizeUser,
-    finalizeLogin:    init.finalizeLogin,
-    getMyPlan:        PlanActions.getMyPlan,
-    getSoreBodyParts: PlanActions.getSoreBodyParts,
-    getUser:          UserActions.getUser,
-    onFormSubmit:     init.startLogin,
-    registerDevice:   init.registerDevice,
-    setAppLogs:       PlanActions.setAppLogs,
+    authorizeUser:  init.authorizeUser,
+    finalizeLogin:  init.finalizeLogin,
+    getMyPlan:      PlanActions.getMyPlan,
+    getUser:        UserActions.getUser,
+    onFormSubmit:   init.startLogin,
+    registerDevice: init.registerDevice,
+    setAppLogs:     PlanActions.setAppLogs,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Start);

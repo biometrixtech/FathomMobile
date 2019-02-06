@@ -19,7 +19,6 @@ const Login = ({
     environment,
     finalizeLogin,
     getMyPlan,
-    getSoreBodyParts,
     lastOpened,
     network,
     onFormSubmit,
@@ -39,7 +38,6 @@ const Login = ({
         environment={environment}
         finalizeLogin={finalizeLogin}
         getMyPlan={getMyPlan}
-        getSoreBodyParts={getSoreBodyParts}
         lastOpened={lastOpened}
         network={network}
         onFormSubmit={onFormSubmit}
@@ -62,7 +60,6 @@ Login.propTypes = {
     environment:          PropTypes.string,
     finalizeLogin:        PropTypes.func.isRequired,
     getMyPlan:            PropTypes.func.isRequired,
-    getSoreBodyParts:     PropTypes.func.isRequired,
     lastOpened:           PropTypes.object.isRequired,
     network:              PropTypes.object.isRequired,
     onFormSubmit:         PropTypes.func.isRequired,
@@ -99,14 +96,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    authorizeUser:    init.authorizeUser,
-    finalizeLogin:    init.finalizeLogin,
-    getMyPlan:        PlanActions.getMyPlan,
-    getSoreBodyParts: PlanActions.getSoreBodyParts,
-    onFormSubmit:     init.startLogin,
-    registerDevice:   init.registerDevice,
-    setAppLogs:       PlanActions.setAppLogs,
-    setEnvironment:   init.setEnvironment,
+    authorizeUser:  init.authorizeUser,
+    finalizeLogin:  init.finalizeLogin,
+    getMyPlan:      PlanActions.getMyPlan,
+    onFormSubmit:   init.startLogin,
+    registerDevice: init.registerDevice,
+    setAppLogs:     PlanActions.setAppLogs,
+    setEnvironment: init.setEnvironment,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

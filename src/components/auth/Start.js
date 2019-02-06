@@ -45,7 +45,6 @@ class Start extends Component {
         expires:              PropTypes.string,
         finalizeLogin:        PropTypes.func.isRequired,
         getMyPlan:            PropTypes.func.isRequired,
-        getSoreBodyParts:     PropTypes.func.isRequired,
         getUser:              PropTypes.func.isRequired,
         jwt:                  PropTypes.string,
         lastOpened:           PropTypes.object.isRequired,

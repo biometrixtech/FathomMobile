@@ -56,18 +56,17 @@ class Onboarding extends Component {
     static componentName = 'Onboarding';
 
     static propTypes = {
-        authorizeUser:    PropTypes.func.isRequired,
-        createUser:       PropTypes.func.isRequired,
-        finalizeLogin:    PropTypes.func.isRequired,
-        getMyPlan:        PropTypes.func.isRequired,
-        getSoreBodyParts: PropTypes.func.isRequired,
-        lastOpened:       PropTypes.object.isRequired,
-        network:          PropTypes.object.isRequired,
-        onFormSubmit:     PropTypes.func.isRequired,
-        registerDevice:   PropTypes.func.isRequired,
-        setAppLogs:       PropTypes.func.isRequired,
-        updateUser:       PropTypes.func.isRequired,
-        user:             PropTypes.object.isRequired,
+        authorizeUser:  PropTypes.func.isRequired,
+        createUser:     PropTypes.func.isRequired,
+        finalizeLogin:  PropTypes.func.isRequired,
+        getMyPlan:      PropTypes.func.isRequired,
+        lastOpened:     PropTypes.object.isRequired,
+        network:        PropTypes.object.isRequired,
+        onFormSubmit:   PropTypes.func.isRequired,
+        registerDevice: PropTypes.func.isRequired,
+        setAppLogs:     PropTypes.func.isRequired,
+        updateUser:     PropTypes.func.isRequired,
+        user:           PropTypes.object.isRequired,
     }
 
     static defaultProps = {}

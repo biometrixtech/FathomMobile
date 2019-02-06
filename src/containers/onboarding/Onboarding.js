@@ -10,7 +10,6 @@ const Onboarding = ({
     createUser,
     finalizeLogin,
     getMyPlan,
-    getSoreBodyParts,
     getUser,
     lastOpened,
     network,
@@ -25,7 +24,6 @@ const Onboarding = ({
         createUser={createUser}
         finalizeLogin={finalizeLogin}
         getMyPlan={getMyPlan}
-        getSoreBodyParts={getSoreBodyParts}
         getUser={getUser}
         lastOpened={lastOpened}
         network={network}
@@ -38,19 +36,18 @@ const Onboarding = ({
 );
 
 Onboarding.propTypes = {
-    Layout:           PropTypes.func.isRequired,
-    authorizeUser:    PropTypes.func.isRequired,
-    createUser:       PropTypes.func.isRequired,
-    finalizeLogin:    PropTypes.func.isRequired,
-    getMyPlan:        PropTypes.func.isRequired,
-    getSoreBodyParts: PropTypes.func.isRequired,
-    lastOpened:       PropTypes.object.isRequired,
-    network:          PropTypes.object.isRequired,
-    onFormSubmit:     PropTypes.func.isRequired,
-    registerDevice:   PropTypes.func.isRequired,
-    setAppLogs:       PropTypes.func.isRequired,
-    updateUser:       PropTypes.func.isRequired,
-    user:             PropTypes.object.isRequired,
+    Layout:         PropTypes.func.isRequired,
+    authorizeUser:  PropTypes.func.isRequired,
+    createUser:     PropTypes.func.isRequired,
+    finalizeLogin:  PropTypes.func.isRequired,
+    getMyPlan:      PropTypes.func.isRequired,
+    lastOpened:     PropTypes.object.isRequired,
+    network:        PropTypes.object.isRequired,
+    onFormSubmit:   PropTypes.func.isRequired,
+    registerDevice: PropTypes.func.isRequired,
+    setAppLogs:     PropTypes.func.isRequired,
+    updateUser:     PropTypes.func.isRequired,
+    user:           PropTypes.object.isRequired,
 };
 
 Onboarding.defaultProps = {};
@@ -62,15 +59,14 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    authorizeUser:    InitActions.authorizeUser,
-    createUser:       UserActions.createUser,
-    finalizeLogin:    InitActions.finalizeLogin,
-    getMyPlan:        PlanActions.getMyPlan,
-    getSoreBodyParts: PlanActions.getSoreBodyParts,
-    onFormSubmit:     InitActions.startLogin,
-    registerDevice:   InitActions.registerDevice,
-    setAppLogs:       PlanActions.setAppLogs,
-    updateUser:       UserActions.updateUser,
+    authorizeUser:  InitActions.authorizeUser,
+    createUser:     UserActions.createUser,
+    finalizeLogin:  InitActions.finalizeLogin,
+    getMyPlan:      PlanActions.getMyPlan,
+    onFormSubmit:   InitActions.startLogin,
+    registerDevice: InitActions.registerDevice,
+    setAppLogs:     PlanActions.setAppLogs,
+    updateUser:     UserActions.updateUser,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Onboarding);
