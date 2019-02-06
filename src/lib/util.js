@@ -344,7 +344,7 @@ const UTIL = {
             daysAgo:  moment().subtract(numberOfDaysAgo, 'd').set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString(),
             lastSync: lastSyncDate ? moment(lastSyncDate).toISOString() : null,
             now:      moment().toISOString(),
-            syncDate: lastSyncDate && moment().diff(moment(lastSyncDate.split('T')[0]), 'days') > 0 ? moment(lastSyncDate).set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString() : null,
+            syncDate: lastSyncDate ? moment(lastSyncDate).set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString() : null,
             today3AM: moment().set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString(),
         };
     },
@@ -424,12 +424,15 @@ const UTIL = {
                             }
                         });
                 } else {
+                    // remove already synced workouts
+                    let healthDataState = store.getState().plan.healthData.workouts;
+                    let updatedCleanedWorkoutValues = _.flatten(_.map(healthDataState, o => _.filter(cleanedWorkoutValues, item => o.sport_name !== item.sport_name && o.end_date !== item.end_date && o.event_date !== item.event_date) ));
                     // store in reducer
                     store.dispatch({
                         type:               DispatchActions.SET_HEALTH_DATA,
                         ignoredWorkoutData: cleanedIgnoredWorkoutValues,
                         sleepData:          filteredSleepValues,
-                        workoutData:        cleanedWorkoutValues,
+                        workoutData:        updatedCleanedWorkoutValues,
                     });
                     if(callback) {
                         return callback();

@@ -164,7 +164,6 @@ class PostSessionSurvey extends Component {
                             <HealthKitWorkouts
                                 handleHealthDataFormChange={handleHealthDataFormChange}
                                 handleNextStep={isHealthKitValid => this._checkNextStep(0, isHealthKitValid)}
-                                handleHealthDataFormChange
                                 handleToggleSurvey={handleTogglePostSessionSurvey}
                                 scrollToArea={xyObject => {
                                     this._scrollTo(xyObject, this.scrollViewSportBuilderRef);

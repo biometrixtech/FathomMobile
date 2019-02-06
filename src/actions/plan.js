@@ -103,6 +103,17 @@ const clearCompletedFSExercises = () => {
 };
 
 /**
+  * Clear HealthKit Workouts
+  */
+const clearHealthKitWorkouts = () => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.SET_HEALTH_DATA,
+        })
+    );
+};
+
+/**
   * Set Completed Exercise
   */
 const setCompletedExercises = exercise => {
@@ -456,6 +467,7 @@ const postHealthData = (payload) => {
 export default {
     clearCompletedExercises,
     clearCompletedFSExercises,
+    clearHealthKitWorkouts,
     clearMyPlanData,
     getCoachesDashboardData,
     getMyPlan,

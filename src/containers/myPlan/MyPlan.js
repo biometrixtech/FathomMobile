@@ -9,6 +9,7 @@ const MyPlan = ({
     ble,
     clearCompletedExercises,
     clearCompletedFSExercises,
+    clearHealthKitWorkouts,
     getMyPlan,
     getSoreBodyParts,
     healthData,
@@ -35,6 +36,7 @@ const MyPlan = ({
         ble={ble}
         clearCompletedExercises={clearCompletedExercises}
         clearCompletedFSExercises={clearCompletedFSExercises}
+        clearHealthKitWorkouts={clearHealthKitWorkouts}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
         healthData={healthData}
@@ -64,6 +66,7 @@ MyPlan.propTypes = {
     ble:                           PropTypes.object.isRequired,
     clearCompletedExercises:       PropTypes.func.isRequired,
     clearCompletedFSExercises:     PropTypes.func.isRequired,
+    clearHealthKitWorkouts:        PropTypes.func.isRequired,
     getMyPlan:                     PropTypes.func.isRequired,
     getSoreBodyParts:              PropTypes.func.isRequired,
     healthData:                    PropTypes.object.isRequired,
@@ -108,6 +111,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
     clearCompletedExercises:       PlanActions.clearCompletedExercises,
     clearCompletedFSExercises:     PlanActions.clearCompletedFSExercises,
+    clearHealthKitWorkouts:        PlanActions.clearHealthKitWorkouts,
     getMyPlan:                     PlanActions.getMyPlan,
     getSoreBodyParts:              PlanActions.getSoreBodyParts,
     markStartedFunctionalStrength: PlanActions.markStartedFunctionalStrength,

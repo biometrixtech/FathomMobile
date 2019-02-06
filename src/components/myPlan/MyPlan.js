@@ -102,6 +102,7 @@ class MyPlan extends Component {
         ble:                           PropTypes.object.isRequired,
         clearCompletedExercises:       PropTypes.func.isRequired,
         clearCompletedFSExercises:     PropTypes.func.isRequired,
+        clearHealthKitWorkouts:        PropTypes.func.isRequired,
         getSoreBodyParts:              PropTypes.func.isRequired,
         healthData:                    PropTypes.object.isRequired,
         lastOpened:                    PropTypes.object.isRequired,
@@ -365,7 +366,7 @@ class MyPlan extends Component {
             planObj.daily_readiness_survey_completed &&
             this.state.healthData.workouts &&
             this.state.healthData.workouts.length > 0
-        ) { // TODO: flesh out!
+        ) {
             this._goToScrollviewPage(1, () => {
                 this._togglePostSessionSurveyModal();
             });
@@ -393,7 +394,7 @@ class MyPlan extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
-        if(!_.isEqual(prevProps.healthData, this.props.healthData)) { // TODO: flesh out!
+        if(!_.isEqual(prevProps.healthData, this.props.healthData)) {
             this._goToScrollviewPage(1, () => {
                 this._togglePostSessionSurveyModal();
             });
@@ -510,7 +511,10 @@ class MyPlan extends Component {
         if(this.state.dailyReadiness.current_position === 0 || this.state.dailyReadiness.current_position > 0) {
             newDailyReadiness.current_position = this.state.dailyReadiness.current_position;
         }
-        newDailyReadiness.sessions = _.concat(this.state.healthData.workouts, this.state.dailyReadiness.sessions, this.state.healthData.ignoredWorkouts);
+        let healthDataWorkouts = this.state.healthData.workouts ? this.state.healthData.workouts : [];
+        let healthDataIgnoredWorkouts = this.state.healthData.ignoredWorkouts ? this.state.healthData.ignoredWorkouts : [];
+        let dailyReadinessSessions = this.state.dailyReadiness.sessions ? this.state.dailyReadiness.sessions : [];
+        newDailyReadiness.sessions = _.concat(healthDataWorkouts, dailyReadinessSessions, healthDataIgnoredWorkouts);
         newDailyReadiness.sleep_data = this.state.healthData.sleep;
         if(this.state.healthData.workouts.length > 0) {
             newDailyReadiness.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
@@ -536,7 +540,7 @@ class MyPlan extends Component {
         }, 500);
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
-                // TODO: clear health data?
+                this.props.clearHealthKitWorkouts();
                 this.props.clearCompletedExercises();
                 this.props.clearCompletedFSExercises();
             })
@@ -560,7 +564,9 @@ class MyPlan extends Component {
         };
         if(this.state.healthData.workouts.length > 0) {
             postSession.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
-            postSession.sessions = this.state.healthData.workouts;
+            let healthDataWorkouts = this.state.healthData.workouts ? this.state.healthData.workouts : [];
+            let healthDataIgnoredWorkouts = this.state.healthData.ignoredWorkouts ? this.state.healthData.ignoredWorkouts : [];
+            postSession.sessions = _.concat(healthDataIgnoredWorkouts, healthDataWorkouts);
             let lastNonDeletedIndex = _.findLastIndex(postSession.sessions, ['deleted', false]);
             postSession.sessions[lastNonDeletedIndex].post_session_survey = {
                 clear_candidates: _.filter(this.state.postSession.soreness, {isClearCandidate: true}),
@@ -602,6 +608,7 @@ class MyPlan extends Component {
         let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
+        console.log('postSession',postSession); // TODO: REMOVE ME
         _.delay(() => {
             this.setState(
                 {
@@ -624,7 +631,7 @@ class MyPlan extends Component {
         }, 500);
         this.props.postSessionSurvey(postSession)
             .then(response => {
-                // TODO: clear health data?
+                this.props.clearHealthKitWorkouts();
                 this.props.clearCompletedExercises();
             })
             .catch(error => {
