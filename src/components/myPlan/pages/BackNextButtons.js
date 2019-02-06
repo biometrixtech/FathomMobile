@@ -18,16 +18,39 @@ import { Platform, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
-import { Button, TabIcon, Text, } from '../../custom';
+import { TabIcon, Text, } from '../../custom';
+
+const addSubmitBtnWidth = ((AppSizes.screen.width - ((AppSizes.paddingSml * 2) + (AppSizes.paddingXSml * 2))) / 2);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    addBtn: {
+        backgroundColor: AppColors.white,
+        borderColor:     AppColors.zeplin.yellow,
+        borderRadius:    5,
+        borderWidth:     1,
+        marginLeft:      AppSizes.paddingSml,
+        marginRight:     AppSizes.paddingXSml,
+        width:           addSubmitBtnWidth,
+    },
+    addSubmitWrapper: {
+        flex:          1,
+        flexDirection: 'row',
+        paddingBottom: AppSizes.paddingMed,
+    },
     backNextWrapper: {
         alignItems:        'center',
         flexDirection:     'row',
         justifyContent:    'space-between',
         paddingBottom:     AppSizes.paddingMed,
         paddingHorizontal: AppSizes.paddingMed,
+    },
+    submitBtn: {
+        borderRadius:   5,
+        justifyContent: 'center',
+        marginLeft:     AppSizes.paddingXSml,
+        marginRight:    AppSizes.paddingSml,
+        width:          addSubmitBtnWidth,
     },
 });
 
@@ -42,17 +65,11 @@ const BackNextButtons = ({
     showSubmitBtn,
     submitBtnText,
 }) => (
-    <View style={[styles.backNextWrapper]}>
+    <View style={[showAddBtn && showSubmitBtn ? styles.addSubmitWrapper : styles.backNextWrapper,]}>
         { showAddBtn ?
             <TouchableHighlight
                 onPress={() => isValid && onBackClick ? onBackClick() : null}
-                style={{
-                    backgroundColor: AppColors.white,
-                    borderColor:     AppColors.zeplin.yellow,
-                    borderRadius:    5,
-                    borderWidth:     1,
-                    flex:            1,
-                }}
+                style={[AppStyles.paddingVerticalSml, styles.addBtn]}
                 underlayColor={AppColors.transparent}
             >
                 <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
@@ -60,16 +77,15 @@ const BackNextButtons = ({
                         color={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
                         icon={'add'}
                         size={AppFonts.scaleFont(18)}
-                        style={{paddingRight: AppSizes.paddingSml,}}
+                        style={{paddingRight: AppSizes.paddingMed,}}
                     />
                     <Text
                         robotoMedium
                         style={[
                             AppStyles.textCenterAligned,
                             {
-                                color:     AppColors.zeplin.yellow,
-                                fontSize:  AppFonts.scaleFont(14),
-                                textAlign: 'center',
+                                color:    AppColors.zeplin.yellow,
+                                fontSize: AppFonts.scaleFont(14),
                             }
                         ]}
                     >
@@ -104,21 +120,29 @@ const BackNextButtons = ({
                 <View style={{flex: 1,}} />
         }
         { showSubmitBtn ?
-            <Button
-                backgroundColor={isValid ? AppColors.zeplin.yellow : AppColors.white}
-                buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {justifyContent: 'center',}]}
-                color={isValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                containerViewStyle={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
-                disabled={!isValid}
-                disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1,}}
-                fontFamily={AppStyles.robotoMedium.fontFamily}
-                fontWeight={AppStyles.robotoMedium.fontWeight}
+            <TouchableHighlight
                 onPress={() => isValid && handleFormSubmit ? handleFormSubmit() : null}
-                raised={false}
-                textColor={isValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                textStyle={{fontSize: AppFonts.scaleFont(14), textAlign: 'center', width: '100%',}}
-                title={submitBtnText}
-            />
+                style={[
+                    AppStyles.paddingVerticalSml,
+                    styles.submitBtn,
+                    isValid ? {} : { borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, },
+                    { backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white, }
+                ]}
+                underlayColor={AppColors.transparent}
+            >
+                <Text
+                    robotoMedium
+                    style={[
+                        AppStyles.textCenterAligned,
+                        {
+                            color:    isValid ? AppColors.white : AppColors.zeplin.lightGrey,
+                            fontSize: AppFonts.scaleFont(14),
+                        }
+                    ]}
+                >
+                    {submitBtnText}
+                </Text>
+            </TouchableHighlight>
             :
             <TouchableHighlight
                 onPress={isValid ? onNextClick : null}
