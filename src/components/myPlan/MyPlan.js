@@ -510,7 +510,7 @@ class MyPlan extends Component {
         if(this.state.dailyReadiness.current_position === 0 || this.state.dailyReadiness.current_position > 0) {
             newDailyReadiness.current_position = this.state.dailyReadiness.current_position;
         }
-        newDailyReadiness.sessions = _.concat(this.state.healthData.workouts, this.state.dailyReadiness.sessions, this.state.healthData.hiddenWorkouts);
+        newDailyReadiness.sessions = _.concat(this.state.healthData.workouts, this.state.dailyReadiness.sessions, this.state.healthData.ignoredWorkouts);
         newDailyReadiness.sleep_data = this.state.healthData.sleep;
         if(this.state.healthData.workouts.length > 0) {
             newDailyReadiness.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;

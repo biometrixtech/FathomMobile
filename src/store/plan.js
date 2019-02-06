@@ -74,7 +74,7 @@ export default {
         sessions_planned:       true,
         training_sessions:      [],
     }],
-    healthData:      { hiddenWorkouts: [], sleep: [], workouts: [], },
+    healthData:      { ignoredWorkouts: [], sleep: [], workouts: [], },
     lastOpened:      { date: '', userId: '' },
     postSession:     {},
     soreBodyParts:   {},

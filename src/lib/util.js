@@ -405,7 +405,7 @@ const UTIL = {
             .then(values => {
                 // [0] = workoutValues, [1] = heartRateSamples, [2] = sleepSamples
                 let possibleSleepValues = ['ASLEEP', 'INBED', 'UNKNOWN'];
-                let { cleanedHiddenWorkoutValues, cleanedWorkoutValues, } = UTIL._cleanWorkoutObject(values[0], values[1], sendAPI);
+                let { cleanedIgnoredWorkoutValues, cleanedWorkoutValues, } = UTIL._cleanWorkoutObject(values[0], values[1], sendAPI);
                 let filteredSleepValues = _.filter(values[2], s => possibleSleepValues.includes(s.value));
                 if(sendAPI) {
                     // send api
@@ -426,10 +426,10 @@ const UTIL = {
                 } else {
                     // store in reducer
                     store.dispatch({
-                        type:              DispatchActions.SET_HEALTH_DATA,
-                        hiddenWorkoutData: cleanedHiddenWorkoutValues,
-                        sleepData:         filteredSleepValues,
-                        workoutData:       [],//cleanedWorkoutValues, // TODO: FIX ME
+                        type:               DispatchActions.SET_HEALTH_DATA,
+                        ignoredWorkoutData: cleanedIgnoredWorkoutValues,
+                        sleepData:          filteredSleepValues,
+                        workoutData:        cleanedWorkoutValues,
                     });
                     if(callback) {
                         return callback();
@@ -446,7 +446,7 @@ const UTIL = {
 
     _cleanWorkoutObject: (workouts, heartRates, isAPI) => {
         let cleanedWorkoutValues = [];
-        let cleanedHiddenWorkoutValues = [];
+        let cleanedIgnoredWorkoutValues = [];
         if(workouts.length > 0) {
             let filteredHeartRateValues = [];
             // removing any workouts which duration is less than 0.5min (30 sec)
@@ -481,7 +481,7 @@ const UTIL = {
                     newWorkout.sport_name === 66
                 ) {
                     // 0.5-15 duration = hidden (is not API && is 'Walking' workout)
-                    cleanedHiddenWorkoutValues.push(newWorkout);
+                    cleanedIgnoredWorkoutValues.push(newWorkout);
                 } else {
                     // 15+ = regular
                     cleanedWorkoutValues.push(newWorkout);
@@ -489,7 +489,7 @@ const UTIL = {
             });
         }
         return {
-            cleanedHiddenWorkoutValues,
+            cleanedIgnoredWorkoutValues,
             cleanedWorkoutValues,
         };
     },
