@@ -1643,7 +1643,7 @@ class MyPlan extends Component {
         trainingSessions = trainingSessions.concat(functionalStrengthArray);
         trainingSessions = _.orderBy(trainingSessions, o => moment(o.event_date), ['asc']);
         let filteredTrainingSessions = trainingSessions.length > 0 ?
-            _.filter(trainingSessions, o => o.sport_name !== null || o.strength_and_conditioning_type !== null)
+            _.filter(trainingSessions, o => !o.deleted && !o.ignored && (o.sport_name !== null || o.strength_and_conditioning_type !== null))
             :
             [];
         let completedFSExercises = store.getState().plan.completedFSExercises;
