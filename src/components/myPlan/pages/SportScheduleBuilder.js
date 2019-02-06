@@ -32,19 +32,11 @@ const step1CircleSize = ((AppSizes.screen.width - (AppSizes.padding * 2) - (AppS
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    pill: {
-        borderColor:     AppColors.zeplin.darkGrey,
-        borderRadius:    5,
-        borderWidth:     1,
-        marginVertical:  AppSizes.paddingXSml,
-        paddingVertical: AppSizes.paddingXSml,
-        width:           (AppSizes.screen.widthThreeQuarters / 2),
-    },
     shadowEffect: {
         shadowColor:   'rgba(0, 0, 0, 0.16)',
         shadowOffset:  {  height: 3, width: 0, },
         shadowOpacity: 1,
-        shadowRadius:  6,
+        shadowRadius:  5,
     },
     sportBlockWrapper: {
         alignItems:      'center',
@@ -193,19 +185,9 @@ class SportScheduleBuilder extends Component {
     }
 
     render = () => {
-        const { handleFormChange, isPostSession, postSession, scrollTo, scrollToArea, scrollToTop, typicalSessions, } = this.props;
-        const { durationValueGroups, isFormValid, showMoreOptions, step, timeValueGroups, } = this.state;
-        let underlinePadding = Platform.OS === 'ios' ? 2 : 8;
-        let {
-            // durationText,
-            // filteredSportSessionTypes,
-            // selectedSport,
-            sportImage,
-            sportText,
-            // startTimeText,
-            // strengthConditioningTypes,
-            // teamSports,
-        } = PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, this.state);
+        const { handleFormChange, isPostSession, postSession, scrollToArea, typicalSessions, } = this.props;
+        const { durationValueGroups, isFormValid, showMoreOptions, step, } = this.state;
+        let { sportImage, sportText, } = PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, this.state);
         let cleanedActivitiesList = MyPlanConstants.cleanedActivitiesList();
         return (
             <View style={{flex: 1,}}>
