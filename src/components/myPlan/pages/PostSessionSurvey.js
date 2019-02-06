@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import { ScrollView, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
 import { Pages, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
@@ -65,7 +65,7 @@ class PostSessionSurvey extends Component {
     _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid) => {
         let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid);
         if(isValid) {
-            this.pages.progress = pageNum;
+            this.pages.scrollToPage(pageNum);
             this.setState({ pageIndex: pageNum, });
         }
     }
@@ -138,17 +138,17 @@ class PostSessionSurvey extends Component {
             typicalSessions,
             user,
         } = this.props;
-        let { isFormValid, isFormValidItems, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
+        const { isActionButtonVisible, isCloseToBottom, isSlideUpPanelExpanded, isSlideUpPanelOpen, pageIndex, } = this.state
+        let { isFormValidItems, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, postSession.soreness);
-        let isFABVisible = areaOfSorenessClicked && this.state.isActionButtonVisible && areaOfSorenessClicked.length > 0;
-        const { isRPEValid, isSportValid, sportText, } = PlanLogic.handleSingleSessionValidation(postSession, this.sportScheduleBuilderRef);
+        let isFABVisible = areaOfSorenessClicked && isActionButtonVisible && areaOfSorenessClicked.length > 0;
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
                 <Pages
                     indicatorPosition={'none'}
                     ref={(pages) => { this.pages = pages; }}
-                    startPlay={this.state.pageIndex}
+                    startPlay={pageIndex}
                 >
 
                     <ScrollView
@@ -192,34 +192,42 @@ class PostSessionSurvey extends Component {
                     </ScrollView>
 
                     <ScrollView
-                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
+                        contentContainerStyle={{flexGrow: 1,}}
                         ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
                     >
-                        <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
-                        <Spacer size={20} />
-                        { _.map(newSoreBodyParts, (bodyPart, i) =>
-                            <View key={i} onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}>
-                                <SoreBodyPart
-                                    bodyPart={bodyPart}
-                                    bodyPartSide={bodyPart.side}
-                                    firstTimeExperience={user.first_time_experience}
-                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                        handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
-                                        if(shouldScroll && newSoreBodyParts.length !== (i + 1) && (newSoreBodyParts.length - 1) !== (i + 1)) {
-                                            this._scrollTo(this.myPrevSorenessComponents[i + 1], this.scrollViewPrevSorenessRef);
-                                        } else if(shouldScroll) {
-                                            this._scrollToBottom(this.scrollViewPrevSorenessRef);
-                                        }
-                                        this._checkNextStep(1);
-                                    }}
-                                    handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
-                                    isPrevSoreness={true}
-                                    surveyObject={postSession}
-                                    toggleSlideUpPanel={this._toggleSlideUpPanel}
-                                />
-                                <Spacer size={50} />
+                        { pageIndex === 1 &&
+                            <View style={{flex: 1,}}>
+                                <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
+                                <View style={{flexDirection: 'column', flexGrow: 1, paddingVertical: AppSizes.padding, justifyContent: 'center',}}>
+                                    { _.map(newSoreBodyParts, (bodyPart, i) =>
+                                        <View
+                                            key={i}
+                                            onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}
+                                            style={{paddingVertical: AppSizes.padding,}}
+                                        >
+                                            <SoreBodyPart
+                                                bodyPart={bodyPart}
+                                                bodyPartSide={bodyPart.side}
+                                                firstTimeExperience={user.first_time_experience}
+                                                handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                                    handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                                    if(shouldScroll && newSoreBodyParts.length !== (i + 1) && (newSoreBodyParts.length - 1) !== (i + 1)) {
+                                                        this._scrollTo(this.myPrevSorenessComponents[i + 1], this.scrollViewPrevSorenessRef);
+                                                    } else if(shouldScroll) {
+                                                        this._scrollToBottom(this.scrollViewPrevSorenessRef);
+                                                    }
+                                                    this._checkNextStep(1);
+                                                }}
+                                                handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                                isPrevSoreness={true}
+                                                surveyObject={postSession}
+                                                toggleSlideUpPanel={this._toggleSlideUpPanel}
+                                            />
+                                        </View>
+                                    )}
+                                </View>
                             </View>
-                        )}
+                        }
                     </ScrollView>
 
                     <ScrollView
@@ -239,7 +247,7 @@ class PostSessionSurvey extends Component {
                             </Text>
                             <AreasOfSoreness
                                 handleAreaOfSorenessClick={(body, isAllGood) => {
-                                    if(!this.state.isCloseToBottom) {
+                                    if(!isCloseToBottom) {
                                         this.setState({ isActionButtonVisible: true, });
                                     }
                                     handleAreaOfSorenessClick(body, false, isAllGood);
@@ -334,8 +342,8 @@ class PostSessionSurvey extends Component {
                 }
                 <SurveySlideUpPanel
                     expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
-                    isSlideUpPanelExpanded={this.state.isSlideUpPanelExpanded}
-                    isSlideUpPanelOpen={this.state.isSlideUpPanelOpen}
+                    isSlideUpPanelExpanded={isSlideUpPanelExpanded}
+                    isSlideUpPanelOpen={isSlideUpPanelOpen}
                     toggleSlideUpPanel={isExpanded => this._toggleSlideUpPanel(isExpanded)}
                 />
             </View>

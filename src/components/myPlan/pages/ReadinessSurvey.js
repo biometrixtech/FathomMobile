@@ -21,8 +21,8 @@ import PropTypes from 'prop-types';
 import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles, MyPlan as MyPlanConstants, AppSizes, AppFonts, } from '../../../constants';
-import { Button, FathomPicker, Pages, Spacer, TabIcon, Text, } from '../../custom';
+import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
+import { Button, Pages, Spacer, TabIcon, Text, } from '../../custom';
 import { EnableAppleHealthKit, } from '../../general';
 import { AppUtil, PlanLogic, } from '../../../lib';
 
@@ -32,7 +32,6 @@ import {
     BackNextButtons,
     HealthKitWorkouts,
     ProgressPill,
-    ScaleButton,
     SoreBodyPart,
     SportScheduleBuilder,
     SurveySlideUpPanel,
@@ -76,17 +75,6 @@ const styles = StyleSheet.create({
         height:          AppFonts.scaleFont(40),
         justifyContent:  'center',
         width:           AppFonts.scaleFont(40),
-    },
-    pickerSelect: {
-        ...AppFonts.oswaldMedium,
-        color:    AppColors.zeplin.darkGrey,
-        fontSize: AppFonts.scaleFont(17),
-    },
-    pickerSelectAndroidContainer: {
-        borderColor:    AppColors.zeplin.blueGrey,
-        borderRadius:   5,
-        borderWidth:    1,
-        justifyContent: 'center',
     },
     shadowEffect: {
         shadowColor:   'rgba(0, 0, 0, 0.16)',
@@ -255,7 +243,6 @@ class ReadinessSurvey extends Component {
         let {
             functionalStrengthTodaySubtext,
             isFirstFunctionalStrength,
-            isFormValid,
             isFormValidItems,
             isSecondFunctionalStrength,
             newSoreBodyParts,
