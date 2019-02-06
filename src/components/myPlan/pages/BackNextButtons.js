@@ -31,6 +31,30 @@ const styles = StyleSheet.create({
     },
 });
 
+// <Button
+//     backgroundColor={AppColors.white}
+//     // buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {borderColor: AppColors.zeplin.yellow, borderWidth: 1, justifyContent: 'center',}]}
+//     color={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
+//     // containerViewStyle={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
+//     containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 0,}}
+//     disabled={!isValid}
+//     disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1,}}
+//     fontFamily={AppStyles.robotoMedium.fontFamily}
+//     fontWeight={AppStyles.robotoMedium.fontWeight}
+//     leftIcon={{
+//         color: isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey,
+//         name:  'add',
+//         size:  AppFonts.scaleFont(18),
+//         style: {backgroundColor: 'green',},
+//     }}
+//     outlined
+//     onPress={() => isValid && onBackClick ? onBackClick() : null}
+//     raised={false}
+//     textColor={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
+//     // textStyle={{fontSize: AppFonts.scaleFont(14), textAlign: 'center', width: '100%',}}
+//     textStyle={{backgroundColor: 'red', flex: 9, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}
+//     title={'Add another session'}
+// />
 /* Component ==================================================================== */
 const BackNextButtons = ({
     handleFormSubmit,
@@ -44,26 +68,39 @@ const BackNextButtons = ({
 }) => (
     <View style={[styles.backNextWrapper]}>
         { showAddBtn ?
-            <Button
-                backgroundColor={AppColors.white}
-                buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {borderColor: AppColors.zeplin.yellow, borderWidth: 1, justifyContent: 'center',}]}
-                color={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
-                containerViewStyle={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
-                disabled={!isValid}
-                disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1,}}
-                fontFamily={AppStyles.robotoMedium.fontFamily}
-                fontWeight={AppStyles.robotoMedium.fontWeight}
-                leftIcon={{
-                    color: isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey,
-                    name:  'add',
-                    size:  AppFonts.scaleFont(18),
-                }}
+            <TouchableHighlight
                 onPress={() => isValid && onBackClick ? onBackClick() : null}
-                raised={false}
-                textColor={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
-                textStyle={{fontSize: AppFonts.scaleFont(14), textAlign: 'center', width: '100%',}}
-                title={'Add another session'}
-            />
+                style={{
+                    backgroundColor: AppColors.white,
+                    borderColor:     AppColors.zeplin.yellow,
+                    borderRadius:    5,
+                    borderWidth:     1,
+                    flex:            1,
+                }}
+                underlayColor={AppColors.transparent}
+            >
+                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
+                    <TabIcon
+                        color={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
+                        icon={'add'}
+                        size={AppFonts.scaleFont(18)}
+                        style={{paddingRight: AppSizes.paddingSml,}}
+                    />
+                    <Text
+                        robotoMedium
+                        style={[
+                            AppStyles.textCenterAligned,
+                            {
+                                color:     AppColors.zeplin.yellow,
+                                fontSize:  AppFonts.scaleFont(14),
+                                textAlign: 'center',
+                            }
+                        ]}
+                    >
+                        {'Add another session'}
+                    </Text>
+                </View>
+            </TouchableHighlight>
             : showBackBtn ?
                 <TouchableHighlight
                     onPress={onBackClick}
