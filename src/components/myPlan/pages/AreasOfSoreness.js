@@ -61,23 +61,18 @@ class AreasOfSoreness extends Component {
     render = () => {
         const {
             handleAreaOfSorenessClick,
-            handleFormChange,
             handleUpdateFirstTimeExperience,
             headerTitle,
             scrollToArea,
             soreBodyParts,
             soreBodyPartsState,
-            surveyObject,
-            toggleSlideUpPanel,
             user,
         } = this.props;
         let { areaOfSorenessClicked, groupedNewBodyPartMap, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState);
         return(
-            <View style={{flex: 1,}}>
+            <View style={{flex: 1, justifyContent: 'center',}}>
                 <Spacer size={AppSizes.padding} />
-                <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
-                    {headerTitle}
-                </Text>
+                <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{headerTitle}</Text>
                 <Spacer size={AppSizes.padding} />
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
                     <TouchableOpacity
@@ -103,7 +98,7 @@ class AreasOfSoreness extends Component {
                             {'NO'}
                         </Text>
                     </TouchableOpacity>
-                    <Spacer size={AppSizes.padding} />
+                    <View style={{width: AppSizes.padding,}} />
                     <TouchableOpacity
                         onPress={() => {
                             this.setState({
@@ -111,7 +106,7 @@ class AreasOfSoreness extends Component {
                                 showWholeArea: !this.state.showWholeArea,
                             }, () => {
                                 if(this.state.showWholeArea) {
-                                    scrollToArea(this._soreBodyPartRef);
+                                    _.delay(() => scrollToArea(this._soreBodyPartRef), 500);
                                 }
                             });
                         }}
@@ -130,7 +125,7 @@ class AreasOfSoreness extends Component {
                     </TouchableOpacity>
                 </View>
                 <Spacer size={AppSizes.paddingLrg} />
-                <View style={{backgroundColor: 'red',}} onLayout={event => {this._soreBodyPartRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}} >
+                <View onLayout={event => {this._soreBodyPartRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}} >
                     { this.state.showWholeArea ?
                         _.map(groupedNewBodyPartMap, (object, key) => {
                             let bodyPartMap = _.orderBy(object, ['order'], ['asc']);
@@ -197,10 +192,14 @@ AreasOfSoreness.propTypes = {
     soreBodyParts:             PropTypes.object.isRequired,
     soreBodyPartsState:        PropTypes.array.isRequired,
     surveyObject:              PropTypes.object,
+    toggleSlideUpPanel:        PropTypes.func,
     user:                      PropTypes.object.isRequired,
 };
 
-AreasOfSoreness.defaultProps = {};
+AreasOfSoreness.defaultProps = {
+    surveyObject:       {},
+    toggleSlideUpPanel: () => null,
+};
 
 AreasOfSoreness.componentName = 'AreasOfSoreness';
 

@@ -234,48 +234,44 @@ class PostSessionSurvey extends Component {
 
                     <ScrollView
                         bounces={false}
-                        contentContainerStyle={[this.areasOfSorenessRef && this.areasOfSorenessRef.state && this.areasOfSorenessRef.state.showWholeArea ? {} : {flex: 1, justifyContent: 'space-between',}]}
+                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         nestedScrollEnabled={true}
                         onScrollEndDrag={event => this._scrollViewEndDrag(event)}
                         overScrollMode={'never'}
                         ref={ref => {this.myAreasOfSorenessComponent = ref;}}
                         style={{flex: 1,}}
                     >
-                        <View style={{flex: 1,}}>
-                            <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
-                            <AreasOfSoreness
-                                handleAreaOfSorenessClick={(body, isAllGood) => {
-                                    if(!isCloseToBottom) {
-                                        this.setState({ isActionButtonVisible: true, });
-                                    }
-                                    handleAreaOfSorenessClick(body, false, isAllGood);
-                                }}
-                                handleFormChange={handleFormChange}
-                                handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
-                                headerTitle={`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' new '}pain or soreness?`}
-                                ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
-                                scrollToArea={xyObject => {
-                                    this._scrollTo(xyObject, this.myAreasOfSorenessComponent);
-                                    this.setState({ isCloseToBottom: true, });
-                                }}
-                                soreBodyParts={soreBodyParts}
-                                soreBodyPartsState={postSession.soreness}
-                                surveyObject={postSession}
-                                toggleSlideUpPanel={this._toggleSlideUpPanel}
-                                user={user}
-                            />
-                        </View>
-                        <View style={{flex: 1, justifyContent: 'flex-end',}}>
-                            <BackNextButtons
-                                handleFormSubmit={() => handleFormSubmit()}
-                                isValid={isFormValidItems.selectAreasOfSorenessValid}
-                                onNextClick={() => {
-                                    this.setState({ isActionButtonVisible: false, });
-                                    this._renderNextPage(2, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked);
-                                }}
-                                showSubmitBtn={areaOfSorenessClicked.length === 0}
-                            />
-                        </View>
+                        <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
+                        <AreasOfSoreness
+                            handleAreaOfSorenessClick={(body, isAllGood) => {
+                                if(!isCloseToBottom) {
+                                    this.setState({ isActionButtonVisible: true, });
+                                }
+                                handleAreaOfSorenessClick(body, false, isAllGood);
+                            }}
+                            handleFormChange={handleFormChange}
+                            handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                            headerTitle={`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' new '}pain or soreness?`}
+                            ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
+                            scrollToArea={xyObject => {
+                                this._scrollTo(xyObject, this.myAreasOfSorenessComponent);
+                                this.setState({ isCloseToBottom: true, });
+                            }}
+                            soreBodyParts={soreBodyParts}
+                            soreBodyPartsState={postSession.soreness}
+                            surveyObject={postSession}
+                            toggleSlideUpPanel={this._toggleSlideUpPanel}
+                            user={user}
+                        />
+                        <BackNextButtons
+                            handleFormSubmit={() => handleFormSubmit()}
+                            isValid={isFormValidItems.selectAreasOfSorenessValid}
+                            onNextClick={() => {
+                                this.setState({ isActionButtonVisible: false, });
+                                this._renderNextPage(2, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked);
+                            }}
+                            showSubmitBtn={areaOfSorenessClicked.length === 0}
+                        />
                     </ScrollView>
 
                     <ScrollView
