@@ -640,11 +640,7 @@ const PlanLogic = {
             pageNum = dailyReadiness.already_trained_number === false ? 5 : 4;
             isValid = isFormValidItems.isTrainedTodayValid;
         } else if(currentPage === 4) { // 4. SportScheduleBuilder & RPE (xN)
-            // TODO: FIX
-            pageNum = (newSoreBodyParts && newSoreBodyParts.length === 0) && (sportBuilderRPEIndex + 1) === dailyReadiness.sessions.length ?
-                (pageState.pageIndex + 2)
-                :
-                (pageState.pageIndex + 1);
+            pageNum = (pageState.pageIndex + 1);
             isValid = true; // can only click if form is valid
         } else if(currentPage === 5) { // 5. train later?
             // pageNum = isSecondFunctionalStrength ? 6 : (newSoreBodyParts && newSoreBodyParts.length > 0) ? 7 : 8;
