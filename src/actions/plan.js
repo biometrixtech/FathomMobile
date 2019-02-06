@@ -252,8 +252,6 @@ const patchActiveRecovery = (user_id, completed_exercises, recovery_type) => {
                 type: Actions.GET_MY_PLAN,
                 data: myPlanData,
             });
-            return true;
-        }).then(myPlanData => {
             dispatch({
                 type: Actions.CLEAR_COMPLETED_EXERCISES,
             });
@@ -339,15 +337,7 @@ const markStartedRecovery = (user_id, recovery_type, newMyPlan) => {
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.recovery_type = recovery_type;
     return dispatch => AppAPI.active_recovery.post(false, bodyObj)
-        .then(response => {
-            let myPlanData = {};
-            myPlanData.daily_plans = newMyPlan;
-            dispatch({
-                type: Actions.GET_MY_PLAN,
-                data: myPlanData,
-            });
-            return Promise.resolve(response);
-        })
+        .then(response => Promise.resolve(response))
         .catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
