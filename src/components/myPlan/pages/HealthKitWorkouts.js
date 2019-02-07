@@ -153,6 +153,7 @@ class HealthKitWorkouts extends Component {
                 >
                     { showRPEPicker ?
                         <View>
+                            <Spacer size={20} />
                             <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                                 {'How was your '}
                                 <Text robotoMedium>{`${sportText} workout?`}</Text>

@@ -53,7 +53,7 @@ const PlanLogic = {
       * Updates to the state when the daily readiness & post session forms are changed
       * - MyPlan
       */
-    handleDailyReadinessAndPostSessionFormChange: (name, value, isPain, bodyPart, side, state) => {
+    handleDailyReadinessAndPostSessionFormChange: (name, value, isPain, bodyPart, side, state, isClearCandidate = false) => {
         // setup varibles
         let newFormFields;
         // logic
@@ -78,6 +78,7 @@ const PlanLogic = {
                 newSorenessPart.pain = isPain;
                 newSorenessPart.severity = value;
                 newSorenessPart.side = side ? side : 0;
+                newSorenessPart.isClearCandidate = isClearCandidate;
                 newSorenessFields.push(newSorenessPart);
             }
             newFormFields = _.update( state, 'soreness', () => newSorenessFields);

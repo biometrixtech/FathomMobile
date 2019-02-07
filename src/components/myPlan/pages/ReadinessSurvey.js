@@ -775,7 +775,7 @@ class ReadinessSurvey extends Component {
                                                 bodyPartSide={bodyPart.side}
                                                 firstTimeExperience={user.first_time_experience}
                                                 handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                                    handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                                    handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide, bodyPart.isClearCandidate);
                                                     if(shouldScroll && newSoreBodyParts.length !== (i + 1) && (newSoreBodyParts.length - 1) !== (i + 1)) {
                                                         this._scrollTo(this.myPrevSorenessComponents[i + 1], this.scrollViewPrevSorenessRef);
                                                     } else if(shouldScroll) {

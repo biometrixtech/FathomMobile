@@ -421,7 +421,6 @@ class MyPlan extends Component {
                 (moment(this.props.user.health_sync_date).diff(moment(), 'minutes') > 7)
             )
         ) {
-            console.log('OLAAAAA-_handleAppStateChange');
             AppUtil.getAppleHealthKitData(this.props.user.id, this.props.user.health_sync_date);
         }
     }
@@ -459,15 +458,15 @@ class MyPlan extends Component {
         );
     }
 
-    _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side) => {
-        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.dailyReadiness);
+    _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate) => {
+        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.dailyReadiness, isClearCandidate);
         this.setState({
             dailyReadiness: newFormFields
         });
     }
 
-    _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side) => {
-        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.postSession);
+    _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate) => {
+        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.postSession, isClearCandidate);
         this.setState({
             postSession: newFormFields
         });
@@ -672,7 +671,6 @@ class MyPlan extends Component {
     }
 
     _handleUpdateUserHealthKitFlag = flag => {
-        console.log('OLAAAAA-_handleUpdateUserHealthKitFlag');
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.health_enabled = flag;
