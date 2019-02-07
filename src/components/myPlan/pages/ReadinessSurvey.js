@@ -682,7 +682,7 @@ class ReadinessSurvey extends Component {
                     </View>
 
                     <View style={{flex: 1,}}>
-                        { pageIndex === 6 &&
+                        { pageIndex === (6 + (dailyReadiness.sessions.length - 1)) &&
                             <View style={{flex: 1,}}>
                                 <ProgressPill currentStep={2} totalSteps={3} />
                                 <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
@@ -760,7 +760,7 @@ class ReadinessSurvey extends Component {
                         overScrollMode={'never'}
                         ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
                     >
-                        { pageIndex === 7 &&
+                        { pageIndex === (7 + (dailyReadiness.sessions.length - 1)) &&
                             <View style={{flex: 1,}}>
                                 <ProgressPill currentStep={3} totalSteps={3} />
                                 <View style={{flexDirection: 'column', flexGrow: 1, paddingVertical: AppSizes.padding, justifyContent: 'center',}}>
