@@ -333,10 +333,6 @@ class TimedExercise extends PureComponent {
         } = this.state;
         let displayNameFontSize = (progressPillsHeight === AppSizes.screen.height) ? AppFonts.scaleFont(22) : AppFonts.scaleFont(28);
         let timerWrapperHeight = (AppFonts.scaleFont(56) + (AppSizes.padding * 2));
-
-        console.log('isPaused',isPaused);
-        console.log(!isPaused, (startPreExerciseCountdown || startFirstSet || startSwitchSidesInterval || startSecondSet));
-        console.log(!isPaused && (startPreExerciseCountdown || startFirstSet || startSwitchSidesInterval || startSecondSet));
         return(
             <View>
                 { isDescriptionToolTipOpen && currentSlideIndex === index ?
