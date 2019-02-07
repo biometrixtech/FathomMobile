@@ -333,6 +333,10 @@ class TimedExercise extends PureComponent {
         } = this.state;
         let displayNameFontSize = (progressPillsHeight === AppSizes.screen.height) ? AppFonts.scaleFont(22) : AppFonts.scaleFont(28);
         let timerWrapperHeight = (AppFonts.scaleFont(56) + (AppSizes.padding * 2));
+
+        console.log('isPaused',isPaused);
+        console.log(!isPaused, (startPreExerciseCountdown || startFirstSet || startSwitchSidesInterval || startSecondSet));
+        console.log(!isPaused && (startPreExerciseCountdown || startFirstSet || startSwitchSidesInterval || startSecondSet));
         return(
             <View>
                 { isDescriptionToolTipOpen && currentSlideIndex === index ?
@@ -386,7 +390,7 @@ class TimedExercise extends PureComponent {
                     <View style={{alignItems: 'center', flexDirection: 'row', height: timerWrapperHeight, justifyContent: exerciseTimer ? 'space-between' : 'center',}}>
                         { exerciseTimer ?
                             <View>
-                                { areAllTimersCompleted ?
+                                { areAllTimersCompleted && !isPaused && !(startPreExerciseCountdown || startFirstSet || startSwitchSidesInterval || startSecondSet) ?
                                     <TabIcon
                                         color={AppColors.zeplin.lightSlate}
                                         containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
