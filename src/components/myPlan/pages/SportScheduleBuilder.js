@@ -234,7 +234,7 @@ class SportScheduleBuilder extends Component {
                                 <SportBlock
                                     displayName={'More options'}
                                     filteredSession={{icon: 'add', iconType: 'material',}}
-                                    onPress={() => this.setState({ showMoreOptions: !this.state.showMoreOptions, }, () => scrollToArea(this._moreOptionsRef))}
+                                    onPress={() => this.setState({ showMoreOptions: !this.state.showMoreOptions, }, () => _.delay(() => scrollToArea(this._moreOptionsRef), 10) )}
                                 />
                             </View>
                             :
