@@ -44,7 +44,6 @@ class HealthKitWorkouts extends Component {
         let numberOfNonDeletedWorkouts = _.filter(this.props.workouts, ['deleted', false]);
         if(numberOfNonDeletedWorkouts.length === 0) {
             this.props.handleToggleSurvey();
-            // TODO: SEND API with deleted
         } else if((currentPage + 1) === this.props.workouts.length) {
             this.props.handleNextStep(true);
         } else {

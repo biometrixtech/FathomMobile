@@ -550,7 +550,7 @@ const UTIL = {
                 hr_data:      o.hr_data,
             };
             newSession.sessions.push(cleanedSessionObj);
-            // PlanActions.patchSession(o.session_id, newSession); // TODO: BRING BACK
+            PlanActions.patchSession(o.session_id, newSession);
         });
     },
 
