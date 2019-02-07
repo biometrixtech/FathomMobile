@@ -362,13 +362,6 @@ class Onboarding extends Component {
                     });
             }
             return this.props.createUser(userObj)
-                .then(response => {
-                    if(userObj.health_enabled) {
-                        AppUtil.getAppleHealthKitDataAsync(userObj.id, userObj.health_sync_date);
-                        return AppUtil.getAppleHealthKitData(userObj.id, userObj.health_sync_date, () => response);
-                    }
-                    return response;
-                })
                 .then(response => this._handleLoginFinalize(userObj))
                 .catch(err => {
                     const error = AppAPI.handleError(err);
@@ -409,6 +402,13 @@ class Onboarding extends Component {
                             });
                     })
                     .then(() => this.props.finalizeLogin(user, credentials, authorization));
+            })
+            .then(response => {
+                if(response.health_enabled) {
+                    AppUtil.getAppleHealthKitDataAsync(response.id, response.health_sync_date);
+                    return AppUtil.getAppleHealthKitData(response.id, response.health_sync_date, () => response);
+                }
+                return response;
             })
             .then(userRes => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
