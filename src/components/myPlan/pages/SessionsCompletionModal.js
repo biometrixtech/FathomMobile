@@ -229,14 +229,13 @@ class SessionsCompletionModal extends Component {
                                                 animated={true}
                                                 borderWidth={0}
                                                 children={
-                                                    <View style={{alignItems: 'center', justifyContent: 'center', width: iconViewWrapperWidth,}}>
+                                                    <View style={{alignItems: 'center', justifyContent: 'center',}}>
                                                         <Image
                                                             source={selectedSession.imagePath}
                                                             style={{
-                                                                height:      iconSize,
-                                                                marginRight: AppSizes.paddingSml,
-                                                                tintColor:   progressCounters[i] === 1 ? AppColors.zeplin.yellow : AppColors.white,
-                                                                width:       iconSize,
+                                                                height:    iconSize,
+                                                                tintColor: progressCounters[i] === 1 ? AppColors.zeplin.yellow : AppColors.white,
+                                                                width:     iconSize,
                                                             }}
                                                         />
                                                     </View>

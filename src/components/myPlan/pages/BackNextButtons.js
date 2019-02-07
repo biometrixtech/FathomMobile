@@ -20,7 +20,10 @@ import { Platform, StyleSheet, TouchableHighlight, View, } from 'react-native';
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
 import { TabIcon, Text, } from '../../custom';
 
-const addSubmitBtnWidth = ((AppSizes.screen.width - ((AppSizes.paddingSml * 2) + (AppSizes.paddingXSml * 2))) / 2);
+const addSubmitBtnWidth = Platform.OS === 'ios' ?
+    ((AppSizes.screen.width - ((AppSizes.paddingSml * 2) + (AppSizes.paddingXSml * 2))) / 2)
+    :
+    ((AppSizes.screen.width - (AppSizes.paddingSml + AppSizes.paddingXSml)) / 2);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -29,8 +32,8 @@ const styles = StyleSheet.create({
         borderColor:     AppColors.zeplin.yellow,
         borderRadius:    5,
         borderWidth:     1,
-        marginLeft:      AppSizes.paddingSml,
-        marginRight:     AppSizes.paddingXSml,
+        marginLeft:      Platform.OS === 'ios' ? AppSizes.paddingSml : (AppSizes.paddingSml / 2),
+        marginRight:     Platform.OS === 'ios' ? AppSizes.paddingXSml : (AppSizes.paddingXSml / 2),
         width:           addSubmitBtnWidth,
     },
     addSubmitWrapper: {
@@ -39,17 +42,16 @@ const styles = StyleSheet.create({
         paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed,
     },
     backNextWrapper: {
-        alignItems:        'center',
-        flexDirection:     'row',
-        justifyContent:    'space-between',
-        paddingBottom:     AppSizes.paddingMed,
-        paddingHorizontal: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed,
+        alignItems:     'center',
+        flexDirection:  'row',
+        justifyContent: 'space-between',
+        paddingBottom:  AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed,
     },
     submitBtn: {
         borderRadius:   5,
         justifyContent: 'center',
-        marginLeft:     AppSizes.paddingXSml,
-        marginRight:    AppSizes.paddingSml,
+        marginLeft:     Platform.OS === 'ios' ? AppSizes.paddingSml : (AppSizes.paddingSml / 2),
+        marginRight:    Platform.OS === 'ios' ? AppSizes.paddingXSml : (AppSizes.paddingXSml / 2),
         width:          addSubmitBtnWidth,
     },
 });

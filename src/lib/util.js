@@ -426,7 +426,11 @@ const UTIL = {
                 } else {
                     // remove already synced workouts
                     let healthDataState = store.getState().plan.healthData.workouts;
-                    let updatedCleanedWorkoutValues = _.flatten(_.map(healthDataState, o => _.filter(cleanedWorkoutValues, item => o.sport_name !== item.sport_name && o.end_date !== item.end_date && o.event_date !== item.event_date) ));
+                    let updatedCleanedWorkoutValues = _.filter(cleanedWorkoutValues, o =>
+                        !_.some(healthDataState, item =>
+                            o.sport_name !== item.sport_name && o.end_date !== item.end_date && o.event_date !== item.event_date
+                        )
+                    );
                     // store in reducer
                     store.dispatch({
                         type:               DispatchActions.SET_HEALTH_DATA,
