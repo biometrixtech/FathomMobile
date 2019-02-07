@@ -526,7 +526,7 @@ const cleanedPostSessionName = (postPracticeSurvey) => {
     let filteredSportTypes = _.filter(teamSports, o => o.index === postPracticeSurvey.sport_name);
     let selectedSport = filteredSportTypes.length > 0 ? filteredSportTypes[0].label.toUpperCase() : filteredStrengthConditioningTypes.length > 0 ? filteredStrengthConditioningTypes[0].label.toUpperCase() : '';
     return {
-        fullName: `${selectedSport.replace(' TRAINING', '')}`,
+        fullName: selectedSport,
         selectedSessionType,
         selectedSport,
     }
