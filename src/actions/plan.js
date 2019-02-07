@@ -446,6 +446,18 @@ const postHealthData = (payload) => {
         });
 }
 
+/**
+  * Patch Session
+  */
+const patchSession = (session_id, payload) => {
+    return AppAPI.patch_sessions.patch({session_id}, payload)
+        .then(data => Promise.resolve(data))
+        .catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+}
+
 export default {
     clearCompletedExercises,
     clearCompletedFSExercises,
@@ -460,6 +472,7 @@ export default {
     patchActiveRecovery,
     patchActiveTime,
     patchFunctionalStrength,
+    patchSession,
     postHealthData,
     postReadinessSurvey,
     postSessionSurvey,

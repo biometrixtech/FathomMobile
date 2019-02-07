@@ -568,12 +568,14 @@ class MyPlan extends Component {
             let healthDataIgnoredWorkouts = this.state.healthData.ignoredWorkouts ? this.state.healthData.ignoredWorkouts : [];
             postSession.sessions = _.concat(healthDataIgnoredWorkouts, healthDataWorkouts);
             let lastNonDeletedIndex = _.findLastIndex(postSession.sessions, ['deleted', false]);
-            postSession.sessions[lastNonDeletedIndex].post_session_survey = {
-                clear_candidates: _.filter(this.state.postSession.soreness, {isClearCandidate: true}),
-                event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
-                RPE:              postSession.sessions[lastNonDeletedIndex].post_session_survey.RPE,
-                soreness:         _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
-            };
+            if(postSession.sessions[lastNonDeletedIndex]) {
+                postSession.sessions[lastNonDeletedIndex].post_session_survey = {
+                    clear_candidates: _.filter(this.state.postSession.soreness, {isClearCandidate: true}),
+                    event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                    RPE:              postSession.sessions[lastNonDeletedIndex].post_session_survey.RPE,
+                    soreness:         _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
+                };
+            }
         } else {
             let newSession = {
                 event_date:          this.state.postSession.event_date,
@@ -608,7 +610,6 @@ class MyPlan extends Component {
         let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
-        console.log('postSession',postSession); // TODO: REMOVE ME
         _.delay(() => {
             this.setState(
                 {

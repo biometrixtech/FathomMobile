@@ -429,9 +429,33 @@ const UTIL = {
                         store.getState().plan.dailyPlan[0].training_sessions
                         :
                         [];
+                    let workoutsToPatch = _.map(cleanedWorkoutValues, o => {
+                        let filteredTrainingSessionsState = _.filter(trainingSessionsState, item =>
+                            o.sport_name === item.sport_name && item.source === 0 && UTIL._lessThanTwoHoursAgo(o.end_date, item.created_date)
+                        );
+                        if(filteredTrainingSessionsState && filteredTrainingSessionsState[0]) {
+                            return {
+                                event_date:   o.event_date,
+                                end_date:     o.end_date,
+                                session_type: 6,
+                                sport_name:   o.sport_name,
+                                duration:     filteredTrainingSessionsState[0].duration_minutes,
+                                calories:     o.calories,
+                                distance:     o.distance,
+                                source:       1,
+                                hr_data:      o.hr_data,
+                                session_id:   filteredTrainingSessionsState[0].session_id,
+                            }
+                        }
+                        return null;
+                    })
+                        .filter(a => a);
                     let updatedCleanedWorkoutValues = _.filter(cleanedWorkoutValues, o =>
-                        _.some(trainingSessionsState, item =>
-                            o.sport_name !== item.sport_name && o.end_date !== item.end_date && o.event_date !== item.event_date
+                        !_.some(trainingSessionsState, item =>
+                            o.sport_name === item.sport_name && o.end_date === item.end_date && o.event_date === item.event_date
+                        ) &&
+                        !_.some(trainingSessionsState, item =>
+                            o.sport_name === item.sport_name && item.source === 0 && UTIL._lessThanTwoHoursAgo(o.end_date, item.created_date)
                         )
                     );
                     // store in reducer
@@ -441,6 +465,7 @@ const UTIL = {
                         sleepData:          filteredSleepValues,
                         workoutData:        updatedCleanedWorkoutValues,
                     });
+                    UTIL._patchWorkoutSession(workoutsToPatch, userId);
                     if(callback) {
                         return callback();
                     }
@@ -502,6 +527,31 @@ const UTIL = {
             cleanedIgnoredWorkoutValues,
             cleanedWorkoutValues,
         };
+    },
+
+    _lessThanTwoHoursAgo: (startDate, endDate) => moment(startDate).isAfter(moment(endDate).subtract(2, 'hours')),
+
+    _patchWorkoutSession: async (sessions, userId) => {
+        _.map(sessions, o => {
+            let newSession = {
+                user_id:    userId,
+                event_date: `${moment().toISOString(true).split('.')[0]}Z`,
+                sessions:   [],
+            };
+            let cleanedSessionObj = {
+                event_date:   o.event_date,
+                end_date:     o.end_date,
+                session_type: 6,
+                sport_name:   o.sport_name,
+                duration:     o.duration,
+                calories:     o.calories,
+                distance:     o.distance,
+                source:       1,
+                hr_data:      o.hr_data,
+            };
+            newSession.sessions.push(cleanedSessionObj);
+            // PlanActions.patchSession(o.session_id, newSession); // TODO: BRING BACK
+        });
     },
 
     /**
