@@ -811,13 +811,14 @@ class MyPlan extends Component {
         this.props.setCompletedExercises(newCompletedExercises);
     }
 
-    _handleCompleteFSExercise = (exerciseId) => {
+    _handleCompleteFSExercise = (exerciseId, setNumber) => {
+        let newFSExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
         // add or remove exercise
         let newCompletedExercises = _.cloneDeep(store.getState().plan.completedFSExercises);
-        if(newCompletedExercises && newCompletedExercises.indexOf(exerciseId) > -1) {
-            newCompletedExercises.splice(newCompletedExercises.indexOf(exerciseId), 1)
+        if(newCompletedExercises && newCompletedExercises.indexOf(newFSExerciseId) > -1) {
+            newCompletedExercises.splice(newCompletedExercises.indexOf(newFSExerciseId), 1)
         } else {
-            newCompletedExercises.push(exerciseId);
+            newCompletedExercises.push(newFSExerciseId);
         }
         // Mark FS as started, if logic passes
         let clonedPlan = _.cloneDeep(this.props.plan);

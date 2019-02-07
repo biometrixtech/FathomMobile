@@ -352,15 +352,7 @@ const markStartedFunctionalStrength = (user_id, newMyPlan) => {
     bodyObj.user_id = user_id;
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.functional_strength.post(false, bodyObj)
-        .then(response => {
-            let myPlanData = {};
-            myPlanData.daily_plans = newMyPlan;
-            dispatch({
-                type: Actions.GET_MY_PLAN,
-                data: myPlanData,
-            });
-            return Promise.resolve(response);
-        })
+        .then(response => Promise.resolve(response))
         .catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
