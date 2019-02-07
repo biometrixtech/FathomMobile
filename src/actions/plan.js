@@ -250,7 +250,7 @@ const patchActiveRecovery = (user_id, completed_exercises, recovery_type) => {
         .then(myPlanData => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
-                data: myPlanData,
+                data: myPlanData.daily_plans,
             });
             dispatch({
                 type: Actions.CLEAR_COMPLETED_EXERCISES,
@@ -315,7 +315,7 @@ const patchFunctionalStrength = (user_id, completed_exercises) => {
         .then(myPlanData => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
-                data: myPlanData,
+                data: myPlanData.daily_plans,
             });
             dispatch({
                 type: Actions.CLEAR_COMPLETED_FS_EXERCISES,
