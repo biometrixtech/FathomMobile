@@ -293,7 +293,7 @@ const PlanLogic = {
             let doesItInclude = _.filter(combinedSoreBodyParts, a => a.body_part === o.body_part && a.side === o.side);
             return doesItInclude.length > 0;
         });
-        let areQuestionsValid = postSession.RPE > 0 && postSession.event_date ? true : false;
+        let areQuestionsValid = postSession.RPE >= 0 && postSession.event_date ? true : false;
         let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length === combinedSoreBodyParts.length : true;
         let areAreasOfSorenessValid = _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0;
         let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;

@@ -425,9 +425,12 @@ const UTIL = {
                         });
                 } else {
                     // remove already synced workouts
-                    let healthDataState = store.getState().plan.healthData.workouts;
+                    let trainingSessionsState = store.getState().plan.dailyPlan && store.getState().plan.dailyPlan[0] ?
+                        store.getState().plan.dailyPlan[0].training_sessions
+                        :
+                        [];
                     let updatedCleanedWorkoutValues = _.filter(cleanedWorkoutValues, o =>
-                        !_.some(healthDataState, item =>
+                        _.some(trainingSessionsState, item =>
                             o.sport_name !== item.sport_name && o.end_date !== item.end_date && o.event_date !== item.event_date
                         )
                     );
