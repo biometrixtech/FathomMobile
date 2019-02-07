@@ -26,6 +26,7 @@ import { ScaleButton, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
+import moment from 'moment';
 
 const step0CircleSize = ((AppSizes.screen.width - (AppSizes.padding * 2) - (AppSizes.paddingSml * 4)) / 3);
 const step1CircleSize = ((AppSizes.screen.width - (AppSizes.padding * 2) - (AppSizes.paddingSml * 5)) / 4);
@@ -150,6 +151,7 @@ class SportScheduleBuilder extends Component {
                 this.props.handleFormChange('description', '');
                 this.props.handleFormChange('duration', 0);
                 this.props.handleFormChange('event_date', null);
+                this.props.handleFormChange('post_session_survey.event_date', null);
                 this.props.handleFormChange('session_type', null);
                 this.props.handleFormChange('sport_name', null);
                 this.props.handleFormChange('strength_and_conditioning_type', null);
@@ -179,6 +181,7 @@ class SportScheduleBuilder extends Component {
             () => {
                 let dateTimeDurationFromState = PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, this.state.isFormValid, this.state.timeValueGroups);
                 this.props.handleFormChange('event_date', this.state.isFormValid ? `${dateTimeDurationFromState.event_date.toISOString(true).split('.')[0]}Z` : dateTimeDurationFromState.event_date);
+                this.props.handleFormChange('post_session_survey.event_date', `${moment().toISOString(true).split('.')[0]}Z`);
                 this.props.handleFormChange('duration', dateTimeDurationFromState.duration);
             },
         );
@@ -216,11 +219,13 @@ class SportScheduleBuilder extends Component {
                                             filteredSession={filteredSession}
                                             key={i}
                                             onPress={() => {
+                                                let newSportName = MyPlanConstants.translateStrengthConditioningTypeToSport(session.sport_name, session.strength_and_conditioning_type);
                                                 this._nextStep(1);
-                                                handleFormChange('sport_name', session.sport_name);
-                                                handleFormChange('session_type', session.session_type);
-                                                handleFormChange('strength_and_conditioning_type', session.strength_and_conditioning_type);
-                                                handleFormChange('event_date', session.event_date);
+                                                handleFormChange('sport_name', newSportName);
+                                                handleFormChange('session_type', 6);
+                                                handleFormChange('strength_and_conditioning_type', null);
+                                                handleFormChange('event_date', null);
+                                                handleFormChange('post_session_survey.event_date', null);
                                                 handleFormChange('duration', session.duration);
                                             }}
                                         />
@@ -452,326 +457,6 @@ class SportScheduleBuilder extends Component {
                         :
                         null
                 }
-                {/*<View style={{flexDirection: 'row'}}>
-                    <View style={{flex: 1,}}>
-                        { (this.props.typicalSessions.length > 0 && step >= 1) || step > 1 ?
-                            <TabIcon
-                                containerStyle={[{alignSelf: 'flex-end'},]}
-                                icon={'chevron-left'}
-                                iconStyle={[{color: AppColors.black}]}
-                                onPress={this._resetStep}
-                                reverse={false}
-                                size={32}
-                                type={'material-community'}
-                            />
-                            :
-                            null
-                        }
-                    </View>
-                    <View style={{flex: 9,}}>
-                        <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32), textAlign: 'center'}}>
-                            {'Today I did'}
-                        </Text>
-                        <Text style={{flexWrap: 'wrap', fontSize: AppFonts.scaleFont(32), lineHeight: AppFonts.scaleFont(32), textAlign: 'center',}}>
-                            <Text
-                                robotoBold
-                                style={{
-                                    color:              step >= 2 ? AppColors.zeplin.darkGrey : AppColors.primary.yellow.hundredPercent,
-                                    textDecorationLine: step >= 2 ? 'none' : 'underline',
-                                }}
-                            >
-                                {sportText}
-                                { step === 2 ?
-                                    <Text
-                                        robotoBold
-                                        style={{
-                                            color:              AppColors.primary.yellow.hundredPercent,
-                                            textDecorationLine: 'underline',
-                                        }}
-                                    >
-                                        {'type'}
-                                    </Text>
-                                    :
-                                    null
-                                }
-                            </Text>
-                            { step >= 3 ?
-                                null
-                                :
-                                <Text style={{fontSize: AppFonts.scaleFont(32), lineHeight: AppFonts.scaleFont(32),}}>
-                                    <Text robotoLight style={{color: AppColors.zeplin.darkGrey,}}>{' for '}</Text>
-                                    <Text robotoMedium style={{color: 'rgba(117, 117, 117, 0.5)',}}>{'duration'}</Text>
-                                </Text>
-                            }
-                        </Text>
-                        { step >= 3 ?
-                            <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center'}}>
-                                <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32), height: (AppFonts.scaleFont(32) + 5),}}>{' for '}</Text>
-                                { this.state.durationValueGroups.hours > 0 ?
-                                    <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2, height: (AppFonts.scaleFont(32) + underlinePadding),}}>
-                                        <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32),}}>
-                                            {parseInt((durationText / 60), 10)}
-                                            <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'HR' : ''}</Text>
-                                        </Text>
-                                    </View>
-                                    :
-                                    null
-                                }
-                                { this.state.durationValueGroups.minutes > 0 ?
-                                    <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2, height: (AppFonts.scaleFont(32) + underlinePadding),}}>
-                                        <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32),}}>
-                                            {(durationText % 60)}
-                                            <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'MIN' : ''}</Text>
-                                        </Text>
-                                    </View>
-                                    :
-                                    null
-                                }
-                                { this.state.durationValueGroups.minutes === 0 && this.state.durationValueGroups.hours === 0 ?
-                                    <View style={{borderBottomColor: AppColors.primary.yellow.hundredPercent, borderBottomWidth: 2, height: (AppFonts.scaleFont(32) + underlinePadding),}}>
-                                        <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(32),}}>
-                                            {durationText}
-                                            <Text robotoBold style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textAlignVertical: 'bottom',}}>{(step === 3 || step === 4) && isFormValid ? 'MIN' : ''}</Text>
-                                        </Text>
-                                    </View>
-                                    :
-                                    null
-                                }
-                            </View>
-                            :
-                            null
-                        }
-                    </View>
-                    <View style={{flex: 1}}></View>
-                </View>
-                <Spacer size={26} />
-                <View>
-                    { step === 0 ?
-                        <View>
-                            <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'MOST RECENT'}</Text>
-                            <Spacer size={15} />
-                            <View style={[typicalSessions.length === 1 ? AppStyles.containerCentered : {alignItems: 'flex-start'}, {alignSelf: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}]}>
-                                { _.map(typicalSessions, (session, i) => {
-                                    let sportName = session.sport_name || session.sport_name === 0 ?
-                                        _.filter(MyPlanConstants.teamSports, ['index', session.sport_name])[0].label.toUpperCase()
-                                        : session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0 ?
-                                            _.filter(MyPlanConstants.strengthConditioningTypes, ['index', session.strength_and_conditioning_type])[0].label.toUpperCase().replace(' TRAINING', '')
-                                            :
-                                            '';
-                                    let sessionType = session.session_type === 1 ?
-                                        'TRAINING'
-                                        :
-                                        _.filter(MyPlanConstants.availableSessionTypes, ['index', session.session_type])[0].label.toUpperCase();
-                                    let displayName = `${sportName} ${sessionType}`;
-                                    return(
-                                        <TouchableOpacity
-                                            key={i}
-                                            onPress={() => {
-                                                this._nextStep(3);
-                                                handleFormChange('sport_name', session.sport_name);
-                                                handleFormChange('session_type', session.session_type);
-                                                handleFormChange('strength_and_conditioning_type', session.strength_and_conditioning_type);
-                                                handleFormChange('event_date', session.event_date);
-                                                handleFormChange('duration', session.duration);
-                                            }}
-                                            style={[styles.step0Circle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, ((i + 1) % 3 === 0) ? {} : {marginRight: AppSizes.paddingSml,}]}
-                                        >
-                                            <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{displayName}</Text>
-                                        </TouchableOpacity>
-                                    )
-                                })}
-                                <TouchableOpacity
-                                    onPress={() => this._nextStep(1)}
-                                    style={[styles.step0Circle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {alignSelf: (typicalSessions.length % 4 === 0) || (typicalSessions.length % 5 === 0) ? 'center' : 'flex-start',}]}
-                                >
-                                    <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{'+ MORE OPTIONS'}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        : step === 1 ?
-                            <View>
-                                <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'SPORT TRAINING'}</Text>
-                                <Spacer size={15} />
-                                <View style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}]}>
-                                    { _.map(teamSports, (sport, i) =>
-                                        <TouchableOpacity
-                                            key={sport.index}
-                                            onPress={() => {
-                                                this._nextStep(2);
-                                                handleFormChange('sport_name', sport.index);
-                                                scrollToTop();
-                                            }}
-                                            style={[styles.step1Circle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, ((i + 1) % 4 === 0) ? {} : {marginRight: AppSizes.paddingSml,}]}
-                                        >
-                                            <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
-                                                {sport.label.toUpperCase() === 'TRACK & FIELD' ? 'TRACK &\nFIELD' : sport.label.toUpperCase().replace(' ', '\n')}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    )}
-                                </View>
-                                <Spacer size={10} />
-                                <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'FITNESS TRAINING'}</Text>
-                                <Spacer size={15} />
-                                <View style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}]}>
-                                    { _.map(strengthConditioningTypes, (strengthConditioningType, i) =>
-                                        <TouchableOpacity
-                                            key={strengthConditioningType.index}
-                                            onPress={() => {
-                                                this._nextStep(3);
-                                                handleFormChange('strength_and_conditioning_type', strengthConditioningType.index);
-                                                handleFormChange('session_type', 1);
-                                                scrollToTop();
-                                            }}
-                                            style={[styles.step1Circle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, ((i + 1) % 4 === 0) ? {} : {marginRight: AppSizes.paddingSml,}]}
-                                        >
-                                            <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
-                                                {strengthConditioningType.label.toUpperCase()}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    )}
-                                </View>
-                            </View>
-                            : step === 2 ?
-                                <View style={[AppStyles.containerCentered,]}>
-                                    <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(18),}}>{`${selectedSport.toUpperCase()} SESSION TYPE`}</Text>
-                                    <Spacer size={15} />
-                                    <View style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}]}>
-                                        { _.map(filteredSportSessionTypes, (session, i) =>
-                                            <TouchableOpacity
-                                                key={i}
-                                                onPress={() => {
-                                                    this._nextStep(3);
-                                                    handleFormChange('session_type', session.index);
-                                                }}
-                                                style={[styles.step0Circle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, ((i + 1) % 3 === 0) ? {} : {marginRight: AppSizes.paddingSml,}]}
-                                            >
-                                                <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{session.label.toUpperCase()}</Text>
-                                            </TouchableOpacity>
-                                        )}
-                                    </View>
-                                </View>
-                                : step === 3 ?
-                                    <View>
-                                        <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                                            <View style={{flex: 1,}}>
-                                                <Text oswaldMedium style={{color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'DURATION'}</Text>
-                                                <Spacer size={10} />
-                                                <View style={{flex: 1, flexDirection: 'row',}}>
-                                                    <WheelScrollPicker
-                                                        activeItemColor={AppColors.zeplin.darkGrey}
-                                                        activeItemHighlight={'#EBBA2D4D'}
-                                                        dataSource={[' ', ' ', ' ']}
-                                                        highlightBorderWidth={2}
-                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
-                                                        itemColor={AppColors.primary.grey.fiftyPercent}
-                                                        itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        scrollEnabled={false}
-                                                        selectedIndex={1}
-                                                        onValueChange={(data, selectedIndex) => null}
-                                                        wrapperBackground={AppColors.transparent}
-                                                        wrapperHeight={180}
-                                                    />
-                                                    <WheelScrollPicker
-                                                        activeItemColor={AppColors.zeplin.darkGrey}
-                                                        activeItemHighlight={'#EBBA2D4D'}
-                                                        dataSource={MyPlanConstants.durationOptionGroups.hours}
-                                                        highlightBorderWidth={2}
-                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
-                                                        itemColor={AppColors.primary.grey.fiftyPercent}
-                                                        itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        selectedIndex={durationValueGroups.hours}
-                                                        onValueChange={(data, selectedIndex) => this._handleScrollFormChange('durationValueGroups', 'hours', data, selectedIndex)}
-                                                        wrapperBackground={AppColors.transparent}
-                                                        wrapperFlex={3}
-                                                        wrapperHeight={180}
-                                                    />
-                                                    <WheelScrollPicker
-                                                        activeItemColor={AppColors.zeplin.darkGrey}
-                                                        activeItemHighlight={'#EBBA2D4D'}
-                                                        dataSource={MyPlanConstants.durationOptionGroups.hourLabel}
-                                                        highlightBorderWidth={2}
-                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
-                                                        itemColor={AppColors.primary.grey.fiftyPercent}
-                                                        itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        scrollEnabled={false}
-                                                        selectedIndex={durationValueGroups.label}
-                                                        onValueChange={(data, selectedIndex) => null}
-                                                        wrapperBackground={AppColors.transparent}
-                                                        wrapperHeight={180}
-                                                    />
-                                                    <WheelScrollPicker
-                                                        activeItemColor={AppColors.zeplin.darkGrey}
-                                                        activeItemHighlight={'#EBBA2D4D'}
-                                                        dataSource={MyPlanConstants.durationOptionGroups.minutes}
-                                                        highlightBorderWidth={2}
-                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
-                                                        itemColor={AppColors.primary.grey.fiftyPercent}
-                                                        itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        selectedIndex={durationValueGroups.minutes}
-                                                        onValueChange={(data, selectedIndex) => this._handleScrollFormChange('durationValueGroups', 'minutes', data, selectedIndex)}
-                                                        wrapperBackground={AppColors.transparent}
-                                                        wrapperFlex={3}
-                                                        wrapperHeight={180}
-                                                    />
-                                                    <WheelScrollPicker
-                                                        activeItemColor={AppColors.zeplin.darkGrey}
-                                                        activeItemHighlight={'#EBBA2D4D'}
-                                                        dataSource={MyPlanConstants.durationOptionGroups.minLabel}
-                                                        highlightBorderWidth={2}
-                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
-                                                        itemColor={AppColors.primary.grey.fiftyPercent}
-                                                        itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        scrollEnabled={false}
-                                                        selectedIndex={1}
-                                                        onValueChange={(data, selectedIndex) => null}
-                                                        wrapperBackground={AppColors.transparent}
-                                                        wrapperHeight={180}
-                                                    />
-                                                    <WheelScrollPicker
-                                                        activeItemColor={AppColors.zeplin.darkGrey}
-                                                        activeItemHighlight={'#EBBA2D4D'}
-                                                        dataSource={[' ', ' ', ' ']}
-                                                        highlightBorderWidth={2}
-                                                        highlightColor={AppColors.primary.yellow.hundredPercent}
-                                                        itemColor={AppColors.primary.grey.fiftyPercent}
-                                                        itemHeight={AppFonts.scaleFont(18) + 10}
-                                                        scrollEnabled={false}
-                                                        selectedIndex={1}
-                                                        onValueChange={(data, selectedIndex) => null}
-                                                        wrapperBackground={AppColors.transparent}
-                                                        wrapperHeight={180}
-                                                    />
-                                                </View>
-                                            </View>
-                                        </View>
-                                        <Spacer size={30} />
-                                        { isPostSession ?
-                                            <View />
-                                            :
-                                            <Button
-                                                backgroundColor={isFormValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                                                buttonStyle={{
-                                                    borderColor:  isFormValid ? AppColors.white : AppColors.zeplin.lightGrey,
-                                                    borderRadius: 10,
-                                                    borderWidth:  1,
-                                                    width:        AppSizes.screen.widthThird,
-                                                }}
-                                                color={isFormValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                                                containerViewStyle={{alignItems: 'center', justifyContent: 'center',}}
-                                                fontFamily={AppStyles.robotoBold.fontFamily}
-                                                fontWeight={AppStyles.robotoBold.fontWeight}
-                                                onPress={() => isFormValid ? scrollTo() : null}
-                                                outlined
-                                                raised={false}
-                                                textStyle={{ fontSize: AppFonts.scaleFont(14) }}
-                                                title={'Next'}
-                                            />
-                                        }
-                                    </View>
-                                    :
-                                    null
-                    }
-                </View>*/}
             </View>
         )
     }

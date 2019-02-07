@@ -439,6 +439,22 @@ const activitiesListOrder = [
     },
 ];
 
+function translateStrengthConditioningTypeToSport(sportName, strengthAndConditioningType) {
+    let newSportName = sportName;
+    let strengthConditioningObj = _.filter(strengthConditioningTypes, o => o.index === strengthAndConditioningType);
+    if(!sportName) {
+        newSportName = strengthConditioningObj[0] ?
+            _.filter(teamSports, o => o.label === strengthConditioningObj[0].label)
+            :
+            83; // set to 'Other' if we don't have a match
+        newSportName = newSportName[0] ?
+            newSportName[0].index
+            :
+            83; // set to 'Other' if we don't have a match
+    }
+    return newSportName;
+}
+
 function cleanedActivitiesList() {
     let cleanedActivityList = {};
     _.map(activitiesListOrder, list => {
@@ -781,5 +797,6 @@ export default {
     strengthConditioningTypes,
     teamSports,
     timeOptionGroups,
+    translateStrengthConditioningTypeToSport,
     userSelectedActiveTimeMessage,
 };
