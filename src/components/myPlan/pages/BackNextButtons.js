@@ -152,6 +152,7 @@ const BackNextButtons = ({
                     backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white,
                     borderColor:     isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey,
                     borderWidth:     1,
+                    marginRight:     Platform.OS === 'ios' ? AppSizes.paddingXSml : (AppSizes.paddingXSml / 2),
                 }]}
                 underlayColor={AppColors.transparent}
             >
