@@ -106,6 +106,9 @@ class ReadinessSurvey extends Component {
             isSlideUpPanelExpanded:  true,
             isSlideUpPanelOpen:      false,
             pageIndex:               0,
+
+            lockAlreadyTrainedBtn: false,
+            lockTrainLaterBtn:     false,
         };
         this.myActivityTargetComponents = [];
         this.myAreasOfSorenessComponent = {};
@@ -524,8 +527,15 @@ class ReadinessSurvey extends Component {
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', width: 220,}}>
                                         <TouchableHighlight
                                             onPress={() => {
-                                                handleFormChange('already_trained_number', false);
-                                                this._checkNextStep(3);
+                                                if(!this.state.lockAlreadyTrainedBtn) {
+                                                    this.setState(
+                                                        { lockAlreadyTrainedBtn: !this.state.lockAlreadyTrainedBtn},
+                                                        () => {
+                                                            handleFormChange('already_trained_number', false);
+                                                            this._checkNextStep(3);
+                                                        }
+                                                    );
+                                                }
                                             }}
                                             style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
                                                 backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
@@ -547,9 +557,16 @@ class ReadinessSurvey extends Component {
                                         </TouchableHighlight>
                                         <TouchableHighlight
                                             onPress={() => {
-                                                this._resetSportBuilder();
-                                                handleFormChange('already_trained_number', 1);
-                                                this._checkNextStep(3);
+                                                if(!this.state.lockAlreadyTrainedBtn) {
+                                                    this.setState(
+                                                        { lockAlreadyTrainedBtn: !this.state.lockAlreadyTrainedBtn},
+                                                        () => {
+                                                            this._resetSportBuilder();
+                                                            handleFormChange('already_trained_number', 1);
+                                                            this._checkNextStep(3);
+                                                        }
+                                                    );
+                                                }
                                             }}
                                             style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
                                                 backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
@@ -633,8 +650,15 @@ class ReadinessSurvey extends Component {
                             >
                                 <TouchableHighlight
                                     onPress={() => {
-                                        handleFormChange('sessions_planned', false);
-                                        this._checkNextStep(5);
+                                        if(!this.state.lockTrainLaterBtn) {
+                                            this.setState(
+                                                { lockTrainLaterBtn: !this.state.lockTrainLaterBtn},
+                                                () => {
+                                                    handleFormChange('sessions_planned', false);
+                                                    this._checkNextStep(5);
+                                                }
+                                            );
+                                        }
                                     }}
                                     style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
                                         backgroundColor: dailyReadiness.sessions_planned === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
@@ -657,8 +681,15 @@ class ReadinessSurvey extends Component {
                                 <Spacer size={20} />
                                 <TouchableHighlight
                                     onPress={() => {
-                                        handleFormChange('sessions_planned', true);
-                                        this._checkNextStep(5);
+                                        if(!this.state.lockTrainLaterBtn) {
+                                            this.setState(
+                                                { lockTrainLaterBtn: !this.state.lockTrainLaterBtn},
+                                                () => {
+                                                    handleFormChange('sessions_planned', true);
+                                                    this._checkNextStep(5);
+                                                }
+                                            );
+                                        }
                                     }}
                                     style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
                                         backgroundColor: dailyReadiness.sessions_planned === true ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
