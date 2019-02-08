@@ -220,13 +220,6 @@ class Login extends Component {
                     password: credentials.password,
                 }, false)
                     .then(response => {
-                        if(response.user.health_enabled) {
-                            AppUtil.getAppleHealthKitDataAsync(response.user.id, response.user.health_sync_date, response.user.historic_health_sync_date);
-                            return AppUtil.getAppleHealthKitData(response.user.id, response.user.health_sync_date, response.user.historic_health_sync_date, () => response);
-                        }
-                        return response;
-                    })
-                    .then(response => {
                         let { authorization, user } = response;
                         return this.props.registerDevice(this.props.certificate, this.props.device, user)
                             .then(() => {
@@ -241,6 +234,13 @@ class Login extends Component {
                                     .then(res => {
                                         if(!res.daily_plans[0].daily_readiness_survey_completed) {
                                             this.props.setAppLogs();
+                                        }
+                                        return res;
+                                    })
+                                    .then(res => {
+                                        if(user.health_enabled) {
+                                            AppUtil.getAppleHealthKitDataAsync(user.id, user.health_sync_date, user.historic_health_sync_date);
+                                            return AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date, () => response);
                                         }
                                         return res;
                                     })
