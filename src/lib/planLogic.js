@@ -746,7 +746,7 @@ const PlanLogic = {
         let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'afternoon' : hourOfDay >= split_evening || hourOfDay < cutoffForNewDay ? 'evening' : 'morning';
         let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
-        let sportDuration = workout.duration;
+        let sportDuration = workout.duration ? workout.duration : 0;
         let sportText = selectedSport ? selectedSport.label.toLowerCase() : '';
         let sportImage = selectedSport ? selectedSport.imagePath : '';
         return {
