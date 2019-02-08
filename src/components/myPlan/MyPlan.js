@@ -564,7 +564,7 @@ class MyPlan extends Component {
             user_id:    this.props.user.id,
             sessions:   [],
         };
-        if(this.state.healthData.workouts.length > 0) {
+        if(this.state.healthData.workouts && this.state.healthData.workouts.length > 0) {
             postSession.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
             let healthDataWorkouts = this.state.healthData.workouts ? this.state.healthData.workouts : [];
             let healthDataIgnoredWorkouts = this.state.healthData.ignoredWorkouts ? this.state.healthData.ignoredWorkouts : [];
@@ -1968,7 +1968,7 @@ class MyPlan extends Component {
                 <SessionsCompletionModal
                     isModalOpen={this.state.isTrainSessionsCompletionModalOpen}
                     onClose={this._closeTrainSessionsCompletionModal}
-                    sessions={this.state.postSession.sessions}
+                    sessions={this.state.postSession.sessions && this.state.postSession.sessions.length > 0 ? this.state.postSession.sessions : []}
                 />
                 <ExerciseCompletionModal
                     completedExercises={completedFSExercises}
