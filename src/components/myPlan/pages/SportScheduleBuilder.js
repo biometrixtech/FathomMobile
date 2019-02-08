@@ -188,7 +188,7 @@ class SportScheduleBuilder extends Component {
     }
 
     render = () => {
-        const { handleFormChange, isPostSession, postSession, scrollToArea, typicalSessions, } = this.props;
+        const { handleFormChange, isPostSession, postSession, scrollToArea, scrollToTop, typicalSessions, } = this.props;
         const { durationValueGroups, isFormValid, showMoreOptions, step, } = this.state;
         let { sportImage, sportText, } = PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, this.state);
         let cleanedActivitiesList = MyPlanConstants.cleanedActivitiesList();
@@ -196,12 +196,13 @@ class SportScheduleBuilder extends Component {
             <View style={{flex: 1,}}>
                 { step === 0 ?
                     <View>
+                        <Spacer size={20} />
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                             {'What activity did you do?'}
                         </Text>
                         <Spacer size={20} />
                         { typicalSessions.length > 0 ?
-                            <View style={{alignSelf: 'center', flex: 1, marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}}>
+                            <View style={{alignSelf: 'center', marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}}>
                                 { _.map(typicalSessions, (session, i) => {
                                     let filteredSession = session.sport_name || session.sport_name === 0 ?
                                         _.filter(MyPlanConstants.teamSports, ['index', session.sport_name])[0]
@@ -234,7 +235,7 @@ class SportScheduleBuilder extends Component {
                                 <SportBlock
                                     displayName={'More options'}
                                     filteredSession={{icon: 'add', iconType: 'material',}}
-                                    onPress={() => this.setState({ showMoreOptions: !this.state.showMoreOptions, }, () => _.delay(() => scrollToArea(this._moreOptionsRef), 10) )}
+                                    onPress={() => this.setState({ showMoreOptions: !this.state.showMoreOptions, }, () => _.delay(() => { if(this.state.showMoreOptions) { scrollToArea(this._moreOptionsRef); } else { scrollToTop(); } }, 10) )}
                                 />
                             </View>
                             :
@@ -469,6 +470,7 @@ SportScheduleBuilder.propTypes = {
     postSession:      PropTypes.object.isRequired,
     scrollTo:         PropTypes.func.isRequired,
     scrollToArea:     PropTypes.func.isRequired,
+    scrollToTop:      PropTypes.func.isRequired,
     typicalSessions:  PropTypes.array.isRequired,
 };
 

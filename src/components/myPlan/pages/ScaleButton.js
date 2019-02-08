@@ -29,9 +29,7 @@ const ScaleButton = ({
     updateStateAndForm,
     valueLabel,
 }) => (
-    <View
-        style={{flex: 1, justifyContent: 'center',}}
-    >
+    <View style={{flex: 1, justifyContent: 'flex-start',}}>
         <TouchableHighlight
             onPress={updateStateAndForm}
             style={[AppStyles.sorenessPainValuesLrg, {
@@ -59,7 +57,6 @@ const ScaleButton = ({
                     AppStyles.textCenterAligned,
                     {
                         color:             isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                        flex:              1,
                         fontSize:          AppFonts.scaleFont(12),
                         paddingHorizontal: AppSizes.paddingXSml,
                         paddingVertical:   AppSizes.paddingSml,

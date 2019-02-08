@@ -77,6 +77,7 @@ class HealthKitWorkouts extends Component {
         let { partOfDay, sportDuration, sportImage, sportText, } = PlanLogic.handleHealthKitWorkoutPageRenderLogic(workouts[pageIndex]);
         return(
             <View style={{flex: 1,}}>
+                <Spacer size={20} />
                 <View style={{alignItems: 'center',}}>
                     <Image
                         source={sportImage}

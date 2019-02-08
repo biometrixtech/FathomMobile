@@ -571,6 +571,7 @@ class ReadinessSurvey extends Component {
                                         </TouchableHighlight>
                                     </View>
                                 </View>
+                                <Spacer size={AppSizes.progressPillsHeight + AppSizes.statusBarHeight} />
                             </View>
                         }
                     </View>
@@ -584,7 +585,6 @@ class ReadinessSurvey extends Component {
                                 ref={ref => {this.scrollViewSportBuilderRefs[index] = ref;}}
                             >
                                 <ProgressPill currentStep={1} totalSteps={3} />
-                                <Spacer size={20} />
                                 <SportScheduleBuilder
                                     handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                         handleFormChange(`sessions[${index}].${location}`, value, isPain, bodyPartMapIndex, bodyPartSide);
@@ -680,6 +680,7 @@ class ReadinessSurvey extends Component {
                                 </TouchableHighlight>
                             </View>
                         </View>
+                        <Spacer size={AppSizes.progressPillsHeight + AppSizes.statusBarHeight} />
                     </View>
 
                     <View style={{flex: 1,}}>
@@ -756,7 +757,7 @@ class ReadinessSurvey extends Component {
 
                     <ScrollView
                         bounces={false}
-                        contentContainerStyle={{flexGrow: 1,}}
+                        contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         nestedScrollEnabled={true}
                         overScrollMode={'never'}
                         ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
@@ -764,34 +765,32 @@ class ReadinessSurvey extends Component {
                         { pageIndex === (7 + pageIndexOffset) &&
                             <View style={{flex: 1,}}>
                                 <ProgressPill currentStep={3} totalSteps={3} />
-                                <View style={{flexDirection: 'column', flexGrow: 1, paddingVertical: AppSizes.padding, justifyContent: 'center',}}>
-                                    { _.map(newSoreBodyParts, (bodyPart, i) =>
-                                        <View
-                                            key={i}
-                                            onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50}}}
-                                            style={{paddingVertical: AppSizes.padding,}}
-                                        >
-                                            <SoreBodyPart
-                                                bodyPart={bodyPart}
-                                                bodyPartSide={bodyPart.side}
-                                                firstTimeExperience={user.first_time_experience}
-                                                handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                                    handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide, bodyPart.isClearCandidate);
-                                                    if(shouldScroll && newSoreBodyParts.length !== (i + 1) && (newSoreBodyParts.length - 1) !== (i + 1)) {
-                                                        this._scrollTo(this.myPrevSorenessComponents[i + 1], this.scrollViewPrevSorenessRef);
-                                                    } else if(shouldScroll) {
-                                                        this._scrollToBottom(this.scrollViewPrevSorenessRef);
-                                                    }
-                                                    this._checkNextStep(7);
-                                                }}
-                                                handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
-                                                isPrevSoreness={true}
-                                                surveyObject={dailyReadiness}
-                                                toggleSlideUpPanel={this._toggleSlideUpPanel}
-                                            />
-                                        </View>
-                                    )}
-                                </View>
+                                { _.map(newSoreBodyParts, (bodyPart, i) =>
+                                    <View
+                                        key={i}
+                                        onLayout={event => {this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y}}}
+                                    >
+                                        <SoreBodyPart
+                                            bodyPart={bodyPart}
+                                            bodyPartSide={bodyPart.side}
+                                            firstTimeExperience={user.first_time_experience}
+                                            handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                                handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide, bodyPart.isClearCandidate);
+                                                if(shouldScroll && newSoreBodyParts.length !== (i + 1) && (newSoreBodyParts.length - 1) !== (i + 1)) {
+                                                    this._scrollTo(this.myPrevSorenessComponents[i + 1], this.scrollViewPrevSorenessRef);
+                                                } else if(shouldScroll) {
+                                                    this._scrollToBottom(this.scrollViewPrevSorenessRef);
+                                                }
+                                                this._checkNextStep(7);
+                                            }}
+                                            handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                            isFirst={i === 0}
+                                            isPrevSoreness={true}
+                                            surveyObject={dailyReadiness}
+                                            toggleSlideUpPanel={this._toggleSlideUpPanel}
+                                        />
+                                    </View>
+                                )}
                             </View>
                         }
                     </ScrollView>
@@ -803,7 +802,6 @@ class ReadinessSurvey extends Component {
                         onScrollEndDrag={event => this._scrollViewEndDrag(event)}
                         overScrollMode={'never'}
                         ref={ref => {this.myAreasOfSorenessComponent = ref;}}
-                        style={{flex: 1,}}
                     >
                         <ProgressPill currentStep={3} totalSteps={3} />
                         <AreasOfSoreness
@@ -821,6 +819,7 @@ class ReadinessSurvey extends Component {
                                 this._scrollTo(xyObject, this.myAreasOfSorenessComponent);
                                 this.setState({ isCloseToBottom: true, });
                             }}
+                            scrollToTop={() => this._scrollToTop(this.myAreasOfSorenessComponent)}
                             soreBodyParts={soreBodyParts}
                             soreBodyPartsState={dailyReadiness.soreness}
                             surveyObject={dailyReadiness}
@@ -847,8 +846,7 @@ class ReadinessSurvey extends Component {
                         {_.map(areaOfSorenessClicked, (area, i) => (
                             <View
                                 key={`AreasOfSoreness1${i}`}
-                                onLayout={event => {this.myClickedSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y - 50, height: event.nativeEvent.layout.height,}}}
-                                style={[AppStyles.paddingVertical]}
+                                onLayout={event => {this.myClickedSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,}}}
                             >
                                 <SoreBodyPart
                                     bodyPart={MyPlanConstants.bodyPartMapping[area.body_part]}
@@ -864,6 +862,7 @@ class ReadinessSurvey extends Component {
                                         }
                                     }}
                                     handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
+                                    isFirst={i === 0}
                                     surveyObject={dailyReadiness}
                                     toggleSlideUpPanel={this._toggleSlideUpPanel}
                                 />

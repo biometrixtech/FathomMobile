@@ -51,6 +51,8 @@ export default {
 
     iphoneXBottomBarPadding: isIphoneX ? 30 : Platform.OS === 'ios' ? 20 : 0,
 
+    progressPillsHeight: screenHeight * 0.08,
+
     padding:     20,
     paddingLrg:  30,
     paddingXLrg: 50,

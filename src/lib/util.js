@@ -353,7 +353,7 @@ const UTIL = {
                         historicSyncDate;
         return {
             daysAgo,
-            lastSync: lastSyncDate ? moment(lastSyncDate).toISOString() : null,
+            lastSync: updatedLastSyncDate ? moment(updatedLastSyncDate).toISOString() : null,
             now:      moment().toISOString(),
             syncDate: updatedLastSyncDate ? moment(updatedLastSyncDate).set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString() : null,
             today3AM: moment().set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString(),
