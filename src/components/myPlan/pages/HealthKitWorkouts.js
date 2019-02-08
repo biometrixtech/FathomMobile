@@ -14,7 +14,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Keyboard, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
+import { Image, Keyboard, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -24,7 +24,16 @@ import { ScaleButton, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
-import moment from 'moment';
+
+/* Styles ==================================================================== */
+const styles = StyleSheet.create({
+    shadowEffect: {
+        shadowColor:   'rgba(0, 0, 0, 0.16)',
+        shadowOffset:  {  height: 3, width: 0, },
+        shadowOpacity: 1,
+        shadowRadius:  6,
+    },
+});
 
 /* Component ==================================================================== */
 class HealthKitWorkouts extends Component {
@@ -71,7 +80,7 @@ class HealthKitWorkouts extends Component {
                 <View style={{alignItems: 'center',}}>
                     <Image
                         source={sportImage}
-                        style={{height: 75, tintColor: AppColors.zeplin.seaBlue, width: 75,}}
+                        style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, tintColor: AppColors.zeplin.seaBlue, width: AppSizes.screen.widthThird,}]}
                     />
                 </View>
                 <FormInput
@@ -89,6 +98,7 @@ class HealthKitWorkouts extends Component {
                     textInputRef={input => {this.textInput = input;}}
                     value={''}
                 />
+                <Spacer size={AppSizes.paddingSml} />
                 <Text robotoLight style={{color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(28), paddingHorizontal: AppSizes.padding, textAlign: 'center',}}>{`Did you do a ${sportText} workout this ${partOfDay} for`}</Text>
                 <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>
                     <Text oswaldMedium style={[isEditingDuration ? {color: AppColors.zeplin.light,} : {}]}>{sportDuration}</Text>

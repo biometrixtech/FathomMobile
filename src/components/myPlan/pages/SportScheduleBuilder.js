@@ -279,7 +279,7 @@ class SportScheduleBuilder extends Component {
                             <View style={{alignItems: 'center',}}>
                                 <Image
                                     source={sportImage}
-                                    style={{height: 75, tintColor: AppColors.zeplin.seaBlue, width: 75,}}
+                                    style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, shadowRadius: 6, tintColor: AppColors.zeplin.seaBlue, width: AppSizes.screen.widthThird,}]}
                                 />
                             </View>
                             <Spacer size={20} />
