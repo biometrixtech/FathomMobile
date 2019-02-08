@@ -170,6 +170,7 @@ class MyPlan extends Component {
                 duration:                       0,
                 event_date:                     null,
                 session_type:                   null,
+                sessions:                       [],
                 soreness:                       [],
                 sport_name:                     null, // this exists for session_type = 0,2,3,6
                 strength_and_conditioning_type: null, // this only exists for session_type=1
@@ -622,9 +623,10 @@ class MyPlan extends Component {
                         duration:                       0,
                         event_date:                     null,
                         session_type:                   null,
+                        sessions:                       postSession.sessions,
                         soreness:                       [],
-                        sport_name:                     this.state.postSession.sport_name || this.state.postSession.sport_name === 0 ? this.state.postSession.sport_name : null,
-                        strength_and_conditioning_type: this.state.postSession.strength_and_conditioning_type || this.state.postSession.strength_and_conditioning_type === 0 ? this.state.postSession.strength_and_conditioning_type : null,
+                        sport_name:                     null,
+                        strength_and_conditioning_type: null,
                     },
                 },
             );
@@ -1963,10 +1965,7 @@ class MyPlan extends Component {
                 <SessionsCompletionModal
                     isModalOpen={this.state.isTrainSessionsCompletionModalOpen}
                     onClose={this._closeTrainSessionsCompletionModal}
-                    sessions={[{
-                        sport_name:                     this.state.postSession.sport_name,
-                        strength_and_conditioning_type: this.state.postSession.strength_and_conditioning_type,
-                    }]}
+                    sessions={this.state.postSession.sessions}
                 />
                 <ExerciseCompletionModal
                     completedExercises={completedFSExercises}

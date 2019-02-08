@@ -747,7 +747,7 @@ const selectedActiveTimes = (selectedIndex = 2) => {
     }
 }
 
-function completionModalExerciseList(exerciseList, completedExercises) {
+function completionModalExerciseList(exerciseList, completedExercises, isFS = false) {
     let cleanedExerciseList = {};
     _.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) => {
         if(exerciseIndex.length > 0) {
@@ -755,7 +755,11 @@ function completionModalExerciseList(exerciseList, completedExercises) {
             cleanedExerciseList[index].completed = 0;
             cleanedExerciseList[index].total = exerciseIndex.length;
             _.map(exerciseIndex, (exercise, i) => {
-                if(completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`)) {
+                let exerciseId = isFS ?
+                    exercise.library_id
+                    :
+                    `${exercise.library_id}-${exercise.set_number}`;
+                if(completedExercises.includes(exerciseId)) {
                     cleanedExerciseList[index].completed += 1;
                 }
             });

@@ -251,6 +251,7 @@ class ReadinessSurvey extends Component {
         } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, dailyReadiness.soreness);
         let isFABVisible = areaOfSorenessClicked && isActionButtonVisible && areaOfSorenessClicked.length > 0;
+        let pageIndexOffset = dailyReadiness.sessions.length > 0 ? (dailyReadiness.sessions.length - 1) : 0;
         /*eslint no-return-assign: 0*/
         return(
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
@@ -428,7 +429,7 @@ class ReadinessSurvey extends Component {
                                                                 isSelected ? {backgroundColor: AppColors.zeplin.yellow,} : {},
                                                             ]}
                                                         >
-                                                            <Text oswaldMedium style={{color: isSelected ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>
+                                                            <Text oswaldMedium style={{color: isSelected ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
                                                                 {position.toUpperCase()}
                                                             </Text>
                                                         </TouchableOpacity>
@@ -682,7 +683,7 @@ class ReadinessSurvey extends Component {
                     </View>
 
                     <View style={{flex: 1,}}>
-                        { pageIndex === (6 + (dailyReadiness.sessions.length - 1)) &&
+                        { pageIndex === (6 + pageIndexOffset) &&
                             <View style={{flex: 1,}}>
                                 <ProgressPill currentStep={2} totalSteps={3} />
                                 <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
@@ -760,7 +761,7 @@ class ReadinessSurvey extends Component {
                         overScrollMode={'never'}
                         ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
                     >
-                        { pageIndex === (7 + (dailyReadiness.sessions.length - 1)) &&
+                        { pageIndex === (7 + pageIndexOffset) &&
                             <View style={{flex: 1,}}>
                                 <ProgressPill currentStep={3} totalSteps={3} />
                                 <View style={{flexDirection: 'column', flexGrow: 1, paddingVertical: AppSizes.padding, justifyContent: 'center',}}>

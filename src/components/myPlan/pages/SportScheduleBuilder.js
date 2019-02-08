@@ -403,6 +403,7 @@ class SportScheduleBuilder extends Component {
                             <Spacer size={30} />
                             { isFormValid ?
                                 <View onLayout={event => {this._activityRPERef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}}>
+                                    <Spacer size={20} />
                                     <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
                                         {'How was '}
                                         <Text robotoMedium>{sportText}</Text>
