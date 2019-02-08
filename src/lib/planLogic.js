@@ -739,7 +739,7 @@ const PlanLogic = {
       */
     // TODO: UNIT TEST ME
     handleHealthKitWorkoutPageRenderLogic: (workout) => {
-        let hourOfDay = moment(workout.event_date).get('hour');
+        let hourOfDay = moment(workout.event_date).utc().get('hour');
         let split_afternoon = 12; // 24hr time to split the afternoon
         let split_evening = 17; // 24hr time to split the evening
         let cutoffForNewDay = 3;
