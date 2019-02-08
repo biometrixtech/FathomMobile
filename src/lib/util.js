@@ -527,6 +527,7 @@ const UTIL = {
                     newWorkout.sport_name === 66
                 ) {
                     // 0.5-15 duration = hidden (is not API && is 'Walking' workout)
+                    newWorkout.ignored = true;
                     cleanedIgnoredWorkoutValues.push(newWorkout);
                 } else {
                     // 15+ = regular

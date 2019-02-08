@@ -482,8 +482,9 @@ class MyPlan extends Component {
         newHealthData[index] = newFormFields;
         this.setState({
             healthData: {
-                sleep:    this.state.healthData.sleep,
-                workouts: newHealthData,
+                ignoredWorkouts: this.state.healthData.ignoredWorkouts,
+                sleep:           this.state.healthData.sleep,
+                workouts:        newHealthData,
             },
         }, () => {
             if(callback) { callback(); }
@@ -524,11 +525,12 @@ class MyPlan extends Component {
                 {
                     dailyReadiness: {
                         readiness:        0,
-                        sessions:         newDailyReadiness.sessions,
+                        sessions:         _.concat(healthDataWorkouts, dailyReadinessSessions),
                         sessions_planned: newDailyReadiness.sessions_planned,
                         sleep_quality:    0,
                         soreness:         [],
                     },
+                    healthData:                           [],
                     isPrepCalculating:                    this.state.dailyReadiness.sessions_planned ? true : false,
                     isPrepareSessionsCompletionModalOpen: newDailyReadiness.sessions.length !== 0,
                     isReadinessSurveyModalOpen:           false,
@@ -613,6 +615,7 @@ class MyPlan extends Component {
         _.delay(() => {
             this.setState(
                 {
+                    healthData:                         [],
                     train:                              newTrainObject,
                     isPostSessionSurveyModalOpen:       false,
                     isRecoverCalculating:               true,
@@ -1904,7 +1907,7 @@ class MyPlan extends Component {
                             handleHealthDataFormChange={this._handleHealthDataFormChange}
                             handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
                             handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                            healthKitWorkouts={this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : null}
+                            healthKitWorkouts={this.state.healthData.workouts && this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : null}
                             postSession={this.state.postSession}
                             soreBodyParts={this.props.plan.soreBodyParts}
                             typicalSessions={this.props.plan.typicalSessions}
