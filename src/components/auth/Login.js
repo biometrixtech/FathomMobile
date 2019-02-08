@@ -221,8 +221,8 @@ class Login extends Component {
                 }, false)
                     .then(response => {
                         if(response.user.health_enabled) {
-                            AppUtil.getAppleHealthKitDataAsync(response.user.id, response.user.health_sync_date);
-                            return AppUtil.getAppleHealthKitData(response.user.id, response.user.health_sync_date, () => response);
+                            AppUtil.getAppleHealthKitDataAsync(response.user.id, response.user.health_sync_date, response.user.historic_health_sync_date);
+                            return AppUtil.getAppleHealthKitData(response.user.id, response.user.health_sync_date, response.user.historic_health_sync_date, () => response);
                         }
                         return response;
                     })

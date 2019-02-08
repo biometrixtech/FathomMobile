@@ -339,26 +339,37 @@ const UTIL = {
         });
     },
 
-    _getAppleHealthTimes: (lastSyncDate, numberOfDaysAgo) => {
+    _getAppleHealthTimes: (lastSyncDate, historicSyncDate, numberOfDaysAgo) => {
+        let daysAgo = moment().subtract(numberOfDaysAgo, 'd').set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
+        let updatedLastSyncDate = !lastSyncDate && !historicSyncDate ?
+            null
+            : lastSyncDate && !historicSyncDate ?
+                daysAgo
+                : !lastSyncDate && historicSyncDate ?
+                    historicSyncDate
+                    : moment(lastSyncDate).format('YYYY-MM-DD') === moment(historicSyncDate).format('YYYY-MM-DD') ?
+                        lastSyncDate
+                        :
+                        historicSyncDate;
         return {
-            daysAgo:  moment().subtract(numberOfDaysAgo, 'd').set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString(),
+            daysAgo,
             lastSync: lastSyncDate ? moment(lastSyncDate).toISOString() : null,
             now:      moment().toISOString(),
-            syncDate: lastSyncDate ? moment(lastSyncDate).set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString() : null,
+            syncDate: updatedLastSyncDate ? moment(updatedLastSyncDate).set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString() : null,
             today3AM: moment().set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString(),
         };
     },
 
-    getAppleHealthKitDataAsync: async (userId, lastSyncDate, callback, numberOfDaysAgo = 35) => {
+    getAppleHealthKitDataAsync: async (userId, lastSyncDate, historicSyncDate, callback, numberOfDaysAgo = 35) => {
         if(Platform.OS === 'ios') {
             // grab permissions
             let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
             // set start and end dates
-            let { daysAgo, lastSync, now, syncDate, today3AM, } = UTIL._getAppleHealthTimes(lastSyncDate, numberOfDaysAgo);
+            let { daysAgo, lastSync, now, syncDate, today3AM, } = UTIL._getAppleHealthTimes(lastSyncDate, historicSyncDate, numberOfDaysAgo);
             // setup variables
             let apiPromisesArray = [];
             // combine promises and trigger next step
-            if(lastSyncDate) {
+            if(syncDate) {
                 // 1- syncDate - today3AM (workout/hr)
                 apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, syncDate, today3AM));
                 apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, syncDate, today3AM));
@@ -372,19 +383,19 @@ const UTIL = {
                 apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, now));
             }
             // return function
-            return UTIL._handleReturnedPromises(userId, lastSyncDate ? syncDate : daysAgo, apiPromisesArray, true);
+            return UTIL._handleReturnedPromises(userId, syncDate ? syncDate : daysAgo, apiPromisesArray, true);
         }
         if(callback) {
             return callback();
         }
     },
 
-    getAppleHealthKitData: (userId, lastSyncDate, callback, numberOfDaysAgo = 35) => {
+    getAppleHealthKitData: (userId, lastSyncDate, historicSyncDate, callback, numberOfDaysAgo = 35) => {
         if(Platform.OS === 'ios') {
             // grab permissions
             let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
             // set start and end dates
-            let { now, today3AM, } = UTIL._getAppleHealthTimes(lastSyncDate, numberOfDaysAgo);
+            let { now, today3AM, } = UTIL._getAppleHealthTimes(lastSyncDate, historicSyncDate, numberOfDaysAgo);
             // setup variables
             let apiPromisesArray = [];
             // combine promises and trigger next step

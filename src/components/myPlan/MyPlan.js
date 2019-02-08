@@ -422,7 +422,7 @@ class MyPlan extends Component {
                 (moment(this.props.user.health_sync_date).diff(moment(), 'minutes') > 7)
             )
         ) {
-            AppUtil.getAppleHealthKitData(this.props.user.id, this.props.user.health_sync_date);
+            AppUtil.getAppleHealthKitData(this.props.user.id, this.props.user.health_sync_date, this.props.user.historic_health_sync_date);
         }
     }
 

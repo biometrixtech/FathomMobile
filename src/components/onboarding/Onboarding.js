@@ -405,8 +405,8 @@ class Onboarding extends Component {
             })
             .then(response => {
                 if(response.health_enabled) {
-                    AppUtil.getAppleHealthKitDataAsync(response.id, response.health_sync_date);
-                    return AppUtil.getAppleHealthKitData(response.id, response.health_sync_date, () => response);
+                    AppUtil.getAppleHealthKitDataAsync(response.id, response.health_sync_date, response.historic_health_sync_date);
+                    return AppUtil.getAppleHealthKitData(response.id, response.health_sync_date, response.historic_health_sync_date, () => response);
                 }
                 return response;
             })
