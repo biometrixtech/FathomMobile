@@ -63,7 +63,7 @@ class AreasOfSoreness extends Component {
     _resizeModal = ev => {
         let oldHeight = this.state.questionsHeight;
         let newHeight = parseInt(ev.nativeEvent.layout.height, 10);
-        if(oldHeight !== newHeight) {
+        if(oldHeight !== newHeight && newHeight < AppSizes.screen.height) {
             this.setState({ questionsHeight: newHeight });
         }
     }

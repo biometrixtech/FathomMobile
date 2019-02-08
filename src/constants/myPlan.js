@@ -441,7 +441,7 @@ const activitiesListOrder = [
 
 function translateStrengthConditioningTypeToSport(sportName, strengthAndConditioningType) {
     let newSportName = sportName;
-    if(!sportName) {
+    if(sportName === null) {
         let strengthConditioningObj = _.filter(strengthConditioningTypes, o => o.index === strengthAndConditioningType);
         newSportName = strengthConditioningObj[0] ?
             _.filter(teamSports, o => o.label === strengthConditioningObj[0].label)

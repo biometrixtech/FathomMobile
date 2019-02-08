@@ -204,10 +204,11 @@ const postSessionSurvey = postSessionObj => {
             });
             dispatch({
                 type: Actions.GET_MY_PLAN,
-                data: newPlan,
+                data: newPlan.daily_plans,
             });
             return myPlanData;
-        }).then(myPlanData => Promise.resolve(newPlan))
+        })
+        .then(myPlanData => Promise.resolve(newPlan))
         .catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
