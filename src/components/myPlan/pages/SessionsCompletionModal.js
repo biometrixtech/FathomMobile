@@ -10,7 +10,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, StyleSheet, View, } from 'react-native';
+import { Image, Platform, StyleSheet, View, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -20,7 +20,7 @@ import Modal from 'react-native-modalbox';
 
 // // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, ProgressCircle, Spacer, TabIcon, Text, } from '../../custom';
+import { Button, ProgressCircle, Spacer, Text, } from '../../custom';
 
 const modalText = MyPlanConstants.randomizeSessionsCompletionModalText();
 const modalWidth = (AppSizes.screen.width * 0.9);
@@ -229,12 +229,14 @@ class SessionsCompletionModal extends Component {
                                                 animated={true}
                                                 borderWidth={0}
                                                 children={
-                                                    <View style={{alignItems: 'center', justifyContent: 'center', width: iconViewWrapperWidth,}}>
-                                                        <TabIcon
-                                                            color={progressCounters[i] === 1 ? AppColors.zeplin.yellow : AppColors.white}
-                                                            icon={selectedSession.icon}
-                                                            size={iconSize}
-                                                            type={selectedSession.iconType}
+                                                    <View style={{alignItems: 'center', justifyContent: 'center',}}>
+                                                        <Image
+                                                            source={selectedSession.imagePath}
+                                                            style={{
+                                                                height:    iconSize,
+                                                                tintColor: progressCounters[i] === 1 ? AppColors.zeplin.yellow : AppColors.white,
+                                                                width:     iconSize,
+                                                            }}
                                                         />
                                                     </View>
                                                 }

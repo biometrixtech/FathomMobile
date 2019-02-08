@@ -8,6 +8,7 @@
         handleFormChange={handleFormChange}
         handleUpdateFirstTimeExperience={name => handleUpdateFirstTimeExperience(name)}
         index={i+3}
+        isFirst={i === 0}
         isPrevSoreness={true}
         surveyObject={dailyReadiness}
         toggleSlideUpPanel={this._toggleSlideUpPanel}
@@ -87,9 +88,8 @@ class SoreBodyPart extends Component {
             firstTimeExperience,
             handleFormChange,
             handleUpdateFirstTimeExperience,
-            index,
+            isFirst,
             isPrevSoreness,
-            surveyObject,
             toggleSlideUpPanel,
         } = this.props;
         let {
@@ -103,7 +103,12 @@ class SoreBodyPart extends Component {
         let showWhatsTheDifferenceLink = bodyPartGroup && bodyPartGroup === 'muscle';
         let isBodyPartJoint = bodyPartGroup === 'joint';
         return(
-            <View>
+            <View
+                style={{
+                    height:         isFirst ? (AppSizes.screen.height - (AppSizes.statusBarHeight + AppSizes.progressPillsHeight)) : AppSizes.screen.height,
+                    justifyContent: 'center',
+                }}
+            >
                 { bodyPart.isClearCandidate ?
                     <View style={[AppStyles.paddingVerticalSml]}>
                         <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}]}>
@@ -169,7 +174,7 @@ class SoreBodyPart extends Component {
                     onClose={() => {}}
                     tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
                 >
-                    <View style={{backgroundColor: this.state.isToolTipOpen ? AppColors.white : AppColors.transparent, flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding,}}>
+                    <View style={{backgroundColor: this.state.isToolTipOpen ? AppColors.white : AppColors.transparent, flexDirection: 'row', justifyContent: 'center', paddingVertical: AppSizes.padding,}}>
                         { isPrevSoreness || bodyPartMap.bilateral ?
                             <View>
                                 <TabIcon
@@ -290,7 +295,7 @@ class SoreBodyPart extends Component {
                         }
                     </View>
                 </Tooltip>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.padding, paddingHorizontal: AppSizes.padding}}>
+                <View style={{flexDirection: 'row', justifyContent: 'center', paddingVertical: AppSizes.padding, paddingHorizontal: AppSizes.padding}}>
                     { showScaleButtons ?
                         _.map(sorenessPainMapping, (value, key) => {
                             if(key === 0) { return; }
@@ -339,6 +344,7 @@ class SoreBodyPart extends Component {
                             null
                     }
                 </View>
+                <Spacer size={isFirst ? (AppSizes.progressPillsHeight + AppSizes.statusBarHeight) : 0} />
             </View>
         )
     }

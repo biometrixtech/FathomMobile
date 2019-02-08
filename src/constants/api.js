@@ -11,7 +11,7 @@
 
 // what {version} are we on?
 const metaAPIVersion = '/meta/1_0';
-const plansAPIVersion = '/plans/2_1';
+const plansAPIVersion = '/plans/2_2';
 const usersAPIVersion = '/users/2_1';
 
 export default {
@@ -56,12 +56,13 @@ export default {
         ['functional_strength',   `${plansAPIVersion}/functional_strength`], // POST/PATCH
         ['get_my_plan',           `${plansAPIVersion}/daily_plan`], // POST
         ['get_sore_body_parts',   `${plansAPIVersion}/daily_readiness/previous`], // POST
+        ['health_data',           `${plansAPIVersion}/health_data`], // POST
         ['no_sessions',           `${plansAPIVersion}/session/no_sessions`], // POST
+        ['patch_sessions',        `${plansAPIVersion}/session/{session_id}`], // PATCH
         ['post_readiness_survey', `${plansAPIVersion}/daily_readiness`], // POST
         ['post_sensor_data',      `${plansAPIVersion}/session/sensor_data`], // POST
         ['post_session_survey',   `${plansAPIVersion}/session`], // POST
         ['survey',                `${plansAPIVersion}/athlete/{userId}/survey`], // POST
-        ['typical_sessions',      `${plansAPIVersion}/session/typical`], // POST
         // other routes
         ['maintenance_status', `${metaAPIVersion}/maintenance`], // GET
     ]),

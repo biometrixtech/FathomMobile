@@ -19,12 +19,13 @@ import { onboardingUtils, } from '../../constants/utils';
 
 // Components
 import { Alerts, ProgressBar, Text, WebViewPage, } from '../custom/';
+import { EnableAppleHealthKit, } from '../general';
 import { UserAccount, } from './pages/';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: AppColors.primary.white.hundredPercent,
+        backgroundColor: AppColors.white,
         flex:            1,
         height:          AppSizes.screen.height,
         width:           AppSizes.screen.width,
@@ -55,19 +56,17 @@ class Onboarding extends Component {
     static componentName = 'Onboarding';
 
     static propTypes = {
-        authorizeUser:    PropTypes.func.isRequired,
-        createUser:       PropTypes.func.isRequired,
-        finalizeLogin:    PropTypes.func.isRequired,
-        getMyPlan:        PropTypes.func.isRequired,
-        getSoreBodyParts: PropTypes.func.isRequired,
-        lastOpened:       PropTypes.object.isRequired,
-        network:          PropTypes.object.isRequired,
-        onFormSubmit:     PropTypes.func.isRequired,
-        preReadiness:     PropTypes.func.isRequired,
-        registerDevice:   PropTypes.func.isRequired,
-        setAppLogs:       PropTypes.func.isRequired,
-        updateUser:       PropTypes.func.isRequired,
-        user:             PropTypes.object.isRequired,
+        authorizeUser:  PropTypes.func.isRequired,
+        createUser:     PropTypes.func.isRequired,
+        finalizeLogin:  PropTypes.func.isRequired,
+        getMyPlan:      PropTypes.func.isRequired,
+        lastOpened:     PropTypes.object.isRequired,
+        network:        PropTypes.object.isRequired,
+        onFormSubmit:   PropTypes.func.isRequired,
+        registerDevice: PropTypes.func.isRequired,
+        setAppLogs:     PropTypes.func.isRequired,
+        updateUser:     PropTypes.func.isRequired,
+        user:           PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -90,18 +89,20 @@ class Onboarding extends Component {
                 user: {
                     // agreed_terms_of_use:   false, // boolean
                     // agreed_privacy_policy: false, // boolean
-                    account_code:      '',
-                    cleared_to_play:   false, // boolean
-                    onboarding_status: user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    password:          '',
-                    biometric_data:    {
+                    account_code:          '',
+                    health_enabled:        user.health_enabled ? user.health_enabled : false,
+                    cleared_to_play:       false, // boolean
+                    first_time_experience: user.first_time_experience ? user.first_time_experience : [],
+                    onboarding_status:     user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
+                    password:              '',
+                    biometric_data:        {
                         height: {
                             in: user.biometric_data && user.biometric_data.height.ft_in ?
                                 ((user.biometric_data.height.ft_in[0] * 12) + user.biometric_data.height.ft_in[1]).toString()
                                 : user.biometric_data && user.biometric_data.height.m ?
                                     onboardingUtils.metersToInches(user.biometric_data.height.m).toString()
                                     :
-                                    ''
+                                    0
                         },
                         mass: {
                             lb: user.biometric_data && user.biometric_data.mass.lb ?
@@ -139,11 +140,12 @@ class Onboarding extends Component {
                     workout_outside_practice: null,
                 }
             },
-            isFormValid:         false,
-            isPrivacyPolicyOpen: false,
-            isTermsOpen:         false,
-            modalStyle:          {},
-            resultMsg:           {
+            isFormValid:          false,
+            isHealthKitModalOpen: !user.id,
+            isPrivacyPolicyOpen:  false,
+            isTermsOpen:          false,
+            modalStyle:           {},
+            resultMsg:            {
                 error:   [],
                 status:  '',
                 success: '',
@@ -157,6 +159,10 @@ class Onboarding extends Component {
     componentWillMount = () => {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => true);
+        }
+        // for current users
+        if(this.props.user && this.props.user.health_enabled) {
+            this._updateStateFromHealthKit();
         }
     }
 
@@ -205,8 +211,7 @@ class Onboarding extends Component {
         const { form_fields, step, } = this.state;
         let errorsArray = [];
         if(step === 2) { // enter user information
-            errorsArray = errorsArray.concat(onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray);
-            errorsArray = errorsArray.concat(onboardingUtils.isUserAboutValid(form_fields.user).errorsArray);
+            errorsArray = _.concat(onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray, onboardingUtils.isUserAboutValid(form_fields.user).errorsArray);
         }
         return errorsArray;
     }
@@ -312,15 +317,17 @@ class Onboarding extends Component {
         if(newUser.system_type) {
             userObj.system_type = newUser.system_type;
         }
-        userObj.injury_status = newUser.injury_status;
-        userObj.cleared_to_play = clearedToPlay;
+        // userObj.injury_status = newUser.injury_status;
+        // userObj.cleared_to_play = clearedToPlay;
         if(!newUser.onboarding_status.includes('account_setup')) {
             userObj.onboarding_status = ['account_setup'];
         }
         userObj.biometric_data = {};
-        userObj.biometric_data.height = {};
-        userObj.biometric_data.height.m = +(onboardingUtils.inchesToMeters(parseFloat(newUser.biometric_data.height.in))) + 0.1;
-        userObj.biometric_data.height.ft_in = [Math.floor(newUser.biometric_data.height.in / 12), newUser.biometric_data.height.in % 12];
+        if(newUser.biometric_data.height.in > 0) {
+            userObj.biometric_data.height = {};
+            userObj.biometric_data.height.m = +(onboardingUtils.inchesToMeters(parseFloat(newUser.biometric_data.height.in))) + 0.1;
+            userObj.biometric_data.height.ft_in = [Math.floor(newUser.biometric_data.height.in / 12), newUser.biometric_data.height.in % 12];
+        }
         userObj.biometric_data.mass = {};
         userObj.biometric_data.mass.kg = +(onboardingUtils.lbsToKgs(parseFloat(newUser.biometric_data.mass.lb))) + 0.1;
         userObj.biometric_data.mass.lb = +(parseFloat(newUser.biometric_data.mass.lb).toFixed(2)) + 0.1;
@@ -332,13 +339,15 @@ class Onboarding extends Component {
         userObj.personal_data.birth_date = newUser.personal_data.birth_date;
         userObj.personal_data.first_name = _.trim(newUser.personal_data.first_name);
         userObj.personal_data.last_name = _.trim(newUser.personal_data.last_name);
-        userObj.personal_data.phone_number = newUser.personal_data.phone_number;
+        // userObj.personal_data.phone_number = newUser.personal_data.phone_number;
         userObj.personal_data.account_type = newUser.personal_data.account_type;
         userObj.personal_data.account_status = newUser.personal_data.account_status;
-        userObj.personal_data.zip_code = newUser.personal_data.zip_code;
+        // userObj.personal_data.zip_code = newUser.personal_data.zip_code;
         if(newUser.account_code && newUser.account_code.length > 0) {
             userObj.account_code = newUser.account_code.toUpperCase();
         }
+        userObj.health_enabled = newUser.health_enabled;
+        userObj.first_time_experience = newUser.first_time_experience;
         // create or update, if no errors
         if(errorsArray.length === 0) {
             if(this.props.user.id) {
@@ -384,15 +393,8 @@ class Onboarding extends Component {
                             false;
                         return this.props.getMyPlan(user.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                             .then(res => {
-                                return this.props.getSoreBodyParts()
-                                    .then(soreBodyParts => {
-                                        this.props.setAppLogs();
-                                        return this.props.preReadiness(user.id);
-                                    })
-                                    .catch(err => {
-                                        const error = AppAPI.handleError(err);
-                                        return this.setState({ loading: false, resultMsg: { error }, });
-                                    });
+                                this.props.setAppLogs();
+                                return res;
                             })
                             .catch(error => {
                                 const err = AppAPI.handleError(error);
@@ -400,6 +402,13 @@ class Onboarding extends Component {
                             });
                     })
                     .then(() => this.props.finalizeLogin(user, credentials, authorization));
+            })
+            .then(response => {
+                if(response.health_enabled) {
+                    AppUtil.getAppleHealthKitDataAsync(response.id, response.health_sync_date, response.historic_health_sync_date);
+                    return AppUtil.getAppleHealthKitData(response.id, response.health_sync_date, response.historic_health_sync_date, () => response);
+                }
+                return response;
             })
             .then(userRes => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
@@ -413,10 +422,54 @@ class Onboarding extends Component {
             });
     }
 
+    _handleEnableAppleHealthKit = (firstTimeExperienceValue, healthKitFlag) => {
+        this.setState(
+            { isHealthKitModalOpen: false, },
+            () => {
+                this._handleUserFormChange('health_enabled', healthKitFlag);
+                this._handleUserFormChange('first_time_experience', [firstTimeExperienceValue]);
+                if(healthKitFlag) {
+                    this._updateStateFromHealthKit();
+                }
+            },
+        );
+    }
+
+    _updateStateFromHealthKit = () => {
+        let personalDataPromises = AppUtil.getAppleHealthKitPersonalData();
+        Promise
+            .all(personalDataPromises)
+            .then(values => {
+                if(values.length > 0) {
+                    // [0] = height, [1] = weight, [2] = dob, [3] = sex
+                    let newUser = _.cloneDeep(this.state.form_fields.user);
+                    if(values[0].value && values[0].value > 0) {
+                        newUser.biometric_data.height.in = values[0].value.toString();
+                    }
+                    if(values[1].value && values[1].value > 0) {
+                        newUser.biometric_data.mass.lb = values[1].value.toString();
+                    }
+                    if(values[2].value && values[2].value.length > 0 && values[2].age && values[2].age > 0) {
+                        newUser.personal_data.birth_date = moment(values[2].value).format('MM/DD/YYYY');
+                    }
+                    if(
+                        values[3].value &&
+                        values[3].value.length > 0 &&
+                        (values[3].value === 'male' || values[3].value === 'female' || values[3].value === 'other')
+                    ) {
+                        newUser.biometric_data.sex = values[3].value;
+                    }
+                    this.setState({ form_fields: { user: newUser, } });
+                }
+            })
+            .catch(err => console.log('err',err));
+    }
+
     render = () => {
         const {
             form_fields,
             isFormValid,
+            isHealthKitModalOpen,
             isPrivacyPolicyOpen,
             isTermsOpen,
             resultMsg,
@@ -435,6 +488,7 @@ class Onboarding extends Component {
                     error={resultMsg.error}
                     handleFormChange={this._handleUserFormChange}
                     handleFormSubmit={this._handleFormSubmit}
+                    isFormValid={isFormValid}
                     isUpdatingUser={this.props.user.id ? true : false}
                     user={form_fields.user}
                 />
@@ -466,11 +520,16 @@ class Onboarding extends Component {
                 </Modal>*/}
                 { this.state.loading ?
                     <ActivityIndicator
-                        color={AppColors.primary.yellow.hundredPercent}
+                        color={AppColors.zeplin.yellow}
                         size={'large'}
                         style={[AppStyles.activityIndicator]}
                     /> : null
                 }
+                <EnableAppleHealthKit
+                    handleSkip={() => this._handleEnableAppleHealthKit('apple_healthkit', false)}
+                    handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
+                    isModalOpen={isHealthKitModalOpen && Platform.OS === 'ios'}
+                />
             </View>
         );
     }

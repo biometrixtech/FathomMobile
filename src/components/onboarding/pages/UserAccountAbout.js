@@ -87,7 +87,7 @@ class UserAccountAbout extends Component {
                         dateInput:       styles.reusableCustomSpacing,
                         dateText:        {...AppFonts.robotoRegular, color: AppColors.black, fontSize: AppFonts.scaleFont(16),},
                         placeholderText: {color: AppColors.zeplin.lightGrey, fontSize: AppFonts.scaleFont(16), ...AppFonts.robotoRegular, },
-                        btnTextConfirm:  {color: AppColors.primary.yellow.hundredPercent},
+                        btnTextConfirm:  {color: AppColors.zeplin.yellow},
                     }}
                     date={user.personal_data.birth_date || ''}
                     format={'MM/DD/YYYY'}
@@ -99,57 +99,6 @@ class UserAccountAbout extends Component {
                     }}
                     showIcon={false}
                     style={{width: '100%'}}
-                />
-                <FormLabel labelStyle={{color: AppColors.black}}>{user.injury_status.length > 0 ? 'Health Status' : ' '}</FormLabel>
-                <FathomPicker
-                    hideIcon={true}
-                    items={UserAccountConstants.possibleInjuryStatuses}
-                    onValueChange={value => value ? clearCoachContent('', () => handleFormChange('injury_status', value)) : null}
-                    placeholder={{
-                        label: 'Health Status',
-                        value: null,
-                    }}
-                    style={{
-                        inputAndroid:     [styles.pickerSelectAndroid],
-                        inputIOS:         [styles.pickerSelectIOS],
-                        placeholderColor: AppColors.zeplin.lightGrey,
-                        viewContainer:    [styles.androidViewContainer],
-                    }}
-                    value={user.injury_status}
-                />
-                <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.zip_code.length > 0 ? 'Zip Code' : ' '}</FormLabel>
-                <FormInput
-                    blurOnSubmit={ true }
-                    containerStyle={{marginLeft: 0, paddingLeft: 10}}
-                    keyboardType={'number-pad'}
-                    maxLength={5}
-                    onChangeText={text => clearCoachContent('', () => handleFormChange('personal_data.zip_code', text))}
-                    placeholder={'Zip Code'}
-                    placeholderTextColor={AppColors.zeplin.lightGrey}
-                    returnKeyType={'done'}
-                    textInputRef={input => {
-                        this.inputs.zip_code = input;
-                    }}
-                    value={user.personal_data.zip_code}
-                />
-                <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.height.in ? 'Height' : ' '}</FormLabel>
-                <FathomPicker
-                    hideIcon={true}
-                    items={UserAccountConstants.heights}
-                    onValueChange={value => value ? clearCoachContent('', () => handleFormChange('biometric_data.height.in', value)) : null}
-                    placeholder={{
-                        label: 'Height',
-                        value: null,
-                    }}
-                    startingIndex={isUpdatingUser ? null : 60}
-                    startingValue={isUpdatingUser ? null : 37}
-                    style={{
-                        inputAndroid:     [styles.pickerSelectAndroid],
-                        inputIOS:         [styles.pickerSelectIOS],
-                        placeholderColor: AppColors.zeplin.lightGrey,
-                        viewContainer:    [styles.androidViewContainer],
-                    }}
-                    value={parseInt(user.biometric_data.height.in, 10) || null}
                 />
                 <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.mass.lb.length > 0 ? 'Weight (lbs)' : ' '}</FormLabel>
                 <FormInput
@@ -182,17 +131,6 @@ class UserAccountAbout extends Component {
                     }}
                     value={user.biometric_data.sex}
                 />
-                <Spacer size={50} />
-                <Text
-                    oswaldRegular
-                    onPress={() => onboardingUtils.isUserAboutValid(user).isValid ? setAccordionSection() : updateErrorMessage(true)}
-                    style={[AppStyles.continueButton,
-                        {
-                            fontSize:      AppFonts.scaleFont(16),
-                            paddingBottom: AppSizes.padding,
-                        },
-                    ]}
-                >{'CONTINUE...'}</Text>
             </View>
         )
     }

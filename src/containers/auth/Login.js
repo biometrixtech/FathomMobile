@@ -19,12 +19,10 @@ const Login = ({
     environment,
     finalizeLogin,
     getMyPlan,
-    getSoreBodyParts,
     lastOpened,
     network,
     onFormSubmit,
     password,
-    preReadiness,
     registerDevice,
     scheduledMaintenance,
     setAppLogs,
@@ -40,12 +38,10 @@ const Login = ({
         environment={environment}
         finalizeLogin={finalizeLogin}
         getMyPlan={getMyPlan}
-        getSoreBodyParts={getSoreBodyParts}
         lastOpened={lastOpened}
         network={network}
         onFormSubmit={onFormSubmit}
         password={password}
-        preReadiness={preReadiness}
         registerDevice={registerDevice}
         scheduledMaintenance={scheduledMaintenance}
         setAppLogs={setAppLogs}
@@ -64,12 +60,10 @@ Login.propTypes = {
     environment:          PropTypes.string,
     finalizeLogin:        PropTypes.func.isRequired,
     getMyPlan:            PropTypes.func.isRequired,
-    getSoreBodyParts:     PropTypes.func.isRequired,
     lastOpened:           PropTypes.object.isRequired,
     network:              PropTypes.object.isRequired,
     onFormSubmit:         PropTypes.func.isRequired,
     password:             PropTypes.string,
-    preReadiness:         PropTypes.func.isRequired,
     registerDevice:       PropTypes.func.isRequired,
     scheduledMaintenance: PropTypes.object,
     setAppLogs:           PropTypes.func.isRequired,
@@ -102,15 +96,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    authorizeUser:    init.authorizeUser,
-    finalizeLogin:    init.finalizeLogin,
-    getMyPlan:        PlanActions.getMyPlan,
-    getSoreBodyParts: PlanActions.getSoreBodyParts,
-    onFormSubmit:     init.startLogin,
-    preReadiness:     PlanActions.preReadiness,
-    registerDevice:   init.registerDevice,
-    setAppLogs:       PlanActions.setAppLogs,
-    setEnvironment:   init.setEnvironment,
+    authorizeUser:  init.authorizeUser,
+    finalizeLogin:  init.finalizeLogin,
+    getMyPlan:      PlanActions.getMyPlan,
+    onFormSubmit:   init.startLogin,
+    registerDevice: init.registerDevice,
+    setAppLogs:     PlanActions.setAppLogs,
+    setEnvironment: init.setEnvironment,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

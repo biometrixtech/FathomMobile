@@ -302,40 +302,169 @@ const availableSessionTypes = [
 ];
 
 const strengthConditioningTypes = [
-    { index: 0, order: 1, label: 'Endurance', icon: 'run', iconType: 'material-community', },
-    { index: 1, order: 2, label: 'Power', icon: `${Platform.OS === 'android' ? 'md' : 'ios'}-fitness`, iconType: 'ionicon', },
-    { index: 2, order: 3, label: 'Speed & Agility', icon: 'run-fast', iconType: 'material-community', },
-    { index: 3, order: 4, label: 'Strength', icon: `${Platform.OS === 'android' ? 'md' : 'ios'}-fitness`, iconType: 'ionicon', },
-    { index: 4, order: 5, label: 'Cross Training', icon: 'checkbox-multiple-marked-outline', iconType: 'material-community', },
+    { index: 0, order: 1, label: 'Endurance', icon: 'run', iconType: 'material-community', activitySection: 'exercise_and_fitness', },
+    { index: 1, order: 2, label: 'Power', icon: `${Platform.OS === 'android' ? 'md' : 'ios'}-fitness`, iconType: 'ionicon', activitySection: 'exercise_and_fitness', },
+    { index: 2, order: 3, label: 'Speed & Agility', icon: 'run-fast', iconType: 'material-community', activitySection: 'exercise_and_fitness', },
+    { index: 3, order: 4, label: 'Strength', icon: `${Platform.OS === 'android' ? 'md' : 'ios'}-fitness`, iconType: 'ionicon', activitySection: '', },
+    { index: 4, order: 5, label: 'Cross Training', icon: 'checkbox-multiple-marked-outline', iconType: 'material-community', activitySection: 'exercise_and_fitness', },
 ];
 
 const teamSports = [
-    { index: 0, order: 1, label: 'Basketball', positions: ['Center', 'Forward', 'Guard'], icon: 'basketball', iconType: 'material-community', },
-    { index: 1, order: 2, label: 'Baseball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], icon: 'baseball', iconType: 'material-community', },
-    { index: 2, order: 13, label: 'Softball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], icon: 'baseball', iconType: 'material-community', },
-    { index: 3, order: 3, label: 'Cycling', positions: false, icon: 'ios-bicycle', iconType: 'ionicon', },
-    { index: 4, order: 5, label: 'Field Hockey', positions: ['Goalie', 'Fullback', 'Midfielder', 'Forward'], icon: 'hockey-sticks', iconType: 'material-community', },
-    { index: 5, order: 6, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], icon: 'football', iconType: 'material-community', },
-    { index: 6, order: null, label: 'General Fitness', positions: false, },
-    { index: 7, order: 7, label: 'Golf', positions: false, icon: 'golf', iconType: 'material-community', },
-    { index: 8, order: null, label: 'Gymnastics', positions: false, },
-    { index: 9, order: 11, label: 'Skate Sports', positions: false, icon: 'run-fast', iconType: 'material-community', },
-    { index: 10, order: 8, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], icon: 'checkbox-marked-outline', iconType: 'material-community', },
-    { index: 11, order: 10, label: 'Rowing', positions: false, icon: 'rowing', iconType: 'material-community', },
-    { index: 12, order: null, label: 'Rugby', positions: false, },
-    { index: 13, order: null, label: 'Diving', positions: false, },
-    { index: 14, order: 12, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], icon: 'ios-football', iconType: 'ionicon', },
-    { index: 15, order: 9, label: 'Pool Sports', positions: false, icon: 'pool', iconType: 'material-community', },
-    { index: 16, order: 14, label: 'Tennis', positions: false, icon: 'md-tennisball', iconType: 'ionicon', },
-    { index: 17, order: 4, label: 'Distance Running', positions: false, icon: 'run', iconType: 'material-community', },
-    { index: 18, order: null, label: 'Sprints', positions: false, },
-    { index: 19, order: null, label: 'Jumps', positions: false, },
-    { index: 20, order: null, label: 'Throws', positions: false, },
-    { index: 21, order: 16, label: 'Volleyball', positions: ['Hitter', 'Setter', 'Middle Blocker', 'Libero'], icon: 'volleyball', iconType: 'material-community', },
-    { index: 22, order: 17, label: 'Wrestling', positions: false, icon: 'checkbox-multiple-marked-outline', iconType: 'material-community', },
-    { index: 23, order: null, label: 'Weightlifting', positions: false, },
-    { index: 24, order: 15, label: 'Track & Field', positions: ['Sprinter', 'Jumper', 'Thrower', 'Distance'], icon: 'run-fast', iconType: 'material-community', },
+    { index: 0, label: 'Basketball', positions: ['Center', 'Forward', 'Guard'], imagePath: require('../../assets/images/sports_images/icons8-basketball-player-200.png'), activitySection: 'team_sports', },
+    { index: 1, label: 'Baseball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], imagePath: require('../../assets/images/sports_images/icons8-baseball-player-200.png'), activitySection: 'team_sports', },
+    { index: 2, label: 'Softball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], imagePath: require('../../assets/images/sports_images/icons8-baseball-player-200.png'), activitySection: 'team_sports', },
+    { index: 3, label: 'Cycling', positions: false, imagePath: require('../../assets/images/sports_images/icons8-cycling-200.png'), activitySection: ['exercise_and_fitness', 'outdoor_activities'], },
+    { index: 4, label: 'Field Hockey', positions: ['Goalie', 'Fullback', 'Midfielder', 'Forward'], imagePath: require('../../assets/images/sports_images/icons8-field-hockey-200.png'), activitySection: 'team_sports', },
+    { index: 5, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], imagePath: require('../../assets/images/sports_images/icons8-american-football-200.png'), activitySection: 'team_sports', },
+    { index: 6, label: 'General Fitness', positions: false, imagePath: require('../../assets/images/sports_images/icons8-exercise-200.png'), activitySection: '', },
+    { index: 7, label: 'Golf', positions: false, imagePath: require('../../assets/images/sports_images/icons8-golf-200.png'), activitySection: ['individual_sports', 'outdoor_activities'], },
+    { index: 8, label: 'Gymnastics', positions: false, imagePath: require('../../assets/images/sports_images/icons8-gymnastics-200.png'), activitySection: 'individual_sports', },
+    { index: 9, label: 'Skating Sports', positions: false, imagePath: require('../../assets/images/sports_images/icons8-speed-skating-200.png'), activitySection: 'snow_and_ice_sports', },
+    { index: 10, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], imagePath: require('../../assets/images/sports_images/icons8-lacrosse-stick-200.png'), activitySection: 'team_sports', },
+    { index: 11, label: 'Rowing', positions: false, imagePath: require('../../assets/images/sports_images/icons8-row-boat-200.png'), activitySection: 'water_activities', },
+    { index: 12, label: 'Rugby', positions: false, imagePath: require('../../assets/images/sports_images/icons8-rugby-sevens-200.png'), activitySection: 'team_sports', },
+    { index: 13, label: 'Diving', positions: false, imagePath: null, activitySection: '', },
+    { index: 14, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], imagePath: require('../../assets/images/sports_images/icons8-soccer-200.png'), activitySection: 'team_sports', },
+    { index: 15, label: 'Water Sports', positions: false, imagePath: require('../../assets/images/sports_images/icons8-swimming-200.png'), activitySection: ['individual_sports', 'water_activities'], },
+    { index: 16, label: 'Tennis', positions: false, imagePath: require('../../assets/images/sports_images/icons8-tennis-player-200.png'), activitySection: ['individual_sports', 'racket_sports'], },
+    { index: 17, label: 'Running', positions: false, imagePath: require('../../assets/images/sports_images/icons8-running-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 18, label: 'Sprints', positions: false, imagePath: null, activitySection: '', },
+    { index: 19, label: 'Jumps', positions: false, imagePath: null, activitySection: '', },
+    { index: 20, label: 'Throws', positions: false, imagePath: null, activitySection: '', },
+    { index: 21, label: 'Volleyball', positions: ['Hitter', 'Setter', 'Middle Blocker', 'Libero'], imagePath: require('../../assets/images/sports_images/icons8-volleyball-player-200.png'), activitySection: 'team_sports', },
+    { index: 22, label: 'Wrestling', positions: false, imagePath: require('../../assets/images/sports_images/icons8-wrestling-200.png'), activitySection: ['martial_arts', 'individual_sports'], },
+    { index: 23, label: 'Weightlifting', positions: false, imagePath: require('../../assets/images/sports_images/icons8-weightlifting-200.png'), activitySection: 'individual_sports', },
+    { index: 24, label: 'Track & Field', positions: ['Sprinter', 'Jumper', 'Thrower', 'Distance'], imagePath: require('../../assets/images/sports_images/icons8-track-and-field-200.png'), activitySection: 'individual_sports', },
+    { index: 25, label: 'Archery', positions: false, imagePath: require('../../assets/images/sports_images/icons8-archery-200.png'), activitySection: 'individual_sports', },
+    { index: 26, label: 'Australian Football', positions: false, imagePath: require('../../assets/images/sports_images/icons8-rugby-sevens-200.png'), activitySection: 'team_sports', },
+    { index: 27, label: 'Badminton', positions: false, imagePath: require('../../assets/images/sports_images/icons8-badminton-player-200.png'), activitySection: 'racket_sports', },
+    { index: 28, label: 'Bowling', positions: false, imagePath: require('../../assets/images/sports_images/icons8-bowling-200.png'), activitySection: 'individual_sports', },
+    { index: 29, label: 'Boxing', positions: false, imagePath: require('../../assets/images/sports_images/icons8-boxing-200.png'), activitySection: 'martial_arts', },
+    { index: 30, label: 'Cricket', positions: false, imagePath: require('../../assets/images/sports_images/icons8-cricketer-200.png'), activitySection: 'team_sports', },
+    { index: 31, label: 'Curling', positions: false, imagePath: require('../../assets/images/sports_images/icons8-curling-stone-200.png'), activitySection: 'snow_and_ice_sports', },
+    { index: 32, label: 'Dance', positions: false, imagePath: require('../../assets/images/sports_images/icons8-dancing-200.png'), activitySection: 'studio_activities', },
+    { index: 33, label: 'Equestrian Sports', positions: false, imagePath: require('../../assets/images/sports_images/icons8-horseback-riding-200.png'), activitySection: 'outdoor_activities', },
+    { index: 34, label: 'Fencing', positions: false, imagePath: require('../../assets/images/sports_images/icons8-fencing-200.png'), activitySection: 'individual_sports', },
+    { index: 35, label: 'Fishing', positions: false, imagePath: require('../../assets/images/sports_images/icons8-sports-fishing-200.png'), activitySection: 'outdoor_activities', },
+    { index: 36, label: 'Handball', positions: false, imagePath: require('../../assets/images/sports_images/icons8-handball-200.png'), activitySection: 'team_sports', },
+    { index: 37, label: 'Hockey', positions: false, imagePath: require('../../assets/images/sports_images/icons8-ice-hockey-200.png'), activitySection: 'team_sports', },
+    { index: 38, label: 'Martial Arts', positions: false, imagePath: require('../../assets/images/sports_images/icons8-judo-200.png'), activitySection: 'martial_arts', },
+    { index: 39, label: 'Paddle Sports', positions: false, imagePath: require('../../assets/images/sports_images/icons8-sup-200.png'), activitySection: 'water_activities', },
+    { index: 40, label: 'Racquetball', positions: false, imagePath: require('../../assets/images/sports_images/icons8-racquetball-200.png'), activitySection: 'racket_sports', },
+    { index: 41, label: 'Sailing', positions: false, imagePath: require('../../assets/images/sports_images/icons8-sailing-200.png'), activitySection: 'water_activities', },
+    { index: 42, label: 'Snow Sports', positions: false, imagePath: require('../../assets/images/sports_images/icons8-nordic-combined-200.png'), activitySection: 'snow_and_ice_sports', },
+    { index: 43, label: 'Squash', positions: false, imagePath: require('../../assets/images/sports_images/icons8-squash-racquet-200.png'), activitySection: 'racket_sports', },
+    { index: 44, label: 'Surfing Sports', positions: false, imagePath: require('../../assets/images/sports_images/icons8-surfing-200.png'), activitySection: 'water_activities', },
+    { index: 45, label: 'Swimming', positions: false, imagePath: require('../../assets/images/sports_images/icons8-swimming-200.png'), activitySection: 'water_activities', },
+    { index: 46, label: 'Table Tennis', positions: false, imagePath: require('../../assets/images/sports_images/icons8-table-tennis-200.png'), activitySection: 'racket_sports', },
+    { index: 47, label: 'Water Polo', positions: false, imagePath: require('../../assets/images/sports_images/icons8-water-polo-200.png'), activitySection: 'water_activities', },
+    { index: 48, label: 'Cross Country Skiing', positions: false, imagePath: require('../../assets/images/sports_images/icons8-cross-country-skiing-200.png'), activitySection: 'snow_and_ice_sports', },
+    { index: 49, label: 'Downhill Skiing', positions: false, imagePath: require('../../assets/images/sports_images/icons8-alpine-skiing-200.png'), activitySection: 'snow_and_ice_sports', },
+    { index: 50, label: 'Kick Boxing', positions: false, imagePath: require('../../assets/images/sports_images/icons8-fight-200.png'), activitySection: 'martial_arts', },
+    { index: 51, label: 'Snowboarding', positions: false, imagePath: require('../../assets/images/sports_images/icons8-snowboarding-200.png'), activitySection: 'snow_and_ice_sports', },
+    { index: 52, label: 'Endurance', imagePath: require('../../assets/images/sports_images/icons8-exercise-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 53, label: 'Power', imagePath: require('../../assets/images/sports_images/icons8-bench-press-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 54, label: 'Speed & Agility', imagePath: require('../../assets/images/sports_images/icons8-exercise-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 55, label: 'Strength', imagePath: require('../../assets/images/sports_images/icons8-bench-press-200.png'), activitySection: '', },
+    { index: 56, label: 'Cross Training', imagePath: require('../../assets/images/sports_images/icons8-crossfit-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 57, label: 'Elliptical', imagePath: require('../../assets/images/sports_images/icons8-treadmill-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 58, label: 'Functional Strength Training', imagePath: require('../../assets/images/sports_images/icons8-deadlift-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 59, label: 'Hiking', imagePath: require('../../assets/images/sports_images/icons8-trekking-200.png'), activitySection: 'outdoor_activities', },
+    { index: 60, label: 'Hunting', imagePath: require('../../assets/images/sports_images/icons8-shooting-200.png'), activitySection: 'outdoor_activities', },
+    { index: 61, label: 'Mind & Body', imagePath: require('../../assets/images/sports_images/icons8-meditation-200.png'), activitySection: 'studio_activities', },
+    { index: 62, label: 'Play', imagePath: require('../../assets/images/sports_images/icons8-frisbee-200.png'), activitySection: 'outdoor_activities', },
+    { index: 63, label: 'Preparation & Recovery', imagePath: require('../../assets/images/sports_images/icons8-warm-up-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 64, label: 'Stair Climbing', imagePath: require('../../assets/images/sports_images/icons8-staircase-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 65, label: 'Traditional Strength Training', imagePath: require('../../assets/images/sports_images/icons8-deadlift-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 66, label: 'Walking', imagePath: require('../../assets/images/sports_images/icons8-walking-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 67, label: 'Water Fitness', imagePath: require('../../assets/images/sports_images/icons8-swim-200.png'), activitySection: 'water_activities', },
+    { index: 68, label: 'Yoga', imagePath: require('../../assets/images/sports_images/icons8-yoga-200.png'), activitySection: 'studio_activities', },
+    { index: 69, label: 'Barre', imagePath: require('../../assets/images/sports_images/icons8-pullups-200.png'), activitySection: 'studio_activities', },
+    { index: 70, label: 'Core Training', imagePath: require('../../assets/images/sports_images/icons8-sit-ups-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 71, label: 'Flexibility', imagePath: require('../../assets/images/sports_images/icons8-warm-up-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 72, label: 'High Intensity Interval Training', imagePath: require('../../assets/images/sports_images/icons8-exercise-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 73, label: 'Jump Rope', imagePath: require('../../assets/images/sports_images/icons8-jump-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 74, label: 'Pilates', imagePath: require('../../assets/images/sports_images/icons8-pilates-200.png'), activitySection: 'studio_activities', },
+    { index: 75, label: 'Stairs', imagePath: require('../../assets/images/sports_images/icons8-staircase-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 76, label: 'Step Training', imagePath: require('../../assets/images/sports_images/icons8-stepper-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 77, label: 'Wheelchair Walk Pace', imagePath: require('../../assets/images/sports_images/icons8-handicapped-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 78, label: 'Wheelchair Run Pace', imagePath: require('../../assets/images/sports_images/icons8-handicapped-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 79, label: 'Tai Chi', imagePath: require('../../assets/images/sports_images/icons8-taekwondo-200.png'), activitySection: 'martial_arts', },
+    { index: 80, label: 'Mixed Cardio', imagePath: require('../../assets/images/sports_images/icons8-exercise-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 81, label: 'Hand Cycling', imagePath: require('../../assets/images/sports_images/icons8-rowing-machine-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 82, label: 'Climbing', imagePath: require('../../assets/images/sports_images/icons8-climbing-200.png'), activitySection: 'outdoor_activities', },
+    { index: 83, label: 'Other', imagePath: require('../../assets/images/sports_images/icons8-netball-200.png'), activitySection: 'other_activities', },
 ];
+
+const activitiesListOrder = [
+    {
+        index: 'exercise_and_fitness',
+        title: 'Exercise and Fitness',
+    },
+    {
+        index: 'team_sports',
+        title: 'Team Sports',
+    },
+    {
+        index: 'individual_sports',
+        title: 'Individual Sports',
+    },
+    {
+        index: 'outdoor_activities',
+        title: 'Outdoor Activities',
+    },
+    {
+        index: 'water_activities',
+        title: 'Water Activities',
+    },
+    {
+        index: 'studio_activities',
+        title: 'Studio Activities',
+    },
+    {
+        index: 'racket_sports',
+        title: 'Racket Sports',
+    },
+    {
+        index: 'snow_and_ice_sports',
+        title: 'Snow and Ice Sports',
+    },
+    {
+        index: 'martial_arts',
+        title: 'Martial Arts',
+    },
+    {
+        index: 'other_activities',
+        title: 'Other Activities',
+    },
+];
+
+function translateStrengthConditioningTypeToSport(sportName, strengthAndConditioningType) {
+    let newSportName = sportName;
+    if(sportName === null) {
+        let strengthConditioningObj = _.filter(strengthConditioningTypes, o => o.index === strengthAndConditioningType);
+        newSportName = strengthConditioningObj[0] ?
+            _.filter(teamSports, o => o.label === strengthConditioningObj[0].label)
+            :
+            83; // set to 'Other' if we don't have a match
+        newSportName = newSportName[0] ?
+            newSportName[0].index
+            :
+            83; // set to 'Other' if we don't have a match
+    }
+    return newSportName;
+}
+
+function cleanedActivitiesList() {
+    let cleanedActivityList = {};
+    _.map(activitiesListOrder, list => {
+        let filteredSport = _.filter(teamSports, s => s.activitySection.includes(list.index));
+        if(filteredSport.length > 0) {
+            cleanedActivityList[list.title] = _.orderBy(filteredSport, ['label', 'asc']);
+        }
+    });
+    return cleanedActivityList;
+}
 
 const getTimeHours = () => {
     let hoursList = [];
@@ -397,7 +526,7 @@ const cleanedPostSessionName = (postPracticeSurvey) => {
     let filteredSportTypes = _.filter(teamSports, o => o.index === postPracticeSurvey.sport_name);
     let selectedSport = filteredSportTypes.length > 0 ? filteredSportTypes[0].label.toUpperCase() : filteredStrengthConditioningTypes.length > 0 ? filteredStrengthConditioningTypes[0].label.toUpperCase() : '';
     return {
-        fullName: `${selectedSport.replace(' TRAINING', '')} ${selectedSessionType}`,
+        fullName: selectedSport,
         selectedSessionType,
         selectedSport,
     }
@@ -618,7 +747,7 @@ const selectedActiveTimes = (selectedIndex = 2) => {
     }
 }
 
-function completionModalExerciseList(exerciseList, completedExercises) {
+function completionModalExerciseList(exerciseList, completedExercises, isFS = false) {
     let cleanedExerciseList = {};
     _.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) => {
         if(exerciseIndex.length > 0) {
@@ -626,7 +755,11 @@ function completionModalExerciseList(exerciseList, completedExercises) {
             cleanedExerciseList[index].completed = 0;
             cleanedExerciseList[index].total = exerciseIndex.length;
             _.map(exerciseIndex, (exercise, i) => {
-                if(completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`)) {
+                let exerciseId = isFS ?
+                    exercise.library_id
+                    :
+                    `${exercise.library_id}-${exercise.set_number}`;
+                if(completedExercises.includes(exerciseId)) {
                     cleanedExerciseList[index].completed += 1;
                 }
             });
@@ -644,6 +777,7 @@ export default {
     cleanExercise,
     cleanExerciseList,
     cleanFSExerciseList,
+    cleanedActivitiesList,
     cleanedPostSessionName,
     coachesDashboardSortBy,
     coachesDashboardCardsData,
@@ -667,5 +801,6 @@ export default {
     strengthConditioningTypes,
     teamSports,
     timeOptionGroups,
+    translateStrengthConditioningTypeToSport,
     userSelectedActiveTimeMessage,
 };

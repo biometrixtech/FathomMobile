@@ -14,6 +14,7 @@ import Routes from './routes';
 // import third-party libraries
 import { Actions as RouterActions, Router, Stack, } from 'react-native-router-flux';
 import { NetworkMonitor } from 'react-native-redux-connectivity';
+import DeviceInfo from 'react-native-device-info';
 import DropdownAlert from 'react-native-dropdownalert';
 import Fabric from 'react-native-fabric';
 import PushNotification from 'react-native-push-notification';
@@ -174,7 +175,7 @@ class Root extends Component {
     }
 
     render = () => {
-        if(this.state.hasError) {
+        if(this.state.hasError || DeviceInfo.isTablet()) {
             return(
                 <View style={{flex: 1, justifyContent: 'space-between', marginTop: AppSizes.statusBarHeight,}}>
                     <View style={{alignItems: 'center', flex: 1,}}>
@@ -196,13 +197,20 @@ class Root extends Component {
                             <View style={{padding: AppSizes.padding,}}>
                                 <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(35), textAlign: 'center',}}>{'UH OH!'}</Text>
                                 <Spacer size={AppSizes.padding} />
-                                <Text robotoLight style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'We\'ve encountered an error. Please restart the app and try again.'}</Text>
+                                <Text robotoLight style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>
+                                    {
+                                        this.state.hasError ?
+                                            'We\'ve encountered an error. Please restart the app and try again.'
+                                            :
+                                            'Sorry, the Fathom mobile app is not compatible on this device.'
+                                    }
+                                </Text>
                             </View>
                         </View>
                     </View>
                     <View style={{alignItems: 'center', flex: 1,}} />
                 </View>
-            )
+            );
         }
         return(
             <View style={{flex: 1,}}>
@@ -238,7 +246,7 @@ class Root extends Component {
                     useNativeDriver={true}
                 />
             </View>
-        )
+        );
     }
 }
 

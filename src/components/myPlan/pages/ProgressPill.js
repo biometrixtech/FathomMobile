@@ -14,7 +14,7 @@ import { StyleSheet, View, } from 'react-native';
 import { AppColors, AppSizes, } from '../../../constants';
 import { TabIcon, } from '../../custom';
 
-const progressPillHeight = AppSizes.screen.height * 0.08;
+const progressPillHeight = AppSizes.progressPillsHeight;
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({

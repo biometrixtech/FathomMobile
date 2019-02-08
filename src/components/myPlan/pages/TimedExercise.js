@@ -386,7 +386,7 @@ class TimedExercise extends PureComponent {
                     <View style={{alignItems: 'center', flexDirection: 'row', height: timerWrapperHeight, justifyContent: exerciseTimer ? 'space-between' : 'center',}}>
                         { exerciseTimer ?
                             <View>
-                                { areAllTimersCompleted ?
+                                { areAllTimersCompleted && !isPaused && !(startPreExerciseCountdown || startFirstSet || startSwitchSidesInterval || startSecondSet) ?
                                     <TabIcon
                                         color={AppColors.zeplin.lightSlate}
                                         containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}

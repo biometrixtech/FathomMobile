@@ -9,8 +9,10 @@ const MyPlan = ({
     ble,
     clearCompletedExercises,
     clearCompletedFSExercises,
+    clearHealthKitWorkouts,
     getMyPlan,
     getSoreBodyParts,
+    healthData,
     lastOpened,
     markStartedFunctionalStrength,
     markStartedRecovery,
@@ -23,7 +25,6 @@ const MyPlan = ({
     plan,
     postReadinessSurvey,
     postSessionSurvey,
-    preReadiness,
     scheduledMaintenance,
     setAppLogs,
     setCompletedExercises,
@@ -35,8 +36,10 @@ const MyPlan = ({
         ble={ble}
         clearCompletedExercises={clearCompletedExercises}
         clearCompletedFSExercises={clearCompletedFSExercises}
+        clearHealthKitWorkouts={clearHealthKitWorkouts}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
+        healthData={healthData}
         lastOpened={lastOpened}
         markStartedFunctionalStrength={markStartedFunctionalStrength}
         markStartedRecovery={markStartedRecovery}
@@ -49,7 +52,6 @@ const MyPlan = ({
         plan={plan}
         postReadinessSurvey={postReadinessSurvey}
         postSessionSurvey={postSessionSurvey}
-        preReadiness={preReadiness}
         scheduledMaintenance={scheduledMaintenance}
         setAppLogs={setAppLogs}
         setCompletedExercises={setCompletedExercises}
@@ -64,8 +66,10 @@ MyPlan.propTypes = {
     ble:                           PropTypes.object.isRequired,
     clearCompletedExercises:       PropTypes.func.isRequired,
     clearCompletedFSExercises:     PropTypes.func.isRequired,
+    clearHealthKitWorkouts:        PropTypes.func.isRequired,
     getMyPlan:                     PropTypes.func.isRequired,
     getSoreBodyParts:              PropTypes.func.isRequired,
+    healthData:                    PropTypes.object.isRequired,
     lastOpened:                    PropTypes.object.isRequired,
     markStartedFunctionalStrength: PropTypes.func.isRequired,
     markStartedRecovery:           PropTypes.func.isRequired,
@@ -81,7 +85,6 @@ MyPlan.propTypes = {
     plan:                    PropTypes.object.isRequired,
     postReadinessSurvey:     PropTypes.func.isRequired,
     postSessionSurvey:       PropTypes.func.isRequired,
-    preReadiness:            PropTypes.func.isRequired,
     scheduledMaintenance:    PropTypes.object,
     setAppLogs:              PropTypes.func.isRequired,
     setCompletedExercises:   PropTypes.func.isRequired,
@@ -96,6 +99,7 @@ MyPlan.defaultProps = {
 
 const mapStateToProps = state => ({
     ble:                  state.ble,
+    healthData:           state.plan.healthData,
     lastOpened:           state.plan.lastOpened,
     network:              state.network,
     notification:         state.init.notification,
@@ -107,6 +111,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
     clearCompletedExercises:       PlanActions.clearCompletedExercises,
     clearCompletedFSExercises:     PlanActions.clearCompletedFSExercises,
+    clearHealthKitWorkouts:        PlanActions.clearHealthKitWorkouts,
     getMyPlan:                     PlanActions.getMyPlan,
     getSoreBodyParts:              PlanActions.getSoreBodyParts,
     markStartedFunctionalStrength: PlanActions.markStartedFunctionalStrength,
@@ -117,7 +122,6 @@ const mapDispatchToProps = {
     patchFunctionalStrength:       PlanActions.patchFunctionalStrength,
     postReadinessSurvey:           PlanActions.postReadinessSurvey,
     postSessionSurvey:             PlanActions.postSessionSurvey,
-    preReadiness:                  PlanActions.preReadiness,
     setAppLogs:                    PlanActions.setAppLogs,
     setCompletedExercises:         PlanActions.setCompletedExercises,
     setCompletedFSExercises:       PlanActions.setCompletedFSExercises,

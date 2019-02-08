@@ -7,6 +7,7 @@
         error={this.state.resultMsg.error}
         handleFormChange={this._handleUserFormChange}
         handleFormSubmit={this._handleFormSubmit}
+        isFormValid={this.state.isFormValid}
         isUpdatingUser={this.props.user.id ? true : false}
         user={form_fields.user}
     />
@@ -19,7 +20,7 @@ import { Image, StyleSheet, View, } from 'react-native';
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
 import { onboardingUtils } from '../../../constants/utils';
-import { Alerts, Spacer, TabIcon, Text } from '../../custom';
+import { Alerts, Button, Spacer, TabIcon, Text } from '../../custom';
 
 // import components
 import { UserAccountAbout, UserAccountInfo, UserSports } from './';
@@ -92,7 +93,7 @@ class UserAccount extends Component {
                         iconStyle={[
                             styles.iconStyle,
                             isFormValid ?
-                                {color: AppColors.primary.yellow.hundredPercent}
+                                {color: AppColors.zeplin.yellow}
                                 : (this.state.accordionSection + 1) === section.index ?
                                     {color: AppColors.black}
                                     :
@@ -107,7 +108,7 @@ class UserAccount extends Component {
                         style={[
                             styles.title,
                             isFormValid ?
-                                {color: AppColors.primary.yellow.hundredPercent}
+                                {color: AppColors.zeplin.yellow}
                                 : (this.state.accordionSection + 1) === section.index ?
                                     {color: AppColors.black}
                                     :
@@ -159,6 +160,7 @@ class UserAccount extends Component {
             if(section === 0) {
                 errorsArray = onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).errorsArray;
                 isInfoFormValid = errorsArray.length > 0 ? false : true;
+                isAboutFormValid = onboardingUtils.isUserAboutValid(user).errorsArray.length > 0 ? false : true;
             } else if(section === 1) {
                 errorsArray = onboardingUtils.isUserAboutValid(user).errorsArray;
                 isAboutFormValid = errorsArray.length > 0 ? false : true;
@@ -222,6 +224,7 @@ class UserAccount extends Component {
             currentStep,
             handleFormChange,
             handleFormSubmit,
+            isFormValid,
             isUpdatingUser,
             user,
         } = this.props;
@@ -258,8 +261,11 @@ class UserAccount extends Component {
         ];
         return (
             <View style={{flex: 1}}>
-                <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1} : {display: 'none'}] ]}>
-                    <KeyboardAwareScrollView ref={ref => {this.scrollViewRef = ref}}>
+                <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1} : {display: 'none'}],]}>
+                    <KeyboardAwareScrollView
+                        contentContainerStyle={{flex: 1, justifyContent: 'space-between'}}
+                        ref={ref => {this.scrollViewRef = ref}}
+                    >
                         <Accordion
                             activeSection={this.state.accordionSection}
                             onChange={this._setAccordionSection}
@@ -269,23 +275,33 @@ class UserAccount extends Component {
                             sections={SECTIONS}
                             underlayColor={AppColors.transparent}
                         />
-                        { this.state.accordionSection === false ?
-                            <View style={{marginLeft: 10, borderLeftWidth: 1, borderColor: AppColors.border,}}>
-                                <Spacer size={40} />
-                                <Text
-                                    oswaldRegular
-                                    onPress={() => this.state.isAboutFormValid && this.state.isInfoFormValid ? handleFormSubmit() : this._setAccordionSection(0, 1)}
-                                    style={[AppStyles.continueButton,
-                                        {
-                                            fontSize:      AppFonts.scaleFont(16),
-                                            paddingBottom: AppSizes.padding,
-                                        },
-                                    ]}
-                                >{'CONTINUE...'}</Text>
-                            </View>
-                            :
-                            null
-                        }
+                        <View style={{flex: 1, paddingBottom: AppSizes.padding,}}>
+                            <Button
+                                backgroundColor={isFormValid ? AppColors.zeplin.yellow : AppColors.white}
+                                buttonStyle={{alignSelf: 'center', width: '75%',}}
+                                containerViewStyle={{flex: 1, justifyContent: 'flex-end', marginLeft: 0, marginRight: 10, width: '100%',}}
+                                color={isFormValid ? AppColors.white : AppColors.zeplin.light}
+                                fontFamily={AppStyles.robotoBold.fontFamily}
+                                fontWeight={AppStyles.robotoBold.fontWeight}
+                                leftIcon={{
+                                    color: isFormValid ? AppColors.zeplin.yellow : AppColors.white,
+                                    name:  'chevron-right',
+                                    size:  AppFonts.scaleFont(24),
+                                    style: {flex: 1,},
+                                }}
+                                outlined={isFormValid ? false : true}
+                                onPress={() => isFormValid ? handleFormSubmit() : null}
+                                raised={false}
+                                rightIcon={{
+                                    color: AppColors.white,
+                                    name:  'chevron-right',
+                                    size:  AppFonts.scaleFont(24),
+                                    style: {flex: 1,},
+                                }}
+                                textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                                title={`${this.props.user.id ? 'Update' : 'Create'} Account`}
+                            />
+                        </View>
                     </KeyboardAwareScrollView>
                 </View>
             </View>
@@ -301,6 +317,7 @@ UserAccount.propTypes = {
         PropTypes.string,
     ]),
     handleFormChange: PropTypes.func.isRequired,
+    isFormValid:      PropTypes.bool.isRequired,
     isUpdatingUser:   PropTypes.bool.isRequired,
     user:             PropTypes.object.isRequired,
 };

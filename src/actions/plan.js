@@ -49,12 +49,20 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
     }
     myPlanObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.get_my_plan.post(false, myPlanObj)
-        .then(myPlanData => {
+        .then(response => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
-                data: myPlanData,
+                data: response.daily_plans,
             });
-            return Promise.resolve(myPlanData);
+            dispatch({
+                type: Actions.GET_SORE_BODY_PARTS,
+                data: response.readiness,
+            });
+            dispatch({
+                type: Actions.SET_TYPICAL_SESSIONS,
+                data: response.typical_sessions,
+            });
+            return Promise.resolve(response);
         }).catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
@@ -90,6 +98,17 @@ const clearCompletedFSExercises = () => {
     return dispatch => Promise.resolve(
         dispatch({
             type: Actions.CLEAR_COMPLETED_FS_EXERCISES,
+        })
+    );
+};
+
+/**
+  * Clear HealthKit Workouts
+  */
+const clearHealthKitWorkouts = () => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.SET_HEALTH_DATA,
         })
     );
 };
@@ -185,10 +204,11 @@ const postSessionSurvey = postSessionObj => {
             });
             dispatch({
                 type: Actions.GET_MY_PLAN,
-                data: newPlan,
+                data: newPlan.daily_plans,
             });
             return myPlanData;
-        }).then(myPlanData => Promise.resolve(newPlan))
+        })
+        .then(myPlanData => Promise.resolve(newPlan))
         .catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
@@ -202,12 +222,16 @@ const getSoreBodyParts = user_id => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.get_sore_body_parts.post(false, bodyObj)
-        .then(soreBodyParts => {
+        .then(response => {
             dispatch({
                 type: Actions.GET_SORE_BODY_PARTS,
-                data: soreBodyParts,
+                data: response.readiness,
             });
-            return Promise.resolve(soreBodyParts);
+            dispatch({
+                type: Actions.SET_TYPICAL_SESSIONS,
+                data: response.typical_sessions,
+            });
+            return Promise.resolve(response);
         }).catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
@@ -227,10 +251,8 @@ const patchActiveRecovery = (user_id, completed_exercises, recovery_type) => {
         .then(myPlanData => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
-                data: myPlanData,
+                data: myPlanData.daily_plans,
             });
-            return true;
-        }).then(myPlanData => {
             dispatch({
                 type: Actions.CLEAR_COMPLETED_EXERCISES,
             });
@@ -255,26 +277,6 @@ const patchActiveTime = (user_id, active_time) => {
             return Promise.resolve(myPlanData);
         })
         .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
-};
-
-/**
-  * Pre Readiness
-  */
-const preReadiness = (user_id) => {
-    let bodyObj = {};
-    bodyObj.user_id = user_id;
-    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
-    return dispatch => AppAPI.typical_sessions.post(false, bodyObj)
-        .then(typicalSessionData => {
-            dispatch({
-                type: Actions.SET_TYPICAL_SESSIONS,
-                data: typicalSessionData.typical_sessions,
-            });
-            return Promise.resolve(typicalSessionData);
-        }).catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
         });
@@ -314,7 +316,7 @@ const patchFunctionalStrength = (user_id, completed_exercises) => {
         .then(myPlanData => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
-                data: myPlanData,
+                data: myPlanData.daily_plans,
             });
             dispatch({
                 type: Actions.CLEAR_COMPLETED_FS_EXERCISES,
@@ -336,15 +338,7 @@ const markStartedRecovery = (user_id, recovery_type, newMyPlan) => {
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.recovery_type = recovery_type;
     return dispatch => AppAPI.active_recovery.post(false, bodyObj)
-        .then(response => {
-            let myPlanData = {};
-            myPlanData.daily_plans = newMyPlan;
-            dispatch({
-                type: Actions.GET_MY_PLAN,
-                data: myPlanData,
-            });
-            return Promise.resolve(response);
-        })
+        .then(response => Promise.resolve(response))
         .catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
@@ -359,15 +353,7 @@ const markStartedFunctionalStrength = (user_id, newMyPlan) => {
     bodyObj.user_id = user_id;
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.functional_strength.post(false, bodyObj)
-        .then(response => {
-            let myPlanData = {};
-            myPlanData.daily_plans = newMyPlan;
-            dispatch({
-                type: Actions.GET_MY_PLAN,
-                data: myPlanData,
-            });
-            return Promise.resolve(response);
-        })
+        .then(response => Promise.resolve(response))
         .catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
@@ -442,9 +428,31 @@ const setAppLogs = () => {
   */
 const postSurvey = (userId, payload) => {
     return dispatch => AppAPI.survey.post({userId}, payload)
-        .then(data => {
-            return Promise.resolve(data);
-        })
+        .then(data => Promise.resolve(data))
+        .catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+}
+
+/**
+  * Post Health Data
+  */
+const postHealthData = (payload) => {
+    return AppAPI.health_data.post(false, payload)
+        .then(data => Promise.resolve(data))
+        .catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+}
+
+/**
+  * Patch Session
+  */
+const patchSession = (session_id, payload) => {
+    return AppAPI.patch_sessions.patch({session_id}, payload)
+        .then(data => Promise.resolve(data))
         .catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
@@ -454,6 +462,7 @@ const postSurvey = (userId, payload) => {
 export default {
     clearCompletedExercises,
     clearCompletedFSExercises,
+    clearHealthKitWorkouts,
     clearMyPlanData,
     getCoachesDashboardData,
     getMyPlan,
@@ -464,11 +473,12 @@ export default {
     patchActiveRecovery,
     patchActiveTime,
     patchFunctionalStrength,
+    patchSession,
+    postHealthData,
     postReadinessSurvey,
     postSessionSurvey,
     postSingleSensorData,
     postSurvey,
-    preReadiness,
     setAppLogs,
     setCompletedExercises,
     setCompletedFSExercises,
