@@ -626,7 +626,7 @@ class MyPlan extends Component {
                         duration:                       0,
                         event_date:                     null,
                         session_type:                   null,
-                        sessions:                       postSession.sessions,
+                        sessions:                       _.filter(postSession.sessions, o => !o.ignored),
                         soreness:                       [],
                         sport_name:                     null,
                         strength_and_conditioning_type: null,
