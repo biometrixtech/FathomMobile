@@ -56,7 +56,6 @@ const EnableAppleHealthKit = ({
                 backdropPressToClose={false}
                 coverScreen={true}
                 isOpen={true}
-                // ref={ref => {this._appleHealthKitModalRef = ref;}}
                 swipeToClose={false}
             >
                 <View style={{flex: 1,}}>
