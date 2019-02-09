@@ -89,7 +89,7 @@ class UserAccountInfo extends Component {
                             onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.last_name', text))}
                             onSubmitEditing={() =>
                                 isUpdatingUser ?
-                                    this.focusNextField('phone_number')
+                                    setAccordionSection(0, 1)
                                     :
                                     this.focusNextField('email')
                             }
@@ -113,7 +113,7 @@ class UserAccountInfo extends Component {
                             editable={!isUpdatingUser}
                             onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.email', text))}
                             onSubmitEditing={() => {
-                                this.focusNextField('phone_number');
+                                this.focusNextField('password');
                             }}
                             keyboardType={'email-address'}
                             placeholder={'E-mail Address'}
@@ -128,24 +128,6 @@ class UserAccountInfo extends Component {
                     :
                     null
                 }
-                <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.phone_number.length > 0 ? 'Phone Number (optional)' : ' '}</FormLabel>
-                <FormInput
-                    blurOnSubmit={ false }
-                    containerStyle={{marginLeft: 0, paddingLeft: 10}}
-                    keyboardType={'number-pad'}
-                    maxLength={10}
-                    onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.phone_number', text))}
-                    onSubmitEditing={() => {
-                        this.focusNextField('password');
-                    }}
-                    placeholder={'Phone Number (optional)'}
-                    placeholderTextColor={AppColors.zeplin.lightGrey}
-                    returnKeyType={'next'}
-                    textInputRef={input => {
-                        this.inputs.phone_number = input;
-                    }}
-                    value={user.personal_data.phone_number}
-                />
                 {!isUpdatingUser ?
                     <View>
                         <FormLabel labelStyle={{color: AppColors.black}}>{user.password.length > 0 ? 'Password' : ' '}</FormLabel>

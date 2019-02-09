@@ -118,6 +118,7 @@ class ExerciseList extends Component {
                                         completedExercises={completedExercises}
                                         exercise={exercise}
                                         handleCompleteExercise={handleCompleteExercise}
+                                        isFunctionalStrength={isFunctionalStrength}
                                         isLastItem={i + 1 === exerciseList.totalLength}
                                         key={exercise.library_id+i}
                                         toggleSelectedExercise={toggleSelectedExercise}

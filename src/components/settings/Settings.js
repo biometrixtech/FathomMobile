@@ -10,19 +10,21 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, Alert, BackHandler, Easing, Platform, View, } from 'react-native';
+import { Animated, Alert, BackHandler, Easing, Platform, Switch, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
+import AppleHealthKit from 'rn-apple-healthkit';
 import Toast, { DURATION, } from 'react-native-easy-toast';
 import _ from 'lodash';
 
 // Consts and Libs
-import { AppColors, AppSizes, AppStyles, UserAccount, } from '../../constants';
+import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, UserAccount, } from '../../constants';
 import { bleUtils, } from '../../constants/utils';
 import { ListItem, TabIcon, } from '../custom';
 import { AppUtil, } from '../../lib';
 import { ble as BLEActions, user as UserActions, } from '../../actions';
+import { store } from '../../store';
 
 // Components
 import { JoinATeamModal, } from './pages';
@@ -37,6 +39,7 @@ class Settings extends Component {
         logout:                         PropTypes.func.isRequired,
         network:                        PropTypes.object.isRequired,
         user:                           PropTypes.object.isRequired,
+        updateUser:                     PropTypes.func.isRequired,
         userJoinAccount:                PropTypes.func.isRequired,
     }
 
@@ -88,6 +91,36 @@ class Settings extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
+    }
+
+    _toggleHealthKitSwitch = value => {
+        if(value) {
+            AppUtil.initAppleHealthKit();
+            // setup variables
+            let newUserPayloadObj = {};
+            newUserPayloadObj.health_enabled = true;
+            let newUserObj = _.cloneDeep(this.props.user);
+            newUserObj.health_enabled = true;
+            // update reducer as API might take too long to return a value
+            store.dispatch({
+                type: DispatchActions.USER_REPLACE,
+                data: newUserObj
+            });
+            // update user object
+            this.props.updateUser(newUserPayloadObj, this.props.user.id);
+        } else {
+            Alert.alert(
+                'Apple Health',
+                'You can manage Apple Health settings in the Health app under the Sources tab.',
+                [
+                    {
+                        text:  'OK',
+                        style: 'cancel',
+                    },
+                ],
+                { cancelable: true }
+            );
+        }
     }
 
     _disconnectFromSingleSensor = () => {
@@ -322,7 +355,7 @@ class Settings extends Component {
                 { userHasSensorSystem ?
                     <ListItem
                         chevronColor={AppColors.black}
-                        containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
+                        containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                         leftIcon={ this.state.isUnpairing ?
                             <Animated.View
                                 style={{transform: [{rotate: spin}],}}
@@ -344,7 +377,7 @@ class Settings extends Component {
                         onPress={() => this.props.accessoryData.sensor_pid !== 'None' ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()
                         }
                         title={this.props.accessoryData.sensor_pid !== 'None' ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
-                        titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
+                        titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                     />
                     :
                     null
@@ -362,7 +395,7 @@ class Settings extends Component {
                     }
                     onPress={() => this._toggleJoinATeamModal()}
                     title={'JOIN A TEAM'}
-                    titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
+                    titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 {
                     /hello[+]demo[1-5]@fathomai.com/g.test(userEmail) ||
@@ -381,7 +414,7 @@ class Settings extends Component {
                     /mazen@fathomai.com/g.test(userEmail) ?
                         <ListItem
                             chevronColor={AppColors.black}
-                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
+                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                             leftIcon={
                                 <TabIcon
                                     color={AppColors.black}
@@ -392,14 +425,43 @@ class Settings extends Component {
                             }
                             onPress={() => this._resetAccountData()}
                             title={'RESET ACCOUNT DATA'}
-                            titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
+                            titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                         />
                         :
                         null
                 }
+                { Platform.OS === 'ios' ?
+                    <ListItem
+                        chevronColor={AppColors.black}
+                        containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                        leftIcon={
+                            <TabIcon
+                                color={AppColors.black}
+                                icon={'heart'}
+                                size={24}
+                                type={'material-community'}
+                            />
+                        }
+                        onPress={() =>
+                            this.props.logout(this.props.user.id)
+                                .then(() => {Actions.start();})
+                                .catch(err => this._handleLogoutAlert(err))
+                        }
+                        rightIcon={
+                            <Switch
+                                onValueChange={value => this._toggleHealthKitSwitch(value)}
+                                value={this.props.user.health_enabled}
+                            />
+                        }
+                        title={'APPLE HEALTH'}
+                        titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                    />
+                    :
+                    null
+                }
                 <ListItem
                     chevronColor={AppColors.black}
-                    containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
+                    containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                     leftIcon={
                         <TabIcon
                             color={AppColors.black}
@@ -413,7 +475,7 @@ class Settings extends Component {
                             .catch(err => this._handleLogoutAlert(err))
                     }
                     title={'LOGOUT'}
-                    titleStyle={{color: AppColors.black, paddingLeft: AppSizes.paddingSml,}}
+                    titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Toast
                     position={'bottom'}

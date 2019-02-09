@@ -6,7 +6,9 @@
           isValid={isFormValidItems.willTrainLaterValid}
           onBackClick={() => this._renderNextPage(8, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked)}
           onNextClick={() => this._renderNextPage(8, isFormValidItems, false, isFirstFunctionalStrength, isSecondFunctionalStrength)}
+          showAddBtn={true}
           showSubmitBtn={!isSecondFunctionalStrength}
+          submitBtnText={'Submit'}
       />
  *
  */
@@ -16,15 +18,41 @@ import { Platform, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
-import { Button, Text, } from '../../custom';
+import { TabIcon, Text, } from '../../custom';
+
+const addSubmitBtnWidth = Platform.OS === 'ios' ?
+    ((AppSizes.screen.width - ((AppSizes.paddingSml * 2) + (AppSizes.paddingXSml * 2))) / 2)
+    :
+    ((AppSizes.screen.width - (AppSizes.paddingSml + AppSizes.paddingXSml)) / 2);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    addBtn: {
+        backgroundColor: AppColors.white,
+        borderColor:     AppColors.zeplin.yellow,
+        borderRadius:    5,
+        borderWidth:     1,
+        marginLeft:      Platform.OS === 'ios' ? AppSizes.paddingSml : (AppSizes.paddingSml / 2),
+        marginRight:     Platform.OS === 'ios' ? AppSizes.paddingXSml : (AppSizes.paddingXSml / 2),
+        width:           addSubmitBtnWidth,
+    },
+    addSubmitWrapper: {
+        flex:          1,
+        flexDirection: 'row',
+        paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed,
+    },
     backNextWrapper: {
-        flexDirection:     'row',
-        justifyContent:    'space-between',
-        paddingBottom:     AppSizes.paddingMed,
-        paddingHorizontal: AppSizes.paddingMed,
+        alignItems:     'center',
+        flexDirection:  'row',
+        justifyContent: 'space-between',
+        paddingBottom:  AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed,
+    },
+    submitBtn: {
+        borderRadius:   5,
+        justifyContent: 'center',
+        marginLeft:     Platform.OS === 'ios' ? AppSizes.paddingSml : (AppSizes.paddingSml / 2),
+        marginRight:    Platform.OS === 'ios' ? AppSizes.paddingXSml : (AppSizes.paddingXSml / 2),
+        width:          addSubmitBtnWidth,
     },
 });
 
@@ -34,18 +62,74 @@ const BackNextButtons = ({
     isValid,
     onBackClick,
     onNextClick,
+    showAddBtn,
     showBackBtn,
     showSubmitBtn,
+    submitBtnText,
 }) => (
-    <View style={[styles.backNextWrapper,]}>
-        { showBackBtn ?
+    <View style={[showAddBtn && showSubmitBtn ? styles.addSubmitWrapper : styles.backNextWrapper,]}>
+        { showAddBtn ?
             <TouchableHighlight
-                onPress={onBackClick}
-                style={[AppStyles.backNextCircleButtons, {
-                    backgroundColor: AppColors.white,
-                    borderColor:     AppColors.primary.yellow.hundredPercent,
-                    borderWidth:     1,
-                }]}
+                onPress={() => isValid && onBackClick ? onBackClick() : null}
+                style={[AppStyles.paddingVerticalSml, styles.addBtn]}
+                underlayColor={AppColors.transparent}
+            >
+                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
+                    <TabIcon
+                        color={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
+                        icon={'add'}
+                        size={AppFonts.scaleFont(18)}
+                        style={{paddingRight: AppSizes.paddingMed,}}
+                    />
+                    <Text
+                        robotoMedium
+                        style={[
+                            AppStyles.textCenterAligned,
+                            {
+                                color:    AppColors.zeplin.yellow,
+                                fontSize: AppFonts.scaleFont(14),
+                            }
+                        ]}
+                    >
+                        {'Add another session'}
+                    </Text>
+                </View>
+            </TouchableHighlight>
+            : showBackBtn ?
+                <TouchableHighlight
+                    onPress={onBackClick}
+                    style={[AppStyles.backNextCircleButtons, {
+                        backgroundColor: AppColors.white,
+                        borderColor:     AppColors.zeplin.yellow,
+                        borderWidth:     1,
+                    }]}
+                    underlayColor={AppColors.transparent}
+                >
+                    <Text
+                        robotoMedium
+                        style={[
+                            AppStyles.textCenterAligned,
+                            {
+                                color:    AppColors.zeplin.yellow,
+                                fontSize: AppFonts.scaleFont(12),
+                            }
+                        ]}
+                    >
+                        {'Back'}
+                    </Text>
+                </TouchableHighlight>
+                :
+                <View style={{flex: 1,}} />
+        }
+        { showSubmitBtn ?
+            <TouchableHighlight
+                onPress={() => isValid && handleFormSubmit ? handleFormSubmit() : null}
+                style={[
+                    AppStyles.paddingVerticalSml,
+                    styles.submitBtn,
+                    isValid ? {} : { borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, },
+                    { backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white, }
+                ]}
                 underlayColor={AppColors.transparent}
             >
                 <Text
@@ -53,40 +137,22 @@ const BackNextButtons = ({
                     style={[
                         AppStyles.textCenterAligned,
                         {
-                            color:    AppColors.primary.yellow.hundredPercent,
-                            fontSize: AppFonts.scaleFont(12),
+                            color:    isValid ? AppColors.white : AppColors.zeplin.lightGrey,
+                            fontSize: AppFonts.scaleFont(14),
                         }
                     ]}
                 >
-                    {'Back'}
+                    {submitBtnText}
                 </Text>
             </TouchableHighlight>
-            :
-            <View />
-        }
-        { showSubmitBtn ?
-            <Button
-                backgroundColor={isValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
-                buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {justifyContent: 'center',}]}
-                color={isValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                containerViewStyle={{ alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf, }}
-                disabled={!isValid}
-                disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.lightGrey, borderWidth: 1,}}
-                fontFamily={AppStyles.robotoMedium.fontFamily}
-                fontWeight={AppStyles.robotoMedium.fontWeight}
-                onPress={() => isValid && handleFormSubmit ? handleFormSubmit() : null}
-                raised={false}
-                textColor={isValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                textStyle={{ fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%', }}
-                title={'Submit'}
-            />
             :
             <TouchableHighlight
                 onPress={isValid ? onNextClick : null}
                 style={[AppStyles.backNextCircleButtons, {
-                    backgroundColor: isValid ? AppColors.primary.yellow.hundredPercent : AppColors.white,
-                    borderColor:     isValid ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.lightGrey,
+                    backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white,
+                    borderColor:     isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey,
                     borderWidth:     1,
+                    marginRight:     Platform.OS === 'ios' ? AppSizes.paddingXSml : (AppSizes.paddingXSml / 2),
                 }]}
                 underlayColor={AppColors.transparent}
             >
@@ -114,15 +180,19 @@ BackNextButtons.propTypes = {
     isValid:          PropTypes.bool.isRequired,
     onBackClick:      PropTypes.func,
     onNextClick:      PropTypes.func.isRequired,
+    showAddBtn:       PropTypes.bool,
     showBackBtn:      PropTypes.bool,
     showSubmitBtn:    PropTypes.bool,
+    submitBtnText:    PropTypes.string,
 };
 
 BackNextButtons.defaultProps = {
     handleFormSubmit: null,
     onBackClick:      null,
-    showBackBtn:      true,
+    showAddBtn:       false,
+    showBackBtn:      false,
     showSubmitBtn:    false,
+    submitBtnText:    'Submit',
 };
 
 BackNextButtons.componentName = 'BackNextButtons';

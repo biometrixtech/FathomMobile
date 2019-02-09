@@ -70,7 +70,7 @@ class ExerciseCompletionModal extends Component {
     componentDidUpdate = (prevProps, prevState) => {
         if(prevProps.isModalOpen !== this.props.isModalOpen) {
             _.delay(() => {
-                const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises);
+                const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises, this.props.isFS);
                 let newProgressCounters = _.cloneDeep(this.state.progressCounters);
                 let index = 0;
                 _.map(completionModalExerciseList, (exerciseGroup, group) => {
@@ -88,7 +88,7 @@ class ExerciseCompletionModal extends Component {
     }
 
     componentWillMount = () => {
-        const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises);
+        const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises, this.props.isFS);
         let newProgressCounters = _.cloneDeep(this.state.progressCounters);
         _.map(completionModalExerciseList, (exerciseGroup, group) => {
             newProgressCounters[group] = 0;
@@ -107,7 +107,7 @@ class ExerciseCompletionModal extends Component {
     }
 
     _closeModal = callback => {
-        const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises);
+        const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises, this.props.isFS);
         let newProgressCounters = _.cloneDeep(this.state.progressCounters);
         _.map(completionModalExerciseList, (exerciseGroup, group) => {
             newProgressCounters[group] = 0;
@@ -136,7 +136,7 @@ class ExerciseCompletionModal extends Component {
         } = this.props;
         const { modalStyle, progressCounters, } = this.state;
         const isCompleted = completedExercises.length === exerciseList.totalLength;
-        const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(exerciseList, completedExercises);
+        const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(exerciseList, completedExercises, this.props.isFS);
         let sessionIconWidth = ((modalWidth / 3) - 5);
         let iconViewWrapperWidth = (sessionIconWidth - (thickness * 2));
         if(Object.keys(completionModalExerciseList).length === 1 || Object.keys(completionModalExerciseList).length === 2) {

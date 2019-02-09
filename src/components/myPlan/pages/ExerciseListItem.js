@@ -5,6 +5,7 @@
         completedExercises={completedExercises}
         exercise={exercise}
         handleCompleteExercise={handleCompleteExercise}
+        isFunctionalStrength={isFunctionalStrength}
         isLastItem={i + 1 === exerciseList.length}
         toggleSelectedExercise={toggleSelectedExercise}
     />
@@ -31,14 +32,18 @@ class ExerciseListItem extends Component {
     }
 
     render = () => {
-        const { completedExercises, exercise, handleCompleteExercise, isLastItem, toggleSelectedExercise, } = this.props;
+        const { completedExercises, exercise, handleCompleteExercise, isFunctionalStrength, toggleSelectedExercise, } = this.props;
+        let exerciseId = isFunctionalStrength ?
+            exercise.library_id
+            :
+            `${exercise.library_id}-${exercise.set_number}`;
         return(
             <View style={[{borderTopColor: AppColors.zeplin.lightGrey, borderTopWidth: 1, marginHorizontal: AppSizes.paddingSml,}]}>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
                     <TabIcon
                         containerStyle={[{flex: 1, justifyContent: 'center',}]}
-                        icon={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? 'ios-checkbox' : 'ios-checkbox-outline'}
-                        iconStyle={[{color: completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.light,}]}
+                        icon={completedExercises.includes(exerciseId) ? 'ios-checkbox' : 'ios-checkbox-outline'}
+                        iconStyle={[{color: completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.zeplin.light,}]}
                         onPress={() => handleCompleteExercise(exercise.library_id, exercise.set_number)}
                         reverse={false}
                         size={30}
@@ -62,7 +67,7 @@ class ExerciseListItem extends Component {
                         <Text
                             oswaldMedium
                             style={{
-                                color:    completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.black,
+                                color:    completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.black,
                                 flexWrap: 'wrap',
                                 fontSize: AppFonts.scaleFont(16),
                             }}
@@ -72,7 +77,7 @@ class ExerciseListItem extends Component {
                         <Text
                             robotoMedium
                             style={{
-                                color:    completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.blueGrey,
+                                color:    completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.zeplin.blueGrey,
                                 fontSize: AppFonts.scaleFont(15),
                             }}
                         >
@@ -80,7 +85,7 @@ class ExerciseListItem extends Component {
                         </Text>
                     </TouchableOpacity>
                     <TabIcon
-                        color={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.black}
+                        color={completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.black}
                         containerStyle={[{flex: 1, justifyContent: 'center',}]}
                         icon={'arrow-right'}
                         onPress={() => toggleSelectedExercise(exercise, true)}
@@ -97,11 +102,14 @@ ExerciseListItem.propTypes = {
     completedExercises:     PropTypes.array.isRequired,
     exercise:               PropTypes.object.isRequired,
     handleCompleteExercise: PropTypes.func.isRequired,
+    isFunctionalStrength:   PropTypes.bool,
     isLastItem:             PropTypes.bool.isRequired,
     toggleSelectedExercise: PropTypes.func.isRequired,
 };
 
-ExerciseListItem.defaultProps = {};
+ExerciseListItem.defaultProps = {
+    isFunctionalStrength: false,
+};
 
 ExerciseListItem.componentName = 'ExerciseListItem';
 

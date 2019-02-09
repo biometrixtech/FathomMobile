@@ -217,29 +217,33 @@ const helperFunctions = {
         return expectedResult;
     },
 
-    getDailyReadinessNewBodyPartSorenessWithPainInputExpectedResult: (bodyPartIndex, side) => {
+    getDailyReadinessNewBodyPartSorenessWithPainInputExpectedResult: (bodyPartIndex, side, isClearCandidate = false) => {
+        let sorenessObj = {body_part: bodyPartIndex, pain: true, severity: null, side: side};
+        if(isClearCandidate) {
+            sorenessObj = {body_part: bodyPartIndex, pain: true, severity: null, side: side, isClearCandidate: false};
+        }
         let expectedResult = {
-            current_position:   null,
-            current_sport_name: null,
-            readiness:          0,
-            sleep_quality:      0,
-            soreness:           [
-                {body_part: bodyPartIndex, pain: true, severity: null, side: side}
-            ],
+            current_position:          null,
+            current_sport_name:        null,
+            readiness:                 0,
+            sleep_quality:             0,
+            soreness:                  [sorenessObj],
             wants_functional_strength: null
         };
         return expectedResult;
     },
 
-    getDailyReadinessNewBodyPartSorenessWithoutPainInputExpectedResult: (bodyPartIndex, side) => {
+    getDailyReadinessNewBodyPartSorenessWithoutPainInputExpectedResult: (bodyPartIndex, side, isClearCandidate = false) => {
+        let sorenessObj = {body_part: bodyPartIndex, pain: false, severity: null, side: side};
+        if(isClearCandidate) {
+            sorenessObj = {body_part: bodyPartIndex, pain: false, severity: null, side: side, isClearCandidate: false};
+        }
         let expectedResult = {
-            current_position:   null,
-            current_sport_name: null,
-            readiness:          0,
-            sleep_quality:      0,
-            soreness:           [
-                {body_part: bodyPartIndex, pain: false, severity: null, side: side}
-            ],
+            current_position:          null,
+            current_sport_name:        null,
+            readiness:                 0,
+            sleep_quality:             0,
+            soreness:                  [sorenessObj],
             wants_functional_strength: null
         };
         return expectedResult;
@@ -329,32 +333,36 @@ const helperFunctions = {
         return expectedResult;
     },
 
-    getPostSessionNewBodyPartSorenessWithoutPainInputExpectedResult: (bodyPartIndex, side) => {
+    getPostSessionNewBodyPartSorenessWithoutPainInputExpectedResult: (bodyPartIndex, side, isClearCandidate = false) => {
+        let sorenessObj = {body_part: bodyPartIndex, pain: false, severity: null, side: side};
+        if(isClearCandidate) {
+            sorenessObj = {body_part: bodyPartIndex, pain: false, severity: null, side: side, isClearCandidate: false,};
+        }
         let expectedResult = {
-            RPE:          0,
-            description:  '',
-            duration:     0,
-            event_date:   null,
-            session_type: null,
-            soreness:     [
-                {body_part: bodyPartIndex, pain: false, severity: null, side: side}
-            ],
+            RPE:                            0,
+            description:                    '',
+            duration:                       0,
+            event_date:                     null,
+            session_type:                   null,
+            soreness:                       [sorenessObj],
             sport_name:                     null,
             strength_and_conditioning_type: null,
         };
         return expectedResult;
     },
 
-    getPostSessionNewBodyPartSorenessWithPainInputExpectedResult: (bodyPartIndex, side) => {
+    getPostSessionNewBodyPartSorenessWithPainInputExpectedResult: (bodyPartIndex, side, isClearCandidate = false) => {
+        let sorenessObj = {body_part: bodyPartIndex, pain: true, severity: null, side: side};
+        if(isClearCandidate) {
+            sorenessObj = {body_part: bodyPartIndex, pain: true, severity: null, side: side, isClearCandidate: false,};
+        }
         let expectedResult = {
-            RPE:          0,
-            description:  '',
-            duration:     0,
-            event_date:   null,
-            session_type: null,
-            soreness:     [
-                { body_part: bodyPartIndex, pain: true, severity: null, side: side }
-            ],
+            RPE:                            0,
+            description:                    '',
+            duration:                       0,
+            event_date:                     null,
+            session_type:                   null,
+            soreness:                       [sorenessObj],
             sport_name:                     null,
             strength_and_conditioning_type: null,
         };
@@ -718,33 +726,100 @@ const helperFunctions = {
 
     getStrengthConditioningTypes: () => {
         return [
-            { index: 0, order: 1, label: 'Endurance', icon: 'run', iconType: 'material-community', },
-            { index: 1, order: 2, label: 'Power', icon: 'ios-fitness', iconType: 'ionicon', },
-            { index: 2, order: 3, label: 'Speed & Agility', icon: 'run-fast', iconType: 'material-community', },
-            { index: 3, order: 4, label: 'Strength', icon: 'ios-fitness', iconType: 'ionicon', },
-            { index: 4, order: 5, label: 'Cross Training', icon: 'checkbox-multiple-marked-outline', iconType: 'material-community', },
+            { index: 0, order: 1, label: 'Endurance', icon: 'run', iconType: 'material-community', activitySection: 'exercise_and_fitness', },
+            { index: 1, order: 2, label: 'Power', icon: 'ios-fitness', iconType: 'ionicon', activitySection: 'exercise_and_fitness', },
+            { index: 2, order: 3, label: 'Speed & Agility', icon: 'run-fast', iconType: 'material-community', activitySection: 'exercise_and_fitness', },
+            { index: 3, order: 4, label: 'Strength', icon: 'ios-fitness', iconType: 'ionicon', activitySection: '', },
+            { index: 4, order: 5, label: 'Cross Training', icon: 'checkbox-multiple-marked-outline', iconType: 'material-community', activitySection: 'exercise_and_fitness', },
         ];
     },
 
     getTeamSports: () => {
         return [
-            { index: 0, order: 1, label: 'Basketball', positions: ['Center', 'Forward', 'Guard'], icon: 'basketball', iconType: 'material-community', },
-            { index: 1, order: 2, label: 'Baseball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], icon: 'baseball', iconType: 'material-community', },
-            { index: 3, order: 3, label: 'Cycling', positions: false, icon: 'ios-bicycle', iconType: 'ionicon', },
-            { index: 17, order: 4, label: 'Distance Running', positions: false, icon: 'run', iconType: 'material-community', },
-            { index: 4, order: 5, label: 'Field Hockey', positions: ['Goalie', 'Fullback', 'Midfielder', 'Forward'], icon: 'hockey-sticks', iconType: 'material-community', },
-            { index: 5, order: 6, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], icon: 'football', iconType: 'material-community', },
-            { index: 7, order: 7, label: 'Golf', positions: false, icon: 'golf', iconType: 'material-community', },
-            { index: 10, order: 8, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], icon: 'checkbox-marked-outline', iconType: 'material-community', },
-            { index: 15, order: 9, label: 'Pool Sports', positions: false, icon: 'pool', iconType: 'material-community', },
-            { index: 11, order: 10, label: 'Rowing', positions: false, icon: 'rowing', iconType: 'material-community', },
-            { index: 9, order: 11, label: 'Skate Sports', positions: false, icon: 'run-fast', iconType: 'material-community', },
-            { index: 14, order: 12, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], icon: 'ios-football', iconType: 'ionicon', },
-            { index: 2, order: 13, label: 'Softball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], icon: 'baseball', iconType: 'material-community', },
-            { index: 16, order: 14, label: 'Tennis', positions: false, icon: 'md-tennisball', iconType: 'ionicon', },
-            { index: 24, order: 15, label: 'Track & Field', positions: ['Sprinter', 'Jumper', 'Thrower', 'Distance'], icon: 'run-fast', iconType: 'material-community', },
-            { index: 21, order: 16, label: 'Volleyball', positions: ['Hitter', 'Setter', 'Middle Blocker', 'Libero'], icon: 'volleyball', iconType: 'material-community', },
-            { index: 22, order: 17, label: 'Wrestling', positions: false, icon: 'checkbox-multiple-marked-outline', iconType: 'material-community', },
+            { index: 0, label: 'Basketball', positions: ['Center', 'Forward', 'Guard'], imagePath: require('../../../assets/images/sports_images/icons8-basketball-player-200.png'), activitySection: 'team_sports', },
+            { index: 1, label: 'Baseball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], imagePath: require('../../../assets/images/sports_images/icons8-baseball-player-200.png'), activitySection: 'team_sports', },
+            { index: 2, label: 'Softball', positions: ['Catcher', 'Infielder', 'Pitcher', 'Outfielder'], imagePath: require('../../../assets/images/sports_images/icons8-baseball-player-200.png'), activitySection: 'team_sports', },
+            { index: 3, label: 'Cycling', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-cycling-200.png'), activitySection: ['exercise_and_fitness', 'outdoor_activities'], },
+            { index: 4, label: 'Field Hockey', positions: ['Goalie', 'Fullback', 'Midfielder', 'Forward'], imagePath: require('../../../assets/images/sports_images/icons8-field-hockey-200.png'), activitySection: 'team_sports', },
+            { index: 5, label: 'Football', positions: ['Defensive Back', 'Kicker', 'Linebacker', 'Lineman', 'Quarterback', 'Receiver', 'Running Back'], imagePath: require('../../../assets/images/sports_images/icons8-american-football-200.png'), activitySection: 'team_sports', },
+            { index: 6, label: 'General Fitness', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-exercise-200.png'), activitySection: '', },
+            { index: 7, label: 'Golf', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-golf-200.png'), activitySection: ['individual_sports', 'outdoor_activities'], },
+            { index: 8, label: 'Gymnastics', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-gymnastics-200.png'), activitySection: 'individual_sports', },
+            { index: 9, label: 'Skating Sports', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-speed-skating-200.png'), activitySection: 'snow_and_ice_sports', },
+            { index: 10, label: 'Lacrosse', positions: ['Attacker', 'Defender', 'Goalie', 'Midfielder'], imagePath: require('../../../assets/images/sports_images/icons8-lacrosse-stick-200.png'), activitySection: 'team_sports', },
+            { index: 11, label: 'Rowing', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-row-boat-200.png'), activitySection: 'water_activities', },
+            { index: 12, label: 'Rugby', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-rugby-sevens-200.png'), activitySection: 'team_sports', },
+            { index: 13, label: 'Diving', positions: false, imagePath: null, activitySection: '', },
+            { index: 14, label: 'Soccer', positions: ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker'], imagePath: require('../../../assets/images/sports_images/icons8-soccer-200.png'), activitySection: 'team_sports', },
+            { index: 15, label: 'Water Sports', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-swimming-200.png'), activitySection: ['individual_sports', 'water_activities'], },
+            { index: 16, label: 'Tennis', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-tennis-player-200.png'), activitySection: ['individual_sports', 'racket_sports'], },
+            { index: 17, label: 'Running', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-running-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 18, label: 'Sprints', positions: false, imagePath: null, activitySection: '', },
+            { index: 19, label: 'Jumps', positions: false, imagePath: null, activitySection: '', },
+            { index: 20, label: 'Throws', positions: false, imagePath: null, activitySection: '', },
+            { index: 21, label: 'Volleyball', positions: ['Hitter', 'Setter', 'Middle Blocker', 'Libero'], imagePath: require('../../../assets/images/sports_images/icons8-volleyball-player-200.png'), activitySection: 'team_sports', },
+            { index: 22, label: 'Wrestling', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-wrestling-200.png'), activitySection: ['martial_arts', 'individual_sports'], },
+            { index: 23, label: 'Weightlifting', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-weightlifting-200.png'), activitySection: 'individual_sports', },
+            { index: 24, label: 'Track & Field', positions: ['Sprinter', 'Jumper', 'Thrower', 'Distance'], imagePath: require('../../../assets/images/sports_images/icons8-track-and-field-200.png'), activitySection: 'individual_sports', },
+            { index: 25, label: 'Archery', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-archery-200.png'), activitySection: 'individual_sports', },
+            { index: 26, label: 'Australian Football', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-rugby-sevens-200.png'), activitySection: 'team_sports', },
+            { index: 27, label: 'Badminton', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-badminton-player-200.png'), activitySection: 'racket_sports', },
+            { index: 28, label: 'Bowling', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-bowling-200.png'), activitySection: 'individual_sports', },
+            { index: 29, label: 'Boxing', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-boxing-200.png'), activitySection: 'martial_arts', },
+            { index: 30, label: 'Cricket', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-cricketer-200.png'), activitySection: 'team_sports', },
+            { index: 31, label: 'Curling', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-curling-stone-200.png'), activitySection: 'snow_and_ice_sports', },
+            { index: 32, label: 'Dance', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-dancing-200.png'), activitySection: 'studio_activities', },
+            { index: 33, label: 'Equestrian Sports', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-horseback-riding-200.png'), activitySection: 'outdoor_activities', },
+            { index: 34, label: 'Fencing', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-fencing-200.png'), activitySection: 'individual_sports', },
+            { index: 35, label: 'Fishing', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-sports-fishing-200.png'), activitySection: 'outdoor_activities', },
+            { index: 36, label: 'Handball', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-handball-200.png'), activitySection: 'team_sports', },
+            { index: 37, label: 'Hockey', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-ice-hockey-200.png'), activitySection: 'team_sports', },
+            { index: 38, label: 'Martial Arts', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-judo-200.png'), activitySection: 'martial_arts', },
+            { index: 39, label: 'Paddle Sports', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-sup-200.png'), activitySection: 'water_activities', },
+            { index: 40, label: 'Racquetball', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-racquetball-200.png'), activitySection: 'racket_sports', },
+            { index: 41, label: 'Sailing', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-sailing-200.png'), activitySection: 'water_activities', },
+            { index: 42, label: 'Snow Sports', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-nordic-combined-200.png'), activitySection: 'snow_and_ice_sports', },
+            { index: 43, label: 'Squash', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-squash-racquet-200.png'), activitySection: 'racket_sports', },
+            { index: 44, label: 'Surfing Sports', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-surfing-200.png'), activitySection: 'water_activities', },
+            { index: 45, label: 'Swimming', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-swimming-200.png'), activitySection: 'water_activities', },
+            { index: 46, label: 'Table Tennis', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-table-tennis-200.png'), activitySection: 'racket_sports', },
+            { index: 47, label: 'Water Polo', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-water-polo-200.png'), activitySection: 'water_activities', },
+            { index: 48, label: 'Cross Country Skiing', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-cross-country-skiing-200.png'), activitySection: 'snow_and_ice_sports', },
+            { index: 49, label: 'Downhill Skiing', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-alpine-skiing-200.png'), activitySection: 'snow_and_ice_sports', },
+            { index: 50, label: 'Kick Boxing', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-fight-200.png'), activitySection: 'martial_arts', },
+            { index: 51, label: 'Snowboarding', positions: false, imagePath: require('../../../assets/images/sports_images/icons8-snowboarding-200.png'), activitySection: 'snow_and_ice_sports', },
+            { index: 52, label: 'Endurance', imagePath: require('../../../assets/images/sports_images/icons8-exercise-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 53, label: 'Power', imagePath: require('../../../assets/images/sports_images/icons8-bench-press-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 54, label: 'Speed & Agility', imagePath: require('../../../assets/images/sports_images/icons8-exercise-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 55, label: 'Strength', imagePath: require('../../../assets/images/sports_images/icons8-bench-press-200.png'), activitySection: '', },
+            { index: 56, label: 'Cross Training', imagePath: require('../../../assets/images/sports_images/icons8-crossfit-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 57, label: 'Elliptical', imagePath: require('../../../assets/images/sports_images/icons8-treadmill-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 58, label: 'Functional Strength Training', imagePath: require('../../../assets/images/sports_images/icons8-deadlift-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 59, label: 'Hiking', imagePath: require('../../../assets/images/sports_images/icons8-trekking-200.png'), activitySection: 'outdoor_activities', },
+            { index: 60, label: 'Hunting', imagePath: require('../../../assets/images/sports_images/icons8-shooting-200.png'), activitySection: 'outdoor_activities', },
+            { index: 61, label: 'Mind & Body', imagePath: require('../../../assets/images/sports_images/icons8-meditation-200.png'), activitySection: 'studio_activities', },
+            { index: 62, label: 'Play', imagePath: require('../../../assets/images/sports_images/icons8-frisbee-200.png'), activitySection: 'outdoor_activities', },
+            { index: 63, label: 'Preparation & Recovery', imagePath: require('../../../assets/images/sports_images/icons8-warm-up-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 64, label: 'Stair Climbing', imagePath: require('../../../assets/images/sports_images/icons8-staircase-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 65, label: 'Traditional Strength Training', imagePath: require('../../../assets/images/sports_images/icons8-deadlift-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 66, label: 'Walking', imagePath: require('../../../assets/images/sports_images/icons8-walking-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 67, label: 'Water Fitness', imagePath: require('../../../assets/images/sports_images/icons8-swim-200.png'), activitySection: 'water_activities', },
+            { index: 68, label: 'Yoga', imagePath: require('../../../assets/images/sports_images/icons8-yoga-200.png'), activitySection: 'studio_activities', },
+            { index: 69, label: 'Barre', imagePath: require('../../../assets/images/sports_images/icons8-pullups-200.png'), activitySection: 'studio_activities', },
+            { index: 70, label: 'Core Training', imagePath: require('../../../assets/images/sports_images/icons8-sit-ups-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 71, label: 'Flexibility', imagePath: require('../../../assets/images/sports_images/icons8-warm-up-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 72, label: 'High Intensity Interval Training', imagePath: require('../../../assets/images/sports_images/icons8-exercise-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 73, label: 'Jump Rope', imagePath: require('../../../assets/images/sports_images/icons8-jump-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 74, label: 'Pilates', imagePath: require('../../../assets/images/sports_images/icons8-pilates-200.png'), activitySection: 'studio_activities', },
+            { index: 75, label: 'Stairs', imagePath: require('../../../assets/images/sports_images/icons8-staircase-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 76, label: 'Step Training', imagePath: require('../../../assets/images/sports_images/icons8-stepper-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 77, label: 'Wheelchair Walk Pace', imagePath: require('../../../assets/images/sports_images/icons8-handicapped-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 78, label: 'Wheelchair Run Pace', imagePath: require('../../../assets/images/sports_images/icons8-handicapped-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 79, label: 'Tai Chi', imagePath: require('../../../assets/images/sports_images/icons8-taekwondo-200.png'), activitySection: 'martial_arts', },
+            { index: 80, label: 'Mixed Cardio', imagePath: require('../../../assets/images/sports_images/icons8-exercise-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 81, label: 'Hand Cycling', imagePath: require('../../../assets/images/sports_images/icons8-rowing-machine-200.png'), activitySection: 'exercise_and_fitness', },
+            { index: 82, label: 'Climbing', imagePath: require('../../../assets/images/sports_images/icons8-climbing-200.png'), activitySection: 'outdoor_activities', },
+            { index: 83, label: 'Other', imagePath: require('../../../assets/images/sports_images/icons8-netball-200.png'), activitySection: 'other_activities', },
         ];
     },
 
@@ -893,9 +968,10 @@ const helperFunctions = {
         };
     },
 
-    postSessionRenderLogicFormValidItems: (areAreasOfSorenessValid, isPrevSorenessValid,selectAreasOfSorenessValid) => {
+    postSessionRenderLogicFormValidItems: (areAreasOfSorenessValid, isPrevSorenessValid, selectAreasOfSorenessValid, areQuestionsValid) => {
         return {
             areAreasOfSorenessValid,
+            areQuestionsValid,
             isPrevSorenessValid,
             selectAreasOfSorenessValid,
         };
@@ -1038,229 +1114,157 @@ it('New Sore Body Part Logic - All 3', () => {
     expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 4 - Back & Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
     let isFormValidItems = {areAreasOfSorenessValid: true};
-    let expectedResult = {isValid: true, pageNum: 3,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 4, isFormValidItems, true, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 4 - Back & NOT Valid', () => {
-    let isFormValidItems = {areAreasOfSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 3,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 4, isFormValidItems, true, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 4 - NOT Back & Valid', () => {
-    let isFormValidItems = {areAreasOfSorenessValid: true};
-    let expectedResult = {isValid: true, pageNum: 4,};
+    let expectedResult = {isValid: false, pageNum: 0,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 4, isFormValidItems, false, [], [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 4 - NOT Back & NOT Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
     let isFormValidItems = {areAreasOfSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 4,};
+    let expectedResult = {isValid: false, pageNum: 0,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 4, isFormValidItems, false, [], [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 3 - Back, Valid, & WITHOUT New Sore Body Parts', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITHOUT New Sore Body Parts', () => {
     let isFormValidItems = {selectAreasOfSorenessValid: true};
-    let expectedResult = {isValid: true, pageNum: 1,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, true, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 3 - Back, NOT Valid, & WITHOUT New Sore Body Parts', () => {
-    let isFormValidItems = {selectAreasOfSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 1,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, true, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 3 - Back, Valid, & WITH New Sore Body Parts', () => {
-    let isFormValidItems = {selectAreasOfSorenessValid: true};
-    let expectedResult = {isValid: true, pageNum: 2,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, true, [{}], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 3 - Back, NOT Valid, & WITH New Sore Body Parts', () => {
-    let isFormValidItems = {selectAreasOfSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 2,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, true, [{}], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 3 - NOT Back, Valid, & WITHOUT New Sore Body Parts', () => {
-    let isFormValidItems = {selectAreasOfSorenessValid: true};
-    let expectedResult = {isValid: true, pageNum: 3,};
+    let expectedResult = {isValid: false, pageNum: 0,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, false, [], [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 3 - NOT Back, NOT Valid, & WITHOUT New Sore Body Parts', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITHOUT New Sore Body Parts', () => {
     let isFormValidItems = {selectAreasOfSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 3,};
+    let expectedResult = {isValid: false, pageNum: 0,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, false, [], [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 3 - NOT Back, Valid, & WITH Areas Of Soreness Clicked', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITH Areas Of Soreness Clicked', () => {
     let isFormValidItems = {selectAreasOfSorenessValid: true};
-    let expectedResult = {isValid: true, pageNum: 4,};
+    let expectedResult = {isValid: false, pageNum: 0,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, false, [], [{}])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 3 - NOT Back, NOT Valid, & WITH Areas Of Soreness Clicked', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITH Areas Of Soreness Clicked', () => {
     let isFormValidItems = {selectAreasOfSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 4,};
+    let expectedResult = {isValid: false, pageNum: 0,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, false, [], [{}])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 2 - Back & Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
     let isFormValidItems = {isPrevSorenessValid: true};
-    let expectedResult = {isValid: true, pageNum: 1,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 2, isFormValidItems, true, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 2 - Back & NOT Valid', () => {
-    let isFormValidItems = {isPrevSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 1,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 2, isFormValidItems, true, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 2 - NOT Back & Valid', () => {
-    let isFormValidItems = {isPrevSorenessValid: true};
-    let expectedResult = {isValid: true, pageNum: 3,};
+    let expectedResult = {isValid: false, pageNum: 0,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 2, isFormValidItems, false, [], [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 2 - NOT Back & NOT Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
     let isFormValidItems = {isPrevSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 3,};
+    let expectedResult = {isValid: false, pageNum: 0,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 2, isFormValidItems, false, [], [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 1 - Back & Valid', () => {
-    let isFormValidItems = {isRPEValid: true};
-    let expectedResult = {isValid: true, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, true, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 1 - Back & NOT Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITH New Sore Body Parts', () => {
     let isFormValidItems = {isRPEValid: false};
     let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, true, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 1 - NOT Back, NOT Valid, & WITH New Sore Body Parts', () => {
-    let isFormValidItems = {isRPEValid: false};
-    let expectedResult = {isValid: false, pageNum: 2,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [{}], [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 1 - NOT Back, NOT Valid, & WITHOUT New Sore Body Parts', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITHOUT New Sore Body Parts', () => {
     let isFormValidItems = {isRPEValid: false};
-    let expectedResult = {isValid: false, pageNum: 3,};
+    let expectedResult = {isValid: false, pageNum: 0,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [], [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 1 - NOT Back, Valid, & WITH New Sore Body Parts', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT d, & WITH New Sore Body Parts', () => {
     let isFormValidItems = {isRPEValid: true};
-    let expectedResult = {isValid: true, pageNum: 2,};
+    let expectedResult = {isValid: false, pageNum: 0,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [{}], [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 1 - NOT Back, Valid, & WITHOUT New Sore Body Parts', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 10 - NOT Valid, & WITHOUT New Sore Body Parts', () => {
     let isFormValidItems = {isRPEValid: true};
-    let expectedResult = {isValid: true, pageNum: 3,};
+    let expectedResult = {isValid: false, pageNum: 0,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [], [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - Back & Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
     let isFormValidItems = {isSportValid: true};
-    let expectedResult = {isValid: true, pageNum: 1,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, true, [], [])).toEqual(expectedResult);
+    let expectedResult = {isValid: false, pageNum: 0,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [], [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - Back & NOT Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
     let isFormValidItems = {isSportValid: false};
-    let expectedResult = {isValid: false, pageNum: 1,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, true, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Back & Valid', () => {
-    let isFormValidItems = {isSportValid: true};
-    let expectedResult = {isValid: true, pageNum: 1,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, false, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Back & NOT Valid', () => {
-    let isFormValidItems = {isSportValid: false};
-    let expectedResult = {isValid: false, pageNum: 1,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, false, [], [])).toEqual(expectedResult);
+    let expectedResult = {isValid: false, pageNum: 0,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [], [])).toEqual(expectedResult);
 });
 
 it('Single Session Validation - First Open (Readiness Survey)', () => {
     let session = helperFunctions.getReadinessSurveySingleSessionValidationSession(null, null, null, null);
     let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(false);
-    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, ' ');
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, '');
     expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
 });
 
 it('Single Session Validation - Selected Sport (Readiness Survey)', () => {
     let session = helperFunctions.getReadinessSurveySingleSessionValidationSession(null, 14, 0, null);
     let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(false);
-    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, 'soccer ');
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, '');
     expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
 });
 
 it('Single Session Validation - Selected Sport & Session Type (Readiness Survey)', () => {
     let session = helperFunctions.getReadinessSurveySingleSessionValidationSession(null, 14, 0, 6);
     let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(false);
-    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, 'soccer training');
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, '');
     expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
 });
 
 it('Single Session Validation - Selected Sport, Session Type, & Duration (Readiness Survey)', () => {
     let session = helperFunctions.getReadinessSurveySingleSessionValidationSession(null, 14, 0, 6);
     let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(true);
-    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, true, 'soccer training');
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, true, '');
     expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
 });
 
 it('Single Session Validation - Selected Sport, Session Type, Duration, & RPE (Readiness Survey)', () => {
     let session = helperFunctions.getReadinessSurveySingleSessionValidationSession(1, 14, 0, 6);
     let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(true);
-    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(true, true, 'soccer training');
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(true, true, '');
     expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
 });
 
 it('Single Session Validation - First Open (Post Session Survey)', () => {
     let session = helperFunctions.getPostSessionSurveySingleSessionValidationSession(null, null, null, null);
     let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(false);
-    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, ' ');
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, '');
     expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
 });
 
 it('Single Session Validation - Selected Sport (Post Session Survey)', () => {
     let session = helperFunctions.getPostSessionSurveySingleSessionValidationSession(null, 14, 0, null);
     let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(false);
-    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, 'soccer ');
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, '');
     expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
 });
 
 it('Single Session Validation - Selected Sport & Session Type (Post Session Survey)', () => {
     let session = helperFunctions.getPostSessionSurveySingleSessionValidationSession(null, 14, 0, 6);
     let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(false);
-    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, 'soccer training');
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, false, '');
     expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
 });
 
 it('Single Session Validation - Selected Sport, Session Type, & Duration (Post Session Survey)', () => {
     let session = helperFunctions.getPostSessionSurveySingleSessionValidationSession(null, 14, 25, 6);
     let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(true);
-    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, true, 'soccer training');
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(false, true, '');
     expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
 });
 
 it('Single Session Validation - Selected Sport, Session Type, Duration, & RPE (Post Session Survey)', () => {
     let session = helperFunctions.getPostSessionSurveySingleSessionValidationSession(1, 14, 25, 6);
     let sportScheduleBuilderRef = helperFunctions.getSportScheduleBuilderRef(true);
-    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(true, true, 'soccer training');
+    let expectedResult = helperFunctions.getSingleSessionValidationExpectedResult(true, true, '');
     expect(PlanLogic.handleSingleSessionValidation(session, sportScheduleBuilderRef)).toEqual(expectedResult);
 });
 
@@ -1369,28 +1373,28 @@ it('Athlete Card Modal Render Logic - With Information - Gabby', () => {
 it('Sport Schedule Builder Render Logic - Valid Sport, RPE, & All Good', () => {
     let postSession = helperFunctions.getPostSessionDefaultState(5, '', 20, '2018-11-15T15:30:00Z', 2, [], 0, null);
     let pageState = helperFunctions.readinessSurveyPageState({hours: 0, minutes: 3, label: 1}, true, 1, 3, {hours: 2, minutes: 2, amPM: 1});
-    let expectedResult = helperFunctions.sportScheduleBuilderRenderLogicExpectedResult('15', helperFunctions.filteredSportSessionTypes(true), 'basketball', 'basketball competition', '3:30', helperFunctions.getStrengthConditioningTypes(), helperFunctions.getTeamSports());
+    let expectedResult = { sportImage: '', sportText: '' };
     expect(PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, pageState)).toEqual(expectedResult);
 });
 
 it('Sport Schedule Builder Render Logic - Valid Sport & RPE', () => {
     let postSession = helperFunctions.getPostSessionDefaultState(5, '', 20, '2018-11-15T15:30:00Z', 2, [], 0, null);
     let pageState = helperFunctions.readinessSurveyPageState({hours: 0, minutes: 3, label: 1}, true, 1, 3, {hours: 2, minutes: 2, amPM: 1});
-    let expectedResult = helperFunctions.sportScheduleBuilderRenderLogicExpectedResult('15', helperFunctions.filteredSportSessionTypes(true), 'basketball', 'basketball competition', '3:30', helperFunctions.getStrengthConditioningTypes(), helperFunctions.getTeamSports());
+    let expectedResult = { sportImage: '', sportText: '' };
     expect(PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, pageState)).toEqual(expectedResult);
 });
 
 it('Sport Schedule Builder Render Logic - Valid Sport', () => {
     let postSession = helperFunctions.getPostSessionDefaultState(0, '', 20, '2018-11-15T15:30:00Z', 2, [], 0, null);
     let pageState = helperFunctions.readinessSurveyPageState({hours: 0, minutes: 3, label: 1}, true, 1, 3, {hours: 2, minutes: 2, amPM: 1});
-    let expectedResult = helperFunctions.sportScheduleBuilderRenderLogicExpectedResult('15', helperFunctions.filteredSportSessionTypes(true), 'basketball', 'basketball competition', '3:30', helperFunctions.getStrengthConditioningTypes(), helperFunctions.getTeamSports());
+    let expectedResult = { sportImage: '', sportText: '' };
     expect(PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, pageState)).toEqual(expectedResult);
 });
 
 it('Sport Schedule Builder Render Logic - On Enter', () => {
     let postSession = helperFunctions.getPostSessionDefaultState();
     let pageState = helperFunctions.readinessSurveyPageState({minutes: 3, label: 1}, false, 0, 0, {hours: 2, minutes: 2, amPM: 1});
-    let expectedResult = helperFunctions.sportScheduleBuilderRenderLogicExpectedResult('', helperFunctions.filteredSportSessionTypes(), '', 'activity type', '', helperFunctions.getStrengthConditioningTypes(), helperFunctions.getTeamSports());
+    let expectedResult = { sportImage: '', sportText: '' };
     expect(PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, pageState)).toEqual(expectedResult);
 });
 
@@ -1458,7 +1462,7 @@ it('Post Session Survey Render Logic - Sport Builder Done, RPE Selected & All Go
     let postSession = helperFunctions.getPostSessionSurveyPostSession(4, [], '2018-11-14T15:30:00Z');
     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: true}};
-    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, true), newSoreBodyParts: []};
+    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, true, true), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
 });
 
@@ -1466,7 +1470,7 @@ it('Post Session Survey Render Logic - Sport Builder Done & RPE Selected, NO Pre
     let postSession = helperFunctions.getPostSessionSurveyPostSession(4, [], '2018-11-14T15:30:00Z');
     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
-    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false), newSoreBodyParts: []};
+    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, true), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
 });
 
@@ -1474,7 +1478,7 @@ it('Post Session Survey Render Logic - Sport Builder Done, NO Previous Soreness'
     let postSession = helperFunctions.getPostSessionSurveyPostSession(0, [], '2018-11-14T15:30:00Z');
     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
-    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false), newSoreBodyParts: []};
+    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, true), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
 });
 
@@ -1482,7 +1486,7 @@ it('Post Session Survey Render Logic - On Enter, NO Previous Soreness', () => {
     let postSession = helperFunctions.getPostSessionSurveyPostSession(0, [], '');
     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
-    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false), newSoreBodyParts: []};
+    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, false), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
 });
 
@@ -1537,114 +1541,6 @@ it('Areas of Soreness Body Part - Selected Muscle (Abs)', () => {
     let soreBodyParts = helperFunctions.handleSoreBodyParts(3);
     let expectedResult = helperFunctions.handleAreasOfSorenessBodyPartExpectedResult('Abs.svg', true, 'ABDOMINALS');
     expect(PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, absBodyParts, soreBodyParts)).toEqual(expectedResult);
-});
-
-it('Sport Schedule Builder Cleaning of Sport Text - Selected Recent Sport - Pool Sports Competition', () => {
-    let selectedSport = 'pool sports';
-    let filteredSessionType = [{index: 2, order: 2, label: 'Competition'}];
-    let postSession = { session_type: 2 };
-    let isFormValid = false;
-    let step = 3;
-    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
-    let selectedDuration = '';
-    let expectedResult = helperFunctions.handleGetFinalSportTextString('duration', 'pool sports competition', 'time');
-    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
-});
-
-it('Sport Schedule Builder Cleaning of Sport Text - Selected Recent Sport - Strength Training', () => {
-    let selectedSport = 'strength';
-    let filteredSessionType = [];
-    let postSession = { session_type: 1 };
-    let isFormValid = false;
-    let step = 3;
-    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
-    let selectedDuration = '';
-    let expectedResult = helperFunctions.handleGetFinalSportTextString('duration', 'strength training', 'time');
-    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
-});
-
-it('Sport Schedule Builder Cleaning of Sport Text - Selected Recent Sport - Cross Training', () => {
-    let selectedSport = 'distance running';
-    let filteredSessionType = [{index: 0, order: 1, label: 'Practice'}];
-    let postSession = { session_type: 0 };
-    let isFormValid = false;
-    let step = 3;
-    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
-    let selectedDuration = '';
-    let expectedResult = helperFunctions.handleGetFinalSportTextString('duration', 'distance running practice', 'time');
-    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
-});
-
-it('Sport Schedule Builder Cleaning of Sport Text - Selected Sport - Cross Training', () => {
-    let selectedSport = 'cross';
-    let filteredSessionType = [];
-    let postSession = { session_type: 1 };
-    let isFormValid = false;
-    let step = 2;
-    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
-    let selectedDuration = '';
-    let expectedResult = helperFunctions.handleGetFinalSportTextString('', 'cross ', '');
-    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
-});
-
-it('Sport Schedule Builder Cleaning of Sport Text - Selected Sport - Basketball', () => {
-    let selectedSport = 'basketball';
-    let filteredSessionType = [];
-    let postSession = { session_type: null };
-    let isFormValid = false;
-    let step = 2;
-    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
-    let selectedDuration = '';
-    let expectedResult = helperFunctions.handleGetFinalSportTextString('', 'basketball ', '');
-    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
-});
-
-it('Sport Schedule Builder Cleaning of Sport Text - Selected Sport, & Type - Speed & Agility', () => {
-    let selectedSport = 'speed & agility';
-    let filteredSessionType = [];
-    let postSession = { session_type: 1 };
-    let isFormValid = false;
-    let step = 3;
-    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
-    let selectedDuration = '';
-    let expectedResult = helperFunctions.handleGetFinalSportTextString('duration', 'speed & agility training', 'time');
-    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
-});
-
-it('Sport Schedule Builder Cleaning of Sport Text - Selected Sport, & Type - Soccer Practice', () => {
-    let selectedSport = 'soccer';
-    let filteredSessionType = [{index: 0, order: 1, label: 'Practice'}];
-    let postSession = { session_type: 0 };
-    let isFormValid = false;
-    let step = 3;
-    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
-    let selectedDuration = '';
-    let expectedResult = helperFunctions.handleGetFinalSportTextString('duration', 'soccer practice', 'time');
-    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
-});
-
-it('Sport Schedule Builder Cleaning of Sport Text - Selected Sport, Type, Time, & Duration', () => {
-    let selectedSport = 'basketball';
-    let filteredSessionType = [{index: 6, order: 3, label: 'Training'}];
-    let postSession = { session_type: 1 };
-    let isFormValid = true;
-    let step = 3;
-    let selectedStartTime = moment('06:30', 'HH:mm');
-    let selectedDuration = 60;
-    let expectedResult = helperFunctions.handleGetFinalSportTextString('60', 'basketball training', '6:30');
-    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
-});
-
-it('Sport Schedule Builder Cleaning of Sport Text - Empty Data', () => {
-    let selectedSport = null;
-    let filteredSessionType = null;
-    let postSession = helperFunctions.getPostSessionRPEInputExpectedResult(0);
-    let isFormValid = false;
-    let step = 0;
-    let selectedStartTime = `${moment().toISOString(true).split('.')[0]}Z`;
-    let selectedDuration = '';
-    let expectedResult = helperFunctions.handleGetFinalSportTextString('', 'activity type', '');
-    expect(PlanLogic.handleGetFinalSportTextString(selectedSport, filteredSessionType, postSession, isFormValid, step, selectedStartTime, selectedDuration)).toEqual(expectedResult);
 });
 
 it('Sport Schedule Builder Cleaning of Date and Time Duration from State - Form Is Valid with data #1', () => {
@@ -1792,7 +1688,7 @@ it('Daily Readiness Form Change - Current Sport Name Input', () => {
 it('Daily Readiness Form Change - Soreness for NEW bodyPart WITH pain Input', () => {
     let bodyPartIndex = 8;
     let side = 1;
-    let expectedResult = helperFunctions.getDailyReadinessNewBodyPartSorenessWithPainInputExpectedResult(bodyPartIndex, side);
+    let expectedResult = helperFunctions.getDailyReadinessNewBodyPartSorenessWithPainInputExpectedResult(bodyPartIndex, side, true);
     let dailyReadinessDefaultState = helperFunctions.getDailyReadinessDefaultState();
     expect(PlanLogic.handleDailyReadinessAndPostSessionFormChange('soreness', null, true, bodyPartIndex, side, dailyReadinessDefaultState)).toEqual(expectedResult);
 });
@@ -1800,7 +1696,7 @@ it('Daily Readiness Form Change - Soreness for NEW bodyPart WITH pain Input', ()
 it('Daily Readiness Form Change - Soreness for NEW bodyPart WITHOUT pain Input', () => {
     let bodyPartIndex = 3;
     let side = 0;
-    let expectedResult = helperFunctions.getDailyReadinessNewBodyPartSorenessWithoutPainInputExpectedResult(bodyPartIndex, side);
+    let expectedResult = helperFunctions.getDailyReadinessNewBodyPartSorenessWithoutPainInputExpectedResult(bodyPartIndex, side, true);
     let dailyReadinessDefaultState = helperFunctions.getDailyReadinessDefaultState();
     expect(PlanLogic.handleDailyReadinessAndPostSessionFormChange('soreness', null, false, bodyPartIndex, side, dailyReadinessDefaultState)).toEqual(expectedResult);
 });
@@ -1831,7 +1727,7 @@ it('Post Session Form Change - RPE Input', () => {
 it('Post Session Form Change - Soreness for NEW bodyPart WITH pain Input', () => {
     let bodyPartIndex = 4;
     let side = 1;
-    let expectedResult = helperFunctions.getPostSessionNewBodyPartSorenessWithPainInputExpectedResult(bodyPartIndex, side);
+    let expectedResult = helperFunctions.getPostSessionNewBodyPartSorenessWithPainInputExpectedResult(bodyPartIndex, side, true);
     let postSessionDefaultState = helperFunctions.getPostSessionDefaultState();
     expect(PlanLogic.handleDailyReadinessAndPostSessionFormChange('soreness', null, true, bodyPartIndex, side, postSessionDefaultState)).toEqual(expectedResult);
 });
@@ -1839,7 +1735,7 @@ it('Post Session Form Change - Soreness for NEW bodyPart WITH pain Input', () =>
 it('Post Session Form Change - Soreness for NEW bodyPart WITHOUT pain Input', () => {
     let bodyPartIndex = 11;
     let side = 2;
-    let expectedResult = helperFunctions.getPostSessionNewBodyPartSorenessWithoutPainInputExpectedResult(bodyPartIndex, side);
+    let expectedResult = helperFunctions.getPostSessionNewBodyPartSorenessWithoutPainInputExpectedResult(bodyPartIndex, side, true);
     let postSessionDefaultState = helperFunctions.getPostSessionDefaultState();
     expect(PlanLogic.handleDailyReadinessAndPostSessionFormChange('soreness', null, false, bodyPartIndex, side, postSessionDefaultState)).toEqual(expectedResult);
 });

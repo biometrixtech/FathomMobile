@@ -5,20 +5,24 @@
  * @Last Modified time: 2018-06-28 11:41:51
  */
 
-import { Alert, AsyncStorage } from 'react-native';
+import { Alert, AsyncStorage, Platform, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
-import { Actions as DispatchActions, } from '../constants';
+import { Actions as DispatchActions, MyPlan as MyPlanConstants, } from '../constants';
 import { Actions as RouterActions, } from 'react-native-router-flux';
 import { AppColors, AppStyles } from '../constants';
 import { store } from '../store';
+import AppleHealthKit from 'rn-apple-healthkit';
 import DeviceInfo from 'react-native-device-info';
 import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 import uuidByString from 'uuid-by-string';
 
-import { init as InitActions, } from '../actions';
+import { init as InitActions, plan as PlanActions, } from '../actions';
+
+// get the available permissions from AppleHealthKit.Constants object
+const PERMS = AppleHealthKit.Constants.Permissions;
 
 /**
  * Global Util Functions
@@ -186,6 +190,380 @@ const UTIL = {
                 }
             }
         }
+    },
+
+    _getAppleHealthKitPerms: () => {
+        return {
+            permissions: {
+                read: [
+                    PERMS.BiologicalSex,
+                    PERMS.DateOfBirth,
+                    PERMS.HeartRate,
+                    PERMS.Height,
+                    PERMS.SleepAnalysis,
+                    PERMS.Weight,
+                    PERMS.Workout,
+                ],
+                write: [],
+            }
+        };
+    },
+
+    initAppleHealthKit: () => {
+        if(Platform.OS === 'ios') {
+            let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (err: String, results: Object) => {
+                if(err) { return false; }
+                return true;
+            });
+        }
+        return false;
+    },
+
+    getAppleHealthKitPersonalData: () => {
+        // grab permissions
+        if(Platform.OS === 'ios') {
+            let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
+            let height = UTIL._getHealthHeight(appleHealthKitPerms);
+            let weight = UTIL._getWeightHeight(appleHealthKitPerms);
+            let dob = UTIL._getDOBHeight(appleHealthKitPerms);
+            let sex = UTIL._getSexHeight(appleHealthKitPerms);
+            return [height, weight, dob, sex];
+        }
+        return [];
+    },
+
+    _getHealthHeight: appleHealthKitPerms => {
+        return new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getLatestHeight(null, (heightError: String, heightResults: Object) => {
+                    if(heightError) { reject(heightError); }
+                    // console.log('heightResults',heightResults);
+                    resolve(heightResults);
+                });
+            });
+        });
+    },
+
+    _getWeightHeight: appleHealthKitPerms => {
+        let weightOptions = {
+            unit: 'pound',
+        };
+        return new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getLatestWeight(weightOptions, (weightError: Object, weightResults: Object) => {
+                    if(weightError) { reject(weightError); }
+                    // console.log('weightResults',weightResults);
+                    resolve(weightResults);
+                });
+            });
+        });
+    },
+
+    _getDOBHeight: appleHealthKitPerms => {
+        return new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getDateOfBirth(null, (dobError: Object, dobResults: Object) => {
+                    if(dobError) { reject(dobError); }
+                    // console.log('dobResults',dobResults);
+                    resolve(dobResults);
+                });
+            });
+        });
+    },
+
+    _getSexHeight: appleHealthKitPerms => {
+        return new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getBiologicalSex(null, (sexError: Object, sexResults: Object) => {
+                    if(sexError) { reject(sexError); }
+                    // console.log('sexResults',sexResults);
+                    resolve(sexResults);
+                });
+            });
+        });
+    },
+
+    _getWorkoutSamples: (appleHealthKitPerms, startDate, endDate) => {
+        let workoutOptions = {
+            startDate,
+            endDate,
+        };
+        return new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getWorkout(workoutOptions, (workoutError: Object, workoutResults: Array<Object>) => {
+                    if(workoutError) { reject(workoutError); }
+                    // console.log('workoutResults',workoutResults);
+                    resolve(workoutResults);
+                });
+            });
+        });
+    },
+
+    _getHeartRateSamples: (appleHealthKitPerms, startDate, endDate) => {
+        let heartRateOptions = {
+            startDate,
+            endDate,
+        };
+        return new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getHeartRateSamples(heartRateOptions, (hrError: Object, hrResults: Array<Object>) => {
+                    if(hrError) { reject(hrError); }
+                    // console.log('hrResults',hrResults);
+                    resolve(hrResults);
+                });
+            });
+        });
+    },
+
+    _getSleepSamples: (appleHealthKitPerms, startDate, endDate) => {
+        let sleepOptions = {
+            startDate,
+            endDate,
+        };
+        return new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { reject(initError); }
+                AppleHealthKit.getSleepSamples(sleepOptions, (sleepError: Object, sleepResults: Array<Object>) => {
+                    if(sleepError) { reject(sleepError); }
+                    // console.log('sleepResults',sleepResults);
+                    resolve(sleepResults);
+                });
+            });
+        });
+    },
+
+    _getAppleHealthTimes: (lastSyncDate, historicSyncDate, numberOfDaysAgo) => {
+        let daysAgo = moment().subtract(numberOfDaysAgo, 'd').set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
+        let updatedLastSyncDate = !lastSyncDate && !historicSyncDate ?
+            null
+            : lastSyncDate && !historicSyncDate ?
+                daysAgo
+                : !lastSyncDate && historicSyncDate ?
+                    historicSyncDate
+                    : moment(lastSyncDate).format('YYYY-MM-DD') === moment(historicSyncDate).format('YYYY-MM-DD') ?
+                        lastSyncDate
+                        :
+                        historicSyncDate;
+        return {
+            daysAgo,
+            lastSync: updatedLastSyncDate ? moment(updatedLastSyncDate).toISOString() : null,
+            now:      moment().toISOString(),
+            syncDate: updatedLastSyncDate ? moment(updatedLastSyncDate).set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString() : null,
+            today3AM: moment().set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString(),
+        };
+    },
+
+    getAppleHealthKitDataAsync: async (userId, lastSyncDate, historicSyncDate, callback, numberOfDaysAgo = 35) => {
+        if(Platform.OS === 'ios') {
+            // grab permissions
+            let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
+            // set start and end dates
+            let { daysAgo, lastSync, now, syncDate, today3AM, } = UTIL._getAppleHealthTimes(lastSyncDate, historicSyncDate, numberOfDaysAgo);
+            // setup variables
+            let apiPromisesArray = [];
+            // combine promises and trigger next step
+            if(syncDate) {
+                // 1- syncDate - today3AM (workout/hr)
+                apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, syncDate, today3AM));
+                apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, syncDate, today3AM));
+                // 2- lastSync - now (sleep)
+                apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, lastSync, now));
+            } else {
+                // 1- daysAgo - today3AM (workout/hr)
+                apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, daysAgo, today3AM));
+                apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, daysAgo, today3AM));
+                // 2- daysAgo - now (sleep)
+                apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, now));
+            }
+            // return function
+            return UTIL._handleReturnedPromises(userId, syncDate ? syncDate : daysAgo, apiPromisesArray, true);
+        }
+        if(callback) {
+            return callback();
+        }
+    },
+
+    getAppleHealthKitData: (userId, lastSyncDate, historicSyncDate, callback, numberOfDaysAgo = 35) => {
+        if(Platform.OS === 'ios') {
+            // grab permissions
+            let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
+            // set start and end dates
+            let { now, today3AM, } = UTIL._getAppleHealthTimes(lastSyncDate, historicSyncDate, numberOfDaysAgo);
+            // setup variables
+            let apiPromisesArray = [];
+            // combine promises and trigger next step
+            // 1- today3AM - now (workout/hr)
+            apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now));
+            apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now));
+            // return function
+            return UTIL._handleReturnedPromises(userId, null, apiPromisesArray, false, callback);
+        }
+        if(callback) {
+            return callback();
+        }
+    },
+
+    _handleReturnedPromises: (userId, startDate, promisesArray, sendAPI, callback) => {
+        return Promise
+            .all(promisesArray)
+            .then(values => {
+                // [0] = workoutValues, [1] = heartRateSamples, [2] = sleepSamples
+                let possibleSleepValues = ['ASLEEP', 'INBED', 'UNKNOWN'];
+                let { cleanedIgnoredWorkoutValues, cleanedWorkoutValues, } = UTIL._cleanWorkoutObject(values[0], values[1], sendAPI);
+                let filteredSleepValues = _.filter(values[2], s => possibleSleepValues.includes(s.value));
+                if(sendAPI) {
+                    // send api
+                    let payload = {
+                        user_id:    userId,
+                        event_date: `${moment().toISOString(true).split('.')[0]}Z`,
+                        start_date: moment(startDate).format('YYYY-MM-DD'),
+                        end_date:   moment().subtract(1, 'd').format('YYYY-MM-DD'),
+                        sessions:   cleanedWorkoutValues,
+                        sleep_data: filteredSleepValues,
+                    };
+                    PlanActions.postHealthData(payload)
+                        .then(() => {
+                            if(callback) {
+                                return callback();
+                            }
+                        });
+                } else {
+                    // remove already synced workouts
+                    let trainingSessionsState = store.getState().plan.dailyPlan && store.getState().plan.dailyPlan[0] ?
+                        store.getState().plan.dailyPlan[0].training_sessions
+                        :
+                        [];
+                    let workoutsToPatch = _.map(cleanedWorkoutValues, o => {
+                        let filteredTrainingSessionsState = _.filter(trainingSessionsState, item =>
+                            o.sport_name === item.sport_name && item.source === 0 && UTIL._lessThanTwoHoursAgo(o.end_date, item.created_date)
+                        );
+                        if(filteredTrainingSessionsState && filteredTrainingSessionsState[0]) {
+                            return {
+                                event_date:   o.event_date,
+                                end_date:     o.end_date,
+                                session_type: 6,
+                                sport_name:   o.sport_name,
+                                duration:     filteredTrainingSessionsState[0].duration_minutes,
+                                calories:     o.calories,
+                                distance:     o.distance,
+                                source:       1,
+                                hr_data:      o.hr_data,
+                                session_id:   filteredTrainingSessionsState[0].session_id,
+                            }
+                        }
+                        return null;
+                    })
+                        .filter(a => a);
+                    let updatedCleanedWorkoutValues = _.filter(cleanedWorkoutValues, o =>
+                        !_.some(trainingSessionsState, item =>
+                            o.sport_name === item.sport_name && o.end_date === item.end_date && o.event_date === item.event_date
+                        ) &&
+                        !_.some(trainingSessionsState, item =>
+                            o.sport_name === item.sport_name && item.source === 0 && UTIL._lessThanTwoHoursAgo(o.end_date, item.created_date)
+                        )
+                    );
+                    // store in reducer
+                    store.dispatch({
+                        type:               DispatchActions.SET_HEALTH_DATA,
+                        ignoredWorkoutData: cleanedIgnoredWorkoutValues,
+                        sleepData:          filteredSleepValues,
+                        workoutData:        updatedCleanedWorkoutValues,
+                    });
+                    UTIL._patchWorkoutSession(workoutsToPatch, userId);
+                    if(callback) {
+                        return callback();
+                    }
+                }
+            })
+            .catch(err => {
+                // console.log('err',err);
+                if(callback) {
+                    return callback();
+                }
+            });
+    },
+
+    _cleanWorkoutObject: (workouts, heartRates, isAPI) => {
+        let cleanedWorkoutValues = [];
+        let cleanedIgnoredWorkoutValues = [];
+        if(workouts.length > 0) {
+            let filteredHeartRateValues = [];
+            // removing any workouts which duration is less than 0.5min (30 sec)
+            let filteredWorkouts = _.filter(workouts, workout => moment(workout.end).diff(workout.start, 'seconds') > 30);
+            _.map(filteredWorkouts, (workout, index) => {
+                let newWorkout = {};
+                filteredHeartRateValues = _.filter(heartRates, hr => moment(workout.start) <= moment(hr.startDate) && moment(workout.end) >= moment(hr.endDate));
+                let otherIndex = _.filter(MyPlanConstants.teamSports, ['label', 'Other'])[0].index;
+                let sportName = _.filter(MyPlanConstants.teamSports, (sport, i) => workout.activityName.toLowerCase() === sport.label.toLowerCase().replace(' ', '').replace(' ', '').replace(' ', '').replace('&', 'and'));
+                newWorkout.sport_name = sportName[0] ? sportName[0].index : otherIndex;
+                newWorkout.event_date = `${workout.start.split('.')[0]}Z`;
+                newWorkout.end_date = `${workout.end.split('.')[0]}Z`;
+                newWorkout.distance = workout.distance;
+                newWorkout.calories = workout.calories;
+                newWorkout.session_type = 6;
+                newWorkout.source = 1;
+                newWorkout.description = '';
+                newWorkout.duration = isAPI ? null : moment(workout.end).diff(workout.start, 'minutes');
+                newWorkout.deleted = false;
+                newWorkout.ignored = false;
+                newWorkout.hr_data = filteredHeartRateValues;
+                newWorkout.post_session_survey = {
+                    clear_candidates: [],
+                    event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                    RPE:              null,
+                    soreness:         [],
+                }
+                if(
+                    newWorkout.duration &&
+                    newWorkout.duration < 15 &&
+                    !isAPI &&
+                    newWorkout.sport_name === 66
+                ) {
+                    // 0.5-15 duration = hidden (is not API && is 'Walking' workout)
+                    newWorkout.ignored = true;
+                    cleanedIgnoredWorkoutValues.push(newWorkout);
+                } else {
+                    // 15+ = regular
+                    cleanedWorkoutValues.push(newWorkout);
+                }
+            });
+        }
+        return {
+            cleanedIgnoredWorkoutValues,
+            cleanedWorkoutValues,
+        };
+    },
+
+    _lessThanTwoHoursAgo: (startDate, endDate) => moment(startDate).isAfter(moment(endDate).subtract(2, 'hours')),
+
+    _patchWorkoutSession: async (sessions, userId) => {
+        _.map(sessions, o => {
+            let newSession = {
+                user_id:    userId,
+                event_date: `${moment().toISOString(true).split('.')[0]}Z`,
+                sessions:   [],
+            };
+            let cleanedSessionObj = {
+                event_date:   o.event_date,
+                end_date:     o.end_date,
+                session_type: 6,
+                sport_name:   o.sport_name,
+                duration:     o.duration,
+                calories:     o.calories,
+                distance:     o.distance,
+                source:       1,
+                hr_data:      o.hr_data,
+            };
+            newSession.sessions.push(cleanedSessionObj);
+            PlanActions.patchSession(o.session_id, newSession);
+        });
     },
 
     /**

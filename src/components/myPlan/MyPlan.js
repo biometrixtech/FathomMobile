@@ -102,7 +102,9 @@ class MyPlan extends Component {
         ble:                           PropTypes.object.isRequired,
         clearCompletedExercises:       PropTypes.func.isRequired,
         clearCompletedFSExercises:     PropTypes.func.isRequired,
+        clearHealthKitWorkouts:        PropTypes.func.isRequired,
         getSoreBodyParts:              PropTypes.func.isRequired,
+        healthData:                    PropTypes.object.isRequired,
         lastOpened:                    PropTypes.object.isRequired,
         markStartedFunctionalStrength: PropTypes.func.isRequired,
         markStartedRecovery:           PropTypes.func.isRequired,
@@ -118,7 +120,6 @@ class MyPlan extends Component {
         plan:                    PropTypes.object.isRequired,
         postReadinessSurvey:     PropTypes.func.isRequired,
         postSessionSurvey:       PropTypes.func.isRequired,
-        preReadiness:            PropTypes.func.isRequired,
         setAppLogs:              PropTypes.func.isRequired,
         setCompletedExercises:   PropTypes.func.isRequired,
         setCompletedFSExercises: PropTypes.func.isRequired,
@@ -135,15 +136,16 @@ class MyPlan extends Component {
             dailyReadiness:     {
                 current_position:          null,
                 current_sport_name:        null,
-                readiness:                 0,
+                readiness:                 null,
                 sessions:                  [],
                 sessions_planned:          null,
-                sleep_quality:             0,
+                sleep_quality:             null,
                 soreness:                  [],
                 wants_functional_strength: null,
                 // won't be submitted, help with UI
                 already_trained_number:    null,
             },
+            healthData:                           props.healthData,
             isCompletedAMPMRecoveryModalOpen:     true,
             isFunctionalStrengthCollapsed:        true,
             isFSExerciseCompletionModalOpen:      false,
@@ -168,6 +170,7 @@ class MyPlan extends Component {
                 duration:                       0,
                 event_date:                     null,
                 session_type:                   null,
+                sessions:                       [],
                 soreness:                       [],
                 sport_name:                     null, // this exists for session_type = 0,2,3,6
                 strength_and_conditioning_type: null, // this only exists for session_type=1
@@ -302,7 +305,8 @@ class MyPlan extends Component {
                             let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
                             newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
                             this.setState({ dailyReadiness: newDailyReadiness });
-                            this._toggleReadinessSurvey();
+                            this.props.setAppLogs();
+                            this.setState({ isReadinessSurveyModalOpen: true, isPageLoading: false, });
                             if(hideSplashScreen) {
                                 SplashScreen.hide();
                             }
@@ -358,6 +362,16 @@ class MyPlan extends Component {
         GATracker.setUser(this.props.user.id);
         GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
         GATracker.setAppName(`Fathom-${store.getState().init.environment}`);
+        let planObj = this.props.plan.dailyPlan[0] || {};
+        if(
+            planObj.daily_readiness_survey_completed &&
+            this.state.healthData.workouts &&
+            this.state.healthData.workouts.length > 0
+        ) {
+            this._goToScrollviewPage(1, () => {
+                this._togglePostSessionSurveyModal();
+            });
+        }
     }
 
     componentWillReceiveProps = (nextProps) => {
@@ -381,6 +395,11 @@ class MyPlan extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
+        if(!_.isEqual(prevProps.healthData, this.props.healthData)) {
+            this._goToScrollviewPage(1, () => {
+                this._togglePostSessionSurveyModal();
+            });
+        }
     }
 
     _handleAppStateChange = (nextAppState) => {
@@ -395,6 +414,15 @@ class MyPlan extends Component {
             this._handleEnteringApp(false, () => this._handlePushNotification(this.props));
         } else if(nextAppState === 'active' && (!this.props.lastOpened.date || clearMyPlan)) {
             Actions.reset('key1');
+        } else if(
+            nextAppState === 'active' &&
+            this.props.user.health_enabled &&
+            (
+                !this.props.user.health_sync_date ||
+                (moment(this.props.user.health_sync_date).diff(moment(), 'minutes') > 7)
+            )
+        ) {
+            AppUtil.getAppleHealthKitData(this.props.user.id, this.props.user.health_sync_date, this.props.user.historic_health_sync_date);
         }
     }
 
@@ -431,51 +459,78 @@ class MyPlan extends Component {
         );
     }
 
-    _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side) => {
-        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.dailyReadiness);
+    _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate) => {
+        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.dailyReadiness, isClearCandidate);
         this.setState({
             dailyReadiness: newFormFields
         });
     }
 
-    _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side) => {
-        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.postSession);
+    _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate) => {
+        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.postSession, isClearCandidate);
         this.setState({
             postSession: newFormFields
         });
     }
 
+    _handleHealthDataFormChange = (index, name, value, callback) => {
+        let newHealthData = _.cloneDeep(this.state.healthData.workouts);
+        let newFormFields = _.update(newHealthData[index], name, () => value);
+        if(name === 'deleted' && value === true) {
+            newFormFields = _.update(newHealthData[index], 'post_session_survey.RPE', () => null);
+        }
+        newHealthData[index] = newFormFields;
+        this.setState({
+            healthData: {
+                ignoredWorkouts: this.state.healthData.ignoredWorkouts,
+                sleep:           this.state.healthData.sleep,
+                workouts:        newHealthData,
+            },
+        }, () => {
+            if(callback) { callback(); }
+        });
+    }
+
     _handleReadinessSurveySubmit = () => {
         // TODO: MOVE TO LOGIC FILE AND UNIT TEST BELOW
-        let newDailyReadiness = {};
-        newDailyReadiness.user_id = this.props.user.id;
-        newDailyReadiness.date_time = `${moment().toISOString(true).split('.')[0]}Z`;
-        newDailyReadiness.sleep_quality = this.state.dailyReadiness.sleep_quality;
-        newDailyReadiness.readiness = this.state.dailyReadiness.readiness;
-        newDailyReadiness.clear_candidates = _.filter(this.state.dailyReadiness.soreness, {isClearCandidate: true});
-        newDailyReadiness.soreness = _.filter(this.state.dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate);
-        newDailyReadiness.wants_functional_strength = this.state.dailyReadiness.wants_functional_strength;
-        newDailyReadiness.sessions = this.state.dailyReadiness.sessions;
-        newDailyReadiness.sessions_planned = this.state.dailyReadiness.sessions_planned;
+        let newPrepareObject = Object.assign({}, this.state.prepare, {
+            isReadinessSurveyCompleted: true,
+        });
+        let newDailyReadiness = {
+            date_time:                 `${moment().toISOString(true).split('.')[0]}Z`,
+            user_id:                   this.props.user.id,
+            soreness:                  _.filter(this.state.dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
+            clear_candidates:          _.filter(this.state.dailyReadiness.soreness, {isClearCandidate: true}),
+            sleep_quality:             this.state.dailyReadiness.sleep_quality,
+            readiness:                 this.state.dailyReadiness.readiness,
+            wants_functional_strength: this.state.dailyReadiness.wants_functional_strength,
+            sessions_planned:          this.state.dailyReadiness.sessions_planned,
+        };
         if(this.state.dailyReadiness.current_sport_name === 0 || this.state.dailyReadiness.current_sport_name > 0) {
             newDailyReadiness.current_sport_name = this.state.dailyReadiness.current_sport_name;
         }
         if(this.state.dailyReadiness.current_position === 0 || this.state.dailyReadiness.current_position > 0) {
             newDailyReadiness.current_position = this.state.dailyReadiness.current_position;
         }
-        let newPrepareObject = Object.assign({}, this.state.prepare, {
-            isReadinessSurveyCompleted: true,
-        });
+        let healthDataWorkouts = this.state.healthData.workouts ? this.state.healthData.workouts : [];
+        let healthDataIgnoredWorkouts = this.state.healthData.ignoredWorkouts ? this.state.healthData.ignoredWorkouts : [];
+        let dailyReadinessSessions = this.state.dailyReadiness.sessions ? this.state.dailyReadiness.sessions : [];
+        newDailyReadiness.sessions = _.concat(healthDataWorkouts, dailyReadinessSessions, healthDataIgnoredWorkouts);
+        newDailyReadiness.sleep_data = this.state.healthData.sleep;
+        if(this.state.healthData.workouts.length > 0) {
+            newDailyReadiness.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
+        }
         _.delay(() => {
             this.setState(
                 {
                     dailyReadiness: {
                         readiness:        0,
-                        sessions:         newDailyReadiness.sessions,
+                        sessions:         _.concat(healthDataWorkouts, dailyReadinessSessions),
                         sessions_planned: newDailyReadiness.sessions_planned,
                         sleep_quality:    0,
                         soreness:         [],
                     },
+                    healthData:                           [],
                     isPrepCalculating:                    this.state.dailyReadiness.sessions_planned ? true : false,
                     isPrepareSessionsCompletionModalOpen: newDailyReadiness.sessions.length !== 0,
                     isReadinessSurveyModalOpen:           false,
@@ -487,6 +542,7 @@ class MyPlan extends Component {
         }, 500);
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
+                this.props.clearHealthKitWorkouts();
                 this.props.clearCompletedExercises();
                 this.props.clearCompletedFSExercises();
             })
@@ -503,23 +559,46 @@ class MyPlan extends Component {
          * result in a tabPage auto change if a postPracticeSurvey
          * has not already been completed
          */
-        let newPostSessionSurvey = {};
-        newPostSessionSurvey.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
-        newPostSessionSurvey.RPE = this.state.postSession.RPE;
-        newPostSessionSurvey.clear_candidates = _.filter(this.state.postSession.soreness, {isClearCandidate: true});
-        newPostSessionSurvey.soreness = _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate);
         let postSession = {
-            event_date:          this.state.postSession.event_date,
-            session_type:        this.state.postSession.session_type,
-            duration:            this.state.postSession.duration,
-            description:         this.state.postSession.description,
-            post_session_survey: newPostSessionSurvey,
-            user_id:             this.props.user.id,
+            event_date: `${moment().toISOString(true).split('.')[0]}Z`,
+            user_id:    this.props.user.id,
+            sessions:   [],
         };
-        if(this.state.postSession.session_type === 0 || this.state.postSession.session_type === 2 || this.state.postSession.session_type === 3 || this.state.postSession.session_type === 6) {
-            postSession.sport_name = this.state.postSession.sport_name;
-        } else if(this.state.postSession.session_type === 1) {
-            postSession.strength_and_conditioning_type = this.state.postSession.strength_and_conditioning_type;
+        if(this.state.healthData.workouts && this.state.healthData.workouts.length > 0) {
+            postSession.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
+            let healthDataWorkouts = this.state.healthData.workouts ? this.state.healthData.workouts : [];
+            let healthDataIgnoredWorkouts = this.state.healthData.ignoredWorkouts ? this.state.healthData.ignoredWorkouts : [];
+            postSession.sessions = _.concat(healthDataIgnoredWorkouts, healthDataWorkouts);
+            let lastNonDeletedIndex = _.findLastIndex(postSession.sessions, ['deleted', false]);
+            if(postSession.sessions[lastNonDeletedIndex]) {
+                postSession.sessions[lastNonDeletedIndex].post_session_survey = {
+                    clear_candidates: _.filter(this.state.postSession.soreness, {isClearCandidate: true}),
+                    event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                    RPE:              postSession.sessions[lastNonDeletedIndex].post_session_survey.RPE,
+                    soreness:         _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
+                };
+            }
+        } else {
+            let newSession = {
+                event_date:          this.state.postSession.event_date,
+                session_type:        6,
+                sport_name:          this.state.postSession.sport_name,
+                duration:            this.state.postSession.duration,
+                description:         '',
+                calories:            null,
+                distance:            null,
+                end_date:            null,
+                source:              0,
+                deleted:             false,
+                hr_data:             [],
+                post_session_survey: {
+                    clear_candidates: _.filter(this.state.postSession.soreness, {isClearCandidate: true}),
+                    event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                    RPE:              this.state.postSession.RPE,
+                    soreness:         _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
+                },
+            };
+            postSession.sessions.push(newSession);
         }
         let clonedPostPracticeSurveys = _.cloneDeep(this.state.train.postPracticeSurveys);
         let newSurvey = {};
@@ -536,6 +615,7 @@ class MyPlan extends Component {
         _.delay(() => {
             this.setState(
                 {
+                    healthData:                         [],
                     train:                              newTrainObject,
                     isPostSessionSurveyModalOpen:       false,
                     isRecoverCalculating:               true,
@@ -546,15 +626,17 @@ class MyPlan extends Component {
                         duration:                       0,
                         event_date:                     null,
                         session_type:                   null,
+                        sessions:                       _.filter(postSession.sessions, o => !o.ignored),
                         soreness:                       [],
-                        sport_name:                     this.state.postSession.sport_name || this.state.postSession.sport_name === 0 ? this.state.postSession.sport_name : null,
-                        strength_and_conditioning_type: this.state.postSession.strength_and_conditioning_type || this.state.postSession.strength_and_conditioning_type === 0 ? this.state.postSession.strength_and_conditioning_type : null,
+                        sport_name:                     null,
+                        strength_and_conditioning_type: null,
                     },
                 },
             );
         }, 500);
         this.props.postSessionSurvey(postSession)
             .then(response => {
+                this.props.clearHealthKitWorkouts();
                 this.props.clearCompletedExercises();
             })
             .catch(error => {
@@ -578,12 +660,27 @@ class MyPlan extends Component {
         }
     }
 
-    _handleUpdateFirstTimeExperience = (value) => {
+    _handleUpdateFirstTimeExperience = value => {
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.first_time_experience = [value];
         let newUserObj = _.cloneDeep(this.props.user);
         newUserObj.first_time_experience.push(value);
+        // update reducer as API might take too long to return a value
+        store.dispatch({
+            type: DispatchActions.USER_REPLACE,
+            data: newUserObj
+        });
+        // update user object
+        this.props.updateUser(newUserPayloadObj, this.props.user.id);
+    }
+
+    _handleUpdateUserHealthKitFlag = flag => {
+        // setup variables
+        let newUserPayloadObj = {};
+        newUserPayloadObj.health_enabled = flag;
+        let newUserObj = _.cloneDeep(this.props.user);
+        newUserObj.health_enabled = flag;
         // update reducer as API might take too long to return a value
         store.dispatch({
             type: DispatchActions.USER_REPLACE,
@@ -603,8 +700,7 @@ class MyPlan extends Component {
     _togglePostSessionSurveyModal = () => {
         this.setState({ loading: true, });
         if (!this.state.isPostSessionSurveyModalOpen) {
-            this.props.preReadiness(this.props.user.id)
-                .then(() => this.props.getSoreBodyParts())
+            this.props.getSoreBodyParts()
                 .then(soreBodyParts => {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
                     newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
@@ -623,7 +719,7 @@ class MyPlan extends Component {
                         loading:                      false,
                         postSession:                  newDailyReadiness,
                     });
-                    AppUtil.handleAPIErrorAlert(ErrorMessages.preReadiness);
+                    AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
                 });
         } else {
             let newPostSession = _.cloneDeep(this.state.postSession);
@@ -645,17 +741,6 @@ class MyPlan extends Component {
                 );
             }, 500);
         }
-    }
-
-    _toggleReadinessSurvey = () => {
-        this.setState({ isPageLoading: true, });
-        this.props.setAppLogs();
-        this.props.preReadiness(this.props.user.id)
-            .then(() => this.setState({ isReadinessSurveyModalOpen: true, isPageLoading: false, }))
-            .catch(() => {
-                this.setState({ isPageLoading: false, });
-                AppUtil.handleAPIErrorAlert(ErrorMessages.preReadiness);
-            });
     }
 
     _handleExerciseListRefresh = (shouldClearCompletedExercises, isFromPushNotification) => {
@@ -730,13 +815,14 @@ class MyPlan extends Component {
         this.props.setCompletedExercises(newCompletedExercises);
     }
 
-    _handleCompleteFSExercise = (exerciseId) => {
+    _handleCompleteFSExercise = (exerciseId, setNumber) => {
+        let newFSExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
         // add or remove exercise
         let newCompletedExercises = _.cloneDeep(store.getState().plan.completedFSExercises);
-        if(newCompletedExercises && newCompletedExercises.indexOf(exerciseId) > -1) {
-            newCompletedExercises.splice(newCompletedExercises.indexOf(exerciseId), 1)
+        if(newCompletedExercises && newCompletedExercises.indexOf(newFSExerciseId) > -1) {
+            newCompletedExercises.splice(newCompletedExercises.indexOf(newFSExerciseId), 1)
         } else {
-            newCompletedExercises.push(exerciseId);
+            newCompletedExercises.push(newFSExerciseId);
         }
         // Mark FS as started, if logic passes
         let clonedPlan = _.cloneDeep(this.props.plan);
@@ -1085,6 +1171,7 @@ class MyPlan extends Component {
                         backdropPressToClose={false}
                         coverScreen={true}
                         isOpen={this.state.isReadinessSurveyModalOpen}
+                        keyboardTopOffset={0}
                         ref={ref => {this._readinessSurveyModalRef = ref;}}
                         swipeToClose={false}
                         useNativeDriver={false}
@@ -1094,7 +1181,10 @@ class MyPlan extends Component {
                             handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                             handleFormChange={this._handleDailyReadinessFormChange}
                             handleFormSubmit={this._handleReadinessSurveySubmit}
+                            handleHealthDataFormChange={this._handleHealthDataFormChange}
                             handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                            handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
+                            healthKitWorkouts={this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : null}
                             soreBodyParts={this.props.plan.soreBodyParts}
                             typicalSessions={this.props.plan.typicalSessions}
                             user={this.props.user}
@@ -1119,6 +1209,7 @@ class MyPlan extends Component {
                             backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
+                            keyboardTopOffset={0}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
@@ -1452,6 +1543,7 @@ class MyPlan extends Component {
                             backdropPressToClose={false}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
+                            keyboardTopOffset={0}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
@@ -1563,7 +1655,7 @@ class MyPlan extends Component {
         trainingSessions = trainingSessions.concat(functionalStrengthArray);
         trainingSessions = _.orderBy(trainingSessions, o => moment(o.event_date), ['asc']);
         let filteredTrainingSessions = trainingSessions.length > 0 ?
-            _.filter(trainingSessions, o => o.sport_name !== null || o.strength_and_conditioning_type !== null)
+            _.filter(trainingSessions, o => !o.deleted && !o.ignored && (o.sport_name !== null || o.strength_and_conditioning_type !== null))
             :
             [];
         let completedFSExercises = store.getState().plan.completedFSExercises;
@@ -1803,6 +1895,7 @@ class MyPlan extends Component {
                         backdropPressToClose={false}
                         coverScreen={true}
                         isOpen={this.state.isPostSessionSurveyModalOpen}
+                        keyboardTopOffset={0}
                         ref={ref => {this._postSessionSurveyModalRef = ref;}}
                         swipeToClose={false}
                         useNativeDriver={false}
@@ -1811,8 +1904,10 @@ class MyPlan extends Component {
                             handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                             handleFormChange={this._handlePostSessionFormChange}
                             handleFormSubmit={this._handlePostSessionSurveySubmit}
+                            handleHealthDataFormChange={this._handleHealthDataFormChange}
                             handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
                             handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                            healthKitWorkouts={this.state.healthData.workouts && this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : null}
                             postSession={this.state.postSession}
                             soreBodyParts={this.props.plan.soreBodyParts}
                             typicalSessions={this.props.plan.typicalSessions}
@@ -1845,6 +1940,7 @@ class MyPlan extends Component {
                             backdropPressToClose={true}
                             coverScreen={true}
                             isOpen={this.state.isSelectedExerciseModalOpen}
+                            keyboardTopOffset={0}
                             onClosed={() => this._toggleSelectedExercise(false, false)}
                             position={'center'}
                             ref={ref => {this._singleExerciseItemRef = ref;}}
@@ -1872,10 +1968,7 @@ class MyPlan extends Component {
                 <SessionsCompletionModal
                     isModalOpen={this.state.isTrainSessionsCompletionModalOpen}
                     onClose={this._closeTrainSessionsCompletionModal}
-                    sessions={[{
-                        sport_name:                     this.state.postSession.sport_name,
-                        strength_and_conditioning_type: this.state.postSession.strength_and_conditioning_type,
-                    }]}
+                    sessions={this.state.postSession.sessions && this.state.postSession.sessions.length > 0 ? this.state.postSession.sessions : []}
                 />
                 <ExerciseCompletionModal
                     completedExercises={completedFSExercises}

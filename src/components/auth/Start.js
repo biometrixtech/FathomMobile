@@ -45,14 +45,12 @@ class Start extends Component {
         expires:              PropTypes.string,
         finalizeLogin:        PropTypes.func.isRequired,
         getMyPlan:            PropTypes.func.isRequired,
-        getSoreBodyParts:     PropTypes.func.isRequired,
         getUser:              PropTypes.func.isRequired,
         jwt:                  PropTypes.string,
         lastOpened:           PropTypes.object.isRequired,
         network:              PropTypes.object.isRequired,
         onFormSubmit:         PropTypes.func,
         password:             PropTypes.string,
-        preReadiness:         PropTypes.func.isRequired,
         registerDevice:       PropTypes.func.isRequired,
         scheduledMaintenance: PropTypes.object,
         sessionToken:         PropTypes.string,
@@ -173,6 +171,13 @@ class Start extends Component {
                 return this.props.getUser(userObj.id);
             })
             .then(response => {
+                if(response.user.health_enabled) {
+                    AppUtil.getAppleHealthKitDataAsync(response.user.id, response.user.health_sync_date, response.user.historic_health_sync_date);
+                    return AppUtil.getAppleHealthKitData(response.user.id, response.user.health_sync_date, response.user.historic_health_sync_date, () => response);
+                }
+                return response;
+            })
+            .then(response => {
                 userObj = response.user;
                 if(this.props.certificate && this.props.certificate.id && this.props.device && this.props.device.id) {
                     return true;
@@ -189,18 +194,10 @@ class Start extends Component {
                     false;
                 return this.props.getMyPlan(userObj.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                     .then(response => {
-                        if(response.daily_plans[0].daily_readiness_survey_completed) {
-                            return response;
+                        if(!response.daily_plans[0].daily_readiness_survey_completed) {
+                            this.props.setAppLogs();
                         }
-                        return this.props.getSoreBodyParts()
-                            .then(soreBodyParts => {
-                                this.props.setAppLogs();
-                                return this.props.preReadiness(userObj.id);
-                            })
-                            .catch(err => {
-                                this.setState({ isLoggingIn: false, });
-                                this.hideSplash();
-                            });
+                        return response;
                     })
                     .catch(error => {
                         this.setState({ isLoggingIn: false, });

@@ -41,7 +41,7 @@ export default function planReducer(state = initialState, action) {
         });
     case Actions.GET_MY_PLAN:
         return Object.assign({}, state, {
-            dailyPlan: action.data.daily_plans,
+            dailyPlan: action.data,
         });
     case Actions.GET_COACHES_DASHBOARD:
         return Object.assign({}, state, {
@@ -52,6 +52,14 @@ export default function planReducer(state = initialState, action) {
     case Actions.SET_TYPICAL_SESSIONS:
         return Object.assign({}, state, {
             typicalSessions: action.data,
+        });
+    case Actions.SET_HEALTH_DATA:
+        return Object.assign({}, state, {
+            healthData: {
+                ignoredWorkouts: action.ignoredWorkoutData || [],
+                sleep:           action.sleepData || [],
+                workouts:        action.workoutData || [],
+            },
         });
     case Actions.POST_READINESS_SURVEY:
         return Object.assign({}, state, {});

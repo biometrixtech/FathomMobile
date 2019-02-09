@@ -14,14 +14,12 @@ const Start = ({
     expires,
     finalizeLogin,
     getMyPlan,
-    getSoreBodyParts,
     getUser,
     jwt,
     lastOpened,
     network,
     onFormSubmit,
     password,
-    preReadiness,
     registerDevice,
     scheduledMaintenance,
     sessionToken,
@@ -37,14 +35,12 @@ const Start = ({
         expires={expires}
         finalizeLogin={finalizeLogin}
         getMyPlan={getMyPlan}
-        getSoreBodyParts={getSoreBodyParts}
         getUser={getUser}
         jwt={jwt}
         lastOpened={lastOpened}
         network={network}
         onFormSubmit={onFormSubmit}
         password={password}
-        preReadiness={preReadiness}
         registerDevice={registerDevice}
         scheduledMaintenance={scheduledMaintenance}
         sessionToken={sessionToken}
@@ -63,14 +59,12 @@ Start.propTypes = {
     expires:              PropTypes.string,
     finalizeLogin:        PropTypes.func.isRequired,
     getMyPlan:            PropTypes.func.isRequired,
-    getSoreBodyParts:     PropTypes.func.isRequired,
     getUser:              PropTypes.func.isRequired,
     jwt:                  PropTypes.string,
     lastOpened:           PropTypes.object.isRequired,
     network:              PropTypes.object.isRequired,
     onFormSubmit:         PropTypes.func.isRequired,
     password:             PropTypes.string,
-    preReadiness:         PropTypes.func.isRequired,
     registerDevice:       PropTypes.func.isRequired,
     scheduledMaintenance: PropTypes.object,
     sessionToken:         PropTypes.string,
@@ -106,15 +100,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    authorizeUser:    init.authorizeUser,
-    finalizeLogin:    init.finalizeLogin,
-    getMyPlan:        PlanActions.getMyPlan,
-    getSoreBodyParts: PlanActions.getSoreBodyParts,
-    getUser:          UserActions.getUser,
-    onFormSubmit:     init.startLogin,
-    preReadiness:     PlanActions.preReadiness,
-    registerDevice:   init.registerDevice,
-    setAppLogs:       PlanActions.setAppLogs,
+    authorizeUser:  init.authorizeUser,
+    finalizeLogin:  init.finalizeLogin,
+    getMyPlan:      PlanActions.getMyPlan,
+    getUser:        UserActions.getUser,
+    onFormSubmit:   init.startLogin,
+    registerDevice: init.registerDevice,
+    setAppLogs:     PlanActions.setAppLogs,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Start);

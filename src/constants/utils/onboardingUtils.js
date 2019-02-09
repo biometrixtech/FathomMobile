@@ -48,9 +48,9 @@ const onboardingUtils = {
         const possibleGenders = UserAccount.possibleGenders.map(gender => gender.value); // ['male', 'female', 'other'];
         if(
             user.personal_data.birth_date.length > 0 &&
-            (user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) &&
-            possibleInjuryStatuses.includes(user.injury_status) &&
-            (possibleSystemTypes.includes(user.system_type) || !user.system_type) &&
+            // (user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) &&
+            // possibleInjuryStatuses.includes(user.injury_status) &&
+            // (possibleSystemTypes.includes(user.system_type) || !user.system_type) &&
             possibleGenders.includes(user.biometric_data.sex)
         ) {
             errorsArray = [];
@@ -60,11 +60,11 @@ const onboardingUtils = {
             errorsArray.push(newError);
             isValid = false;
         }
-        if(user.personal_data.zip_code.length !== 5) {
+        /*if(user.personal_data.zip_code.length !== 5) {
             const newError = 'Please enter a valid Zip Code';
             errorsArray.push(newError);
             isValid = false;
-        }
+        }*/
         if((user.biometric_data.mass.lb.length === 0 || user.biometric_data.mass.lb === 0)) {
             const newError = 'Please enter a valid Weight';
             errorsArray.push(newError);
@@ -111,19 +111,19 @@ const onboardingUtils = {
             numbersRegex.test(user.password)
         ) { count = count + 1; }
         if( this.isEmailValid(user.personal_data.email) ) { count = count + 1; }
-        if(user.personal_data.zip_code.length > 0) { count = count + 1; }
+        // if(user.personal_data.zip_code.length > 0) { count = count + 1; }
         if(user.personal_data.birth_date.length > 0) { count = count + 1; }
-        if(user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) { count = count + 1; }
+        // if(user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) { count = count + 1; }
         if(user.biometric_data.mass.lb.length > 0 || user.biometric_data.mass.lb > 0) { count = count + 1; }
-        if(possibleInjuryStatuses.includes(user.injury_status)) { count = count + 1; }
-        if(possibleSystemTypes.includes(user.system_type)) { count = count + 1; }
+        // if(possibleInjuryStatuses.includes(user.injury_status)) { count = count + 1; }
+        // if(possibleSystemTypes.includes(user.system_type)) { count = count + 1; }
         if(possibleGenders.includes(user.biometric_data.sex)) { count = count + 1; }
         // return count
         return count;
     },
 
     getTotalSteps(user) {
-        return 12;
+        return 7;
     },
 
     isPhoneNumberValid(phoneNumber) {
@@ -247,79 +247,43 @@ const onboardingUtils = {
             slides:         [
                 {
                     backgroundColor: AppColors.white,
-                    icon:            {color: AppColors.primary.yellow.hundredPercent, goToPage: 1, icon: 'arrow-right-circle', type: 'simple-line-icon',},
+                    icon:            {color: AppColors.zeplin.yellow, goToPage: 1, icon: 'arrow-right-circle', type: 'simple-line-icon',},
                     key:             'tutorial-0',
                     title:           'Welcome to Sustainable Training',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},
                 },
                 {
-                    backgroundColor: AppColors.primary.yellow.hundredPercent,
+                    backgroundColor: AppColors.zeplin.yellow,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-1',
-                    text:            'Start every morning with a simple survey to tell us how your body feels.',
-                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
-                    title:           'Listen to your body',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
+                    text:            'Complete your daily survey to improve \'Prepare\' & \'Recover\' recommendations.',
+                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(35),},
                 },
                 {
-                    backgroundColor: AppColors.white,
+                    backgroundColor: AppColors.zeplin.darkSlate,
+                    buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-2',
-                    title:           'Daily Readiness Survey',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
-                    videoLink:       'https://s3.amazonaws.com/onboarding-content/readiness.mp4',
+                    text:            '\'Prepare\' helps mobilize before training & sooth pain & soreness.',
+                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(35),},
                 },
                 {
-                    backgroundColor: AppColors.zeplin.navyBlue,
+                    backgroundColor: AppColors.zeplin.yellow,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-3',
-                    text:            'Informed by your body\'s needs, Mobilize helps you prepare for training and reduce injury risk.',
-                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
-                    title:           'Prep your body for exercise',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
+                    text:            'Log training daily to build your history & improve recovery.',
+                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(35),},
                 },
                 {
-                    backgroundColor: AppColors.white,
+                    backgroundColor: AppColors.zeplin.darkSlate,
+                    buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-4',
-                    title:           'Mobilize',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
-                    videoLink:       'https://s3.amazonaws.com/onboarding-content/prep.mp4',
+                    text:            '\'Recover\' improves circulation to rebuild muscle tissue.',
+                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(35),},
                 },
                 {
-                    backgroundColor: AppColors.zeplin.navyBlue,
-                    buttonTextStyle: {color: AppColors.white,},
+                    backgroundColor: AppColors.white,
+                    icon:            {color: AppColors.zeplin.yellow, goToPage: false, icon: 'arrow-right-circle', type: 'simple-line-icon',},
                     key:             'tutorial-5',
-                    text:            'After training, log your soreness & activity for a personalized, restorative Recovery.',
-                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
-                    title:           'Recover intentionally',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
-                },
-                {
-                    backgroundColor: AppColors.white,
-                    key:             'tutorial-6',
-                    title:           'Train & Active Recovery',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
-                    videoLink:       'https://s3.amazonaws.com/onboarding-content/train.mp4',
-                },
-                {
-                    backgroundColor: AppColors.primary.yellow.hundredPercent,
-                    buttonTextStyle: {color: AppColors.white,},
-                    key:             'tutorial-7',
-                    text:            'Mobilize & Recover regularly to unlock personalized Functional Strength.',
-                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(28),},
-                    title:           'Increase resilience with Functional Strength ',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.white, fontSize: AppFonts.scaleFont(40),},
-                },
-                {
-                    backgroundColor: AppColors.white,
-                    key:             'tutorial-8',
-                    title:           'Functional Strength',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
-                    videoLink:       'https://s3.amazonaws.com/onboarding-content/fs.mp4',
-                },
-                {
-                    backgroundColor: AppColors.white,
-                    icon:            {color: AppColors.primary.yellow.hundredPercent, goToPage: false, icon: 'arrow-right-circle', type: 'simple-line-icon',},
-                    key:             'tutorial-9',
                     title:           'You\'re ready to use the app!',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},
                 },

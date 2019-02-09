@@ -80,24 +80,22 @@ class Login extends Component {
     static componentName = 'Login';
 
     static propTypes = {
-        authorizeUser:    PropTypes.func.isRequired,
-        certificate:      PropTypes.object,
-        device:           PropTypes.object,
-        email:            PropTypes.string,
-        environment:      PropTypes.string,
-        finalizeLogin:    PropTypes.func.isRequired,
-        getMyPlan:        PropTypes.func.isRequired,
-        getSoreBodyParts: PropTypes.func.isRequired,
-        lastOpened:       PropTypes.object.isRequired,
-        network:          PropTypes.object.isRequired,
-        onFormSubmit:     PropTypes.func,
-        password:         PropTypes.string,
-        preReadiness:     PropTypes.func.isRequired,
-        registerDevice:   PropTypes.func.isRequired,
-        setAppLogs:       PropTypes.func.isRequired,
-        setEnvironment:   PropTypes.func,
-        token:            PropTypes.string,
-        user:             PropTypes.object.isRequired,
+        authorizeUser:  PropTypes.func.isRequired,
+        certificate:    PropTypes.object,
+        device:         PropTypes.object,
+        email:          PropTypes.string,
+        environment:    PropTypes.string,
+        finalizeLogin:  PropTypes.func.isRequired,
+        getMyPlan:      PropTypes.func.isRequired,
+        lastOpened:     PropTypes.object.isRequired,
+        network:        PropTypes.object.isRequired,
+        onFormSubmit:   PropTypes.func,
+        password:       PropTypes.string,
+        registerDevice: PropTypes.func.isRequired,
+        setAppLogs:     PropTypes.func.isRequired,
+        setEnvironment: PropTypes.func,
+        token:          PropTypes.string,
+        user:           PropTypes.object.isRequired,
     }
 
     static defaultProps = {
@@ -234,18 +232,17 @@ class Login extends Component {
                                     false;
                                 return this.props.getMyPlan(user.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                                     .then(res => {
-                                        if(res.daily_plans[0].daily_readiness_survey_completed) {
-                                            return res;
+                                        if(!res.daily_plans[0].daily_readiness_survey_completed) {
+                                            this.props.setAppLogs();
                                         }
-                                        return this.props.getSoreBodyParts()
-                                            .then(soreBodyParts => {
-                                                this.props.setAppLogs();
-                                                return this.props.preReadiness(user.id);
-                                            })
-                                            .catch(err => {
-                                                const error = AppAPI.handleError(err);
-                                                return this.setState({ resultMsg: { error } });
-                                            });
+                                        return res;
+                                    })
+                                    .then(res => {
+                                        if(user.health_enabled) {
+                                            AppUtil.getAppleHealthKitDataAsync(user.id, user.health_sync_date, user.historic_health_sync_date);
+                                            return AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date, () => response);
+                                        }
+                                        return res;
                                     })
                                     .catch(error => {
                                         const err = AppAPI.handleError(error);
