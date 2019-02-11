@@ -55,20 +55,18 @@ const RenderMyPlanTab = ({
 }) => {
     let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
     isTabActive = isTabActive;
-    const textStyle = AppStyles.tabHeaders;
-    const fontSize = isTabActive ? AppFonts.scaleFont(20) : AppFonts.scaleFont(16);
     let { page0, page1, page2 } = statePages;
     let flag = dailyPlanObj && page === dailyPlanObj.nav_bar_indicator ? true : false;
     let currentPage = tabView ? tabView.state.currentPage : 0;
-    let page0Width = currentPage === 0 ? AppSizes.screen.widthThreeQuarters : currentPage === 1 ? AppSizes.screen.widthQuarter : 0;
-    let page1Width = currentPage === 0 || currentPage === 2 ? AppSizes.screen.widthQuarter : AppSizes.screen.widthHalf;
-    let page2Width = currentPage === 2 ? AppSizes.screen.widthThreeQuarters : currentPage === 1 ? AppSizes.screen.widthQuarter : 0;
-    let page0ExtraStyles = currentPage === 0 ? {paddingLeft: AppSizes.screen.widthQuarter} : {};
-    let page1ExtraStyles = {};
-    let page2ExtraStyles = currentPage === 2 ? {paddingRight: AppSizes.screen.widthQuarter} : {};
-    let page0Styles = [AppStyles.leftTabBar, page0ExtraStyles, {width: page0Width,}];
-    let page1Styles = [AppStyles.centerTabBar, page1ExtraStyles, {width: page1Width,}];
-    let page2Styles = [AppStyles.rightTabBar, page2ExtraStyles, {width: page2Width,}];
+    let page0Width = AppSizes.screen.widthThird;
+    let page1Width = AppSizes.screen.widthThird;
+    let page2Width = AppSizes.screen.widthThird;
+    let page0ExtraStyles = {borderBottomColor: isTabActive ? AppColors.zeplin.darkBlue : AppColors.zeplin.light, borderBottomWidth: 3,};
+    let page1ExtraStyles = {borderBottomColor: isTabActive ? AppColors.zeplin.darkBlue : AppColors.zeplin.light, borderBottomWidth: 3,};
+    let page2ExtraStyles = {borderBottomColor: isTabActive ? AppColors.zeplin.darkBlue : AppColors.zeplin.light, borderBottomWidth: 3,};
+    let page0Styles = [AppStyles.leftTabBar, page0ExtraStyles, {paddingBottom: AppSizes.paddingXSml, width: page0Width,}];
+    let page1Styles = [AppStyles.centerTabBar, page1ExtraStyles, {paddingBottom: AppSizes.paddingXSml, width: page1Width,}];
+    let page2Styles = [AppStyles.rightTabBar, page2ExtraStyles, {paddingBottom: AppSizes.paddingXSml, width: page2Width,}];
     let textBorderWidth = 4;
     let iconSize = 10;
     let iconLeftPadding = 2;
@@ -90,25 +88,20 @@ const RenderMyPlanTab = ({
             onLayout={onLayoutHandler}
         >
             <View style={[page === 0 ? page0Styles : page === 1 ? page1Styles : page2Styles]}>
-                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
-                    <View>
-                        <Text
-                            oswaldMedium
-                            onLayout={event =>
-                                updatePageState(page === 0 ? event.nativeEvent.layout : page0, page === 1 ? event.nativeEvent.layout : page1, page === 2 ? event.nativeEvent.layout : page2)
-                            }
-                            style={[
-                                textStyle,
-                                {
-                                    color: isTabActive ? AppColors.zeplin.darkNavy : AppColors.zeplin.lightSlate,
-                                    fontSize,
-                                }
-                            ]}
-                        >
-                            {name}
-                        </Text>
-                    </View>
-                    {
+                <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
+                    <Text
+                        oswaldMedium
+                        onLayout={event =>
+                            updatePageState(page === 0 ? event.nativeEvent.layout : page0, page === 1 ? event.nativeEvent.layout : page1, page === 2 ? event.nativeEvent.layout : page2)
+                        }
+                        style={{
+                            color:    isTabActive ? AppColors.zeplin.darkBlue : AppColors.zeplin.lightSlate,
+                            fontSize: isTabActive ? AppFonts.scaleFont(25) : AppFonts.scaleFont(18),
+                        }}
+                    >
+                        {name}
+                    </Text>
+                    {/*
                         flag ?
                             <TabIcon
                                 containerStyle={[AppStyles.indicatorContainerStyles, extraIconContainerStyle, {paddingLeft: iconLeftPadding,}]}
@@ -119,7 +112,7 @@ const RenderMyPlanTab = ({
                             />
                             :
                             null
-                    }
+                    */}
                 </View>
             </View>
         </TouchableWithoutFeedback>

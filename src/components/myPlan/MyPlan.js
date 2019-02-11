@@ -2039,7 +2039,7 @@ class MyPlan extends Component {
                 locked={isScrollLocked}
                 onChangeTab={tabLocation => this._onChangeTab(tabLocation)}
                 ref={tabView => { this.tabView = tabView; }}
-                renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderBottomWidth: 0,}} />}
+                renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}} />}
                 style={{backgroundColor: AppColors.white}}
                 tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
                 tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
