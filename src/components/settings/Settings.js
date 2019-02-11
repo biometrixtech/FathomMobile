@@ -442,11 +442,6 @@ class Settings extends Component {
                                 type={'material-community'}
                             />
                         }
-                        onPress={() =>
-                            this.props.logout(this.props.user.id)
-                                .then(() => {Actions.start();})
-                                .catch(err => this._handleLogoutAlert(err))
-                        }
                         rightIcon={
                             <Switch
                                 onValueChange={value => this._toggleHealthKitSwitch(value)}
