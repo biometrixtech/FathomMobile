@@ -188,10 +188,10 @@ const postSessionSurvey = postSessionObj => {
     newCurrentPlan.post_recovery = null;
     let newTrainingSessions = _.cloneDeep(newCurrentPlan.training_sessions);
     let newTrainingSession = {};
-    newTrainingSession.sport_name = postSessionObj.sport_name;
-    newTrainingSession.strength_and_conditioning_type = postSessionObj.strength_and_conditioning_type;
-    newTrainingSession.session_type = postSessionObj.session_type;
-    newTrainingSession.event_date = postSessionObj.event_date;
+    newTrainingSession.sport_name = postSessionObj.sessions[0] && postSessionObj.sessions[0].sport_name ? postSessionObj.sessions[0].sport_name : null;
+    newTrainingSession.strength_and_conditioning_type = postSessionObj.sessions[0] && postSessionObj.sessions[0].strength_and_conditioning_type ? postSessionObj.sessions[0].strength_and_conditioning_type : null;
+    newTrainingSession.session_type = postSessionObj.sessions[0] && postSessionObj.sessions[0].session_type ? postSessionObj.sessions[0].session_type : null;
+    newTrainingSession.event_date = postSessionObj.sessions[0] && postSessionObj.sessions[0].event_date ? postSessionObj.sessions[0].event_date : null;
     newTrainingSessions.push(newTrainingSession);
     newCurrentPlan.training_sessions = newTrainingSessions;
     newPlan.daily_plans.push(newCurrentPlan);
