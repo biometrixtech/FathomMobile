@@ -202,10 +202,10 @@ const postSessionSurvey = postSessionObj => {
                 type: Actions.POST_SESSION_SURVEY,
                 data: postSessionObj,
             });
-            dispatch({
-                type: Actions.GET_MY_PLAN,
-                data: newPlan.daily_plans,
-            });
+            // dispatch({
+            //     type: Actions.GET_MY_PLAN,
+            //     data: newPlan.daily_plans,
+            // });
             return myPlanData;
         })
         .then(myPlanData => Promise.resolve(newPlan))

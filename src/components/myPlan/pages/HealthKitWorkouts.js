@@ -52,7 +52,7 @@ class HealthKitWorkouts extends Component {
         Keyboard.dismiss();
         let numberOfNonDeletedWorkouts = _.filter(this.props.workouts, ['deleted', false]);
         if(numberOfNonDeletedWorkouts.length === 0) {
-            this.props.handleToggleSurvey();
+            this.props.handleToggleSurvey(true);
         } else if((currentPage + 1) === this.props.workouts.length) {
             this.props.handleNextStep(true);
         } else {

@@ -395,7 +395,7 @@ class MyPlan extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
-        if(!_.isEqual(prevProps.healthData, this.props.healthData)) {
+        if(!_.isEqual(prevProps.healthData, this.props.healthData) && this.props.healthData.workouts.length > 0) {
             this._goToScrollviewPage(1, () => {
                 this.setState(
                     { healthData: this.props.healthData, },
@@ -557,7 +557,7 @@ class MyPlan extends Component {
             });
     }
 
-    _handlePostSessionSurveySubmit = () => {
+    _handlePostSessionSurveySubmit = areAllDeleted => {
         // TODO: MOVE TO LOGIC FILE AND UNIT TEST BELOW
         /*
          * update for the componentWillReceiveProps call will only
@@ -623,8 +623,8 @@ class MyPlan extends Component {
                     healthData:                         [],
                     train:                              newTrainObject,
                     isPostSessionSurveyModalOpen:       false,
-                    isRecoverCalculating:               true,
-                    isTrainSessionsCompletionModalOpen: true,
+                    isRecoverCalculating:               !areAllDeleted,
+                    isTrainSessionsCompletionModalOpen: !areAllDeleted,
                     postSession:                        {
                         RPE:                            null,
                         description:                    '',
@@ -642,7 +642,16 @@ class MyPlan extends Component {
         this.props.postSessionSurvey(postSession)
             .then(response => {
                 this.props.clearHealthKitWorkouts();
-                this.props.clearCompletedExercises();
+                if(!areAllDeleted) {
+                    this.props.clearCompletedExercises();
+                }
+                if(areAllDeleted) {
+                    let landingScreen = this.props.plan.dailyPlan[0] && this.props.plan.dailyPlan[0].landing_screen ?
+                        this.props.plan.dailyPlan[0].landing_screen
+                        :
+                        0;
+                    this._goToScrollviewPage(landingScreen);
+                }
             })
             .catch(error => {
                 console.log('error',error);
@@ -1908,7 +1917,7 @@ class MyPlan extends Component {
                         <PostSessionSurvey
                             handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                             handleFormChange={this._handlePostSessionFormChange}
-                            handleFormSubmit={this._handlePostSessionSurveySubmit}
+                            handleFormSubmit={areAllDeleted => this._handlePostSessionSurveySubmit(areAllDeleted)}
                             handleHealthDataFormChange={this._handleHealthDataFormChange}
                             handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
                             handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
