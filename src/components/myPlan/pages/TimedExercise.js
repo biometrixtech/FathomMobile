@@ -75,6 +75,8 @@ class TimedExercise extends PureComponent {
             switchSideTime:            0,
             timer:                     null,
             timerSeconds:              5,
+
+            delayTimerId: null,
         };
         this._cleanTime = this._cleanTime.bind(this);
         this._firstSetTick = this._firstSetTick.bind(this);
@@ -101,7 +103,11 @@ class TimedExercise extends PureComponent {
                     if( !user.first_time_experience.includes('exercise_description_tooltip') ) {
                         // show tooltip, that'll then start timer
                         toggleScrollStatus();
-                        _.delay(() => this.setState({ isDescriptionToolTipOpen: true, }), 1000);
+                        this.setState(
+                            {
+                                delayTimerId: _.delay(() => this.setState({ isDescriptionToolTipOpen: true, }), 1000),
+                            }
+                        );
                     } else if( !completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ) {
                         // start timer
                         this._startTimer();
@@ -117,6 +123,7 @@ class TimedExercise extends PureComponent {
     componentWillUnmount = () => {
         this.setState({ isMounted: false, });
         clearInterval(this.state.timer);
+        clearInterval(this.state.delayTimerId);
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -129,65 +136,86 @@ class TimedExercise extends PureComponent {
             this.animation.play
         ) {
             // pulse checkbox
-            _.delay(() => {
-                this.animation.play();
-            }, Platform.OS === 'ios' ? 500 : 0);
+            this.setState(
+                {
+                    delayTimerId: _.delay(() => this.animation.play(), Platform.OS === 'ios' ? 500 : 0),
+                }
+            );
         }
     }
 
     _firstSetTick = () => {
-        const { timer, timerSeconds, } = this.state;
+        const { delayTimerId, timer, timerSeconds, } = this.state;
         const { exerciseTimer, } = this.props;
         if(timerSeconds === 0) {
-            _.delay(() => {
-                this.setState(
-                    {
-                        areAllTimersCompleted:    exerciseTimer.number_of_sets === 1,
-                        startFirstSet:            false,
-                        startSwitchSidesInterval: exerciseTimer.number_of_sets === 2,
-                        timerSeconds:             exerciseTimer.switch_sides_time,
-                        showAnimation:            exerciseTimer.number_of_sets === 2 ? false: true,
-                    },
-                    () => {
-                        if(exerciseTimer.number_of_sets === 2) { this._startSwitchSideCountdown(); }
-                    }
-                );
-                clearInterval(timer);
-            }, 500);
+            this.setState(
+                {
+                    delayTimerId:
+                        _.delay(() => {
+                            this.setState(
+                                {
+                                    areAllTimersCompleted:    exerciseTimer.number_of_sets === 1,
+                                    startFirstSet:            false,
+                                    startSwitchSidesInterval: exerciseTimer.number_of_sets === 2,
+                                    timerSeconds:             exerciseTimer.switch_sides_time,
+                                    showAnimation:            exerciseTimer.number_of_sets === 2 ? false: true,
+                                },
+                                () => {
+                                    if(exerciseTimer.number_of_sets === 2) { this._startSwitchSideCountdown(); }
+                                }
+                            );
+                            clearInterval(timer);
+                            clearInterval(delayTimerId);
+                        }, 500),
+                }
+            );
         } else {
             this.setState({ timerSeconds: (timerSeconds - 1), });
         }
     }
 
     _secondSetTick = () => {
-        const { timer, timerSeconds, } = this.state;
+        const { delayTimerId, timer, timerSeconds, } = this.state;
         if(timerSeconds === 0) {
-            _.delay(() => {
-                this.setState({
-                    areAllTimersCompleted: true,
-                    showAnimation:         true,
-                    startSecondSet:        false,
-                    timerSeconds:          0,
-                });
-                clearInterval(timer);
-            }, 500);
+            this.setState(
+                {
+                    delayTimerId:
+                        _.delay(() => {
+                            this.setState({
+                                areAllTimersCompleted: true,
+                                showAnimation:         true,
+                                startSecondSet:        false,
+                                timerSeconds:          0,
+                            });
+                            clearInterval(timer);
+                            clearInterval(delayTimerId);
+                        }, 500)
+                }
+            );
         } else {
             this.setState({ timerSeconds: (timerSeconds - 1), });
         }
     }
 
     _startTimer = () => {
-        _.delay(() => {
-            this.setState(
-                { startPreExerciseCountdown: true, },
-                () => this._startPreExerciseCountdown(),
-            );
-        }, 500);
+        this.setState(
+            {
+                delayTimerId:
+                    _.delay(() => {
+                        this.setState(
+                            { startPreExerciseCountdown: true, },
+                            () => this._startPreExerciseCountdown(),
+                        );
+                    }, 500),
+            }
+        );
     }
 
     _resetTimer = (restartTimer = false, shouldCloseModal = false) => {
+        const { delayTimerId, timer, } = this.state;
         const { closeModal, completedExercises, exercise, } = this.props;
-        clearInterval(this.state.timer);
+        clearInterval(timer);
+        clearInterval(delayTimerId);
         this.setState(
             {
                 areAllTimersCompleted:     completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? true : false,
@@ -218,22 +246,28 @@ class TimedExercise extends PureComponent {
     }
 
     _preExerciseTick = () => {
-        const { preExerciseTime, timer, timerSeconds, } = this.state;
+        const { delayTimerId, preExerciseTime, timer, timerSeconds, } = this.state;
         const { exerciseTimer, } = this.props;
         let preStartTime = exerciseTimer && exerciseTimer.pre_start_time ? exerciseTimer.pre_start_time : 0;
         if((preExerciseTime * preStartTime) !== preStartTime) {
             this.setState({ preExerciseTime: (this.state.preExerciseTime + 1 / preStartTime), timerSeconds: (timerSeconds - 1), });
         } else {
             clearInterval(timer);
-            _.delay(() => {
-                let firstTickTimer = setInterval(this._firstSetTick, 1000);
-                this.setState({
-                    startFirstSet:             true,
-                    startPreExerciseCountdown: false,
-                    timer:                     firstTickTimer,
-                    timerSeconds:              exerciseTimer.seconds_per_set,
-                });
-            }, 500);
+            clearInterval(delayTimerId);
+            this.setState(
+                {
+                    delayTimerId:
+                        _.delay(() => {
+                            let firstTickTimer = setInterval(this._firstSetTick, 1000);
+                            this.setState({
+                                startFirstSet:             true,
+                                startPreExerciseCountdown: false,
+                                timer:                     firstTickTimer,
+                                timerSeconds:              exerciseTimer.seconds_per_set,
+                            });
+                        }, 500)
+                }
+            );
         }
     }
 
@@ -245,27 +279,34 @@ class TimedExercise extends PureComponent {
     }
 
     _switchSidesTick = () => {
-        const { switchSideTime, timer, timerSeconds, } = this.state;
+        const { delayTimerId, switchSideTime, timer, timerSeconds, } = this.state;
         const { exerciseTimer, } = this.props;
         let switchSidesTime = exerciseTimer && exerciseTimer.switch_sides_time ? exerciseTimer.switch_sides_time : 0;
         if((switchSideTime * switchSidesTime) !== switchSidesTime) {
             this.setState({ switchSideTime: (this.state.switchSideTime + 1 / switchSidesTime), timerSeconds: (timerSeconds + 1), });
         } else {
             clearInterval(timer);
-            _.delay(() => {
-                let switchSidesTimer = setInterval(this._secondSetTick, 1000);
-                this.setState({
-                    startSwitchSidesInterval: false,
-                    startSecondSet:           true,
-                    timer:                    switchSidesTimer,
-                    timerSeconds:             exerciseTimer.seconds_per_set,
-                });
-            }, 500);
+            clearInterval(delayTimerId);
+            this.setState(
+                {
+                    delayTimerId:
+                        _.delay(() => {
+                            let switchSidesTimer = setInterval(this._secondSetTick, 1000);
+                            this.setState({
+                                startSwitchSidesInterval: false,
+                                startSecondSet:           true,
+                                timer:                    switchSidesTimer,
+                                timerSeconds:             exerciseTimer.seconds_per_set,
+                            });
+                        }, 500)
+                }
+            );
         }
     }
 
     _pauseTimer = (shouldPause, openTooltip = false) => {
         const {
+            delayTimerId,
             startFirstSet,
             startPreExerciseCountdown,
             startSecondSet,
@@ -273,6 +314,7 @@ class TimedExercise extends PureComponent {
             timer,
         } = this.state;
         clearInterval(timer);
+        clearInterval(delayTimerId);
         this.setState({
             isDescriptionToolTipOpen: openTooltip,
             isPaused:                 shouldPause,
