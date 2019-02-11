@@ -171,13 +171,6 @@ class Start extends Component {
                 return this.props.getUser(userObj.id);
             })
             .then(response => {
-                if(response.user.health_enabled) {
-                    AppUtil.getAppleHealthKitDataAsync(response.user.id, response.user.health_sync_date, response.user.historic_health_sync_date);
-                    return AppUtil.getAppleHealthKitData(response.user.id, response.user.health_sync_date, response.user.historic_health_sync_date, () => response);
-                }
-                return response;
-            })
-            .then(response => {
                 userObj = response.user;
                 if(this.props.certificate && this.props.certificate.id && this.props.device && this.props.device.id) {
                     return true;
@@ -196,6 +189,13 @@ class Start extends Component {
                     .then(response => {
                         if(!response.daily_plans[0].daily_readiness_survey_completed) {
                             this.props.setAppLogs();
+                        }
+                        return response;
+                    })
+                    .then(response => {
+                        if(userObj.health_enabled) {
+                            AppUtil.getAppleHealthKitDataAsync(userObj.id, userObj.health_sync_date, userObj.historic_health_sync_date);
+                            return AppUtil.getAppleHealthKitData(userObj.id, userObj.health_sync_date, userObj.historic_health_sync_date, () => response);
                         }
                         return response;
                     })
