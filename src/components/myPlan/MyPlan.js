@@ -397,7 +397,10 @@ class MyPlan extends Component {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
         if(!_.isEqual(prevProps.healthData, this.props.healthData)) {
             this._goToScrollviewPage(1, () => {
-                this._togglePostSessionSurveyModal();
+                this.setState(
+                    { healthData: this.props.healthData, },
+                    () => this._togglePostSessionSurveyModal(),
+                );
             });
         }
     }
