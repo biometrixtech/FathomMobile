@@ -57,6 +57,7 @@ const EnableAppleHealthKit = ({
                 coverScreen={true}
                 isOpen={true}
                 swipeToClose={false}
+                useNativeDriver={false}
             >
                 <View style={{flex: 1,}}>
                     <ImageBackground

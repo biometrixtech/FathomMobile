@@ -225,9 +225,9 @@ class ReadinessSurvey extends Component {
         this.setState({ isAppleHealthKitLoading: true, },);
         AppUtil.getAppleHealthKitDataAsync(user.id, user.health_sync_date, user.historic_health_sync_date);
         AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date, () => {
-            this.setState({ isAppleHealthKitLoading: false, });
             this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue);
             this.props.handleUpdateUserHealthKitFlag(healthKitFlag);
+            this.setState({ isAppleHealthKitLoading: false, });
         });
     }
 
@@ -843,7 +843,7 @@ class ReadinessSurvey extends Component {
                                     this.setState({ isActionButtonVisible: true, });
                                 }
                                 if(body) {
-                                    handleAreaOfSorenessClick(body, false, isAllGood);
+                                    handleAreaOfSorenessClick(body, true, isAllGood);
                                 }
                             }}
                             handleFormChange={handleFormChange}
