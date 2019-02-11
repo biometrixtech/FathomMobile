@@ -674,7 +674,7 @@ class MyPlan extends Component {
         }
     }
 
-    _handleUpdateFirstTimeExperience = value => {
+    _handleUpdateFirstTimeExperience = (value, callback) => {
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.first_time_experience = [value];
@@ -686,10 +686,15 @@ class MyPlan extends Component {
             data: newUserObj
         });
         // update user object
-        this.props.updateUser(newUserPayloadObj, this.props.user.id);
+        this.props.updateUser(newUserPayloadObj, this.props.user.id)
+            .then(res => {
+                if(callback) {
+                    callback();
+                }
+            });
     }
 
-    _handleUpdateUserHealthKitFlag = flag => {
+    _handleUpdateUserHealthKitFlag = (flag, callback) => {
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.health_enabled = flag;
@@ -701,7 +706,12 @@ class MyPlan extends Component {
             data: newUserObj
         });
         // update user object
-        this.props.updateUser(newUserPayloadObj, this.props.user.id);
+        this.props.updateUser(newUserPayloadObj, this.props.user.id)
+            .then(res => {
+                if(callback) {
+                    callback();
+                }
+            });
     }
 
     _toggleCompletedAMPMRecoveryModal = () => {
