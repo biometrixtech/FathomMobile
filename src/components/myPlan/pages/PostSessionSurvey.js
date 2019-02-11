@@ -65,9 +65,13 @@ class PostSessionSurvey extends Component {
     _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid) => {
         let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid);
         if(isValid) {
-            this.pages.scrollToPage(pageNum);
-            this.setState({ pageIndex: pageNum, });
+            this._updatePageIndex(pageNum);
         }
+    }
+
+    _updatePageIndex = pageNum => {
+        this.pages.scrollToPage(pageNum);
+        this.setState({ pageIndex: pageNum, });
     }
 
     _checkNextStep = (currentStep, isHealthKitValid) => {
@@ -306,7 +310,7 @@ class PostSessionSurvey extends Component {
                         <BackNextButtons
                             handleFormSubmit={() => handleFormSubmit()}
                             isValid={isFormValidItems.areAreasOfSorenessValid}
-                            onBackClick={() => this.pages.scrollToPage(pageIndex - 1)}
+                            onBackClick={() => this._updatePageIndex(pageIndex - 1)}
                             onNextClick={() => this._renderNextPage(3, isFormValidItems)}
                             showBackBtn={true}
                             showSubmitBtn={true}

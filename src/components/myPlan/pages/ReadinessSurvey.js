@@ -137,9 +137,13 @@ class ReadinessSurvey extends Component {
         const { dailyReadiness, healthKitWorkouts, } = this.props;
         let { isValid, pageNum, } = PlanLogic.handleReadinessSurveyNextPage(this.state, dailyReadiness, currentPage, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid);
         if(isValid) {
-            this.pages.scrollToPage(pageNum);
-            this.setState({ pageIndex: pageNum, });
+            this._updatePageIndex(pageNum);
         }
+    }
+
+    _updatePageIndex = pageNum => {
+        this.pages.scrollToPage(pageNum);
+        this.setState({ pageIndex: pageNum, });
     }
 
     _checkNextStep = (currentPage, isHealthKitValid) => {
@@ -906,7 +910,7 @@ class ReadinessSurvey extends Component {
                         <BackNextButtons
                             handleFormSubmit={() => handleFormSubmit()}
                             isValid={isFormValidItems.areAreasOfSorenessValid}
-                            onBackClick={() => this.pages.scrollToPage(pageIndex - 1)}
+                            onBackClick={() => this._updatePageIndex(pageIndex - 1)}
                             onNextClick={() => this._renderNextPage(9, isFormValidItems)}
                             showBackBtn={true}
                             showSubmitBtn={true}
