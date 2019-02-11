@@ -18,7 +18,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, View, } from 'react-native';
+import { Platform, ScrollView, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -238,11 +238,13 @@ class PostSessionSurvey extends Component {
                     >
                         <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
                         <AreasOfSoreness
-                            handleAreaOfSorenessClick={(body, isAllGood) => {
-                                if(!isCloseToBottom) {
+                            handleAreaOfSorenessClick={(body, isAllGood, showFAB) => {
+                                if(!isCloseToBottom || (Platform.OS === 'android' && !body && showFAB)) {
                                     this.setState({ isActionButtonVisible: true, });
                                 }
-                                handleAreaOfSorenessClick(body, false, isAllGood);
+                                if(body) {
+                                    handleAreaOfSorenessClick(body, false, isAllGood);
+                                }
                             }}
                             handleFormChange={handleFormChange}
                             handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}

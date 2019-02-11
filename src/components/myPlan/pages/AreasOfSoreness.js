@@ -137,6 +137,7 @@ class AreasOfSoreness extends Component {
                                     showWholeArea: !this.state.showWholeArea,
                                 }, () => {
                                     _.delay(() => {
+                                        handleAreaOfSorenessClick(false, false, true);
                                         if(this.state.showWholeArea) {
                                             scrollToArea(this._soreBodyPartRef);
                                         } else {
@@ -165,7 +166,7 @@ class AreasOfSoreness extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View onLayout={event => {this._soreBodyPartRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}} >
+                <View onLayout={event => {this._soreBodyPartRef = {x: event.nativeEvent.layout.x, y: (event.nativeEvent.layout.y + AppSizes.paddingLrg),}}} >
                     <Spacer size={this.state.showWholeArea ? AppSizes.paddingLrg : 0} />
                     { this.state.showWholeArea ?
                         _.map(groupedNewBodyPartMap, (object, key) => {
