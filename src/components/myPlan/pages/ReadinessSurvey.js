@@ -838,11 +838,13 @@ class ReadinessSurvey extends Component {
                     >
                         <ProgressPill currentStep={3} totalSteps={3} />
                         <AreasOfSoreness
-                            handleAreaOfSorenessClick={(body, isAllGood) => {
-                                if(!isCloseToBottom) {
+                            handleAreaOfSorenessClick={(body, isAllGood, showFAB) => {
+                                if(!isCloseToBottom || (Platform.OS === 'android' && !body && showFAB)) {
                                     this.setState({ isActionButtonVisible: true, });
                                 }
-                                handleAreaOfSorenessClick(body, true, isAllGood);
+                                if(body) {
+                                    handleAreaOfSorenessClick(body, false, isAllGood);
+                                }
                             }}
                             handleFormChange={handleFormChange}
                             handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
