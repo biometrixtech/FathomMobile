@@ -524,11 +524,13 @@ class MyPlan extends Component {
             newDailyReadiness.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
         }
         _.delay(() => {
+            let filteredHealthDataWorkouts = _.filter(healthDataWorkouts, o => !o.deleted);
+            let filteredDailyReadinessSuessions = _.filter(dailyReadinessSessions, o => !o.deleted);
             this.setState(
                 {
                     dailyReadiness: {
                         readiness:        0,
-                        sessions:         _.concat(healthDataWorkouts, dailyReadinessSessions),
+                        sessions:         _.concat(filteredHealthDataWorkouts, filteredDailyReadinessSuessions),
                         sessions_planned: newDailyReadiness.sessions_planned,
                         sleep_quality:    0,
                         soreness:         [],
@@ -629,7 +631,7 @@ class MyPlan extends Component {
                         duration:                       0,
                         event_date:                     null,
                         session_type:                   null,
-                        sessions:                       _.filter(postSession.sessions, o => !o.ignored),
+                        sessions:                       _.filter(postSession.sessions, o => !o.deleted && !o.ignored),
                         soreness:                       [],
                         sport_name:                     null,
                         strength_and_conditioning_type: null,
