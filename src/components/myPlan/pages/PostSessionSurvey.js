@@ -239,7 +239,7 @@ class PostSessionSurvey extends Component {
                         <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood, showFAB) => {
-                                if(!isCloseToBottom || (Platform.OS === 'android' && !body && showFAB)) {
+                                if(!isCloseToBottom || (!body && showFAB)) {
                                     this.setState({ isActionButtonVisible: true, });
                                 }
                                 if(body) {
@@ -306,7 +306,9 @@ class PostSessionSurvey extends Component {
                         <BackNextButtons
                             handleFormSubmit={() => handleFormSubmit()}
                             isValid={isFormValidItems.areAreasOfSorenessValid}
+                            onBackClick={() => this.pages.scrollToPage(pageIndex - 1)}
                             onNextClick={() => this._renderNextPage(3, isFormValidItems)}
+                            showBackBtn={true}
                             showSubmitBtn={true}
                         />
                     </ScrollView>

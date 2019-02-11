@@ -839,7 +839,7 @@ class ReadinessSurvey extends Component {
                         <ProgressPill currentStep={3} totalSteps={3} />
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood, showFAB) => {
-                                if(!isCloseToBottom || (Platform.OS === 'android' && !body && showFAB)) {
+                                if(!isCloseToBottom || (!body && showFAB)) {
                                     this.setState({ isActionButtonVisible: true, });
                                 }
                                 if(body) {
@@ -906,7 +906,9 @@ class ReadinessSurvey extends Component {
                         <BackNextButtons
                             handleFormSubmit={() => handleFormSubmit()}
                             isValid={isFormValidItems.areAreasOfSorenessValid}
+                            onBackClick={() => this.pages.scrollToPage(pageIndex - 1)}
                             onNextClick={() => this._renderNextPage(9, isFormValidItems)}
+                            showBackBtn={true}
                             showSubmitBtn={true}
                         />
                     </ScrollView>
