@@ -19,7 +19,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
@@ -62,7 +62,7 @@ class AreasOfSoreness extends Component {
 
     _resizeModal = ev => {
         let oldHeight = this.state.questionsHeight;
-        let newHeight = parseInt(ev.nativeEvent.layout.height, 10);
+        let newHeight = ev.nativeEvent.layout.height;
         if(oldHeight !== newHeight && newHeight < AppSizes.screen.height) {
             this.setState({ questionsHeight: newHeight });
         }
@@ -87,7 +87,7 @@ class AreasOfSoreness extends Component {
                 <View
                     onLayout={ev => this._resizeModal(ev)}
                     style={[
-                        this.state.questionsHeight ?
+                        this.state.questionsHeight && this.state.showWholeArea ?
                             {height: this.state.questionsHeight,}
                             :
                             {},
