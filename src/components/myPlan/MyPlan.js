@@ -531,19 +531,20 @@ class MyPlan extends Component {
         }
         _.delay(() => {
             let filteredHealthDataWorkouts = _.filter(healthDataWorkouts, o => !o.deleted);
-            let filteredDailyReadinessSuessions = _.filter(dailyReadinessSessions, o => !o.deleted);
+            let filteredDailyReadinessSessions = _.filter(dailyReadinessSessions, o => !o.deleted);
+            let nonDeletedSessions = _.concat(filteredHealthDataWorkouts, filteredDailyReadinessSessions);
             this.setState(
                 {
                     dailyReadiness: {
                         readiness:        0,
-                        sessions:         _.concat(filteredHealthDataWorkouts, filteredDailyReadinessSuessions),
+                        sessions:         nonDeletedSessions,
                         sessions_planned: newDailyReadiness.sessions_planned,
                         sleep_quality:    0,
                         soreness:         [],
                     },
                     healthData:                           [],
                     isPrepCalculating:                    this.state.dailyReadiness.sessions_planned ? true : false,
-                    isPrepareSessionsCompletionModalOpen: newDailyReadiness.sessions.length !== 0,
+                    isPrepareSessionsCompletionModalOpen: nonDeletedSessions.length !== 0,
                     isReadinessSurveyModalOpen:           false,
                     isRecoverCalculating:                 this.state.dailyReadiness.sessions_planned ? false : true,
                     prepare:                              newPrepareObject,
