@@ -582,7 +582,7 @@ const coachesDashboardCardsData = isToday => {
         return [
             {
                 description: 'Pain severity is too high to train today, consult medical staff to evaluate status',
-                label:       'NOT CLEARED TO TRAIN TODAY',
+                label:       'PAIN TOO SEVERE TO TRAIN',
                 overlayText: 'When an athlete completes a survey, their status will update here.',
                 value:       'not_cleared_for_training',
             },
