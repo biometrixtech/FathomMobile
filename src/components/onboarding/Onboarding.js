@@ -354,7 +354,7 @@ class Onboarding extends Component {
                 return this.props.updateUser(userObj, this.props.user.id)
                     .then(response => {
                         this.setState({ loading: false });
-                        return AppUtil.routeOnLogin(response.user);
+                        return AppUtil.routeOnLogin(response.user, true);
                     })
                     .catch(err => {
                         const error = AppAPI.handleError(err);
@@ -414,7 +414,7 @@ class Onboarding extends Component {
                 resultMsg: { success: 'Success, now loading your data!' },
             }, () => {
                 this.setState({ loading: false, });
-                return AppUtil.routeOnLogin(userRes);
+                return AppUtil.routeOnLogin(userRes, true);
             })).catch((err) => {
                 console.log('err',err);
                 const error = AppAPI.handleError(err);
