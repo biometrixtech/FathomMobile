@@ -525,11 +525,11 @@ class Onboarding extends Component {
                         style={[AppStyles.activityIndicator]}
                     /> : null
                 }
-                <EnableAppleHealthKit
+                {/*<EnableAppleHealthKit
                     handleSkip={() => this._handleEnableAppleHealthKit('apple_healthkit', false)}
                     handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
                     isModalOpen={isHealthKitModalOpen && Platform.OS === 'ios'}
-                />
+                />*/}
             </View>
         );
     }

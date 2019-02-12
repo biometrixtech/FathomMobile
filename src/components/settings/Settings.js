@@ -430,7 +430,7 @@ class Settings extends Component {
                         :
                         null
                 }
-                { Platform.OS === 'ios' ?
+                {/* Platform.OS === 'ios' ?
                     <ListItem
                         chevronColor={AppColors.black}
                         containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
@@ -458,7 +458,7 @@ class Settings extends Component {
                     />
                     :
                     null
-                }
+                */}
                 <ListItem
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
