@@ -396,13 +396,14 @@ export default {
 
     // Activity Indicator
     activityIndicator: {
-        position:       'absolute',
+        alignItems:     'center',
+        bottom:         0,
+        height:         (Sizes.screen.height - (Sizes.navbarHeight + Sizes.statusBarHeight + Sizes.tabbarHeight)),
+        justifyContent: 'center',
         left:           0,
+        position:       'absolute',
         right:          0,
         top:            0,
-        bottom:         0,
-        alignItems:     'center',
-        justifyContent: 'center'
     },
     continueButton: {
         ...Fonts.oswaldBold,
