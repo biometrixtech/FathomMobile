@@ -395,13 +395,19 @@ class MyPlan extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
+        // if we have workouts, handle RS or PSS
         if(!_.isEqual(prevProps.healthData, this.props.healthData) && this.props.healthData.workouts.length > 0) {
-            this._goToScrollviewPage(1, () => {
-                this.setState(
-                    { healthData: this.props.healthData, },
-                    () => this._togglePostSessionSurveyModal(),
-                );
-            });
+            let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
+            if(dailyPlanObj.daily_readiness_survey_completed) {
+                this._goToScrollviewPage(1, () => {
+                    this.setState(
+                        { healthData: this.props.healthData, },
+                        () => this._togglePostSessionSurveyModal(),
+                    );
+                });
+            } else {
+                this.setState({ healthData: this.props.healthData, });
+            }
         }
     }
 
