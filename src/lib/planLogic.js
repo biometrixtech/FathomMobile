@@ -693,6 +693,27 @@ const PlanLogic = {
     },
 
     /**
+      * Previous Page & Validation Logic
+      * - PostSessionSurvey
+      */
+    // TODO: UNIT TEST ME
+    handlePostSessionSurveyPreviousPage: (currentPage, newSoreBodyParts) => {
+        let pageNum = 0;
+        if(currentPage === 0) { // 0. Apple HealthKit (xN) OR Session + RPE/Duration
+            pageNum = 0;
+        } else if(currentPage === 1) { // 1. Follow Up Pain & Soreness
+            pageNum = 0;
+        } else if(currentPage === 2) { // 2. Areas of Soreness
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 1 : 0;
+        } else if(currentPage === 3) { // 3. Areas of Soreness Selected
+            pageNum = 2;
+        }
+        return {
+            pageNum,
+        };
+    },
+
+    /**
       * Exercises Render Logic
       * - Exercises
       */

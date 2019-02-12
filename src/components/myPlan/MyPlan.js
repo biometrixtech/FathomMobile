@@ -303,7 +303,7 @@ class MyPlan extends Component {
                     this.props.getSoreBodyParts()
                         .then(soreBodyParts => {
                             let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                            newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
+                            newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
                             this.setState({ dailyReadiness: newDailyReadiness });
                             this.props.setAppLogs();
                             this.setState({ isReadinessSurveyModalOpen: true, isPageLoading: false, });
@@ -734,7 +734,7 @@ class MyPlan extends Component {
             this.props.getSoreBodyParts()
                 .then(soreBodyParts => {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
-                    newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
+                    newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
                     this.setState({
                         isPostSessionSurveyModalOpen: true,
                         loading:                      false,
