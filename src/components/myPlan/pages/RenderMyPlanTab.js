@@ -96,7 +96,7 @@ const RenderMyPlanTab = ({
                         }
                         style={{
                             color:    isTabActive ? AppColors.zeplin.darkBlue : AppColors.zeplin.lightSlate,
-                            fontSize: isTabActive ? AppFonts.scaleFont(25) : AppFonts.scaleFont(18),
+                            fontSize: isTabActive ? AppFonts.scaleFont(22) : AppFonts.scaleFont(18),
                         }}
                     >
                         {name}

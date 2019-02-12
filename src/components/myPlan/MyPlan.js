@@ -1944,11 +1944,11 @@ class MyPlan extends Component {
                             typicalSessions={this.props.plan.typicalSessions}
                             user={user}
                         />
-                        { this.state.loading ?
+                      { this.state.loading ?
                             <ActivityIndicator
                                 color={AppColors.primary.yellow.hundredPercent}
                                 size={'large'}
-                                style={[AppStyles.activityIndicator]}
+                                style={[AppStyles.activityIndicator, {height: AppSizes.screen.height,}]}
                             /> : null
                         }
                     </Modal>
