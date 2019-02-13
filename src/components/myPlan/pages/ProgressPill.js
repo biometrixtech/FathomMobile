@@ -3,6 +3,10 @@
  *
     <ProgressPill
         currentStep={1}
+        onBack={() => {}}
+        onClose={() => {}}
+        onNext={() => {}}
+        totalSteps={3}
     />
  *
  */
@@ -39,7 +43,9 @@ const styles = StyleSheet.create({
 /* Component ==================================================================== */
 const ProgressPill = ({
     currentStep,
+    onBack,
     onClose,
+    onNext,
     totalSteps,
 }) => {
     let pills = [];
@@ -61,7 +67,20 @@ const ProgressPill = ({
         <View style={{backgroundColor: AppColors.zeplin.progressPillBackground, height: (progressPillHeight + AppSizes.statusBarHeight),}}>
             <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
             <View style={{flex: 1, flexDirection: 'row',}}>
-                <View style={{flex: 1,}} />
+                <View style={{flex: 1, justifyContent: 'center',}}>
+                    { onBack ?
+                        <TabIcon
+                            containerStyle={[{paddingLeft: AppSizes.paddingMed,}]}
+                            color={AppColors.zeplin.blueGrey}
+                            icon={'arrow-left'}
+                            onPress={() => onBack()}
+                            raised={false}
+                            type={'simple-line-icon'}
+                        />
+                        :
+                        null
+                    }
+                </View>
                 <View style={[styles.progressPillWrapper]}>
                     {pills}
                 </View>
@@ -75,8 +94,17 @@ const ProgressPill = ({
                             raised={false}
                             type={'material-community'}
                         />
-                        :
-                        null
+                        : onNext ?
+                            <TabIcon
+                                containerStyle={[{paddingRight: AppSizes.paddingMed,}]}
+                                color={AppColors.zeplin.blueGrey}
+                                icon={'arrow-right'}
+                                onPress={() => onNext()}
+                                raised={false}
+                                type={'simple-line-icon'}
+                            />
+                            :
+                            null
                     }
                 </View>
             </View>
@@ -86,12 +114,16 @@ const ProgressPill = ({
 
 ProgressPill.propTypes = {
     currentStep: PropTypes.number.isRequired,
+    onBack:      PropTypes.func,
     onClose:     PropTypes.func,
+    onNext:      PropTypes.func,
     totalSteps:  PropTypes.number.isRequired,
 };
 
 ProgressPill.defaultProps = {
+    onBack:  null,
     onClose: null,
+    onNext:  null,
 };
 
 ProgressPill.componentName = 'ProgressPill';

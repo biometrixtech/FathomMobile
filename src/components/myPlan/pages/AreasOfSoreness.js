@@ -19,7 +19,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
@@ -62,7 +62,7 @@ class AreasOfSoreness extends Component {
 
     _resizeModal = ev => {
         let oldHeight = this.state.questionsHeight;
-        let newHeight = parseInt(ev.nativeEvent.layout.height, 10);
+        let newHeight = ev.nativeEvent.layout.height;
         if(oldHeight !== newHeight && newHeight < AppSizes.screen.height) {
             this.setState({ questionsHeight: newHeight });
         }
@@ -87,7 +87,7 @@ class AreasOfSoreness extends Component {
                 <View
                     onLayout={ev => this._resizeModal(ev)}
                     style={[
-                        this.state.questionsHeight ?
+                        this.state.questionsHeight && this.state.showWholeArea ?
                             {height: this.state.questionsHeight,}
                             :
                             {},
@@ -137,6 +137,7 @@ class AreasOfSoreness extends Component {
                                     showWholeArea: !this.state.showWholeArea,
                                 }, () => {
                                     _.delay(() => {
+                                        handleAreaOfSorenessClick(false, false, true);
                                         if(this.state.showWholeArea) {
                                             scrollToArea(this._soreBodyPartRef);
                                         } else {
@@ -165,7 +166,7 @@ class AreasOfSoreness extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View onLayout={event => {this._soreBodyPartRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}} >
+                <View onLayout={event => {this._soreBodyPartRef = {x: event.nativeEvent.layout.x, y: (event.nativeEvent.layout.y + AppSizes.paddingLrg),}}} >
                     <Spacer size={this.state.showWholeArea ? AppSizes.paddingLrg : 0} />
                     { this.state.showWholeArea ?
                         _.map(groupedNewBodyPartMap, (object, key) => {

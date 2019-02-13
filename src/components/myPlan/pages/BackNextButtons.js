@@ -102,6 +102,7 @@ const BackNextButtons = ({
                         backgroundColor: AppColors.white,
                         borderColor:     AppColors.zeplin.yellow,
                         borderWidth:     1,
+                        marginLeft:      AppSizes.paddingMed,
                     }]}
                     underlayColor={AppColors.transparent}
                 >
@@ -127,6 +128,7 @@ const BackNextButtons = ({
                 style={[
                     AppStyles.paddingVerticalSml,
                     styles.submitBtn,
+                    showAddBtn ? {} : { marginRight: AppSizes.paddingMed, },
                     isValid ? {} : { borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, },
                     { backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white, }
                 ]}
@@ -152,7 +154,7 @@ const BackNextButtons = ({
                     backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white,
                     borderColor:     isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey,
                     borderWidth:     1,
-                    marginRight:     Platform.OS === 'ios' ? AppSizes.paddingXSml : (AppSizes.paddingXSml / 2),
+                    marginRight:     AppSizes.paddingMed,
                 }]}
                 underlayColor={AppColors.transparent}
             >

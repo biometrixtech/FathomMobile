@@ -98,17 +98,18 @@ const styles = StyleSheet.create({
 class ReadinessSurvey extends Component {
     constructor(props) {
         super(props);
+        const { user, } = this.props;
         this.state = {
             androidShowMoreOptions:  false,
             isActionButtonVisible:   false,
             isAppleHealthKitLoading: false,
+            isAppleHealthModalOpen:  !user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios',
             isCloseToBottom:         false,
             isSlideUpPanelExpanded:  true,
             isSlideUpPanelOpen:      false,
+            lockAlreadyTrainedBtn:   false,
+            lockTrainLaterBtn:       false,
             pageIndex:               0,
-
-            lockAlreadyTrainedBtn: false,
-            lockTrainLaterBtn:     false,
         };
         this.myActivityTargetComponents = [];
         this.myAreasOfSorenessComponent = {};
@@ -137,9 +138,13 @@ class ReadinessSurvey extends Component {
         const { dailyReadiness, healthKitWorkouts, } = this.props;
         let { isValid, pageNum, } = PlanLogic.handleReadinessSurveyNextPage(this.state, dailyReadiness, currentPage, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid);
         if(isValid) {
-            this.pages.scrollToPage(pageNum);
-            this.setState({ pageIndex: pageNum, });
+            this._updatePageIndex(pageNum);
         }
+    }
+
+    _updatePageIndex = pageNum => {
+        this.pages.scrollToPage(pageNum);
+        this.setState({ pageIndex: pageNum, });
     }
 
     _checkNextStep = (currentPage, isHealthKitValid) => {
@@ -221,11 +226,15 @@ class ReadinessSurvey extends Component {
     }
 
     _handleEnableAppleHealthKit = (firstTimeExperienceValue, healthKitFlag) => {
+        const { user, } = this.props;
         this.setState({ isAppleHealthKitLoading: true, });
-        AppUtil.getAppleHealthKitDataAsync(null, () => {
-            this.setState({ isAppleHealthKitLoading: false, });
-            this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue);
-            this.props.handleUpdateUserHealthKitFlag(healthKitFlag);
+        AppUtil.getAppleHealthKitDataAsync(user.id, user.health_sync_date, user.historic_health_sync_date);
+        AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date, () => {
+            this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue, () => {
+                this.props.handleUpdateUserHealthKitFlag(healthKitFlag, () => {
+                    this.setState({ isAppleHealthKitLoading: false, isAppleHealthModalOpen: false, });
+                });
+            });
         });
     }
 
@@ -836,11 +845,13 @@ class ReadinessSurvey extends Component {
                     >
                         <ProgressPill currentStep={3} totalSteps={3} />
                         <AreasOfSoreness
-                            handleAreaOfSorenessClick={(body, isAllGood) => {
-                                if(!isCloseToBottom) {
+                            handleAreaOfSorenessClick={(body, isAllGood, showFAB) => {
+                                if(!isCloseToBottom || (!body && showFAB)) {
                                     this.setState({ isActionButtonVisible: true, });
                                 }
-                                handleAreaOfSorenessClick(body, true, isAllGood);
+                                if(body) {
+                                    handleAreaOfSorenessClick(body, true, isAllGood);
+                                }
                             }}
                             handleFormChange={handleFormChange}
                             handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
@@ -902,7 +913,9 @@ class ReadinessSurvey extends Component {
                         <BackNextButtons
                             handleFormSubmit={() => handleFormSubmit()}
                             isValid={isFormValidItems.areAreasOfSorenessValid}
+                            onBackClick={() => this._updatePageIndex(pageIndex - 1)}
                             onNextClick={() => this._renderNextPage(9, isFormValidItems)}
+                            showBackBtn={true}
                             showSubmitBtn={true}
                         />
                     </ScrollView>

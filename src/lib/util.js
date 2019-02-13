@@ -356,15 +356,15 @@ const UTIL = {
                 daysAgo
                 : !lastSyncDate && historicSyncDate ?
                     historicSyncDate
-                    : moment(lastSyncDate).format('YYYY-MM-DD') === moment(historicSyncDate).format('YYYY-MM-DD') ?
+                    : lastSyncDate && historicSyncDate && moment(lastSyncDate, 'YYYY-MM-DDThh:mm:ssZ').format('YYYY-MM-DD') === moment(historicSyncDate, 'YYYY-MM-DDThh:mm:ssZ').format('YYYY-MM-DD') ?
                         lastSyncDate
                         :
                         historicSyncDate;
         return {
             daysAgo,
-            lastSync: updatedLastSyncDate ? moment(updatedLastSyncDate).toISOString() : null,
+            lastSync: updatedLastSyncDate ? moment(updatedLastSyncDate, 'YYYY-MM-DDThh:mm:ssZ').toISOString() : null,
             now:      moment().toISOString(),
-            syncDate: updatedLastSyncDate ? moment(updatedLastSyncDate).set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString() : null,
+            syncDate: updatedLastSyncDate ? moment(updatedLastSyncDate, 'YYYY-MM-DDThh:mm:ssZ').set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString() : null,
             today3AM: moment().set('hour', 3).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString(),
         };
     },
@@ -519,7 +519,7 @@ const UTIL = {
                 newWorkout.session_type = 6;
                 newWorkout.source = 1;
                 newWorkout.description = '';
-                newWorkout.duration = isAPI ? null : moment(workout.end).diff(workout.start, 'minutes');
+                newWorkout.duration = isAPI ? null : workout.duration && workout.duration > 0 ? _.floor(workout.duration / 60) : moment(workout.end).diff(workout.start, 'minutes');
                 newWorkout.deleted = false;
                 newWorkout.ignored = false;
                 newWorkout.hr_data = filteredHeartRateValues;

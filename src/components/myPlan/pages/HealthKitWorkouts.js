@@ -4,6 +4,7 @@
     <HealthKitWorkouts
         handleHealthDataFormChange={handleHealthDataFormChange}
         handleNextStep={() => this._checkNextStep(0)}
+        handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
         handleToggleSurvey={handleTogglePostSessionSurvey}
         scrollToArea={xyObject => {
             this._scrollTo(xyObject, this.scrollViewSportBuilderRef);
@@ -20,7 +21,7 @@ import { Image, Keyboard, StyleSheet, TouchableHighlight, TouchableOpacity, View
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
 import { Button, FormInput, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
-import { ScaleButton, } from './';
+import { ProgressPill, ScaleButton, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -48,21 +49,40 @@ class HealthKitWorkouts extends Component {
         this.textInput = {};
     }
 
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        if(prevProps.resetFirstPage !== this.props.resetFirstPage) {
+            this._resetStep(this.state.pageIndex);
+        }
+    }
+
+    _resetStep = pageIndex => {
+        const { handleHealthDataFormChange, } = this.props;
+        this.setState(
+            { showRPEPicker: false, },
+            () => {
+                handleHealthDataFormChange(pageIndex, 'deleted', false);
+                handleHealthDataFormChange(pageIndex, 'post_session_survey.RPE', null);
+                _.delay(() => this.props.scrollToArea({x: 0, y: 0}), 500);
+            }
+        );
+    }
+
     _renderNextPage = currentPage => {
         Keyboard.dismiss();
         let numberOfNonDeletedWorkouts = _.filter(this.props.workouts, ['deleted', false]);
         if(numberOfNonDeletedWorkouts.length === 0) {
-            this.props.handleToggleSurvey();
+            this.props.handleToggleSurvey(true);
         } else if((currentPage + 1) === this.props.workouts.length) {
             this.props.handleNextStep(true);
         } else {
-            _.delay(() =>
+            _.delay(() => {
                 this.setState({
                     isEditingDuration: false,
                     pageIndex:         (currentPage + 1),
                     showRPEPicker:     false,
-                })
-            , 500);
+                });
+                this.props.scrollToArea({x: 0, y: 0});
+            }, 500);
         }
     }
 
@@ -72,11 +92,17 @@ class HealthKitWorkouts extends Component {
     }
 
     render = () => {
-        const { handleHealthDataFormChange, scrollToArea, workouts, } = this.props;
+        const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, scrollToArea, workouts, } = this.props;
         const { isEditingDuration, pageIndex, showRPEPicker, } = this.state;
         let { partOfDay, sportDuration, sportImage, sportText, } = PlanLogic.handleHealthKitWorkoutPageRenderLogic(workouts[pageIndex]);
         return(
             <View style={{flex: 1,}}>
+                <ProgressPill
+                    currentStep={1}
+                    onBack={isPostSession && pageIndex > 0 ? () => this.setState({ pageIndex: (pageIndex - 1), }, () => this._resetStep(pageIndex)) : null}
+                    onClose={handleTogglePostSessionSurvey}
+                    totalSteps={isPostSession ? 2 : 3}
+                />
                 <Spacer size={20} />
                 <View style={{alignItems: 'center',}}>
                     <Image
@@ -222,14 +248,19 @@ class HealthKitWorkouts extends Component {
 }
 
 HealthKitWorkouts.propTypes = {
-    handleHealthDataFormChange: PropTypes.func.isRequired,
-    handleNextStep:             PropTypes.func.isRequired,
-    handleToggleSurvey:         PropTypes.func.isRequired,
-    scrollToArea:               PropTypes.func.isRequired,
-    workouts:                   PropTypes.array.isRequired,
+    handleHealthDataFormChange:    PropTypes.func.isRequired,
+    handleNextStep:                PropTypes.func.isRequired,
+    handleTogglePostSessionSurvey: PropTypes.func,
+    handleToggleSurvey:            PropTypes.func.isRequired,
+    isPostSession:                 PropTypes.bool,
+    scrollToArea:                  PropTypes.func.isRequired,
+    workouts:                      PropTypes.array.isRequired,
 };
 
-HealthKitWorkouts.defaultProps = {};
+HealthKitWorkouts.defaultProps = {
+    handleTogglePostSessionSurvey: null,
+    isPostSession:                 false,
+};
 
 HealthKitWorkouts.componentName = 'HealthKitWorkouts';
 

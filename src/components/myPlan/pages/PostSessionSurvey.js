@@ -49,6 +49,7 @@ class PostSessionSurvey extends Component {
             isSlideUpPanelExpanded: true,
             isSlideUpPanelOpen:     false,
             pageIndex:              0,
+            resetFirstPage:         false,
         };
         this.areasOfSorenessRef = {};
         this.myAreasOfSorenessComponent = {};
@@ -62,12 +63,32 @@ class PostSessionSurvey extends Component {
         this.sportScheduleBuilderRef = {};
     }
 
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        if((prevState.pageIndex === 2 || prevState.pageIndex === 1) && this.state.pageIndex === 0) {
+            this.setState({ resetFirstPage: true, });
+        }
+    }
+
     _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid) => {
         let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid);
         if(isValid) {
-            this.pages.scrollToPage(pageNum);
-            this.setState({ pageIndex: pageNum, });
+            this._updatePageIndex(pageNum);
         }
+    }
+
+    _renderPreviousPage = (currentPage) => {
+        const {
+            postSession,
+            soreBodyParts,
+        } = this.props;
+        let { newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
+        let { pageNum, } = PlanLogic.handlePostSessionSurveyPreviousPage(currentPage, newSoreBodyParts);
+        this._updatePageIndex(pageNum);
+    }
+
+    _updatePageIndex = pageNum => {
+        this.pages.scrollToPage(pageNum);
+        this.setState({ isActionButtonVisible: false, pageIndex: pageNum, });
     }
 
     _checkNextStep = (currentStep, isHealthKitValid) => {
@@ -100,10 +121,12 @@ class PostSessionSurvey extends Component {
         }, 500);
     }
 
-    _scrollToTop = (scrollViewRef) => {
-        _.delay(() => {
-            scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
-        }, 500);
+    _scrollToTop = scrollViewRef => {
+        if(scrollViewRef) {
+            _.delay(() => {
+                scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
+            }, 500);
+        }
     }
 
     _toggleSlideUpPanel = (isExpanded = true) => {
@@ -139,7 +162,7 @@ class PostSessionSurvey extends Component {
             typicalSessions,
             user,
         } = this.props;
-        const { isActionButtonVisible, isCloseToBottom, isSlideUpPanelExpanded, isSlideUpPanelOpen, pageIndex, } = this.state
+        const { isActionButtonVisible, isCloseToBottom, isSlideUpPanelExpanded, isSlideUpPanelOpen, pageIndex, resetFirstPage, } = this.state
         let { isFormValidItems, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, postSession.soreness);
         let isFABVisible = areaOfSorenessClicked && isActionButtonVisible && areaOfSorenessClicked.length > 0;
@@ -157,12 +180,20 @@ class PostSessionSurvey extends Component {
                         keyboardShouldPersistTaps={'always'}
                         ref={ref => {this.scrollViewSportBuilderRef = ref;}}
                     >
-                        <ProgressPill currentStep={1} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
+                        {/*<ProgressPill
+                            currentStep={1}
+                            // onBack={() => this._renderPreviousPage(0)}
+                            onClose={handleTogglePostSessionSurvey}
+                            totalSteps={2}
+                        />*/}
                         { healthKitWorkouts && healthKitWorkouts.length > 0 ?
                             <HealthKitWorkouts
                                 handleHealthDataFormChange={handleHealthDataFormChange}
                                 handleNextStep={isHealthKitValid => this._checkNextStep(0, isHealthKitValid)}
-                                handleToggleSurvey={handleFormSubmit}
+                                handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
+                                handleToggleSurvey={areAllDeleted => handleFormSubmit(areAllDeleted)}
+                                isPostSession={true}
+                                resetFirstPage={resetFirstPage}
                                 scrollToArea={xyObject => {
                                     this._scrollTo(xyObject, this.scrollViewSportBuilderRef);
                                 }}
@@ -176,9 +207,11 @@ class PostSessionSurvey extends Component {
                                         this._checkNextStep(0);
                                     }
                                 }}
+                                handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
                                 isPostSession={true}
                                 postSession={postSession}
                                 ref={ref => {this.sportScheduleBuilderRef = ref;}}
+                                resetFirstPage={resetFirstPage}
                                 scrollTo={() => null}
                                 scrollToArea={xyObject => {
                                     this._scrollTo(xyObject, this.scrollViewSportBuilderRef);
@@ -194,9 +227,14 @@ class PostSessionSurvey extends Component {
                         contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
                     >
-                        { pageIndex === 1 &&
+                        { newSoreBodyParts.length > 0 &&
                             <View style={{flex: 1,}}>
-                                <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
+                                <ProgressPill
+                                    currentStep={2}
+                                    onBack={() => this._renderPreviousPage(1)}
+                                    onClose={handleTogglePostSessionSurvey}
+                                    totalSteps={2}
+                                />
                                 { _.map(newSoreBodyParts, (bodyPart, i) =>
                                     <View
                                         key={i}
@@ -208,12 +246,11 @@ class PostSessionSurvey extends Component {
                                             firstTimeExperience={user.first_time_experience}
                                             handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                                 handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide, bodyPart.isClearCandidate);
-                                                if(shouldScroll && newSoreBodyParts.length !== (i + 1) && (newSoreBodyParts.length - 1) !== (i + 1)) {
-                                                    this._scrollTo(this.myPrevSorenessComponents[i + 1], this.scrollViewPrevSorenessRef);
-                                                } else if(shouldScroll) {
+                                                if(shouldScroll && newSoreBodyParts.length === (i + 1)) {
                                                     this._scrollToBottom(this.scrollViewPrevSorenessRef);
+                                                } else if(shouldScroll) {
+                                                    this._scrollTo(this.myPrevSorenessComponents[i + 1], this.scrollViewPrevSorenessRef);
                                                 }
-                                                this._checkNextStep(1);
                                             }}
                                             handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                                             isFirst={i === 0}
@@ -223,6 +260,11 @@ class PostSessionSurvey extends Component {
                                         />
                                     </View>
                                 )}
+                                <BackNextButtons
+                                    isValid={isFormValidItems.isPrevSorenessValid}
+                                    onNextClick={() => this._checkNextStep(1)}
+                                    showNextBtn={true}
+                                />
                             </View>
                         }
                     </ScrollView>
@@ -231,17 +273,25 @@ class PostSessionSurvey extends Component {
                         bounces={false}
                         contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         nestedScrollEnabled={true}
+                        onMomentumScrollEnd={event => this._scrollViewEndDrag(event)}
                         onScrollEndDrag={event => this._scrollViewEndDrag(event)}
                         overScrollMode={'never'}
                         ref={ref => {this.myAreasOfSorenessComponent = ref;}}
                     >
-                        <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
+                        <ProgressPill
+                            currentStep={2}
+                            onBack={() => this._renderPreviousPage(2)}
+                            onClose={handleTogglePostSessionSurvey}
+                            totalSteps={2}
+                        />
                         <AreasOfSoreness
-                            handleAreaOfSorenessClick={(body, isAllGood) => {
-                                if(!isCloseToBottom) {
+                            handleAreaOfSorenessClick={(body, isAllGood, showFAB) => {
+                                if(!isCloseToBottom || (!body && showFAB)) {
                                     this.setState({ isActionButtonVisible: true, });
                                 }
-                                handleAreaOfSorenessClick(body, false, isAllGood);
+                                if(body) {
+                                    handleAreaOfSorenessClick(body, false, isAllGood);
+                                }
                             }}
                             handleFormChange={handleFormChange}
                             handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
@@ -274,7 +324,12 @@ class PostSessionSurvey extends Component {
                         nestedScrollEnabled={true}
                         ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
                     >
-                        <ProgressPill currentStep={2} onClose={handleTogglePostSessionSurvey} totalSteps={2} />
+                        <ProgressPill
+                            currentStep={2}
+                            onBack={() => this._renderPreviousPage(3)}
+                            onClose={handleTogglePostSessionSurvey}
+                            totalSteps={2}
+                        />
                         {_.map(areaOfSorenessClicked, (area, i) => (
                             <View
                                 key={`AreasOfSoreness1${i}`}
