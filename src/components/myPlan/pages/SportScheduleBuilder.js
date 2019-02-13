@@ -2,6 +2,7 @@
  * SportScheduleBuilder
  *
     <SportScheduleBuilder
+        goBack={() => this._updatePageIndex(pageIndex - 1)}
         handleFormChange={this._handleFormChange}
         handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
         isPostSession={true}
@@ -130,7 +131,7 @@ class SportScheduleBuilder extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         if(prevProps.resetFirstPage !== this.props.resetFirstPage) {
-            this._resetStep();
+            this._resetStep(false);
         }
     }
 
@@ -138,36 +139,40 @@ class SportScheduleBuilder extends Component {
         this.setState({ step: newStep });
     }
 
-    _resetStep = () => {
+    _resetStep = resetWholeSelection => {
         const { handleFormChange, scrollToTop, } = this.props;
-        this.setState(
-            {
-                durationValueGroups: {
-                    hours:   0,
-                    minutes: 0,
-                    label:   1,
+        if(resetWholeSelection) {
+            this.setState(
+                {
+                    durationValueGroups: {
+                        hours:   0,
+                        minutes: 0,
+                        label:   1,
+                    },
+                    isFormValid:       false,
+                    pickerScrollCount: 0,
+                    step:              0,
+                    timeValueGroups:   {
+                        hours:   2,
+                        minutes: 2,
+                        amPM:    1,
+                    },
                 },
-                isFormValid:       false,
-                pickerScrollCount: 0,
-                step:              0,
-                timeValueGroups:   {
-                    hours:   2,
-                    minutes: 2,
-                    amPM:    1,
+                () => {
+                    handleFormChange('description', '');
+                    handleFormChange('duration', 0);
+                    handleFormChange('event_date', null);
+                    handleFormChange('post_session_survey.event_date', null);
+                    handleFormChange('session_type', null);
+                    handleFormChange('sport_name', null);
+                    handleFormChange('strength_and_conditioning_type', null);
+                    handleFormChange(this.props.isPostSession ? 'RPE' : 'post_session_survey.RPE', null);
                 },
-            },
-            () => {
-                handleFormChange('description', '');
-                handleFormChange('duration', 0);
-                handleFormChange('event_date', null);
-                handleFormChange('post_session_survey.event_date', null);
-                handleFormChange('session_type', null);
-                handleFormChange('sport_name', null);
-                handleFormChange('strength_and_conditioning_type', null);
-                handleFormChange(this.props.isPostSession ? 'RPE' : 'post_session_survey.RPE', null);
-                _.delay(() => scrollToTop(), 500);
-            },
-        );
+            );
+        } else {
+            handleFormChange(this.props.isPostSession ? 'RPE' : 'post_session_survey.RPE', null);
+        }
+        _.delay(() => scrollToTop(), 500);
     }
 
     _handleScrollFormChange = (stateIndex, name, data, selectedIndex) => {
@@ -200,6 +205,7 @@ class SportScheduleBuilder extends Component {
 
     render = () => {
         const {
+            goBack,
             handleFormChange,
             handleTogglePostSessionSurvey,
             isPostSession,
@@ -215,7 +221,7 @@ class SportScheduleBuilder extends Component {
             <View style={{flex: 1,}}>
                 <ProgressPill
                     currentStep={1}
-                    onBack={isPostSession && step === 1 ? () => this._resetStep() : null}
+                    onBack={step === 1 ? () => this._resetStep(true) : step === 0 && !isPostSession ? () => goBack() : null}
                     onClose={handleTogglePostSessionSurvey}
                     totalSteps={2}
                 />
@@ -495,6 +501,7 @@ class SportScheduleBuilder extends Component {
 }
 
 SportScheduleBuilder.propTypes = {
+    goBack:                        PropTypes.func,
     handleFormChange:              PropTypes.func.isRequired,
     handleTogglePostSessionSurvey: PropTypes.func,
     isPostSession:                 PropTypes.bool,
@@ -507,6 +514,7 @@ SportScheduleBuilder.propTypes = {
 };
 
 SportScheduleBuilder.defaultProps = {
+    goBack:                        () => null,
     handleTogglePostSessionSurvey: null,
     resetFirstPage:                false,
     isPostSession:                 false,

@@ -217,7 +217,7 @@ class PostSessionSurvey extends Component {
                             <SportScheduleBuilder
                                 handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                     handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
-                                    if(location === 'RPE' && value >= 0) {
+                                    if(location === 'RPE' && (value === 0 || value >= 1)) {
                                         this._checkNextStep(0);
                                     }
                                 }}
@@ -268,6 +268,7 @@ class PostSessionSurvey extends Component {
                                             }}
                                             handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                                             isFirst={i === 0}
+                                            isLast={i === (newSoreBodyParts.length - 1)}
                                             isPrevSoreness={true}
                                             surveyObject={postSession}
                                             toggleSlideUpPanel={this._toggleSlideUpPanel}
@@ -303,6 +304,9 @@ class PostSessionSurvey extends Component {
                                 if(!isCloseToBottom || (!body && showFAB)) {
                                     this.setState({ isActionButtonVisible: true, });
                                 }
+                                if(!body && isAllGood) {
+                                    this.setState({ isActionButtonVisible: false, });
+                                }
                                 if(body) {
                                     handleAreaOfSorenessClick(body, false, isAllGood);
                                 }
@@ -324,12 +328,24 @@ class PostSessionSurvey extends Component {
                         />
                         <BackNextButtons
                             handleFormSubmit={() => handleFormSubmit()}
-                            isValid={isFormValidItems.selectAreasOfSorenessValid}
+                            isValid={
+                                areaOfSorenessClicked.length > 0 ?
+                                    isFormValidItems.selectAreasOfSorenessValid
+                                    : this.areasOfSorenessRef && this.areasOfSorenessRef.state && this.areasOfSorenessRef.state.isAllGood ?
+                                        true
+                                        :
+                                        false
+                            }
                             onNextClick={() => {
                                 this.setState({ isActionButtonVisible: false, });
                                 this._renderNextPage(2, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked);
                             }}
-                            showSubmitBtn={areaOfSorenessClicked.length === 0}
+                            showSubmitBtn={
+                                (this.areasOfSorenessRef && this.areasOfSorenessRef.state && this.areasOfSorenessRef.state.showWholeArea) ?
+                                    false
+                                    :
+                                    true
+                            }
                         />
                     </ScrollView>
 
@@ -364,6 +380,7 @@ class PostSessionSurvey extends Component {
                                     }}
                                     handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
                                     isFirst={i === 0}
+                                    isLast={i === (newSoreBodyParts.length - 1)}
                                     surveyObject={postSession}
                                     toggleSlideUpPanel={this._toggleSlideUpPanel}
                                 />

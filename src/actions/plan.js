@@ -291,7 +291,7 @@ const noSessions = (user_id) => {
             myPlanData.daily_plans = [data.daily_plan];
             store.dispatch({
                 type: Actions.GET_MY_PLAN,
-                data: myPlanData,
+                data: myPlanData.daily_plans,
             });
             return Promise.resolve(data);
         }).catch(err => {
