@@ -86,7 +86,7 @@ class Tutorial extends Component {
         this.props.updateUser(payload, this.props.user.id);
         let newUserObj = _.cloneDeep(this.props.user);
         newUserObj.onboarding_status.push(Actions.currentParams.step);
-        AppUtil.routeOnLogin(newUserObj);
+        AppUtil.routeOnLogin(newUserObj, true);
     }
 
     _onSkip = () => {

@@ -147,8 +147,17 @@ const UTIL = {
         );
     },
 
-    routeOnLogin: (userObj) => {
+    routeOnLogin: (userObj, updateReducer = false) => {
         // WARNING: WORK IN PROGRESS
+        /*
+         * Update Reducer so we don't have to wait for API to return
+         */
+        if(updateReducer) {
+            store.dispatch({
+                type: DispatchActions.USER_REPLACE,
+                data: userObj,
+            });
+        }
         /*
          * Items to look at
          *  - email_verified
