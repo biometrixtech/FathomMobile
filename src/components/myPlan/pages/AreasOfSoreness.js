@@ -123,7 +123,7 @@ class AreasOfSoreness extends Component {
                                     showWholeArea: !this.state.showWholeArea,
                                 }, () => {
                                     _.delay(() => {
-                                        handleAreaOfSorenessClick(false, false, true);
+                                        handleAreaOfSorenessClick(false, false, true, true);
                                         if(this.state.showWholeArea) {
                                             scrollToArea(this._soreBodyPartRef);
                                         } else {

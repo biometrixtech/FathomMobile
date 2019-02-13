@@ -580,7 +580,7 @@ class ReadinessSurvey extends Component {
                             nestedScrollEnabled={true}
                             overScrollMode={'never'}
                             ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
-                            stickyHeaderIndices={[0]}
+                            // stickyHeaderIndices={[0]}
                         >
                             <ProgressPill
                                 currentStep={3}
@@ -636,7 +636,7 @@ class ReadinessSurvey extends Component {
                         onScrollEndDrag={event => this._scrollViewEndDrag(event)}
                         overScrollMode={'never'}
                         ref={ref => {this.myAreasOfSorenessComponent = ref;}}
-                        stickyHeaderIndices={[0]}
+                        // stickyHeaderIndices={[0]}
                     >
                         <ProgressPill
                             currentStep={3}
@@ -644,16 +644,14 @@ class ReadinessSurvey extends Component {
                             totalSteps={3}
                         />
                         <AreasOfSoreness
-                            handleAreaOfSorenessClick={(body, isAllGood, showFAB) => {
+                            handleAreaOfSorenessClick={(body, isAllGood, showFAB, resetSections) => {
                                 if(!isCloseToBottom || (!body && showFAB)) {
                                     this.setState({ isActionButtonVisible: true, });
                                 }
                                 if(!body && isAllGood) {
                                     this.setState({ isActionButtonVisible: false, });
                                 }
-                                if(body) {
-                                    handleAreaOfSorenessClick(body, true, isAllGood);
-                                }
+                                handleAreaOfSorenessClick(body, true, isAllGood, resetSections);
                             }}
                             handleFormChange={handleFormChange}
                             handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
@@ -694,7 +692,7 @@ class ReadinessSurvey extends Component {
                         contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         nestedScrollEnabled={true}
                         ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
-                        stickyHeaderIndices={[0]}
+                        // stickyHeaderIndices={[0]}
                     >
                         <ProgressPill
                             currentStep={3}
@@ -705,11 +703,12 @@ class ReadinessSurvey extends Component {
                             <View
                                 key={`AreasOfSoreness1${i}`}
                                 onLayout={event => {
+                                    // NOTE: BRING BACK WITH STICKY HEADER
                                     let yLocation = !(i === 0) && !(i === (areaOfSorenessClicked.length - 1)) ?
                                         (event.nativeEvent.layout.y - ((AppSizes.statusBarHeight + AppSizes.progressPillsHeight)))
                                         :
                                         event.nativeEvent.layout.y;
-                                    this.myClickedSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: yLocation, height: event.nativeEvent.layout.height,};
+                                    this.myClickedSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,};
                                 }}
                             >
                                 <SoreBodyPart
@@ -719,9 +718,9 @@ class ReadinessSurvey extends Component {
                                     handleFormChange={handleFormChange}
                                     handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                         handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
-                                        if(shouldScroll && (i + 1) === (areaOfSorenessClicked.length - 1)) {
+                                        if(!(i === (areaOfSorenessClicked.length - 1)) && shouldScroll && (i + 1) === (areaOfSorenessClicked.length - 1)) {
                                             this._scrollToBottom(this.scrollViewClickedSorenessRef);
-                                        } else if(shouldScroll) {
+                                        } else if(!(i === (areaOfSorenessClicked.length - 1)) && shouldScroll) {
                                             this._scrollTo(this.myClickedSorenessComponents[i + 1], this.scrollViewClickedSorenessRef);
                                         }
                                     }}

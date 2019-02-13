@@ -110,11 +110,14 @@ const PlanLogic = {
       * Updates to the state when the area of soreness is clicked on daily readiness & post session forms
       * - MyPlan
       */
-    handleAreaOfSorenessClick: (stateObject, areaClicked, isAllGood, soreBodyPartsPlan) => {
+    handleAreaOfSorenessClick: (stateObject, areaClicked, isAllGood, soreBodyPartsPlan, resetSections) => {
         // setup varibles
         let newSorenessFields = _.cloneDeep(stateObject.soreness);
         // logic
-        if(!areaClicked && isAllGood) {
+        if(resetSections) {
+            let combinedSoreBodyParts = PlanLogic.handleNewSoreBodyPartLogic(soreBodyPartsPlan);
+            newSorenessFields = combinedSoreBodyParts;
+        } else if(!areaClicked && isAllGood) {
             let combinedSoreBodyParts = PlanLogic.handleNewSoreBodyPartLogic(soreBodyPartsPlan);
             let soreBodyParts = _.filter(stateObject.soreness, stateObjectSoreBodyPart => {
                 let isPrev = _.filter(combinedSoreBodyParts, o => o.body_part === stateObjectSoreBodyPart.body_part && o.side === stateObjectSoreBodyPart.side).length > 0;

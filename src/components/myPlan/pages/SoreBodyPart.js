@@ -106,13 +106,22 @@ class SoreBodyPart extends Component {
         let isBodyPartJoint = bodyPartGroup === 'joint';
         let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
         let backNextHeight = ((AppSizes.backNextButtonsHeight) + (AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed));
+        // NOTE: BRING BACK WITH STICKY HEADER
+        /*
+        height: (isFirst && isLast) || (!isFirst && isLast) ?
+            (AppSizes.screen.height - (pillsHeight + backNextHeight))
+            :
+            (AppSizes.screen.height - pillsHeight),
+        */
         return(
             <View
                 style={{
-                    height: (isFirst && isLast) || (!isFirst && isLast) ?
-                        (AppSizes.screen.height - (pillsHeight + backNextHeight))
-                        :
-                        (AppSizes.screen.height - pillsHeight),
+                    height: isFirst && !isLast ?
+                        (AppSizes.screen.height - pillsHeight)
+                        : !isFirst && isLast ?
+                            (AppSizes.screen.height - backNextHeight)
+                            :
+                            AppSizes.screen.height,
                     justifyContent: 'center',
                 }}
             >
