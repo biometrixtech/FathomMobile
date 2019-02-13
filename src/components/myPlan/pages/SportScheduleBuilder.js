@@ -131,7 +131,6 @@ class SportScheduleBuilder extends Component {
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         if(prevProps.resetFirstPage !== this.props.resetFirstPage) {
             this._resetStep();
-            _.delay(() => this.props.scrollToTop(), 500);
         }
     }
 
@@ -140,6 +139,7 @@ class SportScheduleBuilder extends Component {
     }
 
     _resetStep = () => {
+        const { handleFormChange, scrollToTop, } = this.props;
         this.setState(
             {
                 durationValueGroups: {
@@ -157,13 +157,15 @@ class SportScheduleBuilder extends Component {
                 },
             },
             () => {
-                this.props.handleFormChange('description', '');
-                this.props.handleFormChange('duration', 0);
-                this.props.handleFormChange('event_date', null);
-                this.props.handleFormChange('post_session_survey.event_date', null);
-                this.props.handleFormChange('session_type', null);
-                this.props.handleFormChange('sport_name', null);
-                this.props.handleFormChange('strength_and_conditioning_type', null);
+                handleFormChange('description', '');
+                handleFormChange('duration', 0);
+                handleFormChange('event_date', null);
+                handleFormChange('post_session_survey.event_date', null);
+                handleFormChange('session_type', null);
+                handleFormChange('sport_name', null);
+                handleFormChange('strength_and_conditioning_type', null);
+                handleFormChange(this.props.isPostSession ? 'RPE' : 'post_session_survey.RPE', null);
+                _.delay(() => scrollToTop(), 500);
             },
         );
     }
@@ -213,7 +215,7 @@ class SportScheduleBuilder extends Component {
             <View style={{flex: 1,}}>
                 <ProgressPill
                     currentStep={1}
-                    // onBack={() => this._renderPreviousPage(0)}
+                    onBack={isPostSession && step === 1 ? () => this._resetStep() : null}
                     onClose={handleTogglePostSessionSurvey}
                     totalSteps={2}
                 />
@@ -295,16 +297,21 @@ class SportScheduleBuilder extends Component {
                                 :
                                 null
                             }
+
                         </View>
                     </View>
                     : step === 1 ?
                         <View>
                             <Spacer size={20} />
                             <View style={{alignItems: 'center',}}>
-                                <Image
-                                    source={sportImage}
-                                    style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, shadowRadius: 6, tintColor: AppColors.zeplin.seaBlue, width: AppSizes.screen.widthThird,}]}
-                                />
+                                { sportImage ?
+                                    <Image
+                                        source={sportImage}
+                                        style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, shadowRadius: 6, tintColor: AppColors.zeplin.seaBlue, width: AppSizes.screen.widthThird,}]}
+                                    />
+                                    :
+                                    null
+                                }
                             </View>
                             <Spacer size={20} />
                             <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(32),}]}>

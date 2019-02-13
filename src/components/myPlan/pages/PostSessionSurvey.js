@@ -84,11 +84,31 @@ class PostSessionSurvey extends Component {
         let { newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
         let { pageNum, } = PlanLogic.handlePostSessionSurveyPreviousPage(currentPage, newSoreBodyParts);
         this._updatePageIndex(pageNum);
+        this._resetStep(currentPage);
     }
 
     _updatePageIndex = pageNum => {
         this.pages.scrollToPage(pageNum);
         this.setState({ isActionButtonVisible: false, pageIndex: pageNum, });
+    }
+
+    _resetStep = currentStep => {
+        const { handleFormChange, handleHealthDataFormChange, healthKitWorkouts, } = this.props;
+        if(currentStep === 1 && healthKitWorkouts && healthKitWorkouts.length > 0) { // reset last index of AppleHealthKit
+            let lastHealthKitIndex = _.findLastIndex(healthKitWorkouts);
+            handleHealthDataFormChange(lastHealthKitIndex, 'deleted', false);
+            handleHealthDataFormChange(lastHealthKitIndex, 'post_session_survey.RPE', null);
+        } else if(currentStep === 1 || (healthKitWorkouts && healthKitWorkouts.length === 0)) { // reset SportScheduleBuilder
+            this.sportScheduleBuilderRef._resetStep();
+            handleFormChange('description', '');
+            handleFormChange('duration', 0);
+            handleFormChange('event_date', null);
+            handleFormChange('post_session_survey.event_date', null);
+            handleFormChange('session_type', null);
+            handleFormChange('sport_name', null);
+            handleFormChange('strength_and_conditioning_type', null);
+            handleFormChange(this.props.isPostSession ? 'RPE' : 'post_session_survey.RPE', null);
+        }
     }
 
     _checkNextStep = (currentStep, isHealthKitValid) => {
@@ -180,12 +200,6 @@ class PostSessionSurvey extends Component {
                         keyboardShouldPersistTaps={'always'}
                         ref={ref => {this.scrollViewSportBuilderRef = ref;}}
                     >
-                        {/*<ProgressPill
-                            currentStep={1}
-                            // onBack={() => this._renderPreviousPage(0)}
-                            onClose={handleTogglePostSessionSurvey}
-                            totalSteps={2}
-                        />*/}
                         { healthKitWorkouts && healthKitWorkouts.length > 0 ?
                             <HealthKitWorkouts
                                 handleHealthDataFormChange={handleHealthDataFormChange}
