@@ -22,6 +22,10 @@ const progressPillHeight = AppSizes.progressPillsHeight;
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    mainWrapper: {
+        backgroundColor: AppColors.zeplin.progressPillBackground,
+        height:          (progressPillHeight + AppSizes.statusBarHeight),
+    },
     progressPill: {
         backgroundColor: AppColors.border,
         borderRadius:    5,
@@ -64,7 +68,9 @@ const ProgressPill = ({
         );
     }
     return(
-        <View style={{backgroundColor: AppColors.zeplin.progressPillBackground, height: (progressPillHeight + AppSizes.statusBarHeight),}}>
+        <View
+            style={[styles.mainWrapper,]}
+        >
             <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
             <View style={{flex: 1, flexDirection: 'row',}}>
                 <View style={{flex: 1, justifyContent: 'center',}}>

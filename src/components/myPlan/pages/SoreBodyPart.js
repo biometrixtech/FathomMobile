@@ -104,10 +104,15 @@ class SoreBodyPart extends Component {
         let showScaleButtons = bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint');
         let showWhatsTheDifferenceLink = bodyPartGroup && bodyPartGroup === 'muscle';
         let isBodyPartJoint = bodyPartGroup === 'joint';
+        let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
+        let backNextHeight = ((AppSizes.backNextButtonsHeight) + (AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed));
         return(
             <View
                 style={{
-                    height:         isFirst ? (AppSizes.screen.height - (AppSizes.statusBarHeight + AppSizes.progressPillsHeight)) : isLast ? (AppSizes.screen.height - 60) : AppSizes.screen.height,
+                    height: (isFirst && isLast) || (!isFirst && isLast) ?
+                        (AppSizes.screen.height - (pillsHeight + backNextHeight))
+                        :
+                        (AppSizes.screen.height - pillsHeight),
                     justifyContent: 'center',
                 }}
             >

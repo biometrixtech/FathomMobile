@@ -443,10 +443,10 @@ export default {
     },
     backNextCircleButtons: {
         alignSelf:      'center',
-        borderRadius:   55 / 2,
-        height:         55,
+        borderRadius:   Sizes.backNextButtonsHeight / 2,
+        height:         Sizes.backNextButtonsHeight,
         justifyContent: 'center',
-        width:          55,
+        width:          Sizes.backNextButtonsHeight,
     },
     allGoodBtn: {
         alignSelf:      'center',

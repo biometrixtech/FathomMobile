@@ -285,6 +285,7 @@ class SportScheduleBuilder extends Component {
                                                     this._nextStep(1);
                                                     handleFormChange('sport_name', activity.index);
                                                     handleFormChange('session_type', 6);
+                                                    _.delay(() => scrollToTop(),500);
                                                 }}
                                                 style={[
                                                     (i+1) === activityItems.length ? {} : {borderBottomColor: AppColors.zeplin.shadow, borderBottomWidth: 1,},
