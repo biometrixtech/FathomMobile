@@ -104,8 +104,8 @@ class ReadinessSurvey extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
-        if(prevState.pageIndex === 2 && this.state.pageIndex === 1) {
-            this.setState({ resetHealthKitFirstPage: true, });
+        if(this.state.pageIndex === 1 && prevState.pageIndex !== this.state.pageIndex) { // reset HealthKit
+            this.setState({ resetHealthKitFirstPage: true, }, () => this.setState({ resetHealthKitFirstPage: false, }));
         }
     }
 

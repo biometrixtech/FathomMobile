@@ -677,7 +677,7 @@ const PlanLogic = {
             pageNum = !healthKitWorkouts && dailyReadiness.already_trained_number ?
                 (pageState.pageIndex - 1)
                 :
-                2;
+                1;
         } else if(currentPage === 5) { // 5. Follow Up Pain & Soreness
             pageNum = (pageState.pageIndex - 1);
             isTrainLater = true;
