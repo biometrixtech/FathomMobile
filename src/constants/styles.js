@@ -396,13 +396,14 @@ export default {
 
     // Activity Indicator
     activityIndicator: {
-        position:       'absolute',
+        alignItems:     'center',
+        bottom:         0,
+        height:         (Sizes.screen.height - (Sizes.navbarHeight + Sizes.statusBarHeight + Sizes.tabbarHeight)),
+        justifyContent: 'center',
         left:           0,
+        position:       'absolute',
         right:          0,
         top:            0,
-        bottom:         0,
-        alignItems:     'center',
-        justifyContent: 'center'
     },
     continueButton: {
         ...Fonts.oswaldBold,
@@ -442,10 +443,10 @@ export default {
     },
     backNextCircleButtons: {
         alignSelf:      'center',
-        borderRadius:   55 / 2,
-        height:         55,
+        borderRadius:   Sizes.backNextButtonsHeight / 2,
+        height:         Sizes.backNextButtonsHeight,
         justifyContent: 'center',
-        width:          55,
+        width:          Sizes.backNextButtonsHeight,
     },
     allGoodBtn: {
         alignSelf:      'center',

@@ -110,11 +110,14 @@ const PlanLogic = {
       * Updates to the state when the area of soreness is clicked on daily readiness & post session forms
       * - MyPlan
       */
-    handleAreaOfSorenessClick: (stateObject, areaClicked, isAllGood, soreBodyPartsPlan) => {
+    handleAreaOfSorenessClick: (stateObject, areaClicked, isAllGood, soreBodyPartsPlan, resetSections) => {
         // setup varibles
         let newSorenessFields = _.cloneDeep(stateObject.soreness);
         // logic
-        if(!areaClicked && isAllGood) {
+        if(resetSections) {
+            let combinedSoreBodyParts = PlanLogic.handleNewSoreBodyPartLogic(soreBodyPartsPlan);
+            newSorenessFields = combinedSoreBodyParts;
+        } else if(!areaClicked && isAllGood) {
             let combinedSoreBodyParts = PlanLogic.handleNewSoreBodyPartLogic(soreBodyPartsPlan);
             let soreBodyParts = _.filter(stateObject.soreness, stateObjectSoreBodyPart => {
                 let isPrev = _.filter(combinedSoreBodyParts, o => o.body_part === stateObjectSoreBodyPart.body_part && o.side === stateObjectSoreBodyPart.side).length > 0;
@@ -621,47 +624,76 @@ const PlanLogic = {
       * - ReadinessSurvey
       */
     // TODO: UNIT TEST ME
-    handleReadinessSurveyNextPage: (pageState, dailyReadiness, currentPage, isFormValidItems, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid) => {
+    handleReadinessSurveyNextPage: (pageState, dailyReadiness, currentPage, isFormValidItems, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid) => {
         let pageNum = 0;
         let isValid = false;
         if(currentPage === 0) { // 0. Begin
-            pageNum = isFirstFunctionalStrength ? 1 : healthKitWorkouts && healthKitWorkouts.length > 0 ? 2 : 3;
+            pageNum = healthKitWorkouts && healthKitWorkouts.length > 0 ? 1 : 2;
             isValid = true;
-        } else if(currentPage === 1) { // 1. first fs
-            pageNum = healthKitWorkouts && healthKitWorkouts.length > 0 ? 2 : 3;
-            isValid = isFormValidItems.isFunctionalStrengthValid;
-        } else if(currentPage === 2) { // 2. Apple HealthKit (xN)
+        } else if(currentPage === 1) { // 1. Apple HealthKit (xN)
             pageNum = 5;
             isValid = isHealthKitValid;
-        } else if(currentPage === 3) { // 3. trained already
-            pageNum = dailyReadiness.already_trained_number === false ? 5 : 4;
+        } else if(currentPage === 2) { // 2. trained already
+            pageNum = dailyReadiness.already_trained_number === false ? 4 : 3;
             isValid = isFormValidItems.isTrainedTodayValid;
-        } else if(currentPage === 4) { // 4. SportScheduleBuilder & RPE (xN)
+        } else if(currentPage === 3) { // 3. SportScheduleBuilder & RPE (xN)
             pageNum = (pageState.pageIndex + 1);
             isValid = true; // can only click if form is valid
-        } else if(currentPage === 5) { // 5. train later?
-            pageNum = isSecondFunctionalStrength ?
+        } else if(currentPage === 4) { // 4. train later?
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ?
                 (pageState.pageIndex + 1)
-                : (newSoreBodyParts && newSoreBodyParts.length > 0) ?
-                    (pageState.pageIndex + 2)
-                    :
-                    (pageState.pageIndex + 3);
+                :
+                (pageState.pageIndex + 2);
             isValid = isFormValidItems.willTrainLaterValid;
-        } else if(currentPage === 6) { // 6. second fs
-            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? (pageState.pageIndex + 1) : (pageState.pageIndex + 2);
-            isValid = isFormValidItems.isSecondFunctionalStrengthValid;
-        } else if(currentPage === 7) { // 7. Follow Up Pain & Soreness
+        } else if(currentPage === 5) { // 5. Follow Up Pain & Soreness
             pageNum = (pageState.pageIndex + 1);
             isValid = isFormValidItems.isPrevSorenessValid;
-        } else if(currentPage === 8) { // 8. Areas of Soreness
+        } else if(currentPage === 6) { // 6. Areas of Soreness
             pageNum = (pageState.pageIndex + 1);
             isValid = isFormValidItems.selectAreasOfSorenessValid;
-        } else if(currentPage === 9) { // 9. Areas of Soreness Selected
+        } else if(currentPage === 7) { // 7. Areas of Soreness Selected
             pageNum = (pageState.pageIndex);
             isValid = isFormValidItems.areAreasOfSorenessValid;
         }
         return {
             isValid,
+            pageNum,
+        };
+    },
+
+    /**
+      * Previous Page & Validation Logic
+      * - ReadinessSurvey
+      */
+    // TODO: UNIT TEST ME
+    handleReadinessSurveyPreviousPage: (pageState, currentPage, newSoreBodyParts, healthKitWorkouts, dailyReadiness) => {
+        let pageNum = 0;
+        let isTrainLater = false;
+        if(currentPage === 2) { // 2. trained already
+            pageNum = 1;
+        } else if(currentPage === 3) { // 3. SportScheduleBuilder & RPE (xN)
+            pageNum = 2;
+        } else if(currentPage === 4) { // 4. train later?
+            pageNum = !healthKitWorkouts && dailyReadiness.already_trained_number ?
+                (pageState.pageIndex - 1)
+                :
+                2;
+        } else if(currentPage === 5) { // 5. Follow Up Pain & Soreness
+            pageNum = (pageState.pageIndex - 1);
+            isTrainLater = true;
+        } else if(currentPage === 6) { // 6. Areas of Soreness
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ?
+                (pageState.pageIndex - 1)
+                :
+                (pageState.pageIndex - 2);
+            isTrainLater = !(newSoreBodyParts && newSoreBodyParts.length > 0);
+        } else if(currentPage === 7) { // 7. Areas of Soreness Selected
+            pageNum = 6;
+        } else {
+            pageNum = currentPage;
+        }
+        return {
+            isTrainLater,
             pageNum,
         };
     },
@@ -688,6 +720,27 @@ const PlanLogic = {
         }
         return {
             isValid,
+            pageNum,
+        };
+    },
+
+    /**
+      * Previous Page & Validation Logic
+      * - PostSessionSurvey
+      */
+    // TODO: UNIT TEST ME
+    handlePostSessionSurveyPreviousPage: (currentPage, newSoreBodyParts) => {
+        let pageNum = 0;
+        if(currentPage === 0) { // 0. Apple HealthKit (xN) OR Session + RPE/Duration
+            pageNum = 0;
+        } else if(currentPage === 1) { // 1. Follow Up Pain & Soreness
+            pageNum = 0;
+        } else if(currentPage === 2) { // 2. Areas of Soreness
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 1 : 0;
+        } else if(currentPage === 3) { // 3. Areas of Soreness Selected
+            pageNum = 2;
+        }
+        return {
             pageNum,
         };
     },

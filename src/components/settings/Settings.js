@@ -430,7 +430,7 @@ class Settings extends Component {
                         :
                         null
                 }
-                { Platform.OS === 'ios' ?
+                {/* Platform.OS === 'ios' ?
                     <ListItem
                         chevronColor={AppColors.black}
                         containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
@@ -441,11 +441,6 @@ class Settings extends Component {
                                 size={24}
                                 type={'material-community'}
                             />
-                        }
-                        onPress={() =>
-                            this.props.logout(this.props.user.id)
-                                .then(() => {Actions.start();})
-                                .catch(err => this._handleLogoutAlert(err))
                         }
                         rightIcon={
                             <Switch
@@ -458,7 +453,7 @@ class Settings extends Component {
                     />
                     :
                     null
-                }
+                */}
                 <ListItem
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}

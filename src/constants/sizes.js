@@ -53,6 +53,8 @@ export default {
 
     progressPillsHeight: screenHeight * 0.08,
 
+    backNextButtonsHeight: 55,
+
     padding:     20,
     paddingLrg:  30,
     paddingXLrg: 50,

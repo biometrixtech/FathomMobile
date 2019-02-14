@@ -19,7 +19,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
@@ -53,19 +53,10 @@ class AreasOfSoreness extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isAllGood:       false,
-            showWholeArea:   false,
-            questionsHeight: null,
+            isAllGood:     false,
+            showWholeArea: false,
         };
         this._soreBodyPartRef = {};
-    }
-
-    _resizeModal = ev => {
-        let oldHeight = this.state.questionsHeight;
-        let newHeight = parseInt(ev.nativeEvent.layout.height, 10);
-        if(oldHeight !== newHeight && newHeight < AppSizes.screen.height) {
-            this.setState({ questionsHeight: newHeight });
-        }
     }
 
     render = () => {
@@ -84,16 +75,11 @@ class AreasOfSoreness extends Component {
             <View
                 style={{flex: 1, flexDirection: 'column', justifyContent: 'center',}}
             >
-                <View
-                    onLayout={ev => this._resizeModal(ev)}
-                    style={[
-                        this.state.questionsHeight ?
-                            {height: this.state.questionsHeight,}
-                            :
-                            {},
-                        {flex: 1, justifyContent: 'center',}
-                    ]}
-                >
+                <View style={{
+                    flex:           1,
+                    height:         (AppSizes.screen.height - (AppSizes.statusBarHeight + AppSizes.progressPillsHeight + ((AppSizes.backNextButtonsHeight) + (AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed)))),
+                    justifyContent: 'center',
+                }}>
                     <Spacer size={AppSizes.padding} />
                     <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{headerTitle}</Text>
                     <Spacer size={AppSizes.padding} />
@@ -137,6 +123,7 @@ class AreasOfSoreness extends Component {
                                     showWholeArea: !this.state.showWholeArea,
                                 }, () => {
                                     _.delay(() => {
+                                        handleAreaOfSorenessClick(false, false, true, true);
                                         if(this.state.showWholeArea) {
                                             scrollToArea(this._soreBodyPartRef);
                                         } else {
