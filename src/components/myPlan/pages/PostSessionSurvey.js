@@ -246,11 +246,12 @@ class PostSessionSurvey extends Component {
                                 <View
                                     key={i}
                                     onLayout={event => {
+                                        // NOTE: BRING BACK WITH STICKY HEADER
                                         let yLocation = !(i === 0) && !(i === (newSoreBodyParts.length - 1)) ?
                                             (event.nativeEvent.layout.y - ((AppSizes.statusBarHeight + AppSizes.progressPillsHeight)))
                                             :
                                             event.nativeEvent.layout.y;
-                                        this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: yLocation};
+                                        this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y};
                                     }}
                                 >
                                     <SoreBodyPart

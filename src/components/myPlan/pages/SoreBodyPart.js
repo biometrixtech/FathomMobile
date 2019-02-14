@@ -125,10 +125,6 @@ class SoreBodyPart extends Component {
                                 :
                                 (AppSizes.screen.height),
                     justifyContent: 'center',
-                    paddingBottom:  isFirst && !isLast ?
-                        pillsHeight
-                        :
-                        0,
                 }}
             >
                 { bodyPart.isClearCandidate ?
@@ -366,7 +362,7 @@ class SoreBodyPart extends Component {
                             null
                     }
                 </View>
-                <Spacer size={isFirst ? (AppSizes.progressPillsHeight + AppSizes.statusBarHeight) : 0} />
+                <Spacer size={isFirst && !isLast ? pillsHeight : 0} />
             </View>
         )
     }
