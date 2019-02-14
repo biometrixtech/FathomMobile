@@ -115,7 +115,7 @@ class HealthKitWorkouts extends Component {
             >
                 <ProgressPill
                     currentStep={1}
-                    onBack={pageIndex > 0 ? () => this.setState({ pageIndex: (pageIndex - 1), }, () => this._resetStep(pageIndex)) : null}
+                    onBack={pageIndex > 0 ? () => this.setState({ pageIndex: (pageIndex - 1), }, () => this._resetStep(this.state.pageIndex)) : null}
                     onClose={handleTogglePostSessionSurvey}
                     totalSteps={isPostSession ? 2 : 3}
                 />
