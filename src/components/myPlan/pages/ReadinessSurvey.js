@@ -770,12 +770,12 @@ class ReadinessSurvey extends Component {
                     toggleSlideUpPanel={isExpanded => this._toggleSlideUpPanel(isExpanded)}
                 />
 
-                {/*<EnableAppleHealthKit
+                <EnableAppleHealthKit
                     handleSkip={value => handleUpdateFirstTimeExperience(value)}
                     handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
                     isLoading={this.state.isAppleHealthKitLoading}
                     isModalOpen={!user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios'}
-                />*/}
+                />
 
             </View>
         )
