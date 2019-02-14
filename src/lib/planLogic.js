@@ -631,7 +631,7 @@ const PlanLogic = {
             pageNum = healthKitWorkouts && healthKitWorkouts.length > 0 ? 1 : 2;
             isValid = true;
         } else if(currentPage === 1) { // 1. Apple HealthKit (xN)
-            pageNum = 5;
+            pageNum = 4;
             isValid = isHealthKitValid;
         } else if(currentPage === 2) { // 2. trained already
             pageNum = dailyReadiness.already_trained_number === false ? 4 : 3;
