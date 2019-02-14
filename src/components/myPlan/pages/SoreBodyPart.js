@@ -126,7 +126,7 @@ class SoreBodyPart extends Component {
                                 (AppSizes.screen.height),
                     justifyContent: 'center',
                     paddingBottom:  isFirst && !isLast ?
-                        backNextHeight
+                        pillsHeight
                         :
                         0,
                 }}
