@@ -64,7 +64,10 @@ class PostSessionSurvey extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         if((prevState.pageIndex === 2 || prevState.pageIndex === 1) && this.state.pageIndex === 0) {
-            this.setState({ resetFirstPage: true, });
+            this.setState(
+                { resetFirstPage: true, },
+                () => this.setState({ resetFirstPage: false, }),
+            );
         }
     }
 
@@ -187,25 +190,6 @@ class PostSessionSurvey extends Component {
                     startPlay={pageIndex}
                 >
 
-                    {/*
-                    <View key={index} style={{flex: 1,}}>
-                        <SportScheduleBuilder
-                            backNextButtonOptions={{
-                                isValid:  isRPEValid && isSportValid,
-                                onBack:   () => this._addSession(),
-                                onSubmit: () => this._checkNextStep(3),
-                            }}
-                            goBack={() => this._handleSportScheduleBuilderGoBack(index)}
-                            handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                handleFormChange(`sessions[${index}].${location}`, value, isPain, bodyPartMapIndex, bodyPartSide);
-                            }}
-                            postSession={session}
-                            ref={ref => {this.sportScheduleBuilderRefs[index] = ref;}}
-                            resetFirstPage={resetSportBuilderFirstPage}
-                            typicalSessions={typicalSessions}
-                        />
-                    </View>
-                    */}
                     <View style={{flex: 1,}}>
                         { healthKitWorkouts && healthKitWorkouts.length > 0 ?
                             <HealthKitWorkouts

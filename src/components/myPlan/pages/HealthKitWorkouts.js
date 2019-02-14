@@ -48,7 +48,7 @@ class HealthKitWorkouts extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
-        if(prevProps.resetFirstPage !== this.props.resetFirstPage) {
+        if(prevProps.resetFirstPage !== this.props.resetFirstPage && this.props.resetFirstPage) {
             this._resetStep(this.state.pageIndex);
         }
     }
@@ -115,7 +115,7 @@ class HealthKitWorkouts extends Component {
             >
                 <ProgressPill
                     currentStep={1}
-                    onBack={isPostSession && pageIndex > 0 ? () => this.setState({ pageIndex: (pageIndex - 1), }, () => this._resetStep(pageIndex)) : null}
+                    onBack={pageIndex > 0 ? () => this.setState({ pageIndex: (pageIndex - 1), }, () => this._resetStep(pageIndex)) : null}
                     onClose={handleTogglePostSessionSurvey}
                     totalSteps={isPostSession ? 2 : 3}
                 />
