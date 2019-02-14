@@ -47,86 +47,81 @@ const EnableAppleHealthKit = ({
     handleSkip,
     isLoading,
     isModalOpen,
-}) => {
-    if(isModalOpen) {
-        return(
-            <Modal
-                backdropColor={AppColors.transparent}
-                backdropOpacity={1}
-                backdropPressToClose={false}
-                coverScreen={true}
-                isOpen={true}
-                swipeToClose={false}
-                useNativeDriver={false}
+}) => (
+    <Modal
+        backdropColor={AppColors.transparent}
+        backdropOpacity={1}
+        backdropPressToClose={false}
+        coverScreen={true}
+        isOpen={isModalOpen}
+        swipeToClose={false}
+        useNativeDriver={false}
+    >
+        <View style={{flex: 1,}}>
+            <ImageBackground
+                source={require('../../../assets/images/standard/start_page_background.png')}
+                style={[styles.imageBackgroundStyle]}
             >
-                <View style={{flex: 1,}}>
-                    <ImageBackground
-                        source={require('../../../assets/images/standard/start_page_background.png')}
-                        style={[styles.imageBackgroundStyle]}
-                    >
-                        <LinearGradient
-                            colors={['#ffffff00', 'white']}
-                            start={{x: 0.0, y: 0.0}}
-                            end={{x: 0.0, y: 0.1}}
-                            style={[styles.linearGradientStyle]}
-                        >
-                            <View style={{flex: 1, justifyContent: 'space-between',}}>
-                                <View style={{flex: 1,}}>
-                                    <TouchableHighlight
-                                        onPress={() => isLoading ? null : handleSkip('apple_healthkit')}
-                                        underlayColor={AppColors.transparent}
-                                    >
-                                        <Text robotoBold style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15), textAlign: 'right',}}>{'Skip'}</Text>
-                                    </TouchableHighlight>
-                                </View>
-                                <View style={{flex: 9, justifyContent: 'space-between', paddingVertical: AppSizes.padding,}}>
-                                    <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'APPLE HEALTH'}</Text>
-                                    <Spacer size={AppSizes.paddingSml} />
-                                    <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'Sync with Apple Health to improve recovery recommendations by tracking your workouts.\n\nPlease tap \'All Categories On\' to allow.'}</Text>
-                                    <Spacer size={AppSizes.paddingSml} />
-                                    <View style={{flex: 6, paddingVertical: AppSizes.paddingSml,}}>
-                                        <ImageBackground
-                                            imageStyle={{resizeMode: 'contain',}}
-                                            source={require('../../../assets/images/standard/HealthKit_iOS.png')}
-                                            style={[{height: '100%', marginHorizontal: AppSizes.padding,}]}
-                                        >
-                                            <LinearGradient
-                                                colors={['#ffffff00', 'white']}
-                                                start={{x: 0.0, y: 0.0}}
-                                                end={{x: 0.0, y: 0.75}}
-                                                style={[styles.linearGradientStyle, {justifyContent: 'flex-end', overflow: 'hidden',}]}
-                                            />
-                                            <Button
-                                                backgroundColor={AppColors.zeplin.yellow}
-                                                buttonStyle={{borderRadius: 5, width: '100%',}}
-                                                containerViewStyle={{marginLeft: 0, marginRight: 0, width: '100%',}}
-                                                color={AppColors.white}
-                                                fontFamily={AppStyles.robotoBold.fontFamily}
-                                                fontWeight={AppStyles.robotoBold.fontWeight}
-                                                loading={isLoading}
-                                                loadingRight={isLoading}
-                                                outlined={false}
-                                                onPress={() => {
-                                                    if(!isLoading) {
-                                                        handleEnableAppleHealthKit('apple_healthkit', true);
-                                                    }
-                                                }}
-                                                raised={false}
-                                                textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
-                                                title={'Enable Apple Health'}
-                                            />
-                                        </ImageBackground>
-                                    </View>
-                                </View>
+                <LinearGradient
+                    colors={['#ffffff00', 'white']}
+                    start={{x: 0.0, y: 0.0}}
+                    end={{x: 0.0, y: 0.1}}
+                    style={[styles.linearGradientStyle]}
+                >
+                    <View style={{flex: 1, justifyContent: 'space-between',}}>
+                        <View style={{flex: 1,}}>
+                            <TouchableHighlight
+                                onPress={() => isLoading ? null : handleSkip('apple_healthkit')}
+                                underlayColor={AppColors.transparent}
+                            >
+                                <Text robotoBold style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15), textAlign: 'right',}}>{'Skip'}</Text>
+                            </TouchableHighlight>
+                        </View>
+                        <View style={{flex: 9, justifyContent: 'space-between', paddingVertical: AppSizes.padding,}}>
+                            <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'APPLE HEALTH'}</Text>
+                            <Spacer size={AppSizes.paddingSml} />
+                            <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'Sync with Apple Health to improve recovery recommendations by tracking your workouts.\n\nPlease tap \'All Categories On\' to allow.'}</Text>
+                            <Spacer size={AppSizes.paddingSml} />
+                            <View style={{flex: 6, paddingVertical: AppSizes.paddingSml,}}>
+                                <ImageBackground
+                                    imageStyle={{resizeMode: 'contain',}}
+                                    source={require('../../../assets/images/standard/HealthKit_iOS.png')}
+                                    style={[{height: '100%', marginHorizontal: AppSizes.padding,}]}
+                                >
+                                    <LinearGradient
+                                        colors={['#ffffff00', 'white']}
+                                        start={{x: 0.0, y: 0.0}}
+                                        end={{x: 0.0, y: 0.75}}
+                                        style={[styles.linearGradientStyle, {justifyContent: 'flex-end', overflow: 'hidden',}]}
+                                    />
+                                    <Button
+                                        backgroundColor={AppColors.zeplin.yellow}
+                                        buttonStyle={{borderRadius: 5, width: '100%',}}
+                                        containerViewStyle={{marginLeft: 0, marginRight: 0, width: '100%',}}
+                                        color={AppColors.white}
+                                        fontFamily={AppStyles.robotoBold.fontFamily}
+                                        fontWeight={AppStyles.robotoBold.fontWeight}
+                                        loading={isLoading}
+                                        loadingRight={isLoading}
+                                        outlined={false}
+                                        onPress={() => {
+                                            if(!isLoading) {
+                                                handleEnableAppleHealthKit('apple_healthkit', true);
+                                            }
+                                        }}
+                                        raised={false}
+                                        textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                                        title={'Enable Apple Health'}
+                                    />
+                                </ImageBackground>
                             </View>
-                        </LinearGradient>
-                    </ImageBackground>
-                </View>
-            </Modal>
-        );
-    }
-    return(null);
-};
+                        </View>
+                    </View>
+                </LinearGradient>
+            </ImageBackground>
+        </View>
+    </Modal>
+)
 
 EnableAppleHealthKit.propTypes = {
     handleEnableAppleHealthKit: PropTypes.func.isRequired,

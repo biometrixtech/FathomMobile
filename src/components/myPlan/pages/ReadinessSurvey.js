@@ -739,7 +739,7 @@ class ReadinessSurvey extends Component {
                     handleSkip={value => handleUpdateFirstTimeExperience(value)}
                     handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
                     isLoading={this.state.isAppleHealthKitLoading}
-                    isModalOpen={!user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios'}
+                    isModalOpen={this.state.isAppleHealthModalOpen}
                 />
 
             </View>
