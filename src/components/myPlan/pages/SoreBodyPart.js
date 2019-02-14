@@ -9,6 +9,7 @@
         handleUpdateFirstTimeExperience={name => handleUpdateFirstTimeExperience(name)}
         index={i+3}
         isFirst={i === 0}
+        isLast={i === (newSoreBodyParts.length - 1)}
         isPrevSoreness={true}
         surveyObject={dailyReadiness}
         toggleSlideUpPanel={this._toggleSlideUpPanel}
@@ -89,6 +90,7 @@ class SoreBodyPart extends Component {
             handleFormChange,
             handleUpdateFirstTimeExperience,
             isFirst,
+            isLast,
             isPrevSoreness,
             toggleSlideUpPanel,
         } = this.props;
@@ -102,10 +104,26 @@ class SoreBodyPart extends Component {
         let showScaleButtons = bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint');
         let showWhatsTheDifferenceLink = bodyPartGroup && bodyPartGroup === 'muscle';
         let isBodyPartJoint = bodyPartGroup === 'joint';
+        let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
+        let backNextHeight = ((AppSizes.backNextButtonsHeight) + (AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed));
+        // NOTE: BRING BACK WITH STICKY HEADER - MAKE SURE TO REVIEW
+        /*
+        height: (isFirst && isLast) || (!isFirst && isLast) ?
+            (AppSizes.screen.height - (pillsHeight + backNextHeight))
+            :
+            (AppSizes.screen.height - pillsHeight),
+        */
         return(
             <View
                 style={{
-                    height:         isFirst ? (AppSizes.screen.height - (AppSizes.statusBarHeight + AppSizes.progressPillsHeight)) : AppSizes.screen.height,
+                    height: isFirst && isLast ?
+                        (AppSizes.screen.height - (pillsHeight + backNextHeight))
+                        : isFirst && !isLast ?
+                            (AppSizes.screen.height - pillsHeight)
+                            : !isFirst && isLast ?
+                                (AppSizes.screen.height - backNextHeight)
+                                :
+                                (AppSizes.screen.height),
                     justifyContent: 'center',
                 }}
             >
@@ -119,17 +137,17 @@ class SoreBodyPart extends Component {
                             {' recently.'}
                         </Text>
                         <Spacer size={AppSizes.padding} />
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
                             {'How has it felt the last '}
-                            <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}}>
+                            <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>
                                 {`${bodyPart.status.includes('acute') ? 'few days' : 'week'}?`}
                             </Text>
                         </Text>
                     </View>
                     : isPrevSoreness ?
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
                             {`How ${helpingVerb} your `}
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22),}]}>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
                                 {bodyPartName}
                             </Text>
                             {' felt?'}
@@ -295,7 +313,7 @@ class SoreBodyPart extends Component {
                         }
                     </View>
                 </Tooltip>
-                <View style={{flexDirection: 'row', justifyContent: 'center', paddingVertical: AppSizes.padding, paddingHorizontal: AppSizes.padding}}>
+                <View style={{flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.padding}}>
                     { showScaleButtons ?
                         _.map(sorenessPainMapping, (value, key) => {
                             if(key === 0) { return; }
@@ -344,7 +362,7 @@ class SoreBodyPart extends Component {
                             null
                     }
                 </View>
-                <Spacer size={isFirst ? (AppSizes.progressPillsHeight + AppSizes.statusBarHeight) : 0} />
+                <Spacer size={isFirst && !isLast ? pillsHeight : 0} />
             </View>
         )
     }
@@ -357,13 +375,18 @@ SoreBodyPart.propTypes = {
     handleFormChange:                PropTypes.func.isRequired,
     handleUpdateFirstTimeExperience: PropTypes.func.isRequired,
     index:                           PropTypes.number,
+    isFirst:                         PropTypes.bool,
+    isLast:                          PropTypes.bool,
     isPrevSoreness:                  PropTypes.bool,
     surveyObject:                    PropTypes.object,
+    toggleSlideUpPanel:              PropTypes.func.isRequired,
 };
 
 SoreBodyPart.defaultProps = {
     bodyPartSide:   0,
     index:          null,
+    isFirst:        false,
+    isLast:         false,
     isPrevSoreness: false,
     surveyObject:   {},
 };

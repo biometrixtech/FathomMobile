@@ -117,7 +117,7 @@ class Survey extends Component {
         }
         let newUserObj = _.cloneDeep(this.props.user);
         newUserObj.onboarding_status.push('survey-questions');
-        AppUtil.routeOnLogin(newUserObj);
+        AppUtil.routeOnLogin(newUserObj, true);
         this.props.postSurvey(this.props.user.id, payload)
             .then(() => {
                 let userPayload = {};

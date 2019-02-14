@@ -303,7 +303,7 @@ class MyPlan extends Component {
                     this.props.getSoreBodyParts()
                         .then(soreBodyParts => {
                             let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                            newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
+                            newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
                             this.setState({ dailyReadiness: newDailyReadiness });
                             this.props.setAppLogs();
                             this.setState({ isReadinessSurveyModalOpen: true, isPageLoading: false, });
@@ -395,10 +395,19 @@ class MyPlan extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
-        if(!_.isEqual(prevProps.healthData, this.props.healthData)) {
-            this._goToScrollviewPage(1, () => {
-                this._togglePostSessionSurveyModal();
-            });
+        // if we have workouts, handle RS or PSS
+        if(!_.isEqual(prevProps.healthData, this.props.healthData) && this.props.healthData.workouts.length > 0) {
+            let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
+            if(dailyPlanObj.daily_readiness_survey_completed) {
+                this._goToScrollviewPage(1, () => {
+                    this.setState(
+                        { healthData: this.props.healthData, },
+                        () => this._togglePostSessionSurveyModal(),
+                    );
+                });
+            } else {
+                this.setState({ healthData: this.props.healthData, });
+            }
         }
     }
 
@@ -419,7 +428,7 @@ class MyPlan extends Component {
             this.props.user.health_enabled &&
             (
                 !this.props.user.health_sync_date ||
-                (moment(this.props.user.health_sync_date).diff(moment(), 'minutes') > 7)
+                (moment().diff(moment(this.props.user.health_sync_date), 'minutes') > 7)
             )
         ) {
             AppUtil.getAppleHealthKitData(this.props.user.id, this.props.user.health_sync_date, this.props.user.historic_health_sync_date);
@@ -521,18 +530,21 @@ class MyPlan extends Component {
             newDailyReadiness.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
         }
         _.delay(() => {
+            let filteredHealthDataWorkouts = _.filter(healthDataWorkouts, o => !o.deleted);
+            let filteredDailyReadinessSessions = _.filter(dailyReadinessSessions, o => !o.deleted);
+            let nonDeletedSessions = _.concat(filteredHealthDataWorkouts, filteredDailyReadinessSessions);
             this.setState(
                 {
                     dailyReadiness: {
                         readiness:        0,
-                        sessions:         _.concat(healthDataWorkouts, dailyReadinessSessions),
+                        sessions:         nonDeletedSessions,
                         sessions_planned: newDailyReadiness.sessions_planned,
                         sleep_quality:    0,
                         soreness:         [],
                     },
                     healthData:                           [],
                     isPrepCalculating:                    this.state.dailyReadiness.sessions_planned ? true : false,
-                    isPrepareSessionsCompletionModalOpen: newDailyReadiness.sessions.length !== 0,
+                    isPrepareSessionsCompletionModalOpen: nonDeletedSessions.length !== 0,
                     isReadinessSurveyModalOpen:           false,
                     isRecoverCalculating:                 this.state.dailyReadiness.sessions_planned ? false : true,
                     prepare:                              newPrepareObject,
@@ -552,7 +564,7 @@ class MyPlan extends Component {
             });
     }
 
-    _handlePostSessionSurveySubmit = () => {
+    _handlePostSessionSurveySubmit = areAllDeleted => {
         // TODO: MOVE TO LOGIC FILE AND UNIT TEST BELOW
         /*
          * update for the componentWillReceiveProps call will only
@@ -618,15 +630,15 @@ class MyPlan extends Component {
                     healthData:                         [],
                     train:                              newTrainObject,
                     isPostSessionSurveyModalOpen:       false,
-                    isRecoverCalculating:               true,
-                    isTrainSessionsCompletionModalOpen: true,
+                    isRecoverCalculating:               !areAllDeleted,
+                    isTrainSessionsCompletionModalOpen: !areAllDeleted,
                     postSession:                        {
                         RPE:                            null,
                         description:                    '',
                         duration:                       0,
                         event_date:                     null,
                         session_type:                   null,
-                        sessions:                       _.filter(postSession.sessions, o => !o.ignored),
+                        sessions:                       _.filter(postSession.sessions, o => !o.deleted && !o.ignored),
                         soreness:                       [],
                         sport_name:                     null,
                         strength_and_conditioning_type: null,
@@ -637,7 +649,16 @@ class MyPlan extends Component {
         this.props.postSessionSurvey(postSession)
             .then(response => {
                 this.props.clearHealthKitWorkouts();
-                this.props.clearCompletedExercises();
+                if(!areAllDeleted) {
+                    this.props.clearCompletedExercises();
+                }
+                if(areAllDeleted) {
+                    let landingScreen = this.props.plan.dailyPlan[0] && this.props.plan.dailyPlan[0].landing_screen ?
+                        this.props.plan.dailyPlan[0].landing_screen
+                        :
+                        0;
+                    this._goToScrollviewPage(landingScreen);
+                }
             })
             .catch(error => {
                 console.log('error',error);
@@ -645,9 +666,9 @@ class MyPlan extends Component {
             });
     }
 
-    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood) => {
+    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections) => {
         let stateObject = isDailyReadiness ? this.state.dailyReadiness : this.state.postSession;
-        let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isAllGood, this.props.plan.soreBodyParts);
+        let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isAllGood, this.props.plan.soreBodyParts, resetSections);
         let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);
         if (isDailyReadiness) {
             this.setState({
@@ -660,7 +681,7 @@ class MyPlan extends Component {
         }
     }
 
-    _handleUpdateFirstTimeExperience = value => {
+    _handleUpdateFirstTimeExperience = (value, callback) => {
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.first_time_experience = [value];
@@ -672,10 +693,15 @@ class MyPlan extends Component {
             data: newUserObj
         });
         // update user object
-        this.props.updateUser(newUserPayloadObj, this.props.user.id);
+        this.props.updateUser(newUserPayloadObj, this.props.user.id)
+            .then(res => {
+                if(callback) {
+                    callback();
+                }
+            });
     }
 
-    _handleUpdateUserHealthKitFlag = flag => {
+    _handleUpdateUserHealthKitFlag = (flag, callback) => {
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.health_enabled = flag;
@@ -687,7 +713,12 @@ class MyPlan extends Component {
             data: newUserObj
         });
         // update user object
-        this.props.updateUser(newUserPayloadObj, this.props.user.id);
+        this.props.updateUser(newUserPayloadObj, this.props.user.id)
+            .then(res => {
+                if(callback) {
+                    callback();
+                }
+            });
     }
 
     _toggleCompletedAMPMRecoveryModal = () => {
@@ -703,7 +734,7 @@ class MyPlan extends Component {
             this.props.getSoreBodyParts()
                 .then(soreBodyParts => {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
-                    newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts);
+                    newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
                     this.setState({
                         isPostSessionSurveyModalOpen: true,
                         loading:                      false,
@@ -1903,7 +1934,7 @@ class MyPlan extends Component {
                         <PostSessionSurvey
                             handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                             handleFormChange={this._handlePostSessionFormChange}
-                            handleFormSubmit={this._handlePostSessionSurveySubmit}
+                            handleFormSubmit={areAllDeleted => this._handlePostSessionSurveySubmit(areAllDeleted)}
                             handleHealthDataFormChange={this._handleHealthDataFormChange}
                             handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
                             handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
@@ -1913,11 +1944,11 @@ class MyPlan extends Component {
                             typicalSessions={this.props.plan.typicalSessions}
                             user={user}
                         />
-                        { this.state.loading ?
+                      { this.state.loading ?
                             <ActivityIndicator
                                 color={AppColors.primary.yellow.hundredPercent}
                                 size={'large'}
-                                style={[AppStyles.activityIndicator]}
+                                style={[AppStyles.activityIndicator, {height: AppSizes.screen.height,}]}
                             /> : null
                         }
                     </Modal>
@@ -2036,7 +2067,7 @@ class MyPlan extends Component {
                 locked={isScrollLocked}
                 onChangeTab={tabLocation => this._onChangeTab(tabLocation)}
                 ref={tabView => { this.tabView = tabView; }}
-                renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderBottomWidth: 0,}} />}
+                renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}} />}
                 style={{backgroundColor: AppColors.white}}
                 tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
                 tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}

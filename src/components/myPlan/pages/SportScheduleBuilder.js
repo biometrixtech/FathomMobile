@@ -2,9 +2,12 @@
  * SportScheduleBuilder
  *
     <SportScheduleBuilder
+        goBack={() => this._updatePageIndex(pageIndex - 1)}
         handleFormChange={this._handleFormChange}
+        handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
         isPostSession={true}
         postSession={postSession}
+        resetFirstPage={resetFirstPage}
         scrollTo={() => this._scrollTo(0)}
         scrollToArea={xyObject => {
             this._scrollTo(xyObject, this.scrollViewSportBuilderRef);
@@ -22,7 +25,7 @@ import { Image, Platform, StyleSheet, TouchableHighlight, TouchableOpacity, View
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
 import { Button, Spacer, TabIcon, Text, WheelScrollPicker, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
-import { ScaleButton, } from './';
+import { ProgressPill, ScaleButton, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -126,37 +129,50 @@ class SportScheduleBuilder extends Component {
         this._moreOptionsRef = {};
     }
 
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        if(prevProps.resetFirstPage !== this.props.resetFirstPage) {
+            this._resetStep(false);
+        }
+    }
+
     _nextStep = newStep => {
         this.setState({ step: newStep });
     }
 
-    _resetStep = () => {
-        this.setState(
-            {
-                durationValueGroups: {
-                    hours:   0,
-                    minutes: 0,
-                    label:   1,
+    _resetStep = resetWholeSelection => {
+        const { handleFormChange, scrollToTop, } = this.props;
+        if(resetWholeSelection) {
+            this.setState(
+                {
+                    durationValueGroups: {
+                        hours:   0,
+                        minutes: 0,
+                        label:   1,
+                    },
+                    isFormValid:       false,
+                    pickerScrollCount: 0,
+                    step:              0,
+                    timeValueGroups:   {
+                        hours:   2,
+                        minutes: 2,
+                        amPM:    1,
+                    },
                 },
-                isFormValid:       false,
-                pickerScrollCount: 0,
-                step:              0,
-                timeValueGroups:   {
-                    hours:   2,
-                    minutes: 2,
-                    amPM:    1,
+                () => {
+                    handleFormChange('description', '');
+                    handleFormChange('duration', 0);
+                    handleFormChange('event_date', null);
+                    handleFormChange('post_session_survey.event_date', null);
+                    handleFormChange('session_type', null);
+                    handleFormChange('sport_name', null);
+                    handleFormChange('strength_and_conditioning_type', null);
+                    handleFormChange(this.props.isPostSession ? 'RPE' : 'post_session_survey.RPE', null);
                 },
-            },
-            () => {
-                this.props.handleFormChange('description', '');
-                this.props.handleFormChange('duration', 0);
-                this.props.handleFormChange('event_date', null);
-                this.props.handleFormChange('post_session_survey.event_date', null);
-                this.props.handleFormChange('session_type', null);
-                this.props.handleFormChange('sport_name', null);
-                this.props.handleFormChange('strength_and_conditioning_type', null);
-            },
-        );
+            );
+        } else {
+            handleFormChange(this.props.isPostSession ? 'RPE' : 'post_session_survey.RPE', null);
+        }
+        _.delay(() => scrollToTop(), 500);
     }
 
     _handleScrollFormChange = (stateIndex, name, data, selectedIndex) => {
@@ -188,12 +204,27 @@ class SportScheduleBuilder extends Component {
     }
 
     render = () => {
-        const { handleFormChange, isPostSession, postSession, scrollToArea, scrollToTop, typicalSessions, } = this.props;
+        const {
+            goBack,
+            handleFormChange,
+            handleTogglePostSessionSurvey,
+            isPostSession,
+            postSession,
+            scrollToArea,
+            scrollToTop,
+            typicalSessions,
+        } = this.props;
         const { durationValueGroups, isFormValid, showMoreOptions, step, } = this.state;
         let { sportImage, sportText, } = PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, this.state);
         let cleanedActivitiesList = MyPlanConstants.cleanedActivitiesList();
         return (
             <View style={{flex: 1,}}>
+                <ProgressPill
+                    currentStep={1}
+                    onBack={step === 1 ? () => this._resetStep(true) : step === 0 && !isPostSession ? () => goBack() : null}
+                    onClose={handleTogglePostSessionSurvey}
+                    totalSteps={2}
+                />
                 { step === 0 ?
                     <View>
                         <Spacer size={20} />
@@ -254,6 +285,7 @@ class SportScheduleBuilder extends Component {
                                                     this._nextStep(1);
                                                     handleFormChange('sport_name', activity.index);
                                                     handleFormChange('session_type', 6);
+                                                    _.delay(() => scrollToTop(),500);
                                                 }}
                                                 style={[
                                                     (i+1) === activityItems.length ? {} : {borderBottomColor: AppColors.zeplin.shadow, borderBottomWidth: 1,},
@@ -272,16 +304,21 @@ class SportScheduleBuilder extends Component {
                                 :
                                 null
                             }
+
                         </View>
                     </View>
                     : step === 1 ?
                         <View>
                             <Spacer size={20} />
                             <View style={{alignItems: 'center',}}>
-                                <Image
-                                    source={sportImage}
-                                    style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, shadowRadius: 6, tintColor: AppColors.zeplin.seaBlue, width: AppSizes.screen.widthThird,}]}
-                                />
+                                { sportImage ?
+                                    <Image
+                                        source={sportImage}
+                                        style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, shadowRadius: 6, tintColor: AppColors.zeplin.seaBlue, width: AppSizes.screen.widthThird,}]}
+                                    />
+                                    :
+                                    null
+                                }
                             </View>
                             <Spacer size={20} />
                             <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(32),}]}>
@@ -465,17 +502,23 @@ class SportScheduleBuilder extends Component {
 }
 
 SportScheduleBuilder.propTypes = {
-    handleFormChange: PropTypes.func.isRequired,
-    isPostSession:    PropTypes.bool,
-    postSession:      PropTypes.object.isRequired,
-    scrollTo:         PropTypes.func.isRequired,
-    scrollToArea:     PropTypes.func.isRequired,
-    scrollToTop:      PropTypes.func.isRequired,
-    typicalSessions:  PropTypes.array.isRequired,
+    goBack:                        PropTypes.func,
+    handleFormChange:              PropTypes.func.isRequired,
+    handleTogglePostSessionSurvey: PropTypes.func,
+    isPostSession:                 PropTypes.bool,
+    postSession:                   PropTypes.object.isRequired,
+    resetFirstPage:                PropTypes.bool,
+    scrollTo:                      PropTypes.func.isRequired,
+    scrollToArea:                  PropTypes.func.isRequired,
+    scrollToTop:                   PropTypes.func.isRequired,
+    typicalSessions:               PropTypes.array.isRequired,
 };
 
 SportScheduleBuilder.defaultProps = {
-    isPostSession: false,
+    goBack:                        () => null,
+    handleTogglePostSessionSurvey: null,
+    isPostSession:                 false,
+    resetFirstPage:                false,
 };
 
 SportScheduleBuilder.componentName = 'SportScheduleBuilder';
