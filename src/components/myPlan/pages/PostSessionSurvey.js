@@ -59,7 +59,6 @@ class PostSessionSurvey extends Component {
         this.scrollViewClickedSorenessRef = {};
         this.scrollViewPrevSorenessRef = {};
         this.scrollViewRPERef = {};
-        this.scrollViewSportBuilderRef = {};
         this.sportScheduleBuilderRef = {};
     }
 
@@ -188,11 +187,26 @@ class PostSessionSurvey extends Component {
                     startPlay={pageIndex}
                 >
 
-                    <ScrollView
-                        contentContainerStyle={{flexGrow: 1,}}
-                        keyboardShouldPersistTaps={'always'}
-                        ref={ref => {this.scrollViewSportBuilderRef = ref;}}
-                    >
+                    {/*
+                    <View key={index} style={{flex: 1,}}>
+                        <SportScheduleBuilder
+                            backNextButtonOptions={{
+                                isValid:  isRPEValid && isSportValid,
+                                onBack:   () => this._addSession(),
+                                onSubmit: () => this._checkNextStep(3),
+                            }}
+                            goBack={() => this._handleSportScheduleBuilderGoBack(index)}
+                            handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                handleFormChange(`sessions[${index}].${location}`, value, isPain, bodyPartMapIndex, bodyPartSide);
+                            }}
+                            postSession={session}
+                            ref={ref => {this.sportScheduleBuilderRefs[index] = ref;}}
+                            resetFirstPage={resetSportBuilderFirstPage}
+                            typicalSessions={typicalSessions}
+                        />
+                    </View>
+                    */}
+                    <View style={{flex: 1,}}>
                         { healthKitWorkouts && healthKitWorkouts.length > 0 ?
                             <HealthKitWorkouts
                                 handleHealthDataFormChange={handleHealthDataFormChange}
@@ -201,9 +215,6 @@ class PostSessionSurvey extends Component {
                                 handleToggleSurvey={areAllDeleted => handleFormSubmit(areAllDeleted)}
                                 isPostSession={true}
                                 resetFirstPage={resetFirstPage}
-                                scrollToArea={xyObject => {
-                                    this._scrollTo(xyObject, this.scrollViewSportBuilderRef);
-                                }}
                                 workouts={healthKitWorkouts}
                             />
                             :
@@ -219,22 +230,16 @@ class PostSessionSurvey extends Component {
                                 postSession={postSession}
                                 ref={ref => {this.sportScheduleBuilderRef = ref;}}
                                 resetFirstPage={resetFirstPage}
-                                scrollTo={() => null}
-                                scrollToArea={xyObject => {
-                                    this._scrollTo(xyObject, this.scrollViewSportBuilderRef);
-                                }}
-                                scrollToTop={() => this._scrollToTop(this.scrollViewSportBuilderRef)}
                                 typicalSessions={typicalSessions}
                             />
                         }
-                        <Spacer size={40} />
-                    </ScrollView>
+                    </View>
 
                     { newSoreBodyParts.length > 0 ?
                         <ScrollView
                             contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                             ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
-                            // stickyHeaderIndices={[0]}
+                            stickyHeaderIndices={[0]}
                         >
                             <ProgressPill
                                 currentStep={2}
@@ -246,12 +251,11 @@ class PostSessionSurvey extends Component {
                                 <View
                                     key={i}
                                     onLayout={event => {
-                                        // NOTE: BRING BACK WITH STICKY HEADER
                                         let yLocation = !(i === 0) && !(i === (newSoreBodyParts.length - 1)) ?
                                             (event.nativeEvent.layout.y - ((AppSizes.statusBarHeight + AppSizes.progressPillsHeight)))
                                             :
                                             event.nativeEvent.layout.y;
-                                        this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y};
+                                        this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: yLocation};
                                     }}
                                 >
                                     <SoreBodyPart
@@ -293,7 +297,7 @@ class PostSessionSurvey extends Component {
                         onScrollEndDrag={event => this._scrollViewEndDrag(event)}
                         overScrollMode={'never'}
                         ref={ref => {this.myAreasOfSorenessComponent = ref;}}
-                        // stickyHeaderIndices={[0]}
+                        stickyHeaderIndices={[0]}
                     >
                         <ProgressPill
                             currentStep={2}
@@ -349,7 +353,7 @@ class PostSessionSurvey extends Component {
                         contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         nestedScrollEnabled={true}
                         ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
-                        // stickyHeaderIndices={[0]}
+                        stickyHeaderIndices={[0]}
                     >
                         <ProgressPill
                             currentStep={2}
@@ -361,12 +365,11 @@ class PostSessionSurvey extends Component {
                             <View
                                 key={`AreasOfSoreness1${i}`}
                                 onLayout={event => {
-                                    // NOTE: BRING BACK WITH STICKY HEADER
                                     let yLocation = !(i === 0) && !(i === (areaOfSorenessClicked.length - 1)) ?
                                         (event.nativeEvent.layout.y - ((AppSizes.statusBarHeight + AppSizes.progressPillsHeight)))
                                         :
                                         event.nativeEvent.layout.y;
-                                    this.myClickedSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,};
+                                    this.myClickedSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: yLocation, height: event.nativeEvent.layout.height,};
                                 }}
                             >
                                 <SoreBodyPart
