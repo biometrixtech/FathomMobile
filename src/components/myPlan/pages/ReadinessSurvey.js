@@ -133,9 +133,9 @@ class ReadinessSurvey extends Component {
             soreBodyParts,
         } = this.props;
         let { newSoreBodyParts, } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
-        let { pageNum, } = PlanLogic.handleReadinessSurveyPreviousPage(this.state, currentPage, newSoreBodyParts, healthKitWorkouts, dailyReadiness);
+        let { isTrainLater, pageNum, } = PlanLogic.handleReadinessSurveyPreviousPage(this.state, currentPage, newSoreBodyParts, healthKitWorkouts, dailyReadiness);
         this._updatePageIndex(pageNum);
-        this._resetStep(currentPage, pageNum, isSessions);
+        this._resetStep(currentPage, pageNum, isSessions, isTrainLater);
     }
 
     _updatePageIndex = pageNum => {
@@ -143,12 +143,12 @@ class ReadinessSurvey extends Component {
         this.setState({ pageIndex: pageNum, });
     }
 
-    _resetStep = (currentStep, nextStep, isSessions) => {
+    _resetStep = (currentStep, nextStep, isSessions, isTrainLater) => {
         const { dailyReadiness, handleFormChange, } = this.props;
         if((currentStep === 3 || currentStep === 4) && nextStep === 2) { // reset trained already?
             this.setState({ lockAlreadyTrainedBtn: !this.state.lockAlreadyTrainedBtn, });
             handleFormChange('already_trained_number', null);
-        } else if((currentStep === 5 || currentStep === 6) && nextStep === 4) { // reset train later?
+        } else if(isTrainLater) { // reset train later?
             this.setState({ lockTrainLaterBtn: !this.state.lockTrainLaterBtn, });
             handleFormChange('sessions_planned', null);
         }

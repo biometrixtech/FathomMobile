@@ -668,6 +668,7 @@ const PlanLogic = {
     // TODO: UNIT TEST ME
     handleReadinessSurveyPreviousPage: (pageState, currentPage, newSoreBodyParts, healthKitWorkouts, dailyReadiness) => {
         let pageNum = 0;
+        let isTrainLater = false;
         if(currentPage === 2) { // 2. trained already
             pageNum = 1;
         } else if(currentPage === 3) { // 3. SportScheduleBuilder & RPE (xN)
@@ -679,17 +680,20 @@ const PlanLogic = {
                 2;
         } else if(currentPage === 5) { // 5. Follow Up Pain & Soreness
             pageNum = (pageState.pageIndex - 1);
+            isTrainLater = true;
         } else if(currentPage === 6) { // 6. Areas of Soreness
             pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ?
                 (pageState.pageIndex - 1)
                 :
                 (pageState.pageIndex - 2);
+            isTrainLater = !(newSoreBodyParts && newSoreBodyParts.length > 0);
         } else if(currentPage === 7) { // 7. Areas of Soreness Selected
             pageNum = 6;
         } else {
             pageNum = currentPage;
         }
         return {
+            isTrainLater,
             pageNum,
         };
     },
