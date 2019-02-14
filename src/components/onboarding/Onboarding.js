@@ -447,7 +447,7 @@ class Onboarding extends Component {
                         newUser.biometric_data.height.in = values[0].value.toString();
                     }
                     if(values[1].value && values[1].value > 0) {
-                        newUser.biometric_data.mass.lb = values[1].value.toString();
+                        newUser.biometric_data.mass.lb = _.round(values[1].value).toString();
                     }
                     if(values[2].value && values[2].value.length > 0 && values[2].age && values[2].age > 0) {
                         newUser.personal_data.birth_date = moment(values[2].value).format('MM/DD/YYYY');

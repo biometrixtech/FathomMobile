@@ -64,7 +64,7 @@ class UserAccountInfo extends Component {
             <View>
                 <View style={[{borderTopWidth: 1, borderTopColor: AppColors.border, flexDirection: 'row',}]}>
                     <View style={[styles.leftItem]}>
-                        <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.first_name.length > 0 ? 'First Name' : ' '}</FormLabel>
+                        <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.first_name.length > 0 ? 'FIRST NAME' : ' '}</FormLabel>
                         <FormInput
                             blurOnSubmit={ false }
                             containerStyle={{marginLeft: 0, marginRight: 0, paddingLeft: 10}}
@@ -82,7 +82,7 @@ class UserAccountInfo extends Component {
                         />
                     </View>
                     <View style={[styles.rightItem]}>
-                        <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.last_name.length > 0 ? 'Last Name' : ' '}</FormLabel>
+                        <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.last_name.length > 0 ? 'LAST NAME' : ' '}</FormLabel>
                         <FormInput
                             blurOnSubmit={ false }
                             containerStyle={{marginLeft: 0, paddingLeft: 10}}
@@ -105,7 +105,7 @@ class UserAccountInfo extends Component {
                 </View>
                 {!isUpdatingUser ?
                     <View>
-                        <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.email.length > 0 ? 'E-mail Address' : ' '}</FormLabel>
+                        <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.email.length > 0 ? 'E-MAIL ADDRESS' : ' '}</FormLabel>
                         <FormInput
                             autoCapitalize={'none'}
                             blurOnSubmit={ false }
@@ -130,7 +130,7 @@ class UserAccountInfo extends Component {
                 }
                 {!isUpdatingUser ?
                     <View>
-                        <FormLabel labelStyle={{color: AppColors.black}}>{user.password.length > 0 ? 'Password' : ' '}</FormLabel>
+                        <FormLabel labelStyle={{color: AppColors.black}}>{user.password.length > 0 ? 'PASSWORD' : ' '}</FormLabel>
                         <View style={[{flexDirection: 'row',}]}>
                             <FormInput
                                 blurOnSubmit={ true }
