@@ -201,13 +201,13 @@ class CoachesDashboard extends Component {
 
     renderTab = (name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle, selectedTeam) => {
         const textStyle = AppStyles.tabHeaders;
-        const fontSize = isTabActive ? AppFonts.scaleFont(20) : AppFonts.scaleFont(16);
+        const fontSize = isTabActive ? AppFonts.scaleFont(22) : AppFonts.scaleFont(18);
         let { page0, page1, } = this.state;
         let currentPage = this.tabView ? this.tabView.state.currentPage : 0;
-        let page0Width = currentPage === 0 ? AppSizes.screen.widthThreeQuarters : AppSizes.screen.widthQuarter;
-        let page1Width = currentPage === 1 ? AppSizes.screen.widthThreeQuarters : AppSizes.screen.widthQuarter;
-        let page0ExtraStyles = currentPage === 0 ? {paddingLeft: AppSizes.screen.widthQuarter} : {};
-        let page1ExtraStyles = currentPage === 1 ? {paddingRight: AppSizes.screen.widthQuarter} : {};
+        let page0Width = AppSizes.screen.widthHalf;
+        let page1Width = AppSizes.screen.widthHalf;
+        let page0ExtraStyles = {borderBottomColor: currentPage === 0 ? AppColors.zeplin.darkBlue : AppColors.zeplin.light, borderBottomWidth: 3,};
+        let page1ExtraStyles = {borderBottomColor: currentPage === 1 ? AppColors.zeplin.darkBlue : AppColors.zeplin.light, borderBottomWidth: 3,};
         let page0Styles = [AppStyles.leftTabBar, page0ExtraStyles, {width: page0Width,}];
         let page1Styles = [AppStyles.rightTabBar, page1ExtraStyles, {width: page1Width,}];
         // making sure we can only drag horizontally if our modals are closed and nothing is loading
@@ -234,7 +234,7 @@ class CoachesDashboard extends Component {
                                 style={[
                                     textStyle,
                                     {
-                                        color: !selectedTeam ? AppColors.primary.grey.twentyPercent : isTabActive ? AppColors.activeTabText : AppColors.inactiveTabText,
+                                        color: !selectedTeam ? AppColors.primary.grey.twentyPercent : isTabActive ? AppColors.zeplin.darkBlue : AppColors.zeplin.lightSlate,
                                         fontSize,
                                     }
                                 ]}
@@ -807,7 +807,7 @@ class CoachesDashboard extends Component {
                             }}
                             locked
                             renderTab={(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) => this.renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle, selectedTeam)}
-                            style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderBottomWidth: 0,}}
+                            style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}}
                         />
                     }
                     style={{backgroundColor: AppColors.white,}}
