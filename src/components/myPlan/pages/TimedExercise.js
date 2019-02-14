@@ -63,6 +63,7 @@ class TimedExercise extends PureComponent {
         const { completedExercises, exercise, } = this.props;
         this.state = {
             areAllTimersCompleted:     completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? true : false,
+            delayTimerId:              null,
             isDescriptionToolTipOpen:  false,
             isMounted:                 false,
             isPaused:                  false,
@@ -75,8 +76,6 @@ class TimedExercise extends PureComponent {
             switchSideTime:            0,
             timer:                     null,
             timerSeconds:              5,
-
-            delayTimerId: null,
         };
         this._cleanTime = this._cleanTime.bind(this);
         this._firstSetTick = this._firstSetTick.bind(this);

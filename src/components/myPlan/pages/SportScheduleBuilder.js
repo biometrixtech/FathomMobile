@@ -517,8 +517,8 @@ SportScheduleBuilder.propTypes = {
 SportScheduleBuilder.defaultProps = {
     goBack:                        () => null,
     handleTogglePostSessionSurvey: null,
-    resetFirstPage:                false,
     isPostSession:                 false,
+    resetFirstPage:                false,
 };
 
 SportScheduleBuilder.componentName = 'SportScheduleBuilder';
