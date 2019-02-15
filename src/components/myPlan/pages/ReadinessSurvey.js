@@ -97,17 +97,15 @@ class ReadinessSurvey extends Component {
         this.positionsComponents = [];
         this.scrollViewActivityTargetRef = {};
         this.scrollViewClickedSorenessRef = {};
-        this.scrollViewHealthKitRef = {};
         this.scrollViewPrevSorenessRef = {};
-        this.scrollViewSportBuilderRefs = [];
         this.sportScheduleBuilderRefs = [];
         this.pages = {};
         this.pickerTrainedAlreadyRefs = {};
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
-        if(prevState.pageIndex === 2 && this.state.pageIndex === 1) {
-            this.setState({ resetHealthKitFirstPage: true, });
+        if(this.state.pageIndex === 1 && prevState.pageIndex !== this.state.pageIndex) { // reset HealthKit
+            this.setState({ resetHealthKitFirstPage: true, }, () => this.setState({ resetHealthKitFirstPage: false, }));
         }
     }
 
@@ -127,6 +125,7 @@ class ReadinessSurvey extends Component {
     }
 
     _renderPreviousPage = (currentPage, isSessions) => {
+        this.setState({ isActionButtonVisible: false, });
         const {
             dailyReadiness,
             healthKitWorkouts,
@@ -251,13 +250,23 @@ class ReadinessSurvey extends Component {
     _handleEnableAppleHealthKit = (firstTimeExperienceValue, healthKitFlag) => {
         const { user, } = this.props;
         this.setState({ isAppleHealthKitLoading: true, });
-        AppUtil.getAppleHealthKitDataAsync(user.id, user.health_sync_date, user.historic_health_sync_date);
-        AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date, () => {
-            this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue, () => {
-                this.props.handleUpdateUserHealthKitFlag(healthKitFlag, () => {
-                    this.setState({ isAppleHealthKitLoading: false, isAppleHealthModalOpen: false, });
-                });
+        AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date)
+            .then(() => {
+                AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
+                    .then(() => {
+                        this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue, () => {
+                            this.props.handleUpdateUserHealthKitFlag(healthKitFlag, () => {
+                                this.setState({ isAppleHealthKitLoading: false, isAppleHealthModalOpen: false, });
+                            });
+                        });
+                    });
             });
+    }
+
+    _handleSkipAppleHealthKit = value => {
+        this.setState({ isAppleHealthKitLoading: true, });
+        this.props.handleUpdateFirstTimeExperience(value, () => {
+            this.setState({ isAppleHealthKitLoading: false, isAppleHealthModalOpen: false, });
         });
     }
 
@@ -345,27 +354,17 @@ class ReadinessSurvey extends Component {
                         </ImageBackground>
                     </View>
 
-                    <ScrollView
-                        contentContainerStyle={{flexGrow: 1,}}
-                        keyboardShouldPersistTaps={'always'}
-                        ref={ref => {this.scrollViewHealthKitRef = ref;}}
-                    >
+                    <View style={{flex: 1,}}>
                         { healthKitWorkouts && healthKitWorkouts.length > 0 &&
-                            <View style={{flex: 1,}}>
-                                <HealthKitWorkouts
-                                    handleHealthDataFormChange={handleHealthDataFormChange}
-                                    handleNextStep={isHealthKitValid => this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, isHealthKitValid)}
-                                    handleToggleSurvey={() => this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, true)}
-                                    resetFirstPage={resetHealthKitFirstPage}
-                                    scrollToArea={xyObject => {
-                                        this._scrollTo(xyObject, this.scrollViewHealthKitRef);
-                                    }}
-                                    workouts={healthKitWorkouts}
-                                />
-                                <Spacer size={40} />
-                            </View>
+                            <HealthKitWorkouts
+                                handleHealthDataFormChange={handleHealthDataFormChange}
+                                handleNextStep={isHealthKitValid => this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, isHealthKitValid)}
+                                handleToggleSurvey={() => this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, true)}
+                                resetFirstPage={resetHealthKitFirstPage}
+                                workouts={healthKitWorkouts}
+                            />
                         }
-                    </ScrollView>
+                    </View>
 
                     <View style={{flex: 1,}}>
                         { !healthKitWorkouts &&
@@ -450,44 +449,23 @@ class ReadinessSurvey extends Component {
                     { dailyReadiness.sessions && dailyReadiness.sessions.length > 0 ? _.map(dailyReadiness.sessions, (session, index) => {
                         const { isRPEValid, isSportValid, sportText, } = PlanLogic.handleSingleSessionValidation(session, this.sportScheduleBuilderRefs[index]);
                         return(
-                            <ScrollView
-                                contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
-                                key={index}
-                                ref={ref => {this.scrollViewSportBuilderRefs[index] = ref;}}
-                            >
+                            <View key={index} style={{flex: 1,}}>
                                 <SportScheduleBuilder
+                                    backNextButtonOptions={{
+                                        isValid:  isRPEValid && isSportValid,
+                                        onBack:   () => this._addSession(),
+                                        onSubmit: () => this._checkNextStep(3),
+                                    }}
                                     goBack={() => this._handleSportScheduleBuilderGoBack(index)}
                                     handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                         handleFormChange(`sessions[${index}].${location}`, value, isPain, bodyPartMapIndex, bodyPartSide);
-                                        if(location === 'post_session_survey.RPE' && (value === 0 || value >= 1)) {
-                                            this._scrollToBottom(this.scrollViewSportBuilderRefs[index]);
-                                        }
                                     }}
                                     postSession={session}
                                     ref={ref => {this.sportScheduleBuilderRefs[index] = ref;}}
                                     resetFirstPage={resetSportBuilderFirstPage}
-                                    scrollTo={() => null}
-                                    scrollToArea={xyObject => {
-                                        this._scrollTo(xyObject, this.scrollViewSportBuilderRefs[index]);
-                                    }}
-                                    scrollToTop={() => this._scrollToTop(this.scrollViewSportBuilderRefs[index])}
                                     typicalSessions={typicalSessions}
                                 />
-                                <Spacer size={20} />
-                                { isRPEValid && isSportValid ?
-                                    <BackNextButtons
-                                        handleFormSubmit={() => this._checkNextStep(3)}
-                                        isValid={isRPEValid && isSportValid}
-                                        onBackClick={() => this._addSession()}
-                                        onNextClick={() => isRPEValid && isSportValid ? this._checkNextStep(3) : null}
-                                        showAddBtn={true}
-                                        showSubmitBtn={true}
-                                        submitBtnText={'Continue'}
-                                    />
-                                    :
-                                    null
-                                }
-                            </ScrollView>
+                            </View>
                         )
                     }) : <View />}
 
@@ -580,7 +558,7 @@ class ReadinessSurvey extends Component {
                             nestedScrollEnabled={true}
                             overScrollMode={'never'}
                             ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
-                            // stickyHeaderIndices={[0]}
+                            stickyHeaderIndices={[0]}
                         >
                             <ProgressPill
                                 currentStep={3}
@@ -591,12 +569,11 @@ class ReadinessSurvey extends Component {
                                 <View
                                     key={i}
                                     onLayout={event => {
-                                        // NOTE: BRING BACK WITH STICKY HEADER
                                         let yLocation = !(i === 0) && !(i === (newSoreBodyParts.length - 1)) ?
                                             (event.nativeEvent.layout.y - ((AppSizes.statusBarHeight + AppSizes.progressPillsHeight)))
                                             :
                                             event.nativeEvent.layout.y;
-                                        this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y};
+                                        this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: yLocation};
                                     }}
                                 >
                                     <SoreBodyPart
@@ -637,7 +614,7 @@ class ReadinessSurvey extends Component {
                         onScrollEndDrag={event => this._scrollViewEndDrag(event)}
                         overScrollMode={'never'}
                         ref={ref => {this.myAreasOfSorenessComponent = ref;}}
-                        // stickyHeaderIndices={[0]}
+                        stickyHeaderIndices={[0]}
                     >
                         <ProgressPill
                             currentStep={3}
@@ -693,7 +670,7 @@ class ReadinessSurvey extends Component {
                         contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         nestedScrollEnabled={true}
                         ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
-                        // stickyHeaderIndices={[0]}
+                        stickyHeaderIndices={[0]}
                     >
                         <ProgressPill
                             currentStep={3}
@@ -704,12 +681,11 @@ class ReadinessSurvey extends Component {
                             <View
                                 key={`AreasOfSoreness1${i}`}
                                 onLayout={event => {
-                                    // NOTE: BRING BACK WITH STICKY HEADER
                                     let yLocation = !(i === 0) && !(i === (areaOfSorenessClicked.length - 1)) ?
                                         (event.nativeEvent.layout.y - ((AppSizes.statusBarHeight + AppSizes.progressPillsHeight)))
                                         :
                                         event.nativeEvent.layout.y;
-                                    this.myClickedSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,};
+                                    this.myClickedSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: yLocation, height: event.nativeEvent.layout.height,};
                                 }}
                             >
                                 <SoreBodyPart
@@ -770,12 +746,12 @@ class ReadinessSurvey extends Component {
                     toggleSlideUpPanel={isExpanded => this._toggleSlideUpPanel(isExpanded)}
                 />
 
-                {/*<EnableAppleHealthKit
-                    handleSkip={value => handleUpdateFirstTimeExperience(value)}
+                <EnableAppleHealthKit
+                    handleSkip={value => this._handleSkipAppleHealthKit(value)}
                     handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
                     isLoading={this.state.isAppleHealthKitLoading}
-                    isModalOpen={!user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios'}
-                />*/}
+                    isModalOpen={this.state.isAppleHealthModalOpen}
+                />
 
             </View>
         )

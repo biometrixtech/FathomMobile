@@ -58,6 +58,10 @@ export default function initReducer(state = initialState, action) {
         return Object.assign({}, state, {
             environment: action.environment
         });
+    case Actions.SET_ACCOUNT_CODE:
+        return Object.assign({}, state, {
+            account_code: action.code || '',
+        });
     case Actions.LOGOUT:
         return Object.assign({}, initialState, {
             token: state.token,
