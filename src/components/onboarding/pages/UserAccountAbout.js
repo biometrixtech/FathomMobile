@@ -79,7 +79,7 @@ class UserAccountAbout extends Component {
         } = this.props;
         return(
             <View style={[{borderTopWidth: 1, borderTopColor: AppColors.border,}]}>
-                <FormLabel labelStyle={{color: AppColors.black}}>{user.personal_data.birth_date.length > 0 ?'DATE OF BIRTH' : ' '}</FormLabel>
+                <FormLabel>{user.personal_data.birth_date.length > 0 ?'DATE OF BIRTH' : ' '}</FormLabel>
                 <DatePicker
                     cancelBtnText={'Cancel'}
                     confirmBtnText={'Confirm'}
@@ -100,7 +100,7 @@ class UserAccountAbout extends Component {
                     showIcon={false}
                     style={{width: '100%'}}
                 />
-                <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.mass.lb.length > 0 ? 'WEIGHT (LBS)' : ' '}</FormLabel>
+                <FormLabel>{user.biometric_data.mass.lb.length > 0 ? 'WEIGHT (LBS)' : ' '}</FormLabel>
                 <FormInput
                     blurOnSubmit={ true }
                     containerStyle={{marginLeft: 0, paddingLeft: 10}}
@@ -114,7 +114,7 @@ class UserAccountAbout extends Component {
                     }}
                     value={user.biometric_data.mass.lb}
                 />
-                <FormLabel labelStyle={{color: AppColors.black}}>{user.biometric_data.sex.length > 0 ? 'SEX' : ' '}</FormLabel>
+                <FormLabel>{user.biometric_data.sex.length > 0 ? 'SEX' : ' '}</FormLabel>
                 <FathomPicker
                     hideIcon={true}
                     items={UserAccountConstants.possibleGenders}

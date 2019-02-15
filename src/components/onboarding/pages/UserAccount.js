@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     title: {
-        ...AppStyles.oswaldBold,
         fontSize: AppFonts.scaleFont(18),
     },
     wrapper: {
