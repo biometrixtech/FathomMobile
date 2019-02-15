@@ -138,6 +138,7 @@ class ActiveRecoveryBlocks extends Component {
             );
         }
         let isDisabled = !recoveryObj && !recoveryObj.minutes_duration && !recoveryObj.impact_score;
+        // TODO: come back to addressing issue when adding in equipment tooltip V2.9.0
         return(
             <View style={{flexDirection: 'row',}}>
                 <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
@@ -153,7 +154,7 @@ class ActiveRecoveryBlocks extends Component {
                             text={MyPlanConstants.userSelectedActiveTimeMessage()}
                         />
                     }
-                    isVisible={this.state.isAllGoodTooltipOpen}
+                    isVisible={false}//this.state.isAllGoodTooltipOpen}
                     onClose={() => {}}
                     tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
                 >

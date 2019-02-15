@@ -6,16 +6,13 @@
         handleNextStep={() => this._checkNextStep(0)}
         handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
         handleToggleSurvey={handleTogglePostSessionSurvey}
-        scrollToArea={xyObject => {
-            this._scrollTo(xyObject, this.scrollViewSportBuilderRef);
-        }}
         workouts={healthKitWorkouts}
     />
  *
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Keyboard, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
+import { Image, Keyboard, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -41,18 +38,24 @@ class HealthKitWorkouts extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            delayTimerId:      null,
             isEditingDuration: false,
             pageIndex:         0,
             showRPEPicker:     false,
         };
         this._activityRPERef = {};
+        this.scrollViewHealthKitRef = {};
         this.textInput = {};
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
-        if(prevProps.resetFirstPage !== this.props.resetFirstPage) {
+        if(prevProps.resetFirstPage !== this.props.resetFirstPage && this.props.resetFirstPage) {
             this._resetStep(this.state.pageIndex);
         }
+    }
+
+    componentWillUnmount = () => {
+        clearInterval(this.state.delayTimerId);
     }
 
     _resetStep = pageIndex => {
@@ -60,9 +63,12 @@ class HealthKitWorkouts extends Component {
         this.setState(
             { showRPEPicker: false, },
             () => {
-                handleHealthDataFormChange(pageIndex, 'deleted', false);
-                handleHealthDataFormChange(pageIndex, 'post_session_survey.RPE', null);
-                _.delay(() => this.props.scrollToArea({x: 0, y: 0}), 500);
+                handleHealthDataFormChange(pageIndex, 'deleted', false, () => {
+                    handleHealthDataFormChange(pageIndex, 'post_session_survey.RPE', null);
+                });
+                this.setState({
+                    delayTimerId: _.delay(() => this._scrollTo({x: 0, y: 0}), 500),
+                });
             }
         );
     }
@@ -75,14 +81,16 @@ class HealthKitWorkouts extends Component {
         } else if((currentPage + 1) === this.props.workouts.length) {
             this.props.handleNextStep(true);
         } else {
-            _.delay(() => {
-                this.setState({
-                    isEditingDuration: false,
-                    pageIndex:         (currentPage + 1),
-                    showRPEPicker:     false,
-                });
-                this.props.scrollToArea({x: 0, y: 0});
-            }, 500);
+            this.setState({
+                delayTimerId: _.delay(() => {
+                    this.setState({
+                        isEditingDuration: false,
+                        pageIndex:         (currentPage + 1),
+                        showRPEPicker:     false,
+                    });
+                    this._scrollTo({x: 0, y: 0});
+                }, 500)
+            });
         }
     }
 
@@ -91,15 +99,35 @@ class HealthKitWorkouts extends Component {
         this.setState({ isEditingDuration: true, });
     }
 
+    _scrollTo = myComponentsLocation => {
+        if(myComponentsLocation) {
+            this.setState({
+                delayTimerId: _.delay(() => {
+                    this.scrollViewHealthKitRef.scrollTo({
+                        x:        myComponentsLocation.x,
+                        y:        myComponentsLocation.y,
+                        animated: true,
+                    });
+                }, 500)
+            });
+        }
+    }
+
     render = () => {
-        const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, scrollToArea, workouts, } = this.props;
+        const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, workouts, } = this.props;
         const { isEditingDuration, pageIndex, showRPEPicker, } = this.state;
         let { partOfDay, sportDuration, sportImage, sportText, } = PlanLogic.handleHealthKitWorkoutPageRenderLogic(workouts[pageIndex]);
+        let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight + AppSizes.paddingLrg);
         return(
-            <View style={{flex: 1,}}>
+            <ScrollView
+                contentContainerStyle={{flexGrow: 1,}}
+                keyboardShouldPersistTaps={'always'}
+                ref={ref => {this.scrollViewHealthKitRef = ref;}}
+                stickyHeaderIndices={[0]}
+            >
                 <ProgressPill
                     currentStep={1}
-                    onBack={isPostSession && pageIndex > 0 ? () => this.setState({ pageIndex: (pageIndex - 1), }, () => this._resetStep(pageIndex)) : null}
+                    onBack={pageIndex > 0 ? () => this.setState({ pageIndex: (pageIndex - 1), }, () => this._resetStep(this.state.pageIndex)) : null}
                     onClose={handleTogglePostSessionSurvey}
                     totalSteps={isPostSession ? 2 : 3}
                 />
@@ -176,7 +204,7 @@ class HealthKitWorkouts extends Component {
                     onPress={() =>
                         this.setState(
                             { showRPEPicker: true, },
-                            () => scrollToArea(this._activityRPERef),
+                            () => this._scrollTo(this._activityRPERef),
                         )
                     }
                     raised={false}
@@ -185,7 +213,10 @@ class HealthKitWorkouts extends Component {
                 />
                 <Spacer size={30} />
                 <View
-                    onLayout={event => {this._activityRPERef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}}
+                    onLayout={event => {
+                        let yLocation = (event.nativeEvent.layout.y - pillsHeight);
+                        this._activityRPERef = {x: event.nativeEvent.layout.x, y: yLocation,}
+                    }}
                     style={{flex: 1,}}
                 >
                     { showRPEPicker ?
@@ -242,7 +273,8 @@ class HealthKitWorkouts extends Component {
                         null
                     }
                 </View>
-            </View>
+                <Spacer size={40} />
+            </ScrollView>
         )
     }
 }
@@ -253,7 +285,6 @@ HealthKitWorkouts.propTypes = {
     handleTogglePostSessionSurvey: PropTypes.func,
     handleToggleSurvey:            PropTypes.func.isRequired,
     isPostSession:                 PropTypes.bool,
-    scrollToArea:                  PropTypes.func.isRequired,
     workouts:                      PropTypes.array.isRequired,
 };
 

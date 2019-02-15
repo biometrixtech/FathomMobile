@@ -125,7 +125,6 @@ const zeplin = {
     superLight:             '#F5F5F5',
     warning:                '#EBBA2D',
     yellow:                 '#EBBA2D',
-
 }
 
 const alerts = {

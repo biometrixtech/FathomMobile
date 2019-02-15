@@ -115,8 +115,7 @@ const PlanLogic = {
         let newSorenessFields = _.cloneDeep(stateObject.soreness);
         // logic
         if(resetSections) {
-            let combinedSoreBodyParts = PlanLogic.handleNewSoreBodyPartLogic(soreBodyPartsPlan);
-            newSorenessFields = combinedSoreBodyParts;
+            // do nothing...
         } else if(!areaClicked && isAllGood) {
             let combinedSoreBodyParts = PlanLogic.handleNewSoreBodyPartLogic(soreBodyPartsPlan);
             let soreBodyParts = _.filter(stateObject.soreness, stateObjectSoreBodyPart => {
@@ -631,7 +630,7 @@ const PlanLogic = {
             pageNum = healthKitWorkouts && healthKitWorkouts.length > 0 ? 1 : 2;
             isValid = true;
         } else if(currentPage === 1) { // 1. Apple HealthKit (xN)
-            pageNum = 5;
+            pageNum = 4;
             isValid = isHealthKitValid;
         } else if(currentPage === 2) { // 2. trained already
             pageNum = dailyReadiness.already_trained_number === false ? 4 : 3;
@@ -676,8 +675,10 @@ const PlanLogic = {
         } else if(currentPage === 4) { // 4. train later?
             pageNum = !healthKitWorkouts && dailyReadiness.already_trained_number ?
                 (pageState.pageIndex - 1)
-                :
-                2;
+                : healthKitWorkouts && healthKitWorkouts.length > 0 ?
+                    1
+                    :
+                    2;
         } else if(currentPage === 5) { // 5. Follow Up Pain & Soreness
             pageNum = (pageState.pageIndex - 1);
             isTrainLater = true;

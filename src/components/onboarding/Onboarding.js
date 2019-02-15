@@ -56,6 +56,7 @@ class Onboarding extends Component {
     static componentName = 'Onboarding';
 
     static propTypes = {
+        accountCode:    PropTypes.string.isRequired,
         authorizeUser:  PropTypes.func.isRequired,
         createUser:     PropTypes.func.isRequired,
         finalizeLogin:  PropTypes.func.isRequired,
@@ -64,6 +65,7 @@ class Onboarding extends Component {
         network:        PropTypes.object.isRequired,
         onFormSubmit:   PropTypes.func.isRequired,
         registerDevice: PropTypes.func.isRequired,
+        setAccountCode: PropTypes.func.isRequired,
         setAppLogs:     PropTypes.func.isRequired,
         updateUser:     PropTypes.func.isRequired,
         user:           PropTypes.object.isRequired,
@@ -89,7 +91,7 @@ class Onboarding extends Component {
                 user: {
                     // agreed_terms_of_use:   false, // boolean
                     // agreed_privacy_policy: false, // boolean
-                    account_code:          '',
+                    account_code:          this.props.accountCode,
                     health_enabled:        user.health_enabled ? user.health_enabled : false,
                     cleared_to_play:       false, // boolean
                     first_time_experience: user.first_time_experience ? user.first_time_experience : [],
@@ -141,7 +143,7 @@ class Onboarding extends Component {
                 }
             },
             isFormValid:          false,
-            isHealthKitModalOpen: !user.id,
+            isHealthKitModalOpen: !this.props.user.id && Platform.OS === 'ios' && this.props.accountCode.length === 0,
             isPrivacyPolicyOpen:  false,
             isTermsOpen:          false,
             modalStyle:           {},
@@ -161,8 +163,14 @@ class Onboarding extends Component {
             BackHandler.addEventListener('hardwareBackPress', () => true);
         }
         // for current users
-        if(this.props.user && this.props.user.health_enabled) {
-            this._updateStateFromHealthKit();
+        if(this.props.user) {
+            let errorsArray = this._validateForm();
+            this.setState({
+                isFormValid: errorsArray.length === 0 ? true : false,
+            });
+            if(this.props.user.health_enabled) {
+                this._updateStateFromHealthKit();
+            }
         }
     }
 
@@ -174,9 +182,6 @@ class Onboarding extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
-        if(Actions.currentParams.accountCode !== this.state.form_fields.user.account_code) {
-            this._handleUserFormChange('account_code', Actions.currentParams.accountCode);
-        }
     }
 
     _toggleTermsWebView = () => {
@@ -348,6 +353,8 @@ class Onboarding extends Component {
         }
         userObj.health_enabled = newUser.health_enabled;
         userObj.first_time_experience = newUser.first_time_experience;
+        // clear account code reducer
+        this.props.setAccountCode('');
         // create or update, if no errors
         if(errorsArray.length === 0) {
             if(this.props.user.id) {
@@ -396,19 +403,19 @@ class Onboarding extends Component {
                                 this.props.setAppLogs();
                                 return res;
                             })
+                            .then(res => {
+                                if(user.health_enabled) {
+                                    return AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date)
+                                        .then(() => AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date));
+                                }
+                                return res;
+                            })
                             .catch(error => {
                                 const err = AppAPI.handleError(error);
                                 return this.setState({ loading: false, resultMsg: { err }, });
                             });
                     })
                     .then(() => this.props.finalizeLogin(user, credentials, authorization));
-            })
-            .then(response => {
-                if(response.health_enabled) {
-                    AppUtil.getAppleHealthKitDataAsync(response.id, response.health_sync_date, response.historic_health_sync_date);
-                    return AppUtil.getAppleHealthKitData(response.id, response.health_sync_date, response.historic_health_sync_date, () => response);
-                }
-                return response;
             })
             .then(userRes => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },
@@ -447,7 +454,7 @@ class Onboarding extends Component {
                         newUser.biometric_data.height.in = values[0].value.toString();
                     }
                     if(values[1].value && values[1].value > 0) {
-                        newUser.biometric_data.mass.lb = values[1].value.toString();
+                        newUser.biometric_data.mass.lb = _.round(values[1].value).toString();
                     }
                     if(values[2].value && values[2].value.length > 0 && values[2].age && values[2].age > 0) {
                         newUser.personal_data.birth_date = moment(values[2].value).format('MM/DD/YYYY');
@@ -525,11 +532,11 @@ class Onboarding extends Component {
                         style={[AppStyles.activityIndicator]}
                     /> : null
                 }
-                {/*<EnableAppleHealthKit
+                <EnableAppleHealthKit
                     handleSkip={() => this._handleEnableAppleHealthKit('apple_healthkit', false)}
                     handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
-                    isModalOpen={isHealthKitModalOpen && Platform.OS === 'ios'}
-                />*/}
+                    isModalOpen={isHealthKitModalOpen && form_fields.user.account_code.length === 0}
+                />
             </View>
         );
     }

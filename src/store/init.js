@@ -7,6 +7,7 @@
 
 /* eslint-disable no-process-env */
 export default {
+    account_code:         '',
     certificate:          null,
     device:               null,
     email:                null,
