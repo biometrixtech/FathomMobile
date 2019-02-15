@@ -456,11 +456,14 @@ function translateStrengthConditioningTypeToSport(sportName, strengthAndConditio
 }
 
 function cleanedActivitiesList() {
-    let cleanedActivityList = {};
+    let cleanedActivityList = [];
     _.map(activitiesListOrder, list => {
         let filteredSport = _.filter(teamSports, s => s.activitySection.includes(list.index));
         if(filteredSport.length > 0) {
-            cleanedActivityList[list.title] = _.orderBy(filteredSport, ['label', 'asc']);
+            let cleanedActivitySection = {};
+            cleanedActivitySection.title = list.title;
+            cleanedActivitySection.data = _.orderBy(filteredSport, ['label', 'asc']);
+            cleanedActivityList.push(cleanedActivitySection);
         }
     });
     return cleanedActivityList;

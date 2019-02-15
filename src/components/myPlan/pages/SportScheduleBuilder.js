@@ -19,7 +19,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
+import { Image, Platform, SectionList, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -303,36 +303,42 @@ class SportScheduleBuilder extends Component {
                         <View onLayout={event => {this._moreOptionsRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}}>
                             <Spacer size={30} />
                             { showMoreOptions ?
-                                _.map(cleanedActivitiesList, (activityItems, index) =>
-                                    <View key={index}>
-                                        <Text oswaldMedium style={{backgroundColor: AppColors.zeplin.lightSlate, color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}}>{index.toUpperCase()}</Text>
-                                        {_.map(activityItems, (activity, i) =>
-                                            <TouchableOpacity
-                                                key={i}
-                                                onPress={() => {
-                                                    this._nextStep(1);
-                                                    handleFormChange('sport_name', activity.index);
-                                                    handleFormChange('session_type', 6);
-                                                    _.delay(() => this._scrollToTop(),500);
-                                                }}
-                                                style={[
-                                                    (i+1) === activityItems.length ? {} : {borderBottomColor: AppColors.zeplin.shadow, borderBottomWidth: 1,},
-                                                    {alignItems: 'center', flexDirection: 'row', paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed,}
-                                                ]}
-                                            >
-                                                <Image
-                                                    source={activity.imagePath}
-                                                    style={{height: 25, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.seaBlue, width: 25,}}
-                                                />
-                                                <Text robotoMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15),}}>{activity.label}</Text>
-                                            </TouchableOpacity>
-                                        )}
-                                    </View>
-                                )
+                                <SectionList
+                                    keyExtractor={(item, index) => item + index}
+                                    renderItem={({item, index, section}) =>
+                                        <TouchableOpacity
+                                            key={index}
+                                            onPress={() => {
+                                                this._nextStep(1);
+                                                handleFormChange('sport_name', item.index);
+                                                handleFormChange('session_type', 6);
+                                                _.delay(() => this._scrollToTop(),500);
+                                            }}
+                                            style={[
+                                                (index+1) === section.data.length ? {} : {borderBottomColor: AppColors.zeplin.shadow, borderBottomWidth: 1,},
+                                                {alignItems: 'center', flexDirection: 'row', paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed,}
+                                            ]}
+                                        >
+                                            <Image
+                                                source={item.imagePath}
+                                                style={{height: 25, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.seaBlue, width: 25,}}
+                                            />
+                                            <Text robotoMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15),}}>{item.label}</Text>
+                                        </TouchableOpacity>
+                                    }
+                                    renderSectionHeader={({section: {title}}) =>
+                                        <Text
+                                            oswaldMedium
+                                            style={{backgroundColor: AppColors.zeplin.lightSlate, color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}}
+                                        >
+                                            {title.toUpperCase()}
+                                        </Text>
+                                    }
+                                    sections={cleanedActivitiesList}
+                                />
                                 :
                                 null
                             }
-
                         </View>
                     </View>
                     : step === 1 ?
