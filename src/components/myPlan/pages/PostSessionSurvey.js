@@ -79,6 +79,7 @@ class PostSessionSurvey extends Component {
     }
 
     _renderPreviousPage = (currentPage) => {
+        this.setState({ isActionButtonVisible: false, });
         const {
             postSession,
             soreBodyParts,

@@ -125,6 +125,7 @@ class ReadinessSurvey extends Component {
     }
 
     _renderPreviousPage = (currentPage, isSessions) => {
+        this.setState({ isActionButtonVisible: false, });
         const {
             dailyReadiness,
             healthKitWorkouts,
@@ -249,11 +250,12 @@ class ReadinessSurvey extends Component {
     _handleEnableAppleHealthKit = (firstTimeExperienceValue, healthKitFlag) => {
         const { user, } = this.props;
         this.setState({ isAppleHealthKitLoading: true, });
-        AppUtil.getAppleHealthKitDataAsync(user.id, user.health_sync_date, user.historic_health_sync_date);
-        AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date, () => {
-            this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue, () => {
-                this.props.handleUpdateUserHealthKitFlag(healthKitFlag, () => {
-                    this.setState({ isAppleHealthKitLoading: false, isAppleHealthModalOpen: false, });
+        AppUtil.getAppleHealthKitDataAsync(user.id, user.health_sync_date, user.historic_health_sync_date, () => {
+            AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date, () => {
+                this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue, () => {
+                    this.props.handleUpdateUserHealthKitFlag(healthKitFlag, () => {
+                        this.setState({ isAppleHealthKitLoading: false, isAppleHealthModalOpen: false, });
+                    });
                 });
             });
         });

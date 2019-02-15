@@ -38,6 +38,7 @@ class HealthKitWorkouts extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            delayTimerId:      null,
             isEditingDuration: false,
             pageIndex:         0,
             showRPEPicker:     false,
@@ -53,14 +54,21 @@ class HealthKitWorkouts extends Component {
         }
     }
 
+    componentWillUnmount = () => {
+        clearInterval(this.state.delayTimerId);
+    }
+
     _resetStep = pageIndex => {
         const { handleHealthDataFormChange, } = this.props;
         this.setState(
             { showRPEPicker: false, },
             () => {
-                handleHealthDataFormChange(pageIndex, 'deleted', false);
-                handleHealthDataFormChange(pageIndex, 'post_session_survey.RPE', null);
-                _.delay(() => this._scrollTo({x: 0, y: 0}), 500);
+                handleHealthDataFormChange(pageIndex, 'deleted', false, () => {
+                    handleHealthDataFormChange(pageIndex, 'post_session_survey.RPE', null);
+                });
+                this.setState({
+                    delayTimerId: _.delay(() => this._scrollTo({x: 0, y: 0}), 500),
+                });
             }
         );
     }
@@ -73,14 +81,16 @@ class HealthKitWorkouts extends Component {
         } else if((currentPage + 1) === this.props.workouts.length) {
             this.props.handleNextStep(true);
         } else {
-            _.delay(() => {
-                this.setState({
-                    isEditingDuration: false,
-                    pageIndex:         (currentPage + 1),
-                    showRPEPicker:     false,
-                });
-                this._scrollTo({x: 0, y: 0});
-            }, 500);
+            this.setState({
+                delayTimerId: _.delay(() => {
+                    this.setState({
+                        isEditingDuration: false,
+                        pageIndex:         (currentPage + 1),
+                        showRPEPicker:     false,
+                    });
+                    this._scrollTo({x: 0, y: 0});
+                }, 500)
+            });
         }
     }
 
@@ -91,13 +101,15 @@ class HealthKitWorkouts extends Component {
 
     _scrollTo = myComponentsLocation => {
         if(myComponentsLocation) {
-            _.delay(() => {
-                this.scrollViewHealthKitRef.scrollTo({
-                    x:        myComponentsLocation.x,
-                    y:        myComponentsLocation.y,
-                    animated: true,
-                });
-            }, 500);
+            this.setState({
+                delayTimerId: _.delay(() => {
+                    this.scrollViewHealthKitRef.scrollTo({
+                        x:        myComponentsLocation.x,
+                        y:        myComponentsLocation.y,
+                        animated: true,
+                    });
+                }, 500)
+            });
         }
     }
 

@@ -194,8 +194,9 @@ class Start extends Component {
                     })
                     .then(response => {
                         if(userObj.health_enabled) {
-                            AppUtil.getAppleHealthKitDataAsync(userObj.id, userObj.health_sync_date, userObj.historic_health_sync_date);
-                            return AppUtil.getAppleHealthKitData(userObj.id, userObj.health_sync_date, userObj.historic_health_sync_date, () => response);
+                            return AppUtil.getAppleHealthKitDataAsync(userObj.id, userObj.health_sync_date, userObj.historic_health_sync_date, () =>
+                                AppUtil.getAppleHealthKitData(userObj.id, userObj.health_sync_date, userObj.historic_health_sync_date, () => response)
+                            );
                         }
                         return response;
                     })
