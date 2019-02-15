@@ -1,6 +1,6 @@
 {
   "name": "fathom",
-  "version": "2.8.0-beta.12",
+  "version": "2.8.0",
   "private": true,
   "author": "Mazen Chami",
   "scripts": {
