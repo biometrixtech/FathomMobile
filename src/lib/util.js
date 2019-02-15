@@ -369,57 +369,63 @@ const UTIL = {
         };
     },
 
-    async getAppleHealthKitDataAsync(userId, lastSyncDate, historicSyncDate, callback, numberOfDaysAgo = 35) {
-        if(Platform.OS === 'ios') {
-            // grab permissions
-            let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
-            // set start and end dates
-            let { daysAgo, lastSync, now, syncDate, today3AM, } = UTIL._getAppleHealthTimes(lastSyncDate, historicSyncDate, numberOfDaysAgo);
-            // setup variables
-            let apiPromisesArray = [];
-            // combine promises and trigger next step
-            if(syncDate) {
-                // 1- syncDate - today3AM (workout/hr)
-                apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, syncDate, today3AM));
-                apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, syncDate, today3AM));
-                // 2- lastSync - now (sleep)
-                apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, lastSync, now));
-            } else {
-                // 1- daysAgo - today3AM (workout/hr)
-                apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, daysAgo, today3AM));
-                apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, daysAgo, today3AM));
-                // 2- daysAgo - now (sleep)
-                apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, now));
+    getAppleHealthKitDataPrevious: (userId, lastSyncDate, historicSyncDate, numberOfDaysAgo = 35) => {
+        return new Promise((resolve, reject) => {
+            if(Platform.OS === 'ios') {
+                // grab permissions
+                let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
+                // set start and end dates
+                let { daysAgo, lastSync, now, syncDate, today3AM, } = UTIL._getAppleHealthTimes(lastSyncDate, historicSyncDate, numberOfDaysAgo);
+                // setup variables
+                let apiPromisesArray = [];
+                // combine promises and trigger next step
+                if(syncDate) {
+                    // 1- syncDate - today3AM (workout/hr)
+                    apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, syncDate, today3AM));
+                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, syncDate, today3AM));
+                    // 2- lastSync - now (sleep)
+                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, lastSync, now));
+                } else {
+                    // 1- daysAgo - today3AM (workout/hr)
+                    apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, daysAgo, today3AM));
+                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, daysAgo, today3AM));
+                    // 2- daysAgo - now (sleep)
+                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, now));
+                }
+                // return function
+                return UTIL._handleReturnedPromises(userId, syncDate ? syncDate : daysAgo, apiPromisesArray, true)
+                    .then(res => {
+                        return resolve();
+                    });
             }
-            // return function
-            UTIL._handleReturnedPromises(userId, syncDate ? syncDate : daysAgo, apiPromisesArray, true);
-        }
-        if(callback) {
-            callback();
-        }
+            return resolve();
+        });
     },
 
-    getAppleHealthKitData: (userId, lastSyncDate, historicSyncDate, callback, numberOfDaysAgo = 35) => {
-        if(Platform.OS === 'ios') {
-            // grab permissions
-            let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
-            // set start and end dates
-            let { now, today3AM, } = UTIL._getAppleHealthTimes(lastSyncDate, historicSyncDate, numberOfDaysAgo);
-            // setup variables
-            let apiPromisesArray = [];
-            // combine promises and trigger next step
-            // 1- today3AM - now (workout/hr)
-            apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now));
-            apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now));
-            // return function
-            return UTIL._handleReturnedPromises(userId, null, apiPromisesArray, false, callback);
-        }
-        if(callback) {
-            return callback();
-        }
+    getAppleHealthKitData: (userId, lastSyncDate, historicSyncDate, numberOfDaysAgo = 35) => {
+        return new Promise((resolve, reject) => {
+            if(Platform.OS === 'ios') {
+                // grab permissions
+                let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
+                // set start and end dates
+                let { now, today3AM, } = UTIL._getAppleHealthTimes(lastSyncDate, historicSyncDate, numberOfDaysAgo);
+                // setup variables
+                let apiPromisesArray = [];
+                // combine promises and trigger next step
+                // 1- today3AM - now (workout/hr)
+                apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now));
+                apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now));
+                // return function
+                return UTIL._handleReturnedPromises(userId, null, apiPromisesArray, false)
+                    .then(res => {
+                        return resolve();
+                    });
+            }
+            return resolve();
+        });
     },
 
-    _handleReturnedPromises: (userId, startDate, promisesArray, sendAPI, callback) => {
+    _handleReturnedPromises: (userId, startDate, promisesArray, sendAPI) => {
         return Promise
             .all(promisesArray)
             .then(values => {
@@ -439,9 +445,7 @@ const UTIL = {
                     };
                     PlanActions.postHealthData(payload)
                         .then(() => {
-                            if(callback) {
-                                return callback();
-                            }
+                            return;
                         });
                 } else {
                     // remove already synced workouts
@@ -486,16 +490,12 @@ const UTIL = {
                         workoutData:        updatedCleanedWorkoutValues,
                     });
                     UTIL._patchWorkoutSession(workoutsToPatch, userId);
-                    if(callback) {
-                        return callback();
-                    }
+                    return;
                 }
             })
             .catch(err => {
                 // console.log('err',err);
-                if(callback) {
-                    return callback();
-                }
+                return;
             });
     },
 

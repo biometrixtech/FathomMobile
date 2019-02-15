@@ -45,8 +45,9 @@ class CustomFormLabel extends Component {
             containerStyle: [{}],
             labelStyle:     [{
                 ...AppFonts.oswaldMedium,
-                color:    AppColors.zeplin.lightSlate,
-                fontSize: AppFonts.scaleFont(14),
+                color:      AppColors.zeplin.lightSlate,
+                fontSize:   AppFonts.scaleFont(14),
+                lineheight: AppFonts.scaleFont(16),
             }],
         };
 
