@@ -430,7 +430,7 @@ class Settings extends Component {
                         :
                         null
                 }
-                { Platform.OS === 'ios' ?
+                { Platform.OS === 'ios' && userObj.role !== 'coach' ?
                     <ListItem
                         chevronColor={AppColors.black}
                         containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
