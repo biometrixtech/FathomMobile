@@ -323,6 +323,13 @@ const signUp = (credentials) => {
         });
 };
 
+const setAccountCode = accountCode => {
+    return dispatch => Promise.resolve(dispatch({
+        type: Actions.SET_ACCOUNT_CODE,
+        code: accountCode,
+    }));
+};
+
 /**
  *
  * @param {new environment to be used} environment
@@ -355,6 +362,7 @@ export default {
     finalizeLogin,
     logout,
     sendDeviceToken,
+    setAccountCode,
     setEnvironment,
     signUp,
 };

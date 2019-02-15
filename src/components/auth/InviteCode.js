@@ -59,6 +59,7 @@ class InviteCode extends Component {
 
     static propTypes = {
         checkAccountCode: PropTypes.func.isRequired,
+        setAccountCode:   PropTypes.func.isRequired,
     }
 
     static defaultProps = {}
@@ -119,6 +120,16 @@ class InviteCode extends Component {
         }
     }
 
+    _handleOnSuccesClicked = () => {
+        this.setState(
+            { isSuccessOpen: false, },
+            () => {
+                this.props.setAccountCode(this.state.account.code)
+                    .then(res => Actions.onboarding({ accountCode: this.state.account.code, }));
+            }
+        );
+    }
+
     render = () => {
         return(
             <Wrapper>
@@ -159,11 +170,11 @@ class InviteCode extends Component {
                                 <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.white, fontSize: AppFonts.scaleFont(40),}]}>{'Success!'}</Text>
                                 <Spacer size={20} />
                                 <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.white, fontSize: AppFonts.scaleFont(14),}]}>{'Continue to Create Account'}</Text>
-                                <Spacer size={5} />
+                                <Spacer size={10} />
                                 <TabIcon
                                     icon={'arrow-right-circle'}
                                     iconStyle={[{color: AppColors.primary.yellow.hundredPercent,}]}
-                                    onPress={() => this.setState({ isSuccessOpen: false, }, () => Actions.onboarding({ accountCode: this.state.account.code, }))}
+                                    onPress={() => this._handleOnSuccesClicked()}
                                     reverse={false}
                                     size={45}
                                     type={'simple-line-icon'}

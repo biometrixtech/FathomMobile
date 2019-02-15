@@ -6,6 +6,7 @@ import { init as InitActions, plan as PlanActions, user as UserActions, } from '
 
 const Onboarding = ({
     Layout,
+    accountCode,
     authorizeUser,
     createUser,
     finalizeLogin,
@@ -15,11 +16,13 @@ const Onboarding = ({
     network,
     onFormSubmit,
     registerDevice,
+    setAccountCode,
     setAppLogs,
     updateUser,
     user,
 }) => (
     <Layout
+        accountCode={accountCode}
         authorizeUser={authorizeUser}
         createUser={createUser}
         finalizeLogin={finalizeLogin}
@@ -29,6 +32,7 @@ const Onboarding = ({
         network={network}
         onFormSubmit={onFormSubmit}
         registerDevice={registerDevice}
+        setAccountCode={setAccountCode}
         setAppLogs={setAppLogs}
         updateUser={updateUser}
         user={user}
@@ -37,6 +41,7 @@ const Onboarding = ({
 
 Onboarding.propTypes = {
     Layout:         PropTypes.func.isRequired,
+    accountCode:    PropTypes.string.isRequired,
     authorizeUser:  PropTypes.func.isRequired,
     createUser:     PropTypes.func.isRequired,
     finalizeLogin:  PropTypes.func.isRequired,
@@ -45,6 +50,7 @@ Onboarding.propTypes = {
     network:        PropTypes.object.isRequired,
     onFormSubmit:   PropTypes.func.isRequired,
     registerDevice: PropTypes.func.isRequired,
+    setAccountCode: PropTypes.func.isRequired,
     setAppLogs:     PropTypes.func.isRequired,
     updateUser:     PropTypes.func.isRequired,
     user:           PropTypes.object.isRequired,
@@ -53,9 +59,10 @@ Onboarding.propTypes = {
 Onboarding.defaultProps = {};
 
 const mapStateToProps = state => ({
-    lastOpened: state.plan.lastOpened,
-    network:    state.network,
-    user:       state.user,
+    accountCode: state.init.account_code,
+    lastOpened:  state.plan.lastOpened,
+    network:     state.network,
+    user:        state.user,
 });
 
 const mapDispatchToProps = {
@@ -65,6 +72,7 @@ const mapDispatchToProps = {
     getMyPlan:      PlanActions.getMyPlan,
     onFormSubmit:   InitActions.startLogin,
     registerDevice: InitActions.registerDevice,
+    setAccountCode: InitActions.setAccountCode,
     setAppLogs:     PlanActions.setAppLogs,
     updateUser:     UserActions.updateUser,
 };

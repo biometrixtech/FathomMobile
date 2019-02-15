@@ -259,6 +259,13 @@ class ReadinessSurvey extends Component {
         });
     }
 
+    _handleSkipAppleHealthKit = value => {
+        this.setState({ isAppleHealthKitLoading: true, });
+        this.props.handleUpdateFirstTimeExperience(value, () => {
+            this.setState({ isAppleHealthKitLoading: false, isAppleHealthModalOpen: false, });
+        });
+    }
+
     render = () => {
         const {
             dailyReadiness,
@@ -736,7 +743,7 @@ class ReadinessSurvey extends Component {
                 />
 
                 <EnableAppleHealthKit
-                    handleSkip={value => handleUpdateFirstTimeExperience(value)}
+                    handleSkip={value => this._handleSkipAppleHealthKit(value)}
                     handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
                     isLoading={this.state.isAppleHealthKitLoading}
                     isModalOpen={this.state.isAppleHealthModalOpen}
