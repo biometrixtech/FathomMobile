@@ -163,15 +163,15 @@ class Onboarding extends Component {
             BackHandler.addEventListener('hardwareBackPress', () => true);
         }
         // for current users
-        if(this.props.user && this.props.user.health_enabled) {
-            this._updateStateFromHealthKit();
+        if(this.props.user) {
+            let errorsArray = this._validateForm();
+            this.setState({
+                isFormValid: errorsArray.length === 0 ? true : false,
+            });
+            if(this.props.user.health_enabled) {
+                this._updateStateFromHealthKit();
+            }
         }
-    }
-
-    componentDidMount = () => {
-        // console.log(Actions.currentParams.accountCode);
-        // console.log(Actions.currentParams.accountCode.length);
-        // this.setState({ isHealthKitModalOpen: !this.props.user.id && Platform.OS === 'ios', });
     }
 
     componentWillUnmount = () => {
@@ -182,9 +182,6 @@ class Onboarding extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
-        // if(Actions.currentParams.accountCode && Actions.currentParams.accountCode !== this.state.form_fields.user.account_code) {
-        //     this._handleUserFormChange('account_code', Actions.currentParams.accountCode);
-        // }
     }
 
     _toggleTermsWebView = () => {

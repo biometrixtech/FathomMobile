@@ -369,7 +369,7 @@ const UTIL = {
         };
     },
 
-    getAppleHealthKitDataAsync: async (userId, lastSyncDate, historicSyncDate, callback, numberOfDaysAgo = 35) => {
+    async getAppleHealthKitDataAsync(userId, lastSyncDate, historicSyncDate, callback, numberOfDaysAgo = 35) {
         if(Platform.OS === 'ios') {
             // grab permissions
             let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
@@ -392,7 +392,7 @@ const UTIL = {
                 apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, now));
             }
             // return function
-            return UTIL._handleReturnedPromises(userId, syncDate ? syncDate : daysAgo, apiPromisesArray, true);
+            return await UTIL._handleReturnedPromises(userId, syncDate ? syncDate : daysAgo, apiPromisesArray, true);
         }
         if(callback) {
             return callback();
