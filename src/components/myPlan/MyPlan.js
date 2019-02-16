@@ -646,9 +646,9 @@ class MyPlan extends Component {
                 },
             );
         }, 500);
-        this.props.postSessionSurvey(postSession)
+        this.props.clearHealthKitWorkouts() // clear HK workouts right away
+            .then(() => this.props.postSessionSurvey(postSession))
             .then(response => {
-                this.props.clearHealthKitWorkouts();
                 if(!areAllDeleted) {
                     this.props.clearCompletedExercises();
                 }
