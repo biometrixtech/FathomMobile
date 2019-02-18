@@ -71,7 +71,7 @@ class AthleteComplianceModal extends Component {
                 {
                     content:        incompleteAthletes,
                     leftIcon:       'alert-circle',
-                    leftIconColor:  AppColors.zeplin.error,
+                    leftIconColor:  AppColors.zeplin.coachesDashError,
                     leftIconFamily: 'material-community',
                     title:          'SURVEYS NOT COMPLETED',
                     subtitle:       `${numOfIncompletedAthletes}/${numOfTotalAthletes}`,
@@ -87,7 +87,7 @@ class AthleteComplianceModal extends Component {
                 {
                     content:        trainingCompliance.no_response,
                     leftIcon:       'alert-circle',
-                    leftIconColor:  AppColors.zeplin.error,
+                    leftIconColor:  AppColors.zeplin.coachesDashError,
                     leftIconFamily: 'material-community',
                     title:          'NO RESPONSE LOGGED',
                     subtitle:       `${trainingCompliance.no_response.length}/${numOfTotalAthletes}`,

@@ -469,14 +469,28 @@ class CoachesDashboard extends Component {
                     }
                 </View>
                 { isThisWeek && !doWeHaveInsights ?
-                    <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
+                    <View
+                        style={[
+                            AppStyles.containerCentered,
+                            styles.shadowEffect,
+                            Platform.OS === 'ios' ? {} : {elevation: 2},
+                            {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}
+                        ]}
+                    >
                         <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(18),}]}>{'INSUFFICIENT TREND DATA'}</Text>
                         <Spacer size={20} />
                         <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{thisWeekInsufficientDataText}</Text>
                         <Spacer size={20} />
                     </View>
-                    : !isThisWeek && complianceColor === AppColors.zeplin.error ?
-                        <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
+                    : !isThisWeek && complianceColor === AppColors.zeplin.coachesDashError ?
+                        <View
+                            style={[
+                                AppStyles.containerCentered,
+                                styles.shadowEffect,
+                                Platform.OS === 'ios' ? {} : {elevation: 2},
+                                {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}
+                            ]}
+                        >
                             <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(18),}]}>{`${compliance.complete.length} ${compliance.complete.length === 1 ? 'SURVEY' : 'SURVEYS'} COMPLETED`}</Text>
                             <Spacer size={20} />
                             <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{todayInsufficientDataText}</Text>
@@ -510,7 +524,13 @@ class CoachesDashboard extends Component {
         }
         return(
             <View key={key}>
-                <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml,}}>
+                <View
+                    style={[
+                        styles.shadowEffect,
+                        Platform.OS === 'ios' ? {} : {elevation: 2},
+                        {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml,}
+                    ]}
+                >
                     <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{descriptionObj.label}</Text>
                     <Spacer size={5} />
                     <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{descriptionObj.description}</Text>
@@ -569,7 +589,14 @@ class CoachesDashboard extends Component {
                     { insights.length === 0 ?
                         this.renderNoDataSection()
                         : !user.first_time_experience.includes('coaches_today_popup') && !hideTodayStartState ?
-                            <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
+                            <View
+                                style={[
+                                    AppStyles.containerCentered,
+                                    styles.shadowEffect,
+                                    Platform.OS === 'ios' ? {} : {elevation: 2},
+                                    {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}
+                                ]}
+                            >
                                 <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'LET\'S GET STARTED!'}</Text>
                                 <Spacer size={20} />
                                 <TabIcon
@@ -635,7 +662,14 @@ class CoachesDashboard extends Component {
                     { insights.length === 0 ?
                         this.renderNoDataSection()
                         : !user.first_time_experience.includes('coaches_this_week_popup') && !hideThisWeekStartState ?
-                            <View style={[AppStyles.containerCentered, styles.shadowEffect, {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}]}>
+                            <View
+                                style={[
+                                    AppStyles.containerCentered,
+                                    styles.shadowEffect,
+                                    Platform.OS === 'ios' ? {} : {elevation: 2},
+                                    {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}
+                                ]}
+                            >
                                 <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'TRENDING INSIGHTS\nLIVE HERE!'}</Text>
                                 <Spacer size={10} />
                                 <TabIcon
@@ -739,7 +773,13 @@ class CoachesDashboard extends Component {
         return (
             _.map(coachesDashboardCardsData, (section, index) =>
                 <View key={index}>
-                    <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml,}}>
+                    <View
+                        style={[
+                            styles.shadowEffect,
+                            Platform.OS === 'ios' ? {} : {elevation: 2},
+                            {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml,}
+                        ]}
+                    >
                         <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{section.label}</Text>
                     </View>
                     <Spacer size={25} />
@@ -820,19 +860,24 @@ class CoachesDashboard extends Component {
                 </ScrollableTabView>
                 { isComplianceModalOpen ?
                     <Modal
-                        backdropColor={AppColors.zeplin.darkNavy}
+                        backdropColor={AppColors.zeplin.darkBlue}
                         backdropOpacity={0.8}
                         backdropPressToClose={false}
                         coverScreen={true}
                         isOpen={isComplianceModalOpen}
                         position={'center'}
                         ref={ref => {this._complianceModalRef = ref;}}
-                        style={[AppStyles.modalShadowEffect, {
-                            borderRadius: 5,
-                            height:       AppSizes.screen.heightThreeQuarters,
-                            width:        AppSizes.screen.widthThreeQuarters,
-                        }]}
+                        style={[
+                            AppStyles.modalShadowEffect,
+                            Platform.OS === 'ios' ? {} : {elevation: 2},
+                            {
+                                borderRadius: 5,
+                                height:       AppSizes.screen.heightThreeQuarters,
+                                width:        AppSizes.screen.widthThreeQuarters,
+                            }
+                        ]}
                         swipeToClose={false}
+                        useNativeDriver={false}
                     >
                         <AthleteComplianceModal
                             completedAthletes={completedAthletes}
@@ -850,19 +895,24 @@ class CoachesDashboard extends Component {
                 }
                 { isAthleteCardModalOpen ?
                     <Modal
-                        backdropColor={AppColors.zeplin.darkNavy}
+                        backdropColor={AppColors.zeplin.darkBlue}
                         backdropOpacity={0.8}
                         backdropPressToClose={false}
                         coverScreen={true}
                         isOpen={isAthleteCardModalOpen}
                         position={'center'}
                         ref={ref => {this._athleteCardModalRef = ref;}}
-                        style={[AppStyles.modalShadowEffect, {
-                            borderRadius: 5,
-                            height:       AppSizes.screen.heightThreeQuarters,
-                            width:        AppSizes.screen.width * 0.9,
-                        }]}
+                        style={[
+                            AppStyles.modalShadowEffect,
+                            Platform.OS === 'ios' ? {} : {elevation: 2},
+                            {
+                                borderRadius: 5,
+                                height:       AppSizes.screen.heightThreeQuarters,
+                                width:        AppSizes.screen.width * 0.9,
+                            }
+                        ]}
                         swipeToClose={false}
+                        useNativeDriver={false}
                     >
                         {this.renderAthleteCardModal()}
                     </Modal>

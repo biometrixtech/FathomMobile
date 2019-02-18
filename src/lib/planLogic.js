@@ -496,7 +496,7 @@ const PlanLogic = {
       */
     handleAthleteCardModalRenderLogic: selectedAthlete => {
         let athleteName = `${selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*'}${selectedAthlete.first_name.toUpperCase()} ${selectedAthlete.last_name.toUpperCase()}`;
-        let mainColor = selectedAthlete.color === 0 ? AppColors.zeplin.success : selectedAthlete.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
+        let mainColor = selectedAthlete.color === 0 ? AppColors.zeplin.success : selectedAthlete.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.coachesDashError;
         let subHeader = selectedAthlete.color === 0 ? 'Train as normal' : selectedAthlete.color === 1 ? 'Consider altering training plan' : 'Consider not training today';
         return {
             athleteName,
@@ -528,12 +528,12 @@ const PlanLogic = {
         let completedAthletes = complianceObj && complianceObj.complete ? complianceObj.complete : [];
         let completedPercent = (numOfCompletedAthletes / numOfTotalAthletes) * 100;
         let complianceColor = completedPercent <= 49 ?
-            AppColors.zeplin.error
+            AppColors.zeplin.coachesDashError
             : completedPercent >= 50 && completedPercent <= 74 ?
                 AppColors.zeplin.warning
                 :
                 AppColors.zeplin.success;
-        complianceColor = numOfTotalAthletes === 0 ? AppColors.zeplin.error : complianceColor;
+        complianceColor = numOfTotalAthletes === 0 ? AppColors.zeplin.coachesDashError : complianceColor;
         let trainingCompliance = complianceObj ? complianceObj.training_compliance : [];
         return {
             coachesTeams,
@@ -558,7 +558,7 @@ const PlanLogic = {
             :
             false;
         let athleteName = `${didUserCompleteReadinessSurvey ? '' : '*'}${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`;
-        let backgroundColor = item.color === 0 ? AppColors.zeplin.success : item.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
+        let backgroundColor = item.color === 0 ? AppColors.zeplin.success : item.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.coachesDashError;
         let filteredAthlete = _.filter(athletes, ['user_id', item.user_id])[0];
         filteredAthlete.didUserCompleteReadinessSurvey = didUserCompleteReadinessSurvey;
         return {

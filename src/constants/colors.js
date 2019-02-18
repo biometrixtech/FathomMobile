@@ -101,6 +101,7 @@ const tabbar = {
 const zeplin = {
     blueBackground:         '#183C4D', // 24, 60, 77
     blueGrey:               '#757D8A',
+    coachesDashError:       '#E6583D',
     darkBlue:               '#081832', // 8, 24, 50
     darkGrey:               '#2B2B2B', // 43, 43, 43
     darkGreyText:           '#868686', // 134, 134, 134
