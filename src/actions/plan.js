@@ -192,6 +192,8 @@ const postSessionSurvey = postSessionObj => {
     newTrainingSession.strength_and_conditioning_type = postSessionObj.sessions[0] && postSessionObj.sessions[0].strength_and_conditioning_type ? postSessionObj.sessions[0].strength_and_conditioning_type : null;
     newTrainingSession.session_type = postSessionObj.sessions[0] && postSessionObj.sessions[0].session_type ? postSessionObj.sessions[0].session_type : null;
     newTrainingSession.event_date = postSessionObj.sessions[0] && postSessionObj.sessions[0].event_date ? postSessionObj.sessions[0].event_date : null;
+    newTrainingSession.end_date = postSessionObj.sessions[0] && postSessionObj.sessions[0].end_date ? postSessionObj.sessions[0].end_date : null;
+    newTrainingSession.deleted = postSessionObj.sessions[0] && postSessionObj.sessions[0].deleted ? true : false;
     newTrainingSessions.push(newTrainingSession);
     newCurrentPlan.training_sessions = newTrainingSessions;
     newPlan.daily_plans.push(newCurrentPlan);
@@ -201,6 +203,10 @@ const postSessionSurvey = postSessionObj => {
             dispatch({
                 type: Actions.POST_SESSION_SURVEY,
                 data: postSessionObj,
+            });
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: newPlan.daily_plans,
             });
             return myPlanData;
         })
