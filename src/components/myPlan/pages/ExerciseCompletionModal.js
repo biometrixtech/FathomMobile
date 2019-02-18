@@ -142,6 +142,10 @@ class ExerciseCompletionModal extends Component {
         if(Object.keys(completionModalExerciseList).length === 1 || Object.keys(completionModalExerciseList).length === 2) {
             sessionIconWidth = (modalWidth * 0.50);
         }
+        let userFirstName = user && user.personal_data && user.personal_data.first_name && user.personal_data.first_name.length > 0 ?
+            user.personal_data.first_name.toUpperCase()
+            :
+            '';
         return(
             <Modal
                 backdropColor={AppColors.zeplin.darkNavy}
@@ -217,7 +221,7 @@ class ExerciseCompletionModal extends Component {
                                 })}
                             </View>
                             <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>
-                                {`${isCompleted ? 'GREAT WORK' : 'ALMOST DONE'} ${user.personal_data.first_name.toUpperCase()}!`}
+                                {`${isCompleted ? 'GREAT WORK' : 'ALMOST DONE'} ${userFirstName}!`}
                             </Text>
                             <Spacer size={AppSizes.padding} />
                             { !isCompleted ?

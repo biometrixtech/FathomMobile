@@ -295,6 +295,10 @@ class ReadinessSurvey extends Component {
         } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, dailyReadiness.soreness);
         let isFABVisible = areaOfSorenessClicked && isActionButtonVisible && areaOfSorenessClicked.length > 0;
+        let userFirstName = user && user.personal_data && user.personal_data.first_name && user.personal_data.first_name.length > 0 ?
+            user.personal_data.first_name.toUpperCase()
+            :
+            '';
         /*eslint no-return-assign: 0*/
         return(
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
@@ -319,7 +323,7 @@ class ReadinessSurvey extends Component {
                                 <View style={{flex: 1, justifyContent: 'space-between',}}>
                                     <View />
                                     <View>
-                                        <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(30), lineHeight: AppFonts.scaleFont(40),}}>{`GOOD ${partOfDay}, ${user.personal_data.first_name.toUpperCase()}!`}</Text>
+                                        <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(30), lineHeight: AppFonts.scaleFont(40),}}>{`GOOD ${partOfDay}, ${userFirstName}!`}</Text>
                                         <Spacer size={5} />
                                         <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(25),}}>{helloPageText}</Text>
                                         <Spacer size={10} />
