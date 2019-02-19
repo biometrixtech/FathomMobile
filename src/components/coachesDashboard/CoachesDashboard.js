@@ -349,7 +349,7 @@ class CoachesDashboard extends Component {
                                         reverse={false}
                                         type={'material-community'}
                                     />
-                                  <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingSml,}}>{'BECAUSE WE NOTICED...'}</Text>
+                                    <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingSml,}}>{'BECAUSE WE NOTICED...'}</Text>
                                 </View>
                                 <Spacer size={10} />
                                 <ScrollView>

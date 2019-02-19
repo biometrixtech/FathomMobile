@@ -137,7 +137,7 @@ class MyPlan extends Component {
                 current_position:          null,
                 current_sport_name:        null,
                 readiness:                 null,
-                sessions:                  [],
+                sessions:                  [PlanLogic.returnEmptySession()],
                 sessions_planned:          null,
                 sleep_quality:             null,
                 soreness:                  [],
