@@ -586,7 +586,7 @@ const coachesDashboardCardsData = isToday => {
             {
                 description: 'Significant pain or soreness reported: consult medical staff, consider not training',
                 label:       'SEEK MED EVAL TO CLEAR FOR TRAINING',
-                overlayText: 'When an athlete completes a survey, their status will update here.',
+                overlayText: 'When an athlete completes a survey, their status will update here',
                 value:       'seek_med_eval_to_clear_for_training',
             },
             {
@@ -595,7 +595,7 @@ const coachesDashboardCardsData = isToday => {
                 value:       'adapt_training_to_avoid_symptoms',
             },
             {
-                description: 'Modify training if pain increases. Prioritize recovery to prevent development of injury',
+                description: 'Modify training if pain increases, prioritize recovery to prevent development of injury',
                 label:       'MONITOR, MODIFY IF NEEDED',
                 value:       'monitor_modify_if_needed',
             },
@@ -605,7 +605,7 @@ const coachesDashboardCardsData = isToday => {
                 value:       'recovery_day_recommended',
             },
             {
-                description: 'Survey responses indicate ready to train as normal if no other medical limitations.',
+                description: 'Survey responses indicate ready to train as normal if no other medical limitations',
                 label:       'READY TO TRAIN BASED ON DATA',
                 value:       'all_good',
             },
@@ -615,7 +615,7 @@ const coachesDashboardCardsData = isToday => {
         {
             description: 'Significant pain or soreness reported: consult medical staff, consider not training',
             label:       'SEEK MED EVAL TO CLEAR FOR TRAINING',
-            overlayText: 'When an athlete has been identified as having a chronic issue, their status will update here.',
+            overlayText: 'When an athlete has been identified as having a chronic issue, their status will update here',
             value:       'seek_med_eval_to_clear_for_training',
         },
         {
