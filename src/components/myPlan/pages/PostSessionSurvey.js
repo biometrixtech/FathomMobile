@@ -278,6 +278,7 @@ class PostSessionSurvey extends Component {
                         bounces={false}
                         contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         nestedScrollEnabled={true}
+                        onMomentumScrollEnd={event => this._scrollViewEndDrag(event)}
                         onScrollEndDrag={event => this._scrollViewEndDrag(event)}
                         overScrollMode={'never'}
                         ref={ref => {this.myAreasOfSorenessComponent = ref;}}
