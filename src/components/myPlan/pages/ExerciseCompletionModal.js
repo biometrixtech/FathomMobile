@@ -156,6 +156,7 @@ class ExerciseCompletionModal extends Component {
                 position={'top'}
                 style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, }]}
                 swipeToClose={false}
+                useNativeDriver={false}
             >
                 <View
                     style={[
