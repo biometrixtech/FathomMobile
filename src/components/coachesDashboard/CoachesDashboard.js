@@ -49,6 +49,14 @@ const todayPopupText = 'Here you\'ll find daily readiness status, injury risk mi
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    athleteCardBottomWrapper: {
+        alignItems:        'center',
+        flex:              1,
+        flexDirection:     'row',
+        justifyContent:    'space-between',
+        paddingBottom:     AppSizes.paddingXSml,
+        paddingHorizontal: AppSizes.padding,
+    },
     athleteCircle: {
         borderRadius:   (circleSize / 2),
         height:         circleSize,
@@ -365,19 +373,22 @@ class CoachesDashboard extends Component {
                         }
                     </View>
                     { selectedAthletePage === 0 ?
-                        <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingBottom: AppSizes.padding, paddingRight: AppSizes.paddingLrg,}}>
-                            <View style={{paddingLeft: AppSizes.paddingLrg,}}>
-                                <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(13),}}>
-                                    {selectedAthlete && selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*survey not completed today'}
+                        <View style={[styles.athleteCardBottomWrapper,]}>
+                            <View style={{alignItems: 'flex-start', flex: 5,}}>
+                                <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(10),}}>
+                                    {selectedAthlete && selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*reduced certainty considering low survey compliance'}
                                 </Text>
                             </View>
-                            <TouchableHighlight onPress={() => this.setState({ selectedAthletePage: 1, })} underlayColor={AppColors.transparent}>
-                                <View style={{flexDirection: 'row',}}>
-                                    <Text oswaldMedium style={[AppStyles.containerCentered, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20),}]}>
-                                        {'VIEW WHY'}
+                            <TouchableHighlight
+                                onPress={() => this.setState({ selectedAthletePage: 1, })}
+                                style={{alignItems: 'flex-end', flex: 5,}}
+                                underlayColor={AppColors.transparent}
+                            >
+                                <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                                    <Text oswaldMedium style={[AppStyles.containerCentered, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}>
+                                        {'VIEW INSIGHTS'}
                                     </Text>
                                     <TabIcon
-                                        containerStyle={[AppStyles.containerCentered,]}
                                         icon={'chevron-right'}
                                         iconStyle={[{color: AppColors.zeplin.darkGrey}]}
                                         reverse={false}
@@ -387,22 +398,29 @@ class CoachesDashboard extends Component {
                             </TouchableHighlight>
                         </View>
                         :
-                        <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingBottom: AppSizes.padding, paddingRight: AppSizes.paddingLrg,}}>
-                            <TouchableHighlight onPress={() => this.setState({ selectedAthletePage: 0, })} style={{paddingLeft: AppSizes.paddingLrg,}} underlayColor={AppColors.transparent}>
-                                <View style={{flexDirection: 'row',}}>
+                        <View style={[styles.athleteCardBottomWrapper,]}>
+                            <TouchableHighlight
+                                onPress={() => this.setState({ selectedAthletePage: 0, })}
+                                style={{alignItems: 'flex-start', flex: 7,}}
+                                underlayColor={AppColors.transparent}
+                            >
+                                <View style={{alignItems: 'center', flexDirection: 'row',}}>
                                     <TabIcon
-                                        containerStyle={[AppStyles.containerCentered,]}
                                         icon={'chevron-left'}
                                         iconStyle={[{color: AppColors.zeplin.darkGrey}]}
                                         reverse={false}
                                         type={'material-community'}
                                     />
-                                    <Text oswaldMedium style={[AppStyles.containerCentered, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20),}]}>
+                                    <Text oswaldMedium style={[AppStyles.containerCentered, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}>
                                         {'VIEW RECOMMENDATIONS'}
                                     </Text>
                                 </View>
                             </TouchableHighlight>
-                            <View />
+                            <View style={{alignItems: 'flex-end', flex: 3,}}>
+                                <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(10),}}>
+                                    {selectedAthlete && selectedAthlete.didUserCompleteReadinessSurvey ? '' : 'reduced certainty considering low survey compliance'}
+                                </Text>
+                            </View>
                         </View>
                     }
                 </View>

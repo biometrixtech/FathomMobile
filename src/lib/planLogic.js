@@ -554,7 +554,7 @@ const PlanLogic = {
       */
     handleRenderCoachesDashboardSection: (athletes, item, compliance) => {
         let didUserCompleteReadinessSurvey = compliance && compliance.complete ?
-            _.filter(compliance.complete, ['user_id', item.user_id]).length > 0
+            _.filter(compliance.complete, ['user_id', item.user_id]).length > 0 && !item.insufficient_data
             :
             false;
         let athleteName = `${didUserCompleteReadinessSurvey ? '' : '*'}${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`;
