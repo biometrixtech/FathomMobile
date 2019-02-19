@@ -361,7 +361,23 @@ class CoachesDashboard extends Component {
                                 </View>
                                 <Spacer size={10} />
                                 <ScrollView>
-                                    {_.map(selectedAthlete.insights, (rec, index) => (
+                                    { selectedAthlete.daily_insights.length > 0 ?
+                                        <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'TODAY'}</Text>
+                                        :
+                                        null
+                                    }
+                                    {_.map(selectedAthlete.daily_insights, (rec, index) => (
+                                        <View key={index} style={styles.ulWrapper}>
+                                            <Text robotoRegular style={styles.ul}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={styles.ulText}>{rec}</Text>
+                                        </View>
+                                    ))}
+                                    { selectedAthlete.weekly_insights.length > 0 ?
+                                        <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'THIS WEEK'}</Text>
+                                        :
+                                        null
+                                    }
+                                    {_.map(selectedAthlete.weekly_insights, (rec, index) => (
                                         <View key={index} style={styles.ulWrapper}>
                                             <Text robotoRegular style={styles.ul}>{'\u2022'}</Text>
                                             <Text robotoRegular style={styles.ulText}>{rec}</Text>
@@ -537,7 +553,7 @@ class CoachesDashboard extends Component {
     }
 
     renderSection = (descriptionObj, items, athletes, key, compliance) => {
-        if(items.length === 0) {
+        if(!descriptionObj || items.length === 0) {
             return(null)
         }
         return(

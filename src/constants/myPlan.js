@@ -584,59 +584,59 @@ const coachesDashboardCardsData = isToday => {
     if(isToday) {
         return [
             {
-                description: 'Pain severity is too high to train today, consult medical staff to evaluate status',
-                label:       'PAIN TOO SEVERE TO TRAIN',
+                description: 'Significant pain or soreness reported: consult medical staff, consider not training',
+                label:       'SEEK MED EVAL TO CLEAR FOR TRAINING',
                 overlayText: 'When an athlete completes a survey, their status will update here.',
-                value:       'not_cleared_for_training',
+                value:       'seek_med_eval_to_clear_for_training',
             },
             {
-                description: 'Shorten training or limit intensity and focus on recovery modalities',
-                label:       'LIMIT TIME & INTENSITY IN TRAINING',
-                value:       'limit_time_intensity_of_training',
+                description: 'Modify intensity, movements & drills to prevent severe pain & soreness from worsening',
+                label:       'ADAPT TRAINING TO AVOID SYMPTOMS',
+                value:       'adapt_training_to_avoid_symptoms',
             },
             {
-                description: 'Stop training if pain increases or consider reducing workload to facilitate recovery',
-                label:       'MONITOR IN TRAINING',
-                value:       'monitor_in_training',
+                description: 'Modify training if pain increases. Prioritize recovery to prevent development of injury',
+                label:       'MONITOR, MODIFY IF NEEDED',
+                value:       'monitor_modify_if_needed',
             },
             {
-                description: 'Complete a relatively high intensity or long duration training within the next 3 days',
-                label:       'INCREASE WORKLOAD',
-                value:       'increase_workload',
+                description: 'Shorten training or limit intensity & to help facilitate recovery from spike in load',
+                label:       'RECOVERY DAY RECOMMENDED',
+                value:       'recovery_day_recommended',
             },
             {
-                description: 'Train as normal and complete Fathom\'s Prep and Recovery',
-                label:       'ALL GOOD',
+                description: 'Survey responces indicate ready to train as normal if no other medical limitations.',
+                label:       'READY TO TRAIN BASED ON DATA',
                 value:       'all_good',
             },
         ]
     }
     return [
         {
-            description: 'Consult medical staff to evaluate status before training',
-            label:       'EVALUATE HEALTH STATUS',
+            description: 'Significant pain or soreness reported: consult medical staff, consider not training',
+            label:       'SEEK MED EVAL TO CLEAR FOR TRAINING',
             overlayText: 'When an athlete has been identified as having a chronic issue, their status will update here.',
-            value:       'evaluate_health_status',
+            value:       'seek_med_eval_to_clear_for_training',
         },
         {
-            description: 'Prioritize Recovery and consider decreasing upcoming workloads',
-            label:       'ADDRESS PAIN OR SORENESS',
-            value:       'address_pain_or_soreness',
+            description: 'Modify intensity, movements & drills to avoid aggravating areas of severe pain & soreness',
+            label:       'AT RISK OF TIME-LOSS INJURY',
+            value:       'at_risk_of_time_loss_injury',
         },
         {
-            description: 'Decrease this week\'s workload or prioritize holistic recovery',
-            label:       'BALANCE OVERTRAINING RISK',
-            value:       'balance_overtraining_risk',
+            description: 'Consider decreasing workload this week or prioritizing holistic recovery',
+            label:       'AT RISK OF OVERTRAINING',
+            value:       'at_risk_of_overtraining',
         },
         {
-            description: 'If tapering is unintentional, increase this week\'s workload',
-            label:       'INCREASE WEEKLY WORKLOAD',
-            value:       'increase_weekly_workload',
+            description: 'Increase variety in training duration & intensity, prioritize holistic recovery',
+            label:       'LOW VARIABILITY INHIBITING RECOVERY',
+            value:       'low_variability_inhibiting_recovery',
         },
         {
-            description: 'Diversify your daily workloads and intensity or prioritize holistic recovery',
-            label:       'ADD VARIETY TO TRAINING THIS WEEK',
-            value:       'add_variety_to_training_risk',
+            description: 'Unless tapering, increase load with longer or higher intensity session or supplemental session',
+            label:       'AT RISK OF UNDERTRAINING',
+            value:       'at_risk_of_undertraining',
         },
     ]
 };

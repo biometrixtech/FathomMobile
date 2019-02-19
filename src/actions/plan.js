@@ -377,17 +377,17 @@ const getCoachesDashboardData = (user_id) => {
                 cleanedTeams[key].compliance = team.compliance;
                 cleanedTeams[key].name = team.name.toUpperCase();
                 cleanedTeams[key].daily_insights = {};
-                cleanedTeams[key].daily_insights.not_cleared_for_training = team.daily_insights.not_cleared_for_training;
-                cleanedTeams[key].daily_insights.limit_time_intensity_of_training = team.daily_insights.limit_time_intensity_of_training;
-                cleanedTeams[key].daily_insights.monitor_in_training = team.daily_insights.monitor_in_training;
-                cleanedTeams[key].daily_insights.increase_workload = team.daily_insights.increase_workload;
+                cleanedTeams[key].daily_insights.seek_med_eval_to_clear_for_training = team.daily_insights.seek_med_eval_to_clear_for_training;
+                cleanedTeams[key].daily_insights.adapt_training_to_avoid_symptoms = team.daily_insights.adapt_training_to_avoid_symptoms;
+                cleanedTeams[key].daily_insights.monitor_modify_if_needed = team.daily_insights.monitor_modify_if_needed;
+                cleanedTeams[key].daily_insights.recovery_day_recommended = team.daily_insights.recovery_day_recommended;
                 cleanedTeams[key].daily_insights.all_good = team.daily_insights.all_good;
                 cleanedTeams[key].weekly_insights = {};
-                cleanedTeams[key].weekly_insights.evaluate_health_status = team.weekly_insights.evaluate_health_status;
-                cleanedTeams[key].weekly_insights.address_pain_or_soreness = team.weekly_insights.address_pain_or_soreness;
-                cleanedTeams[key].weekly_insights.balance_overtraining_risk = team.weekly_insights.balance_overtraining_risk;
-                cleanedTeams[key].weekly_insights.increase_weekly_workload = team.weekly_insights.increase_weekly_workload;
-                cleanedTeams[key].weekly_insights.add_variety_to_training_risk = team.weekly_insights.add_variety_to_training_risk;
+                cleanedTeams[key].weekly_insights.seek_med_eval_to_clear_for_training = team.weekly_insights.seek_med_eval_to_clear_for_training;
+                cleanedTeams[key].weekly_insights.at_risk_of_time_loss_injury = team.weekly_insights.at_risk_of_time_loss_injury;
+                cleanedTeams[key].weekly_insights.at_risk_of_overtraining = team.weekly_insights.at_risk_of_overtraining;
+                cleanedTeams[key].weekly_insights.low_variability_inhibiting_recovery = team.weekly_insights.low_variability_inhibiting_recovery;
+                cleanedTeams[key].weekly_insights.at_risk_of_undertraining = team.weekly_insights.at_risk_of_undertraining;
             });
             cleanedTeams = _.orderBy(cleanedTeams, ['name']);
             // update coaches dashboard data
