@@ -523,7 +523,10 @@ class MyPlan extends Component {
         }
         let healthDataWorkouts = this.state.healthData.workouts ? this.state.healthData.workouts : [];
         let healthDataIgnoredWorkouts = this.state.healthData.ignoredWorkouts ? this.state.healthData.ignoredWorkouts : [];
-        let dailyReadinessSessions = this.state.dailyReadiness.sessions ? this.state.dailyReadiness.sessions : [];
+        let dailyReadinessSessions = this.state.dailyReadiness.sessions ?
+            _.filter(this.state.dailyReadiness.sessions, session => session.sport_name && session.session_type && (session.post_session_survey.RPE === 0 || session.post_session_survey.RPE > 0))
+            :
+            [];
         newDailyReadiness.sessions = _.concat(healthDataWorkouts, dailyReadinessSessions, healthDataIgnoredWorkouts);
         newDailyReadiness.sleep_data = this.state.healthData.sleep;
         if(this.state.healthData.workouts.length > 0) {
