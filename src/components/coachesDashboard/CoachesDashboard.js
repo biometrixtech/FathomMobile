@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         shadowColor:   'rgba(0, 0, 0, 0.16)',
         shadowOffset:  { width: 0, height: 3 },
         shadowOpacity: 1,
-        shadowRadius:  6,
+        shadowRadius:  5,
     },
     sortByPickerSelectAndroid: {
         color: AppColors.zeplin.darkGrey,
