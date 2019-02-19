@@ -184,8 +184,6 @@ const postSessionSurvey = postSessionObj => {
     let newPlan = {};
     newPlan.daily_plans = [];
     let newCurrentPlan = _.cloneDeep(currentState.plan.dailyPlan[0]);
-    newCurrentPlan.pre_recovery = null;
-    newCurrentPlan.post_recovery = null;
     let newTrainingSessions = _.cloneDeep(newCurrentPlan.training_sessions);
     let newTrainingSession = {};
     newTrainingSession.sport_name = postSessionObj.sessions[0] && postSessionObj.sessions[0].sport_name ? postSessionObj.sessions[0].sport_name : null;
