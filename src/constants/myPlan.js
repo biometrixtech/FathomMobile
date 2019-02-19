@@ -605,7 +605,7 @@ const coachesDashboardCardsData = isToday => {
                 value:       'recovery_day_recommended',
             },
             {
-                description: 'Survey responces indicate ready to train as normal if no other medical limitations.',
+                description: 'Survey responses indicate ready to train as normal if no other medical limitations.',
                 label:       'READY TO TRAIN BASED ON DATA',
                 value:       'all_good',
             },
