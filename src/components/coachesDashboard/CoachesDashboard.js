@@ -434,7 +434,7 @@ class CoachesDashboard extends Component {
                             </TouchableHighlight>
                             <View style={{alignItems: 'flex-end', flex: 3,}}>
                                 <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(10),}}>
-                                    {selectedAthlete && selectedAthlete.didUserCompleteReadinessSurvey ? '' : 'reduced certainty considering low survey compliance'}
+                                    {selectedAthlete && selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*reduced certainty considering low survey compliance'}
                                 </Text>
                             </View>
                         </View>
