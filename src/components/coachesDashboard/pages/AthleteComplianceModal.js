@@ -197,20 +197,20 @@ class AthleteComplianceModal extends Component {
                 </Text>
                 <Text oswaldMedium style={{color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(15),}}>{moment().format('MM/DD/YY')}</Text>
                 <Spacer size={15} />
-                <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg,}}>
                     <TouchableHighlight
                         onPress={() => this._togglePage('readiness')}
                         style={{borderBottomColor: page === 'readiness' ? AppColors.primary.yellow.hundredPercent : AppColors.white, borderBottomWidth: 2,}}
                         underlayColor={AppColors.transparent}
                     >
-                        <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}}>{'READINESS'}</Text>
+                        <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{'READINESS'}</Text>
                     </TouchableHighlight>
                     <TouchableHighlight
                         onPress={() => this._togglePage('training')}
                         style={{borderBottomColor: page === 'training' ? AppColors.primary.yellow.hundredPercent : AppColors.white, borderBottomWidth: 2,}}
                         underlayColor={AppColors.transparent}
                     >
-                        <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}}>{'TRAINING'}</Text>
+                        <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{'TRAINING'}</Text>
                     </TouchableHighlight>
                 </View>
                 <Spacer size={10} />
