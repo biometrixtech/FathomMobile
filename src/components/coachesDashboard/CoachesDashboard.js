@@ -907,7 +907,7 @@ class CoachesDashboard extends Component {
                             {
                                 borderRadius: 5,
                                 height:       AppSizes.screen.heightThreeQuarters,
-                                width:        AppSizes.screen.widthThreeQuarters,
+                                width:        AppSizes.screen.width * 0.85,
                             }
                         ]}
                         swipeToClose={false}

@@ -182,7 +182,7 @@ class AthleteComplianceModal extends Component {
         let { toggleComplianceModal, } = this.props;
         let { page, readinessAccordionSections, readinessSections, trainingAccordionSections, trainingSections, } = this.state;
         return(
-            <View style={{flex: 1, paddingHorizontal: AppSizes.paddingLrg,}}>
+            <View style={{flex: 1, paddingHorizontal: AppSizes.padding,}}>
                 <TabIcon
                     containerStyle={[{alignSelf: 'flex-end',}]}
                     icon={'close'}
