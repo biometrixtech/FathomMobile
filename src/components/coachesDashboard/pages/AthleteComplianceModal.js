@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
         shadowColor:   'rgba(0, 0, 0, 0.16)',
         shadowOffset:  { width: 0, height: 3 },
         shadowOpacity: 1,
-        shadowRadius:  6,
+        shadowRadius:  5,
     },
 });
 
@@ -182,49 +182,53 @@ class AthleteComplianceModal extends Component {
         let { toggleComplianceModal, } = this.props;
         let { page, readinessAccordionSections, readinessSections, trainingAccordionSections, trainingSections, } = this.state;
         return(
-            <View style={{flex: 1, paddingHorizontal: AppSizes.padding,}}>
-                <TabIcon
-                    containerStyle={[{alignSelf: 'flex-end',}]}
-                    icon={'close'}
-                    iconStyle={[{color: AppColors.black, paddingTop: AppSizes.padding,}]}
-                    onPress={() => toggleComplianceModal()}
-                    reverse={false}
-                    size={30}
-                    type={'material-community'}
-                />
-                <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(35),}}>
-                    {'COMPLIANCE'}
-                </Text>
-                <Text oswaldMedium style={{color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(15),}}>{moment().format('MM/DD/YY')}</Text>
-                <Spacer size={15} />
-                <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg,}}>
-                    <TouchableHighlight
-                        onPress={() => this._togglePage('readiness')}
-                        style={{borderBottomColor: page === 'readiness' ? AppColors.primary.yellow.hundredPercent : AppColors.white, borderBottomWidth: 2,}}
-                        underlayColor={AppColors.transparent}
-                    >
-                        <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{'READINESS'}</Text>
-                    </TouchableHighlight>
-                    <TouchableHighlight
-                        onPress={() => this._togglePage('training')}
-                        style={{borderBottomColor: page === 'training' ? AppColors.primary.yellow.hundredPercent : AppColors.white, borderBottomWidth: 2,}}
-                        underlayColor={AppColors.transparent}
-                    >
-                        <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{'TRAINING'}</Text>
-                    </TouchableHighlight>
+            <View style={{flex: 1,}}>
+                <View style={{paddingHorizontal: AppSizes.padding,}}>
+                    <TabIcon
+                        containerStyle={[{alignSelf: 'flex-end',}]}
+                        icon={'close'}
+                        iconStyle={[{color: AppColors.black, paddingTop: AppSizes.padding,}]}
+                        onPress={() => toggleComplianceModal()}
+                        reverse={false}
+                        size={30}
+                        type={'material-community'}
+                    />
+                    <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(35),}}>
+                        {'COMPLIANCE'}
+                    </Text>
+                    <Text oswaldMedium style={{color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(15),}}>{moment().format('MM/DD/YY')}</Text>
+                    <Spacer size={15} />
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg,}}>
+                        <TouchableHighlight
+                            onPress={() => this._togglePage('readiness')}
+                            style={{borderBottomColor: page === 'readiness' ? AppColors.primary.yellow.hundredPercent : AppColors.white, borderBottomWidth: 2,}}
+                            underlayColor={AppColors.transparent}
+                        >
+                            <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{'READINESS'}</Text>
+                        </TouchableHighlight>
+                        <TouchableHighlight
+                            onPress={() => this._togglePage('training')}
+                            style={{borderBottomColor: page === 'training' ? AppColors.primary.yellow.hundredPercent : AppColors.white, borderBottomWidth: 2,}}
+                            underlayColor={AppColors.transparent}
+                        >
+                            <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{'TRAINING'}</Text>
+                        </TouchableHighlight>
+                    </View>
                 </View>
                 <Spacer size={10} />
                 <ScrollView style={{flex: 1,}}>
                     <Spacer size={10} />
-                    <Accordion
-                        activeSections={page === 'readiness' ? readinessAccordionSections : trainingAccordionSections}
-                        expandMultiple={true}
-                        onChange={sections => page === 'readiness' ? this._updateSections('readinessAccordionSections', sections) : this._updateSections('trainingAccordionSections', sections)}
-                        renderContent={this._renderContent}
-                        renderHeader={this._renderHeader}
-                        sections={page === 'readiness' ? readinessSections : trainingSections}
-                        underlayColor={AppColors.transparent}
-                    />
+                    <View style={{paddingHorizontal: AppSizes.padding,}}>
+                        <Accordion
+                            activeSections={page === 'readiness' ? readinessAccordionSections : trainingAccordionSections}
+                            expandMultiple={true}
+                            onChange={sections => page === 'readiness' ? this._updateSections('readinessAccordionSections', sections) : this._updateSections('trainingAccordionSections', sections)}
+                            renderContent={this._renderContent}
+                            renderHeader={this._renderHeader}
+                            sections={page === 'readiness' ? readinessSections : trainingSections}
+                            underlayColor={AppColors.transparent}
+                        />
+                    </View>
                     <Spacer size={20} />
                 </ScrollView>
             </View>
