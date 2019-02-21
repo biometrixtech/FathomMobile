@@ -137,7 +137,7 @@ class MyPlan extends Component {
                 current_position:          null,
                 current_sport_name:        null,
                 readiness:                 null,
-                sessions:                  [],
+                sessions:                  [PlanLogic.returnEmptySession()],
                 sessions_planned:          null,
                 sleep_quality:             null,
                 soreness:                  [],
@@ -523,7 +523,10 @@ class MyPlan extends Component {
         }
         let healthDataWorkouts = this.state.healthData.workouts ? this.state.healthData.workouts : [];
         let healthDataIgnoredWorkouts = this.state.healthData.ignoredWorkouts ? this.state.healthData.ignoredWorkouts : [];
-        let dailyReadinessSessions = this.state.dailyReadiness.sessions ? this.state.dailyReadiness.sessions : [];
+        let dailyReadinessSessions = this.state.dailyReadiness.sessions ?
+            _.filter(this.state.dailyReadiness.sessions, session => session.sport_name && session.session_type && (session.post_session_survey.RPE === 0 || session.post_session_survey.RPE > 0))
+            :
+            [];
         newDailyReadiness.sessions = _.concat(healthDataWorkouts, dailyReadinessSessions, healthDataIgnoredWorkouts);
         newDailyReadiness.sleep_data = this.state.healthData.sleep;
         if(this.state.healthData.workouts.length > 0) {
@@ -646,9 +649,9 @@ class MyPlan extends Component {
                 },
             );
         }, 500);
-        this.props.postSessionSurvey(postSession)
+        this.props.clearHealthKitWorkouts() // clear HK workouts right away
+            .then(() => this.props.postSessionSurvey(postSession))
             .then(response => {
-                this.props.clearHealthKitWorkouts();
                 if(!areAllDeleted) {
                     this.props.clearCompletedExercises();
                 }
@@ -735,11 +738,13 @@ class MyPlan extends Component {
                 .then(soreBodyParts => {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
                     newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
-                    this.setState({
-                        isPostSessionSurveyModalOpen: true,
-                        loading:                      false,
-                        postSession:                  newDailyReadiness,
-                    });
+                    _.delay(() =>
+                        this.setState({
+                            isPostSessionSurveyModalOpen: true,
+                            loading:                      false,
+                            postSession:                  newDailyReadiness,
+                        })
+                    , 500);
                 })
                 .catch(err => {
                     // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank

@@ -184,14 +184,14 @@ const postSessionSurvey = postSessionObj => {
     let newPlan = {};
     newPlan.daily_plans = [];
     let newCurrentPlan = _.cloneDeep(currentState.plan.dailyPlan[0]);
-    newCurrentPlan.pre_recovery = null;
-    newCurrentPlan.post_recovery = null;
     let newTrainingSessions = _.cloneDeep(newCurrentPlan.training_sessions);
     let newTrainingSession = {};
     newTrainingSession.sport_name = postSessionObj.sessions[0] && postSessionObj.sessions[0].sport_name ? postSessionObj.sessions[0].sport_name : null;
     newTrainingSession.strength_and_conditioning_type = postSessionObj.sessions[0] && postSessionObj.sessions[0].strength_and_conditioning_type ? postSessionObj.sessions[0].strength_and_conditioning_type : null;
     newTrainingSession.session_type = postSessionObj.sessions[0] && postSessionObj.sessions[0].session_type ? postSessionObj.sessions[0].session_type : null;
     newTrainingSession.event_date = postSessionObj.sessions[0] && postSessionObj.sessions[0].event_date ? postSessionObj.sessions[0].event_date : null;
+    newTrainingSession.end_date = postSessionObj.sessions[0] && postSessionObj.sessions[0].end_date ? postSessionObj.sessions[0].end_date : null;
+    newTrainingSession.deleted = postSessionObj.sessions[0] && postSessionObj.sessions[0].deleted ? true : false;
     newTrainingSessions.push(newTrainingSession);
     newCurrentPlan.training_sessions = newTrainingSessions;
     newPlan.daily_plans.push(newCurrentPlan);
@@ -201,6 +201,10 @@ const postSessionSurvey = postSessionObj => {
             dispatch({
                 type: Actions.POST_SESSION_SURVEY,
                 data: postSessionObj,
+            });
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: newPlan.daily_plans,
             });
             return myPlanData;
         })
@@ -371,17 +375,17 @@ const getCoachesDashboardData = (user_id) => {
                 cleanedTeams[key].compliance = team.compliance;
                 cleanedTeams[key].name = team.name.toUpperCase();
                 cleanedTeams[key].daily_insights = {};
-                cleanedTeams[key].daily_insights.not_cleared_for_training = team.daily_insights.not_cleared_for_training;
-                cleanedTeams[key].daily_insights.limit_time_intensity_of_training = team.daily_insights.limit_time_intensity_of_training;
-                cleanedTeams[key].daily_insights.monitor_in_training = team.daily_insights.monitor_in_training;
-                cleanedTeams[key].daily_insights.increase_workload = team.daily_insights.increase_workload;
+                cleanedTeams[key].daily_insights.seek_med_eval_to_clear_for_training = team.daily_insights.seek_med_eval_to_clear_for_training;
+                cleanedTeams[key].daily_insights.adapt_training_to_avoid_symptoms = team.daily_insights.adapt_training_to_avoid_symptoms;
+                cleanedTeams[key].daily_insights.monitor_modify_if_needed = team.daily_insights.monitor_modify_if_needed;
+                cleanedTeams[key].daily_insights.recovery_day_recommended = team.daily_insights.recovery_day_recommended;
                 cleanedTeams[key].daily_insights.all_good = team.daily_insights.all_good;
                 cleanedTeams[key].weekly_insights = {};
-                cleanedTeams[key].weekly_insights.evaluate_health_status = team.weekly_insights.evaluate_health_status;
-                cleanedTeams[key].weekly_insights.address_pain_or_soreness = team.weekly_insights.address_pain_or_soreness;
-                cleanedTeams[key].weekly_insights.balance_overtraining_risk = team.weekly_insights.balance_overtraining_risk;
-                cleanedTeams[key].weekly_insights.increase_weekly_workload = team.weekly_insights.increase_weekly_workload;
-                cleanedTeams[key].weekly_insights.add_variety_to_training_risk = team.weekly_insights.add_variety_to_training_risk;
+                cleanedTeams[key].weekly_insights.seek_med_eval_to_clear_for_training = team.weekly_insights.seek_med_eval_to_clear_for_training;
+                cleanedTeams[key].weekly_insights.at_risk_of_time_loss_injury = team.weekly_insights.at_risk_of_time_loss_injury;
+                cleanedTeams[key].weekly_insights.at_risk_of_overtraining = team.weekly_insights.at_risk_of_overtraining;
+                cleanedTeams[key].weekly_insights.low_variability_inhibiting_recovery = team.weekly_insights.low_variability_inhibiting_recovery;
+                cleanedTeams[key].weekly_insights.at_risk_of_undertraining = team.weekly_insights.at_risk_of_undertraining;
             });
             cleanedTeams = _.orderBy(cleanedTeams, ['name']);
             // update coaches dashboard data

@@ -496,7 +496,7 @@ const PlanLogic = {
       */
     handleAthleteCardModalRenderLogic: selectedAthlete => {
         let athleteName = `${selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*'}${selectedAthlete.first_name.toUpperCase()} ${selectedAthlete.last_name.toUpperCase()}`;
-        let mainColor = selectedAthlete.color === 0 ? AppColors.zeplin.success : selectedAthlete.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
+        let mainColor = selectedAthlete.color === 0 ? AppColors.zeplin.success : selectedAthlete.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.coachesDashError;
         let subHeader = selectedAthlete.color === 0 ? 'Train as normal' : selectedAthlete.color === 1 ? 'Consider altering training plan' : 'Consider not training today';
         return {
             athleteName,
@@ -528,12 +528,12 @@ const PlanLogic = {
         let completedAthletes = complianceObj && complianceObj.complete ? complianceObj.complete : [];
         let completedPercent = (numOfCompletedAthletes / numOfTotalAthletes) * 100;
         let complianceColor = completedPercent <= 49 ?
-            AppColors.zeplin.error
+            AppColors.zeplin.coachesDashError
             : completedPercent >= 50 && completedPercent <= 74 ?
                 AppColors.zeplin.warning
                 :
                 AppColors.zeplin.success;
-        complianceColor = numOfTotalAthletes === 0 ? AppColors.zeplin.error : complianceColor;
+        complianceColor = numOfTotalAthletes === 0 ? AppColors.zeplin.coachesDashError : complianceColor;
         let trainingCompliance = complianceObj ? complianceObj.training_compliance : [];
         return {
             coachesTeams,
@@ -554,11 +554,11 @@ const PlanLogic = {
       */
     handleRenderCoachesDashboardSection: (athletes, item, compliance) => {
         let didUserCompleteReadinessSurvey = compliance && compliance.complete ?
-            _.filter(compliance.complete, ['user_id', item.user_id]).length > 0
+            _.filter(compliance.complete, ['user_id', item.user_id]).length > 0 && !item.insufficient_data
             :
             false;
         let athleteName = `${didUserCompleteReadinessSurvey ? '' : '*'}${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`;
-        let backgroundColor = item.color === 0 ? AppColors.zeplin.success : item.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.error;
+        let backgroundColor = item.color === 0 ? AppColors.zeplin.success : item.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.coachesDashError;
         let filteredAthlete = _.filter(athletes, ['user_id', item.user_id])[0];
         filteredAthlete.didUserCompleteReadinessSurvey = didUserCompleteReadinessSurvey;
         return {
@@ -792,7 +792,7 @@ const PlanLogic = {
       * - HealthKitWorkouts
       */
     // TODO: UNIT TEST ME
-    handleHealthKitWorkoutPageRenderLogic: (workout) => {
+    handleHealthKitWorkoutPageRenderLogic: workout => {
         let hourOfDay = moment(workout.event_date).utc().get('hour');
         let split_afternoon = 12; // 24hr time to split the afternoon
         let split_evening = 17; // 24hr time to split the evening
@@ -801,12 +801,16 @@ const PlanLogic = {
         let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
         let sportDuration = workout.duration ? workout.duration : 0;
-        let sportText = selectedSport ? selectedSport.label.toLowerCase() : '';
+        let sportName = selectedSport ? selectedSport.label : '';
+        let sportStartTime = workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
+        let sportText = selectedSport ? `${sportStartTime} ${selectedSport.label.toLowerCase()} workout` : '';
         let sportImage = selectedSport ? selectedSport.imagePath : '';
         return {
             partOfDay,
             sportDuration,
             sportImage,
+            sportName,
+            sportStartTime,
             sportText,
         };
     },

@@ -195,7 +195,11 @@ class SoreBodyPart extends Component {
                                                 value: null,
                                             }, () => {
                                                 let value = this.state.type === 'all-good' ? 0 : null;
-                                                handleFormChange('soreness', value, this.state.type === 'pain', bodyPartMap.index, bodyPartSide, value === 0 ? true : false);
+                                                let isPain = this.state.type === 'pain';
+                                                if(bodyPart.isClearCandidate) {
+                                                    isPain = bodyPart.pain;
+                                                }
+                                                handleFormChange('soreness', value, isPain, bodyPartMap.index, bodyPartSide, value === 0 ? true : false);
                                             });
                                         }
                                     }}
@@ -328,6 +332,9 @@ class SoreBodyPart extends Component {
                                         let newKey = sorenessPainScaleMappingValue === this.state.value ? null : key;
                                         sorenessPainScaleMappingValue = sorenessPainScaleMappingValue === this.state.value ? null : sorenessPainScaleMappingValue;
                                         let isPain = bodyPartMap.group === 'joint' || this.state.type === 'pain';
+                                        if(bodyPart.isClearCandidate) {
+                                            isPain = bodyPart.pain;
+                                        }
                                         this.setState({
                                             type:  newType,
                                             value: newKey,

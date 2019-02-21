@@ -1290,7 +1290,7 @@ it('Coaches Dashboard Section Render Loop Logic - Dipesh Gautam', () => {
 it('Coaches Dashboard Section Render Loop Logic - Paul LaForge', () => {
     let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
     let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Paul', 'LaForge', 2, '3', false);
-    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Paul', 'LaForge', '#C8432A', item);
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Paul', 'LaForge', '#E6583D', item);
     expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
 });
 
@@ -1307,7 +1307,7 @@ it('Coaches Dashboard Render Logic - 1 Team', () => {
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
         coachesDashboardData[selectedTeamIndex].compliance.complete,
-        '#C8432A',
+        '#E6583D',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
         coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
@@ -1324,7 +1324,7 @@ it('Coaches Dashboard Render Logic - 2 Teams, First Team Selected', () => {
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
         coachesDashboardData[selectedTeamIndex].compliance.complete,
-        '#C8432A',
+        '#E6583D',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
         coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
@@ -1341,7 +1341,7 @@ it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
         coachesDashboardData[selectedTeamIndex].compliance.complete,
-        '#C8432A',
+        '#E6583D',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
         coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
@@ -1366,7 +1366,7 @@ it('Athlete Card Modal Render Logic - With Information - Mazen', () => {
 
 it('Athlete Card Modal Render Logic - With Information - Gabby', () => {
     let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(2, 'Gabby', 'Lavac');
-    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*GABBY LAVAC', '#C8432A', 'Consider not training today');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*GABBY LAVAC', '#E6583D', 'Consider not training today');
     expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
 });
 
