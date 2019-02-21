@@ -792,7 +792,7 @@ const PlanLogic = {
       * - HealthKitWorkouts
       */
     // TODO: UNIT TEST ME
-    handleHealthKitWorkoutPageRenderLogic: (workout) => {
+    handleHealthKitWorkoutPageRenderLogic: workout => {
         let hourOfDay = moment(workout.event_date).utc().get('hour');
         let split_afternoon = 12; // 24hr time to split the afternoon
         let split_evening = 17; // 24hr time to split the evening
@@ -801,12 +801,16 @@ const PlanLogic = {
         let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
         let sportDuration = workout.duration ? workout.duration : 0;
-        let sportText = selectedSport ? selectedSport.label.toLowerCase() : '';
+        let sportName = selectedSport ? selectedSport.label : '';
+        let sportStartTime = workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
+        let sportText = selectedSport ? `${sportStartTime} ${selectedSport.label.toLowerCase()} workout` : '';
         let sportImage = selectedSport ? selectedSport.imagePath : '';
         return {
             partOfDay,
             sportDuration,
             sportImage,
+            sportName,
+            sportStartTime,
             sportText,
         };
     },

@@ -738,11 +738,13 @@ class MyPlan extends Component {
                 .then(soreBodyParts => {
                     let newDailyReadiness = _.cloneDeep(this.state.postSession);
                     newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
-                    this.setState({
-                        isPostSessionSurveyModalOpen: true,
-                        loading:                      false,
-                        postSession:                  newDailyReadiness,
-                    });
+                    _.delay(() =>
+                        this.setState({
+                            isPostSessionSurveyModalOpen: true,
+                            loading:                      false,
+                            postSession:                  newDailyReadiness,
+                        })
+                    , 500);
                 })
                 .catch(err => {
                     // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
