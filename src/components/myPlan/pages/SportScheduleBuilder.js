@@ -212,7 +212,7 @@ class SportScheduleBuilder extends Component {
     }
 
     _scrollTo = myComponentsLocation => {
-        if(myComponentsLocation) {
+        if(myComponentsLocation && this.scrollViewSportBuilderRef) {
             this.setState(
                 {
                     delayTimerId: _.delay(() => {
@@ -228,23 +228,27 @@ class SportScheduleBuilder extends Component {
     }
 
     _scrollToTop = () => {
-        this.setState(
-            {
-                delayTimerId: _.delay(() => {
-                    this.scrollViewSportBuilderRef.scrollTo({x: 0, y: 0, animated: true});
-                }, 500)
-            }
-        );
+        if(this.scrollViewSportBuilderRef) {
+            this.setState(
+                {
+                    delayTimerId: _.delay(() => {
+                        this.scrollViewSportBuilderRef.scrollTo({x: 0, y: 0, animated: true});
+                    }, 500)
+                }
+            );
+        }
     }
 
     _scrollToBottom = () => {
-        this.setState(
-            {
-                delayTimerId: _.delay(() => {
-                    this.scrollViewSportBuilderRef.scrollToEnd({ animated: true, });
-                }, 500)
-            }
-        );
+        if(this.scrollViewSportBuilderRef) {
+            this.setState(
+                {
+                    delayTimerId: _.delay(() => {
+                        this.scrollViewSportBuilderRef.scrollToEnd({ animated: true, });
+                    }, 500)
+                }
+            );
+        }
     }
 
     render = () => {

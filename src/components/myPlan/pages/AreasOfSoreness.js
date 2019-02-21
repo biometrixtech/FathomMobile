@@ -71,14 +71,21 @@ class AreasOfSoreness extends Component {
             user,
         } = this.props;
         let { areaOfSorenessClicked, groupedNewBodyPartMap, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState);
+        let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
+        let backNextHeight = ((AppSizes.backNextButtonsHeight) + (AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed));
+        let btnsWrapperHeight = this.state.showWholeArea ?
+            (AppSizes.screen.height - pillsHeight)
+            :
+            (AppSizes.screen.height - (pillsHeight + backNextHeight));
         return(
             <View
                 style={{flex: 1, flexDirection: 'column', justifyContent: 'center',}}
             >
                 <View style={{
                     flex:           1,
-                    height:         (AppSizes.screen.height - (AppSizes.statusBarHeight + AppSizes.progressPillsHeight + ((AppSizes.backNextButtonsHeight) + (AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed)))),
+                    height:         btnsWrapperHeight,
                     justifyContent: 'center',
+                    paddingBottom:  this.state.showWholeArea ? backNextHeight : 0,
                 }}>
                     <Spacer size={AppSizes.padding} />
                     <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{headerTitle}</Text>
@@ -152,7 +159,9 @@ class AreasOfSoreness extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View onLayout={event => {this._soreBodyPartRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}} >
+                <View
+                    onLayout={event => {this._soreBodyPartRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height,}}}
+                >
                     <Spacer size={this.state.showWholeArea ? AppSizes.paddingLrg : 0} />
                     { this.state.showWholeArea ?
                         _.map(groupedNewBodyPartMap, (object, key) => {
@@ -206,7 +215,7 @@ class AreasOfSoreness extends Component {
                         :
                         null
                     }
-                    <Spacer size={this.state.showWholeArea ? AppSizes.paddingSml : 0} />
+                    <Spacer size={this.state.showWholeArea ? AppSizes.padding : 0} />
                 </View>
             </View>
         )

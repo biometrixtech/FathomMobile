@@ -2,6 +2,7 @@
  * BackNextButtons
  *
       <BackNextButtons
+          addBtnText={'Add another session'}
           handleFormSubmit={() => handleFormSubmit()}
           isValid={isFormValidItems.willTrainLaterValid}
           onBackClick={() => this._renderNextPage(8, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked)}
@@ -58,12 +59,15 @@ const styles = StyleSheet.create({
 
 /* Component ==================================================================== */
 const BackNextButtons = ({
+    addBtnText,
     handleFormSubmit,
     isValid,
     onBackClick,
     onNextClick,
     showAddBtn,
+    showAddBtnDisabledStyle,
     showBackBtn,
+    showBackIcon,
     showSubmitBtn,
     submitBtnText,
 }) => (
@@ -71,27 +75,31 @@ const BackNextButtons = ({
         { showAddBtn ?
             <TouchableHighlight
                 onPress={() => isValid && onBackClick ? onBackClick() : null}
-                style={[AppStyles.paddingVerticalSml, styles.addBtn]}
+                style={[AppStyles.paddingVerticalSml, styles.addBtn, showAddBtnDisabledStyle ? {borderColor: AppColors.zeplin.light,} : {}]}
                 underlayColor={AppColors.transparent}
             >
                 <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
-                    <TabIcon
-                        color={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
-                        icon={'add'}
-                        size={AppFonts.scaleFont(18)}
-                        style={{paddingRight: AppSizes.paddingMed,}}
-                    />
+                    { showBackIcon ?
+                        <TabIcon
+                            color={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
+                            icon={'add'}
+                            size={AppFonts.scaleFont(18)}
+                            style={{paddingRight: AppSizes.paddingMed,}}
+                        />
+                        :
+                        null
+                    }
                     <Text
                         robotoMedium
                         style={[
                             AppStyles.textCenterAligned,
                             {
-                                color:    AppColors.zeplin.yellow,
+                                color:    showAddBtnDisabledStyle ? AppColors.zeplin.light : AppColors.zeplin.yellow,
                                 fontSize: AppFonts.scaleFont(14),
                             }
                         ]}
                     >
-                        {'Add another session'}
+                        {addBtnText}
                     </Text>
                 </View>
             </TouchableHighlight>
@@ -178,23 +186,30 @@ const BackNextButtons = ({
 );
 
 BackNextButtons.propTypes = {
-    handleFormSubmit: PropTypes.func,
-    isValid:          PropTypes.bool.isRequired,
-    onBackClick:      PropTypes.func,
-    onNextClick:      PropTypes.func.isRequired,
-    showAddBtn:       PropTypes.bool,
-    showBackBtn:      PropTypes.bool,
-    showSubmitBtn:    PropTypes.bool,
-    submitBtnText:    PropTypes.string,
+    addBtnText:              PropTypes.string,
+    handleFormSubmit:        PropTypes.func,
+    isValid:                 PropTypes.bool.isRequired,
+    onBackClick:             PropTypes.func,
+    onNextClick:             PropTypes.func,
+    showAddBtn:              PropTypes.bool,
+    showAddBtnDisabledStyle: PropTypes.bool,
+    showBackBtn:             PropTypes.bool,
+    showBackIcon:            PropTypes.bool,
+    showSubmitBtn:           PropTypes.bool,
+    submitBtnText:           PropTypes.string,
 };
 
 BackNextButtons.defaultProps = {
-    handleFormSubmit: null,
-    onBackClick:      null,
-    showAddBtn:       false,
-    showBackBtn:      false,
-    showSubmitBtn:    false,
-    submitBtnText:    'Submit',
+    addBtnText:              'Add another session',
+    handleFormSubmit:        null,
+    onBackClick:             null,
+    onNextClick:             null,
+    showAddBtn:              false,
+    showAddBtnDisabledStyle: false,
+    showBackBtn:             false,
+    showBackIcon:            true,
+    showSubmitBtn:           false,
+    submitBtnText:           'Submit',
 };
 
 BackNextButtons.componentName = 'BackNextButtons';

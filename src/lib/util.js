@@ -301,6 +301,7 @@ const UTIL = {
         let workoutOptions = {
             startDate,
             endDate,
+            ascending: true,
         };
         return new Promise((resolve, reject) => {
             AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
