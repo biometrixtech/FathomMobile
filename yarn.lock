@@ -7615,9 +7615,9 @@ react-native-video@3.2.0:
     keymirror "0.1.1"
     prop-types "^15.5.10"
 
-react-native-webview@^5.2.1:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-5.2.1.tgz#8a3f2ee14488ad3d058f15c7054fb52fa47195ea"
+react-native-webview@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-2.0.0.tgz#a805d7261004a6b3da43f05759999c79becb994f"
   dependencies:
     escape-string-regexp "^1.0.5"
     fbjs "^0.8.17"
