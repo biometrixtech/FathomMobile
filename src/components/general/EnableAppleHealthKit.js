@@ -23,6 +23,9 @@ import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 // Components
 import { Button, Spacer, Text, } from '../custom';
 
+const healthKitText = 'Sync with Apple Health to improve recovery recommendations.\n\nPlease tap \'All Categories On\' to allow.';
+// const healthKitText = 'Sync with Apple Health to improve recovery recommendations by tracking your workouts.\n\nPlease tap \'All Categories On\' to allow.';
+
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     imageBackgroundStyle: {
@@ -80,7 +83,7 @@ const EnableAppleHealthKit = ({
                         <View style={{flex: 9, justifyContent: 'space-between', paddingVertical: AppSizes.padding,}}>
                             <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'APPLE HEALTH'}</Text>
                             <Spacer size={AppSizes.paddingSml} />
-                            <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'Sync with Apple Health to improve recovery recommendations by tracking your workouts.\n\nPlease tap \'All Categories On\' to allow.'}</Text>
+                            <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{healthKitText}</Text>
                             <Spacer size={AppSizes.paddingSml} />
                             <View style={{flex: 6, paddingVertical: AppSizes.paddingSml,}}>
                                 <ImageBackground
