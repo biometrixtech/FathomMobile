@@ -116,9 +116,11 @@ class HealthKitWorkouts extends Component {
         this.setState(
             { showRPEPicker: false, },
             () => {
-                handleHealthDataFormChange(pageIndex, 'deleted', false, () => {
-                    handleHealthDataFormChange(pageIndex, 'post_session_survey.RPE', null);
-                });
+                if(pageIndex > 0) {
+                    handleHealthDataFormChange(pageIndex, 'deleted', false, () => {
+                        handleHealthDataFormChange(pageIndex, 'post_session_survey.RPE', null);
+                    });
+                }
                 this.setState({
                     delayTimerId: _.delay(() => this._scrollTo({x: 0, y: 0}), 500),
                 });
@@ -154,7 +156,7 @@ class HealthKitWorkouts extends Component {
     }
 
     _scrollTo = myComponentsLocation => {
-        if(myComponentsLocation) {
+        if(myComponentsLocation && this.scrollViewHealthKitRef && this.scrollViewHealthKitRef.scrollTo) {
             this.setState({
                 delayTimerId: _.delay(() => {
                     this.scrollViewHealthKitRef.scrollTo({
@@ -188,15 +190,19 @@ class HealthKitWorkouts extends Component {
         const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, workouts, } = this.props;
         const { isEditingDuration, isSlideUpPanelOpen, pageIndex, showRPEPicker, } = this.state;
         let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight + AppSizes.paddingLrg);
+        let backNextHeight = ((AppSizes.backNextButtonsHeight) + (AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed));
         return(
             <View style={{flex: 1,}}>
-                <ScrollView
+
+                {/*<ScrollView
                     contentContainerStyle={{flexGrow: 1,}}
                     keyboardShouldPersistTaps={'always'}
                     nestedScrollEnabled={true}
                     ref={ref => {this.scrollViewHealthKitRef = ref;}}
                     stickyHeaderIndices={[0]}
-                >
+                    style={{flex: 1, flexGrow: 1,}}
+                >*/}
+
                     <ProgressPill
                         currentStep={1}
                         onBack={pageIndex > 0 ? () => this._updateBackPageIndex(pageIndex - 1) : null}
@@ -205,15 +211,16 @@ class HealthKitWorkouts extends Component {
                     />
 
                     <Pages
-                        containerStyle={{flexGrow: 1,}}
+                        contentContainerStyle={{flexGrow: 1,}}
+                        containerStyle={{flex: 1, flexGrow: 1,}}
                         indicatorPosition={'none'}
                         ref={pages => { this.pages = pages; }}
                         startPlay={pageIndex}
-                        // style={{flex: 1,}}
+                        style={{flex: 1, flexGrow: 1,}}
                     >
 
-                        <View style={{flex: 1, justifyContent: 'space-between',}}>
-                            <View style={{flexGrow: 1, justifyContent: 'center',}}>
+                        <View style={{flexGrow: 1, justifyContent: 'space-between',}}>
+                            <View style={{backgroundColor: 'red', flexGrow: 1, justifyContent: 'center',}}>
                                 <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingLrg,}}>
                                     <View style={{flex: 1,}} />
                                     <View style={{flex: 8,}}>
@@ -238,7 +245,7 @@ class HealthKitWorkouts extends Component {
                                     />
                                 )}
                             </View>
-                            <View>
+                            <View style={{backgroundColor: 'blue',}}>
                                 <BackNextButtons
                                     addBtnText={'Delete all sessions'}
                                     handleFormSubmit={() => this._renderNextPage(pageIndex)}
@@ -256,7 +263,7 @@ class HealthKitWorkouts extends Component {
                         { workouts && workouts.length > 0 ? _.map(workouts, (workout, index) => {
                             let { sportDuration, sportImage, sportName, sportText, } = PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout);
                             return(
-                                <View key={index} style={{flex: 1,}}>
+                                <View key={index} style={{flexGrow: 1,}}>
                                     <Spacer size={20} />
                                     <View style={{alignItems: 'center',}}>
                                         <Image
@@ -409,7 +416,8 @@ class HealthKitWorkouts extends Component {
 
                     </Pages>
 
-                </ScrollView>
+                {/*</ScrollView>*/}
+
                 <SlidingUpPanel
                     allowDragging={false}
                     startCollapsed={true}
@@ -448,6 +456,7 @@ class HealthKitWorkouts extends Component {
                         </View>
                     </View>
                 </SlidingUpPanel>
+
             </View>
         )
     }
