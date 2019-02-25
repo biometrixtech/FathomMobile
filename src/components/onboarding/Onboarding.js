@@ -19,7 +19,7 @@ import { onboardingUtils, } from '../../constants/utils';
 
 // Components
 import { Alerts, ProgressBar, Text, WebViewPage, } from '../custom/';
-import { EnableAppleHealthKit, } from '../general';
+import { EnableAppleHealthKit, PrivacyPolicyModal, } from '../general';
 import { UserAccount, } from './pages/';
 
 /* Styles ==================================================================== */
@@ -185,11 +185,11 @@ class Onboarding extends Component {
     }
 
     _toggleTermsWebView = () => {
-        this.setState({ isTermsOpen: !this.state.isTermsOpen })
+        this.setState({ isTermsOpen: !this.state.isTermsOpen, });
     }
 
     _togglePrivacyPolicyWebView = () => {
-        this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen })
+        this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, });
     }
 
     _handleUserFormChange = (name, value) => {
@@ -497,34 +497,9 @@ class Onboarding extends Component {
                     handleFormSubmit={this._handleFormSubmit}
                     isFormValid={isFormValid}
                     isUpdatingUser={this.props.user.id ? true : false}
+                    togglePrivacyPolicyWebView={this._togglePrivacyPolicyWebView}
                     user={form_fields.user}
                 />
-                {/*<Modal
-                    backdropPressToClose={false}
-                    coverScreen={true}
-                    isOpen={isTermsOpen}
-                    swipeToClose={false}
-                >
-                    <WebViewPage
-                        source={'https://www.fathomai.com/'}
-                    />
-                    <TouchableOpacity onPress={this._toggleTermsWebView} style={[AppStyles.nextButtonWrapper]}>
-                        <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
-                    </TouchableOpacity>
-                </Modal>
-                <Modal
-                    backdropPressToClose={false}
-                    coverScreen={true}
-                    isOpen={isPrivacyPolicyOpen}
-                    swipeToClose={false}
-                >
-                    <WebViewPage
-                        source={'https://www.fathomai.com/'}
-                    />
-                    <TouchableOpacity onPress={this._togglePrivacyPolicyWebView} style={[AppStyles.nextButtonWrapper]}>
-                        <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
-                    </TouchableOpacity>
-                </Modal>*/}
                 { this.state.loading ?
                     <ActivityIndicator
                         color={AppColors.zeplin.yellow}
@@ -536,6 +511,10 @@ class Onboarding extends Component {
                     handleSkip={() => this._handleEnableAppleHealthKit('apple_healthkit', false)}
                     handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
                     isModalOpen={isHealthKitModalOpen && form_fields.user.account_code.length === 0}
+                />
+                <PrivacyPolicyModal
+                    handleModalToggle={this._togglePrivacyPolicyWebView}
+                    isPrivacyPolicyOpen={this.state.isPrivacyPolicyOpen}
                 />
             </View>
         );
