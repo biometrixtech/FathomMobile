@@ -190,9 +190,11 @@ function cleanExerciseList(recoveryObj) {
     let totalLength = 0;
     let cleanedExerciseList = {};
     let largestSetCount = {};
+    let equipmentRequired = [];
     _.map(exerciseListOrder, list => {
         largestSetCount[list.index] = 0;
         _.map(recoveryObj[list.index], exercise => {
+            equipmentRequired = _.concat(equipmentRequired, exercise.equipment_required);
             if(exercise.sets_assigned > largestSetCount[list.index]) {
                 largestSetCount[list.index] = exercise.sets_assigned;
             }
@@ -210,8 +212,11 @@ function cleanExerciseList(recoveryObj) {
         totalLength += exerciseArray.length;
         cleanedExerciseList[list.title] = exerciseArray;
     });
+    equipmentRequired = _.uniq(equipmentRequired);
+    equipmentRequired = _.filter(equipmentRequired, o => o !== 'None');
     return {
         cleanedExerciseList,
+        equipmentRequired,
         totalLength,
     };
 }
