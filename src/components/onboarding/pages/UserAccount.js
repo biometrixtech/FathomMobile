@@ -9,18 +9,19 @@
         handleFormSubmit={this._handleFormSubmit}
         isFormValid={this.state.isFormValid}
         isUpdatingUser={this.props.user.id ? true : false}
+        togglePrivacyPolicyWebView={this._togglePrivacyPolicyWebView}
         user={form_fields.user}
     />
  *
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, StyleSheet, View, } from 'react-native';
+import { Image, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
 import { onboardingUtils } from '../../../constants/utils';
-import { Alerts, Button, Spacer, TabIcon, Text } from '../../custom';
+import { Alerts, Button, Spacer, TabIcon, Text, } from '../../custom';
 
 // import components
 import { UserAccountAbout, UserAccountInfo, UserSports } from './';
@@ -225,6 +226,7 @@ class UserAccount extends Component {
             handleFormSubmit,
             isFormValid,
             isUpdatingUser,
+            togglePrivacyPolicyWebView,
             user,
         } = this.props;
         // Accordion sections
@@ -300,6 +302,16 @@ class UserAccount extends Component {
                                 textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                 title={`${this.props.user.id ? 'Update' : 'Create'} Account`}
                             />
+                            <TouchableHighlight
+                                onPress={() => togglePrivacyPolicyWebView()}
+                                style={[{marginTop: AppSizes.padding,}]}
+                                underlayColor={AppColors.transparent}
+                            >
+                                <Text robotoRegular style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
+                                    {'By signing up you agree to our '}
+                                    <Text robotoBold>{'Terms of Use.'}</Text>
+                                </Text>
+                            </TouchableHighlight>
                         </View>
                     </KeyboardAwareScrollView>
                 </View>
@@ -315,10 +327,11 @@ UserAccount.propTypes = {
         PropTypes.array,
         PropTypes.string,
     ]),
-    handleFormChange: PropTypes.func.isRequired,
-    isFormValid:      PropTypes.bool.isRequired,
-    isUpdatingUser:   PropTypes.bool.isRequired,
-    user:             PropTypes.object.isRequired,
+    handleFormChange:           PropTypes.func.isRequired,
+    isFormValid:                PropTypes.bool.isRequired,
+    isUpdatingUser:             PropTypes.bool.isRequired,
+    togglePrivacyPolicyWebView: PropTypes.func.isRequired,
+    user:                       PropTypes.object.isRequired,
 };
 UserAccount.defaultProps = {
     error: null,

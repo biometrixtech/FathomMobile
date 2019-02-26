@@ -8,26 +8,39 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, WebView } from 'react-native';
+import { View, } from 'react-native';
 
-import { AppSizes } from '../../constants';
+// import third-party libraries
+import { WebView, } from 'react-native-webview';
+
+// import consts
+import { AppColors, AppSizes, } from '../../constants';
 
 /* Component ==================================================================== */
-const WebViewPage = ({ allowsInlineMediaPlayback, backgroundColor, height, scrollEnabled, source, width, }) => (
+const WebViewPage = ({
+    allowsInlineMediaPlayback,
+    backgroundColor,
+    height,
+    scrollEnabled,
+    source,
+    width,
+}) => (
     <View
         style={{
-            // backgroundColor: backgroundColor ? backgroundColor : AppColors.black,
             flex:    1,
             height:  height ? height : AppSizes.screen.height * 0.75,
             opacity: 0.5,
             width:   width ? width : AppSizes.screen.width,
         }}
     >
+        <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
         <WebView
             allowsInlineMediaPlayback={allowsInlineMediaPlayback}
+            originWhitelist={['*']}
             scrollEnabled={scrollEnabled}
             source={{uri: source}}
-            style={{flex: 1}}
+            startInLoadingState={true}
+            style={{flex: 1,}}
         />
     </View>
 );
@@ -40,6 +53,7 @@ WebViewPage.propTypes = {
     source:                    PropTypes.string.isRequired,
     width:                     PropTypes.number,
 };
+
 WebViewPage.defaultProps = {
     allowsInlineMediaPlayback: false,
     backgroundColor:           null,

@@ -11,7 +11,8 @@
 import EnableAppleHealthKit from './EnableAppleHealthKit';
 import Error from './Error';
 import Loading from './Loading';
+import PrivacyPolicyModal from './PrivacyPolicyModal';
 import Placeholder from './Placeholder';
 import WebView from './WebView';
 
-export { EnableAppleHealthKit, Error, Loading, Placeholder, WebView };
+export { EnableAppleHealthKit, Error, Loading, PrivacyPolicyModal, Placeholder, WebView };

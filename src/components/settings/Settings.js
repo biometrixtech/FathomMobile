@@ -14,14 +14,15 @@ import { Animated, Alert, BackHandler, Easing, Platform, Switch, View, } from 'r
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
+import _ from 'lodash';
 import AppleHealthKit from 'rn-apple-healthkit';
 import Toast, { DURATION, } from 'react-native-easy-toast';
-import _ from 'lodash';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, UserAccount, } from '../../constants';
 import { bleUtils, } from '../../constants/utils';
 import { ListItem, TabIcon, } from '../custom';
+import { PrivacyPolicyModal, } from '../general';
 import { AppUtil, } from '../../lib';
 import { ble as BLEActions, user as UserActions, } from '../../actions';
 import { store } from '../../store';
@@ -50,6 +51,7 @@ class Settings extends Component {
         this.state = {
             isJoinATeamFormSubmitting: false,
             isJoinATeamModalOpen:      false,
+            isPrivacyPolicyOpen:       false,
             isUnpairing:               false,
             resultMsg:                 {
                 error:   '',
@@ -430,7 +432,7 @@ class Settings extends Component {
                         :
                         null
                 }
-                {/* Platform.OS === 'ios' && userObj.role !== 'coach' ?
+                { Platform.OS === 'ios' && userObj.role !== 'coach' ?
                     <ListItem
                         chevronColor={AppColors.black}
                         containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
@@ -453,7 +455,21 @@ class Settings extends Component {
                     />
                     :
                     null
-                */}
+                }
+                <ListItem
+                    chevronColor={AppColors.black}
+                    containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                    leftIcon={
+                        <TabIcon
+                            color={AppColors.black}
+                            icon={'gavel'}
+                            size={24}
+                        />
+                    }
+                    onPress={() => this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, })}
+                    title={'TERMS & PRIVACY'}
+                    titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                />
                 <ListItem
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
@@ -485,6 +501,10 @@ class Settings extends Component {
                     isFormSuccessful={this.state.teamName && this.state.teamName.length > 0}
                     isOpen={this.state.isJoinATeamModalOpen}
                     resultMsg={this.state.resultMsg}
+                />
+                <PrivacyPolicyModal
+                    handleModalToggle={() => this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, })}
+                    isPrivacyPolicyOpen={this.state.isPrivacyPolicyOpen}
                 />
             </View>
         );

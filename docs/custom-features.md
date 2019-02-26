@@ -35,6 +35,7 @@ Installed React-Native libraries that we're utilizing
 | [Splash Screen](https://github.com/crazycodeboy/react-native-splash-screen) | A splash screen for React-Native, hide when application loaded ,it works on iOS and Android. | Start Page |
 | [Vector Icons](https://github.com/oblador/react-native-vector-icons) | Customizable Icons for React-Native with support for NavBar/TabBar/ToolbarAndroid, image source and full styling. | Installed so we can access ALL icons from [director](https://oblador.github.io/react-native-vector-icons/) |
 | [Video](https://github.com/react-native-community/react-native-video) | A <Video> component for React-Native | 1. Single Exercises<br/>2. Tutorials |
+| [WebView](https://github.com/react-native-community/react-native-webview) | React-Native WebView - a Modern, Cross-Platform WebView for React-Native | WebViewPage |
 
 ---
 
