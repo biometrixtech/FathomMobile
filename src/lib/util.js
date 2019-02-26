@@ -298,6 +298,7 @@ const UTIL = {
     },
 
     _getWorkoutSamples: (appleHealthKitPerms, startDate, endDate) => {
+        // NOTE: successful resolving of an empty array so that Promise.all() works as desired
         let workoutOptions = {
             startDate,
             endDate,
@@ -305,9 +306,9 @@ const UTIL = {
         };
         return new Promise((resolve, reject) => {
             AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
-                if(initError) { reject(initError); }
+                if(initError) { resolve([]); }
                 AppleHealthKit.getWorkout(workoutOptions, (workoutError: Object, workoutResults: Array<Object>) => {
-                    if(workoutError) { reject(workoutError); }
+                    if(workoutError) { resolve([]); }
                     // console.log('workoutResults',workoutResults);
                     resolve(workoutResults);
                 });
@@ -316,15 +317,16 @@ const UTIL = {
     },
 
     _getHeartRateSamples: (appleHealthKitPerms, startDate, endDate) => {
+        // NOTE: successful resolving of an empty array so that Promise.all() works as desired
         let heartRateOptions = {
             startDate,
             endDate,
         };
         return new Promise((resolve, reject) => {
             AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
-                if(initError) { reject(initError); }
+                if(initError) { resolve([]); }
                 AppleHealthKit.getHeartRateSamples(heartRateOptions, (hrError: Object, hrResults: Array<Object>) => {
-                    if(hrError) { reject(hrError); }
+                    if(hrError) { resolve([]); }
                     // console.log('hrResults',hrResults);
                     resolve(hrResults);
                 });
@@ -333,15 +335,16 @@ const UTIL = {
     },
 
     _getSleepSamples: (appleHealthKitPerms, startDate, endDate) => {
+        // NOTE: successful resolving of an empty array so that Promise.all() works as desired
         let sleepOptions = {
             startDate,
             endDate,
         };
         return new Promise((resolve, reject) => {
             AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
-                if(initError) { reject(initError); }
+                if(initError) { resolve([]); }
                 AppleHealthKit.getSleepSamples(sleepOptions, (sleepError: Object, sleepResults: Array<Object>) => {
-                    if(sleepError) { reject(sleepError); }
+                    if(sleepError) { resolve([]); }
                     // console.log('sleepResults',sleepResults);
                     resolve(sleepResults);
                 });
