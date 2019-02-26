@@ -207,11 +207,11 @@ const UTIL = {
                 read: [
                     PERMS.BiologicalSex,
                     PERMS.DateOfBirth,
-                    // PERMS.HeartRate,
+                    PERMS.HeartRate,
                     PERMS.Height,
-                    // PERMS.SleepAnalysis,
+                    PERMS.SleepAnalysis,
                     PERMS.Weight,
-                    // PERMS.Workout,
+                    PERMS.Workout,
                 ],
                 write: [],
             }
@@ -372,7 +372,7 @@ const UTIL = {
 
     getAppleHealthKitDataPrevious: (userId, lastSyncDate, historicSyncDate, numberOfDaysAgo = 35) => {
         return new Promise((resolve, reject) => {
-            /*if(Platform.OS === 'ios') {
+            if(Platform.OS === 'ios') {
                 // grab permissions
                 let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
                 // set start and end dates
@@ -398,14 +398,14 @@ const UTIL = {
                     .then(res => {
                         return resolve();
                     });
-            }*/
+            }
             return resolve();
         });
     },
 
     getAppleHealthKitData: (userId, lastSyncDate, historicSyncDate, numberOfDaysAgo = 35) => {
         return new Promise((resolve, reject) => {
-            /*if(Platform.OS === 'ios') {
+            if(Platform.OS === 'ios') {
                 // grab permissions
                 let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
                 // set start and end dates
@@ -421,7 +421,7 @@ const UTIL = {
                     .then(res => {
                         return resolve();
                     });
-            }*/
+            }
             return resolve();
         });
     },
