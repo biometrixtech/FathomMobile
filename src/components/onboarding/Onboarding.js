@@ -19,7 +19,7 @@ import { onboardingUtils, } from '../../constants/utils';
 
 // Components
 import { Alerts, ProgressBar, Text, WebViewPage, } from '../custom/';
-import { EnableAppleHealthKit, } from '../general';
+import { EnableAppleHealthKit, PrivacyPolicyModal, } from '../general';
 import { UserAccount, } from './pages/';
 
 /* Styles ==================================================================== */
@@ -185,11 +185,11 @@ class Onboarding extends Component {
     }
 
     _toggleTermsWebView = () => {
-        this.setState({ isTermsOpen: !this.state.isTermsOpen })
+        this.setState({ isTermsOpen: !this.state.isTermsOpen, });
     }
 
     _togglePrivacyPolicyWebView = () => {
-        this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen })
+        this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, });
     }
 
     _handleUserFormChange = (name, value) => {
@@ -444,32 +444,33 @@ class Onboarding extends Component {
 
     _updateStateFromHealthKit = () => {
         let personalDataPromises = AppUtil.getAppleHealthKitPersonalData();
+        // [0] = height, [1] = weight, [2] = dob, [3] = sex
         Promise
-            .all(personalDataPromises)
-            .then(values => {
-                if(values.length > 0) {
-                    // [0] = height, [1] = weight, [2] = dob, [3] = sex
-                    let newUser = _.cloneDeep(this.state.form_fields.user);
-                    if(values[0].value && values[0].value > 0) {
-                        newUser.biometric_data.height.in = values[0].value.toString();
-                    }
-                    if(values[1].value && values[1].value > 0) {
-                        newUser.biometric_data.mass.lb = _.round(values[1].value).toString();
-                    }
-                    if(values[2].value && values[2].value.length > 0 && values[2].age && values[2].age > 0) {
-                        newUser.personal_data.birth_date = moment(values[2].value).format('MM/DD/YYYY');
-                    }
-                    if(
-                        values[3].value &&
-                        values[3].value.length > 0 &&
-                        (values[3].value === 'male' || values[3].value === 'female' || values[3].value === 'other')
-                    ) {
-                        newUser.biometric_data.sex = values[3].value;
-                    }
-                    this.setState({ form_fields: { user: newUser, } });
-                }
-            })
-            .catch(err => console.log('err',err));
+            .all(_.map(personalDataPromises, (values, i) => {
+                values
+                    .then(value => {
+                        let newUser = _.cloneDeep(this.state.form_fields.user);
+                        if(i === 0 && value.value && value.value > 0) {
+                            newUser.biometric_data.height.in = value.value.toString();
+                        }
+                        if(i === 1 && value.value && value.value > 0) {
+                            newUser.biometric_data.mass.lb = _.round(value.value).toString();
+                        }
+                        if(i === 2 && value.value && value.value.length > 0 && value.age && value.age > 0) {
+                            newUser.personal_data.birth_date = moment(value.value).format('MM/DD/YYYY');
+                        }
+                        if(
+                            i === 3 &&
+                            value.value &&
+                            value.value.length > 0 &&
+                            (value.value === 'male' || value.value === 'female' || value.value === 'other')
+                        ) {
+                            newUser.biometric_data.sex = value.value;
+                        }
+                        this.setState({ form_fields: { user: newUser, } });
+                    })
+                    .catch(err => console.log(i,err));
+            }));
     }
 
     render = () => {
@@ -497,34 +498,9 @@ class Onboarding extends Component {
                     handleFormSubmit={this._handleFormSubmit}
                     isFormValid={isFormValid}
                     isUpdatingUser={this.props.user.id ? true : false}
+                    togglePrivacyPolicyWebView={this._togglePrivacyPolicyWebView}
                     user={form_fields.user}
                 />
-                {/*<Modal
-                    backdropPressToClose={false}
-                    coverScreen={true}
-                    isOpen={isTermsOpen}
-                    swipeToClose={false}
-                >
-                    <WebViewPage
-                        source={'https://www.fathomai.com/'}
-                    />
-                    <TouchableOpacity onPress={this._toggleTermsWebView} style={[AppStyles.nextButtonWrapper]}>
-                        <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
-                    </TouchableOpacity>
-                </Modal>
-                <Modal
-                    backdropPressToClose={false}
-                    coverScreen={true}
-                    isOpen={isPrivacyPolicyOpen}
-                    swipeToClose={false}
-                >
-                    <WebViewPage
-                        source={'https://www.fathomai.com/'}
-                    />
-                    <TouchableOpacity onPress={this._togglePrivacyPolicyWebView} style={[AppStyles.nextButtonWrapper]}>
-                        <Text style={[AppStyles.nextButtonText]}>{'Done'}</Text>
-                    </TouchableOpacity>
-                </Modal>*/}
                 { this.state.loading ?
                     <ActivityIndicator
                         color={AppColors.zeplin.yellow}
@@ -532,11 +508,15 @@ class Onboarding extends Component {
                         style={[AppStyles.activityIndicator]}
                     /> : null
                 }
-                {/*<EnableAppleHealthKit
+                <EnableAppleHealthKit
                     handleSkip={() => this._handleEnableAppleHealthKit('apple_healthkit', false)}
                     handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
                     isModalOpen={isHealthKitModalOpen && form_fields.user.account_code.length === 0}
-                />*/}
+                />
+                <PrivacyPolicyModal
+                    handleModalToggle={this._togglePrivacyPolicyWebView}
+                    isPrivacyPolicyOpen={this.state.isPrivacyPolicyOpen}
+                />
             </View>
         );
     }

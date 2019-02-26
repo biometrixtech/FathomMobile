@@ -47,7 +47,7 @@ class CustomFormLabel extends Component {
                 ...AppFonts.oswaldMedium,
                 color:      AppColors.zeplin.lightSlate,
                 fontSize:   AppFonts.scaleFont(14),
-                lineheight: AppFonts.scaleFont(16),
+                lineHeight: AppFonts.scaleFont(16),
             }],
         };
 
