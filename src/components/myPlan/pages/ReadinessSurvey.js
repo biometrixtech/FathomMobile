@@ -252,14 +252,11 @@ class ReadinessSurvey extends Component {
         this.setState({ isAppleHealthKitLoading: true, });
         AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date)
             .then(() => {
-                AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
-                    .then(() => {
-                        this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue, () => {
-                            this.props.handleUpdateUserHealthKitFlag(healthKitFlag, () => {
-                                this.setState({ isAppleHealthKitLoading: false, isAppleHealthModalOpen: false, });
-                            });
-                        });
+                this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue, () => {
+                    this.props.handleUpdateUserHealthKitFlag(healthKitFlag, () => {
+                        this.setState({ isAppleHealthKitLoading: false, isAppleHealthModalOpen: false, });
                     });
+                });
             });
     }
 
