@@ -303,7 +303,7 @@ class ReadinessSurvey extends Component {
                 <Pages
                     indicatorPosition={'none'}
                     ref={(pages) => { this.pages = pages; }}
-                    startPlay={pageIndex}
+                    startPage={pageIndex}
                 >
 
                     <View style={{flex: 1,}}>
@@ -368,83 +368,79 @@ class ReadinessSurvey extends Component {
                     </View>
 
                     <View style={{flex: 1,}}>
-                        { !healthKitWorkouts &&
-                            <View style={{flex: 1,}}>
-                                <ProgressPill
-                                    currentStep={1}
-                                    onBack={healthKitWorkouts ? () => this._renderPreviousPage(2) : null}
-                                    totalSteps={3}
-                                />
-                                <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
-                                    <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Have you already trained today?'}</Text>
-                                    <Spacer size={20} />
-                                    <View style={{flexDirection: 'row', justifyContent: 'space-between', width: 220,}}>
-                                        <TouchableHighlight
-                                            onPress={() => {
-                                                if(!this.state.lockAlreadyTrainedBtn) {
-                                                    this.setState(
-                                                        { lockAlreadyTrainedBtn: !this.state.lockAlreadyTrainedBtn},
-                                                        () => {
-                                                            handleFormChange('already_trained_number', false);
-                                                            this._checkNextStep(this.state.pageIndex);
-                                                        }
-                                                    );
+                        <ProgressPill
+                            currentStep={1}
+                            onBack={healthKitWorkouts ? () => this._renderPreviousPage(2) : null}
+                            totalSteps={3}
+                        />
+                        <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Have you already trained today?'}</Text>
+                            <Spacer size={20} />
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: 220,}}>
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        if(!this.state.lockAlreadyTrainedBtn) {
+                                            this.setState(
+                                                { lockAlreadyTrainedBtn: !this.state.lockAlreadyTrainedBtn},
+                                                () => {
+                                                    handleFormChange('already_trained_number', false);
+                                                    this._checkNextStep(this.state.pageIndex);
                                                 }
-                                            }}
-                                            style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
-                                                backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
-                                            }]}
-                                            underlayColor={AppColors.transparent}
-                                        >
-                                            <Text
-                                                oswaldMedium
-                                                style={[
-                                                    AppStyles.textCenterAligned,
-                                                    {
-                                                        color:    dailyReadiness.already_trained_number === false ? AppColors.white : AppColors.zeplin.blueGrey,
-                                                        fontSize: AppFonts.scaleFont(27),
-                                                    }
-                                                ]}
-                                            >
-                                                {'NO'}
-                                            </Text>
-                                        </TouchableHighlight>
-                                        <TouchableHighlight
-                                            onPress={() => {
-                                                if(!this.state.lockAlreadyTrainedBtn) {
-                                                    this.setState(
-                                                        { lockAlreadyTrainedBtn: !this.state.lockAlreadyTrainedBtn},
-                                                        () => {
-                                                            this._resetSportBuilder();
-                                                            handleFormChange('already_trained_number', 1);
-                                                            this._checkNextStep(this.state.pageIndex);
-                                                        }
-                                                    );
+                                            );
+                                        }
+                                    }}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.already_trained_number === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'NO'}
+                                    </Text>
+                                </TouchableHighlight>
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        if(!this.state.lockAlreadyTrainedBtn) {
+                                            this.setState(
+                                                { lockAlreadyTrainedBtn: !this.state.lockAlreadyTrainedBtn},
+                                                () => {
+                                                    this._resetSportBuilder();
+                                                    handleFormChange('already_trained_number', 1);
+                                                    this._checkNextStep(this.state.pageIndex);
                                                 }
-                                            }}
-                                            style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
-                                                backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
-                                            }]}
-                                            underlayColor={AppColors.transparent}
-                                        >
-                                            <Text
-                                                oswaldMedium
-                                                style={[
-                                                    AppStyles.textCenterAligned,
-                                                    {
-                                                        color:    dailyReadiness.already_trained_number === 1 ? AppColors.white : AppColors.zeplin.blueGrey,
-                                                        fontSize: AppFonts.scaleFont(27),
-                                                    }
-                                                ]}
-                                            >
-                                                {'YES'}
-                                            </Text>
-                                        </TouchableHighlight>
-                                    </View>
-                                </View>
-                                <Spacer size={AppSizes.progressPillsHeight + AppSizes.statusBarHeight} />
+                                            );
+                                        }
+                                    }}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.already_trained_number === 1 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'YES'}
+                                    </Text>
+                                </TouchableHighlight>
                             </View>
-                        }
+                        </View>
+                        <Spacer size={AppSizes.progressPillsHeight + AppSizes.statusBarHeight} />
                     </View>
 
                     { dailyReadiness.sessions && dailyReadiness.sessions.length > 0 ? _.map(dailyReadiness.sessions, (session, index) => {

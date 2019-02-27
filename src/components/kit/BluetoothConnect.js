@@ -354,7 +354,7 @@ class BluetoothConnectView extends Component {
             <Pages
                 indicatorPosition={'none'}
                 ref={(pages) => { this.pages = pages; }}
-                startPlay={this.state.index}
+                startPage={this.state.index}
             >
 
                 <View

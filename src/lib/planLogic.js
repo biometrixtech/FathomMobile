@@ -630,7 +630,7 @@ const PlanLogic = {
             pageNum = healthKitWorkouts && healthKitWorkouts.length > 0 ? 1 : 2;
             isValid = true;
         } else if(currentPage === 1) { // 1. Apple HealthKit (xN)
-            pageNum = 4;
+            pageNum = 2;
             isValid = isHealthKitValid;
         } else if(currentPage === 2) { // 2. trained already
             pageNum = dailyReadiness.already_trained_number === false ? 4 : 3;
@@ -675,10 +675,8 @@ const PlanLogic = {
         } else if(currentPage === 4) { // 4. train later?
             pageNum = !healthKitWorkouts && dailyReadiness.already_trained_number ?
                 (pageState.pageIndex - 1)
-                : healthKitWorkouts && healthKitWorkouts.length > 0 ?
-                    1
-                    :
-                    2;
+                :
+                2;
         } else if(currentPage === 5) { // 5. Follow Up Pain & Soreness
             pageNum = (pageState.pageIndex - 1);
             isTrainLater = true;
@@ -706,17 +704,20 @@ const PlanLogic = {
     handlePostSessionSurveyNextPage: (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid) => {
         let isValid = false;
         let pageNum = 0;
-        if(currentPage === 0) { // 0. Apple HealthKit (xN) OR Session + RPE/Duration
-            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 1 : 2;
-            isValid = isFormValidItems.areQuestionsValid || isHealthKitValid;
-        } else if(currentPage === 1) { // 1. Follow Up Pain & Soreness
-            pageNum = 2;
+        if(currentPage === 0) { // 0. Apple HealthKit (xN)
+            pageNum = 1;
+            isValid = isHealthKitValid;
+        } else if(currentPage === 1) { // 1. Session + RPE/Duration
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 2 : 3;
+            isValid = isFormValidItems.areQuestionsValid;
+        } else if(currentPage === 2) { // 2. Follow Up Pain & Soreness
+            pageNum = 3;
             isValid = isFormValidItems.isPrevSorenessValid;
-        } else if(currentPage === 2) { // 2. Areas of Soreness
-            pageNum = 3;
+        } else if(currentPage === 3) { // 3. Areas of Soreness
+            pageNum = 4;
             isValid = isFormValidItems.selectAreasOfSorenessValid;
-        } else if(currentPage === 3) { // 3. Areas of Soreness Selected
-            pageNum = 3;
+        } else if(currentPage === 4) { // 4. Areas of Soreness Selected
+            pageNum = 4;
             isValid = isFormValidItems.areAreasOfSorenessValid;
         }
         return {
@@ -732,14 +733,16 @@ const PlanLogic = {
     // TODO: UNIT TEST ME
     handlePostSessionSurveyPreviousPage: (currentPage, newSoreBodyParts) => {
         let pageNum = 0;
-        if(currentPage === 0) { // 0. Apple HealthKit (xN) OR Session + RPE/Duration
+        if(currentPage === 0) { // 0. Apple HealthKit (xN)
             pageNum = 0;
-        } else if(currentPage === 1) { // 1. Follow Up Pain & Soreness
+        } else if(currentPage === 1) { // 1. Session + RPE/Duration
             pageNum = 0;
-        } else if(currentPage === 2) { // 2. Areas of Soreness
-            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 1 : 0;
-        } else if(currentPage === 3) { // 3. Areas of Soreness Selected
-            pageNum = 2;
+        } else if(currentPage === 2) { // 2. Follow Up Pain & Soreness
+            pageNum = 1;
+        } else if(currentPage === 3) { // 3. Areas of Soreness
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 2 : 1;
+        } else if(currentPage === 4) { // 4. Areas of Soreness Selected
+            pageNum = 3;
         }
         return {
             pageNum,
@@ -793,7 +796,7 @@ const PlanLogic = {
       */
     // TODO: UNIT TEST ME
     handleHealthKitWorkoutPageRenderLogic: workout => {
-        let hourOfDay = moment(workout.event_date).utc().get('hour');
+        let hourOfDay = workout && workout.event_date ? moment(workout.event_date).utc().get('hour') : moment().utc().get('hour');
         let split_afternoon = 12; // 24hr time to split the afternoon
         let split_evening = 17; // 24hr time to split the evening
         let cutoffForNewDay = 3;
@@ -802,7 +805,7 @@ const PlanLogic = {
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
         let sportDuration = workout.duration ? workout.duration : 0;
         let sportName = selectedSport ? selectedSport.label : '';
-        let sportStartTime = workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
+        let sportStartTime = workout && workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
         let sportText = selectedSport ? `${sportStartTime} ${selectedSport.label.toLowerCase()} workout` : '';
         let sportImage = selectedSport ? selectedSport.imagePath : '';
         return {

@@ -273,7 +273,7 @@ class SportScheduleBuilder extends Component {
             >
                 <ProgressPill
                     currentStep={1}
-                    onBack={step === 1 ? () => this._resetStep(true) : step === 0 && !isPostSession ? () => goBack() : null}
+                    onBack={step === 1 ? () => this._resetStep(true) : step === 0 && goBack ? () => goBack() : null}
                     onClose={handleTogglePostSessionSurvey}
                     totalSteps={2}
                 />
