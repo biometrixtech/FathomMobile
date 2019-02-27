@@ -117,7 +117,7 @@ class ActiveRecoveryBlocks extends Component {
             if(equipmentRequired[2]) {
                 equipmentText.push(
                     <Text key={2} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>
-                        {equipmentRequired[2].toUpperCase() + '...'}
+                        {`${equipmentRequired[2].toUpperCase()} ${equipmentRequired.length > 3 ? '...' : ''}`}
                     </Text>
                 );
             }
