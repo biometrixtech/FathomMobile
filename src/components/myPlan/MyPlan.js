@@ -42,6 +42,7 @@ import {
     ExerciseCompletionModal,
     ExerciseList,
     Exercises,
+    FunctionalStrengthModal,
     PostSessionSurvey,
     ReadinessSurvey,
     RenderMyPlanTab,
@@ -99,6 +100,7 @@ class MyPlan extends Component {
     static componentName = 'MyPlanView';
 
     static propTypes = {
+        activateFunctionalStrength:    PropTypes.func.isRequired,
         ble:                           PropTypes.object.isRequired,
         clearCompletedExercises:       PropTypes.func.isRequired,
         clearCompletedFSExercises:     PropTypes.func.isRequired,
@@ -145,9 +147,16 @@ class MyPlan extends Component {
                 // won't be submitted, help with UI
                 already_trained_number:    null,
             },
+            functionalStrength: {
+                current_position:   null,
+                current_sport_name: null,
+                event_date:         `${moment().toISOString(true).split('.')[0]}Z`,
+            },
             healthData:                           props.healthData,
             isCompletedAMPMRecoveryModalOpen:     true,
             isFunctionalStrengthCollapsed:        true,
+            isFunctionalStrengthModalOpen:        false,
+            isFSCalculating:                      false,
             isFSExerciseCompletionModalOpen:      false,
             isPageLoading:                        false,
             isPostSessionSurveyModalOpen:         false,
@@ -500,7 +509,29 @@ class MyPlan extends Component {
         });
     }
 
-    _handleReadinessSurveySubmit = () => {
+    _handleFSFormChange = (name, value) => {
+        const newFormFields = _.update(this.state.functionalStrength, name, () => value);
+        this.setState({
+            functionalStrength: newFormFields
+        });
+    }
+
+    _handleFSFormSubmit = () => {
+        let payload = this.state.functionalStrength;
+        this.setState({
+            isFunctionalStrengthModalOpen: false,
+            isFSCalculating:               true,
+        })
+        this.props.activateFunctionalStrength(payload)
+            .then(response => this.setState({ isFSCalculating: false, }))
+            .catch(error => {
+                console.log('error',error);
+                AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
+            });
+
+    }
+
+    _handleReadinessSurveySubmit = isSecondFunctionalStrength => {
         // TODO: MOVE TO LOGIC FILE AND UNIT TEST BELOW
         let newPrepareObject = Object.assign({}, this.state.prepare, {
             isReadinessSurveyCompleted: true,
@@ -512,7 +543,7 @@ class MyPlan extends Component {
             clear_candidates:          _.filter(this.state.dailyReadiness.soreness, {isClearCandidate: true}),
             sleep_quality:             this.state.dailyReadiness.sleep_quality,
             readiness:                 this.state.dailyReadiness.readiness,
-            wants_functional_strength: this.state.dailyReadiness.wants_functional_strength,
+            wants_functional_strength: isSecondFunctionalStrength ? true : this.state.dailyReadiness.wants_functional_strength,
             sessions_planned:          this.state.dailyReadiness.sessions_planned,
         };
         if(this.state.dailyReadiness.current_sport_name === 0 || this.state.dailyReadiness.current_sport_name > 0) {
@@ -773,6 +804,37 @@ class MyPlan extends Component {
                         isPostSessionSurveyModalOpen: false,
                         loading:                      false,
                         postSession:                  newPostSession,
+                    },
+                );
+            }, 500);
+        }
+    }
+
+    _toggleFunctionalStrengthModal = () => {
+        this.setState({ loading: true, });
+        if(!this.state.isFunctionalStrengthModalOpen) {
+            this.props.getSoreBodyParts()
+                .then(soreBodyParts => {
+                    _.delay(() =>
+                        this.setState({
+                            isFunctionalStrengthModalOpen: true,
+                            loading:                       false,
+                        })
+                    , 500);
+                })
+                .catch(err => {
+                    this.setState({
+                        isFunctionalStrengthModalOpen: true,
+                        loading:                       false,
+                    });
+                    AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
+                });
+        } else {
+            _.delay(() => {
+                this.setState(
+                    {
+                        isFunctionalStrengthModalOpen: false,
+                        loading:                       false,
                     },
                 );
             }, 500);
@@ -1721,7 +1783,10 @@ class MyPlan extends Component {
             :
             AppColors.zeplin.greyText;
         return (
-            <ScrollView contentContainerStyle={{ backgroundColor: AppColors.white, }} tabLabel={tabs[index]}>
+            <ScrollView
+                contentContainerStyle={{ backgroundColor: AppColors.white, }}
+                tabLabel={tabs[index]}
+            >
                 <Spacer size={30} />
                 { (dailyPlanObj && !dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
                     <View>
@@ -2029,6 +2094,24 @@ class MyPlan extends Component {
                     }}
                     user={user}
                 />
+                <Modal
+                    backdropColor={AppColors.zeplin.darkNavy}
+                    backdropOpacity={0.8}
+                    backdropPressToClose={false}
+                    coverScreen={true}
+                    isOpen={this.state.isFunctionalStrengthModalOpen}
+                    keyboardTopOffset={0}
+                    swipeToClose={false}
+                    useNativeDriver={false}
+                >
+                    <FunctionalStrengthModal
+                        functionalStrength={this.state.functionalStrength}
+                        handleFormChange={this._handleFSFormChange}
+                        handleFormSubmit={this._handleFSFormSubmit}
+                        toggleFSModal={this._toggleFunctionalStrengthModal}
+                        typicalSessions={this.props.plan.typicalSessions}
+                    />
+                </Modal>
             </ScrollView>
         );
     };

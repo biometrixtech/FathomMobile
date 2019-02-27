@@ -48,6 +48,7 @@ export default {
         ['reset_password',     `${usersAPIVersion}/user/reset_password`],
         ['update_user',        `${usersAPIVersion}/user/{userId}`],
         // My Plan specific routes
+        ['activate_fs',           `${plansAPIVersion}/functional_strength/activate`], // POST
         ['active_recovery',       `${plansAPIVersion}/active_recovery`], // POST/PATCH
         ['active_time',           `${plansAPIVersion}/active_recovery/active_time`], // PATCH
         ['app_logs',              `${plansAPIVersion}/misc/app_logs`], // POST

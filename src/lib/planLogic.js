@@ -817,6 +817,26 @@ const PlanLogic = {
             sportText,
         };
     },
+    /**
+      * Function Strength Modal Render Logic
+      * - FunctionalStrengthModal
+      */
+    // TODO: UNIT TEST ME
+    fsModalRenderLogic: (functionalStrength, typicalSession) => {
+        let foundSport = _.find(MyPlanConstants.teamSports, o => o.index === functionalStrength.current_sport_name);
+        let selectedSportPositions = functionalStrength.current_sport_name !== null && foundSport && foundSport.positions ? foundSport.positions : [];
+        let hasPositions = (functionalStrength.current_sport_name !== null || functionalStrength.current_sport_name === 0) && selectedSportPositions && selectedSportPositions.length > 0;
+        let isValid = (functionalStrength.current_sport_name === 0 || functionalStrength.current_sport_name > 0) &&
+            (
+                selectedSportPositions.length === 0 ||
+                (functionalStrength.current_position === 0 || functionalStrength.current_position > 0)
+            );
+        return {
+            hasPositions,
+            isValid,
+            selectedSportPositions,
+        }
+    },
 
 };
 

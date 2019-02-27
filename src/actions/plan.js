@@ -54,14 +54,16 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
                 type: Actions.GET_MY_PLAN,
                 data: response.daily_plans,
             });
-            dispatch({
-                type: Actions.GET_SORE_BODY_PARTS,
-                data: response.readiness,
-            });
-            dispatch({
-                type: Actions.SET_TYPICAL_SESSIONS,
-                data: response.typical_sessions,
-            });
+            if(!response.daily_plans[0].daily_readiness_survey_completed) {
+                dispatch({
+                    type: Actions.GET_SORE_BODY_PARTS,
+                    data: response.readiness,
+                });
+                dispatch({
+                    type: Actions.SET_TYPICAL_SESSIONS,
+                    data: response.typical_sessions,
+                });
+            }
             return Promise.resolve(response);
         }).catch(err => {
             const error = AppAPI.handleError(err);
@@ -330,6 +332,24 @@ const patchFunctionalStrength = (user_id, completed_exercises) => {
 };
 
 /**
+  * Activate Functional Strength
+  */
+const activateFunctionalStrength = payload => {
+    return dispatch => AppAPI.activate_fs.post(false, payload)
+        .then(myPlanData => {
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: myPlanData.daily_plans,
+            });
+            return Promise.resolve(myPlanData);
+        })
+        .catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+}
+
+/**
   * Mark Started Recovery - recovery_type of pre or post
   */
 const markStartedRecovery = (user_id, recovery_type, newMyPlan) => {
@@ -460,6 +480,7 @@ const patchSession = (session_id, payload) => {
 }
 
 export default {
+    activateFunctionalStrength,
     clearCompletedExercises,
     clearCompletedFSExercises,
     clearHealthKitWorkouts,

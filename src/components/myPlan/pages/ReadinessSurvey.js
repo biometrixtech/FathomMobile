@@ -644,7 +644,7 @@ class ReadinessSurvey extends Component {
                             user={user}
                         />
                         <BackNextButtons
-                            handleFormSubmit={() => handleFormSubmit()}
+                            handleFormSubmit={() => handleFormSubmit(isSecondFunctionalStrength)}
                             isValid={this.areasOfSorenessRef && this.areasOfSorenessRef.state && !this.areasOfSorenessRef.state.isAllGood && !this.areasOfSorenessRef.state.showWholeArea ?
                                 false
                                 :
@@ -707,7 +707,7 @@ class ReadinessSurvey extends Component {
                             </View>
                         ))}
                         <BackNextButtons
-                            handleFormSubmit={() => handleFormSubmit()}
+                            handleFormSubmit={() => handleFormSubmit(isSecondFunctionalStrength)}
                             isValid={isFormValidItems.areAreasOfSorenessValid}
                             onNextClick={() => this._renderNextPage(7, isFormValidItems)}
                             showSubmitBtn={true}

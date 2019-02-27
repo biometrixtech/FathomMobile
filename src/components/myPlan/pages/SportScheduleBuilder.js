@@ -25,7 +25,7 @@ import { Image, Platform, SectionList, ScrollView, StyleSheet, TouchableHighligh
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
 import { Button, Spacer, TabIcon, Text, WheelScrollPicker, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
-import { BackNextButtons, ProgressPill, ScaleButton, } from './';
+import { BackNextButtons, ProgressPill, ScaleButton, SportBlock, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -41,15 +41,6 @@ const styles = StyleSheet.create({
         shadowOffset:  {  height: 3, width: 0, },
         shadowOpacity: 1,
         shadowRadius:  5,
-    },
-    sportBlockWrapper: {
-        alignItems:      'center',
-        backgroundColor: AppColors.zeplin.darkWhite,
-        borderRadius:    7,
-        flexDirection:   'row',
-        marginBottom:    AppSizes.paddingMed,
-        padding:         AppSizes.paddingSml,
-        width:           AppSizes.screen.widthTwoThirds,
     },
     step0Circle: {
         alignSelf:         'center',
@@ -73,39 +64,6 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const SportBlock = ({ displayName, filteredSession, onPress, }) => {
-    if(!filteredSession) {
-        return(null);
-    }
-    return(
-        <TouchableOpacity
-            onPress={() => onPress()}
-            style={[
-                Platform.OS === 'ios' ? {} : {elevation: 2,},
-                styles.shadowEffect,
-                styles.sportBlockWrapper,
-            ]}
-        >
-            { filteredSession.icon && filteredSession.iconType ?
-                <TabIcon
-                    containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
-                    color={AppColors.zeplin.seaBlue}
-                    icon={filteredSession.icon}
-                    reverse={false}
-                    size={32}
-                    type={filteredSession.iconType}
-                />
-                :
-                <Image
-                    source={filteredSession.imagePath}
-                    style={{height: 32, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.seaBlue, width: 32,}}
-                />
-            }
-            <Text robotoMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(15),}}>{displayName}</Text>
-        </TouchableOpacity>
-    );
-};
-
 class SportScheduleBuilder extends Component {
     constructor(props) {
         super(props);
