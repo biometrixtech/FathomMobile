@@ -630,7 +630,8 @@ const PlanLogic = {
             pageNum = healthKitWorkouts && healthKitWorkouts.length > 0 ? 1 : 2;
             isValid = true;
         } else if(currentPage === 1) { // 1. Apple HealthKit (xN)
-            pageNum = 2;
+            let numberOfNonDeletedWorkouts = _.filter(healthKitWorkouts, ['deleted', false]);
+            pageNum = numberOfNonDeletedWorkouts.length === 0 ? 2 : 4;
             isValid = isHealthKitValid;
         } else if(currentPage === 2) { // 2. trained already
             pageNum = dailyReadiness.already_trained_number === false ? 4 : 3;

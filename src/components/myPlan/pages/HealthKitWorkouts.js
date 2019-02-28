@@ -181,6 +181,12 @@ class HealthKitWorkouts extends PureComponent {
         }
     }
 
+    _scrollToBottom = scrollViewRef => {
+        if(scrollViewRef) {
+            this.setState({ delayTimerId: _.delay(() => scrollViewRef.scrollToEnd({ animated: true, }), 500) });
+        }
+    }
+
     _deleteAllWorkouts = () => {
         const { handleHealthDataFormChange, workouts, } = this.props;
         let i = 0;
@@ -291,7 +297,7 @@ class HealthKitWorkouts extends PureComponent {
                                     containerStyle={[{display: 'none',}]}
                                     inputStyle={[{display: 'none',}]}
                                     keyboardType={'numeric'}
-                                    onChangeText={value => handleHealthDataFormChange(index, 'duration', parseInt(value, 10))}
+                                    onChangeText={value => handleHealthDataFormChange((pageIndex - 1), 'duration', parseInt(value, 10))}
                                     onEndEditing={() => this.setState({ isEditingDuration: false, })}
                                     placeholder={''}
                                     placeholderTextColor={AppColors.transparent}
@@ -325,7 +331,7 @@ class HealthKitWorkouts extends PureComponent {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        handleHealthDataFormChange(index, 'deleted', true, () => {
+                                        handleHealthDataFormChange((pageIndex - 1), 'deleted', true, () => {
                                             this._renderNextPage(pageIndex);
                                         });
                                     }}
@@ -383,7 +389,7 @@ class HealthKitWorkouts extends PureComponent {
                                                         <TouchableHighlight
                                                             key={value+key}
                                                             onPress={() => {
-                                                                handleHealthDataFormChange(index, 'post_session_survey.RPE', key);
+                                                                handleHealthDataFormChange((pageIndex - 1), 'post_session_survey.RPE', key);
                                                                 this._renderNextPage(pageIndex);
                                                             }}
                                                             underlayColor={AppColors.transparent}
@@ -396,8 +402,12 @@ class HealthKitWorkouts extends PureComponent {
                                                                         opacity={opacity}
                                                                         sorenessPainMappingLength={MyPlanConstants.postSessionFeel.length}
                                                                         updateStateAndForm={() => {
-                                                                            handleHealthDataFormChange(index, 'post_session_survey.RPE', key);
-                                                                            this._renderNextPage(pageIndex);
+                                                                            handleHealthDataFormChange((pageIndex - 1), 'post_session_survey.RPE', key);
+                                                                            if(filteredWorkouts.length !== pageIndex) {
+                                                                                this._renderNextPage(pageIndex);
+                                                                            } else {
+                                                                                this._scrollToBottom(this.scrollViewHealthKitRef[index]);
+                                                                            }
                                                                         }}
                                                                     />
                                                                 </View>
@@ -423,6 +433,22 @@ class HealthKitWorkouts extends PureComponent {
                                     }
                                 </View>
                                 <Spacer size={40} />
+                                { filteredWorkouts.length === pageIndex && showRPEPicker ?
+                                    <View>
+                                        <BackNextButtons
+                                            addBtnText={'Add another session'}
+                                            handleFormSubmit={() => console.log('hi1')}
+                                            isValid={true}
+                                            onBackClick={() => console.log('hi2')}
+                                            showAddBtn={true}
+                                            showBackIcon={true}
+                                            showSubmitBtn={true}
+                                            submitBtnText={'Continue'}
+                                        />
+                                    </View>
+                                    :
+                                    null
+                                }
                             </ScrollView>
                         )
                     }) : <View />}
