@@ -23,6 +23,8 @@ import {
 import type { SizeType, PointType, RectType } from './helpers/tooltipGeom';
 import styles from './helpers/tooltipStyles';
 
+import { AppColors, } from '../../constants';
+
 const SCREEN_HEIGHT: number = Dimensions.get('window').height;
 const SCREEN_WIDTH: number = Dimensions.get('window').width;
 
@@ -499,7 +501,7 @@ class Tooltip extends Component<Props, State> {
                           ]}
                       >
                           <Animated.View
-                              style={[styles.background, ...extendedStyles.background, { backgroundColor }]}
+                              style={[styles.background, ...extendedStyles.background, { backgroundColor: AppColors.zeplin.darkBlue, opacity: 0.8, }]}
                           />
                           <Animated.View
                               style={[styles.tooltip, ...extendedStyles.tooltip, tooltipPlacementStyles,]}

@@ -71,7 +71,7 @@ const customStyles = StyleSheet.create({
         flex:         1,
         marginRight:  9,
         paddingLeft:  37,
-        paddingRight: 15,
+        paddingRight: 10,
     },
     alertMessageIconWrapper: {
         alignSelf:            'stretch',
@@ -1155,7 +1155,7 @@ class MyPlan extends Component {
                         exerciseList.totalLength === 0 ?
                             <View style={{ flex: 1, }}>
                                 <Spacer size={10} />
-                                <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
+                                <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
                                     <TabIcon
                                         color={AppColors.white}
                                         containerStyle={[customStyles.alertMessageIconWrapper, recoveryObj.impact_score < 1.5 ? {backgroundColor: AppColors.zeplin.tealGreen,} : {backgroundColor: AppColors.zeplin.error,}]}
@@ -1484,7 +1484,7 @@ class MyPlan extends Component {
                                 </View>
                             </View>
                             <Spacer size={25}/>
-                            <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
+                            <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
                                 <TabIcon
                                     color={AppColors.white}
                                     containerStyle={[customStyles.alertMessageIconWrapper,]}
@@ -1526,7 +1526,7 @@ class MyPlan extends Component {
                         exerciseList.totalLength === 0 ?
                             <View style={{ flex: 1, }}>
                                 <Spacer size={10} />
-                                <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect,]}>
+                                <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
                                     <TabIcon
                                         color={AppColors.white}
                                         containerStyle={[customStyles.alertMessageIconWrapper, recoveryObj.impact_score < 1.5 ? {backgroundColor: AppColors.zeplin.tealGreen,} : {backgroundColor: AppColors.zeplin.error,}]}
