@@ -817,6 +817,11 @@ class MyPlan extends Component {
                 .then(soreBodyParts => {
                     _.delay(() =>
                         this.setState({
+                            functionalStrength: {
+                                current_position:   null,
+                                current_sport_name: null,
+                                event_date:         `${moment().toISOString(true).split('.')[0]}Z`,
+                            },
                             isFunctionalStrengthModalOpen: true,
                             loading:                       false,
                         })
@@ -831,12 +836,15 @@ class MyPlan extends Component {
                 });
         } else {
             _.delay(() => {
-                this.setState(
-                    {
-                        isFunctionalStrengthModalOpen: false,
-                        loading:                       false,
+                this.setState({
+                    functionalStrength: {
+                        current_position:   null,
+                        current_sport_name: null,
+                        event_date:         `${moment().toISOString(true).split('.')[0]}Z`,
                     },
-                );
+                    isFunctionalStrengthModalOpen: false,
+                    loading:                       false,
+                });
             }, 500);
         }
     }
