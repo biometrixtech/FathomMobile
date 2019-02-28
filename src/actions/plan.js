@@ -339,7 +339,7 @@ const activateFunctionalStrength = payload => {
         .then(myPlanData => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
-                data: myPlanData.daily_plans,
+                data: [myPlanData.daily_plan],
             });
             return Promise.resolve(myPlanData);
         })

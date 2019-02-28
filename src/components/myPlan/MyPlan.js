@@ -75,7 +75,7 @@ const customStyles = StyleSheet.create({
     },
     alertMessageIconWrapper: {
         alignSelf:            'stretch',
-        backgroundColor:      AppColors.primary.yellow.hundredPercent,
+        backgroundColor:      AppColors.zeplin.yellow,
         borderTopLeftRadius:  5,
         borderTopRightRadius: 5,
         paddingVertical:      AppSizes.paddingSml,
@@ -1058,12 +1058,12 @@ class MyPlan extends Component {
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}
                 refreshControl={
                     <RefreshControl
-                        colors={[AppColors.primary.yellow.hundredPercent]}
+                        colors={[AppColors.zeplin.yellow]}
                         onRefresh={() => this._handleExerciseListRefresh(false)}
                         refreshing={isPageLoading}
                         title={'Loading...'}
-                        titleColor={AppColors.primary.yellow.hundredPercent}
-                        tintColor={AppColors.primary.yellow.hundredPercent}
+                        titleColor={AppColors.zeplin.yellow}
+                        tintColor={AppColors.zeplin.yellow}
                     />
                 }
                 tabLabel={tabs[index]}
@@ -1109,7 +1109,7 @@ class MyPlan extends Component {
                             </View>
                             :
                             <TabIcon
-                                color={isCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
+                                color={isCompleted ? AppColors.zeplin.yellow : AppColors.black}
                                 containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
                                 icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
                                 size={isCompleted ? AppFonts.scaleFont(24) : AppFonts.scaleFont(20)}
@@ -1181,14 +1181,14 @@ class MyPlan extends Component {
                                     />
                                     <Spacer size={12}/>
                                     <Button
-                                        backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                        backgroundColor={AppColors.zeplin.yellow}
                                         buttonStyle={{width: '100%',}}
                                         containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
                                         color={AppColors.white}
                                         fontFamily={AppStyles.robotoBold.fontFamily}
                                         fontWeight={AppStyles.robotoBold.fontWeight}
                                         leftIcon={{
-                                            color: AppColors.primary.yellow.hundredPercent,
+                                            color: AppColors.zeplin.yellow,
                                             name:  'chevron-right',
                                             size:  AppFonts.scaleFont(24),
                                             style: {flex: 1,},
@@ -1289,7 +1289,7 @@ class MyPlan extends Component {
                         />
                         { this.state.loading ?
                             <ActivityIndicator
-                                color={AppColors.primary.yellow.hundredPercent}
+                                color={AppColors.zeplin.yellow}
                                 size={'large'}
                                 style={[AppStyles.activityIndicator]}
                             /> : null
@@ -1344,7 +1344,7 @@ class MyPlan extends Component {
                 }
                 { this.state.loading ?
                     <ActivityIndicator
-                        color={AppColors.primary.yellow.hundredPercent}
+                        color={AppColors.zeplin.yellow}
                         size={'large'}
                         style={[AppStyles.activityIndicator]}
                     /> : null
@@ -1436,12 +1436,12 @@ class MyPlan extends Component {
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}
                 refreshControl={
                     <RefreshControl
-                        colors={[AppColors.primary.yellow.hundredPercent]}
+                        colors={[AppColors.zeplin.yellow]}
                         onRefresh={() => this._handleExerciseListRefresh(false)}
                         refreshing={isPageLoading}
                         title={'Loading...'}
-                        titleColor={AppColors.primary.yellow.hundredPercent}
-                        tintColor={AppColors.primary.yellow.hundredPercent}
+                        titleColor={AppColors.zeplin.yellow}
+                        tintColor={AppColors.zeplin.yellow}
                     />
                 }
                 tabLabel={tabs[index]}
@@ -1462,7 +1462,7 @@ class MyPlan extends Component {
                             </View>
                             :
                             <TabIcon
-                                color={isCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.black}
+                                color={isCompleted ? AppColors.zeplin.yellow : AppColors.black}
                                 containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
                                 icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
                                 size={isCompleted ? AppFonts.scaleFont(24) : 20}
@@ -1552,13 +1552,13 @@ class MyPlan extends Component {
                                     />
                                     <Spacer size={12}/>
                                     <Button
-                                        backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                        backgroundColor={AppColors.zeplin.yellow}
                                         color={AppColors.white}
                                         containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
                                         fontFamily={AppStyles.robotoBold.fontFamily}
                                         fontWeight={AppStyles.robotoBold.fontWeight}
                                         leftIcon={{
-                                            color: AppColors.primary.yellow.hundredPercent,
+                                            color: AppColors.zeplin.yellow,
                                             name:  'chevron-right',
                                             size:  AppFonts.scaleFont(24),
                                             style: {flex: 1,},
@@ -1743,8 +1743,9 @@ class MyPlan extends Component {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
         let trainingSessions = dailyPlanObj ? dailyPlanObj.training_sessions : [];
+        let isFSEligible = dailyPlanObj && dailyPlanObj.functional_strength_eligible;
         let functionalStrengthArray = [];
-        let functionalStrength = dailyPlanObj && dailyPlanObj.functional_strength_eligible && dailyPlanObj.functional_strength_session ? dailyPlanObj.functional_strength_session : {};
+        let functionalStrength = dailyPlanObj && dailyPlanObj.functional_strength_session ? dailyPlanObj.functional_strength_session : {};
         if(functionalStrength.completed && functionalStrength.event_date) {
             let newFunctionalStrength = _.cloneDeep(functionalStrength);
             newFunctionalStrength.isFunctionalStrength = true;
@@ -1759,25 +1760,25 @@ class MyPlan extends Component {
         let completedFSExercises = store.getState().plan.completedFSExercises;
         let fsExerciseList = functionalStrength ? MyPlanConstants.cleanFSExerciseList(functionalStrength) : {};
         let offDaySelected = dailyPlanObj && !dailyPlanObj.sessions_planned || filteredTrainingSessions.length > 0;
-        let logActivityButtonOutlined = (isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed) || (!isDailyReadinessSurveyCompleted) ? true : false;
+        let logActivityButtonOutlined = (isDailyReadinessSurveyCompleted && (isFSEligible || functionalStrength && Object.keys(functionalStrength).length > 0) && !functionalStrength.completed) || (!isDailyReadinessSurveyCompleted) ? true : false;
         let logActivityButtonBackgroundColor = offDaySelected && functionalStrength.completed ?
-            AppColors.primary.yellow.hundredPercent
+            AppColors.zeplin.yellow
             : logActivityButtonOutlined ?
                 AppColors.white
                 :
-                AppColors.primary.yellow.hundredPercent;
+                AppColors.zeplin.yellow;
         let logActivityButtonColor = offDaySelected && functionalStrength.completed ?
             AppColors.white
             : logActivityButtonOutlined && !isDailyReadinessSurveyCompleted ?
                 AppColors.zeplin.greyText
                 : logActivityButtonOutlined && isDailyReadinessSurveyCompleted ?
-                    AppColors.primary.yellow.hundredPercent
+                    AppColors.zeplin.yellow
                     :
                     AppColors.white;
         let isFSCompletedValid = functionalStrength && Object.keys(functionalStrength).length > 0 && completedFSExercises ? MyPlanConstants.isFSCompletedValid(functionalStrength, completedFSExercises) : false;
         let logActivityRightIconColor = isDailyReadinessSurveyCompleted ?
                 completedFSExercises.length > 0 ?
-                    AppColors.primary.yellow.hundredPercent
+                    AppColors.zeplin.yellow
                     :
                     AppColors.white
             :
@@ -1816,7 +1817,7 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                { isDailyReadinessSurveyCompleted && functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed ?
+                { isDailyReadinessSurveyCompleted && (isFSEligible || functionalStrength && Object.keys(functionalStrength).length > 0) && !functionalStrength.completed ?
                       <View>
                           <ListItem
                               containerStyle={{ borderBottomWidth: 0 }}
@@ -1838,32 +1839,44 @@ class MyPlan extends Component {
                               <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
                                   <ActiveRecoveryBlocks
                                       isFunctionalStrength={true}
-                                      recoveryObj={functionalStrength}
+                                      recoveryObj={this.state.isFSCalculating ? false : functionalStrength}
                                   />
                                   <Spacer size={this.state.isFunctionalStrengthCollapsed ? 12 : 20}/>
                                   { this.state.isFunctionalStrengthCollapsed ?
                                       <Button
-                                          backgroundColor={AppColors.primary.yellow.hundredPercent}
-                                          color={AppColors.white}
+                                          backgroundColor={this.state.isFSCalculating ? AppColors.white : AppColors.zeplin.yellow}
+                                          color={this.state.isFSCalculating ? AppColors.zeplin.yellow : AppColors.white}
                                           containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
                                           fontFamily={AppStyles.robotoBold.fontFamily}
                                           fontWeight={AppStyles.robotoBold.fontWeight}
                                           leftIcon={{
-                                              color: AppColors.primary.yellow.hundredPercent,
+                                              color: this.state.isFSCalculating ? AppColors.white : AppColors.zeplin.yellow,
                                               name:  'chevron-right',
                                               size:  AppFonts.scaleFont(24),
                                               style: {flex: 1,},
                                           }}
+                                          loading={this.state.isFSCalculating}
+                                          loadingRight={true}
                                           outlined
-                                          onPress={() => this.setState({ isFunctionalStrengthCollapsed: false, })}
-                                          rightIcon={{
-                                              color: AppColors.white,
-                                              name:  'chevron-right',
-                                              size:  AppFonts.scaleFont(24),
-                                              style: {flex: 1,},
-                                          }}
+                                          onPress={() => this.state.isFSCalculating ?
+                                              null
+                                              : (isFSEligible && functionalStrength && Object.keys(functionalStrength).length === 0) ?
+                                                  this._toggleFunctionalStrengthModal()
+                                                  :
+                                                  this.setState({ isFunctionalStrengthCollapsed: false, })
+                                          }
+                                          rightIcon={this.state.isFSCalculating ?
+                                              {}
+                                              :
+                                              {
+                                                  color: AppColors.white,
+                                                  name:  'chevron-right',
+                                                  size:  AppFonts.scaleFont(24),
+                                                  style: {flex: 1,},
+                                              }
+                                          }
                                           textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
-                                          title={completedFSExercises.length > 0 ? 'Continue' : 'Start'}
+                                          title={this.state.isFSCalculating ? 'Calculating...' : completedFSExercises.length > 0 ? 'Continue' : 'Start'}
                                       />
                                       :
                                       <Text
@@ -1962,12 +1975,12 @@ class MyPlan extends Component {
                             <Button
                                 backgroundColor={AppColors.white}
                                 buttonStyle={{justifyContent: 'space-between',}}
-                                color={isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText}
+                                color={isDailyReadinessSurveyCompleted ? AppColors.zeplin.yellow : AppColors.zeplin.greyText}
                                 containerViewStyle={{marginLeft: 22, marginRight: 22,}}
                                 fontFamily={AppStyles.robotoBold.fontFamily}
                                 fontWeight={AppStyles.robotoBold.fontWeight}
                                 leftIcon={{
-                                    color: isDailyReadinessSurveyCompleted ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.greyText,
+                                    color: isDailyReadinessSurveyCompleted ? AppColors.zeplin.yellow : AppColors.zeplin.greyText,
                                     name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
                                     size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
                                 }}
@@ -2016,7 +2029,7 @@ class MyPlan extends Component {
                         />
                       { this.state.loading ?
                             <ActivityIndicator
-                                color={AppColors.primary.yellow.hundredPercent}
+                                color={AppColors.zeplin.yellow}
                                 size={'large'}
                                 style={[AppStyles.activityIndicator, {height: AppSizes.screen.height,}]}
                             /> : null
@@ -2027,44 +2040,42 @@ class MyPlan extends Component {
                 }
                 { this.state.loading ?
                     <ActivityIndicator
-                        color={AppColors.primary.yellow.hundredPercent}
+                        color={AppColors.zeplin.yellow}
                         size={'large'}
                         style={[AppStyles.activityIndicator]}
                     /> : null
                 }
-                {
-                    this.state.isSelectedExerciseModalOpen
-                        ?
-                        <Modal
-                            backdropColor={AppColors.zeplin.darkNavy}
-                            backdropOpacity={0.8}
-                            backdropPressToClose={true}
-                            coverScreen={true}
-                            isOpen={this.state.isSelectedExerciseModalOpen}
-                            keyboardTopOffset={0}
-                            onClosed={() => this._toggleSelectedExercise(false, false)}
-                            position={'center'}
-                            ref={ref => {this._singleExerciseItemRef = ref;}}
-                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
-                            swipeToClose={true}
-                            useNativeDriver={false}
-                        >
-                            { this.state.selectedExercise.library_id ?
-                                <SingleExerciseItem
-                                    completedExercises={completedFSExercises}
-                                    exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
-                                    handleCompleteExercise={exerciseId => {
-                                        this._handleCompleteFSExercise(exerciseId);
-                                        this._singleExerciseItemRef.close();
-                                    }}
-                                    selectedExercise={this.state.selectedExercise.library_id}
-                                />
-                                :
-                                null
-                            }
-                        </Modal>
-                        :
-                        null
+                { this.state.isSelectedExerciseModalOpen ?
+                    <Modal
+                        backdropColor={AppColors.zeplin.darkNavy}
+                        backdropOpacity={0.8}
+                        backdropPressToClose={true}
+                        coverScreen={true}
+                        isOpen={this.state.isSelectedExerciseModalOpen}
+                        keyboardTopOffset={0}
+                        onClosed={() => this._toggleSelectedExercise(false, false)}
+                        position={'center'}
+                        ref={ref => {this._singleExerciseItemRef = ref;}}
+                        style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
+                        swipeToClose={true}
+                        useNativeDriver={false}
+                    >
+                        { this.state.selectedExercise.library_id ?
+                            <SingleExerciseItem
+                                completedExercises={completedFSExercises}
+                                exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
+                                handleCompleteExercise={exerciseId => {
+                                    this._handleCompleteFSExercise(exerciseId);
+                                    this._singleExerciseItemRef.close();
+                                }}
+                                selectedExercise={this.state.selectedExercise.library_id}
+                            />
+                            :
+                            null
+                        }
+                    </Modal>
+                    :
+                    null
                 }
                 <SessionsCompletionModal
                     isModalOpen={this.state.isTrainSessionsCompletionModalOpen}

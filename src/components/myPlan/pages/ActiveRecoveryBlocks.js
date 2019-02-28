@@ -134,29 +134,45 @@ class ActiveRecoveryBlocks extends Component {
             recoveryObj,
             toggleActiveTimeSlideUpPanel,
         } = this.props;
+        let isDisabled = !recoveryObj && !recoveryObj.minutes_duration;
+        let { equipmentRequired, } = MyPlanConstants.cleanExerciseList(recoveryObj);
         if(isFunctionalStrength) {
             return(
                 <View style={{flexDirection: 'row',}}>
-                    <View style={[customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {paddingLeft: 13,}]}>
-                        <Text oswaldMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'WHEN'}</Text>
-                        <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(20),}}>{'ANYTIME DURING THE DAY'}</Text>
+                    <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper, {paddingRight: 10,}] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {paddingLeft: 13,}]}>
+                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'WHAT'}</Text>
+                        <View style={{backgroundColor: isDisabled ? AppColors.zeplin.superLight : AppColors.transparent,}}>
+                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.superLight : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{'DYNAMIC MOVEMENTS\nTO IMPROVE STRENGTH &\nPOWER EFFICIENCY'}</Text>
+                        </View>
                     </View>
-                    <View style={[customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {marginRight: 10, paddingLeft: 13,}]}>
-                        <Text oswaldMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'ACTIVE TIME'}</Text>
-                        <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
-                            <View style={{backgroundColor: AppColors.transparent, borderRadius: 3,}}>
-                                <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(28),}}>{`${parseFloat(recoveryObj.minutes_duration).toFixed(1)}`}</Text>
-                            </View>
-                            <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
-                                <Text oswaldMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(12),}}>{'MINS'}</Text>
-                            </View>
+                    <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper, {paddingRight: 10,}] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {marginRight: 10, paddingLeft: 13,}]}>
+                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{!recoveryObj.minutes_duration ? 'ACTIVE TIME' : 'WHEN'}</Text>
+                        <View style={{alignItems: 'flex-end', backgroundColor: isDisabled ? AppColors.zeplin.superLight : AppColors.transparent, flex: 1, flexDirection: 'row',}}>
+                            { recoveryObj && recoveryObj.minutes_duration ?
+                                <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
+                                    <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(28),}}>{`${parseFloat(recoveryObj.minutes_duration).toFixed(1)}`}</Text>
+                                    <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
+                                        <Text oswaldMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(12),}}>{'MINS'}</Text>
+                                    </View>
+                                </View>
+                                : !recoveryObj ?
+                                    <Text>{' '}</Text>
+                                    :
+                                    <View style={{flex: 1,}}>
+                                        <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
+                                            <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(28),}}>{'10-15'}</Text>
+                                            <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
+                                                <Text oswaldMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(12),}}>{'MINS'}</Text>
+                                            </View>
+                                        </View>
+                                        <Text oswaldMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14),}}>{'TWICE PER WEEK'}</Text>
+                                    </View>
+                            }
                         </View>
                     </View>
                 </View>
             );
         }
-        let isDisabled = !recoveryObj && !recoveryObj.minutes_duration && !recoveryObj.impact_score;
-        let { equipmentRequired, } = MyPlanConstants.cleanExerciseList(recoveryObj);
         return(
             <View style={{flexDirection: 'row',}}>
                 <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper, {flex: 3,}] : [customStyles.recoverBlocksActiveWrapper, {flex: 3,}, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
