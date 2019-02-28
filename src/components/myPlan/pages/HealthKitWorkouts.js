@@ -230,7 +230,7 @@ class HealthKitWorkouts extends PureComponent {
                                 <View style={[workouts && workouts.length >= 6 ? {marginVertical: AppSizes.paddingLrg,} : {marginBottom: AppSizes.paddingLrg,}, {alignItems: 'center', flexDirection: 'row',}]}>
                                     <View style={{flex: 1,}} />
                                     <View style={{flex: 8,}}>
-                                        <Text robotoLight style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(25), textAlign: 'center',}}>{'We\'ve detected the following workouts today:'}</Text>
+                                        <Text robotoLight style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>{'We detected the following workouts from Apple Health:'}</Text>
                                     </View>
                                     <View style={{flex: 1,}}>
                                         <TabIcon

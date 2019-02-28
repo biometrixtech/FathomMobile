@@ -46,10 +46,10 @@ class PostSessionSurvey extends Component {
         super(props);
         const { healthKitWorkouts, } = this.props;
         this.state = {
-            isActionButtonVisible:  false,
-            isSlideUpPanelExpanded: true,
-            isSlideUpPanelOpen:     false,
-            pageIndex:              healthKitWorkouts && healthKitWorkouts.length > 0 ? 0 : 1,
+            isActionButtonVisible:      false,
+            isSlideUpPanelExpanded:     true,
+            isSlideUpPanelOpen:         false,
+            pageIndex:                  healthKitWorkouts && healthKitWorkouts.length > 0 ? 0 : 1,
             resetHealthKitFirstPage:    false,
             resetSportBuilderFirstPage: false,
         };
