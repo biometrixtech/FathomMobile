@@ -250,7 +250,8 @@ class ReadinessSurvey extends Component {
     _handleEnableAppleHealthKit = (firstTimeExperienceValue, healthKitFlag) => {
         const { user, } = this.props;
         this.setState({ isAppleHealthKitLoading: true, });
-        AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date)
+        AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
+            .then(() => AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date))
             .then(() => {
                 this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue, () => {
                     this.props.handleUpdateUserHealthKitFlag(healthKitFlag, () => {

@@ -316,7 +316,10 @@ const UTIL = {
         });
     },
 
-    _getHeartRateSamples: (appleHealthKitPerms, startDate, endDate) => {
+    _getHeartRateSamples: (appleHealthKitPerms, startDate, endDate, resolveEmpty) => {
+        if(resolveEmpty) {
+            return new Promise((resolve, reject) => resolve([]));
+        }
         // NOTE: successful resolving of an empty array so that Promise.all() works as desired
         let heartRateOptions = {
             startDate,
@@ -334,7 +337,10 @@ const UTIL = {
         });
     },
 
-    _getSleepSamples: (appleHealthKitPerms, startDate, endDate) => {
+    _getSleepSamples: (appleHealthKitPerms, startDate, endDate, resolveEmpty) => {
+        if(resolveEmpty) {
+            return new Promise((resolve, reject) => resolve([]));
+        }
         // NOTE: successful resolving of an empty array so that Promise.all() works as desired
         let sleepOptions = {
             startDate,
@@ -386,15 +392,15 @@ const UTIL = {
                 if(syncDate) {
                     // 1- syncDate - today3AM (workout/hr)
                     apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, syncDate, today3AM));
-                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, syncDate, today3AM));
+                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, syncDate, today3AM, true));
                     // 2- lastSync - now (sleep)
-                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, lastSync, now));
+                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, lastSync, now,));
                 } else {
                     // 1- daysAgo - today3AM (workout/hr)
                     apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, daysAgo, today3AM));
-                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, daysAgo, today3AM));
+                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, daysAgo, today3AM, true));
                     // 2- daysAgo - now (sleep)
-                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, now));
+                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, now,));
                 }
                 // return function
                 return UTIL._handleReturnedPromises(userId, syncDate ? syncDate : daysAgo, apiPromisesArray, true)
@@ -419,6 +425,7 @@ const UTIL = {
                 // 1- today3AM - now (workout/hr)
                 apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now));
                 apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now));
+                apiPromisesArray.push(UTIL._getSleepSamples(false, false, false, true)); // resolving empty
                 // return function
                 return UTIL._handleReturnedPromises(userId, null, apiPromisesArray, false)
                     .then(res => {
