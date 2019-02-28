@@ -352,7 +352,9 @@ class Onboarding extends Component {
             userObj.account_code = newUser.account_code.toUpperCase();
         }
         userObj.health_enabled = newUser.health_enabled;
-        userObj.first_time_experience = newUser.first_time_experience;
+        if(newUser.first_time_experience.length > 0) {
+            userObj.first_time_experience = newUser.first_time_experience;
+        }
         // clear account code reducer
         this.props.setAccountCode('');
         // create or update, if no errors
