@@ -48,6 +48,7 @@ type Props = {
     onChildLongPress: () => void,
     onChildPress: () => void,
     onClose: () => void,
+    parentViewStyle: StyleSheet.Styles,
     placement: PlacementType,
     tooltipStyle: StyleSheet.Styles,
 };
@@ -97,6 +98,7 @@ class Tooltip extends Component<Props, State> {
       onChildLongPress:  null,
       onChildPress:      null,
       onClose:           null,
+      parentViewStyle:   {},
       placement:         'auto',
   };
 
@@ -476,7 +478,7 @@ class Tooltip extends Component<Props, State> {
           return null;
       }
       const { measurementsFinished, placement } = this.state;
-      const { backgroundColor, children, childrenViewStyle, content, isVisible, onClose } = this.props;
+      const { backgroundColor, children, childrenViewStyle, content, isVisible, onClose, parentViewStyle, } = this.props;
       const extendedStyles = this._getExtendedStyles();
       const contentStyle = [styles.content, ...extendedStyles.content];
       const arrowColor = StyleSheet.flatten(contentStyle).backgroundColor;
@@ -490,7 +492,7 @@ class Tooltip extends Component<Props, State> {
       arrowTransform.unshift({ rotate: this.getArrowRotation(placement) });
       arrowStyle = [...arrowStyle, { transform: arrowTransform }];
       return (
-          <View>
+          <View style={parentViewStyle}>
               {/* This renders the fullscreen tooltip */}
               <Modal transparent visible={isVisible} onRequestClose={onClose}>
                   <TouchableWithoutFeedback onPress={onClose}>
@@ -501,7 +503,7 @@ class Tooltip extends Component<Props, State> {
                           ]}
                       >
                           <Animated.View
-                              style={[styles.background, ...extendedStyles.background, { backgroundColor: AppColors.zeplin.darkBlue, opacity: 0.8, }]}
+                              style={[styles.background, ...extendedStyles.background, { backgroundColor: AppColors.zeplin.darkNavy, opacity: 0.8, }]}
                           />
                           <Animated.View
                               style={[styles.tooltip, ...extendedStyles.tooltip, tooltipPlacementStyles,]}

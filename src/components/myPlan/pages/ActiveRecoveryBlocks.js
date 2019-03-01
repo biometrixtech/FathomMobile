@@ -28,28 +28,18 @@ const tooltipText = 'Don’t have a foam roller? You can use a water bottle or t
 /* Styles ==================================================================== */
 const customStyles = StyleSheet.create({
     recoverBlocksDisabledWrapper: {
-        backgroundColor:   AppColors.white,
-        borderColor:       AppColors.zeplin.lightGrey,
-        borderRadius:      5,
-        borderWidth:       1,
-        flex:              1,
-        flexDirection:     'column',
-        marginRight:       9,
-        paddingBottom:     10,
-        paddingHorizontal: 10,
-        paddingTop:        7,
+        backgroundColor: AppColors.white,
+        borderColor:     AppColors.zeplin.lightGrey,
+        borderRadius:    5,
+        borderWidth:     1,
+        padding:         10,
     },
     recoverBlocksActiveWrapper: {
-        backgroundColor:   AppColors.zeplin.superLight,
-        borderColor:       AppColors.zeplin.superLight,
-        borderRadius:      5,
-        borderWidth:       1,
-        flex:              1,
-        flexDirection:     'column',
-        marginRight:       9,
-        paddingBottom:     10,
-        paddingHorizontal: 10,
-        paddingTop:        7,
+        backgroundColor: AppColors.zeplin.superLight,
+        borderColor:     AppColors.zeplin.superLight,
+        borderRadius:    5,
+        borderWidth:     1,
+        padding:         10,
     },
     shadowEffect: {
         shadowColor:   'rgba(0, 0, 0, 0.16)',
@@ -124,7 +114,7 @@ class ActiveRecoveryBlocks extends Component {
                 );
             }
         } else {
-            equipmentText.push(<Text key={0} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{'FOAM ROLL'}</Text>);
+            equipmentText.push(<Text key={0} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{'FOAM ROLLER'}</Text>);
             equipmentText.push(<Text key={1} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{'BAND'}</Text>);
         }
         return equipmentText;
@@ -142,13 +132,28 @@ class ActiveRecoveryBlocks extends Component {
         if(isFunctionalStrength) {
             return(
                 <View style={{flexDirection: 'row',}}>
-                    <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper, {paddingRight: 10,}] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {flex: 1, paddingLeft: 13,}]}>
+                    <View
+                        style={[
+                            isDisabled ?
+                                [customStyles.recoverBlocksDisabledWrapper, {paddingRight: 10,}]
+                                :
+                                [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {flex: 1, paddingLeft: 13,}],
+                            {marginRight: 9,}
+                        ]}
+                    >
                         <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'WHAT'}</Text>
                         <View style={{backgroundColor: isDisabled ? AppColors.zeplin.superLight : AppColors.transparent,}}>
                             <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.superLight : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{'DYNAMIC MOVEMENTS\nTO IMPROVE STRENGTH\n& POWER EFFICIENCY'}</Text>
                         </View>
                     </View>
-                    <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper, {paddingRight: 10,}] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {flex: 1, marginRight: 10, paddingLeft: 13,}]}>
+                    <View
+                        style={[
+                            isDisabled ?
+                                [customStyles.recoverBlocksDisabledWrapper, {paddingRight: 10,}]
+                                :
+                                [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {flex: 1, marginRight: 10, paddingLeft: 13,}]
+                        ]}
+                    >
                         <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{!recoveryObj.minutes_duration ? 'ACTIVE TIME' : 'WHEN'}</Text>
                         <View style={{alignItems: 'flex-end', backgroundColor: isDisabled ? AppColors.zeplin.superLight : AppColors.transparent, flex: 1, flexDirection: 'row',}}>
                             { recoveryObj && recoveryObj.minutes_duration ?
@@ -178,47 +183,77 @@ class ActiveRecoveryBlocks extends Component {
         }
         return(
             <View style={{flex: 1, flexDirection: 'row', marginRight: 9,}}>
-                <View style={[isDisabled ? [customStyles.recoverBlocksDisabledWrapper] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}], {flex: 2.5,}]}>
+
+                <View
+                    style={[
+                        isDisabled ?
+                            [customStyles.recoverBlocksDisabledWrapper]
+                            :
+                            [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}],
+                        {flex: 2.5,},
+                    ]}
+                >
                     <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'WHEN'}</Text>
                     <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
                         <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
                     </View>
                 </View>
-                <View style={{flex: 7.5, flexDirection: 'row',}}>
-                    <View style={[isDisabled ? [customStyles.recoverBlocksDisabledWrapper] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}], {paddingBottom: 5,}]}>
-                        <TouchableHighlight
-                            onPress={() => toggleActiveTimeSlideUpPanel ? toggleActiveTimeSlideUpPanel() : null}
-                            style={{flex: 1,}}
-                            underlayColor={isDisabled ? AppColors.white : AppColors.zeplin.superLight}
-                        >
-                            <View style={{flex: 1,}}>
-                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
-                                    <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14),}}>{'ACTIVE TIME'}</Text>
-                                    { isDisabled && !toggleActiveTimeSlideUpPanel ?
-                                        null
-                                        :
-                                        <TabIcon
-                                            color={recoveryObj.completed ? AppColors.zeplin.lightSlate : AppColors.zeplin.yellow}
-                                            icon={'pencil'}
-                                            size={24}
-                                            type={'material-community'}
-                                        />
-                                    }
-                                </View>
-                                <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
-                                    <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(32),}}>
-                                        {isDisabled ? '15' : `${recoveryObj && recoveryObj.minutes_duration ? recoveryObj.minutes_duration : '0'}`}
-                                    </Text>
-                                    <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
-                                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15),}}>{'MINS'}</Text>
-                                    </View>
-                                </View>
+
+                <View style={{flex: 0.25,}} />
+
+                <TouchableHighlight
+                    onPress={() => toggleActiveTimeSlideUpPanel ? toggleActiveTimeSlideUpPanel() : null}
+                    style={[
+                        isDisabled ?
+                            [customStyles.recoverBlocksDisabledWrapper]
+                            :
+                            [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}],
+                        {flex: 3.5, paddingBottom: 5,},
+                    ]}
+                    underlayColor={isDisabled ? AppColors.white : AppColors.zeplin.superLight}
+                >
+                    <View style={{flex: 1,}}>
+                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
+                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14),}}>{'ACTIVE TIME'}</Text>
+                            { isDisabled && !toggleActiveTimeSlideUpPanel ?
+                                null
+                                :
+                                <TabIcon
+                                    color={recoveryObj.completed ? AppColors.zeplin.lightSlate : AppColors.zeplin.yellow}
+                                    icon={'pencil'}
+                                    size={20}
+                                    type={'material-community'}
+                                />
+                            }
+                        </View>
+                        <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
+                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(32),}}>
+                                {isDisabled ? '15' : `${recoveryObj && recoveryObj.minutes_duration ? recoveryObj.minutes_duration : '0'}`}
+                            </Text>
+                            <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
+                                <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15),}}>{'MINS'}</Text>
                             </View>
-                        </TouchableHighlight>
+                        </View>
                     </View>
+                </TouchableHighlight>
+
+                <View style={{flex: 0.25,}} />
+
+                <TouchableHighlight
+                    onPress={isDisabled ? null : () => this.setState({ isEquipmentTooltipOpen: true, },)}
+                    style={[
+                        // isDisabled ?
+                        //     [customStyles.recoverBlocksDisabledWrapper,]
+                        //     :
+                        //     [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}],
+                        // {flex: 3.5, paddingBottom: 5,},
+                        {flex: 3.5,},
+                    ]}
+                    underlayColor={AppColors.transparent}
+                >
                     <Tooltip
                         animated
-                        childrenViewStyle={[{flex: 1,}, Platform.OS === 'ios' ? {} : {elevation: 2,}]}
+                        childrenViewStyle={{flex: 1,}}
                         content={
                             <TooltipContent
                                 handleTooltipClose={() => this.setState({ isEquipmentTooltipOpen: false, })}
@@ -227,40 +262,42 @@ class ActiveRecoveryBlocks extends Component {
                         }
                         isVisible={this.state.isEquipmentTooltipOpen}
                         onClose={() => {}}
+                        parentViewStyle={{flex: 1,}}
                         tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
                     >
-                        <View style={isDisabled ? [customStyles.recoverBlocksDisabledWrapper,] : [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {marginRight: 0, paddingBottom: 5,}]}>
-                            <TouchableHighlight
-                                onPress={() => this.setState({ isEquipmentTooltipOpen: true, },)}
-                                style={{flex: 1,}}
-                                underlayColor={AppColors.transparent}
-                            >
+                        <View
+                            style={[
+                                isDisabled ?
+                                    [customStyles.recoverBlocksDisabledWrapper,]
+                                    :
+                                    [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}],
+                                {flex: 1, paddingBottom: 5,},
+                            ]}
+                        >
+                            <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
+                                <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14),}}>{'EQUIPMENT'}</Text>
+                                { isDisabled && !toggleActiveTimeSlideUpPanel ?
+                                    null
+                                    :
+                                    <TabIcon
+                                        color={recoveryObj.completed ? AppColors.zeplin.lightSlate : AppColors.zeplin.yellow}
+                                        icon={'help'}
+                                        size={20}
+                                        type={'material'}
+                                    />
+                                }
+                            </View>
+                            <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row', paddingBottom: AppSizes.paddingXSml,}}>
                                 <View style={{flex: 1,}}>
-                                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
-                                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14),}}>{'EQUIPMENT'}</Text>
-                                        { isDisabled && !toggleActiveTimeSlideUpPanel ?
-                                            null
-                                            :
-                                            <TabIcon
-                                                color={recoveryObj.completed ? AppColors.zeplin.lightSlate : AppColors.zeplin.yellow}
-                                                icon={'help'}
-                                                size={24}
-                                                type={'material'}
-                                            />
-                                        }
-                                    </View>
-                                    <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row', paddingBottom: isDisabled ? 0 : AppSizes.paddingXSml,}}>
-                                        <View style={[isDisabled ? {flex: 1, marginRight: 10,} : {}, {borderRadius: 3,}]}>
-                                            {this._displayEquipmentText(equipmentRequired, isDisabled)}
-                                        </View>
-                                    </View>
+                                    {this._displayEquipmentText(equipmentRequired, isDisabled)}
                                 </View>
-                            </TouchableHighlight>
+                            </View>
                         </View>
                     </Tooltip>
-                </View>
+                </TouchableHighlight>
+
             </View>
-        )
+        );
     }
 }
 

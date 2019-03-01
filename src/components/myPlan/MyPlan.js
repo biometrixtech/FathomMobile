@@ -197,6 +197,7 @@ class MyPlan extends Component {
             },
             recoverSelectedActiveTime: 2,
             selectedExercise:          {},
+            showLoadingText:           false,
             train:                     {
                 completedPostPracticeSurvey: false,
                 postPracticeSurveys:         [],
@@ -763,7 +764,7 @@ class MyPlan extends Component {
     }
 
     _togglePostSessionSurveyModal = () => {
-        this.setState({ loading: true, });
+        this.setState({ loading: true, showLoadingText: true, });
         if (!this.state.isPostSessionSurveyModalOpen) {
             this.props.getSoreBodyParts()
                 .then(soreBodyParts => {
@@ -774,6 +775,7 @@ class MyPlan extends Component {
                             isPostSessionSurveyModalOpen: true,
                             loading:                      false,
                             postSession:                  newDailyReadiness,
+                            showLoadingText:              true,
                         })
                     , 500);
                 })
@@ -785,6 +787,7 @@ class MyPlan extends Component {
                         isPostSessionSurveyModalOpen: true,
                         loading:                      false,
                         postSession:                  newDailyReadiness,
+                        showLoadingText:              true,
                     });
                     AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
                 });
@@ -799,13 +802,12 @@ class MyPlan extends Component {
             newPostSession.RPE = null;
             this.props.clearCompletedExercises();
             _.delay(() => {
-                this.setState(
-                    {
-                        isPostSessionSurveyModalOpen: false,
-                        loading:                      false,
-                        postSession:                  newPostSession,
-                    },
-                );
+                this.setState({
+                    isPostSessionSurveyModalOpen: false,
+                    loading:                      false,
+                    postSession:                  newPostSession,
+                    showLoadingText:              true,
+                });
             }, 500);
         }
     }
@@ -2047,11 +2049,18 @@ class MyPlan extends Component {
                     null
                 }
                 { this.state.loading ?
-                    <ActivityIndicator
-                        color={AppColors.zeplin.yellow}
-                        size={'large'}
-                        style={[AppStyles.activityIndicator]}
-                    /> : null
+                    <View style={[AppStyles.activityIndicator]}>
+                        <ActivityIndicator
+                            color={AppColors.zeplin.yellow}
+                            size={'large'}
+                        />
+                        <Spacer size={AppSizes.padding} />
+                        { this.state.showLoadingText &&
+                            <Text robotoLight style={{color: AppColors.zeplin.yellow,}}>{'Loading workouts...'}</Text>
+                        }
+                    </View>
+                    :
+                    null
                 }
                 { this.state.isSelectedExerciseModalOpen ?
                     <Modal

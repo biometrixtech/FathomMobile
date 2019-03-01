@@ -123,8 +123,8 @@ class Login extends Component {
                 success: '',
             },
             form_values: {
-                email:    '',
-                password: '',
+                email:    'mazen+mvp@fathomai.com',
+                password: 'Fathom123!',
             },
         };
     }

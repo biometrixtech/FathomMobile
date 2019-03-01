@@ -16,7 +16,7 @@
     />
  *
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
 
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
 });
 
 /* Components ================================================================= */
-class ReadinessSurvey extends Component {
+class ReadinessSurvey extends PureComponent {
     constructor(props) {
         super(props);
         const { user, } = this.props;
