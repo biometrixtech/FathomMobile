@@ -437,9 +437,9 @@ class HealthKitWorkouts extends PureComponent {
                                     <View>
                                         <BackNextButtons
                                             addBtnText={'Add another session'}
-                                            handleFormSubmit={() => console.log('hi1')}
+                                            handleFormSubmit={() => this.props.handleNextStep(true, 'continue')}
                                             isValid={true}
-                                            onBackClick={() => console.log('hi2')}
+                                            onBackClick={() => this.props.handleNextStep(true, 'add_session')}
                                             showAddBtn={true}
                                             showBackIcon={true}
                                             showSubmitBtn={true}

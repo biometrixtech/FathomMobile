@@ -73,8 +73,8 @@ class PostSessionSurvey extends Component {
         }
     }
 
-    _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid) => {
-        let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid);
+    _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep) => {
+        let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep);
         if(isValid) {
             this._updatePageIndex(pageNum);
         }
@@ -109,7 +109,7 @@ class PostSessionSurvey extends Component {
         }
     }
 
-    _checkNextStep = (currentStep, isHealthKitValid) => {
+    _checkNextStep = (currentStep, isHealthKitValid, isHKNextStep) => {
         const {
             postSession,
             soreBodyParts,
@@ -117,7 +117,7 @@ class PostSessionSurvey extends Component {
         let { isFormValidItems, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, postSession.soreness);
         _.delay(() => {
-            this._renderNextPage(currentStep, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid);
+            this._renderNextPage(currentStep, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep);
         }, 500);
     }
 
@@ -205,7 +205,7 @@ class PostSessionSurvey extends Component {
                         { healthKitWorkouts && healthKitWorkouts.length > 0 &&
                             <HealthKitWorkouts
                                 handleHealthDataFormChange={handleHealthDataFormChange}
-                                handleNextStep={isHealthKitValid => this._checkNextStep(0, isHealthKitValid)}
+                                handleNextStep={(isHealthKitValid, isHKNextStep) => this._checkNextStep(0, isHealthKitValid, isHKNextStep)}
                                 handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
                                 handleToggleSurvey={areAllDeleted => handleFormSubmit(areAllDeleted)}
                                 isPostSession={true}

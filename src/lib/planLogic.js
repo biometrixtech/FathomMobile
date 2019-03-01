@@ -623,7 +623,7 @@ const PlanLogic = {
       * - ReadinessSurvey
       */
     // TODO: UNIT TEST ME
-    handleReadinessSurveyNextPage: (pageState, dailyReadiness, currentPage, isFormValidItems, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid) => {
+    handleReadinessSurveyNextPage: (pageState, dailyReadiness, currentPage, isFormValidItems, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid, isHKNextStep) => {
         let pageNum = 0;
         let isValid = false;
         if(currentPage === 0) { // 0. Begin
@@ -631,7 +631,14 @@ const PlanLogic = {
             isValid = true;
         } else if(currentPage === 1) { // 1. Apple HealthKit (xN)
             let numberOfNonDeletedWorkouts = _.filter(healthKitWorkouts, ['deleted', false]);
-            pageNum = numberOfNonDeletedWorkouts.length === 0 ? 2 : 4;
+            pageNum = numberOfNonDeletedWorkouts.length === 0 ?
+                2
+                : isHKNextStep === 'continue' ?
+                    4
+                    : isHKNextStep === 'add_session' ?
+                        3
+                        :
+                        4;
             isValid = isHealthKitValid;
         } else if(currentPage === 2) { // 2. trained already
             pageNum = dailyReadiness.already_trained_number === false ? 4 : 3;
@@ -702,11 +709,18 @@ const PlanLogic = {
       * Next Page & Validation Logic
       * - PostSessionSurvey
       */
-    handlePostSessionSurveyNextPage: (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid) => {
+    handlePostSessionSurveyNextPage: (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep) => {
         let isValid = false;
         let pageNum = 0;
         if(currentPage === 0) { // 0. Apple HealthKit (xN)
-            pageNum = 1;
+            pageNum = isHKNextStep === 'continue' && (newSoreBodyParts && newSoreBodyParts.length > 0) ?
+                2
+                : isHKNextStep === 'continue' && (newSoreBodyParts && newSoreBodyParts.length === 0) ?
+                    3
+                    : isHKNextStep === 'add_session' ?
+                        1
+                        :
+                        1;
             isValid = isHealthKitValid;
         } else if(currentPage === 1) { // 1. Session + RPE/Duration
             pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 2 : 3;

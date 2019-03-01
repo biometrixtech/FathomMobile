@@ -116,9 +116,9 @@ class ReadinessSurvey extends Component {
         });
     }
 
-    _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, isHealthKitValid) => {
+    _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, isHealthKitValid, isHKNextStep) => {
         const { dailyReadiness, healthKitWorkouts, } = this.props;
-        let { isValid, pageNum, } = PlanLogic.handleReadinessSurveyNextPage(this.state, dailyReadiness, currentPage, isFormValidItems, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid);
+        let { isValid, pageNum, } = PlanLogic.handleReadinessSurveyNextPage(this.state, dailyReadiness, currentPage, isFormValidItems, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid, isHKNextStep);
         if(isValid) {
             this._updatePageIndex(pageNum);
         }
@@ -153,8 +153,10 @@ class ReadinessSurvey extends Component {
         }
         if(isSessions) {
             let lastSessionsIndex = _.findLastIndex(dailyReadiness.sessions);
-            handleFormChange(`sessions[${lastSessionsIndex}].post_session_survey.RPE`, null);
-            this.sportScheduleBuilderRefs[lastSessionsIndex]._resetStep(false);
+            if(lastSessionsIndex === 0 || lastSessionsIndex > 0) {
+                handleFormChange(`sessions[${lastSessionsIndex}].post_session_survey.RPE`, null);
+                this.sportScheduleBuilderRefs[lastSessionsIndex]._resetStep(false);
+            }
         }
     }
 
@@ -360,7 +362,7 @@ class ReadinessSurvey extends Component {
                         { healthKitWorkouts && healthKitWorkouts.length > 0 &&
                             <HealthKitWorkouts
                                 handleHealthDataFormChange={handleHealthDataFormChange}
-                                handleNextStep={isHealthKitValid => this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, isHealthKitValid)}
+                                handleNextStep={(isHealthKitValid, isHKNextStep) => this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, isHealthKitValid, isHKNextStep)}
                                 handleToggleSurvey={() => this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, true)}
                                 resetFirstPage={resetHealthKitFirstPage}
                                 workouts={healthKitWorkouts}
