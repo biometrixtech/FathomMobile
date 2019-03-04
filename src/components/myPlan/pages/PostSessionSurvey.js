@@ -16,7 +16,7 @@
     />
  *
  */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ScrollView, View, } from 'react-native';
 
@@ -41,7 +41,7 @@ import _ from 'lodash';
 import ActionButton from 'react-native-action-button';
 
 /* Component ==================================================================== */
-class PostSessionSurvey extends PureComponent {
+class PostSessionSurvey extends Component {
     constructor(props) {
         super(props);
         const { healthKitWorkouts, } = this.props;

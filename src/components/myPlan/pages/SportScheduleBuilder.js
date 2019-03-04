@@ -134,11 +134,7 @@ class SportScheduleBuilder extends PureComponent {
         } else {
             handleFormChange(this.props.isPostSession ? 'RPE' : 'post_session_survey.RPE', null);
         }
-        this.setState(
-            {
-                delayTimerId: _.delay(() => this._scrollToTop(), 500)
-            }
-        );
+        this.setState({ delayTimerId: _.delay(() => this._scrollToTop(), 500) });
     }
 
     _handleScrollFormChange = (stateIndex, name, data, selectedIndex) => {
@@ -148,18 +144,14 @@ class SportScheduleBuilder extends PureComponent {
                 [this.state[stateIndex]]: newFormFields,
                 pickerScrollCount:        this.state.durationValueGroups.hours !== 0 || this.state.durationValueGroups.minutes !== 0 ? 1 : 0,
             },
-            () => {
-                this._validateForm();
-            },
+            () => this._validateForm(),
         );
     }
 
     _validateForm = () => {
         let { pickerScrollCount, } = this.state;
         this.setState(
-            {
-                isFormValid: pickerScrollCount > 0 ? true : false,
-            },
+            { isFormValid: pickerScrollCount > 0 ? true : false, },
             () => {
                 let dateTimeDurationFromState = PlanLogic.handleGetDateTimeDurationFromState(this.state.durationValueGroups, this.state.isFormValid, this.state.timeValueGroups);
                 this.props.handleFormChange('event_date', this.state.isFormValid ? `${dateTimeDurationFromState.event_date.toISOString(true).split('.')[0]}Z` : dateTimeDurationFromState.event_date);
@@ -171,41 +163,35 @@ class SportScheduleBuilder extends PureComponent {
 
     _scrollTo = myComponentsLocation => {
         if(myComponentsLocation && this.scrollViewSportBuilderRef) {
-            this.setState(
-                {
-                    delayTimerId: _.delay(() => {
-                        this.scrollViewSportBuilderRef.scrollTo({
-                            x:        myComponentsLocation.x,
-                            y:        myComponentsLocation.y,
-                            animated: true,
-                        });
-                    }, 500)
-                }
-            );
+            this.setState({
+                delayTimerId: _.delay(() => {
+                    this.scrollViewSportBuilderRef.scrollTo({
+                        x:        myComponentsLocation.x,
+                        y:        myComponentsLocation.y,
+                        animated: true,
+                    });
+                }, 500)
+            });
         }
     }
 
     _scrollToTop = () => {
         if(this.scrollViewSportBuilderRef) {
-            this.setState(
-                {
-                    delayTimerId: _.delay(() => {
-                        this.scrollViewSportBuilderRef.scrollTo({x: 0, y: 0, animated: true});
-                    }, 500)
-                }
-            );
+            this.setState({
+                delayTimerId: _.delay(() => {
+                    this.scrollViewSportBuilderRef.scrollTo({x: 0, y: 0, animated: true});
+                }, 500)
+            });
         }
     }
 
     _scrollToBottom = () => {
         if(this.scrollViewSportBuilderRef) {
-            this.setState(
-                {
-                    delayTimerId: _.delay(() => {
-                        this.scrollViewSportBuilderRef.scrollToEnd({ animated: true, });
-                    }, 500)
-                }
-            );
+            this.setState({
+                delayTimerId: _.delay(() => {
+                    this.scrollViewSportBuilderRef.scrollToEnd({ animated: true, });
+                }, 500)
+            });
         }
     }
 
