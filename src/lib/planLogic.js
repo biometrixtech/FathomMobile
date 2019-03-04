@@ -410,7 +410,10 @@ const PlanLogic = {
       * - SoreBodyPart
       */
     handleSoreBodyPartRenderLogic: (bodyPart, bodyPartSide, pageStateType) => {
-        let bodyPartMap = bodyPart.body_part ? MyPlanConstants.bodyPartMapping[bodyPart.body_part] : MyPlanConstants.bodyPartMapping[bodyPart.index];
+        let bodyPartMap = bodyPart.body_part ?
+            _.filter(MyPlanConstants.bodyPartMapping, ['index', bodyPart.body_part])[0]
+            :
+            _.filter(MyPlanConstants.bodyPartMapping, ['index', bodyPart.index])[0];
         let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
         let sorenessPainMapping =
             bodyPartGroup && bodyPartGroup === 'muscle' && pageStateType.length > 0 ?
