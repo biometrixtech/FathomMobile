@@ -174,15 +174,9 @@ class MyPlan extends Component {
             page1:                                {},
             page2:                                {},
             postSession:                          {
-                RPE:                            null,
-                description:                    '',
-                duration:                       0,
-                event_date:                     null,
-                session_type:                   null,
-                sessions:                       [],
-                soreness:                       [],
-                sport_name:                     null, // this exists for session_type = 0,2,3,6
-                strength_and_conditioning_type: null, // this only exists for session_type=1
+                description: '',
+                sessions:    [PlanLogic.returnEmptySession()],
+                soreness:    [],
             },
             prepare: {
                 finishedRecovery:           props.plan && props.plan.dailyPlan[0] && props.plan.dailyPlan[0].pre_recovery_completed ? true : false,
@@ -571,11 +565,16 @@ class MyPlan extends Component {
             this.setState(
                 {
                     dailyReadiness: {
-                        readiness:        0,
-                        sessions:         nonDeletedSessions,
-                        sessions_planned: newDailyReadiness.sessions_planned,
-                        sleep_quality:    0,
-                        soreness:         [],
+                        current_position:          null,
+                        current_sport_name:        null,
+                        readiness:                 null,
+                        sessions:                  nonDeletedSessions,
+                        sessions_planned:          newDailyReadiness.sessions_planned,
+                        sleep_quality:             null,
+                        soreness:                  [],
+                        wants_functional_strength: null,
+                        // won't be submitted, help with UI
+                        already_trained_number:    null,
                     },
                     healthData:                           [],
                     isPrepCalculating:                    this.state.dailyReadiness.sessions_planned ? true : false,
@@ -611,41 +610,20 @@ class MyPlan extends Component {
             user_id:    this.props.user.id,
             sessions:   [],
         };
+        let healthDataWorkouts = this.state.healthData.workouts && this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : [];
+        let loggedSessions = this.state.postSession.sessions;
         if(this.state.healthData.workouts && this.state.healthData.workouts.length > 0) {
             postSession.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
-            let healthDataWorkouts = this.state.healthData.workouts ? this.state.healthData.workouts : [];
-            let healthDataIgnoredWorkouts = this.state.healthData.ignoredWorkouts ? this.state.healthData.ignoredWorkouts : [];
-            postSession.sessions = _.concat(healthDataIgnoredWorkouts, healthDataWorkouts);
-            let lastNonDeletedIndex = _.findLastIndex(postSession.sessions, ['deleted', false]);
-            if(postSession.sessions[lastNonDeletedIndex]) {
-                postSession.sessions[lastNonDeletedIndex].post_session_survey = {
-                    clear_candidates: _.filter(this.state.postSession.soreness, {isClearCandidate: true}),
-                    event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
-                    RPE:              postSession.sessions[lastNonDeletedIndex].post_session_survey.RPE,
-                    soreness:         _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
-                };
-            }
-        } else {
-            let newSession = {
-                event_date:          this.state.postSession.event_date,
-                session_type:        6,
-                sport_name:          this.state.postSession.sport_name,
-                duration:            this.state.postSession.duration,
-                description:         '',
-                calories:            null,
-                distance:            null,
-                end_date:            null,
-                source:              0,
-                deleted:             false,
-                hr_data:             [],
-                post_session_survey: {
-                    clear_candidates: _.filter(this.state.postSession.soreness, {isClearCandidate: true}),
-                    event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
-                    RPE:              this.state.postSession.RPE,
-                    soreness:         _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
-                },
+        }
+        postSession.sessions = _.concat(healthDataWorkouts, loggedSessions);
+        let lastNonDeletedIndex = _.findLastIndex(postSession.sessions, ['deleted', false]);
+        if(postSession.sessions[lastNonDeletedIndex]) {
+            postSession.sessions[lastNonDeletedIndex].post_session_survey = {
+                clear_candidates: _.filter(this.state.postSession.soreness, {isClearCandidate: true}),
+                event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                RPE:              postSession.sessions[lastNonDeletedIndex].post_session_survey.RPE,
+                soreness:         _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
             };
-            postSession.sessions.push(newSession);
         }
         let clonedPostPracticeSurveys = _.cloneDeep(this.state.train.postPracticeSurveys);
         let newSurvey = {};
@@ -668,15 +646,9 @@ class MyPlan extends Component {
                     isRecoverCalculating:               !areAllDeleted,
                     isTrainSessionsCompletionModalOpen: !areAllDeleted,
                     postSession:                        {
-                        RPE:                            null,
-                        description:                    '',
-                        duration:                       0,
-                        event_date:                     null,
-                        session_type:                   null,
-                        sessions:                       _.filter(postSession.sessions, o => !o.deleted && !o.ignored),
-                        soreness:                       [],
-                        sport_name:                     null,
-                        strength_and_conditioning_type: null,
+                        description: '',
+                        sessions:    _.filter(postSession.sessions, o => !o.deleted && !o.ignored),
+                        soreness:    [],
                     },
                 },
             );

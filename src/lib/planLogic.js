@@ -97,8 +97,10 @@ const PlanLogic = {
         };
         return {
             description:                    '',
+            deleted:                        false,
             duration:                       0,
             event_date:                     null,
+            ignored:                        false,
             post_session_survey:            postSessionSurvey,
             session_type:                   null,
             sport_name:                     null, // this exists for session_type = 0,2,3,6
@@ -712,7 +714,7 @@ const PlanLogic = {
       * Next Page & Validation Logic
       * - PostSessionSurvey
       */
-    handlePostSessionSurveyNextPage: (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep) => {
+    handlePostSessionSurveyNextPage: (pageState, currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep) => {
         let isValid = false;
         let pageNum = 0;
         if(currentPage === 0) { // 0. Apple HealthKit (xN)
@@ -726,16 +728,16 @@ const PlanLogic = {
                         1;
             isValid = isHealthKitValid;
         } else if(currentPage === 1) { // 1. Session + RPE/Duration
-            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 2 : 3;
-            isValid = isFormValidItems.areQuestionsValid;
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? (pageState.pageIndex + 1) : (pageState.pageIndex + 2);
+            isValid = true; // can only click if form is valid
         } else if(currentPage === 2) { // 2. Follow Up Pain & Soreness
-            pageNum = 3;
+            pageNum = (pageState.pageIndex + 1);
             isValid = isFormValidItems.isPrevSorenessValid;
         } else if(currentPage === 3) { // 3. Areas of Soreness
-            pageNum = 4;
+            pageNum = (pageState.pageIndex + 1);
             isValid = isFormValidItems.selectAreasOfSorenessValid;
         } else if(currentPage === 4) { // 4. Areas of Soreness Selected
-            pageNum = 4;
+            pageNum = (pageState.pageIndex);
             isValid = isFormValidItems.areAreasOfSorenessValid;
         }
         return {
@@ -749,18 +751,18 @@ const PlanLogic = {
       * - PostSessionSurvey
       */
     // TODO: UNIT TEST ME
-    handlePostSessionSurveyPreviousPage: (currentPage, newSoreBodyParts) => {
+    handlePostSessionSurveyPreviousPage: (pageState, currentPage, newSoreBodyParts) => {
         let pageNum = 0;
         if(currentPage === 0) { // 0. Apple HealthKit (xN)
             pageNum = 0;
         } else if(currentPage === 1) { // 1. Session + RPE/Duration
             pageNum = 0;
         } else if(currentPage === 2) { // 2. Follow Up Pain & Soreness
-            pageNum = 1;
+            pageNum = (pageState - 1);
         } else if(currentPage === 3) { // 3. Areas of Soreness
-            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 2 : 1;
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? (pageState - 1) : (pageState - 2);
         } else if(currentPage === 4) { // 4. Areas of Soreness Selected
-            pageNum = 3;
+            pageNum = (pageState - 1);
         }
         return {
             pageNum,

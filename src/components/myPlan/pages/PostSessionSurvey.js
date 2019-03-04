@@ -61,7 +61,7 @@ class PostSessionSurvey extends Component {
         this.scrollViewClickedSorenessRef = {};
         this.scrollViewPrevSorenessRef = {};
         this.scrollViewRPERef = {};
-        this.sportScheduleBuilderRef = {};
+        this.sportScheduleBuilderRefs = [];
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -74,7 +74,7 @@ class PostSessionSurvey extends Component {
     }
 
     _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep) => {
-        let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep);
+        let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(this.state, currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep);
         if(isValid) {
             this._updatePageIndex(pageNum);
         }
@@ -87,7 +87,7 @@ class PostSessionSurvey extends Component {
             soreBodyParts,
         } = this.props;
         let { newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
-        let { pageNum, } = PlanLogic.handlePostSessionSurveyPreviousPage(currentPage, newSoreBodyParts);
+        let { pageNum, } = PlanLogic.handlePostSessionSurveyPreviousPage(this.state, currentPage, newSoreBodyParts);
         this._updatePageIndex(pageNum);
         this._resetStep(currentPage);
     }
@@ -98,14 +98,14 @@ class PostSessionSurvey extends Component {
     }
 
     _resetStep = currentStep => {
-        const { handleFormChange, handleHealthDataFormChange, healthKitWorkouts, } = this.props;
+        const { handleFormChange, handleHealthDataFormChange, healthKitWorkouts, postSession, } = this.props;
         if(currentStep === 2 && healthKitWorkouts && healthKitWorkouts.length > 0) { // reset last index of AppleHealthKit
             let lastHealthKitIndex = _.findLastIndex(healthKitWorkouts);
             handleHealthDataFormChange(lastHealthKitIndex, 'deleted', false);
             handleHealthDataFormChange(lastHealthKitIndex, 'post_session_survey.RPE', null);
         } else if(currentStep === 2 || (healthKitWorkouts && healthKitWorkouts.length === 0)) { // reset SportScheduleBuilder
-            this.sportScheduleBuilderRef._resetStep(false);
-            handleFormChange(this.props.isPostSession ? 'RPE' : 'post_session_survey.RPE', null);
+            let lastSessionsIndex = _.findLastIndex(postSession.sessions);
+            this.sportScheduleBuilderRefs[lastSessionsIndex]._resetStep(false);
         }
     }
 
@@ -119,6 +119,21 @@ class PostSessionSurvey extends Component {
         _.delay(() => {
             this._renderNextPage(currentStep, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep);
         }, 500);
+    }
+
+    _addSession = () => {
+        let newSessions = _.cloneDeep(this.props.postSession.sessions);
+        newSessions.push(PlanLogic.returnEmptySession());
+        this.props.handleFormChange('sessions', newSessions);
+        this._checkNextStep(this.state.pageIndex);
+    }
+
+    _handleSportScheduleBuilderGoBack = index => {
+        const { handleFormChange, } = this.props;
+        const { pageIndex, } = this.state;
+        handleFormChange(`sessions[${(index - 1)}].post_session_survey.RPE`, null);
+        this.sportScheduleBuilderRefs[(index - 1)]._resetStep(false);
+        this._updatePageIndex((pageIndex - 1));
     }
 
     _scrollTo = (myComponentsLocation, scrollViewRef) => {
@@ -216,27 +231,41 @@ class PostSessionSurvey extends Component {
                     </View>
 
 
-                    <View style={{flex: 1,}}>
-                        <SportScheduleBuilder
-                            goBack={healthKitWorkouts && healthKitWorkouts.length > 0 ? () => this._renderPreviousPage(1) : null}
-                            handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
-                                if(location === 'RPE' && (value === 0 || value >= 1)) {
-                                    this._checkNextStep(1);
-                                }
-                            }}
-                            handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
-                            isPostSession={true}
-                            postSession={postSession}
-                            ref={ref => {this.sportScheduleBuilderRef = ref;}}
-                            resetFirstPage={resetSportBuilderFirstPage}
-                            typicalSessions={typicalSessions}
-                        />
-                    </View>
+                    { postSession.sessions && postSession.sessions.length > 0 ? _.map(postSession.sessions, (session, index) => {
+                        const { isRPEValid, isSportValid, } = PlanLogic.handleSingleSessionValidation(session, this.sportScheduleBuilderRefs[index]);
+                        return(
+                            <View key={index} style={{flex: 1,}}>
+                                <SportScheduleBuilder
+                                    backNextButtonOptions={{
+                                        isValid:  isRPEValid && isSportValid,
+                                        onBack:   () => this._addSession(),
+                                        onSubmit: () => this._checkNextStep(1),
+                                    }}
+                                    goBack={
+                                        healthKitWorkouts && healthKitWorkouts.length > 0 && index === 0 ?
+                                            () => this._renderPreviousPage(1)
+                                            : index >= 1 ?
+                                                () => this._handleSportScheduleBuilderGoBack(index)
+                                                :
+                                                null
+                                    }
+                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                        handleFormChange(`sessions[${index}].${location}`, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                    }}
+                                    handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
+                                    postSession={session}
+                                    ref={ref => {this.sportScheduleBuilderRefs[index] = ref;}}
+                                    resetFirstPage={resetSportBuilderFirstPage}
+                                    typicalSessions={typicalSessions}
+                                />
+                            </View>
+                        )
+                    }) : <View />}
 
                     { newSoreBodyParts.length > 0 ?
                         <ScrollView
                             contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
+                            nestedScrollEnabled={true}
                             ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
                             stickyHeaderIndices={[0]}
                         >

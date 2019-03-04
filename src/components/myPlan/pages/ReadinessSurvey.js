@@ -181,21 +181,8 @@ class ReadinessSurvey extends Component {
     }
 
     _addSession = () => {
-        let newSession = {
-            description:         '',
-            duration:            null,
-            event_date:          null,
-            post_session_survey: {
-                RPE:        null,
-                event_date: null,
-                soreness:   [],
-            },
-            session_type:                   null,
-            sport_name:                     null,
-            strength_and_conditioning_type: null,
-        };
         let newSessions = _.cloneDeep(this.props.dailyReadiness.sessions);
-        newSessions.push(newSession);
+        newSessions.push(PlanLogic.returnEmptySession());
         this.props.handleFormChange('sessions', newSessions);
         this._checkNextStep(this.state.pageIndex);
     }
@@ -285,13 +272,10 @@ class ReadinessSurvey extends Component {
         } = this.props;
         const { isActionButtonVisible, isCloseToBottom, pageIndex, resetHealthKitFirstPage, resetSportBuilderFirstPage, } = this.state;
         let {
-            functionalStrengthTodaySubtext,
-            isFirstFunctionalStrength,
             isFormValidItems,
             isSecondFunctionalStrength,
             newSoreBodyParts,
             partOfDay,
-            selectedSportPositions,
         } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, dailyReadiness.soreness);
         let isFABVisible = areaOfSorenessClicked && isActionButtonVisible && areaOfSorenessClicked.length > 0;
@@ -447,7 +431,7 @@ class ReadinessSurvey extends Component {
                     </View>
 
                     { dailyReadiness.sessions && dailyReadiness.sessions.length > 0 ? _.map(dailyReadiness.sessions, (session, index) => {
-                        const { isRPEValid, isSportValid, sportText, } = PlanLogic.handleSingleSessionValidation(session, this.sportScheduleBuilderRefs[index]);
+                        const { isRPEValid, isSportValid, } = PlanLogic.handleSingleSessionValidation(session, this.sportScheduleBuilderRefs[index]);
                         return(
                             <View key={index} style={{flex: 1,}}>
                                 <SportScheduleBuilder

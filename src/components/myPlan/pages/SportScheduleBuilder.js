@@ -10,7 +10,6 @@
         goBack={() => this._updatePageIndex(pageIndex - 1)}
         handleFormChange={this._handleFormChange}
         handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
-        isPostSession={true}
         postSession={postSession}
         resetFirstPage={resetFirstPage}
         typicalSessions={typicalSessions}
@@ -128,11 +127,11 @@ class SportScheduleBuilder extends PureComponent {
                     handleFormChange('session_type', null);
                     handleFormChange('sport_name', null);
                     handleFormChange('strength_and_conditioning_type', null);
-                    handleFormChange(this.props.isPostSession ? 'RPE' : 'post_session_survey.RPE', null);
+                    handleFormChange('post_session_survey.RPE', null);
                 },
             );
         } else {
-            handleFormChange(this.props.isPostSession ? 'RPE' : 'post_session_survey.RPE', null);
+            handleFormChange('post_session_survey.RPE', null);
         }
         this.setState({ delayTimerId: _.delay(() => this._scrollToTop(), 500) });
     }
@@ -201,7 +200,6 @@ class SportScheduleBuilder extends PureComponent {
             goBack,
             handleFormChange,
             handleTogglePostSessionSurvey,
-            isPostSession,
             postSession,
             typicalSessions,
         } = this.props;
@@ -212,6 +210,7 @@ class SportScheduleBuilder extends PureComponent {
         return (
             <ScrollView
                 contentContainerStyle={{flexGrow: 1,}}
+                nestedScrollEnabled={true}
                 ref={ref => {this.scrollViewSportBuilderRef = ref;}}
                 stickyHeaderIndices={[0]}
             >
@@ -453,15 +452,15 @@ class SportScheduleBuilder extends PureComponent {
                                     </Text>
                                     <View style={{flex: 1, paddingTop: AppSizes.paddingSml,}}>
                                         { _.map(MyPlanConstants.postSessionFeel, (value, key) => {
-                                            let RPEValue = isPostSession ? postSession.RPE : postSession.post_session_survey.RPE;
+                                            let RPEValue = postSession.post_session_survey.RPE;
                                             let isSelected = RPEValue === key;
                                             let opacity = isSelected ? 1 : (key * 0.1);
                                             return(
                                                 <TouchableHighlight
                                                     key={value+key}
                                                     onPress={() => {
-                                                        handleFormChange(isPostSession ? 'RPE' : 'post_session_survey.RPE', key);
-                                                        if(!isPostSession && (key === 0 || key >= 1)) {
+                                                        handleFormChange('post_session_survey.RPE', key);
+                                                        if(key === 0 || key >= 1) {
                                                             this._scrollToBottom();
                                                         }
                                                     }}
@@ -475,8 +474,8 @@ class SportScheduleBuilder extends PureComponent {
                                                                 opacity={opacity}
                                                                 sorenessPainMappingLength={MyPlanConstants.postSessionFeel.length}
                                                                 updateStateAndForm={() => {
-                                                                    handleFormChange(isPostSession ? 'RPE' : 'post_session_survey.RPE', key);
-                                                                    if(!isPostSession && (key === 0 || key >= 1)) {
+                                                                    handleFormChange('post_session_survey.RPE', key);
+                                                                    if(key === 0 || key >= 1) {
                                                                         this._scrollToBottom();
                                                                     }
                                                                 }}
@@ -499,7 +498,7 @@ class SportScheduleBuilder extends PureComponent {
                                         })}
                                     </View>
                                     <Spacer size={20} />
-                                    { !isPostSession && backNextButtonOptions.isValid ?
+                                    { backNextButtonOptions.isValid ?
                                         <BackNextButtons
                                             handleFormSubmit={backNextButtonOptions.onSubmit}
                                             isValid={backNextButtonOptions.isValid}
@@ -526,21 +525,18 @@ class SportScheduleBuilder extends PureComponent {
 }
 
 SportScheduleBuilder.propTypes = {
-    backNextButtonOptions:         PropTypes.object,
+    backNextButtonOptions:         PropTypes.object.isRequired,
     goBack:                        PropTypes.func,
     handleFormChange:              PropTypes.func.isRequired,
     handleTogglePostSessionSurvey: PropTypes.func,
-    isPostSession:                 PropTypes.bool,
     postSession:                   PropTypes.object.isRequired,
     resetFirstPage:                PropTypes.bool,
     typicalSessions:               PropTypes.array.isRequired,
 };
 
 SportScheduleBuilder.defaultProps = {
-    backNextButtonOptions:         {},
     goBack:                        () => null,
     handleTogglePostSessionSurvey: null,
-    isPostSession:                 false,
     resetFirstPage:                false,
 };
 
