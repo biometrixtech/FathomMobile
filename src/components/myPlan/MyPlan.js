@@ -978,14 +978,9 @@ class MyPlan extends Component {
             {
                 isTrainSessionsCompletionModalOpen: false,
                 postSession:                        {
-                    RPE:                            null,
-                    description:                    '',
-                    duration:                       0,
-                    event_date:                     null,
-                    session_type:                   null,
-                    soreness:                       [],
-                    sport_name:                     null,
-                    strength_and_conditioning_type: null,
+                    description: '',
+                    sessions:    [PlanLogic.returnEmptySession()],
+                    soreness:    [],
                 },
             },
             () => _.delay(() => { this._goToScrollviewPage(2) }, 500)
