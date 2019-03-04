@@ -206,15 +206,6 @@ class Login extends Component {
             this.setState({ form_values: credentials }, () => {
                 this.setState({ resultMsg: { status: 'ONE MOMENT...' } });
 
-                /**
-                  * - if jwt valid
-                  *     - registerDevice (user, userCreds, token, resolve, reject)
-                  *       - finalizeLogin (user, userCreds, token, resolve, reject)
-                  * - else if jwt not valid
-                  *   - authorizeUser (authorization, user, userCreds, resolve, reject)
-                  *       - registerDevice (user, userCreds, token, resolve, reject)
-                  *         - finalizeLogin (user, userCreds, token, resolve, reject)
-                  */
                 return this.props.onFormSubmit({
                     email:    credentials.email,
                     password: credentials.password,
@@ -260,6 +251,7 @@ class Login extends Component {
                         const error = AppAPI.handleError(err);
                         return this.setState({ resultMsg: { error } });
                     });
+
             });
         }
     }
