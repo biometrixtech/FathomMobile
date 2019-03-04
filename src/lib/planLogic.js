@@ -714,6 +714,7 @@ const PlanLogic = {
       * Next Page & Validation Logic
       * - PostSessionSurvey
       */
+    // TODO: UNIT TEST ME
     handlePostSessionSurveyNextPage: (pageState, currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep) => {
         let isValid = false;
         let pageNum = 0;
