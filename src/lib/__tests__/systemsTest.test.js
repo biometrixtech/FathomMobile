@@ -100,7 +100,7 @@ describe('Looping through every user', () => {
                 sleep:           [],
                 workouts:        [],
             };
-            let { newDailyReadiness, } = PlanLogic.hanldeReadinessSurveySubmitLogic(loginRes.user.id, dailyReadinessObj, prepareObj, healthData);
+            let { newDailyReadiness, } = PlanLogic.handleReadinessSurveySubmitLogic(loginRes.user.id, dailyReadinessObj, prepareObj, healthData);
             // check newDailyReadiness is correct before sending
             let newNewDailyReadiness = _.cloneDeep(newDailyReadiness);
             delete newNewDailyReadiness.date_time;

@@ -820,7 +820,7 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    hanldeReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, healthData) => {
+    handleReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, healthData) => {
         let newPrepareObject = Object.assign({}, prepare, {
             isReadinessSurveyCompleted: true,
         });

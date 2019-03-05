@@ -448,7 +448,7 @@ class MyPlan extends Component {
             healthDataWorkouts,
             newDailyReadiness,
             newPrepareObject,
-        } = PlanLogic.hanldeReadinessSurveySubmitLogic(this.props.user.id, this.state.dailyReadiness, this.state.prepare, this.state.healthData);
+        } = PlanLogic.handleReadinessSurveySubmitLogic(this.props.user.id, this.state.dailyReadiness, this.state.prepare, this.state.healthData);
         _.delay(() => {
             let filteredHealthDataWorkouts = _.filter(healthDataWorkouts, o => !o.deleted);
             let filteredDailyReadinessSessions = _.filter(dailyReadinessSessions, o => !o.deleted);
