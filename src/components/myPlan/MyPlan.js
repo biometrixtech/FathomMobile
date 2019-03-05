@@ -555,7 +555,7 @@ class MyPlan extends Component {
             [];
         newDailyReadiness.sessions = _.concat(healthDataWorkouts, dailyReadinessSessions, healthDataIgnoredWorkouts);
         newDailyReadiness.sleep_data = this.state.healthData.sleep;
-        if(this.state.healthData.workouts.length > 0) {
+        if(this.state.healthData.workouts && this.state.healthData.workouts.length > 0) {
             newDailyReadiness.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
         }
         _.delay(() => {
@@ -1259,7 +1259,7 @@ class MyPlan extends Component {
                             handleHealthDataFormChange={this._handleHealthDataFormChange}
                             handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                             handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
-                            healthKitWorkouts={this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : null}
+                            healthKitWorkouts={this.state.healthData.workouts && this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : null}
                             soreBodyParts={this.props.plan.soreBodyParts}
                             typicalSessions={this.props.plan.typicalSessions}
                             user={this.props.user}
