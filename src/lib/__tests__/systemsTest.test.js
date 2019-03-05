@@ -46,7 +46,8 @@ const helperFunctions = {
 
 describe('Looping through every user', () => {
 
-    // _.map(helperFunctions.getTestUsersLoginInfo(), user => {
+    // _.map(helperFunctions.getTestUsersLoginInfo(), user => {});
+
     let user = helperFunctions.getTestUsersLoginInfo()[0];
     console.log(user);
     it(`TESTING USER: ${user.email}`, async () => {
@@ -56,6 +57,5 @@ describe('Looping through every user', () => {
         expect(userAuth).toBeDefined();
         expect(userAuth.name).toEqual('Koen van Gilst');
     });
-    // });
 
 });
