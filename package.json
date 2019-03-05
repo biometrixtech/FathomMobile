@@ -33,6 +33,8 @@
     "bail": true
   },
   "dependencies": {
+    "es6-promise": "^4.2.6",
+    "isomorphic-fetch": "^2.2.1",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.10",
     "lottie-react-native": "^2.5.11",
