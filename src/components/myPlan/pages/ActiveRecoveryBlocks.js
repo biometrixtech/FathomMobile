@@ -131,11 +131,11 @@ class ActiveRecoveryBlocks extends Component {
         let { equipmentRequired, } = MyPlanConstants.cleanExerciseList(recoveryObj);
         if(isFunctionalStrength) {
             return(
-                <View style={{flexDirection: 'row',}}>
+                <View style={{flex: 1, flexDirection: 'row', marginRight: 9,}}>
                     <View
                         style={[
                             isDisabled ?
-                                [customStyles.recoverBlocksDisabledWrapper, {paddingRight: 10,}]
+                                [customStyles.recoverBlocksDisabledWrapper, {flex: 1, paddingRight: 10,}]
                                 :
                                 [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {flex: 1, paddingLeft: 13,}],
                             {marginRight: 9,}
@@ -149,12 +149,14 @@ class ActiveRecoveryBlocks extends Component {
                     <View
                         style={[
                             isDisabled ?
-                                [customStyles.recoverBlocksDisabledWrapper, {paddingRight: 10,}]
+                                [customStyles.recoverBlocksDisabledWrapper, {flex: 1, marginRight: 9, paddingRight: 10,}]
                                 :
-                                [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {flex: 1, marginRight: 10, paddingLeft: 13,}]
+                                [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {flex: 1, paddingLeft: 13,}]
                         ]}
                     >
-                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{!recoveryObj.minutes_duration ? 'ACTIVE TIME' : 'WHEN'}</Text>
+                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>
+                            {(recoveryObj && recoveryObj.minutes_duration) || !recoveryObj ? 'ACTIVE TIME' : 'WHEN'}
+                        </Text>
                         <View style={{alignItems: 'flex-end', backgroundColor: isDisabled ? AppColors.zeplin.superLight : AppColors.transparent, flex: 1, flexDirection: 'row',}}>
                             { recoveryObj && recoveryObj.minutes_duration ?
                                 <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
@@ -241,14 +243,7 @@ class ActiveRecoveryBlocks extends Component {
 
                 <TouchableHighlight
                     onPress={isDisabled ? null : () => this.setState({ isEquipmentTooltipOpen: true, },)}
-                    style={[
-                        // isDisabled ?
-                        //     [customStyles.recoverBlocksDisabledWrapper,]
-                        //     :
-                        //     [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}],
-                        // {flex: 3.5, paddingBottom: 5,},
-                        {flex: 3.5,},
-                    ]}
+                    style={{flex: 3.5,}}
                     underlayColor={AppColors.transparent}
                 >
                     <Tooltip
