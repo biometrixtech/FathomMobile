@@ -32,6 +32,7 @@ import moment from 'moment';
 import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants/';
 import { AppUtil, PlanLogic, } from '../../lib';
 import { store } from '../../store';
+import defaultPlanState from '../../states/plan';
 
 // Components
 import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
@@ -131,69 +132,10 @@ class MyPlan extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            currentTabLocation: 0,
-            dailyReadiness:     {
-                current_position:          null,
-                current_sport_name:        null,
-                readiness:                 null,
-                sessions:                  [PlanLogic.returnEmptySession()],
-                sessions_planned:          null,
-                sleep_quality:             null,
-                soreness:                  [],
-                wants_functional_strength: null,
-                // won't be submitted, help with UI
-                already_trained_number:    null,
-            },
-            healthData:                           props.healthData,
-            isCompletedAMPMRecoveryModalOpen:     true,
-            isFunctionalStrengthCollapsed:        true,
-            isFSExerciseCompletionModalOpen:      false,
-            isPageLoading:                        false,
-            isPostSessionSurveyModalOpen:         false,
-            isPrepCalculating:                    false,
-            isPrepareExerciseCompletionModalOpen: false,
-            isPrepareSessionsCompletionModalOpen: false,
-            isPrepareSlideUpPanelOpen:            false,
-            isReadinessSurveyModalOpen:           false,
-            isRecoverCalculating:                 false,
-            isRecoverExerciseCompletionModalOpen: false,
-            isRecoverSlideUpPanelOpen:            false,
-            isSelectedExerciseModalOpen:          false,
-            isTrainSessionsCompletionModalOpen:   false,
-            page0:                                {},
-            page1:                                {},
-            page2:                                {},
-            postSession:                          {
-                RPE:                            null,
-                description:                    '',
-                duration:                       0,
-                event_date:                     null,
-                session_type:                   null,
-                sessions:                       [],
-                soreness:                       [],
-                sport_name:                     null, // this exists for session_type = 0,2,3,6
-                strength_and_conditioning_type: null, // this only exists for session_type=1
-            },
-            prepare: {
-                finishedRecovery:           props.plan && props.plan.dailyPlan[0] && props.plan.dailyPlan[0].pre_recovery_completed ? true : false,
-                isActiveRecoveryCollapsed:  true,
-                isReadinessSurveyCollapsed: false,
-                isReadinessSurveyCompleted: false,
-            },
-            prepareSelectedActiveTime: 2,
-            recover:                   {
-                finished:                  false,
-                isActiveRecoveryCollapsed: true,
-            },
-            recoverSelectedActiveTime: 2,
-            selectedExercise:          {},
-            train:                     {
-                completedPostPracticeSurvey: false,
-                postPracticeSurveys:         [],
-            },
-            loading: false,
-        };
+        let defaultState = _.cloneDeep(defaultPlanState);
+        defaultState.healthData = props.healthData;
+        defaultState.prepare.finishedRecovery = props.plan && props.plan.dailyPlan[0] && props.plan.dailyPlan[0].pre_recovery_completed ? true : false;
+        this.state = defaultState;
         this._postSessionSurveyModalRef = {};
         this._readinessSurveyModalRef = {};
         this._singleExerciseItemRef = {};
@@ -501,37 +443,12 @@ class MyPlan extends Component {
     }
 
     _handleReadinessSurveySubmit = () => {
-        // TODO: MOVE TO LOGIC FILE AND UNIT TEST BELOW
-        let newPrepareObject = Object.assign({}, this.state.prepare, {
-            isReadinessSurveyCompleted: true,
-        });
-        let newDailyReadiness = {
-            date_time:                 `${moment().toISOString(true).split('.')[0]}Z`,
-            user_id:                   this.props.user.id,
-            soreness:                  _.filter(this.state.dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
-            clear_candidates:          _.filter(this.state.dailyReadiness.soreness, {isClearCandidate: true}),
-            sleep_quality:             this.state.dailyReadiness.sleep_quality,
-            readiness:                 this.state.dailyReadiness.readiness,
-            wants_functional_strength: this.state.dailyReadiness.wants_functional_strength,
-            sessions_planned:          this.state.dailyReadiness.sessions_planned,
-        };
-        if(this.state.dailyReadiness.current_sport_name === 0 || this.state.dailyReadiness.current_sport_name > 0) {
-            newDailyReadiness.current_sport_name = this.state.dailyReadiness.current_sport_name;
-        }
-        if(this.state.dailyReadiness.current_position === 0 || this.state.dailyReadiness.current_position > 0) {
-            newDailyReadiness.current_position = this.state.dailyReadiness.current_position;
-        }
-        let healthDataWorkouts = this.state.healthData.workouts ? this.state.healthData.workouts : [];
-        let healthDataIgnoredWorkouts = this.state.healthData.ignoredWorkouts ? this.state.healthData.ignoredWorkouts : [];
-        let dailyReadinessSessions = this.state.dailyReadiness.sessions ?
-            _.filter(this.state.dailyReadiness.sessions, session => session.sport_name && session.session_type && (session.post_session_survey.RPE === 0 || session.post_session_survey.RPE > 0))
-            :
-            [];
-        newDailyReadiness.sessions = _.concat(healthDataWorkouts, dailyReadinessSessions, healthDataIgnoredWorkouts);
-        newDailyReadiness.sleep_data = this.state.healthData.sleep;
-        if(this.state.healthData.workouts.length > 0) {
-            newDailyReadiness.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
-        }
+        let {
+            dailyReadinessSessions,
+            healthDataWorkouts,
+            newDailyReadiness,
+            newPrepareObject,
+        } = PlanLogic.handleReadinessSurveySubmitLogic(this.props.user.id, this.state.dailyReadiness, this.state.prepare, this.state.healthData);
         _.delay(() => {
             let filteredHealthDataWorkouts = _.filter(healthDataWorkouts, o => !o.deleted);
             let filteredDailyReadinessSessions = _.filter(dailyReadinessSessions, o => !o.deleted);
