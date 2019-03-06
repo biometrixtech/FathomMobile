@@ -859,6 +859,50 @@ const PlanLogic = {
         }
     },
 
+    /**
+      * Handle Readiness Survey Submit Objects
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handleReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, healthData) => {
+        let newPrepareObject = Object.assign({}, prepare, {
+            isReadinessSurveyCompleted: true,
+        });
+        let newDailyReadiness = {
+            date_time:                 `${moment().toISOString(true).split('.')[0]}Z`,
+            user_id:                   user_id,
+            soreness:                  _.filter(dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
+            clear_candidates:          _.filter(dailyReadiness.soreness, {isClearCandidate: true}),
+            sleep_quality:             dailyReadiness.sleep_quality,
+            readiness:                 dailyReadiness.readiness,
+            wants_functional_strength: dailyReadiness.wants_functional_strength,
+            sessions_planned:          dailyReadiness.sessions_planned,
+        };
+        if(dailyReadiness.current_sport_name === 0 || dailyReadiness.current_sport_name > 0) {
+            newDailyReadiness.current_sport_name = dailyReadiness.current_sport_name;
+        }
+        if(dailyReadiness.current_position === 0 || dailyReadiness.current_position > 0) {
+            newDailyReadiness.current_position = dailyReadiness.current_position;
+        }
+        let healthDataWorkouts = healthData.workouts ? healthData.workouts : [];
+        let healthDataIgnoredWorkouts = healthData.ignoredWorkouts ? healthData.ignoredWorkouts : [];
+        let dailyReadinessSessions = dailyReadiness.sessions ?
+            _.filter(dailyReadiness.sessions, session => session.sport_name && session.session_type && (session.post_session_survey.RPE === 0 || session.post_session_survey.RPE > 0))
+            :
+            [];
+        newDailyReadiness.sessions = _.concat(healthDataWorkouts, dailyReadinessSessions, healthDataIgnoredWorkouts);
+        newDailyReadiness.sleep_data = healthData.sleep;
+        if(healthData.workouts && healthData.workouts.length > 0) {
+            newDailyReadiness.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
+        }
+        return {
+            dailyReadinessSessions,
+            healthDataWorkouts,
+            newDailyReadiness,
+            newPrepareObject,
+        };
+    }
+
 };
 
 /* Export ==================================================================== */

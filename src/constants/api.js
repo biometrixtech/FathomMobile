@@ -66,6 +66,8 @@ export default {
         ['survey',                `${plansAPIVersion}/athlete/{userId}/survey`], // POST
         // other routes
         ['maintenance_status', `${metaAPIVersion}/maintenance`], // GET
+        // systems test routes
+        ['copy_test_data', `${plansAPIVersion}/misc/copy_test_data`], // POST
     ]),
 
     // Which 'endpoint' key deals with our tokens?
