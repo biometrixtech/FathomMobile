@@ -514,44 +514,7 @@ class MyPlan extends Component {
     }
 
     _handlePostSessionSurveySubmit = areAllDeleted => {
-        // TODO: MOVE TO LOGIC FILE AND UNIT TEST BELOW
-        /*
-         * update for the componentWillReceiveProps call will only
-         * result in a tabPage auto change if a postPracticeSurvey
-         * has not already been completed
-         */
-        let postSession = {
-            event_date: `${moment().toISOString(true).split('.')[0]}Z`,
-            user_id:    this.props.user.id,
-            sessions:   [],
-        };
-        let healthDataWorkouts = this.state.healthData.workouts && this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : [];
-        let loggedSessions = this.state.postSession.sessions;
-        if(this.state.healthData.workouts && this.state.healthData.workouts.length > 0) {
-            postSession.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
-        }
-        postSession.sessions = _.concat(healthDataWorkouts, loggedSessions);
-        let lastNonDeletedIndex = _.findLastIndex(postSession.sessions, ['deleted', false]);
-        if(postSession.sessions[lastNonDeletedIndex]) {
-            postSession.sessions[lastNonDeletedIndex].post_session_survey = {
-                clear_candidates: _.filter(this.state.postSession.soreness, {isClearCandidate: true}),
-                event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
-                RPE:              postSession.sessions[lastNonDeletedIndex].post_session_survey.RPE,
-                soreness:         _.filter(this.state.postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
-            };
-        }
-        let clonedPostPracticeSurveys = _.cloneDeep(this.state.train.postPracticeSurveys);
-        let newSurvey = {};
-        newSurvey.isPostPracticeSurveyCollapsed = true;
-        newSurvey.isPostPracticeSurveyCompleted = true;
-        clonedPostPracticeSurveys.push(newSurvey);
-        let newTrainObject = Object.assign({}, this.state.train, {
-            completedPostPracticeSurvey: true,
-            postPracticeSurveys:         clonedPostPracticeSurveys,
-        });
-        let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
-        newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
-        newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
+        let { newPostSession, newTrainObject, } = PlanLogic.handlePostSessionSurveySubmitLogic(this.props.user.id, this.state.postSession, this.state.train, this.state.healthData);
         _.delay(() => {
             this.setState(
                 {
@@ -562,14 +525,14 @@ class MyPlan extends Component {
                     isTrainSessionsCompletionModalOpen: !areAllDeleted,
                     postSession:                        {
                         description: '',
-                        sessions:    _.filter(postSession.sessions, o => !o.deleted && !o.ignored),
+                        sessions:    _.filter(newPostSession.sessions, o => !o.deleted && !o.ignored),
                         soreness:    [],
                     },
                 },
             );
         }, 500);
         this.props.clearHealthKitWorkouts() // clear HK workouts right away
-            .then(() => this.props.postSessionSurvey(postSession))
+            .then(() => this.props.postSessionSurvey(newPostSession))
             .then(response => {
                 if(!areAllDeleted) {
                     this.props.clearCompletedExercises();

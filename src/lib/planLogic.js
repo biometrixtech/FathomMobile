@@ -901,7 +901,54 @@ const PlanLogic = {
             newDailyReadiness,
             newPrepareObject,
         };
-    }
+    },
+
+    /**
+      * Handle Post Session Survey Submit Objects
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handlePostSessionSurveySubmitLogic: (user_id, postSession, train, healthData) => {
+        let newPostSession = {
+            event_date: `${moment().toISOString(true).split('.')[0]}Z`,
+            user_id:    user_id,
+            sessions:   [],
+        };
+        let healthDataWorkouts = healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : [];
+        let loggedSessions = postSession.sessions ?
+            _.filter(postSession.sessions, session => session.sport_name && session.session_type && (session.post_session_survey.RPE === 0 || session.post_session_survey.RPE > 0))
+            :
+            [];
+        if(healthData.workouts && healthData.workouts.length > 0) {
+            newPostSession.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
+        }
+        newPostSession.sessions = _.concat(healthDataWorkouts, loggedSessions);
+        let lastNonDeletedIndex = _.findLastIndex(newPostSession.sessions, ['deleted', false]);
+        if(newPostSession.sessions[lastNonDeletedIndex]) {
+            newPostSession.sessions[lastNonDeletedIndex].post_session_survey = {
+                clear_candidates: _.filter(postSession.soreness, {isClearCandidate: true}),
+                event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                RPE:              newPostSession.sessions[lastNonDeletedIndex].post_session_survey.RPE,
+                soreness:         _.filter(postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
+            };
+        }
+        let clonedPostPracticeSurveys = _.cloneDeep(train.postPracticeSurveys);
+        let newSurvey = {};
+        newSurvey.isPostPracticeSurveyCollapsed = true;
+        newSurvey.isPostPracticeSurveyCompleted = true;
+        clonedPostPracticeSurveys.push(newSurvey);
+        let newTrainObject = Object.assign({}, train, {
+            completedPostPracticeSurvey: true,
+            postPracticeSurveys:         clonedPostPracticeSurveys,
+        });
+        let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
+        newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
+        newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
+        return {
+            newPostSession,
+            newTrainObject,
+        };
+    },
 
 };
 

@@ -81,6 +81,7 @@ class ReadinessSurvey extends Component {
             isAppleHealthKitLoading:    false,
             isAppleHealthModalOpen:     !user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios',
             isCloseToBottom:            false,
+            isFromHKContinue:           false,
             isSlideUpPanelExpanded:     true,
             isSlideUpPanelOpen:         false,
             lockAlreadyTrainedBtn:      false,
@@ -122,19 +123,28 @@ class ReadinessSurvey extends Component {
         if(isValid) {
             this._updatePageIndex(pageNum);
         }
+        // set true so we know to go back here from train later
+        this.setState({
+            isFromHKContinue: isHKNextStep === 'continue',
+        });
     }
 
     _renderPreviousPage = (currentPage, isSessions) => {
         this.setState({ isActionButtonVisible: false, });
-        const {
-            dailyReadiness,
-            healthKitWorkouts,
-            soreBodyParts,
-        } = this.props;
-        let { newSoreBodyParts, } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
-        let { isTrainLater, pageNum, } = PlanLogic.handleReadinessSurveyPreviousPage(this.state, currentPage, newSoreBodyParts, healthKitWorkouts, dailyReadiness);
-        this._updatePageIndex(pageNum);
-        this._resetStep(currentPage, pageNum, isSessions, isTrainLater);
+        if(currentPage === 4 && this.state.isFromHKContinue) {
+            // lets go back to HK
+            this._updatePageIndex(1);
+        } else {
+            const {
+                dailyReadiness,
+                healthKitWorkouts,
+                soreBodyParts,
+            } = this.props;
+            let { newSoreBodyParts, } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
+            let { isTrainLater, pageNum, } = PlanLogic.handleReadinessSurveyPreviousPage(this.state, currentPage, newSoreBodyParts, healthKitWorkouts, dailyReadiness);
+            this._updatePageIndex(pageNum);
+            this._resetStep(currentPage, pageNum, isSessions, isTrainLater);
+        }
     }
 
     _updatePageIndex = pageNum => {

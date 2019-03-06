@@ -102,7 +102,7 @@ class HealthKitWorkouts extends PureComponent {
         this.pages = {};
         this.scrollViewHealthKitOverviewRef = {};
         this.scrollViewHealthKitRef = [];
-        this.textInput = {};
+        this.textInput = [];
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -154,8 +154,8 @@ class HealthKitWorkouts extends PureComponent {
         }
     }
 
-    _editDuration = () => {
-        this.textInput.focus();
+    _editDuration = index => {
+        this.textInput[index].focus();
         this.setState({ isEditingDuration: true, });
     }
 
@@ -207,7 +207,7 @@ class HealthKitWorkouts extends PureComponent {
     render = () => {
         const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, workouts, } = this.props;
         const { isEditingDuration, isSlideUpPanelOpen, pageIndex, showRPEPicker, } = this.state;
-        let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight + AppSizes.paddingLrg);
+        let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
         let filteredWorkouts = _.filter(workouts, ['deleted', false]);
         return(
             <View style={{flex: 1,}}>
@@ -283,93 +283,90 @@ class HealthKitWorkouts extends PureComponent {
                                 nestedScrollEnabled={true}
                                 ref={ref => {this.scrollViewHealthKitRef[index] = ref;}}
                             >
-                                <Spacer size={20} />
-                                <View style={{alignItems: 'center',}}>
-                                    <Image
-                                        source={sportImage}
-                                        style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, tintColor: AppColors.zeplin.seaBlue, width: AppSizes.screen.widthThird,}]}
-                                    />
+
+                                <View style={{height: (AppSizes.screen.height - pillsHeight), justifyContent: 'center',}}>
+                                    <View>
+                                        <View style={{alignItems: 'center',}}>
+                                            <Image
+                                                source={sportImage}
+                                                style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, tintColor: AppColors.zeplin.seaBlue, width: AppSizes.screen.widthThird,}]}
+                                            />
+                                        </View>
+                                        <FormInput
+                                            autoCapitalize={'none'}
+                                            blurOnSubmit={true}
+                                            clearButtonMode={'while-editing'}
+                                            containerStyle={[{display: 'none',}]}
+                                            inputStyle={[{display: 'none',}]}
+                                            keyboardType={'numeric'}
+                                            onChangeText={value => handleHealthDataFormChange((pageIndex - 1), 'duration', parseInt(value, 10))}
+                                            onEndEditing={() => this.setState({ isEditingDuration: false, })}
+                                            placeholder={''}
+                                            placeholderTextColor={AppColors.transparent}
+                                            returnKeyType={'done'}
+                                            textInputRef={input => {this.textInput[index] = input;}}
+                                            value={''}
+                                        />
+                                        <Spacer size={AppSizes.paddingSml} />
+                                        <Text robotoLight style={{color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(28), paddingHorizontal: AppSizes.padding, textAlign: 'center',}}>
+                                            {'Was your '}
+                                            <Text robotoBold>{sportText}</Text>
+                                        </Text>
+                                        <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>
+                                            <Text oswaldMedium style={[isEditingDuration ? {color: AppColors.zeplin.light,} : {}, {textDecorationLine: 'underline',}]}>{sportDuration}</Text>
+                                            {' MINUTES?'}
+                                        </Text>
+                                        <Spacer size={AppSizes.padding} />
+                                        <TouchableOpacity
+                                            onPress={() => this._editDuration(index)}
+                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.lightSlate, borderWidth: 1, borderRadius: 5, flexDirection: 'row', marginBottom: AppSizes.paddingSml, padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
+                                        >
+                                            <TabIcon
+                                                containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
+                                                color={AppColors.zeplin.lightSlate}
+                                                icon={'clock-outline'}
+                                                reverse={false}
+                                                size={20}
+                                                type={'material-community'}
+                                            />
+                                            <Text robotoRegular style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(17),}}>{'Edit time'}</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                handleHealthDataFormChange((pageIndex - 1), 'deleted', true, () => {
+                                                    this._renderNextPage(pageIndex);
+                                                });
+                                            }}
+                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.lightSlate, borderWidth: 1, borderRadius: 5, flexDirection: 'row', padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
+                                        >
+                                            <TabIcon
+                                                containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
+                                                color={AppColors.zeplin.lightSlate}
+                                                icon={'close'}
+                                                reverse={false}
+                                                size={20}
+                                                type={'material'}
+                                            />
+                                            <Text robotoRegular style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(17),}}>{'No, delete session'}</Text>
+                                        </TouchableOpacity>
+                                        <Spacer size={AppSizes.padding} />
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                this.setState(
+                                                    { showRPEPicker: true, },
+                                                    () => this._scrollTo(this._activityRPERef, this.scrollViewHealthKitRef[index]),
+                                                )
+                                            }
+                                            style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 5, padding: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
+                                        >
+                                            <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Yes'}</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                                <FormInput
-                                    autoCapitalize={'none'}
-                                    blurOnSubmit={true}
-                                    clearButtonMode={'while-editing'}
-                                    containerStyle={[{display: 'none',}]}
-                                    inputStyle={[{display: 'none',}]}
-                                    keyboardType={'numeric'}
-                                    onChangeText={value => handleHealthDataFormChange((pageIndex - 1), 'duration', parseInt(value, 10))}
-                                    onEndEditing={() => this.setState({ isEditingDuration: false, })}
-                                    placeholder={''}
-                                    placeholderTextColor={AppColors.transparent}
-                                    returnKeyType={'done'}
-                                    textInputRef={input => {this.textInput = input;}}
-                                    value={''}
-                                />
-                                <Spacer size={AppSizes.paddingSml} />
-                                <Text robotoLight style={{color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(28), paddingHorizontal: AppSizes.padding, textAlign: 'center',}}>
-                                    {'Was your '}
-                                    <Text robotoBold>{sportText}</Text>
-                                </Text>
-                                <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>
-                                    <Text oswaldMedium style={[isEditingDuration ? {color: AppColors.zeplin.light,} : {}, {textDecorationLine: 'underline',}]}>{sportDuration}</Text>
-                                    {' MINUTES?'}
-                                </Text>
-                                <Spacer size={AppSizes.padding} />
-                                <TouchableOpacity
-                                    onPress={() => this._editDuration()}
-                                    style={{alignSelf: 'center', borderColor: AppColors.zeplin.lightSlate, borderWidth: 1, borderRadius: 5, flexDirection: 'row', marginBottom: AppSizes.paddingSml, padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
-                                >
-                                    <TabIcon
-                                        containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
-                                        color={AppColors.zeplin.lightSlate}
-                                        icon={'clock-outline'}
-                                        reverse={false}
-                                        size={20}
-                                        type={'material-community'}
-                                    />
-                                    <Text robotoRegular style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(17),}}>{'Edit time'}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        handleHealthDataFormChange((pageIndex - 1), 'deleted', true, () => {
-                                            this._renderNextPage(pageIndex);
-                                        });
-                                    }}
-                                    style={{alignSelf: 'center', borderColor: AppColors.zeplin.lightSlate, borderWidth: 1, borderRadius: 5, flexDirection: 'row', padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
-                                >
-                                    <TabIcon
-                                        containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
-                                        color={AppColors.zeplin.lightSlate}
-                                        icon={'close'}
-                                        reverse={false}
-                                        size={20}
-                                        type={'material'}
-                                    />
-                                    <Text robotoRegular style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(17),}}>{'No, delete session'}</Text>
-                                </TouchableOpacity>
-                                <Spacer size={AppSizes.padding} />
-                                <Button
-                                    backgroundColor={AppColors.zeplin.yellow}
-                                    buttonStyle={{width: AppSizes.screen.widthTwoThirds,}}
-                                    containerViewStyle={{alignItems: 'center', flex: 1, margin: 0,}}
-                                    color={AppColors.white}
-                                    fontFamily={AppStyles.robotoBold.fontFamily}
-                                    fontWeight={AppStyles.robotoBold.fontWeight}
-                                    outlined={false}
-                                    onPress={() =>
-                                        this.setState(
-                                            { showRPEPicker: true, },
-                                            () => this._scrollTo(this._activityRPERef, this.scrollViewHealthKitRef[index]),
-                                        )
-                                    }
-                                    raised={false}
-                                    textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(22), textAlign: 'center', }}
-                                    title={'Yes'}
-                                />
-                                <Spacer size={30} />
+
                                 <View
                                     onLayout={event => {
-                                        let yLocation = (event.nativeEvent.layout.y - pillsHeight);
+                                        let yLocation = (event.nativeEvent.layout.y);
                                         this._activityRPERef = {x: event.nativeEvent.layout.x, y: yLocation,}
                                     }}
                                     style={{flex: 1,}}
@@ -427,12 +424,13 @@ class HealthKitWorkouts extends PureComponent {
                                                     )
                                                 })}
                                             </View>
+                                            <Spacer size={40} />
                                         </View>
                                         :
                                         null
                                     }
                                 </View>
-                                <Spacer size={40} />
+
                                 { filteredWorkouts.length === pageIndex && showRPEPicker ?
                                     <View>
                                         <BackNextButtons
@@ -449,6 +447,7 @@ class HealthKitWorkouts extends PureComponent {
                                     :
                                     null
                                 }
+
                             </ScrollView>
                         )
                     }) : <View />}
