@@ -1,3 +1,6 @@
+// import third-party libraries
+import moment from 'moment';
+
 // import required files
 import { PlanLogic, } from '../lib';
 
@@ -18,9 +21,16 @@ const defaultPlanState = {
         // won't be submitted, help with UI
         already_trained_number:    null,
     },
+    functionalStrength: {
+        current_position:   null,
+        current_sport_name: null,
+        event_date:         `${moment().toISOString(true).split('.')[0]}Z`,
+    },
     healthData:                           {},
     isCompletedAMPMRecoveryModalOpen:     true,
     isFunctionalStrengthCollapsed:        true,
+    isFunctionalStrengthModalOpen:        false,
+    isFSCalculating:                      false,
     isFSExerciseCompletionModalOpen:      false,
     isPageLoading:                        false,
     isPostSessionSurveyModalOpen:         false,
@@ -38,15 +48,9 @@ const defaultPlanState = {
     page1:                                {},
     page2:                                {},
     postSession:                          {
-        RPE:                            null,
-        description:                    '',
-        duration:                       0,
-        event_date:                     null,
-        session_type:                   null,
-        sessions:                       [],
-        soreness:                       [],
-        sport_name:                     null, // this exists for session_type = 0,2,3,6
-        strength_and_conditioning_type: null, // this only exists for session_type=1
+        description: '',
+        sessions:    [PlanLogic.returnEmptySession()],
+        soreness:    [],
     },
     prepare: {
         finishedRecovery:           false,
@@ -61,6 +65,7 @@ const defaultPlanState = {
     },
     recoverSelectedActiveTime: 2,
     selectedExercise:          {},
+    showLoadingText:           false,
     train:                     {
         completedPostPracticeSurvey: false,
         postPracticeSurveys:         [],
