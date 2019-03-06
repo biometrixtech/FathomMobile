@@ -474,8 +474,14 @@ class MyPlan extends Component {
             newPrepareObject,
         } = PlanLogic.handleReadinessSurveySubmitLogic(this.props.user.id, this.state.dailyReadiness, this.state.prepare, this.state.healthData);
         _.delay(() => {
-            let filteredHealthDataWorkouts = _.filter(healthDataWorkouts, o => !o.deleted);
-            let filteredDailyReadinessSessions = _.filter(dailyReadinessSessions, o => !o.deleted);
+            let filteredHealthDataWorkouts = healthDataWorkouts && healthDataWorkouts.length > 0 ?
+                _.filter(healthDataWorkouts, o => !o.deleted)
+                :
+                [];
+            let filteredDailyReadinessSessions = dailyReadinessSessions && dailyReadinessSessions.length > 0 ?
+                _.filter(dailyReadinessSessions, o => !o.deleted)
+                :
+                [];
             let nonDeletedSessions = _.concat(filteredHealthDataWorkouts, filteredDailyReadinessSessions);
             this.setState(
                 {
@@ -525,7 +531,7 @@ class MyPlan extends Component {
                     isTrainSessionsCompletionModalOpen: !areAllDeleted,
                     postSession:                        {
                         description: '',
-                        sessions:    _.filter(newPostSession.sessions, o => !o.deleted && !o.ignored),
+                        sessions:    newPostSession && newPostSession.sessions && newPostSession.sessions.length > 0 ? _.filter(newPostSession.sessions, o => !o.deleted && !o.ignored) : [],
                         soreness:    [],
                     },
                 },
@@ -1608,7 +1614,7 @@ class MyPlan extends Component {
         }
         trainingSessions = trainingSessions.concat(functionalStrengthArray);
         trainingSessions = _.orderBy(trainingSessions, o => moment(o.event_date), ['asc']);
-        let filteredTrainingSessions = trainingSessions.length > 0 ?
+        let filteredTrainingSessions = trainingSessions && trainingSessions.length > 0 ?
             _.filter(trainingSessions, o => !o.deleted && !o.ignored && (o.sport_name !== null || o.strength_and_conditioning_type !== null))
             :
             [];
