@@ -714,7 +714,6 @@ const PlanLogic = {
       * Next Page & Validation Logic
       * - PostSessionSurvey
       */
-    // TODO: UNIT TEST ME
     handlePostSessionSurveyNextPage: (pageState, currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep) => {
         let isValid = false;
         let pageNum = 0;
@@ -751,7 +750,6 @@ const PlanLogic = {
       * Previous Page & Validation Logic
       * - PostSessionSurvey
       */
-    // TODO: UNIT TEST ME
     handlePostSessionSurveyPreviousPage: (pageState, currentPage, newSoreBodyParts) => {
         let pageNum = 0;
         if(currentPage === 0) { // 0. Apple HealthKit (xN)

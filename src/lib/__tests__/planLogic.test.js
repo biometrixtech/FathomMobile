@@ -1066,6 +1066,54 @@ const helperFunctions = {
 
 };
 
+it('Post Session Survey Previous Page & Validation Logic - Page 4 (Selected Areas of Soreness)', () => {
+    let currentPage = 4;
+    let pageState = 6;
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts', () => {
+    let currentPage = 3;
+    let pageState = 4;
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 2,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITH Sore Body Parts', () => {
+    let currentPage = 3;
+    let pageState = 4;
+    let newSoreBodyParts = [{}];
+    let expectedResult = {pageNum: 3,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 2 (F/U P/S)', () => {
+    let currentPage = 2;
+    let pageState = 3;
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 2,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 1 (Sport Schedule Builder)', () => {
+    let currentPage = 1;
+    let pageState = 0;
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 0,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 0 (HealthKit)', () => {
+    let currentPage = 0;
+    let pageState = 0;
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 0,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
+
 it('Exercises Timer Logic - Nothing Passed', () => {
     let exercises = {};
     let expectedResult = helperFunctions.getExerciseTimersExecptedResult(1, 5, null, 5 ,10);
@@ -1119,89 +1167,105 @@ it('New Sore Body Part Logic - All 3', () => {
     expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
 });
 
-/*it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
-    let isFormValidItems = {areAreasOfSorenessValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 4, isFormValidItems, false, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 4 (Selected Areas of Soreness) - NOT Valid', () => {
     let isFormValidItems = {areAreasOfSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 4, isFormValidItems, false, [], [])).toEqual(expectedResult);
+    let pageState = { pageIndex: 5, };
+    let expectedResult = {isValid: false, pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 4, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITHOUT New Sore Body Parts', () => {
-    let isFormValidItems = {selectAreasOfSorenessValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, false, [], [])).toEqual(expectedResult);
+it('Post Session Survey Next Page & Validation Logic - Page 4 (Selected Areas of Soreness) - Valid', () => {
+    let isFormValidItems = {areAreasOfSorenessValid: true};
+    let pageState = { pageIndex: 5, };
+    let expectedResult = {isValid: true, pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 4, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITHOUT New Sore Body Parts', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 3 (Areas of Soreness) - NOT Valid', () => {
     let isFormValidItems = {selectAreasOfSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, false, [], [])).toEqual(expectedResult);
+    let pageState = { pageIndex: 4, };
+    let expectedResult = {isValid: false, pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 3, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITH Areas Of Soreness Clicked', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 3 (Areas of Soreness) - Valid', () => {
     let isFormValidItems = {selectAreasOfSorenessValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, false, [], [{}])).toEqual(expectedResult);
+    let pageState = { pageIndex: 4, };
+    let expectedResult = {isValid: true, pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 3, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITH Areas Of Soreness Clicked', () => {
-    let isFormValidItems = {selectAreasOfSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, false, [], [{}])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
-    let isFormValidItems = {isPrevSorenessValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 2, isFormValidItems, false, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 2 (F/U P/S) - NOT Valid', () => {
     let isFormValidItems = {isPrevSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 2, isFormValidItems, false, [], [])).toEqual(expectedResult);
+    let pageState = { pageIndex: 3, };
+    let expectedResult = {isValid: false, pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 2, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITH New Sore Body Parts', () => {
-    let isFormValidItems = {isRPEValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [{}], [])).toEqual(expectedResult);
+it('Post Session Survey Next Page & Validation Logic - Page 2 (F/U P/S) - Valid', () => {
+    let isFormValidItems = {isPrevSorenessValid: true};
+    let pageState = { pageIndex: 3, };
+    let expectedResult = {isValid: true, pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 2, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITHOUT New Sore Body Parts', () => {
-    let isFormValidItems = {isRPEValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [], [])).toEqual(expectedResult);
+it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - NOT Valid', () => {
+    let isFormValidItems = {};
+    let pageState = { pageIndex: 2, };
+    let expectedResult = {isValid: true, pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT d, & WITH New Sore Body Parts', () => {
-    let isFormValidItems = {isRPEValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [{}], [])).toEqual(expectedResult);
+it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - NOT Valid', () => {
+    let isFormValidItems = {};
+    let pageState = { pageIndex: 2, };
+    let expectedResult = {isValid: true, pageNum: 3,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [{}, {}])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 10 - NOT Valid, & WITHOUT New Sore Body Parts', () => {
-    let isFormValidItems = {isRPEValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [], [])).toEqual(expectedResult);
+it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - Valid', () => {
+    let isFormValidItems = {};
+    let pageState = { pageIndex: 2, };
+    let expectedResult = {isValid: true, pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
-    let isFormValidItems = {isSportValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [], [])).toEqual(expectedResult);
+it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - Valid', () => {
+    let isFormValidItems = {};
+    let pageState = { pageIndex: 2, };
+    let expectedResult = {isValid: true, pageNum: 3,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [{}, {}])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
-    let isFormValidItems = {isSportValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [], [])).toEqual(expectedResult);
-});*/
+it('Post Session Survey Next Page & Validation Logic - Page 0 (HealthKit) - Valid', () => {
+    let isFormValidItems = {};
+    let expectedResult = {isValid: true, pageNum: 1,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, [], false, true, '')).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 0 (HealthKit) - Valid', () => {
+    let isFormValidItems = {};
+    let expectedResult = {isValid: true, pageNum: 1,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, [], false, true, 'add_session')).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 0 (HealthKit) - Valid', () => {
+    let isFormValidItems = {};
+    let expectedResult = {isValid: true, pageNum: 2,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, [{}, {}], false, true, 'continue')).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 0 (HealthKit) - Valid', () => {
+    let isFormValidItems = {};
+    let expectedResult = {isValid: true, pageNum: 3,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, [], false, true, 'continue')).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 0 (HealthKit) - NOT Valid', () => {
+    let isFormValidItems = {};
+    let expectedResult = {isValid: false, pageNum: 1,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, [], false, false, '')).toEqual(expectedResult);
+});
 
 it('Single Session Validation - First Open (Readiness Survey)', () => {
     let session = helperFunctions.getReadinessSurveySingleSessionValidationSession(null, null, null, null);
