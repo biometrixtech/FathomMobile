@@ -207,11 +207,11 @@ const UTIL = {
                 read: [
                     PERMS.BiologicalSex,
                     PERMS.DateOfBirth,
-                    // PERMS.HeartRate,
+                    PERMS.HeartRate,
                     PERMS.Height,
-                    // PERMS.SleepAnalysis,
+                    PERMS.SleepAnalysis,
                     PERMS.Weight,
-                    // PERMS.Workout,
+                    PERMS.Workout,
                 ],
                 write: [],
             }
@@ -233,20 +233,20 @@ const UTIL = {
         // grab permissions
         if(Platform.OS === 'ios') {
             let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
-            let height = UTIL._getHealthHeight(appleHealthKitPerms);
-            let weight = UTIL._getWeightHeight(appleHealthKitPerms);
-            let dob = UTIL._getDOBHeight(appleHealthKitPerms);
-            let sex = UTIL._getSexHeight(appleHealthKitPerms);
+            let height = UTIL._getHealthHeight(appleHealthKitPerms, AppleHealthKit);
+            let weight = UTIL._getWeightHeight(appleHealthKitPerms, AppleHealthKit);
+            let dob = UTIL._getDOBHeight(appleHealthKitPerms, AppleHealthKit);
+            let sex = UTIL._getSexHeight(appleHealthKitPerms, AppleHealthKit);
             return [height, weight, dob, sex];
         }
         return [];
     },
 
-    _getHealthHeight: appleHealthKitPerms => {
+    _getHealthHeight: (appleHealthKitPerms, appleHealthKit) => {
         return new Promise((resolve, reject) => {
-            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+            appleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
                 if(initError) { reject(initError); }
-                AppleHealthKit.getLatestHeight(null, (heightError: String, heightResults: Object) => {
+                appleHealthKit.getLatestHeight(null, (heightError: String, heightResults: Object) => {
                     if(heightError) { reject(heightError); }
                     // console.log('heightResults',heightResults);
                     resolve(heightResults);
@@ -255,14 +255,14 @@ const UTIL = {
         });
     },
 
-    _getWeightHeight: appleHealthKitPerms => {
+    _getWeightHeight: (appleHealthKitPerms, appleHealthKit) => {
         let weightOptions = {
             unit: 'pound',
         };
         return new Promise((resolve, reject) => {
-            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+            appleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
                 if(initError) { reject(initError); }
-                AppleHealthKit.getLatestWeight(weightOptions, (weightError: Object, weightResults: Object) => {
+                appleHealthKit.getLatestWeight(weightOptions, (weightError: Object, weightResults: Object) => {
                     if(weightError) { reject(weightError); }
                     // console.log('weightResults',weightResults);
                     resolve(weightResults);
@@ -271,11 +271,11 @@ const UTIL = {
         });
     },
 
-    _getDOBHeight: appleHealthKitPerms => {
+    _getDOBHeight: (appleHealthKitPerms, appleHealthKit) => {
         return new Promise((resolve, reject) => {
-            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+            appleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
                 if(initError) { reject(initError); }
-                AppleHealthKit.getDateOfBirth(null, (dobError: Object, dobResults: Object) => {
+                appleHealthKit.getDateOfBirth(null, (dobError: Object, dobResults: Object) => {
                     if(dobError) { reject(dobError); }
                     // console.log('dobResults',dobResults);
                     resolve(dobResults);
@@ -284,11 +284,11 @@ const UTIL = {
         });
     },
 
-    _getSexHeight: appleHealthKitPerms => {
+    _getSexHeight: (appleHealthKitPerms, appleHealthKit) => {
         return new Promise((resolve, reject) => {
-            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+            appleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
                 if(initError) { reject(initError); }
-                AppleHealthKit.getBiologicalSex(null, (sexError: Object, sexResults: Object) => {
+                appleHealthKit.getBiologicalSex(null, (sexError: Object, sexResults: Object) => {
                     if(sexError) { reject(sexError); }
                     // console.log('sexResults',sexResults);
                     resolve(sexResults);
@@ -297,17 +297,18 @@ const UTIL = {
         });
     },
 
-    _getWorkoutSamples: (appleHealthKitPerms, startDate, endDate) => {
+    _getWorkoutSamples: (appleHealthKitPerms, startDate, endDate, appleHealthKit) => {
+        // NOTE: successful resolving of an empty array so that Promise.all() works as desired
         let workoutOptions = {
             startDate,
             endDate,
             ascending: true,
         };
         return new Promise((resolve, reject) => {
-            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
-                if(initError) { reject(initError); }
-                AppleHealthKit.getWorkout(workoutOptions, (workoutError: Object, workoutResults: Array<Object>) => {
-                    if(workoutError) { reject(workoutError); }
+            appleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { resolve([]); }
+                appleHealthKit.getWorkout(workoutOptions, (workoutError: Object, workoutResults: Array<Object>) => {
+                    if(workoutError) { resolve([]); }
                     // console.log('workoutResults',workoutResults);
                     resolve(workoutResults);
                 });
@@ -315,16 +316,20 @@ const UTIL = {
         });
     },
 
-    _getHeartRateSamples: (appleHealthKitPerms, startDate, endDate) => {
+    _getHeartRateSamples: (appleHealthKitPerms, startDate, endDate, resolveEmpty, appleHealthKit) => {
+        if(resolveEmpty) {
+            return new Promise((resolve, reject) => resolve([]));
+        }
+        // NOTE: successful resolving of an empty array so that Promise.all() works as desired
         let heartRateOptions = {
             startDate,
             endDate,
         };
         return new Promise((resolve, reject) => {
-            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
-                if(initError) { reject(initError); }
-                AppleHealthKit.getHeartRateSamples(heartRateOptions, (hrError: Object, hrResults: Array<Object>) => {
-                    if(hrError) { reject(hrError); }
+            appleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { resolve([]); }
+                appleHealthKit.getHeartRateSamples(heartRateOptions, (hrError: Object, hrResults: Array<Object>) => {
+                    if(hrError) { resolve([]); }
                     // console.log('hrResults',hrResults);
                     resolve(hrResults);
                 });
@@ -332,16 +337,20 @@ const UTIL = {
         });
     },
 
-    _getSleepSamples: (appleHealthKitPerms, startDate, endDate) => {
+    _getSleepSamples: (appleHealthKitPerms, startDate, endDate, resolveEmpty, appleHealthKit) => {
+        if(resolveEmpty) {
+            return new Promise((resolve, reject) => resolve([]));
+        }
+        // NOTE: successful resolving of an empty array so that Promise.all() works as desired
         let sleepOptions = {
             startDate,
             endDate,
         };
         return new Promise((resolve, reject) => {
-            AppleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
-                if(initError) { reject(initError); }
-                AppleHealthKit.getSleepSamples(sleepOptions, (sleepError: Object, sleepResults: Array<Object>) => {
-                    if(sleepError) { reject(sleepError); }
+            appleHealthKit.initHealthKit(appleHealthKitPerms, (initError: String, results: Object) => {
+                if(initError) { resolve([]); }
+                appleHealthKit.getSleepSamples(sleepOptions, (sleepError: Object, sleepResults: Array<Object>) => {
+                    if(sleepError) { resolve([]); }
                     // console.log('sleepResults',sleepResults);
                     resolve(sleepResults);
                 });
@@ -372,7 +381,7 @@ const UTIL = {
 
     getAppleHealthKitDataPrevious: (userId, lastSyncDate, historicSyncDate, numberOfDaysAgo = 35) => {
         return new Promise((resolve, reject) => {
-            /*if(Platform.OS === 'ios') {
+            if(Platform.OS === 'ios') {
                 // grab permissions
                 let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
                 // set start and end dates
@@ -382,30 +391,30 @@ const UTIL = {
                 // combine promises and trigger next step
                 if(syncDate) {
                     // 1- syncDate - today3AM (workout/hr)
-                    apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, syncDate, today3AM));
-                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, syncDate, today3AM));
+                    apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, syncDate, today3AM, AppleHealthKit));
+                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, syncDate, today3AM, true, AppleHealthKit));
                     // 2- lastSync - now (sleep)
-                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, lastSync, now));
+                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, lastSync, now, AppleHealthKit));
                 } else {
                     // 1- daysAgo - today3AM (workout/hr)
-                    apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, daysAgo, today3AM));
-                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, daysAgo, today3AM));
+                    apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, daysAgo, today3AM, AppleHealthKit));
+                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, daysAgo, today3AM, true, AppleHealthKit));
                     // 2- daysAgo - now (sleep)
-                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, now));
+                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, now, AppleHealthKit));
                 }
                 // return function
                 return UTIL._handleReturnedPromises(userId, syncDate ? syncDate : daysAgo, apiPromisesArray, true)
                     .then(res => {
                         return resolve();
                     });
-            }*/
+            }
             return resolve();
         });
     },
 
     getAppleHealthKitData: (userId, lastSyncDate, historicSyncDate, numberOfDaysAgo = 35) => {
         return new Promise((resolve, reject) => {
-            /*if(Platform.OS === 'ios') {
+            if(Platform.OS === 'ios') {
                 // grab permissions
                 let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
                 // set start and end dates
@@ -414,14 +423,15 @@ const UTIL = {
                 let apiPromisesArray = [];
                 // combine promises and trigger next step
                 // 1- today3AM - now (workout/hr)
-                apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now));
-                apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now));
+                apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now, AppleHealthKit));
+                apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now, AppleHealthKit));
+                apiPromisesArray.push(UTIL._getSleepSamples(false, false, false, true, AppleHealthKit)); // resolving empty
                 // return function
                 return UTIL._handleReturnedPromises(userId, null, apiPromisesArray, false)
                     .then(res => {
                         return resolve();
                     });
-            }*/
+            }
             return resolve();
         });
     },

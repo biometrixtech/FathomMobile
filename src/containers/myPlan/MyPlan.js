@@ -6,6 +6,7 @@ import { plan as PlanActions, user as UserActions, } from '../../actions';
 
 const MyPlan = ({
     Layout,
+    activateFunctionalStrength,
     ble,
     clearCompletedExercises,
     clearCompletedFSExercises,
@@ -33,6 +34,7 @@ const MyPlan = ({
     user,
 }) => (
     <Layout
+        activateFunctionalStrength={activateFunctionalStrength}
         ble={ble}
         clearCompletedExercises={clearCompletedExercises}
         clearCompletedFSExercises={clearCompletedFSExercises}
@@ -63,6 +65,7 @@ const MyPlan = ({
 
 MyPlan.propTypes = {
     Layout:                        PropTypes.func.isRequired,
+    activateFunctionalStrength:    PropTypes.func.isRequired,
     ble:                           PropTypes.object.isRequired,
     clearCompletedExercises:       PropTypes.func.isRequired,
     clearCompletedFSExercises:     PropTypes.func.isRequired,
@@ -109,6 +112,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
+    activateFunctionalStrength:    PlanActions.activateFunctionalStrength,
     clearCompletedExercises:       PlanActions.clearCompletedExercises,
     clearCompletedFSExercises:     PlanActions.clearCompletedFSExercises,
     clearHealthKitWorkouts:        PlanActions.clearHealthKitWorkouts,

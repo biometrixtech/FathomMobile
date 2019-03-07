@@ -54,14 +54,16 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
                 type: Actions.GET_MY_PLAN,
                 data: response.daily_plans,
             });
-            dispatch({
-                type: Actions.GET_SORE_BODY_PARTS,
-                data: response.readiness,
-            });
-            dispatch({
-                type: Actions.SET_TYPICAL_SESSIONS,
-                data: response.typical_sessions,
-            });
+            if(!response.daily_plans[0].daily_readiness_survey_completed) {
+                dispatch({
+                    type: Actions.GET_SORE_BODY_PARTS,
+                    data: response.readiness,
+                });
+                dispatch({
+                    type: Actions.SET_TYPICAL_SESSIONS,
+                    data: response.typical_sessions,
+                });
+            }
             return Promise.resolve(response);
         }).catch(err => {
             const error = AppAPI.handleError(err);
@@ -185,14 +187,17 @@ const postSessionSurvey = postSessionObj => {
     newPlan.daily_plans = [];
     let newCurrentPlan = _.cloneDeep(currentState.plan.dailyPlan[0]);
     let newTrainingSessions = _.cloneDeep(newCurrentPlan.training_sessions);
-    let newTrainingSession = {};
-    newTrainingSession.sport_name = postSessionObj.sessions[0] && postSessionObj.sessions[0].sport_name ? postSessionObj.sessions[0].sport_name : null;
-    newTrainingSession.strength_and_conditioning_type = postSessionObj.sessions[0] && postSessionObj.sessions[0].strength_and_conditioning_type ? postSessionObj.sessions[0].strength_and_conditioning_type : null;
-    newTrainingSession.session_type = postSessionObj.sessions[0] && postSessionObj.sessions[0].session_type ? postSessionObj.sessions[0].session_type : null;
-    newTrainingSession.event_date = postSessionObj.sessions[0] && postSessionObj.sessions[0].event_date ? postSessionObj.sessions[0].event_date : null;
-    newTrainingSession.end_date = postSessionObj.sessions[0] && postSessionObj.sessions[0].end_date ? postSessionObj.sessions[0].end_date : null;
-    newTrainingSession.deleted = postSessionObj.sessions[0] && postSessionObj.sessions[0].deleted ? true : false;
-    newTrainingSessions.push(newTrainingSession);
+    _.map(postSessionObj.sessions, session => {
+        let newTrainingSession = {};
+        newTrainingSession.sport_name = session && session.sport_name ? session.sport_name : null;
+        newTrainingSession.strength_and_conditioning_type = session && session.strength_and_conditioning_type ? session.strength_and_conditioning_type : null;
+        newTrainingSession.session_type = session && session.session_type ? session.session_type : null;
+        newTrainingSession.event_date = session && session.event_date ? session.event_date : null;
+        newTrainingSession.end_date = session && session.end_date ? session.end_date : null;
+        newTrainingSession.deleted = session && session.deleted ? true : false;
+        newTrainingSession.ignored = session && session.ignored ? true : false;
+        newTrainingSessions.push(newTrainingSession);
+    });
     newCurrentPlan.training_sessions = newTrainingSessions;
     newPlan.daily_plans.push(newCurrentPlan);
     // call api
@@ -330,6 +335,24 @@ const patchFunctionalStrength = (user_id, completed_exercises) => {
 };
 
 /**
+  * Activate Functional Strength
+  */
+const activateFunctionalStrength = payload => {
+    return dispatch => AppAPI.activate_fs.post(false, payload)
+        .then(myPlanData => {
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: [myPlanData.daily_plan],
+            });
+            return Promise.resolve(myPlanData);
+        })
+        .catch(err => {
+            const error = AppAPI.handleError(err);
+            return Promise.reject(error);
+        });
+}
+
+/**
   * Mark Started Recovery - recovery_type of pre or post
   */
 const markStartedRecovery = (user_id, recovery_type, newMyPlan) => {
@@ -460,6 +483,7 @@ const patchSession = (session_id, payload) => {
 }
 
 export default {
+    activateFunctionalStrength,
     clearCompletedExercises,
     clearCompletedFSExercises,
     clearHealthKitWorkouts,

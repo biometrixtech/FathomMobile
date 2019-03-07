@@ -23,8 +23,7 @@ import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 // Components
 import { Button, Spacer, Text, } from '../custom';
 
-const healthKitText = 'Sync with Apple Health to improve recovery recommendations.\n\nPlease tap \'All Categories On\' to allow.';
-// const healthKitText = 'Sync with Apple Health to improve recovery recommendations by tracking your workouts.\n\nPlease tap \'All Categories On\' to allow.';
+const healthKitText = 'Sync with Apple Health to improve recovery recommendations by tracking your workouts.\n\nPlease tap \'All Categories On\' to allow.';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({

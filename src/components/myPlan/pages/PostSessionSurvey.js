@@ -44,12 +44,14 @@ import ActionButton from 'react-native-action-button';
 class PostSessionSurvey extends Component {
     constructor(props) {
         super(props);
+        const { healthKitWorkouts, } = this.props;
         this.state = {
-            isActionButtonVisible:  false,
-            isSlideUpPanelExpanded: true,
-            isSlideUpPanelOpen:     false,
-            pageIndex:              0,
-            resetFirstPage:         false,
+            isActionButtonVisible:      false,
+            isSlideUpPanelExpanded:     true,
+            isSlideUpPanelOpen:         false,
+            pageIndex:                  healthKitWorkouts && healthKitWorkouts.length > 0 ? 0 : 1,
+            resetHealthKitFirstPage:    false,
+            resetSportBuilderFirstPage: false,
         };
         this.areasOfSorenessRef = {};
         this.myAreasOfSorenessComponent = {};
@@ -59,33 +61,34 @@ class PostSessionSurvey extends Component {
         this.scrollViewClickedSorenessRef = {};
         this.scrollViewPrevSorenessRef = {};
         this.scrollViewRPERef = {};
-        this.sportScheduleBuilderRef = {};
+        this.sportScheduleBuilderRefs = [];
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
-        if((prevState.pageIndex === 2 || prevState.pageIndex === 1) && this.state.pageIndex === 0) {
+        if(prevState.pageIndex === 1 && this.state.pageIndex === 0) {
             this.setState(
-                { resetFirstPage: true, },
-                () => this.setState({ resetFirstPage: false, }),
+                { resetHealthKitFirstPage: true, },
+                () => this.setState({ resetHealthKitFirstPage: false, }),
             );
         }
     }
 
-    _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid) => {
-        let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid);
+    _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep) => {
+        let { isValid, pageNum, } = PlanLogic.handlePostSessionSurveyNextPage(this.state, currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep);
         if(isValid) {
             this._updatePageIndex(pageNum);
         }
     }
 
-    _renderPreviousPage = (currentPage) => {
+    _renderPreviousPage = currentPage => {
         this.setState({ isActionButtonVisible: false, });
         const {
+            healthKitWorkouts,
             postSession,
             soreBodyParts,
         } = this.props;
         let { newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
-        let { pageNum, } = PlanLogic.handlePostSessionSurveyPreviousPage(currentPage, newSoreBodyParts);
+        let { pageNum, } = PlanLogic.handlePostSessionSurveyPreviousPage(this.state, currentPage, newSoreBodyParts, postSession.sessions, healthKitWorkouts);
         this._updatePageIndex(pageNum);
         this._resetStep(currentPage);
     }
@@ -96,18 +99,18 @@ class PostSessionSurvey extends Component {
     }
 
     _resetStep = currentStep => {
-        const { handleFormChange, handleHealthDataFormChange, healthKitWorkouts, } = this.props;
-        if(currentStep === 1 && healthKitWorkouts && healthKitWorkouts.length > 0) { // reset last index of AppleHealthKit
+        const { handleFormChange, handleHealthDataFormChange, healthKitWorkouts, postSession, } = this.props;
+        if(currentStep === 2 && healthKitWorkouts && healthKitWorkouts.length > 0) { // reset last index of AppleHealthKit
             let lastHealthKitIndex = _.findLastIndex(healthKitWorkouts);
             handleHealthDataFormChange(lastHealthKitIndex, 'deleted', false);
             handleHealthDataFormChange(lastHealthKitIndex, 'post_session_survey.RPE', null);
-        } else if(currentStep === 1 || (healthKitWorkouts && healthKitWorkouts.length === 0)) { // reset SportScheduleBuilder
-            this.sportScheduleBuilderRef._resetStep(false);
-            handleFormChange(this.props.isPostSession ? 'RPE' : 'post_session_survey.RPE', null);
+        } else if(currentStep === 2 || (healthKitWorkouts && healthKitWorkouts.length === 0)) { // reset SportScheduleBuilder
+            let lastSessionsIndex = _.findLastIndex(postSession.sessions);
+            this.sportScheduleBuilderRefs[lastSessionsIndex]._resetStep(false);
         }
     }
 
-    _checkNextStep = (currentStep, isHealthKitValid) => {
+    _checkNextStep = (currentStep, isHealthKitValid, isHKNextStep) => {
         const {
             postSession,
             soreBodyParts,
@@ -115,8 +118,23 @@ class PostSessionSurvey extends Component {
         let { isFormValidItems, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, postSession.soreness);
         _.delay(() => {
-            this._renderNextPage(currentStep, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid);
+            this._renderNextPage(currentStep, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep);
         }, 500);
+    }
+
+    _addSession = () => {
+        let newSessions = _.cloneDeep(this.props.postSession.sessions);
+        newSessions.push(PlanLogic.returnEmptySession());
+        this.props.handleFormChange('sessions', newSessions);
+        this._checkNextStep(this.state.pageIndex);
+    }
+
+    _handleSportScheduleBuilderGoBack = index => {
+        const { handleFormChange, } = this.props;
+        const { pageIndex, } = this.state;
+        handleFormChange(`sessions[${(index - 1)}].post_session_survey.RPE`, null);
+        this.sportScheduleBuilderRefs[(index - 1)]._resetStep(false);
+        this._updatePageIndex((pageIndex - 1));
     }
 
     _scrollTo = (myComponentsLocation, scrollViewRef) => {
@@ -178,7 +196,15 @@ class PostSessionSurvey extends Component {
             typicalSessions,
             user,
         } = this.props;
-        const { isActionButtonVisible, isCloseToBottom, isSlideUpPanelExpanded, isSlideUpPanelOpen, pageIndex, resetFirstPage, } = this.state
+        const {
+            isActionButtonVisible,
+            isCloseToBottom,
+            isSlideUpPanelExpanded,
+            isSlideUpPanelOpen,
+            pageIndex,
+            resetHealthKitFirstPage,
+            resetSportBuilderFirstPage,
+        } = this.state;
         let { isFormValidItems, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, postSession.soreness);
         let isFABVisible = areaOfSorenessClicked && isActionButtonVisible && areaOfSorenessClicked.length > 0;
@@ -188,47 +214,65 @@ class PostSessionSurvey extends Component {
                 <Pages
                     indicatorPosition={'none'}
                     ref={(pages) => { this.pages = pages; }}
-                    startPlay={pageIndex}
+                    startPage={pageIndex}
                 >
 
                     <View style={{flex: 1,}}>
-                        { healthKitWorkouts && healthKitWorkouts.length > 0 ?
+                        { healthKitWorkouts && healthKitWorkouts.length > 0 &&
                             <HealthKitWorkouts
                                 handleHealthDataFormChange={handleHealthDataFormChange}
-                                handleNextStep={isHealthKitValid => this._checkNextStep(0, isHealthKitValid)}
+                                handleNextStep={(isHealthKitValid, isHKNextStep) => this._checkNextStep(0, isHealthKitValid, isHKNextStep)}
                                 handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
                                 handleToggleSurvey={areAllDeleted => handleFormSubmit(areAllDeleted)}
                                 isPostSession={true}
-                                resetFirstPage={resetFirstPage}
+                                resetFirstPage={resetHealthKitFirstPage}
                                 workouts={healthKitWorkouts}
-                            />
-                            :
-                            <SportScheduleBuilder
-                                handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                    handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
-                                    if(location === 'RPE' && (value === 0 || value >= 1)) {
-                                        this._checkNextStep(0);
-                                    }
-                                }}
-                                handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
-                                isPostSession={true}
-                                postSession={postSession}
-                                ref={ref => {this.sportScheduleBuilderRef = ref;}}
-                                resetFirstPage={resetFirstPage}
-                                typicalSessions={typicalSessions}
                             />
                         }
                     </View>
 
+
+                    { postSession.sessions && postSession.sessions.length > 0 ? _.map(postSession.sessions, (session, index) => {
+                        const { isRPEValid, isSportValid, } = PlanLogic.handleSingleSessionValidation(session, this.sportScheduleBuilderRefs[index]);
+                        return(
+                            <View key={index} style={{flex: 1,}}>
+                                <SportScheduleBuilder
+                                    backNextButtonOptions={{
+                                        isValid:  isRPEValid && isSportValid,
+                                        onBack:   () => this._addSession(),
+                                        onSubmit: () => this._checkNextStep(1),
+                                    }}
+                                    goBack={
+                                        healthKitWorkouts && healthKitWorkouts.length > 0 && index === 0 ?
+                                            () => this._renderPreviousPage(1)
+                                            : index >= 1 ?
+                                                () => this._handleSportScheduleBuilderGoBack(index)
+                                                :
+                                                null
+                                    }
+                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
+                                        handleFormChange(`sessions[${index}].${location}`, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                    }}
+                                    handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
+                                    postSession={session}
+                                    ref={ref => {this.sportScheduleBuilderRefs[index] = ref;}}
+                                    resetFirstPage={resetSportBuilderFirstPage}
+                                    typicalSessions={typicalSessions}
+                                />
+                            </View>
+                        )
+                    }) : <View />}
+
                     { newSoreBodyParts.length > 0 ?
                         <ScrollView
                             contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
+                            nestedScrollEnabled={true}
                             ref={ref => {this.scrollViewPrevSorenessRef = ref;}}
                             stickyHeaderIndices={[0]}
                         >
                             <ProgressPill
                                 currentStep={2}
-                                onBack={() => this._renderPreviousPage(1)}
+                                onBack={() => this._renderPreviousPage(2)}
                                 onClose={handleTogglePostSessionSurvey}
                                 totalSteps={2}
                             />
@@ -266,7 +310,7 @@ class PostSessionSurvey extends Component {
                             )}
                             <BackNextButtons
                                 isValid={isFormValidItems.isPrevSorenessValid}
-                                onNextClick={() => this._checkNextStep(1)}
+                                onNextClick={() => this._checkNextStep(2)}
                                 showNextBtn={true}
                             />
                         </ScrollView>
@@ -286,7 +330,7 @@ class PostSessionSurvey extends Component {
                     >
                         <ProgressPill
                             currentStep={2}
-                            onBack={() => this._renderPreviousPage(2)}
+                            onBack={() => this._renderPreviousPage(3)}
                             onClose={handleTogglePostSessionSurvey}
                             totalSteps={2}
                         />
@@ -323,7 +367,7 @@ class PostSessionSurvey extends Component {
                             }
                             onNextClick={() => {
                                 this.setState({ isActionButtonVisible: false, });
-                                this._renderNextPage(2, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked);
+                                this._renderNextPage(3, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked);
                             }}
                             showSubmitBtn={
                                 (this.areasOfSorenessRef && this.areasOfSorenessRef.state && this.areasOfSorenessRef.state.showWholeArea) ?
@@ -342,7 +386,7 @@ class PostSessionSurvey extends Component {
                     >
                         <ProgressPill
                             currentStep={2}
-                            onBack={() => this._renderPreviousPage(3)}
+                            onBack={() => this._renderPreviousPage(4)}
                             onClose={handleTogglePostSessionSurvey}
                             totalSteps={2}
                         />
@@ -381,7 +425,7 @@ class PostSessionSurvey extends Component {
                         <BackNextButtons
                             handleFormSubmit={() => handleFormSubmit()}
                             isValid={isFormValidItems.areAreasOfSorenessValid}
-                            onNextClick={() => this._renderNextPage(3, isFormValidItems)}
+                            onNextClick={() => this._renderNextPage(4, isFormValidItems)}
                             showSubmitBtn={true}
                         />
                     </ScrollView>
