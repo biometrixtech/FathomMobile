@@ -36,8 +36,10 @@ const helperFunctions = {
         return `${APIConfig.APIs[environment]}${APIConfig.endpoints.get(tokenKey)}`;
     },
 
-    fetcher: async (url, req) => {
-        const response = await fetch(url, req).then(res => res);
+    fetcher: async (url, req, delay) => {
+        const delayValue = delay ? 3000 : 0;
+        const wait = new Promise(resolve => setTimeout(resolve, delayValue));
+        const response = await wait.then(() => fetch(url, req)).then(res => res);
         // if(response.status === 200) {}
         const data = await response.json();
         return data;
@@ -140,6 +142,15 @@ describe('Looping through every user', () => {
         // make sure we are successful & valid - Readiness Survey Submit
         const readinessSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_readiness_survey'), helperFunctions.apiReqs('post', newDailyReadiness, loginRes.authorization.jwt));
         expect(readinessSurveyRes.message).toEqual('success');
+        // simulate delay as we wait for 'notification' -> getMyPlan
+        const secondDailyPlanRes = await helperFunctions.fetcher(helperFunctions.getURL('get_my_plan'), helperFunctions.apiReqs('post', myPlanObj, loginRes.authorization.jwt), true);
+        let dailyPlanObj = secondDailyPlanRes.daily_plans[0];
+        let exerciseList = _.concat(dailyPlanObj.pre_recovery.inhibit_exercises, dailyPlanObj.pre_recovery.lengthen_exercises, dailyPlanObj.pre_recovery.activate_exercises);
+        expect(dailyPlanObj.daily_readiness_survey_completed).toEqual(true);
+        expect(dailyPlanObj.landing_screen).toEqual(0);
+        expect(dailyPlanObj.pre_recovery.display_exercises).toEqual(true);
+        expect(dailyPlanObj.post_recovery.display_exercises).toEqual(false);
+        expect(exerciseList.length === 0).toEqual(false);
         // check after submit we have the right previous soreness
         let previousSorenessObj = {
             event_date: `${moment().toISOString(true).split('.')[0]}Z`,
@@ -212,6 +223,15 @@ describe('Looping through every user', () => {
         // make sure we are successful & valid - Readiness Survey Submit
         const readinessSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_readiness_survey'), helperFunctions.apiReqs('post', newDailyReadiness, loginRes.authorization.jwt));
         expect(readinessSurveyRes.message).toEqual('success');
+        // simulate delay as we wait for 'notification' -> getMyPlan
+        const secondDailyPlanRes = await helperFunctions.fetcher(helperFunctions.getURL('get_my_plan'), helperFunctions.apiReqs('post', myPlanObj, loginRes.authorization.jwt), true);
+        let dailyPlanObj = secondDailyPlanRes.daily_plans[0];
+        let exerciseList = _.concat(dailyPlanObj.pre_recovery.inhibit_exercises, dailyPlanObj.pre_recovery.lengthen_exercises, dailyPlanObj.pre_recovery.activate_exercises);
+        expect(dailyPlanObj.daily_readiness_survey_completed).toEqual(true);
+        expect(dailyPlanObj.landing_screen).toEqual(0);
+        expect(dailyPlanObj.pre_recovery.display_exercises).toEqual(true);
+        expect(dailyPlanObj.post_recovery.display_exercises).toEqual(false);
+        expect(exerciseList.length === 0).toEqual(true);
         // check after submit we have the right previous soreness
         let previousSorenessObj = {
             event_date: `${moment().toISOString(true).split('.')[0]}Z`,
@@ -284,6 +304,15 @@ describe('Looping through every user', () => {
         // make sure we are successful & valid - Readiness Survey Submit
         const readinessSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_readiness_survey'), helperFunctions.apiReqs('post', newDailyReadiness, loginRes.authorization.jwt));
         expect(readinessSurveyRes.message).toEqual('success');
+        // simulate delay as we wait for 'notification' -> getMyPlan
+        const secondDailyPlanRes = await helperFunctions.fetcher(helperFunctions.getURL('get_my_plan'), helperFunctions.apiReqs('post', myPlanObj, loginRes.authorization.jwt), true);
+        let dailyPlanObj = secondDailyPlanRes.daily_plans[0];
+        let exerciseList = _.concat(dailyPlanObj.post_recovery.inhibit_exercises, dailyPlanObj.post_recovery.lengthen_exercises, dailyPlanObj.post_recovery.activate_exercises);
+        expect(dailyPlanObj.daily_readiness_survey_completed).toEqual(true);
+        expect(dailyPlanObj.landing_screen).toEqual(2);
+        expect(dailyPlanObj.pre_recovery.display_exercises).toEqual(false);
+        expect(dailyPlanObj.post_recovery.display_exercises).toEqual(true);
+        expect(exerciseList.length === 0).toEqual(false);
         // check after submit we have the right previous soreness
         let previousSorenessObj = {
             event_date: `${moment().toISOString(true).split('.')[0]}Z`,
