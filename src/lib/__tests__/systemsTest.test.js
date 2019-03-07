@@ -46,9 +46,7 @@ const helperFunctions = {
     },
 
     getTestUsersLoginInfo: () => {
-        return [
-            { personal_data: { email: 'dipesh+persona1@fathomai.com', }, password: 'Fathom123!', },
-        ];
+        return { personal_data: { email: 'dipesh+persona1@fathomai.com', }, password: 'Fathom123!', };
     },
 
     getNewSoreBodyPartsOptions: (bodyPart, value) => {
@@ -82,9 +80,9 @@ describe('Looping through every user', () => {
 
     jest.setTimeout(60000);
 
-    let user = helperFunctions.getTestUsersLoginInfo()[0];
+    let user = helperFunctions.getTestUsersLoginInfo();
 
-    it(`TESTING USER: ${user.personal_data.email} - Screen on Mobilize, 1 Clear Candidate (not clear), & 1 Hist Sore Status with tipping point`, async () => {
+    it('Submit RS with 1 Clear Candidate (not clear) & 1 Hist Sore Status with tipping point (Screen on Mobilize), Completed Prep with 4 Exercises (Screen on Train), Submit PSS with 1 Session (Screen on Recover), & Complete Recover with 3 Exercises (Screen on Recover)', async () => {
         // login
         const loginRes = await helperFunctions.fetcher(helperFunctions.getURL(APIConfig.tokenKey), helperFunctions.apiReqs('post', user));
         // copy data
@@ -163,9 +161,38 @@ describe('Looping through every user', () => {
                 soreBodyPart.status === 'persistent_pain'
             ).toBe(true);
         });
+        // simulate completing a round of exercises
+        let completedExercises = [`${exerciseList[_.random(0, exerciseList.length)].library_id}-0`, `${exerciseList[_.random(0, exerciseList.length)].library_id}-1`, `${exerciseList[_.random(0, exerciseList.length)].library_id}-2`, `${exerciseList[_.random(0, exerciseList.length)].library_id}-2`];
+        let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(completedExercises);
+        let patchActiveRecoveryObj = {
+            user_id:             loginRes.user.id,
+            event_date:          `${moment().toISOString(true).split('.')[0]}Z`,
+            recovery_type:       'pre',
+            completed_exercises: newCompletedExercises,
+        };
+        const patchActiveRecoveryRes = await helperFunctions.fetcher(helperFunctions.getURL('active_recovery'), helperFunctions.apiReqs('patch', patchActiveRecoveryObj, loginRes.authorization.jwt));
+        let activeRecoveryDailyPlanObj = patchActiveRecoveryRes.daily_plans[0];
+        expect(activeRecoveryDailyPlanObj.landing_screen).toEqual(1);
+        expect(activeRecoveryDailyPlanObj.pre_recovery.completed).toEqual(true);
+        // Submit PSS with 1 Session (Screen on Recover) - fetch daily plan again with DELAY
+        
+        // simulate completing recover with 3 exercises
+        // let newCompletedExercises = [`${newExerciseList[_.random(0, newExerciseList.length)].library_id}-0`, `${newExerciseList[_.random(0, newExerciseList.length)].library_id}-1`, `${newExerciseList[_.random(0, newExerciseList.length)].library_id}-2`];
+        // let { newNewCompletedExercises, } = PlanLogic.handleCompletedExercises(newCompletedExercises);
+        // let newPatchActiveRecoveryObj = {
+        //     user_id:             loginRes.user.id,
+        //     event_date:          `${moment().toISOString(true).split('.')[0]}Z`,
+        //     recovery_type:       'post',
+        //     completed_exercises: newNewCompletedExercises,
+        // };
+        // const newPatchActiveRecoveryRes = await helperFunctions.fetcher(helperFunctions.getURL('active_recovery'), helperFunctions.apiReqs('patch', newPatchActiveRecoveryObj, loginRes.authorization.jwt));
+        // let newActiveRecoveryDailyPlanObj = newPatchActiveRecoveryRes.daily_plans[0];
+        // expect(newActiveRecoveryDailyPlanObj.landing_screen).toEqual(2);
+        // expect(newActiveRecoveryDailyPlanObj.pre_recovery.completed).toEqual(true);
+        // expect(newActiveRecoveryDailyPlanObj.post_recovery.completed).toEqual(true);
     });
 
-    it(`TESTING USER: ${user.personal_data.email} - Screen on Mobilize (LOCKED), 1 Clear Candidate (not clear), & 1 Hist Sore Status with tipping point`, async () => {
+    it('Submit RS with 1 Clear Candidate (not clear) & 1 Hist Sore Status with tipping point (Severity of 4) - (Screen on Mobilize (LOCKED))', async () => {
         // login
         const loginRes = await helperFunctions.fetcher(helperFunctions.getURL(APIConfig.tokenKey), helperFunctions.apiReqs('post', user));
         // copy data
@@ -246,7 +273,7 @@ describe('Looping through every user', () => {
         });
     });
 
-    it(`TESTING USER: ${user.personal_data.email} - Screen on Recover, 1 Clear Candidate (clear), & 1 Hist Sore Status with tipping point`, async () => {
+    it('Submit RS with 1 Clear Candidate (clear) & 1 Hist Sore Status with tipping point (Screen on Recover), Complete Recover with 4 Exercises (Screen on Recover)', async () => {
         // login
         const loginRes = await helperFunctions.fetcher(helperFunctions.getURL(APIConfig.tokenKey), helperFunctions.apiReqs('post', user));
         // copy data
@@ -322,9 +349,22 @@ describe('Looping through every user', () => {
         _.map(previousSorenessRes.readiness.hist_sore_status, soreBodyPart => {
             expect(soreBodyPart.status).toEqual('persistent_2_pain');
         });
+        // simulate completing a round of exercises
+        let completedExercises = [`${exerciseList[_.random(0, exerciseList.length)].library_id}-0`, `${exerciseList[_.random(0, exerciseList.length)].library_id}-1`, `${exerciseList[_.random(0, exerciseList.length)].library_id}-2`, `${exerciseList[_.random(0, exerciseList.length)].library_id}-2`];
+        let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(completedExercises);
+        let patchActiveRecoveryObj = {
+            user_id:             loginRes.user.id,
+            event_date:          `${moment().toISOString(true).split('.')[0]}Z`,
+            recovery_type:       'post',
+            completed_exercises: newCompletedExercises,
+        };
+        const patchActiveRecoveryRes = await helperFunctions.fetcher(helperFunctions.getURL('active_recovery'), helperFunctions.apiReqs('patch', patchActiveRecoveryObj, loginRes.authorization.jwt));
+        let activeRecoveryDailyPlanObj = patchActiveRecoveryRes.daily_plans[0];
+        expect(activeRecoveryDailyPlanObj.landing_screen).toEqual(2);
+        expect(activeRecoveryDailyPlanObj.post_recovery.completed).toEqual(true);
     });
 
-    it(`TESTING USER: ${user.personal_data.email} - 1 Clear Candidate (clear) & 1 Hist Sore Status with tipping point (clear)`, async () => {
+    it('Submit RS with 1 Clear Candidate (clear) & 1 Hist Sore Status with tipping point (clear)', async () => {
         // login
         const loginRes = await helperFunctions.fetcher(helperFunctions.getURL(APIConfig.tokenKey), helperFunctions.apiReqs('post', user));
         // copy data

@@ -1244,13 +1244,7 @@ class MyPlan extends Component {
                     onClose={() => this.setState({ isPrepareExerciseCompletionModalOpen: false, })}
                     onComplete={() => {
                         this.setState({ isPrepareExerciseCompletionModalOpen: false, loading: true, });
-                        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
-                        newCompletedExercises = _.map(newCompletedExercises, exId => {
-                            let newExerciseId = _.cloneDeep(exId);
-                            newExerciseId = newExerciseId.substring(0, newExerciseId.indexOf('-'));
-                            return newExerciseId;
-                        });
-                        newCompletedExercises = _.uniq(newCompletedExercises);
+                        let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(store.getState().plan.completedExercises);
                         this.props.patchActiveRecovery(this.props.user.id, newCompletedExercises, 'pre')
                             .then(res => {
                                 let newDailyPlanObj = store.getState().plan.dailyPlan[0];
@@ -1565,13 +1559,7 @@ class MyPlan extends Component {
                     onClose={() => this.setState({ isRecoverExerciseCompletionModalOpen: false, })}
                     onComplete={() => {
                         this.setState({ isRecoverExerciseCompletionModalOpen: false, loading: true, });
-                        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
-                        newCompletedExercises = _.map(newCompletedExercises, exId => {
-                            let newExerciseId = _.cloneDeep(exId);
-                            newExerciseId = newExerciseId.substring(0, newExerciseId.indexOf('-'));
-                            return newExerciseId;
-                        });
-                        newCompletedExercises = _.uniq(newCompletedExercises);
+                        let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(store.getState().plan.completedExercises);
                         this.props.patchActiveRecovery(this.props.user.id, newCompletedExercises, 'post')
                             .then(() =>
                                 this.setState({

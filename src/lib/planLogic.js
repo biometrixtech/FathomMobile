@@ -857,7 +857,23 @@ const PlanLogic = {
             newDailyReadiness,
             newPrepareObject,
         };
-    }
+    },
+
+    /**
+      * Handle Readiness Survey Submit Objects
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handleCompletedExercises: completedExercises => {
+        let newCompletedExercises = _.cloneDeep(completedExercises);
+        newCompletedExercises = _.map(newCompletedExercises, exId => {
+            let newExerciseId = _.cloneDeep(exId);
+            newExerciseId = newExerciseId.substring(0, newExerciseId.indexOf('-'));
+            return newExerciseId;
+        });
+        newCompletedExercises = _.uniq(newCompletedExercises);
+        return { newCompletedExercises, };
+    },
 
 };
 
