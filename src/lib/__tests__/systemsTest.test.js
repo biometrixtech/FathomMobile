@@ -212,7 +212,7 @@ describe('Looping through every user', () => {
         expect(newActiveRecoveryDailyPlanObj.post_recovery.completed).toEqual(true);
     });
 
-    /*it('Submit RS with 1 Clear Candidate (not clear) & 1 Hist Sore Status with tipping point (Severity of 4) - (Screen on Mobilize (LOCKED))', async () => {
+    it('Submit RS with 1 Clear Candidate (not clear) & 1 Hist Sore Status with tipping point (Severity of 4) - (Screen on Mobilize (LOCKED))', async () => {
         // login
         const loginRes = await helperFunctions.fetcher(helperFunctions.getURL(APIConfig.tokenKey), helperFunctions.apiReqs('post', user));
         // copy data
@@ -452,6 +452,6 @@ describe('Looping through every user', () => {
                 soreBodyPart.status === 'almost_persistent_2_pain_acute'
             ).toBe(true);
         });
-    });*/
+    });
 
 });
