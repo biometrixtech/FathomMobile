@@ -780,7 +780,6 @@ const PlanLogic = {
       * Exercises Render Logic
       * - Exercises
       */
-    // TODO: UNIT TEST ME
     handleExercisesRenderLogic: (exerciseList, selectedExercise) => {
         const cleanedExerciseList = exerciseList.cleanedExerciseList;
         /*eslint dot-notation: 0*/
@@ -821,7 +820,6 @@ const PlanLogic = {
       * HealthKit Workout Page Render Logic
       * - HealthKitWorkouts
       */
-    // TODO: UNIT TEST ME
     handleHealthKitWorkoutPageRenderLogic: workout => {
         let hourOfDay = workout && workout.event_date ? moment(workout.event_date).utc().get('hour') : moment().utc().get('hour');
         let split_afternoon = 12; // 24hr time to split the afternoon
@@ -844,11 +842,11 @@ const PlanLogic = {
             sportText,
         };
     },
+
     /**
       * Function Strength Modal Render Logic
       * - FunctionalStrengthModal
       */
-    // TODO: UNIT TEST ME
     fsModalRenderLogic: (functionalStrength, typicalSession) => {
         let foundSport = _.find(MyPlanConstants.teamSports, o => o.index === functionalStrength.current_sport_name);
         let selectedSportPositions = functionalStrength.current_sport_name !== null && foundSport && foundSport.positions ? foundSport.positions : [];

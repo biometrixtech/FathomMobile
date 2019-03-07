@@ -1064,7 +1064,165 @@ const helperFunctions = {
         }
     },
 
+    getFSModalExpectedResult: (hasPositions, isValid, selectedSportPositions) => {
+        return {
+            hasPositions,
+            isValid,
+            selectedSportPositions,
+        }
+    },
+
+    getExercisesRenderLogicExpectedResult: (availableSectionsCount, cleanedExerciseList, flatListExercises, firstItemIndex) => {
+        return {
+            availableSectionsCount,
+            cleanedExerciseList,
+            flatListExercises,
+            firstItemIndex,
+        }
+    },
+
+    getSingleSectionSampleExerciseList: () => {
+        return {
+            cleanedExerciseList: {'FOAM ROLL': [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}], 'STRETCH': [], 'ACTIVATE': [], 'INTEGRATE': [],},
+            flatListExercises:   [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}],
+        }
+    },
+
+    getTwoSectionsSampleExerciseList: () => {
+        return {
+            cleanedExerciseList: {
+                'FOAM ROLL': [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}],
+                'STRETCH':   [{library_id: 5, set_number: 1,}, {library_id: 6, set_number: 1,}, {library_id: 7, set_number: 1,}, {library_id: 8, set_number: 1,}, {library_id: 9, set_number: 1,}],
+                'ACTIVATE':  [],
+                'INTEGRATE': [],
+            },
+            flatListExercises: [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}, {library_id: 5, set_number: 1,}, {library_id: 6, set_number: 1,}, {library_id: 7, set_number: 1,}, {library_id: 8, set_number: 1,}, {library_id: 9, set_number: 1,}],
+        }
+    },
+
+    getHealthKitWorkoutExpectedResult: (partOfDay, sportDuration, sportImage, sportName, sportStartTime, sportText) => {
+        return {
+            partOfDay,
+            sportDuration,
+            sportImage,
+            sportName,
+            sportStartTime,
+            sportText,
+        }
+    },
+
 };
+
+it('HealthKit Workout Page Render Logic - Evening Tennis', () => {
+    let workout = {
+        sport_name: 79,
+        duration:   100,
+        event_date: '2019-01-10T18:00:00',
+    };
+    let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
+        'evening',
+        100,
+        require('../../../assets/images/sports_images/icons8-taekwondo-200.png'),
+        'Tai Chi',
+        '11:00pm',
+        '11:00pm tai chi workout'
+    );
+    expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
+});
+
+it('HealthKit Workout Page Render Logic - Afternoon Tennis', () => {
+    let workout = {
+        sport_name: 16,
+        duration:   60,
+        event_date: '2019-01-10T11:00:00',
+    };
+    let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
+        'afternoon',
+        60,
+        require('../../../assets/images/sports_images/icons8-tennis-player-200.png'),
+        'Tennis',
+        '4:00pm',
+        '4:00pm tennis workout'
+    );
+    expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
+});
+
+it('HealthKit Workout Page Render Logic - Morning Soccer', () => {
+    let workout = {
+        sport_name: 14,
+        duration:   90,
+        event_date: '2019-01-10T06:00:00',
+    };
+    let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
+        'morning',
+        90,
+        require('../../../assets/images/sports_images/icons8-soccer-200.png'),
+        'Soccer',
+        '11:00am',
+        '11:00am soccer workout'
+    );
+    expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - Two Sections - Selected Item Deeper in List', () => {
+    let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
+    let selectedExercise = {library_id: 8, set_number: 1,};
+    let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
+        2,
+        helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
+        helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
+        8
+    );
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - Two Sections - Selected First Item', () => {
+    let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
+    let selectedExercise = {library_id: 0, set_number: 1,};
+    let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
+        2,
+        helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
+        helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
+        0
+    );
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - Single Section', () => {
+    let exerciseList = helperFunctions.getSingleSectionSampleExerciseList();
+    let selectedExercise = {library_id: 2, set_number: 1,};
+    let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
+        1,
+        helperFunctions.getSingleSectionSampleExerciseList().cleanedExerciseList,
+        helperFunctions.getSingleSectionSampleExerciseList().flatListExercises,
+        2
+    );
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
+});
+
+it('FS Modal Render Logic - Sport (Soccer) WITH Position(s) - NOT Valid', () => {
+    let functionalStrength = {current_sport_name: 14};
+    let expectedResult = helperFunctions.getFSModalExpectedResult(true, false, ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker']);
+    expect(PlanLogic.fsModalRenderLogic(functionalStrength)).toEqual(expectedResult);
+});
+
+it('FS Modal Render Logic - Sport (Soccer) WITH Position(s) - Valid', () => {
+    let functionalStrength = {current_sport_name: 14, current_position: 2,};
+    let expectedResult = helperFunctions.getFSModalExpectedResult(true, true, ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker']);
+    expect(PlanLogic.fsModalRenderLogic(functionalStrength)).toEqual(expectedResult);
+});
+
+it('FS Modal Render Logic - Sport (Diving) WITHOUT Position(s) - Valid', () => {
+    let functionalStrength = {current_sport_name: 13};
+    let expectedResult = helperFunctions.getFSModalExpectedResult(false, true, []);
+    expect(PlanLogic.fsModalRenderLogic(functionalStrength)).toEqual(expectedResult);
+});
+
+it('FS Modal Render Logic - Empty State', () => {
+    let functionalStrength = {current_sport_name: null};
+    let expectedResult = helperFunctions.getFSModalExpectedResult(false, false, []);
+    expect(PlanLogic.fsModalRenderLogic(functionalStrength)).toEqual(expectedResult);
+});
 
 it('Post Session Survey Previous Page & Validation Logic - Page 4 (Selected Areas of Soreness)', () => {
     let currentPage = 4;
