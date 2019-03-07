@@ -162,7 +162,7 @@ describe('Looping through every user', () => {
             ).toBe(true);
         });
         // simulate completing a round of exercises
-        let completedExercises = [`${exerciseList[_.random(0, exerciseList.length)].library_id}-0`, `${exerciseList[_.random(0, exerciseList.length)].library_id}-1`, `${exerciseList[_.random(0, exerciseList.length)].library_id}-2`, `${exerciseList[_.random(0, exerciseList.length)].library_id}-2`];
+        let completedExercises = [`${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-0`, `${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-1`, `${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-2`, `${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-2`];
         let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(completedExercises);
         let patchActiveRecoveryObj = {
             user_id:             loginRes.user.id,
@@ -175,24 +175,44 @@ describe('Looping through every user', () => {
         expect(activeRecoveryDailyPlanObj.landing_screen).toEqual(1);
         expect(activeRecoveryDailyPlanObj.pre_recovery.completed).toEqual(true);
         // Submit PSS with 1 Session (Screen on Recover) - fetch daily plan again with DELAY
-        
+        let postSessionObj = _.cloneDeep(defaultPlanState.postSession);
+        let trainObj = _.cloneDeep(defaultPlanState.train);
+        postSessionObj = PlanLogic.handleDailyReadinessAndPostSessionFormChange('sessions[0].sport_name', 73, null, null, null, postSessionObj);
+        postSessionObj = PlanLogic.handleDailyReadinessAndPostSessionFormChange('sessions[0].session_type', 6, null, null, null, postSessionObj);
+        postSessionObj = PlanLogic.handleDailyReadinessAndPostSessionFormChange('sessions[0].event_date', `${moment().toISOString(true).split('.')[0]}Z`, null, null, null, postSessionObj);
+        postSessionObj = PlanLogic.handleDailyReadinessAndPostSessionFormChange('sessions[0].post_session_survey.event_date', `${moment().toISOString(true).split('.')[0]}Z`, null, null, null, postSessionObj);
+        postSessionObj = PlanLogic.handleDailyReadinessAndPostSessionFormChange('sessions[0].duration', 65, null, null, null, postSessionObj);
+        postSessionObj = PlanLogic.handleDailyReadinessAndPostSessionFormChange('sessions[0].post_session_survey.RPE', 3, null, null, null, postSessionObj);
+        let { newPostSession, } = PlanLogic.handlePostSessionSurveySubmitLogic(loginRes.user.id, postSessionObj, trainObj, healthData);
+        const postSessionSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_session_survey'), helperFunctions.apiReqs('post', newPostSession, loginRes.authorization.jwt));
+        expect(postSessionSurveyRes.message).toEqual('success');
+        // simulate delay as we wait for 'notification' -> getMyPlan
+        const thirdDailyPlanRes = await helperFunctions.fetcher(helperFunctions.getURL('get_my_plan'), helperFunctions.apiReqs('post', myPlanObj, loginRes.authorization.jwt), true);
+        let thirdDailyPlanObj = thirdDailyPlanRes.daily_plans[0];
+        let newExerciseList = _.concat(thirdDailyPlanObj.pre_recovery.inhibit_exercises, thirdDailyPlanObj.pre_recovery.lengthen_exercises, thirdDailyPlanObj.pre_recovery.activate_exercises);
+        expect(thirdDailyPlanObj.daily_readiness_survey_completed).toEqual(true);
+        expect(thirdDailyPlanObj.landing_screen).toEqual(2);
+        expect(thirdDailyPlanObj.pre_recovery.display_exercises).toEqual(false);
+        expect(thirdDailyPlanObj.post_recovery.display_exercises).toEqual(true);
+        expect(newExerciseList.length === 0).toEqual(false);
+        expect(thirdDailyPlanObj.training_sessions.length === 1).toEqual(true);
         // simulate completing recover with 3 exercises
-        // let newCompletedExercises = [`${newExerciseList[_.random(0, newExerciseList.length)].library_id}-0`, `${newExerciseList[_.random(0, newExerciseList.length)].library_id}-1`, `${newExerciseList[_.random(0, newExerciseList.length)].library_id}-2`];
-        // let { newNewCompletedExercises, } = PlanLogic.handleCompletedExercises(newCompletedExercises);
-        // let newPatchActiveRecoveryObj = {
-        //     user_id:             loginRes.user.id,
-        //     event_date:          `${moment().toISOString(true).split('.')[0]}Z`,
-        //     recovery_type:       'post',
-        //     completed_exercises: newNewCompletedExercises,
-        // };
-        // const newPatchActiveRecoveryRes = await helperFunctions.fetcher(helperFunctions.getURL('active_recovery'), helperFunctions.apiReqs('patch', newPatchActiveRecoveryObj, loginRes.authorization.jwt));
-        // let newActiveRecoveryDailyPlanObj = newPatchActiveRecoveryRes.daily_plans[0];
-        // expect(newActiveRecoveryDailyPlanObj.landing_screen).toEqual(2);
-        // expect(newActiveRecoveryDailyPlanObj.pre_recovery.completed).toEqual(true);
-        // expect(newActiveRecoveryDailyPlanObj.post_recovery.completed).toEqual(true);
+        let anotherCompletedExercises = [`${newExerciseList[_.random(0, (newExerciseList.length - 1))].library_id}-0`, `${newExerciseList[_.random(0, (newExerciseList.length - 1))].library_id}-1`, `${newExerciseList[_.random(0, (newExerciseList.length - 1))].library_id}-2`];
+        let { newNewCompletedExercises, } = PlanLogic.handleCompletedExercises(anotherCompletedExercises);
+        let newPatchActiveRecoveryObj = {
+            user_id:             loginRes.user.id,
+            event_date:          `${moment().toISOString(true).split('.')[0]}Z`,
+            recovery_type:       'post',
+            completed_exercises: newNewCompletedExercises,
+        };
+        const newPatchActiveRecoveryRes = await helperFunctions.fetcher(helperFunctions.getURL('active_recovery'), helperFunctions.apiReqs('patch', newPatchActiveRecoveryObj, loginRes.authorization.jwt));
+        let newActiveRecoveryDailyPlanObj = newPatchActiveRecoveryRes.daily_plans[0];
+        expect(newActiveRecoveryDailyPlanObj.landing_screen).toEqual(2);
+        expect(newActiveRecoveryDailyPlanObj.pre_recovery.completed).toEqual(true);
+        expect(newActiveRecoveryDailyPlanObj.post_recovery.completed).toEqual(true);
     });
 
-    it('Submit RS with 1 Clear Candidate (not clear) & 1 Hist Sore Status with tipping point (Severity of 4) - (Screen on Mobilize (LOCKED))', async () => {
+    /*it('Submit RS with 1 Clear Candidate (not clear) & 1 Hist Sore Status with tipping point (Severity of 4) - (Screen on Mobilize (LOCKED))', async () => {
         // login
         const loginRes = await helperFunctions.fetcher(helperFunctions.getURL(APIConfig.tokenKey), helperFunctions.apiReqs('post', user));
         // copy data
@@ -350,7 +370,7 @@ describe('Looping through every user', () => {
             expect(soreBodyPart.status).toEqual('persistent_2_pain');
         });
         // simulate completing a round of exercises
-        let completedExercises = [`${exerciseList[_.random(0, exerciseList.length)].library_id}-0`, `${exerciseList[_.random(0, exerciseList.length)].library_id}-1`, `${exerciseList[_.random(0, exerciseList.length)].library_id}-2`, `${exerciseList[_.random(0, exerciseList.length)].library_id}-2`];
+        let completedExercises = [`${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-0`, `${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-1`, `${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-2`, `${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-2`];
         let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(completedExercises);
         let patchActiveRecoveryObj = {
             user_id:             loginRes.user.id,
@@ -432,6 +452,6 @@ describe('Looping through every user', () => {
                 soreBodyPart.status === 'almost_persistent_2_pain_acute'
             ).toBe(true);
         });
-    });
+    });*/
 
 });
