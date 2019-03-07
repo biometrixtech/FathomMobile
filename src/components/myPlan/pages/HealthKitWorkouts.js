@@ -6,6 +6,7 @@
         handleNextStep={() => this._checkNextStep(0)}
         handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
         handleToggleSurvey={handleTogglePostSessionSurvey}
+        resetFirstPage={resetHealthKitFirstPage}
         workouts={healthKitWorkouts}
     />
  *
@@ -121,8 +122,8 @@ class HealthKitWorkouts extends PureComponent {
             { showRPEPicker: false, },
             () => {
                 if(pageIndex > 0) {
-                    handleHealthDataFormChange(pageIndex, 'deleted', false, () => {
-                        handleHealthDataFormChange(pageIndex, 'post_session_survey.RPE', null);
+                    handleHealthDataFormChange((pageIndex - 1), 'deleted', false, () => {
+                        handleHealthDataFormChange((pageIndex - 1), 'post_session_survey.RPE', null);
                     });
                 }
                 this.setState({
@@ -504,12 +505,14 @@ HealthKitWorkouts.propTypes = {
     handleTogglePostSessionSurvey: PropTypes.func,
     handleToggleSurvey:            PropTypes.func.isRequired,
     isPostSession:                 PropTypes.bool,
+    resetFirstPage:                PropTypes.bool,
     workouts:                      PropTypes.array.isRequired,
 };
 
 HealthKitWorkouts.defaultProps = {
     handleTogglePostSessionSurvey: null,
     isPostSession:                 false,
+    resetFirstPage:                false,
 };
 
 HealthKitWorkouts.componentName = 'HealthKitWorkouts';

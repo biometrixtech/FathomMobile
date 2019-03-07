@@ -750,18 +750,26 @@ const PlanLogic = {
       * Previous Page & Validation Logic
       * - PostSessionSurvey
       */
-    handlePostSessionSurveyPreviousPage: (pageState, currentPage, newSoreBodyParts) => {
+    handlePostSessionSurveyPreviousPage: (pageState, currentPage, newSoreBodyParts, postSessionSessions, healthKitWorkouts) => {
         let pageNum = 0;
         if(currentPage === 0) { // 0. Apple HealthKit (xN)
             pageNum = 0;
         } else if(currentPage === 1) { // 1. Session + RPE/Duration
             pageNum = 0;
         } else if(currentPage === 2) { // 2. Follow Up Pain & Soreness
-            pageNum = (pageState - 1);
+            pageNum = (postSessionSessions && postSessionSessions.length > 0) ?
+                (pageState.pageIndex - 1)
+                :
+                0;
         } else if(currentPage === 3) { // 3. Areas of Soreness
-            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? (pageState - 1) : (pageState - 2);
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ?
+                (pageState.pageIndex - 1)
+                : (postSessionSessions && postSessionSessions.length > 0) ?
+                    (pageState.pageIndex - 2)
+                    :
+                    (pageState.pageIndex - 3);
         } else if(currentPage === 4) { // 4. Areas of Soreness Selected
-            pageNum = (pageState - 1);
+            pageNum = (pageState.pageIndex - 1);
         }
         return {
             pageNum,

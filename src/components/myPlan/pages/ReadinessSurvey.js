@@ -76,19 +76,21 @@ class ReadinessSurvey extends Component {
         super(props);
         const { user, } = this.props;
         this.state = {
-            androidShowMoreOptions:     false,
-            isActionButtonVisible:      false,
-            isAppleHealthKitLoading:    false,
-            isAppleHealthModalOpen:     !user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios',
-            isCloseToBottom:            false,
-            isFromHKContinue:           false,
-            isSlideUpPanelExpanded:     true,
-            isSlideUpPanelOpen:         false,
-            lockAlreadyTrainedBtn:      false,
-            lockTrainLaterBtn:          false,
-            pageIndex:                  0,
-            resetHealthKitFirstPage:    false,
-            resetSportBuilderFirstPage: false,
+            androidShowMoreOptions:      false,
+            isActionButtonVisible:       false,
+            isAppleHealthKitLoading:     false,
+            isAppleHealthModalOpen:      !user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios',
+            isCloseToBottom:             false,
+            isFromHKAddSession:          false,
+            isFromHKContinue:            false,
+            isFromManualSessionContinue: false,
+            isSlideUpPanelExpanded:      true,
+            isSlideUpPanelOpen:          false,
+            lockAlreadyTrainedBtn:       false,
+            lockTrainLaterBtn:           false,
+            pageIndex:                   0,
+            resetHealthKitFirstPage:     false,
+            resetSportBuilderFirstPage:  false,
         };
         this.myActivityTargetComponents = [];
         this.myAreasOfSorenessComponent = {};
@@ -124,16 +126,30 @@ class ReadinessSurvey extends Component {
             this._updatePageIndex(pageNum);
         }
         // set true so we know to go back here from train later
-        this.setState({
-            isFromHKContinue: isHKNextStep === 'continue',
-        });
+        if(isHKNextStep === 'add_session' || isHKNextStep === 'continue') {
+            this.setState({
+                isFromHKAddSession: isHKNextStep === 'add_session',
+                isFromHKContinue:   isHKNextStep === 'continue',
+            });
+        }
     }
 
     _renderPreviousPage = (currentPage, isSessions) => {
         this.setState({ isActionButtonVisible: false, });
         if(currentPage === 4 && this.state.isFromHKContinue) {
             // lets go back to HK
-            this._updatePageIndex(1);
+            this.setState(
+                { isFromHKContinue: false, },
+                () => this._updatePageIndex(1),
+            );
+            this._resetStep(currentPage, 1, false);
+        } else if(currentPage === 4 && this.state.isFromManualSessionContinue) {
+            // lets go back to sport builder
+            this.setState(
+                { isFromManualSessionContinue: false, },
+                () => this._updatePageIndex((this.state.pageIndex - 1)),
+            );
+            this._resetStep(currentPage, (this.state.pageIndex - 1), true);
         } else {
             const {
                 dailyReadiness,
@@ -200,7 +216,14 @@ class ReadinessSurvey extends Component {
     _handleSportScheduleBuilderGoBack = index => {
         const { handleFormChange, } = this.props;
         const { pageIndex, } = this.state;
-        if(index === 0) { // going back to trained already screen
+        if(index === 0 && this.state.isFromHKAddSession) {
+            // lets go back to HK
+            this.setState(
+                { isFromHKAddSession: false, },
+                () => this._updatePageIndex(1),
+            );
+            this.setState({ resetHealthKitFirstPage: true, }, () => this.setState({ resetHealthKitFirstPage: false, }));
+        } else if(index === 0 && !this.state.isFromHKAddSession) { // going back to trained already screen
             this.setState({ lockAlreadyTrainedBtn: !this.state.lockAlreadyTrainedBtn, });
             handleFormChange('already_trained_number', null);
         } else {
@@ -448,8 +471,9 @@ class ReadinessSurvey extends Component {
                                     backNextButtonOptions={{
                                         isValid:  isRPEValid && isSportValid,
                                         onBack:   () => this._addSession(),
-                                        onSubmit: () => this._checkNextStep(3),
+                                        onSubmit: () => this.setState({ isFromManualSessionContinue: true, } , () => this._checkNextStep(3)),
                                     }}
+                                    // this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, isHealthKitValid, isHKNextStep)
                                     goBack={() => this._handleSportScheduleBuilderGoBack(index)}
                                     handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                         handleFormChange(`sessions[${index}].${location}`, value, isPain, bodyPartMapIndex, bodyPartSide);

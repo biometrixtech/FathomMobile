@@ -83,11 +83,12 @@ class PostSessionSurvey extends Component {
     _renderPreviousPage = currentPage => {
         this.setState({ isActionButtonVisible: false, });
         const {
+            healthKitWorkouts,
             postSession,
             soreBodyParts,
         } = this.props;
         let { newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
-        let { pageNum, } = PlanLogic.handlePostSessionSurveyPreviousPage(this.state, currentPage, newSoreBodyParts);
+        let { pageNum, } = PlanLogic.handlePostSessionSurveyPreviousPage(this.state, currentPage, newSoreBodyParts, postSession.sessions, healthKitWorkouts);
         this._updatePageIndex(pageNum);
         this._resetStep(currentPage);
     }

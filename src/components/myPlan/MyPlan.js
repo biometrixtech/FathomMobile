@@ -631,7 +631,7 @@ class MyPlan extends Component {
                             isPostSessionSurveyModalOpen: true,
                             loading:                      false,
                             postSession:                  newDailyReadiness,
-                            showLoadingText:              true,
+                            showLoadingText:              false,
                         })
                     , 500);
                 })
@@ -643,7 +643,7 @@ class MyPlan extends Component {
                         isPostSessionSurveyModalOpen: true,
                         loading:                      false,
                         postSession:                  newDailyReadiness,
-                        showLoadingText:              true,
+                        showLoadingText:              false,
                     });
                     AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
                 });
@@ -662,7 +662,7 @@ class MyPlan extends Component {
                     isPostSessionSurveyModalOpen: false,
                     loading:                      false,
                     postSession:                  newPostSession,
-                    showLoadingText:              true,
+                    showLoadingText:              false,
                 });
             }, 500);
         }
@@ -1907,7 +1907,7 @@ class MyPlan extends Component {
                         />
                         <Spacer size={AppSizes.padding} />
                         { this.state.showLoadingText &&
-                            <Text robotoLight style={{color: AppColors.zeplin.yellow,}}>{'Loading workouts...'}</Text>
+                            <Text robotoLight style={{color: AppColors.zeplin.yellow,}}>{this.state.trainLoadingScreenText}</Text>
                         }
                     </View>
                     :

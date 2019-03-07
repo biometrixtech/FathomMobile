@@ -1068,39 +1068,63 @@ const helperFunctions = {
 
 it('Post Session Survey Previous Page & Validation Logic - Page 4 (Selected Areas of Soreness)', () => {
     let currentPage = 4;
-    let pageState = 6;
+    let pageState = {pageIndex: 6,};
     let newSoreBodyParts = [];
     let expectedResult = {pageNum: 5,};
     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
 });
 
-it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts', () => {
+it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - TWO HK SESSIONS', () => {
     let currentPage = 3;
-    let pageState = 4;
+    let pageState = {pageIndex: 4,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 1,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, null, [{}, {}])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - TWO SESSIONS', () => {
+    let currentPage = 3;
+    let pageState = {pageIndex: 4,};
     let newSoreBodyParts = [];
     let expectedResult = {pageNum: 2,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, [{}, {}])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - NO Sessions', () => {
+    let currentPage = 3;
+    let pageState = {pageIndex: 4,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 1,};
     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
 });
 
 it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITH Sore Body Parts', () => {
     let currentPage = 3;
-    let pageState = 4;
+    let pageState = {pageIndex: 4,};
     let newSoreBodyParts = [{}];
     let expectedResult = {pageNum: 3,};
     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
 });
 
-it('Post Session Survey Previous Page & Validation Logic - Page 2 (F/U P/S)', () => {
+it('Post Session Survey Previous Page & Validation Logic - Page 2 (F/U P/S) - NO Sessions', () => {
     let currentPage = 2;
-    let pageState = 3;
+    let pageState = {pageIndex: 3,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 0,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, [])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 2 (F/U P/S) - TWO Sessions', () => {
+    let currentPage = 2;
+    let pageState = {pageIndex: 3,};
     let newSoreBodyParts = [];
     let expectedResult = {pageNum: 2,};
-    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, [{}, {}])).toEqual(expectedResult);
 });
 
 it('Post Session Survey Previous Page & Validation Logic - Page 1 (Sport Schedule Builder)', () => {
     let currentPage = 1;
-    let pageState = 0;
+    let pageState = {pageIndex: 0,};
     let newSoreBodyParts = [];
     let expectedResult = {pageNum: 0,};
     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
@@ -1108,7 +1132,7 @@ it('Post Session Survey Previous Page & Validation Logic - Page 1 (Sport Schedul
 
 it('Post Session Survey Previous Page & Validation Logic - Page 0 (HealthKit)', () => {
     let currentPage = 0;
-    let pageState = 0;
+    let pageState = {pageIndex: 0,};
     let newSoreBodyParts = [];
     let expectedResult = {pageNum: 0,};
     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
