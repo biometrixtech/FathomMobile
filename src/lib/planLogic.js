@@ -868,12 +868,12 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, healthData) => {
+    handleReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPrepareObject = Object.assign({}, prepare, {
             isReadinessSurveyCompleted: true,
         });
         let newDailyReadiness = {
-            date_time:                 `${moment().toISOString(true).split('.')[0]}Z`,
+            date_time:                 eventDate,
             user_id:                   user_id,
             soreness:                  _.filter(dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
             clear_candidates:          _.filter(dailyReadiness.soreness, {isClearCandidate: true}),
@@ -897,7 +897,7 @@ const PlanLogic = {
         newDailyReadiness.sessions = _.concat(healthDataWorkouts, dailyReadinessSessions, healthDataIgnoredWorkouts);
         newDailyReadiness.sleep_data = healthData.sleep;
         if(healthData.workouts && healthData.workouts.length > 0) {
-            newDailyReadiness.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
+            newDailyReadiness.health_sync_date = eventDate;
         }
         return {
             dailyReadinessSessions,
@@ -912,9 +912,9 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handlePostSessionSurveySubmitLogic: (user_id, postSession, train, healthData) => {
+    handlePostSessionSurveySubmitLogic: (user_id, postSession, train, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPostSession = {
-            event_date: `${moment().toISOString(true).split('.')[0]}Z`,
+            event_date: eventDate,
             user_id:    user_id,
             sessions:   [],
         };
@@ -924,14 +924,14 @@ const PlanLogic = {
             :
             [];
         if(healthData.workouts && healthData.workouts.length > 0) {
-            newPostSession.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
+            newPostSession.health_sync_date = eventDate;
         }
         newPostSession.sessions = _.concat(healthDataWorkouts, loggedSessions);
         let lastNonDeletedIndex = _.findLastIndex(newPostSession.sessions, ['deleted', false]);
         if(newPostSession.sessions[lastNonDeletedIndex]) {
             newPostSession.sessions[lastNonDeletedIndex].post_session_survey = {
                 clear_candidates: _.filter(postSession.soreness, {isClearCandidate: true}),
-                event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                event_date:       eventDate,
                 RPE:              newPostSession.sessions[lastNonDeletedIndex].post_session_survey.RPE,
                 soreness:         _.filter(postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
             };
