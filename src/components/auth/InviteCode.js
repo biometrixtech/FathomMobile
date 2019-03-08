@@ -77,6 +77,7 @@ class InviteCode extends Component {
             },
             form_values: {
                 code: '',
+                role: '',
             },
         };
     }
@@ -105,8 +106,10 @@ class InviteCode extends Component {
                 () => {
                     this.props.checkAccountCode(code)
                         .then(res => {
+                            let role = res.account && res.account.codes && res.account.codes.coach === code ? 'coach' : 'athlete';
                             let newAccount = _.cloneDeep(res.account);
                             newAccount.code = code;
+                            newAccount.role = role;
                             this.setState({ isSuccessOpen: true, isVerifyingOpen: false, account: newAccount, });
                         })
                         .catch(err => {
@@ -124,7 +127,7 @@ class InviteCode extends Component {
         this.setState(
             { isSuccessOpen: false, },
             () => {
-                this.props.setAccountCode(this.state.account.code)
+                this.props.setAccountCode(this.state.account.code, this.state.account.role)
                     .then(res => Actions.onboarding({ accountCode: this.state.account.code, }));
             }
         );

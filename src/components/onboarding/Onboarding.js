@@ -57,6 +57,7 @@ class Onboarding extends Component {
 
     static propTypes = {
         accountCode:    PropTypes.string.isRequired,
+        accountRole:    PropTypes.string.isRequired,
         authorizeUser:  PropTypes.func.isRequired,
         createUser:     PropTypes.func.isRequired,
         finalizeLogin:  PropTypes.func.isRequired,
@@ -126,7 +127,7 @@ class Onboarding extends Component {
                         phone_number:   user.personal_data && user.personal_data.phone_number ? user.personal_data.phone_number : '',
                         zip_code:       user.personal_data && user.personal_data.zip_code ? user.personal_data.zip_code : '',
                     },
-                    role:                           'athlete',
+                    role:                           this.props.accountRole,
                     // system_type:                    '1-sensor', // '1-sensor', '3-sensor'
                     injury_status:                  user.injury_status ? user.injury_status : '',
                     injuries:                       {}, // COMING SOON
@@ -143,7 +144,7 @@ class Onboarding extends Component {
                 }
             },
             isFormValid:          false,
-            isHealthKitModalOpen: !this.props.user.id && Platform.OS === 'ios' && this.props.accountCode.length === 0,
+            isHealthKitModalOpen: !this.props.user.id && Platform.OS === 'ios' && this.props.accountRole === 'athlete',
             isPrivacyPolicyOpen:  false,
             isTermsOpen:          false,
             modalStyle:           {},
@@ -352,7 +353,9 @@ class Onboarding extends Component {
             userObj.account_code = newUser.account_code.toUpperCase();
         }
         userObj.health_enabled = newUser.health_enabled;
-        userObj.first_time_experience = newUser.first_time_experience;
+        if(newUser.first_time_experience.length > 0) {
+            userObj.first_time_experience = newUser.first_time_experience;
+        }
         // clear account code reducer
         this.props.setAccountCode('');
         // create or update, if no errors
@@ -405,8 +408,8 @@ class Onboarding extends Component {
                             })
                             .then(res => {
                                 if(user.health_enabled) {
-                                    return AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date)
-                                        .then(() => AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date));
+                                    return AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
+                                        .then(() => AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date));
                                 }
                                 return res;
                             })
@@ -511,7 +514,7 @@ class Onboarding extends Component {
                 <EnableAppleHealthKit
                     handleSkip={() => this._handleEnableAppleHealthKit('apple_healthkit', false)}
                     handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
-                    isModalOpen={isHealthKitModalOpen && form_fields.user.account_code.length === 0}
+                    isModalOpen={isHealthKitModalOpen}
                 />
                 <PrivacyPolicyModal
                     handleModalToggle={this._togglePrivacyPolicyWebView}

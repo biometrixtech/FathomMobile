@@ -7,6 +7,7 @@ import { init as InitActions, plan as PlanActions, user as UserActions, } from '
 const Onboarding = ({
     Layout,
     accountCode,
+    accountRole,
     authorizeUser,
     createUser,
     finalizeLogin,
@@ -23,6 +24,7 @@ const Onboarding = ({
 }) => (
     <Layout
         accountCode={accountCode}
+        accountRole={accountRole}
         authorizeUser={authorizeUser}
         createUser={createUser}
         finalizeLogin={finalizeLogin}
@@ -42,6 +44,7 @@ const Onboarding = ({
 Onboarding.propTypes = {
     Layout:         PropTypes.func.isRequired,
     accountCode:    PropTypes.string.isRequired,
+    accountRole:    PropTypes.string.isRequired,
     authorizeUser:  PropTypes.func.isRequired,
     createUser:     PropTypes.func.isRequired,
     finalizeLogin:  PropTypes.func.isRequired,
@@ -60,6 +63,7 @@ Onboarding.defaultProps = {};
 
 const mapStateToProps = state => ({
     accountCode: state.init.account_code,
+    accountRole: state.init.account_role,
     lastOpened:  state.plan.lastOpened,
     network:     state.network,
     user:        state.user,

@@ -323,10 +323,11 @@ const signUp = (credentials) => {
         });
 };
 
-const setAccountCode = accountCode => {
+const setAccountCode = (accountCode, accountRole = 'athlete') => {
     return dispatch => Promise.resolve(dispatch({
         type: Actions.SET_ACCOUNT_CODE,
         code: accountCode,
+        role: accountRole,
     }));
 };
 

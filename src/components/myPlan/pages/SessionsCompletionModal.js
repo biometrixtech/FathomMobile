@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
         alignItems:        'center',
         alignSelf:         'stretch',
         borderRadius:      4,
-        flex:              1,
         overflow:          'visible',
         paddingHorizontal: 50,
     },
@@ -60,10 +59,7 @@ class SessionsCompletionModal extends Component {
             isConfettiAnimationVisible:  true,
             isConfettiAnimation2Visible: true,
             isConfettiAnimation3Visible: true,
-            modalStyle:                  {
-                height: 200,
-            },
-            progressCounters: {},
+            progressCounters:            {},
         };
         this.animation = {};
         this.animation2 = {};
@@ -120,14 +116,6 @@ class SessionsCompletionModal extends Component {
         });
     }
 
-    _resizeModal = ev => {
-        let oldHeight = this.state.modalStyle.height;
-        let newHeight = parseInt(ev.nativeEvent.layout.height, 10);
-        if(oldHeight !== newHeight) {
-            this.setState({ modalStyle: {height: newHeight} });
-        }
-    }
-
     _onClose = () => {
         const { onClose, } = this.props;
         let filteredIconSessions = _.filter(this.props.sessions, session => {
@@ -142,10 +130,7 @@ class SessionsCompletionModal extends Component {
                     isConfettiAnimationVisible:  true,
                     isConfettiAnimation2Visible: true,
                     isConfettiAnimation3Visible: true,
-                    modalStyle:                  {
-                        height: 200,
-                    },
-                    progressCounters: {},
+                    progressCounters:            {},
                 },
                 () => {
                     this.animation = {};
@@ -166,7 +151,6 @@ class SessionsCompletionModal extends Component {
             isConfettiAnimationVisible,
             isConfettiAnimation2Visible,
             isConfettiAnimation3Visible,
-            modalStyle,
             progressCounters,
         } = this.state;
         let filteredIconSessions = _.filter(sessions, session => {
@@ -175,7 +159,6 @@ class SessionsCompletionModal extends Component {
         });
         let iconSize = AppFonts.scaleFont(60);
         let sessionIconWidth = (modalWidth / 3);
-        let iconViewWrapperWidth = (sessionIconWidth - (thickness * 2));
         if(filteredIconSessions.length === 1 || filteredIconSessions.length === 2) {
             sessionIconWidth = (modalWidth * 0.50);
             iconSize = AppFonts.scaleFont(90);
@@ -192,20 +175,14 @@ class SessionsCompletionModal extends Component {
                 swipeToClose={false}
                 useNativeDriver={false}
             >
-                <View
-                    style={[
-                        modalStyle,
-                        Platform.OS === 'ios' ? styles.shadowEffect : {elevation: 2},
-                        {backgroundColor: AppColors.transparent, width: modalWidth,}
-                    ]}
-                >
+                <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center', width: modalWidth,}}>
                     <LinearGradient
                         colors={[AppColors.zeplin.lightNavy, AppColors.zeplin.darkBlue, AppColors.zeplin.darkNavy, AppColors.black]}
                         start={{x: 0.0, y: 0.0}}
                         end={{x: 1, y: 1}}
                         style={[styles.linearGradientStyle]}
                     >
-                        <View onLayout={ev => this._resizeModal(ev)}>
+                        <View style={[Platform.OS === 'ios' ? styles.shadowEffect : {elevation: 2}]}>
                             <Spacer size={AppSizes.paddingXLrg} />
                             <View style={[styles.iconRowWrapper]}>
                                 {_.map(filteredIconSessions, (session, i) => {

@@ -12,6 +12,7 @@ import ExerciseList from './ExerciseList';
 import ExerciseListItem from './ExerciseListItem';
 import Exercises from './Exercises';
 import ExercisesExercise from './ExercisesExercise';
+import FunctionalStrengthModal from './FunctionalStrengthModal';
 import HealthKitWorkouts from './HealthKitWorkouts';
 import PostSessionSurvey from './PostSessionSurvey';
 import ProgressPill from './ProgressPill';
@@ -21,6 +22,7 @@ import ScaleButton from './ScaleButton';
 import SessionsCompletionModal from './SessionsCompletionModal';
 import SingleExerciseItem from './SingleExerciseItem';
 import SoreBodyPart from './SoreBodyPart';
+import SportBlock from './SportBlock';
 import SportScheduleBuilder from './SportScheduleBuilder';
 import SurveySlideUpPanel from './SurveySlideUpPanel';
 import TimedExercise from './TimedExercise';
@@ -36,6 +38,7 @@ export {
     ExerciseListItem,
     Exercises,
     ExercisesExercise,
+    FunctionalStrengthModal,
     HealthKitWorkouts,
     PostSessionSurvey,
     ProgressPill,
@@ -45,6 +48,7 @@ export {
     SessionsCompletionModal,
     SingleExerciseItem,
     SoreBodyPart,
+    SportBlock,
     SportScheduleBuilder,
     SurveySlideUpPanel,
     TimedExercise,

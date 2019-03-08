@@ -97,8 +97,10 @@ const PlanLogic = {
         };
         return {
             description:                    '',
+            deleted:                        false,
             duration:                       0,
             event_date:                     null,
+            ignored:                        false,
             post_session_survey:            postSessionSurvey,
             session_type:                   null,
             sport_name:                     null, // this exists for session_type = 0,2,3,6
@@ -333,7 +335,7 @@ const PlanLogic = {
             return doesItInclude.length > 0;
         });
         let areQuestionsValid = dailyReadiness.readiness > 0 && dailyReadiness.sleep_quality > 0;
-        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length === filteredSoreBodyParts.length : true;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length === combinedSoreBodyParts.length : true;
         let areAreasOfSorenessValid = _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0;
         let foundSport = _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name);
         let selectedSportPositions = dailyReadiness.current_sport_name !== null && foundSport ? foundSport.positions : [];
@@ -410,7 +412,10 @@ const PlanLogic = {
       * - SoreBodyPart
       */
     handleSoreBodyPartRenderLogic: (bodyPart, bodyPartSide, pageStateType) => {
-        let bodyPartMap = bodyPart.body_part ? MyPlanConstants.bodyPartMapping[bodyPart.body_part] : MyPlanConstants.bodyPartMapping[bodyPart.index];
+        let bodyPartMap = bodyPart.body_part ?
+            _.filter(MyPlanConstants.bodyPartMapping, ['index', bodyPart.body_part])[0]
+            :
+            _.filter(MyPlanConstants.bodyPartMapping, ['index', bodyPart.index])[0];
         let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
         let sorenessPainMapping =
             bodyPartGroup && bodyPartGroup === 'muscle' && pageStateType.length > 0 ?
@@ -623,14 +628,22 @@ const PlanLogic = {
       * - ReadinessSurvey
       */
     // TODO: UNIT TEST ME
-    handleReadinessSurveyNextPage: (pageState, dailyReadiness, currentPage, isFormValidItems, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid) => {
+    handleReadinessSurveyNextPage: (pageState, dailyReadiness, currentPage, isFormValidItems, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid, isHKNextStep) => {
         let pageNum = 0;
         let isValid = false;
         if(currentPage === 0) { // 0. Begin
             pageNum = healthKitWorkouts && healthKitWorkouts.length > 0 ? 1 : 2;
             isValid = true;
         } else if(currentPage === 1) { // 1. Apple HealthKit (xN)
-            pageNum = 4;
+            let numberOfNonDeletedWorkouts = _.filter(healthKitWorkouts, ['deleted', false]);
+            pageNum = numberOfNonDeletedWorkouts.length === 0 ?
+                2
+                : isHKNextStep === 'continue' ?
+                    4
+                    : isHKNextStep === 'add_session' ?
+                        3
+                        :
+                        4;
             isValid = isHealthKitValid;
         } else if(currentPage === 2) { // 2. trained already
             pageNum = dailyReadiness.already_trained_number === false ? 4 : 3;
@@ -675,10 +688,8 @@ const PlanLogic = {
         } else if(currentPage === 4) { // 4. train later?
             pageNum = !healthKitWorkouts && dailyReadiness.already_trained_number ?
                 (pageState.pageIndex - 1)
-                : healthKitWorkouts && healthKitWorkouts.length > 0 ?
-                    1
-                    :
-                    2;
+                :
+                2;
         } else if(currentPage === 5) { // 5. Follow Up Pain & Soreness
             pageNum = (pageState.pageIndex - 1);
             isTrainLater = true;
@@ -703,20 +714,30 @@ const PlanLogic = {
       * Next Page & Validation Logic
       * - PostSessionSurvey
       */
-    handlePostSessionSurveyNextPage: (currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid) => {
+    handlePostSessionSurveyNextPage: (pageState, currentPage, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep) => {
         let isValid = false;
         let pageNum = 0;
-        if(currentPage === 0) { // 0. Apple HealthKit (xN) OR Session + RPE/Duration
-            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 1 : 2;
-            isValid = isFormValidItems.areQuestionsValid || isHealthKitValid;
-        } else if(currentPage === 1) { // 1. Follow Up Pain & Soreness
-            pageNum = 2;
+        if(currentPage === 0) { // 0. Apple HealthKit (xN)
+            pageNum = isHKNextStep === 'continue' && (newSoreBodyParts && newSoreBodyParts.length > 0) ?
+                2
+                : isHKNextStep === 'continue' && (newSoreBodyParts && newSoreBodyParts.length === 0) ?
+                    3
+                    : isHKNextStep === 'add_session' ?
+                        1
+                        :
+                        1;
+            isValid = isHealthKitValid;
+        } else if(currentPage === 1) { // 1. Session + RPE/Duration
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? (pageState.pageIndex + 1) : (pageState.pageIndex + 2);
+            isValid = true; // can only click if form is valid
+        } else if(currentPage === 2) { // 2. Follow Up Pain & Soreness
+            pageNum = (pageState.pageIndex + 1);
             isValid = isFormValidItems.isPrevSorenessValid;
-        } else if(currentPage === 2) { // 2. Areas of Soreness
-            pageNum = 3;
+        } else if(currentPage === 3) { // 3. Areas of Soreness
+            pageNum = (pageState.pageIndex + 1);
             isValid = isFormValidItems.selectAreasOfSorenessValid;
-        } else if(currentPage === 3) { // 3. Areas of Soreness Selected
-            pageNum = 3;
+        } else if(currentPage === 4) { // 4. Areas of Soreness Selected
+            pageNum = (pageState.pageIndex);
             isValid = isFormValidItems.areAreasOfSorenessValid;
         }
         return {
@@ -729,17 +750,26 @@ const PlanLogic = {
       * Previous Page & Validation Logic
       * - PostSessionSurvey
       */
-    // TODO: UNIT TEST ME
-    handlePostSessionSurveyPreviousPage: (currentPage, newSoreBodyParts) => {
+    handlePostSessionSurveyPreviousPage: (pageState, currentPage, newSoreBodyParts, postSessionSessions, healthKitWorkouts) => {
         let pageNum = 0;
-        if(currentPage === 0) { // 0. Apple HealthKit (xN) OR Session + RPE/Duration
+        if(currentPage === 0) { // 0. Apple HealthKit (xN)
             pageNum = 0;
-        } else if(currentPage === 1) { // 1. Follow Up Pain & Soreness
+        } else if(currentPage === 1) { // 1. Session + RPE/Duration
             pageNum = 0;
-        } else if(currentPage === 2) { // 2. Areas of Soreness
-            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? 1 : 0;
-        } else if(currentPage === 3) { // 3. Areas of Soreness Selected
-            pageNum = 2;
+        } else if(currentPage === 2) { // 2. Follow Up Pain & Soreness
+            pageNum = (postSessionSessions && postSessionSessions.length > 0) ?
+                (pageState.pageIndex - 1)
+                :
+                0;
+        } else if(currentPage === 3) { // 3. Areas of Soreness
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ?
+                (pageState.pageIndex - 1)
+                : (postSessionSessions && postSessionSessions.length > 0) ?
+                    (pageState.pageIndex - 2)
+                    :
+                    (pageState.pageIndex - 3);
+        } else if(currentPage === 4) { // 4. Areas of Soreness Selected
+            pageNum = (pageState.pageIndex - 1);
         }
         return {
             pageNum,
@@ -750,7 +780,6 @@ const PlanLogic = {
       * Exercises Render Logic
       * - Exercises
       */
-    // TODO: UNIT TEST ME
     handleExercisesRenderLogic: (exerciseList, selectedExercise) => {
         const cleanedExerciseList = exerciseList.cleanedExerciseList;
         /*eslint dot-notation: 0*/
@@ -791,9 +820,8 @@ const PlanLogic = {
       * HealthKit Workout Page Render Logic
       * - HealthKitWorkouts
       */
-    // TODO: UNIT TEST ME
     handleHealthKitWorkoutPageRenderLogic: workout => {
-        let hourOfDay = moment(workout.event_date).utc().get('hour');
+        let hourOfDay = workout && workout.event_date ? moment(workout.event_date).utc().get('hour') : moment().utc().get('hour');
         let split_afternoon = 12; // 24hr time to split the afternoon
         let split_evening = 17; // 24hr time to split the evening
         let cutoffForNewDay = 3;
@@ -802,7 +830,7 @@ const PlanLogic = {
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
         let sportDuration = workout.duration ? workout.duration : 0;
         let sportName = selectedSport ? selectedSport.label : '';
-        let sportStartTime = workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
+        let sportStartTime = workout && workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
         let sportText = selectedSport ? `${sportStartTime} ${selectedSport.label.toLowerCase()} workout` : '';
         let sportImage = selectedSport ? selectedSport.imagePath : '';
         return {
@@ -816,16 +844,36 @@ const PlanLogic = {
     },
 
     /**
+      * Function Strength Modal Render Logic
+      * - FunctionalStrengthModal
+      */
+    fsModalRenderLogic: (functionalStrength, typicalSession) => {
+        let foundSport = _.find(MyPlanConstants.teamSports, o => o.index === functionalStrength.current_sport_name);
+        let selectedSportPositions = functionalStrength.current_sport_name !== null && foundSport && foundSport.positions ? foundSport.positions : [];
+        let hasPositions = (functionalStrength.current_sport_name !== null || functionalStrength.current_sport_name === 0) && selectedSportPositions && selectedSportPositions.length > 0;
+        let isValid = (functionalStrength.current_sport_name === 0 || functionalStrength.current_sport_name > 0) &&
+            (
+                selectedSportPositions.length === 0 ||
+                (functionalStrength.current_position === 0 || functionalStrength.current_position > 0)
+            );
+        return {
+            hasPositions,
+            isValid,
+            selectedSportPositions,
+        }
+    },
+
+    /**
       * Handle Readiness Survey Submit Objects
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, healthData) => {
+    handleReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPrepareObject = Object.assign({}, prepare, {
             isReadinessSurveyCompleted: true,
         });
         let newDailyReadiness = {
-            date_time:                 `${moment().toISOString(true).split('.')[0]}Z`,
+            date_time:                 eventDate,
             user_id:                   user_id,
             soreness:                  _.filter(dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
             clear_candidates:          _.filter(dailyReadiness.soreness, {isClearCandidate: true}),
@@ -849,7 +897,7 @@ const PlanLogic = {
         newDailyReadiness.sessions = _.concat(healthDataWorkouts, dailyReadinessSessions, healthDataIgnoredWorkouts);
         newDailyReadiness.sleep_data = healthData.sleep;
         if(healthData.workouts && healthData.workouts.length > 0) {
-            newDailyReadiness.health_sync_date = `${moment().toISOString(true).split('.')[0]}Z`;
+            newDailyReadiness.health_sync_date = eventDate;
         }
         return {
             dailyReadinessSessions,
@@ -857,7 +905,75 @@ const PlanLogic = {
             newDailyReadiness,
             newPrepareObject,
         };
-    }
+    },
+
+    /**
+      * Handle Post Session Survey Submit Objects
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handlePostSessionSurveySubmitLogic: (user_id, postSession, train, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
+        let newPostSession = {
+            event_date: eventDate,
+            user_id:    user_id,
+            sessions:   [],
+        };
+        let healthDataWorkouts = healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : [];
+        let loggedSessions = postSession.sessions ?
+            _.filter(postSession.sessions, session => session.sport_name && session.session_type && (session.post_session_survey.RPE === 0 || session.post_session_survey.RPE > 0))
+            :
+            [];
+        if(healthData.workouts && healthData.workouts.length > 0) {
+            newPostSession.health_sync_date = eventDate;
+        }
+        newPostSession.sessions = _.concat(healthDataWorkouts, loggedSessions);
+        let lastNonDeletedIndex = _.findLastIndex(newPostSession.sessions, ['deleted', false]);
+        if(newPostSession.sessions[lastNonDeletedIndex]) {
+            newPostSession.sessions[lastNonDeletedIndex].post_session_survey = {
+                clear_candidates: _.filter(postSession.soreness, {isClearCandidate: true}),
+                event_date:       eventDate,
+                RPE:              newPostSession.sessions[lastNonDeletedIndex].post_session_survey.RPE,
+                soreness:         _.filter(postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
+            };
+        }
+        let clonedPostPracticeSurveys = _.cloneDeep(train.postPracticeSurveys);
+        let newSurvey = {};
+        newSurvey.isPostPracticeSurveyCollapsed = true;
+        newSurvey.isPostPracticeSurveyCompleted = true;
+        clonedPostPracticeSurveys.push(newSurvey);
+        let newTrainObject = Object.assign({}, train, {
+            completedPostPracticeSurvey: true,
+            postPracticeSurveys:         clonedPostPracticeSurveys,
+        });
+        let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
+        newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
+        newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
+        let newPostSessionSessions = newPostSession && newPostSession.sessions && newPostSession.sessions.length > 0 ?
+            _.filter(newPostSession.sessions, o => !o.deleted && !o.ignored)
+            :
+            [PlanLogic.returnEmptySession()];
+        return {
+            newPostSession,
+            newPostSessionSessions,
+            newTrainObject,
+        };
+    },
+
+    /**
+      * Handle Completed Exercises
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handleCompletedExercises: completedExercises => {
+        let newCompletedExercises = _.cloneDeep(completedExercises);
+        newCompletedExercises = _.map(newCompletedExercises, exId => {
+            let newExerciseId = _.cloneDeep(exId);
+            newExerciseId = newExerciseId.substring(0, newExerciseId.indexOf('-'));
+            return newExerciseId;
+        });
+        newCompletedExercises = _.uniq(newCompletedExercises);
+        return { newCompletedExercises, };
+    },
 
 };
 

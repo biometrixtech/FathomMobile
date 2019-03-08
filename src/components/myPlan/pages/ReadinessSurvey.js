@@ -76,18 +76,21 @@ class ReadinessSurvey extends Component {
         super(props);
         const { user, } = this.props;
         this.state = {
-            androidShowMoreOptions:     false,
-            isActionButtonVisible:      false,
-            isAppleHealthKitLoading:    false,
-            isAppleHealthModalOpen:     !user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios',
-            isCloseToBottom:            false,
-            isSlideUpPanelExpanded:     true,
-            isSlideUpPanelOpen:         false,
-            lockAlreadyTrainedBtn:      false,
-            lockTrainLaterBtn:          false,
-            pageIndex:                  0,
-            resetHealthKitFirstPage:    false,
-            resetSportBuilderFirstPage: false,
+            androidShowMoreOptions:      false,
+            isActionButtonVisible:       false,
+            isAppleHealthKitLoading:     false,
+            isAppleHealthModalOpen:      !user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios',
+            isCloseToBottom:             false,
+            isFromHKAddSession:          false,
+            isFromHKContinue:            false,
+            isFromManualSessionContinue: false,
+            isSlideUpPanelExpanded:      true,
+            isSlideUpPanelOpen:          false,
+            lockAlreadyTrainedBtn:       false,
+            lockTrainLaterBtn:           false,
+            pageIndex:                   0,
+            resetHealthKitFirstPage:     false,
+            resetSportBuilderFirstPage:  false,
         };
         this.myActivityTargetComponents = [];
         this.myAreasOfSorenessComponent = {};
@@ -116,30 +119,56 @@ class ReadinessSurvey extends Component {
         });
     }
 
-    _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, isHealthKitValid) => {
+    _renderNextPage = (currentPage, isFormValidItems, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, isHealthKitValid, isHKNextStep) => {
         const { dailyReadiness, healthKitWorkouts, } = this.props;
-        let { isValid, pageNum, } = PlanLogic.handleReadinessSurveyNextPage(this.state, dailyReadiness, currentPage, isFormValidItems, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid);
+        let { isValid, pageNum, } = PlanLogic.handleReadinessSurveyNextPage(this.state, dailyReadiness, currentPage, isFormValidItems, newSoreBodyParts, sportBuilderRPEIndex, areaOfSorenessClicked, healthKitWorkouts, isHealthKitValid, isHKNextStep);
         if(isValid) {
             this._updatePageIndex(pageNum);
+        }
+        // set true so we know to go back here from train later
+        if(isHKNextStep === 'add_session' || isHKNextStep === 'continue') {
+            this.setState({
+                isFromHKAddSession: isHKNextStep === 'add_session',
+                isFromHKContinue:   isHKNextStep === 'continue',
+            });
         }
     }
 
     _renderPreviousPage = (currentPage, isSessions) => {
         this.setState({ isActionButtonVisible: false, });
-        const {
-            dailyReadiness,
-            healthKitWorkouts,
-            soreBodyParts,
-        } = this.props;
-        let { newSoreBodyParts, } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
-        let { isTrainLater, pageNum, } = PlanLogic.handleReadinessSurveyPreviousPage(this.state, currentPage, newSoreBodyParts, healthKitWorkouts, dailyReadiness);
-        this._updatePageIndex(pageNum);
-        this._resetStep(currentPage, pageNum, isSessions, isTrainLater);
+        if(currentPage === 4 && this.state.isFromHKContinue) {
+            // lets go back to HK
+            this.setState(
+                { isFromHKContinue: false, },
+                () => this._updatePageIndex(1),
+            );
+            this._resetStep(currentPage, 1, false);
+        } else if(currentPage === 4 && this.state.isFromManualSessionContinue) {
+            // lets go back to sport builder
+            this.setState(
+                { isFromManualSessionContinue: false, },
+                () => this._updatePageIndex((this.state.pageIndex - 1)),
+            );
+            this._resetStep(currentPage, (this.state.pageIndex - 1), true);
+        } else {
+            const {
+                dailyReadiness,
+                healthKitWorkouts,
+                soreBodyParts,
+            } = this.props;
+            let { newSoreBodyParts, } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
+            let { isTrainLater, pageNum, } = PlanLogic.handleReadinessSurveyPreviousPage(this.state, currentPage, newSoreBodyParts, healthKitWorkouts, dailyReadiness);
+            this._updatePageIndex(pageNum);
+            this._resetStep(currentPage, pageNum, isSessions, isTrainLater);
+        }
     }
 
-    _updatePageIndex = pageNum => {
+    _updatePageIndex = (pageNum, callback) => {
         this.pages.scrollToPage(pageNum);
-        this.setState({ pageIndex: pageNum, });
+        this.setState(
+            { pageIndex: pageNum, },
+            () => callback && callback()
+        );
     }
 
     _resetStep = (currentStep, nextStep, isSessions, isTrainLater) => {
@@ -153,8 +182,10 @@ class ReadinessSurvey extends Component {
         }
         if(isSessions) {
             let lastSessionsIndex = _.findLastIndex(dailyReadiness.sessions);
-            handleFormChange(`sessions[${lastSessionsIndex}].post_session_survey.RPE`, null);
-            this.sportScheduleBuilderRefs[lastSessionsIndex]._resetStep(false);
+            if(lastSessionsIndex === 0 || lastSessionsIndex > 0) {
+                handleFormChange(`sessions[${lastSessionsIndex}].post_session_survey.RPE`, null);
+                this.sportScheduleBuilderRefs[lastSessionsIndex]._resetStep(false);
+            }
         }
     }
 
@@ -179,36 +210,37 @@ class ReadinessSurvey extends Component {
     }
 
     _addSession = () => {
-        let newSession = {
-            description:         '',
-            duration:            null,
-            event_date:          null,
-            post_session_survey: {
-                RPE:        null,
-                event_date: null,
-                soreness:   [],
-            },
-            session_type:                   null,
-            sport_name:                     null,
-            strength_and_conditioning_type: null,
-        };
         let newSessions = _.cloneDeep(this.props.dailyReadiness.sessions);
-        newSessions.push(newSession);
+        newSessions.push(PlanLogic.returnEmptySession());
         this.props.handleFormChange('sessions', newSessions);
-        this._checkNextStep(this.state.pageIndex);
+        this._checkNextStep(3);
     }
 
     _handleSportScheduleBuilderGoBack = index => {
-        const { handleFormChange, } = this.props;
+        const { dailyReadiness, handleFormChange, } = this.props;
         const { pageIndex, } = this.state;
-        if(index === 0) { // going back to trained already screen
+        if(index === 0 && this.state.isFromHKAddSession) {
+            // lets go back to HK
+            this.setState(
+                { isFromHKAddSession: false, },
+                () => this._updatePageIndex(1),
+            );
+            this.setState({ resetHealthKitFirstPage: true, }, () => this.setState({ resetHealthKitFirstPage: false, }));
+        } else if(index === 0 && !this.state.isFromHKAddSession) { // going back to trained already screen
             this.setState({ lockAlreadyTrainedBtn: !this.state.lockAlreadyTrainedBtn, });
             handleFormChange('already_trained_number', null);
         } else {
             handleFormChange(`sessions[${(index - 1)}].post_session_survey.RPE`, null);
             this.sportScheduleBuilderRefs[(index - 1)]._resetStep(false);
         }
-        this._updatePageIndex(pageIndex - 1);
+        this._updatePageIndex((pageIndex - 1), () => {
+            if(index !== 0) {
+                // remove index
+                let newSessions = _.cloneDeep(dailyReadiness.sessions);
+                newSessions = _.filter(newSessions, (session, i) => i !== index || (session.post_session_survey.RPE === 0 || session.post_session_survey.RPE > 0));
+                handleFormChange('sessions', newSessions);
+            }
+        });
     }
 
     _scrollToBottom = scrollViewRef => {
@@ -250,16 +282,14 @@ class ReadinessSurvey extends Component {
     _handleEnableAppleHealthKit = (firstTimeExperienceValue, healthKitFlag) => {
         const { user, } = this.props;
         this.setState({ isAppleHealthKitLoading: true, });
-        AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date)
+        AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
+            .then(() => AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date))
             .then(() => {
-                AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
-                    .then(() => {
-                        this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue, () => {
-                            this.props.handleUpdateUserHealthKitFlag(healthKitFlag, () => {
-                                this.setState({ isAppleHealthKitLoading: false, isAppleHealthModalOpen: false, });
-                            });
-                        });
+                this.props.handleUpdateFirstTimeExperience(firstTimeExperienceValue, () => {
+                    this.props.handleUpdateUserHealthKitFlag(healthKitFlag, () => {
+                        this.setState({ isAppleHealthKitLoading: false, isAppleHealthModalOpen: false, });
                     });
+                });
             });
     }
 
@@ -285,13 +315,10 @@ class ReadinessSurvey extends Component {
         } = this.props;
         const { isActionButtonVisible, isCloseToBottom, pageIndex, resetHealthKitFirstPage, resetSportBuilderFirstPage, } = this.state;
         let {
-            functionalStrengthTodaySubtext,
-            isFirstFunctionalStrength,
             isFormValidItems,
             isSecondFunctionalStrength,
             newSoreBodyParts,
             partOfDay,
-            selectedSportPositions,
         } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, dailyReadiness.soreness);
         let isFABVisible = areaOfSorenessClicked && isActionButtonVisible && areaOfSorenessClicked.length > 0;
@@ -306,7 +333,7 @@ class ReadinessSurvey extends Component {
                 <Pages
                     indicatorPosition={'none'}
                     ref={(pages) => { this.pages = pages; }}
-                    startPlay={pageIndex}
+                    startPage={pageIndex}
                 >
 
                     <View style={{flex: 1,}}>
@@ -362,7 +389,7 @@ class ReadinessSurvey extends Component {
                         { healthKitWorkouts && healthKitWorkouts.length > 0 &&
                             <HealthKitWorkouts
                                 handleHealthDataFormChange={handleHealthDataFormChange}
-                                handleNextStep={isHealthKitValid => this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, isHealthKitValid)}
+                                handleNextStep={(isHealthKitValid, isHKNextStep) => this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, isHealthKitValid, isHKNextStep)}
                                 handleToggleSurvey={() => this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, true)}
                                 resetFirstPage={resetHealthKitFirstPage}
                                 workouts={healthKitWorkouts}
@@ -371,94 +398,90 @@ class ReadinessSurvey extends Component {
                     </View>
 
                     <View style={{flex: 1,}}>
-                        { !healthKitWorkouts &&
-                            <View style={{flex: 1,}}>
-                                <ProgressPill
-                                    currentStep={1}
-                                    onBack={healthKitWorkouts ? () => this._renderPreviousPage(2) : null}
-                                    totalSteps={3}
-                                />
-                                <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
-                                    <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Have you already trained today?'}</Text>
-                                    <Spacer size={20} />
-                                    <View style={{flexDirection: 'row', justifyContent: 'space-between', width: 220,}}>
-                                        <TouchableHighlight
-                                            onPress={() => {
-                                                if(!this.state.lockAlreadyTrainedBtn) {
-                                                    this.setState(
-                                                        { lockAlreadyTrainedBtn: !this.state.lockAlreadyTrainedBtn},
-                                                        () => {
-                                                            handleFormChange('already_trained_number', false);
-                                                            this._checkNextStep(this.state.pageIndex);
-                                                        }
-                                                    );
+                        <ProgressPill
+                            currentStep={1}
+                            onBack={healthKitWorkouts ? () => this._renderPreviousPage(2) : null}
+                            totalSteps={3}
+                        />
+                        <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Have you already trained today?'}</Text>
+                            <Spacer size={20} />
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: 220,}}>
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        if(!this.state.lockAlreadyTrainedBtn) {
+                                            this.setState(
+                                                { lockAlreadyTrainedBtn: !this.state.lockAlreadyTrainedBtn},
+                                                () => {
+                                                    handleFormChange('already_trained_number', false);
+                                                    this._checkNextStep(this.state.pageIndex);
                                                 }
-                                            }}
-                                            style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
-                                                backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
-                                            }]}
-                                            underlayColor={AppColors.transparent}
-                                        >
-                                            <Text
-                                                oswaldMedium
-                                                style={[
-                                                    AppStyles.textCenterAligned,
-                                                    {
-                                                        color:    dailyReadiness.already_trained_number === false ? AppColors.white : AppColors.zeplin.blueGrey,
-                                                        fontSize: AppFonts.scaleFont(27),
-                                                    }
-                                                ]}
-                                            >
-                                                {'NO'}
-                                            </Text>
-                                        </TouchableHighlight>
-                                        <TouchableHighlight
-                                            onPress={() => {
-                                                if(!this.state.lockAlreadyTrainedBtn) {
-                                                    this.setState(
-                                                        { lockAlreadyTrainedBtn: !this.state.lockAlreadyTrainedBtn},
-                                                        () => {
-                                                            this._resetSportBuilder();
-                                                            handleFormChange('already_trained_number', 1);
-                                                            this._checkNextStep(this.state.pageIndex);
-                                                        }
-                                                    );
+                                            );
+                                        }
+                                    }}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.already_trained_number === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.already_trained_number === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'NO'}
+                                    </Text>
+                                </TouchableHighlight>
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        if(!this.state.lockAlreadyTrainedBtn) {
+                                            this.setState(
+                                                { lockAlreadyTrainedBtn: !this.state.lockAlreadyTrainedBtn},
+                                                () => {
+                                                    this._resetSportBuilder();
+                                                    handleFormChange('already_trained_number', 1);
+                                                    this._checkNextStep(this.state.pageIndex);
                                                 }
-                                            }}
-                                            style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
-                                                backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
-                                            }]}
-                                            underlayColor={AppColors.transparent}
-                                        >
-                                            <Text
-                                                oswaldMedium
-                                                style={[
-                                                    AppStyles.textCenterAligned,
-                                                    {
-                                                        color:    dailyReadiness.already_trained_number === 1 ? AppColors.white : AppColors.zeplin.blueGrey,
-                                                        fontSize: AppFonts.scaleFont(27),
-                                                    }
-                                                ]}
-                                            >
-                                                {'YES'}
-                                            </Text>
-                                        </TouchableHighlight>
-                                    </View>
-                                </View>
-                                <Spacer size={AppSizes.progressPillsHeight + AppSizes.statusBarHeight} />
+                                            );
+                                        }
+                                    }}
+                                    style={[AppStyles.xxLrgCircle, styles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: dailyReadiness.already_trained_number === 1 ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    dailyReadiness.already_trained_number === 1 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'YES'}
+                                    </Text>
+                                </TouchableHighlight>
                             </View>
-                        }
+                        </View>
+                        <Spacer size={AppSizes.progressPillsHeight + AppSizes.statusBarHeight} />
                     </View>
 
                     { dailyReadiness.sessions && dailyReadiness.sessions.length > 0 ? _.map(dailyReadiness.sessions, (session, index) => {
-                        const { isRPEValid, isSportValid, sportText, } = PlanLogic.handleSingleSessionValidation(session, this.sportScheduleBuilderRefs[index]);
+                        const { isRPEValid, isSportValid, } = PlanLogic.handleSingleSessionValidation(session, this.sportScheduleBuilderRefs[index]);
                         return(
                             <View key={index} style={{flex: 1,}}>
                                 <SportScheduleBuilder
                                     backNextButtonOptions={{
                                         isValid:  isRPEValid && isSportValid,
                                         onBack:   () => this._addSession(),
-                                        onSubmit: () => this._checkNextStep(3),
+                                        onSubmit: () => this.setState({ isFromManualSessionContinue: true, } , () => this._checkNextStep(3)),
                                     }}
                                     goBack={() => this._handleSportScheduleBuilderGoBack(index)}
                                     handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
@@ -651,7 +674,7 @@ class ReadinessSurvey extends Component {
                             user={user}
                         />
                         <BackNextButtons
-                            handleFormSubmit={() => handleFormSubmit()}
+                            handleFormSubmit={() => handleFormSubmit(isSecondFunctionalStrength)}
                             isValid={this.areasOfSorenessRef && this.areasOfSorenessRef.state && !this.areasOfSorenessRef.state.isAllGood && !this.areasOfSorenessRef.state.showWholeArea ?
                                 false
                                 :
@@ -714,7 +737,7 @@ class ReadinessSurvey extends Component {
                             </View>
                         ))}
                         <BackNextButtons
-                            handleFormSubmit={() => handleFormSubmit()}
+                            handleFormSubmit={() => handleFormSubmit(isSecondFunctionalStrength)}
                             isValid={isFormValidItems.areAreasOfSorenessValid}
                             onNextClick={() => this._renderNextPage(7, isFormValidItems)}
                             showSubmitBtn={true}
@@ -750,12 +773,12 @@ class ReadinessSurvey extends Component {
                     toggleSlideUpPanel={isExpanded => this._toggleSlideUpPanel(isExpanded)}
                 />
 
-                {/*<EnableAppleHealthKit
+                <EnableAppleHealthKit
                     handleSkip={value => this._handleSkipAppleHealthKit(value)}
                     handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
                     isLoading={this.state.isAppleHealthKitLoading}
                     isModalOpen={this.state.isAppleHealthModalOpen}
-                />*/}
+                />
 
             </View>
         )
