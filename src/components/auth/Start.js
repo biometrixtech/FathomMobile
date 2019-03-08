@@ -219,7 +219,6 @@ class Start extends Component {
                 const error = AppAPI.handleError(err);
                 console.log('err',error);
                 this.setState({ isLoggingIn: false, });
-                AppUtil.handleAPIErrorAlert(error);
                 // this._routeToLogin();
             });
     }

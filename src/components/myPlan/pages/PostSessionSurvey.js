@@ -126,10 +126,11 @@ class PostSessionSurvey extends Component {
     }
 
     _addSession = () => {
+        const { pageIndex, } = this.state;
         let newSessions = _.cloneDeep(this.props.postSession.sessions);
         newSessions.push(PlanLogic.returnEmptySession());
         this.props.handleFormChange('sessions', newSessions);
-        this._checkNextStep(1);
+        this._updatePageIndex((pageIndex + 1));
     }
 
     _handleSportScheduleBuilderGoBack = index => {
