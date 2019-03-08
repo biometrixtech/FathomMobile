@@ -163,9 +163,12 @@ class ReadinessSurvey extends Component {
         }
     }
 
-    _updatePageIndex = pageNum => {
+    _updatePageIndex = (pageNum, callback) => {
         this.pages.scrollToPage(pageNum);
-        this.setState({ pageIndex: pageNum, });
+        this.setState(
+            { pageIndex: pageNum, },
+            () => callback && callback()
+        );
     }
 
     _resetStep = (currentStep, nextStep, isSessions, isTrainLater) => {
@@ -214,7 +217,7 @@ class ReadinessSurvey extends Component {
     }
 
     _handleSportScheduleBuilderGoBack = index => {
-        const { handleFormChange, } = this.props;
+        const { dailyReadiness, handleFormChange, } = this.props;
         const { pageIndex, } = this.state;
         if(index === 0 && this.state.isFromHKAddSession) {
             // lets go back to HK
@@ -230,7 +233,14 @@ class ReadinessSurvey extends Component {
             handleFormChange(`sessions[${(index - 1)}].post_session_survey.RPE`, null);
             this.sportScheduleBuilderRefs[(index - 1)]._resetStep(false);
         }
-        this._updatePageIndex(pageIndex - 1);
+        this._updatePageIndex((pageIndex - 1), () => {
+            if(index !== 0) {
+                // remove index
+                let newSessions = _.cloneDeep(dailyReadiness.sessions);
+                newSessions = _.filter(newSessions, (session, i) => i !== index || (session.post_session_survey.RPE === 0 || session.post_session_survey.RPE > 0));
+                handleFormChange('sessions', newSessions);
+            }
+        });
     }
 
     _scrollToBottom = scrollViewRef => {

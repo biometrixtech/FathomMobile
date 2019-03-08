@@ -93,9 +93,12 @@ class PostSessionSurvey extends Component {
         this._resetStep(currentPage);
     }
 
-    _updatePageIndex = pageNum => {
+    _updatePageIndex = (pageNum, callback) => {
         this.pages.scrollToPage(pageNum);
-        this.setState({ isActionButtonVisible: false, pageIndex: pageNum, });
+        this.setState(
+            { isActionButtonVisible: false, pageIndex: pageNum, },
+            () => callback && callback()
+        );
     }
 
     _resetStep = currentStep => {
@@ -126,15 +129,20 @@ class PostSessionSurvey extends Component {
         let newSessions = _.cloneDeep(this.props.postSession.sessions);
         newSessions.push(PlanLogic.returnEmptySession());
         this.props.handleFormChange('sessions', newSessions);
-        this._checkNextStep(this.state.pageIndex);
+        this._checkNextStep(1);
     }
 
     _handleSportScheduleBuilderGoBack = index => {
-        const { handleFormChange, } = this.props;
+        const { handleFormChange, postSession, } = this.props;
         const { pageIndex, } = this.state;
         handleFormChange(`sessions[${(index - 1)}].post_session_survey.RPE`, null);
         this.sportScheduleBuilderRefs[(index - 1)]._resetStep(false);
-        this._updatePageIndex((pageIndex - 1));
+        this._updatePageIndex((pageIndex - 1), () => {
+            // remove index
+            let newSessions = _.cloneDeep(postSession.sessions);
+            newSessions = _.filter(newSessions, (session, i) => i !== index || (session.post_session_survey.RPE === 0 || session.post_session_survey.RPE > 0));
+            handleFormChange('sessions', newSessions);
+        });
     }
 
     _scrollTo = (myComponentsLocation, scrollViewRef) => {
