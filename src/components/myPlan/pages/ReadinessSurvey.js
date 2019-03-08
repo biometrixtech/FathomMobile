@@ -210,7 +210,7 @@ class ReadinessSurvey extends Component {
         let newSessions = _.cloneDeep(this.props.dailyReadiness.sessions);
         newSessions.push(PlanLogic.returnEmptySession());
         this.props.handleFormChange('sessions', newSessions);
-        this._checkNextStep(this.state.pageIndex);
+        this._checkNextStep(3);
     }
 
     _handleSportScheduleBuilderGoBack = index => {
@@ -473,7 +473,6 @@ class ReadinessSurvey extends Component {
                                         onBack:   () => this._addSession(),
                                         onSubmit: () => this.setState({ isFromManualSessionContinue: true, } , () => this._checkNextStep(3)),
                                     }}
-                                    // this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, isHealthKitValid, isHKNextStep)
                                     goBack={() => this._handleSportScheduleBuilderGoBack(index)}
                                     handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
                                         handleFormChange(`sessions[${index}].${location}`, value, isPain, bodyPartMapIndex, bodyPartSide);

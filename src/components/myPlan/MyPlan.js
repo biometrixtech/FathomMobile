@@ -520,7 +520,7 @@ class MyPlan extends Component {
     }
 
     _handlePostSessionSurveySubmit = areAllDeleted => {
-        let { newPostSession, newTrainObject, } = PlanLogic.handlePostSessionSurveySubmitLogic(this.props.user.id, this.state.postSession, this.state.train, this.state.healthData);
+        let { newPostSession, newPostSessionSessions, newTrainObject, } = PlanLogic.handlePostSessionSurveySubmitLogic(this.props.user.id, this.state.postSession, this.state.train, this.state.healthData);
         _.delay(() => {
             this.setState(
                 {
@@ -531,7 +531,7 @@ class MyPlan extends Component {
                     isTrainSessionsCompletionModalOpen: !areAllDeleted,
                     postSession:                        {
                         description: '',
-                        sessions:    newPostSession && newPostSession.sessions && newPostSession.sessions.length > 0 ? _.filter(newPostSession.sessions, o => !o.deleted && !o.ignored) : [],
+                        sessions:    newPostSessionSessions,
                         soreness:    [],
                     },
                 },
@@ -624,38 +624,31 @@ class MyPlan extends Component {
         if (!this.state.isPostSessionSurveyModalOpen) {
             this.props.getSoreBodyParts()
                 .then(soreBodyParts => {
-                    let newDailyReadiness = _.cloneDeep(this.state.postSession);
-                    newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
+                    let newPostSession = _.cloneDeep(defaultPlanState.postSession);
+                    newPostSession.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
                     _.delay(() =>
                         this.setState({
                             isPostSessionSurveyModalOpen: true,
                             loading:                      false,
-                            postSession:                  newDailyReadiness,
+                            postSession:                  newPostSession,
                             showLoadingText:              false,
                         })
                     , 500);
                 })
                 .catch(err => {
                     // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
-                    let newDailyReadiness = _.cloneDeep(this.state.postSession);
-                    newDailyReadiness.soreness = [];
+                    let newPostSession = _.cloneDeep(defaultPlanState.postSession);
+                    newPostSession.soreness = [];
                     this.setState({
                         isPostSessionSurveyModalOpen: true,
                         loading:                      false,
-                        postSession:                  newDailyReadiness,
+                        postSession:                  newPostSession,
                         showLoadingText:              false,
                     });
                     AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
                 });
         } else {
-            let newPostSession = _.cloneDeep(this.state.postSession);
-            newPostSession.description = '';
-            newPostSession.duration = 0;
-            newPostSession.event_date = null;
-            newPostSession.session_type = null;
-            newPostSession.sport_name = null;
-            newPostSession.strength_and_conditioning_type = null;
-            newPostSession.RPE = null;
+            let newPostSession = _.cloneDeep(defaultPlanState.postSession);
             this.props.clearCompletedExercises();
             _.delay(() => {
                 this.setState({

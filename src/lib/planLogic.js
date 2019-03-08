@@ -948,8 +948,13 @@ const PlanLogic = {
         let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCompleted = true;
         newTrainObject.postPracticeSurveys[postPracticeSurveysLastIndex].isPostPracticeSurveyCollapsed = true;
+        let newPostSessionSessions = newPostSession && newPostSession.sessions && newPostSession.sessions.length > 0 ?
+            _.filter(newPostSession.sessions, o => !o.deleted && !o.ignored)
+            :
+            [PlanLogic.returnEmptySession()];
         return {
             newPostSession,
+            newPostSessionSessions,
             newTrainObject,
         };
     },
