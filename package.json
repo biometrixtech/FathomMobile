@@ -1,6 +1,6 @@
 {
   "name": "fathom",
-  "version": "2.8.1",
+  "version": "2.9.0",
   "private": true,
   "author": "Mazen Chami",
   "scripts": {
@@ -10,7 +10,8 @@
     "ios": "react-native run-ios --simulator='iPhone X'",
     "pretest": "./node_modules/.bin/eslint -c .eslintrc --quiet --ext .js src",
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest",
+    "test": "jest --config ./jest-config.js",
+    "test-system": "jest --config ./jest-config-system.js",
     "test-watch": "jest --watch"
   },
   "rnpm": {
@@ -18,21 +19,9 @@
       "./assets/fonts"
     ]
   },
-  "jest": {
-    "preset": "react-native",
-    "setupFiles": [
-      "<rootDir>/jest.setup.js"
-    ],
-    "transformIgnorePatterns": [
-      "node_modules/(?!react-native|tcomb-form-native|apsl-react-native-button|react-clone-referenced-element|react-navigation|redux-persist|react-native-vector-icons|rn-apple-healthkit)"
-    ],
-    "testRegex": ".*test.js$",
-    "collectCoverage": false,
-    "coverageDirectory": "__coverage__",
-    "verbose": false,
-    "bail": true
-  },
   "dependencies": {
+    "es6-promise": "^4.2.6",
+    "isomorphic-fetch": "^2.2.1",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.10",
     "lottie-react-native": "^2.5.11",

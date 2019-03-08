@@ -78,85 +78,115 @@ class SVGImage extends Component {
         const { image } = this.props;
         /* eslint-disable indent */
         let imageName = image === 'Abs.svg' ?
-            require('../../../assets/images/body/Abs.png')
-          : image === 'Hip.svg' ?
-            require('../../../assets/images/body/Hip.png')
-          : image === 'L_Hip.svg' ?
-            require('../../../assets/images/body/L_Hip.png')
-          : image === 'R_Hip.svg' ?
-            require('../../../assets/images/body/R_Hip.png')
-          : image === 'Groin.svg' ?
-            require('../../../assets/images/body/Groin.png')
-          : image === 'L_Groin.svg' ?
-            require('../../../assets/images/body/L_Groin.png')
-          : image === 'R_Groin.svg' ?
-            require('../../../assets/images/body/R_Groin.png')
-          : image === 'Quad.svg' ?
-            require('../../../assets/images/body/Quad.png')
-          : image === 'L_Quad.svg' ?
-            require('../../../assets/images/body/L_Quad.png')
-          : image === 'R_Quad.svg' ?
-            require('../../../assets/images/body/R_Quad.png')
-          : image === 'Knee.svg' ?
-            require('../../../assets/images/body/Knee.png')
-          : image === 'L_Knee.svg' ?
-            require('../../../assets/images/body/L_Knee.png')
-          : image === 'R_Knee.svg' ?
-            require('../../../assets/images/body/R_Knee.png')
-          : image === 'Shin.svg' ?
-            require('../../../assets/images/body/Shin.png')
-          : image === 'L_Shin.svg' ?
-            require('../../../assets/images/body/L_Shin.png')
-          : image === 'R_Shin.svg' ?
-            require('../../../assets/images/body/R_Shin.png')
-          : image === 'Ankle.svg' ?
-            require('../../../assets/images/body/Ankle.png')
-          : image === 'L_Ankle.svg' ?
-            require('../../../assets/images/body/L_Ankle.png')
-          : image === 'R_Ankle.svg' ?
-            require('../../../assets/images/body/R_Ankle.png')
-          : image === 'Foot.svg' ?
-            require('../../../assets/images/body/Foot.png')
-          : image === 'L_Foot.svg' ?
-            require('../../../assets/images/body/L_Foot.png')
-          : image === 'R_Foot.svg' ?
-            require('../../../assets/images/body/R_Foot.png')
-          : image === 'ITBand.svg' ?
-            require('../../../assets/images/body/ITBand.png')
-          : image === 'L_ITBand.svg' ?
-            require('../../../assets/images/body/L_ITBand.png')
-          : image === 'R_ITBand.svg' ?
-            require('../../../assets/images/body/R_ITBand.png')
-          : image === 'LowBack.svg' ?
-            require('../../../assets/images/body/LowBack.png')
-          : image === 'Glute.svg' ?
-            require('../../../assets/images/body/Glute.png')
-          : image === 'L_Glute.svg' ?
-            require('../../../assets/images/body/L_Glute.png')
-          : image === 'R_Glute.svg' ?
-            require('../../../assets/images/body/R_Glute.png')
-          : image === 'Hamstring.svg' ?
-            require('../../../assets/images/body/Hamstring.png')
-          : image === 'L_Hamstring.svg' ?
-            require('../../../assets/images/body/L_Hamstring.png')
-          : image === 'R_Hamstring.svg' ?
-            require('../../../assets/images/body/R_Hamstring.png')
-          : image === 'Calf.svg' ?
-            require('../../../assets/images/body/Calf.png')
-          : image === 'L_Calf.svg' ?
-            require('../../../assets/images/body/L_Calf.png')
-          : image === 'R_Calf.svg' ?
-            require('../../../assets/images/body/R_Calf.png')
-          : image === 'Achilles.svg' ?
-            require('../../../assets/images/body/Achilles.png')
-          : image === 'L_Achilles.svg' ?
-            require('../../../assets/images/body/L_Achilles.png')
-          : image === 'R_Achilles.svg' ?
-            require('../../../assets/images/body/R_Achilles.png')
-          : image === 'UpperBackNeck.svg' ?
-            require('../../../assets/images/body/UpperBackNeck.png')
-          :
-            require('../../../assets/images/body/Abs.png');
+                require('../../../assets/images/body/Abs.png')
+            : image === 'Hip.svg' ?
+                require('../../../assets/images/body/Hip.png')
+            : image === 'L_Hip.svg' ?
+                require('../../../assets/images/body/L_Hip.png')
+            : image === 'R_Hip.svg' ?
+                require('../../../assets/images/body/R_Hip.png')
+            : image === 'Groin.svg' ?
+                require('../../../assets/images/body/Groin.png')
+            : image === 'L_Groin.svg' ?
+                require('../../../assets/images/body/L_Groin.png')
+            : image === 'R_Groin.svg' ?
+                require('../../../assets/images/body/R_Groin.png')
+            : image === 'Quad.svg' ?
+                require('../../../assets/images/body/Quad.png')
+            : image === 'L_Quad.svg' ?
+                require('../../../assets/images/body/L_Quad.png')
+            : image === 'R_Quad.svg' ?
+                require('../../../assets/images/body/R_Quad.png')
+            : image === 'Knee.svg' ?
+                require('../../../assets/images/body/Knee.png')
+            : image === 'L_Knee.svg' ?
+                require('../../../assets/images/body/L_Knee.png')
+            : image === 'R_Knee.svg' ?
+                require('../../../assets/images/body/R_Knee.png')
+            : image === 'Shin.svg' ?
+                require('../../../assets/images/body/Shin.png')
+            : image === 'L_Shin.svg' ?
+                require('../../../assets/images/body/L_Shin.png')
+            : image === 'R_Shin.svg' ?
+                require('../../../assets/images/body/R_Shin.png')
+            : image === 'Ankle.svg' ?
+                require('../../../assets/images/body/Ankle.png')
+            : image === 'L_Ankle.svg' ?
+                require('../../../assets/images/body/L_Ankle.png')
+            : image === 'R_Ankle.svg' ?
+                require('../../../assets/images/body/R_Ankle.png')
+            : image === 'Foot.svg' ?
+                require('../../../assets/images/body/Foot.png')
+            : image === 'L_Foot.svg' ?
+                require('../../../assets/images/body/L_Foot.png')
+            : image === 'R_Foot.svg' ?
+                require('../../../assets/images/body/R_Foot.png')
+            : image === 'ITBand.svg' ?
+                require('../../../assets/images/body/ITBand.png')
+            : image === 'L_ITBand.svg' ?
+                require('../../../assets/images/body/L_ITBand.png')
+            : image === 'R_ITBand.svg' ?
+                require('../../../assets/images/body/R_ITBand.png')
+            : image === 'LowBack.svg' ?
+                require('../../../assets/images/body/LowBack.png')
+            : image === 'Glute.svg' ?
+                require('../../../assets/images/body/Glute.png')
+            : image === 'L_Glute.svg' ?
+                require('../../../assets/images/body/L_Glute.png')
+            : image === 'R_Glute.svg' ?
+                require('../../../assets/images/body/R_Glute.png')
+            : image === 'Hamstring.svg' ?
+                require('../../../assets/images/body/Hamstring.png')
+            : image === 'L_Hamstring.svg' ?
+                require('../../../assets/images/body/L_Hamstring.png')
+            : image === 'R_Hamstring.svg' ?
+                require('../../../assets/images/body/R_Hamstring.png')
+            : image === 'Calf.svg' ?
+                require('../../../assets/images/body/Calf.png')
+            : image === 'L_Calf.svg' ?
+                require('../../../assets/images/body/L_Calf.png')
+            : image === 'R_Calf.svg' ?
+                require('../../../assets/images/body/R_Calf.png')
+            : image === 'Achilles.svg' ?
+                require('../../../assets/images/body/Achilles.png')
+            : image === 'L_Achilles.svg' ?
+                require('../../../assets/images/body/L_Achilles.png')
+            : image === 'R_Achilles.svg' ?
+                require('../../../assets/images/body/R_Achilles.png')
+            : image === 'UpperBackNeck.svg' ?
+                require('../../../assets/images/body/UpperBackNeck.png')
+            : image === 'Shoulder.svg' ?
+                require('../../../assets/images/body/Shoulder.png')
+            : image === 'L_Shoulder.svg' ?
+                require('../../../assets/images/body/L_Shoulder.png')
+            : image === 'R_Shoulder.svg' ?
+                require('../../../assets/images/body/R_Shoulder.png')
+            : image === 'Elbow.svg' ?
+                require('../../../assets/images/body/Elbow.png')
+            : image === 'L_Elbow.svg' ?
+                require('../../../assets/images/body/L_Elbow.png')
+            : image === 'R_Elbow.svg' ?
+                require('../../../assets/images/body/R_Elbow.png')
+            : image === 'Lats.svg' ?
+                require('../../../assets/images/body/Lats.png')
+            : image === 'L_Lats.svg' ?
+                require('../../../assets/images/body/L_Lats.png')
+            : image === 'R_Lats.svg' ?
+                require('../../../assets/images/body/R_Lats.png')
+            : image === 'Wrist.svg' ?
+                require('../../../assets/images/body/Wrist.png')
+            : image === 'L_Wrist.svg' ?
+                require('../../../assets/images/body/L_Wrist.png')
+            : image === 'R_Wrist.svg' ?
+                require('../../../assets/images/body/R_Wrist.png')
+            : image === 'Pec.svg' ?
+                require('../../../assets/images/body/Pec.png')
+            : image === 'L_Pec.svg' ?
+                require('../../../assets/images/body/L_Pec.png')
+            : image === 'R_Pec.svg' ?
+                require('../../../assets/images/body/R_Pec.png')
+            :
+                require('../../../assets/images/body/Abs.png');
         return imageName;
     }
 

@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
         alignItems:        'center',
         alignSelf:         'stretch',
         borderRadius:      4,
-        flex:              1,
         overflow:          'visible',
         paddingHorizontal: 50,
     },
@@ -98,26 +97,13 @@ class ExerciseCompletionModal extends Component {
         });
     }
 
-    _resizeModal = ev => {
-        let oldHeight = this.state.modalStyle.height;
-        let newHeight = parseInt(ev.nativeEvent.layout.height, 10);
-        if(oldHeight !== newHeight) {
-            this.setState({ modalStyle: {height: newHeight} });
-        }
-    }
-
     _closeModal = callback => {
         const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises, this.props.isFS);
         let newProgressCounters = _.cloneDeep(this.state.progressCounters);
         _.map(completionModalExerciseList, (exerciseGroup, group) => {
             newProgressCounters[group] = 0;
             this.setState(
-                {
-                    modalStyle: {
-                        height: 200,
-                    },
-                    progressCounters: newProgressCounters,
-                },
+                { progressCounters: newProgressCounters, },
                 () => { if(this.animation[group] && this.animation[group].reset) { this.animation[group].reset(); } }
             );
         });
@@ -134,7 +120,7 @@ class ExerciseCompletionModal extends Component {
             onComplete,
             user,
         } = this.props;
-        const { modalStyle, progressCounters, } = this.state;
+        const { progressCounters, } = this.state;
         const isCompleted = completedExercises.length === exerciseList.totalLength;
         const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(exerciseList, completedExercises, this.props.isFS);
         let sessionIconWidth = ((modalWidth / 3) - 5);
@@ -158,20 +144,14 @@ class ExerciseCompletionModal extends Component {
                 swipeToClose={false}
                 useNativeDriver={false}
             >
-                <View
-                    style={[
-                        modalStyle,
-                        Platform.OS === 'ios' ? styles.shadowEffect : {elevation: 2},
-                        {backgroundColor: AppColors.transparent, width: modalWidth,}
-                    ]}
-                >
+                <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center', width: modalWidth,}}>
                     <LinearGradient
                         colors={[AppColors.zeplin.lightNavy, AppColors.zeplin.darkBlue, AppColors.zeplin.darkNavy, AppColors.black]}
                         start={{x: 0.0, y: 0.0}}
                         end={{x: 1, y: 1}}
                         style={[styles.linearGradientStyle]}
                     >
-                        <View onLayout={ev => this._resizeModal(ev)}>
+                        <View style={[Platform.OS === 'ios' ? styles.shadowEffect : {elevation: 2}]}>
                             <Spacer size={AppSizes.paddingXLrg} />
                             <View style={[styles.iconRowWrapper]}>
                                 {_.map(completionModalExerciseList, (exerciseGroup, group) => {

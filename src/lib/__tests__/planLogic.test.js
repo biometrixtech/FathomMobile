@@ -547,23 +547,28 @@ const helperFunctions = {
     getAreaOfSorenessFullGroupedBodyPartMap: () => {
         return {
             back: [
-                {index: 12, order: 11, label: 'Lower Back', location: 'back', group: 'muscle', image: {0: 'LowBack.svg'}, bilateral: false, helping_verb: 'has'},
-                {index: 14, order: 12, label: 'Glutes', location: 'back', group: 'muscle', image: {0: 'Glute.svg', 1: 'L_Glute.svg', 2: 'R_Glute.svg'}, bilateral: true, helping_verb: 'has'},
-                {index: 15, order: 13, label: 'Hamstrings', location: 'back', group: 'muscle', image: {0: 'Hamstring.svg', 1: 'L_Hamstring.svg', 2: 'R_Hamstring.svg'}, bilateral: true, helping_verb: 'has'},
-                {index: 16, order: 14, label: 'Calves', location: 'back', group: 'muscle', image: {0: 'Calf.svg', 1: 'L_Calf.svg', 2: 'R_Calf.svg'}, bilateral: true, helping_verb: 'has'},
-                {index: 17, order: 15, label: 'Achilles', location: 'back', group: 'joint', image: {0: 'Achilles.svg', 1: 'L_Achilles.svg', 2: 'R_Achilles.svg'}, bilateral: true, helping_verb: 'has'},
-                {index: 18, order: 10, label: 'Upper Back', location: 'back', group: 'muscle', image: {0: 'UpperBackNeck.svg'}, bilateral: false, helping_verb: 'has'},
+                {index: 1, order: 15, label: 'Shoulder', location: 'back', group: 'muscle', image: {0: 'Shoulder.svg', 1: 'L_Shoulder.svg', 2: 'R_Shoulder.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 12, order: 14, label: 'Lower Back', location: 'back', group: 'muscle', image: {0: 'LowBack.svg'}, bilateral: false, helping_verb: 'has'},
+                {index: 14, order: 17, label: 'Glutes', location: 'back', group: 'muscle', image: {0: 'Glute.svg', 1: 'L_Glute.svg', 2: 'R_Glute.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 15, order: 18, label: 'Hamstrings', location: 'back', group: 'muscle', image: {0: 'Hamstring.svg', 1: 'L_Hamstring.svg', 2: 'R_Hamstring.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 16, order: 19, label: 'Calves', location: 'back', group: 'muscle', image: {0: 'Calf.svg', 1: 'L_Calf.svg', 2: 'R_Calf.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 17, order: 20, label: 'Achilles', location: 'back', group: 'joint', image: {0: 'Achilles.svg', 1: 'L_Achilles.svg', 2: 'R_Achilles.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 18, order: 12, label: 'Upper Back', location: 'back', group: 'muscle', image: {0: 'UpperBackNeck.svg'}, bilateral: false, helping_verb: 'has'},
+                {index: 19, order: 16, label: 'Elbow', location: 'back', group: 'joint', image: {0: 'Elbow.svg', 1: 'L_Elbow.svg', 2: 'R_Elbow.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 21, order: 13, label: 'Lats', location: 'back', group: 'muscle', image: {0: 'Lats.svg', 1: 'L_Lats.svg', 2: 'R_Lats.svg'}, bilateral: true, helping_verb: 'has'},
             ],
             front: [
-                {index: 3, order: 1, label: 'Abdominals', location: 'front', group: 'muscle', image: {0: 'Abs.svg'}, bilateral: false, helping_verb: 'have'},
-                {index: 4, order: 3, label: 'Hip', location: 'front', group: 'joint', image: {0: 'Hip.svg', 1: 'L_Hip.svg', 2: 'R_Hip.svg'}, bilateral: true, helping_verb: 'has'},
-                {index: 5, order: 2, label: 'Groin', location: 'front', group: 'muscle', image: {0: 'Groin.svg', 1: 'L_Groin.svg', 2: 'R_Groin.svg'}, bilateral: true, helping_verb: 'has'},
-                {index: 6, order: 4, label: 'Quads', location: 'front', group: 'muscle', image: {0: 'Quad.svg', 1: 'L_Quad.svg', 2: 'R_Quad.svg'}, bilateral: true, helping_verb: 'has'},
-                {index: 7, order: 6, label: 'Knee', location: 'front', group: 'joint', image: {0: 'Knee.svg', 1: 'L_Knee.svg', 2: 'R_Knee.svg'}, bilateral: true, helping_verb: 'has'},
-                {index: 8, order: 7, label: 'Shin', location: 'front', group: 'muscle', image: {0: 'Shin.svg', 1: 'L_Shin.svg', 2: 'R_Shin.svg'}, bilateral: true, helping_verb: 'has'},
-                {index: 9, order: 8, label: 'Ankle', location: 'front', group: 'joint', image: {0: 'Ankle.svg', 1: 'L_Ankle.svg', 2: 'R_Ankle.svg'}, bilateral: true, helping_verb: 'has'},
-                {index: 10, order: 9, label: 'Foot', location: 'front', group: 'joint', image: {0: 'Foot.svg', 1: 'L_Foot.svg', 2: 'R_Foot.svg'}, bilateral: true, helping_verb: 'has'},
-                {index: 11, order: 5, label: 'IT Band', location: 'front', group: 'muscle', image: {0: 'ITBand.svg', 1: 'L_ITBand.svg', 2: 'R_ITBand.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 2, order: 1, label: 'Pecs', location: 'front', group: 'muscle', image: {0: 'Pec.svg', 1: 'L_Pec.svg', 2: 'R_Pec.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 3, order: 3, label: 'Abdominals', location: 'front', group: 'muscle', image: {0: 'Abs.svg'}, bilateral: false, helping_verb: 'have'},
+                {index: 4, order: 5, label: 'Hip', location: 'front', group: 'joint', image: {0: 'Hip.svg', 1: 'L_Hip.svg', 2: 'R_Hip.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 5, order: 4, label: 'Groin', location: 'front', group: 'muscle', image: {0: 'Groin.svg', 1: 'L_Groin.svg', 2: 'R_Groin.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 6, order: 6, label: 'Quads', location: 'front', group: 'muscle', image: {0: 'Quad.svg', 1: 'L_Quad.svg', 2: 'R_Quad.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 7, order: 8, label: 'Knee', location: 'front', group: 'joint', image: {0: 'Knee.svg', 1: 'L_Knee.svg', 2: 'R_Knee.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 8, order: 9, label: 'Shin', location: 'front', group: 'muscle', image: {0: 'Shin.svg', 1: 'L_Shin.svg', 2: 'R_Shin.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 9, order: 10, label: 'Ankle', location: 'front', group: 'joint', image: {0: 'Ankle.svg', 1: 'L_Ankle.svg', 2: 'R_Ankle.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 10, order: 11, label: 'Foot', location: 'front', group: 'joint', image: {0: 'Foot.svg', 1: 'L_Foot.svg', 2: 'R_Foot.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 11, order: 7, label: 'IT Band', location: 'front', group: 'muscle', image: {0: 'ITBand.svg', 1: 'L_ITBand.svg', 2: 'R_ITBand.svg'}, bilateral: true, helping_verb: 'has'},
+                {index: 20, order: 2, label: 'Wrist', location: 'front', group: 'joint', image: {0: 'Wrist.svg', 1: 'L_Wrist.svg', 2: 'R_Wrist.svg'}, bilateral: true, helping_verb: 'has'},
             ],
         }
     },
@@ -585,7 +590,7 @@ const helperFunctions = {
             index:        14,
             label:        'Glutes',
             location:     'back',
-            order:        12
+            order:        17
         };
         return leftGlute;
     },
@@ -599,7 +604,7 @@ const helperFunctions = {
             index:        12,
             label:        'Lower Back',
             location:     'back',
-            order:        11
+            order:        14
         };
         return lowerBack;
     },
@@ -613,7 +618,7 @@ const helperFunctions = {
             index:        15,
             label:        'Hamstrings',
             location:     'back',
-            order:        13
+            order:        18
         };
         return rightHamstring;
     },
@@ -1059,7 +1064,237 @@ const helperFunctions = {
         }
     },
 
+    getFSModalExpectedResult: (hasPositions, isValid, selectedSportPositions) => {
+        return {
+            hasPositions,
+            isValid,
+            selectedSportPositions,
+        }
+    },
+
+    getExercisesRenderLogicExpectedResult: (availableSectionsCount, cleanedExerciseList, flatListExercises, firstItemIndex) => {
+        return {
+            availableSectionsCount,
+            cleanedExerciseList,
+            flatListExercises,
+            firstItemIndex,
+        }
+    },
+
+    getSingleSectionSampleExerciseList: () => {
+        return {
+            cleanedExerciseList: {'FOAM ROLL': [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}], 'STRETCH': [], 'ACTIVATE': [], 'INTEGRATE': [],},
+            flatListExercises:   [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}],
+        }
+    },
+
+    getTwoSectionsSampleExerciseList: () => {
+        return {
+            cleanedExerciseList: {
+                'FOAM ROLL': [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}],
+                'STRETCH':   [{library_id: 5, set_number: 1,}, {library_id: 6, set_number: 1,}, {library_id: 7, set_number: 1,}, {library_id: 8, set_number: 1,}, {library_id: 9, set_number: 1,}],
+                'ACTIVATE':  [],
+                'INTEGRATE': [],
+            },
+            flatListExercises: [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}, {library_id: 5, set_number: 1,}, {library_id: 6, set_number: 1,}, {library_id: 7, set_number: 1,}, {library_id: 8, set_number: 1,}, {library_id: 9, set_number: 1,}],
+        }
+    },
+
+    getHealthKitWorkoutExpectedResult: (partOfDay, sportDuration, sportImage, sportName, sportStartTime, sportText) => {
+        return {
+            partOfDay,
+            sportDuration,
+            sportImage,
+            sportName,
+            sportStartTime,
+            sportText,
+        }
+    },
+
 };
+
+it('HealthKit Workout Page Render Logic - Evening Tennis', () => {
+    let workout = {
+        sport_name: 79,
+        duration:   100,
+        event_date: '2019-01-10T18:00:00',
+    };
+    let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
+        'evening',
+        100,
+        require('../../../assets/images/sports_images/icons8-taekwondo-200.png'),
+        'Tai Chi',
+        '11:00pm',
+        '11:00pm tai chi workout'
+    );
+    expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
+});
+
+it('HealthKit Workout Page Render Logic - Afternoon Tennis', () => {
+    let workout = {
+        sport_name: 16,
+        duration:   60,
+        event_date: '2019-01-10T11:00:00',
+    };
+    let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
+        'afternoon',
+        60,
+        require('../../../assets/images/sports_images/icons8-tennis-player-200.png'),
+        'Tennis',
+        '4:00pm',
+        '4:00pm tennis workout'
+    );
+    expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
+});
+
+it('HealthKit Workout Page Render Logic - Morning Soccer', () => {
+    let workout = {
+        sport_name: 14,
+        duration:   90,
+        event_date: '2019-01-10T06:00:00',
+    };
+    let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
+        'morning',
+        90,
+        require('../../../assets/images/sports_images/icons8-soccer-200.png'),
+        'Soccer',
+        '11:00am',
+        '11:00am soccer workout'
+    );
+    expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - Two Sections - Selected Item Deeper in List', () => {
+    let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
+    let selectedExercise = {library_id: 8, set_number: 1,};
+    let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
+        2,
+        helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
+        helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
+        8
+    );
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - Two Sections - Selected First Item', () => {
+    let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
+    let selectedExercise = {library_id: 0, set_number: 1,};
+    let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
+        2,
+        helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
+        helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
+        0
+    );
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - Single Section', () => {
+    let exerciseList = helperFunctions.getSingleSectionSampleExerciseList();
+    let selectedExercise = {library_id: 2, set_number: 1,};
+    let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
+        1,
+        helperFunctions.getSingleSectionSampleExerciseList().cleanedExerciseList,
+        helperFunctions.getSingleSectionSampleExerciseList().flatListExercises,
+        2
+    );
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
+});
+
+it('FS Modal Render Logic - Sport (Soccer) WITH Position(s) - NOT Valid', () => {
+    let functionalStrength = {current_sport_name: 14};
+    let expectedResult = helperFunctions.getFSModalExpectedResult(true, false, ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker']);
+    expect(PlanLogic.fsModalRenderLogic(functionalStrength)).toEqual(expectedResult);
+});
+
+it('FS Modal Render Logic - Sport (Soccer) WITH Position(s) - Valid', () => {
+    let functionalStrength = {current_sport_name: 14, current_position: 2,};
+    let expectedResult = helperFunctions.getFSModalExpectedResult(true, true, ['Defender', 'Forward', 'Goalkeeper', 'Midfielder', 'Striker']);
+    expect(PlanLogic.fsModalRenderLogic(functionalStrength)).toEqual(expectedResult);
+});
+
+it('FS Modal Render Logic - Sport (Diving) WITHOUT Position(s) - Valid', () => {
+    let functionalStrength = {current_sport_name: 13};
+    let expectedResult = helperFunctions.getFSModalExpectedResult(false, true, []);
+    expect(PlanLogic.fsModalRenderLogic(functionalStrength)).toEqual(expectedResult);
+});
+
+it('FS Modal Render Logic - Empty State', () => {
+    let functionalStrength = {current_sport_name: null};
+    let expectedResult = helperFunctions.getFSModalExpectedResult(false, false, []);
+    expect(PlanLogic.fsModalRenderLogic(functionalStrength)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 4 (Selected Areas of Soreness)', () => {
+    let currentPage = 4;
+    let pageState = {pageIndex: 6,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - TWO HK SESSIONS', () => {
+    let currentPage = 3;
+    let pageState = {pageIndex: 4,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 1,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, null, [{}, {}])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - TWO SESSIONS', () => {
+    let currentPage = 3;
+    let pageState = {pageIndex: 4,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 2,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, [{}, {}])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - NO Sessions', () => {
+    let currentPage = 3;
+    let pageState = {pageIndex: 4,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 1,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITH Sore Body Parts', () => {
+    let currentPage = 3;
+    let pageState = {pageIndex: 4,};
+    let newSoreBodyParts = [{}];
+    let expectedResult = {pageNum: 3,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 2 (F/U P/S) - NO Sessions', () => {
+    let currentPage = 2;
+    let pageState = {pageIndex: 3,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 0,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, [])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 2 (F/U P/S) - TWO Sessions', () => {
+    let currentPage = 2;
+    let pageState = {pageIndex: 3,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 2,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, [{}, {}])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 1 (Sport Schedule Builder)', () => {
+    let currentPage = 1;
+    let pageState = {pageIndex: 0,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 0,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 0 (HealthKit)', () => {
+    let currentPage = 0;
+    let pageState = {pageIndex: 0,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 0,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
 
 it('Exercises Timer Logic - Nothing Passed', () => {
     let exercises = {};
@@ -1114,88 +1349,104 @@ it('New Sore Body Part Logic - All 3', () => {
     expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
-    let isFormValidItems = {areAreasOfSorenessValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 4, isFormValidItems, false, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 4 (Selected Areas of Soreness) - NOT Valid', () => {
     let isFormValidItems = {areAreasOfSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 4, isFormValidItems, false, [], [])).toEqual(expectedResult);
+    let pageState = { pageIndex: 5, };
+    let expectedResult = {isValid: false, pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 4, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITHOUT New Sore Body Parts', () => {
-    let isFormValidItems = {selectAreasOfSorenessValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, false, [], [])).toEqual(expectedResult);
+it('Post Session Survey Next Page & Validation Logic - Page 4 (Selected Areas of Soreness) - Valid', () => {
+    let isFormValidItems = {areAreasOfSorenessValid: true};
+    let pageState = { pageIndex: 5, };
+    let expectedResult = {isValid: true, pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 4, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITHOUT New Sore Body Parts', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 3 (Areas of Soreness) - NOT Valid', () => {
     let isFormValidItems = {selectAreasOfSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, false, [], [])).toEqual(expectedResult);
+    let pageState = { pageIndex: 4, };
+    let expectedResult = {isValid: false, pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 3, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITH Areas Of Soreness Clicked', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 3 (Areas of Soreness) - Valid', () => {
     let isFormValidItems = {selectAreasOfSorenessValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, false, [], [{}])).toEqual(expectedResult);
+    let pageState = { pageIndex: 4, };
+    let expectedResult = {isValid: true, pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 3, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITH Areas Of Soreness Clicked', () => {
-    let isFormValidItems = {selectAreasOfSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 3, isFormValidItems, false, [], [{}])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
-    let isFormValidItems = {isPrevSorenessValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 2, isFormValidItems, false, [], [])).toEqual(expectedResult);
-});
-
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 2 (F/U P/S) - NOT Valid', () => {
     let isFormValidItems = {isPrevSorenessValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 2, isFormValidItems, false, [], [])).toEqual(expectedResult);
+    let pageState = { pageIndex: 3, };
+    let expectedResult = {isValid: false, pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 2, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITH New Sore Body Parts', () => {
-    let isFormValidItems = {isRPEValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [{}], [])).toEqual(expectedResult);
+it('Post Session Survey Next Page & Validation Logic - Page 2 (F/U P/S) - Valid', () => {
+    let isFormValidItems = {isPrevSorenessValid: true};
+    let pageState = { pageIndex: 3, };
+    let expectedResult = {isValid: true, pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 2, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid, & WITHOUT New Sore Body Parts', () => {
-    let isFormValidItems = {isRPEValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [], [])).toEqual(expectedResult);
+it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - NOT Valid', () => {
+    let isFormValidItems = {};
+    let pageState = { pageIndex: 2, };
+    let expectedResult = {isValid: true, pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT d, & WITH New Sore Body Parts', () => {
-    let isFormValidItems = {isRPEValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [{}], [])).toEqual(expectedResult);
+it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - NOT Valid', () => {
+    let isFormValidItems = {};
+    let pageState = { pageIndex: 2, };
+    let expectedResult = {isValid: true, pageNum: 3,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [{}, {}])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 10 - NOT Valid, & WITHOUT New Sore Body Parts', () => {
-    let isFormValidItems = {isRPEValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [], [])).toEqual(expectedResult);
+it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - Valid', () => {
+    let isFormValidItems = {};
+    let pageState = { pageIndex: 2, };
+    let expectedResult = {isValid: true, pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
-    let isFormValidItems = {isSportValid: true};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [], [])).toEqual(expectedResult);
+it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - Valid', () => {
+    let isFormValidItems = {};
+    let pageState = { pageIndex: 2, };
+    let expectedResult = {isValid: true, pageNum: 3,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [{}, {}])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 0 - NOT Valid', () => {
-    let isFormValidItems = {isSportValid: false};
-    let expectedResult = {isValid: false, pageNum: 0,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 1, isFormValidItems, false, [], [])).toEqual(expectedResult);
+it('Post Session Survey Next Page & Validation Logic - Page 0 (HealthKit) - Valid', () => {
+    let isFormValidItems = {};
+    let expectedResult = {isValid: true, pageNum: 1,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, [], false, true, '')).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 0 (HealthKit) - Valid', () => {
+    let isFormValidItems = {};
+    let expectedResult = {isValid: true, pageNum: 1,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, [], false, true, 'add_session')).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 0 (HealthKit) - Valid', () => {
+    let isFormValidItems = {};
+    let expectedResult = {isValid: true, pageNum: 2,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, [{}, {}], false, true, 'continue')).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 0 (HealthKit) - Valid', () => {
+    let isFormValidItems = {};
+    let expectedResult = {isValid: true, pageNum: 3,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, [], false, true, 'continue')).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 0 (HealthKit) - NOT Valid', () => {
+    let isFormValidItems = {};
+    let expectedResult = {isValid: false, pageNum: 1,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, [], false, false, '')).toEqual(expectedResult);
 });
 
 it('Single Session Validation - First Open (Readiness Survey)', () => {

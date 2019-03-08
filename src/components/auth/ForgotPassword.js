@@ -57,9 +57,9 @@ class ForgotPassword extends Component {
     constructor(props) {
         super(props);
         this.inputs = {};
-
         this.state = {
-            resultMsg: {
+            isSubmitting: false,
+            resultMsg:    {
                 status:  '',
                 success: '',
                 error:   '',
@@ -142,14 +142,19 @@ class ForgotPassword extends Component {
     }
 
     _handleFormSubmit = () => {
-        // validation
-        let errorsArray = this._validateForm();
-        if (errorsArray.length === 0) {
-            this.forgotPassword();
-        } else {
-            let newErrorFields = _.update( this.state.resultMsg, 'error', () => errorsArray);
-            this.setState({ resultMsg: newErrorFields });
-        }
+        this.setState(
+            { isSubmitting: true, },
+            () => {
+                // validation
+                let errorsArray = this._validateForm();
+                if (errorsArray.length === 0) {
+                    this.forgotPassword();
+                } else {
+                    let newErrorFields = _.update( this.state.resultMsg, 'error', () => errorsArray);
+                    this.setState({ resultMsg: newErrorFields });
+                }
+            }
+        );
     }
 
     _routeToResetPassword = (from_button) => {
@@ -220,6 +225,7 @@ class ForgotPassword extends Component {
                     buttonStyle={{borderRadius: 0, paddingVertical: 20,}}
                     containerViewStyle={{marginLeft: 0, width: '100%',}}
                     color={AppColors.white}
+                    disabled={this.state.isSubmitting}
                     fontFamily={AppStyles.robotoBold.fontFamily}
                     fontWeight={AppStyles.robotoBold.fontWeight}
                     onPress={() => this._handleFormSubmit()}

@@ -206,15 +206,6 @@ class Login extends Component {
             this.setState({ form_values: credentials }, () => {
                 this.setState({ resultMsg: { status: 'ONE MOMENT...' } });
 
-                /**
-                  * - if jwt valid
-                  *     - registerDevice (user, userCreds, token, resolve, reject)
-                  *       - finalizeLogin (user, userCreds, token, resolve, reject)
-                  * - else if jwt not valid
-                  *   - authorizeUser (authorization, user, userCreds, resolve, reject)
-                  *       - registerDevice (user, userCreds, token, resolve, reject)
-                  *         - finalizeLogin (user, userCreds, token, resolve, reject)
-                  */
                 return this.props.onFormSubmit({
                     email:    credentials.email,
                     password: credentials.password,
@@ -239,8 +230,8 @@ class Login extends Component {
                                     })
                                     .then(res => {
                                         if(user.health_enabled) {
-                                            return AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date)
-                                                .then(() => AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date));
+                                            return AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
+                                                .then(() => AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date));
                                         }
                                         return res;
                                     })
@@ -260,6 +251,7 @@ class Login extends Component {
                         const error = AppAPI.handleError(err);
                         return this.setState({ resultMsg: { error } });
                     });
+
             });
         }
     }

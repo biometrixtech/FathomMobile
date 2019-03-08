@@ -61,6 +61,7 @@ export default function initReducer(state = initialState, action) {
     case Actions.SET_ACCOUNT_CODE:
         return Object.assign({}, state, {
             account_code: action.code || '',
+            account_role: action.role || 'athlete',
         });
     case Actions.LOGOUT:
         return Object.assign({}, initialState, {

@@ -19,6 +19,7 @@ import { Actions as DispatchActions } from '../constants';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
+import moment from 'moment';
 
 const { Answers } = Fabric;
 
@@ -206,7 +207,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
 
         const thisUrl = `${hostname}${endpoint}${urlParams}`;
 
-        debug('', `API Request #${requestNum} to ${thisUrl}`);
+        debug('', `API Request #${requestNum} to ${thisUrl} @ ${moment()}`);
 
         // Make the request
         return fetch(thisUrl, req)
@@ -271,7 +272,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                 throw rawRes.status === 404 ? { message: ErrorMessages.emailNotFound, } : jsonRes;
             })
             .then(res => {
-                debug(res, `API Response #${requestNum} from ${thisUrl}`);
+                debug(res, `API Response #${requestNum} from ${thisUrl} @ ${moment()}`);
 
                 try {
                     // Don't send plaintext password to Answers logs

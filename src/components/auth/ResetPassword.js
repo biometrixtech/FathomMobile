@@ -8,6 +8,7 @@ import { Keyboard, View, StyleSheet, TouchableOpacity, } from 'react-native';
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
 import _ from 'lodash';
+import moment from 'moment';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
@@ -34,20 +35,26 @@ class ResetPassword extends Component {
     static componentName = 'ResetPassword';
 
     static propTypes = {
-        authorizeUser:    PropTypes.func.isRequired,
+        certificate:      PropTypes.object,
         confirmPassword:  PropTypes.string,
+        device:           PropTypes.object,
         email:            PropTypes.string,
         finalizeLogin:    PropTypes.func.isRequired,
+        getMyPlan:        PropTypes.func.isRequired,
+        lastOpened:       PropTypes.object.isRequired,
         newPassword:      PropTypes.string,
         onFormSubmit:     PropTypes.func.isRequired,
         onSubmitSuccess:  PropTypes.func.isRequired,
         registerDevice:   PropTypes.func.isRequired,
+        setAppLogs:       PropTypes.func.isRequired,
         setEnvironment:   PropTypes.func.isRequired,
         verificationCode: PropTypes.string,
     }
 
     static defaultProps = {
+        certificate:      null,
         confirmPassword:  null,
+        device:           null,
         email:            null,
         newPassword:      null,
         verificationCode: null,
@@ -58,7 +65,8 @@ class ResetPassword extends Component {
         this._focusNextField = this._focusNextField.bind(this);
         this.inputs = {};
         this.state = {
-            resultMsg: {
+            isSubmitting: false,
+            resultMsg:    {
                 error:   '',
                 status:  '',
                 success: '',
@@ -104,12 +112,10 @@ class ResetPassword extends Component {
         if (userData) {
             this.setState({ form_values: userData }, () => {
                 this.setState({ resultMsg: { status: 'One moment...' } });
-
                 // Scroll to top, to show message
                 if (this.scrollView) {
                     this.scrollView.scrollTo({ y: 0 });
                 }
-
                 this.props.onFormSubmit({
                     email:             userData.Email,
                     confirmation_code: userData.VerificationCode,
@@ -136,8 +142,130 @@ class ResetPassword extends Component {
         }
     }
 
-    render = () => {
+    _loginUser = (userData) => {
+        this.props.onSubmitSuccess({
+            email:    userData.Email,
+            password: userData.NewPassword,
+        }, false)
+            .then(response => {
+                let { authorization, user } = response;
+                return this.props.registerDevice(this.props.certificate, this.props.device, user)
+                    .then(() => {
+                        let clearMyPlan = (
+                            this.props.lastOpened.userId !== user.id ||
+                            moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')
+                        ) ?
+                            true
+                            :
+                            false;
+                        return this.props.getMyPlan(user.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
+                            .then(res => {
+                                if(!res.daily_plans[0].daily_readiness_survey_completed) {
+                                    this.props.setAppLogs();
+                                }
+                                return res;
+                            })
+                            .then(res => {
+                                if(user.health_enabled) {
+                                    return AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
+                                        .then(() => AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date));
+                                }
+                                return res;
+                            })
+                            .catch(error => {
+                                const err = AppAPI.handleError(error);
+                                return this.setState({ resultMsg: { err } });
+                            });
+                    })
+                    .then(() => this.props.finalizeLogin(user, userData, authorization));
+            })
+            .then(res => this.setState({
+                resultMsg: { success: 'Success, now loading your data!' },
+            }, () => {
+                AppUtil.routeOnLogin(res);
+            })).catch((err) => {
+                console.log('err',err);
+                const error = AppAPI.handleError(err);
+                return this.setState({ resultMsg: { error } });
+            });
+    }
 
+    _isValidCode = (verificationCode) => {
+        let errorsArray = [];
+        const regularExpression = /\d{6}/;
+        let isValid = false;
+        if (regularExpression.test(verificationCode)) {
+            isValid = true;
+        } else {
+            errorsArray.push('Please enter a valid PIN')
+        }
+        return {
+            errorsArray,
+            isValid
+        };
+    }
+
+    _passwordsMatch = (newPassword, confirmPassword) => {
+        let errorsArray = [];
+        let isValid = false;
+        if(newPassword === confirmPassword) {
+            isValid = true;
+        } else if(newPassword.length === 0 && confirmPassword.length === 0) {
+            isValid = true;
+        } else {
+            errorsArray.push('Passwords entered do not match.');
+        }
+        return {
+            errorsArray,
+            isValid
+        };
+    }
+
+    _focusNextField = (id) => {
+        this.inputs[id].focus();
+    }
+
+    _validateForm = () => {
+        const form_fields = this.state;
+        let errorsArray = [];
+        errorsArray = errorsArray.concat(onboardingUtils.isEmailValid(form_fields.form_values.Email).errorsArray);
+        errorsArray = errorsArray.concat(this._isValidCode(form_fields.form_values.VerificationCode).errorsArray);
+        errorsArray = errorsArray.concat(onboardingUtils.isPasswordValid(form_fields.form_values.NewPassword).errorsArray);
+        errorsArray = errorsArray.concat(this._passwordsMatch(form_fields.form_values.NewPassword, form_fields.form_values.ConfirmPassword).errorsArray);
+        return errorsArray;
+    }
+
+    _handleFormChange = (name, value) => {
+        let newFormFields = _.update( this.state.form_values, name, () => value);
+        this.setState({
+            ['form_values']: newFormFields,
+        });
+        // also clear error messages when typing
+        let newResultMsgs = _.update( this.state.resultMsg, 'success', () => '');
+        newResultMsgs = _.update( this.state.resultMsg, 'error', () => '');
+        newResultMsgs = _.update( this.state.resultMsg, 'status', () => '');
+        this.setState({
+            ['resultMsg']: newResultMsgs,
+        });
+    }
+
+    _handleFormSubmit = () => {
+        this.setState(
+            { isSubmitting: true, },
+            () => {
+                // validation
+                let errorsArray = this._validateForm();
+                if (errorsArray.length === 0) {
+                    this.resetPassword();
+                } else {
+                    let newErrorFields = _.update( this.state.resultMsg, 'error', () => errorsArray);
+                    this.setState({ resultMsg: newErrorFields });
+                }
+            }
+        );
+    }
+
+    render = () => {
         return (
             <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: AppColors.white}}>
                 <View >
@@ -243,6 +371,7 @@ class ResetPassword extends Component {
                     buttonStyle={{borderRadius: 0, paddingVertical: 20,}}
                     containerViewStyle={{marginLeft: 0, width: '100%',}}
                     color={AppColors.white}
+                    disabled={this.state.isSubmitting}
                     fontFamily={AppStyles.robotoBold.fontFamily}
                     fontWeight={AppStyles.robotoBold.fontWeight}
                     onPress={() => this._handleFormSubmit()}
@@ -252,121 +381,6 @@ class ResetPassword extends Component {
                 />
             </View>
         );
-    }
-
-    _isValidCode = (verificationCode) => {
-        let errorsArray = [];
-        const regularExpression = /\d{6}/;
-        let isValid = false;
-
-        if (regularExpression.test(verificationCode))
-        {
-            isValid = true;
-        }
-        else
-        {
-            errorsArray.push('Please enter a valid PIN')
-        }
-        return {
-            errorsArray,
-            isValid
-        };
-    }
-
-    _passwordsMatch = (newPassword, confirmPassword) => {
-        let errorsArray = [];
-        let isValid = false;
-
-        if(newPassword === confirmPassword)
-        {
-            isValid = true;
-        }
-        else if(newPassword.length === 0 && confirmPassword.length === 0)
-        {
-            isValid = true;
-        }
-        else
-        {
-            errorsArray.push('Passwords entered do not match.');
-        }
-        return {
-            errorsArray,
-            isValid
-        };
-    }
-
-    _focusNextField = (id) => {
-        this.inputs[id].focus();
-    }
-
-    _validateForm = () => {
-        const form_fields = this.state;
-        let errorsArray = [];
-        errorsArray = errorsArray.concat(onboardingUtils.isEmailValid(form_fields.form_values.Email).errorsArray);
-        errorsArray = errorsArray.concat(this._isValidCode(form_fields.form_values.VerificationCode).errorsArray);
-        errorsArray = errorsArray.concat(onboardingUtils.isPasswordValid(form_fields.form_values.NewPassword).errorsArray);
-        errorsArray = errorsArray.concat(this._passwordsMatch(form_fields.form_values.NewPassword, form_fields.form_values.ConfirmPassword).errorsArray);
-        return errorsArray;
-    }
-
-    _handleFormChange = (name, value) => {
-        let newFormFields = _.update( this.state.form_values, name, () => value);
-        this.setState({
-            ['form_values']: newFormFields,
-        });
-        // also clear error messages when typing
-        let newResultMsgs = _.update( this.state.resultMsg, 'success', () => '');
-        newResultMsgs = _.update( this.state.resultMsg, 'error', () => '');
-        newResultMsgs = _.update( this.state.resultMsg, 'status', () => '');
-        this.setState({
-            ['resultMsg']: newResultMsgs,
-        });
-    }
-
-    _handleFormSubmit = () => {
-        // validation
-        let errorsArray = this._validateForm();
-        if (errorsArray.length === 0)
-        {
-            this.resetPassword();
-        }
-        else
-        {
-            let newErrorFields = _.update( this.state.resultMsg, 'error', () => errorsArray);
-            this.setState({ resultMsg: newErrorFields });
-        }
-    }
-
-    _loginUser(userData) {
-        this.props.onSubmitSuccess({
-            email:    userData.Email,
-            password: userData.NewPassword,
-        }, false).then(response => {
-            let { authorization, user } = response;
-            return this.props.authorizeUser(authorization, user, userData)
-                .then(res => {
-                    let returnObj = {};
-                    returnObj.user = user;
-                    returnObj.authorization = res.authorization;
-                    returnObj.authorization.session_token = authorization.session_token;
-                    return Promise.resolve(returnObj);
-                })
-                .catch(err => Promise.reject('Unexpected response authorization'))
-        })
-            .then(response => {
-                let { authorization, user } = response;
-                return this.props.registerDevice(this.props.certificate, this.props.device, user)
-                    .then(() => this.props.finalizeLogin(user, userData, authorization));
-            })
-            .then(res => this.setState({
-                resultMsg: { success: 'Success, now loading your data!' },
-            }, () => {
-                AppUtil.routeOnLogin(res);
-            })).catch((err) => {
-                console.log('err',err);
-                const error = AppAPI.handleError(err);
-                return this.setState({ resultMsg: { error } });
-            });
     }
 }
 

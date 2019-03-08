@@ -34,7 +34,9 @@ const styles = StyleSheet.create({
 class AccountType extends Component {
     static componentName = 'AccountType';
 
-    static propTypes = {};
+    static propTypes = {
+        setAccountCode: PropTypes.func.isRequired,
+    };
 
     static defaultProps = {};
 
@@ -79,7 +81,7 @@ class AccountType extends Component {
                             </View>
                         </TouchableHighlight>
                         <Spacer size={35} />
-                        <TouchableHighlight onPress={() => Actions.onboarding()} underlayColor={'rgba(0, 0, 0, 0)'}>
+                        <TouchableHighlight onPress={() => {this.props.setAccountCode(''); Actions.onboarding();}} underlayColor={'rgba(0, 0, 0, 0)'}>
                             <View style={[AppStyles.containerCentered]}>
                                 <TabIcon
                                     color={AppColors.white}
