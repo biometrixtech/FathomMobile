@@ -66,6 +66,7 @@ const defaultPlanState = {
     recoverSelectedActiveTime: 2,
     selectedExercise:          {},
     showLoadingText:           false,
+    timer:                     null,
     train:                     {
         completedPostPracticeSurvey: false,
         postPracticeSurveys:         [],

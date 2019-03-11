@@ -61,6 +61,7 @@ const highSorenessMessage = 'Based on your reported discomfort we recommend you 
 const lowSorenessPostMessage = 'Looks like you\'re all clear! Active Recovery is low-impact for now, so log another activity or we\'ll check in tomorrow to assess your ideal Recovery Plan!';
 const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Mobilize is low-impact this morning so complete your usual warm-up and we’ll pick-up with post practice recovery!';
 const offDayLoggedText = 'Make the most of your training by resting well today: hydrate, eat well and sleep early.';
+const timerDelay = 30000; // delay for X ms
 
 // setup GA Tracker
 const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
@@ -290,6 +291,8 @@ class MyPlan extends Component {
             BackHandler.removeEventListener('hardwareBackPress');
         }
         AppState.removeEventListener('change', this._handleAppStateChange);
+        // clear timer
+        clearInterval(this.state.timer);
     }
 
     componentDidMount = async () => {
@@ -353,6 +356,24 @@ class MyPlan extends Component {
                 this.setState({ healthData: this.props.healthData, });
             }
         }
+        // handle if PN is delayed to come in
+        if(
+            (prevState.isFSCalculating !== this.state.isFSCalculating && this.state.isFSCalculating) ||
+            (prevState.isPrepCalculating !== this.state.isPrepCalculating && this.state.isPrepCalculating) ||
+            (prevState.isRecoverCalculating !== this.state.isRecoverCalculating && this.state.isRecoverCalculating)
+        ) {
+            // start timer
+            this.setState({
+                timer: _.delay(() => this._handleExerciseListRefresh(false, false), timerDelay),
+            });
+        } else if(
+            (prevState.isFSCalculating !== this.state.isFSCalculating && !this.state.isFSCalculating) ||
+            (prevState.isPrepCalculating !== this.state.isPrepCalculating && !this.state.isPrepCalculating) ||
+            (prevState.isRecoverCalculating !== this.state.isRecoverCalculating && !this.state.isRecoverCalculating)
+        ) {
+            // clear timer
+            clearInterval(this.state.timer);
+        }
     }
 
     _handleAppStateChange = (nextAppState) => {
@@ -397,6 +418,7 @@ class MyPlan extends Component {
                     if(pushNotificationUpdate.stateName !== '' || pushNotificationUpdate.newStateFields !== '') {
                         this.setState({
                             [pushNotificationUpdate.stateName]: pushNotificationUpdate.newStateFields,
+                            isFSCalculating:                    false,
                             isPrepCalculating:                  false,
                             isRecoverCalculating:               false,
                         });
@@ -463,7 +485,6 @@ class MyPlan extends Component {
                 console.log('error',error);
                 AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
             });
-
     }
 
     _handleReadinessSurveySubmit = isSecondFunctionalStrength => {
@@ -701,6 +722,8 @@ class MyPlan extends Component {
     }
 
     _handleExerciseListRefresh = (shouldClearCompletedExercises, isFromPushNotification) => {
+        // clear timer
+        clearInterval(this.state.timer);
         let userId = this.props.user.id;
         this.setState({ isPageLoading: isFromPushNotification ? false : true, });
         this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
@@ -729,6 +752,7 @@ class MyPlan extends Component {
                 let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
                 this.setState({
                     dailyReadiness:       newDailyReadiness,
+                    isFSCalculating:      false,
                     isPageLoading:        false,
                     isPrepCalculating:    false,
                     isRecoverCalculating: false,
