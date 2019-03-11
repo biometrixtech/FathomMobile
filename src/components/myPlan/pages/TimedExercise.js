@@ -24,6 +24,7 @@ import { Image, Platform, TouchableOpacity, View, } from 'react-native';
 // import third-party libraries
 import _ from 'lodash';
 import LottieView from 'lottie-react-native';
+import Video from 'react-native-video';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
@@ -64,6 +65,7 @@ class TimedExercise extends PureComponent {
         this.state = {
             areAllTimersCompleted:     completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? true : false,
             delayTimerId:              null,
+            isAudioPaused:             true,
             isDescriptionToolTipOpen:  false,
             isMounted:                 false,
             isPaused:                  false,
@@ -87,6 +89,7 @@ class TimedExercise extends PureComponent {
         this._startTimer = this._startTimer.bind(this);
         this._switchSidesTick = this._switchSidesTick.bind(this);
         this.animation = {};
+        this.audioPlayer = {};
     }
 
     componentDidMount = () => {
@@ -135,11 +138,9 @@ class TimedExercise extends PureComponent {
             this.animation.play
         ) {
             // pulse checkbox
-            this.setState(
-                {
-                    delayTimerId: _.delay(() => this.animation.play(), Platform.OS === 'ios' ? 500 : 0),
-                }
-            );
+            this.setState({
+                delayTimerId: _.delay(() => this.animation.play(), Platform.OS === 'ios' ? 500 : 0),
+            });
         }
     }
 
@@ -147,27 +148,26 @@ class TimedExercise extends PureComponent {
         const { delayTimerId, timer, timerSeconds, } = this.state;
         const { exerciseTimer, } = this.props;
         if(timerSeconds === 0) {
-            this.setState(
-                {
-                    delayTimerId:
-                        _.delay(() => {
-                            this.setState(
-                                {
-                                    areAllTimersCompleted:    exerciseTimer.number_of_sets === 1,
-                                    startFirstSet:            false,
-                                    startSwitchSidesInterval: exerciseTimer.number_of_sets === 2,
-                                    timerSeconds:             exerciseTimer.switch_sides_time,
-                                    showAnimation:            exerciseTimer.number_of_sets === 2 ? false: true,
-                                },
-                                () => {
-                                    if(exerciseTimer.number_of_sets === 2) { this._startSwitchSideCountdown(); }
-                                }
-                            );
-                            clearInterval(timer);
-                            clearInterval(delayTimerId);
-                        }, 500),
-                }
-            );
+            this.setState({
+                delayTimerId:
+                    _.delay(() => {
+                        this.setState(
+                            {
+                                areAllTimersCompleted:    exerciseTimer.number_of_sets === 1,
+                                isAudioPaused:            exerciseTimer.number_of_sets === 2,
+                                startFirstSet:            false,
+                                startSwitchSidesInterval: exerciseTimer.number_of_sets === 2,
+                                timerSeconds:             exerciseTimer.switch_sides_time,
+                                showAnimation:            exerciseTimer.number_of_sets === 2 ? false: true,
+                            },
+                            () => {
+                                if(exerciseTimer.number_of_sets === 2) { this._startSwitchSideCountdown(); }
+                            }
+                        );
+                        clearInterval(timer);
+                        clearInterval(delayTimerId);
+                    }, 500),
+            });
         } else {
             this.setState({ timerSeconds: (timerSeconds - 1), });
         }
@@ -176,38 +176,35 @@ class TimedExercise extends PureComponent {
     _secondSetTick = () => {
         const { delayTimerId, timer, timerSeconds, } = this.state;
         if(timerSeconds === 0) {
-            this.setState(
-                {
-                    delayTimerId:
-                        _.delay(() => {
-                            this.setState({
-                                areAllTimersCompleted: true,
-                                showAnimation:         true,
-                                startSecondSet:        false,
-                                timerSeconds:          0,
-                            });
-                            clearInterval(timer);
-                            clearInterval(delayTimerId);
-                        }, 500)
-                }
-            );
+            this.setState({
+                delayTimerId:
+                    _.delay(() => {
+                        this.setState({
+                            areAllTimersCompleted: true,
+                            isAudioPaused:         false,
+                            showAnimation:         true,
+                            startSecondSet:        false,
+                            timerSeconds:          0,
+                        });
+                        clearInterval(timer);
+                        clearInterval(delayTimerId);
+                    }, 500)
+            });
         } else {
             this.setState({ timerSeconds: (timerSeconds - 1), });
         }
     }
 
     _startTimer = () => {
-        this.setState(
-            {
-                delayTimerId:
-                    _.delay(() => {
-                        this.setState(
-                            { startPreExerciseCountdown: true, },
-                            () => this._startPreExerciseCountdown(),
-                        );
-                    }, 500),
-            }
-        );
+        this.setState({
+            delayTimerId:
+                _.delay(() => {
+                    this.setState(
+                        { startPreExerciseCountdown: true, },
+                        () => this._startPreExerciseCountdown(),
+                    );
+                }, 500),
+        });
     }
 
     _resetTimer = (restartTimer = false, shouldCloseModal = false) => {
@@ -253,27 +250,25 @@ class TimedExercise extends PureComponent {
         } else {
             clearInterval(timer);
             clearInterval(delayTimerId);
-            this.setState(
-                {
-                    delayTimerId:
-                        _.delay(() => {
-                            let firstTickTimer = setInterval(this._firstSetTick, 1000);
-                            this.setState({
-                                startFirstSet:             true,
-                                startPreExerciseCountdown: false,
-                                timer:                     firstTickTimer,
-                                timerSeconds:              exerciseTimer.seconds_per_set,
-                            });
-                        }, 500)
-                }
-            );
+            this.setState({
+                delayTimerId:
+                    _.delay(() => {
+                        let firstTickTimer = setInterval(this._firstSetTick, 1000);
+                        this.setState({
+                            startFirstSet:             true,
+                            startPreExerciseCountdown: false,
+                            timer:                     firstTickTimer,
+                            timerSeconds:              exerciseTimer.seconds_per_set,
+                        });
+                    }, 500)
+            });
         }
     }
 
     _startSwitchSideCountdown = () => {
         if(!this.state.isPaused && this.props.exerciseTimer) {
             let timer = setInterval(this._switchSidesTick, 1000);
-            this.setState({ timer, });
+            this.setState({ isAudioPaused: false, timer, });
         }
     }
 
@@ -286,20 +281,22 @@ class TimedExercise extends PureComponent {
         } else {
             clearInterval(timer);
             clearInterval(delayTimerId);
-            this.setState(
-                {
-                    delayTimerId:
-                        _.delay(() => {
-                            let switchSidesTimer = setInterval(this._secondSetTick, 1000);
-                            this.setState({
+            this.setState({
+                delayTimerId:
+                    _.delay(() => {
+                        let switchSidesTimer = setInterval(this._secondSetTick, 1000);
+                        this.setState(
+                            {
+                                isAudioPaused:            true,
                                 startSwitchSidesInterval: false,
                                 startSecondSet:           true,
                                 timer:                    switchSidesTimer,
                                 timerSeconds:             exerciseTimer.seconds_per_set,
-                            });
-                        }, 500)
-                }
-            );
+                            },
+                            () => this.audioPlayer.seek(0),
+                        );
+                    }, 500)
+            });
         }
     }
 
@@ -361,6 +358,7 @@ class TimedExercise extends PureComponent {
         } = this.props;
         const {
             areAllTimersCompleted,
+            isAudioPaused,
             isDescriptionToolTipOpen,
             isPaused,
             preExerciseTime,
@@ -376,6 +374,13 @@ class TimedExercise extends PureComponent {
         let timerWrapperHeight = (AppFonts.scaleFont(56) + (AppSizes.padding * 2));
         return(
             <View>
+                <Video
+                    audioOnly={true}
+                    ignoreSilentSwitch={'ignore'}
+                    paused={isAudioPaused}
+                    ref={ref => {this.audioPlayer = ref;}}
+                    source={require('../../../../assets/audio/ding.mp3')}
+                />
                 { isDescriptionToolTipOpen && currentSlideIndex === index ?
                     <View style={{borderRadius: 4, height: '100%', right: 0, paddingHorizontal: AppSizes.padding, position: 'absolute', top: 0, width: '100%', zIndex: 200,}}>
                         <TooltipContent
