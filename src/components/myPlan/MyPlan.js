@@ -1012,13 +1012,13 @@ class MyPlan extends Component {
                                 <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
                                     <TabIcon
                                         color={AppColors.white}
-                                        containerStyle={[customStyles.alertMessageIconWrapper, recoveryObj.impact_score < 1.5 ? {backgroundColor: AppColors.zeplin.tealGreen,} : {backgroundColor: AppColors.zeplin.error,}]}
-                                        icon={recoveryObj.impact_score < 1.5 ? 'check-circle' : 'alert'}
+                                        containerStyle={[customStyles.alertMessageIconWrapper, {backgroundColor: AppColors.zeplin.error,}]}
+                                        icon={'alert'}
                                         size={AppFonts.scaleFont(26)}
                                         type={'material-community'}
                                     />
                                     <View style={[customStyles.alertMessageTextWrapper,]}>
-                                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(13),}]}>{recoveryObj.impact_score < 1.5 ? lowSorenessPreMessage : highSorenessMessage}</Text>
+                                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(13),}]}>{highSorenessMessage}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -1377,13 +1377,13 @@ class MyPlan extends Component {
                                 <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
                                     <TabIcon
                                         color={AppColors.white}
-                                        containerStyle={[customStyles.alertMessageIconWrapper, recoveryObj.impact_score < 1.5 ? {backgroundColor: AppColors.zeplin.tealGreen,} : {backgroundColor: AppColors.zeplin.error,}]}
-                                        icon={recoveryObj.impact_score < 1.5 ? 'check-circle' : 'alert'}
+                                        containerStyle={[customStyles.alertMessageIconWrapper, {backgroundColor: AppColors.zeplin.error,}]}
+                                        icon={'alert'}
                                         size={AppFonts.scaleFont(26)}
                                         type={'material-community'}
                                     />
                                     <View style={[customStyles.alertMessageTextWrapper,]}>
-                                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(13),}]}>{recoveryObj.impact_score < 1.5 ? lowSorenessPostMessage : highSorenessMessage}</Text>
+                                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(13),}]}>{highSorenessMessage}</Text>
                                     </View>
                                 </View>
                             </View>
