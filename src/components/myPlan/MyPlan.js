@@ -50,6 +50,7 @@ import {
     SessionsCompletionModal,
     SingleExerciseItem,
 } from './pages';
+import { Loading, } from '../general';
 
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
@@ -321,7 +322,7 @@ class MyPlan extends Component {
         }
     }
 
-    componentWillReceiveProps = (nextProps) => {
+    componentWillReceiveProps = nextProps => {
         if(nextProps.notification && nextProps.notification !== this.props.notification) {
             this._handlePushNotification(nextProps);
         }
@@ -376,7 +377,7 @@ class MyPlan extends Component {
         }
     }
 
-    _handleAppStateChange = (nextAppState) => {
+    _handleAppStateChange = nextAppState => {
         let clearMyPlan = (
             this.props.lastOpened.userId !== this.props.user.id ||
             moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')
@@ -888,7 +889,7 @@ class MyPlan extends Component {
         );
     }
 
-    renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) {
+    renderTab = (name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) => {
         return(
             <RenderMyPlanTab
                 isPostSessionSurveyModalOpen={this.state.isPostSessionSurveyModalOpen}
@@ -1165,13 +1166,6 @@ class MyPlan extends Component {
                             typicalSessions={this.props.plan.typicalSessions}
                             user={this.props.user}
                         />
-                        { this.state.loading ?
-                            <ActivityIndicator
-                                color={AppColors.zeplin.yellow}
-                                size={'large'}
-                                style={[AppStyles.activityIndicator]}
-                            /> : null
-                        }
                     </Modal>
                     :
                     null
@@ -1219,13 +1213,6 @@ class MyPlan extends Component {
                         </Modal>
                         :
                         null
-                }
-                { this.state.loading ?
-                    <ActivityIndicator
-                        color={AppColors.zeplin.yellow}
-                        size={'large'}
-                        style={[AppStyles.activityIndicator]}
-                    /> : null
                 }
                 <ActiveTimeSlideUpPanel
                     changeSelectedActiveTime={(selectedIndex) => this._changeSelectedActiveTime(selectedIndex, 'prepareSelectedActiveTime')}
@@ -1293,7 +1280,7 @@ class MyPlan extends Component {
         );
     };
 
-    renderRecover = (index) => {
+    renderRecover = index => {
         let { isPageLoading, isRecoverCalculating, recover, } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
         let { plan, user, } = this.props;
@@ -1604,7 +1591,7 @@ class MyPlan extends Component {
         );
     };
 
-    renderTrain = (index) => {
+    renderTrain = index => {
         let { plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
@@ -1893,28 +1880,7 @@ class MyPlan extends Component {
                             typicalSessions={this.props.plan.typicalSessions}
                             user={user}
                         />
-                      { this.state.loading ?
-                            <ActivityIndicator
-                                color={AppColors.zeplin.yellow}
-                                size={'large'}
-                                style={[AppStyles.activityIndicator, {height: AppSizes.screen.height,}]}
-                            /> : null
-                        }
                     </Modal>
-                    :
-                    null
-                }
-                { this.state.loading ?
-                    <View style={[AppStyles.activityIndicator]}>
-                        <ActivityIndicator
-                            color={AppColors.zeplin.yellow}
-                            size={'large'}
-                        />
-                        <Spacer size={AppSizes.padding} />
-                        { this.state.showLoadingText &&
-                            <Text robotoLight style={{color: AppColors.zeplin.yellow,}}>{this.state.trainLoadingScreenText}</Text>
-                        }
-                    </View>
                     :
                     null
                 }
@@ -2034,21 +2000,30 @@ class MyPlan extends Component {
     render = () => {
         // making sure we can only drag horizontally if our modals are closed and nothing is loading
         let isScrollLocked = !this.state.isReadinessSurveyModalOpen && !this.state.isPostSessionSurveyModalOpen && !this.state.loading ? false : true;
-        return (
-            <ScrollableTabView
-                locked={isScrollLocked}
-                onChangeTab={tabLocation => this._onChangeTab(tabLocation)}
-                ref={tabView => { this.tabView = tabView; }}
-                renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}} />}
-                style={{backgroundColor: AppColors.white}}
-                tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
-                tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
-                tabBarUnderlineStyle={{ height: 0 }}
-            >
-                {this.renderPrepare(0)}
-                {this.renderTrain(1)}
-                {this.renderRecover(2)}
-            </ScrollableTabView>
+        return(
+            <View style={{flex: 1,}}>
+                <ScrollableTabView
+                    locked={isScrollLocked}
+                    onChangeTab={tabLocation => this._onChangeTab(tabLocation)}
+                    ref={tabView => { this.tabView = tabView; }}
+                    renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}} />}
+                    style={{backgroundColor: AppColors.white}}
+                    tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
+                    tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
+                    tabBarUnderlineStyle={{ height: 0 }}
+                >
+                    {this.renderPrepare(0)}
+                    {this.renderTrain(1)}
+                    {this.renderRecover(2)}
+                </ScrollableTabView>
+                { this.state.loading ?
+                    <Loading
+                        text={this.state.showLoadingText ? this.state.trainLoadingScreenText : null}
+                    />
+                    :
+                    null
+                }
+            </View>
         );
     }
 }

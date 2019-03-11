@@ -71,7 +71,7 @@ const defaultPlanState = {
         completedPostPracticeSurvey: false,
         postPracticeSurveys:         [],
     },
-    trainLoadingScreenText: 'Loading workouts...',
+    trainLoadingScreenText: 'LOADING WORKOUTS...',
     loading:                false,
 };
 
