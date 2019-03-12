@@ -24,11 +24,15 @@ import { Image, Platform, TouchableOpacity, View, } from 'react-native';
 // import third-party libraries
 import _ from 'lodash';
 import LottieView from 'lottie-react-native';
-import Video from 'react-native-video';
+import Sound from 'react-native-sound';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
 import { ProgressCircle, Spacer, TabIcon, Text, } from '../../custom';
+
+// setup Sound
+Sound.setCategory('Playback', true); // value, mixWithOthers
+const ding = new Sound('ding.mp3', Sound.MAIN_BUNDLE, err => console.log('failed to load ding sound',err));
 
 /* Component ==================================================================== */
 const TooltipContent = ({ handleTooltipClose, text, }) => (
@@ -65,7 +69,6 @@ class TimedExercise extends PureComponent {
         this.state = {
             areAllTimersCompleted:     completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? true : false,
             delayTimerId:              null,
-            isAudioPaused:             true,
             isDescriptionToolTipOpen:  false,
             isMounted:                 false,
             isPaused:                  false,
@@ -89,7 +92,6 @@ class TimedExercise extends PureComponent {
         this._startTimer = this._startTimer.bind(this);
         this._switchSidesTick = this._switchSidesTick.bind(this);
         this.animation = {};
-        this.audioPlayer = {};
     }
 
     componentDidMount = () => {
@@ -154,7 +156,6 @@ class TimedExercise extends PureComponent {
                         this.setState(
                             {
                                 areAllTimersCompleted:    exerciseTimer.number_of_sets === 1,
-                                isAudioPaused:            exerciseTimer.number_of_sets === 2,
                                 startFirstSet:            false,
                                 startSwitchSidesInterval: exerciseTimer.number_of_sets === 2,
                                 timerSeconds:             exerciseTimer.switch_sides_time,
@@ -162,6 +163,7 @@ class TimedExercise extends PureComponent {
                             },
                             () => {
                                 if(exerciseTimer.number_of_sets === 2) { this._startSwitchSideCountdown(); }
+                                if(exerciseTimer.number_of_sets === 1) { ding.play(); }
                             }
                         );
                         clearInterval(timer);
@@ -179,13 +181,15 @@ class TimedExercise extends PureComponent {
             this.setState({
                 delayTimerId:
                     _.delay(() => {
-                        this.setState({
-                            areAllTimersCompleted: true,
-                            isAudioPaused:         false,
-                            showAnimation:         true,
-                            startSecondSet:        false,
-                            timerSeconds:          0,
-                        });
+                        this.setState(
+                            {
+                                areAllTimersCompleted: true,
+                                showAnimation:         true,
+                                startSecondSet:        false,
+                                timerSeconds:          0,
+                            },
+                            () => ding.play(),
+                        );
                         clearInterval(timer);
                         clearInterval(delayTimerId);
                     }, 500)
@@ -268,7 +272,10 @@ class TimedExercise extends PureComponent {
     _startSwitchSideCountdown = () => {
         if(!this.state.isPaused && this.props.exerciseTimer) {
             let timer = setInterval(this._switchSidesTick, 1000);
-            this.setState({ isAudioPaused: false, timer, });
+            this.setState(
+                { timer, },
+                () => ding.play(),
+            );
         }
     }
 
@@ -287,13 +294,11 @@ class TimedExercise extends PureComponent {
                         let switchSidesTimer = setInterval(this._secondSetTick, 1000);
                         this.setState(
                             {
-                                isAudioPaused:            true,
                                 startSwitchSidesInterval: false,
                                 startSecondSet:           true,
                                 timer:                    switchSidesTimer,
                                 timerSeconds:             exerciseTimer.seconds_per_set,
                             },
-                            () => this.audioPlayer.seek(0),
                         );
                     }, 500)
             });
@@ -358,7 +363,6 @@ class TimedExercise extends PureComponent {
         } = this.props;
         const {
             areAllTimersCompleted,
-            isAudioPaused,
             isDescriptionToolTipOpen,
             isPaused,
             preExerciseTime,
@@ -374,13 +378,6 @@ class TimedExercise extends PureComponent {
         let timerWrapperHeight = (AppFonts.scaleFont(56) + (AppSizes.padding * 2));
         return(
             <View>
-                <Video
-                    audioOnly={true}
-                    ignoreSilentSwitch={'ignore'}
-                    paused={isAudioPaused}
-                    ref={ref => {this.audioPlayer = ref;}}
-                    source={require('../../../../assets/audio/ding.mp3')}
-                />
                 { isDescriptionToolTipOpen && currentSlideIndex === index ?
                     <View style={{borderRadius: 4, height: '100%', right: 0, paddingHorizontal: AppSizes.padding, position: 'absolute', top: 0, width: '100%', zIndex: 200,}}>
                         <TooltipContent

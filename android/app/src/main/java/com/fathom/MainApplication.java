@@ -20,6 +20,7 @@ import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import com.airbnb.android.react.lottie.LottiePackage;
 import com.corbt.keepawake.KCKeepAwakePackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
+import com.zmxv.RNSound.RNSoundPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +50,8 @@ public class MainApplication extends Application implements ReactApplication {
           new GoogleAnalyticsBridgePackage(),
           new LottiePackage(),
           new KCKeepAwakePackage(),
-          new RNCWebViewPackage()
+          new RNCWebViewPackage(),
+          new RNSoundPackage()
       );
     }
 
