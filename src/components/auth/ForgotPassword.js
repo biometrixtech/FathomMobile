@@ -111,8 +111,8 @@ class ForgotPassword extends Component {
                         }, 1000);
                     });
                 }).catch((err) => {
+                    this.setState({ isSubmitting: false, });
                     const error = AppAPI.handleError(err);
-
                     if(error.includes('UserNotFoundException')) {
                         this.setState({ resultMsg: {error: 'The email address you provided was not found.'} });
                     } else if(error.includes('LimitExceededException')) {
@@ -151,7 +151,7 @@ class ForgotPassword extends Component {
                     this.forgotPassword();
                 } else {
                     let newErrorFields = _.update( this.state.resultMsg, 'error', () => errorsArray);
-                    this.setState({ resultMsg: newErrorFields });
+                    this.setState({ isSubmitting: false, resultMsg: newErrorFields });
                 }
             }
         );

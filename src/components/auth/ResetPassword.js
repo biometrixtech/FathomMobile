@@ -129,6 +129,7 @@ class ResetPassword extends Component {
                         }, 1000);
                     });
                 }).catch((err) => {
+                    this.setState({ isSubmitting: false, });
                     const error = AppAPI.handleError(err);
                     if(error.includes('ExpiredCodeException')) {
                         this.setState({ resultMsg: {error: 'The PIN you are using has expired.  Please request a new PIN.'} });
@@ -259,7 +260,7 @@ class ResetPassword extends Component {
                     this.resetPassword();
                 } else {
                     let newErrorFields = _.update( this.state.resultMsg, 'error', () => errorsArray);
-                    this.setState({ resultMsg: newErrorFields });
+                    this.setState({ isSubmitting: false, resultMsg: newErrorFields });
                 }
             }
         );
