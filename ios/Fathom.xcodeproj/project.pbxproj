@@ -41,8 +41,8 @@
 		5A406FAD29B24D039B4CF246 /* Roboto-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E401DD776A5D481E93A30FD9 /* Roboto-LightItalic.ttf */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		63EC966BA0534094931D90AE /* Oswald-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8A63D6E29732455FAAA822FE /* Oswald-Regular.ttf */; };
+		721454B622381F5200B305FB /* ding.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7214547722381F5200B305FB /* ding.mp3 */; };
 		7223DB14223812B20098D5A9 /* libRNSound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7223DB0E223812AA0098D5A9 /* libRNSound.a */; };
-		7223DB16223812D50098D5A9 /* ding.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7223DB15223812D50098D5A9 /* ding.mp3 */; };
 		7245D145222486F40036AD1D /* libRNCWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7245D13D222486DC0036AD1D /* libRNCWebView.a */; };
 		72918B0A21E0036800295BE4 /* libLottieReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72918AD621E0033800295BE4 /* libLottieReactNative.a */; };
 		72918B1A21E0043000295BE4 /* libLottie.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72918B1921E0042900295BE4 /* libLottie.a */; };
@@ -605,8 +605,8 @@
 		6017545335F543FE90A2ADDF /* Roboto-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Thin.ttf"; path = "../assets/fonts/Roboto-Thin.ttf"; sourceTree = "<group>"; };
 		621FED576505468EB9CFE175 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		62A8EA882B184930825FDE66 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
+		7214547722381F5200B305FB /* ding.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ding.mp3; sourceTree = "<group>"; };
 		7223DAD1223812AA0098D5A9 /* RNSound.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSound.xcodeproj; path = "../node_modules/react-native-sound/RNSound.xcodeproj"; sourceTree = "<group>"; };
-		7223DB15223812D50098D5A9 /* ding.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = ding.mp3; path = ../../../Downloads/ding.mp3; sourceTree = "<group>"; };
 		7245D103222486DC0036AD1D /* RNCWebView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNCWebView.xcodeproj; path = "../node_modules/react-native-webview/ios/RNCWebView.xcodeproj"; sourceTree = "<group>"; };
 		72918ACC21E0033800295BE4 /* LottieReactNative.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LottieReactNative.xcodeproj; path = "../node_modules/lottie-react-native/src/ios/LottieReactNative.xcodeproj"; sourceTree = "<group>"; };
 		72918B0B21E0042900295BE4 /* Lottie.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Lottie.xcodeproj; path = "../node_modules/lottie-ios/Lottie.xcodeproj"; sourceTree = "<group>"; };
@@ -797,7 +797,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				7223DB15223812D50098D5A9 /* ding.mp3 */,
+				7214547722381F5200B305FB /* ding.mp3 */,
 			);
 			name = Fathom;
 			sourceTree = "<group>";
@@ -1798,12 +1798,12 @@
 				50BAB68A1EB84DA69372E99D /* Octicons.ttf in Resources */,
 				2AFBECAF1B4E4623BBE432F8 /* SimpleLineIcons.ttf in Resources */,
 				9FE70E0599D44E42AD68E716 /* Zocial.ttf in Resources */,
+				721454B622381F5200B305FB /* ding.mp3 in Resources */,
 				F2D5C432FE4244A1889B6DEA /* MaterialCommunityIcons.ttf in Resources */,
 				4950BB1C0EA048208219B5EB /* Feather.ttf in Resources */,
 				B553226738FE4F80AAF930BA /* Oswald-Bold.ttf in Resources */,
 				98AC8D53D1A4428FA1F17576 /* Oswald-BoldItalic.ttf in Resources */,
 				3249E389222B416C8EAFF397 /* Oswald-ExtraLight.ttf in Resources */,
-				7223DB16223812D50098D5A9 /* ding.mp3 in Resources */,
 				33D516BB2E47406599EEEAE3 /* Oswald-ExtraLightItalic.ttf in Resources */,
 				036A0BDA6C21494894B23C8C /* Oswald-Heavy.ttf in Resources */,
 				BBDB5419B24447DB9DF6339E /* Oswald-HeavyItalic.ttf in Resources */,
