@@ -531,11 +531,13 @@ class MyPlan extends Component {
         }, 500);
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
+                this.setState({ isPrepCalculating: false, isRecoverCalculating: false, });
                 this.props.clearHealthKitWorkouts();
                 this.props.clearCompletedExercises();
                 this.props.clearCompletedFSExercises();
             })
             .catch(error => {
+                this.setState({ isPrepCalculating: false, isRecoverCalculating: false, });
                 console.log('error',error);
                 AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey);
             });
@@ -562,6 +564,7 @@ class MyPlan extends Component {
         this.props.clearHealthKitWorkouts() // clear HK workouts right away
             .then(() => this.props.postSessionSurvey(newPostSession))
             .then(response => {
+                this.setState({ isRecoverCalculating: false, });
                 if(!areAllDeleted) {
                     this.props.clearCompletedExercises();
                 }
@@ -574,6 +577,7 @@ class MyPlan extends Component {
                 }
             })
             .catch(error => {
+                this.setState({ isRecoverCalculating: false, });
                 console.log('error',error);
                 AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey);
             });
@@ -921,7 +925,14 @@ class MyPlan extends Component {
     }
 
     renderPrepare = index => {
-        let { dailyReadiness, isPageLoading, isPrepCalculating, prepare, } = this.state;
+        let {
+            dailyReadiness,
+            isFSCalculating,
+            isPageLoading,
+            isPrepCalculating,
+            isRecoverCalculating,
+            prepare,
+        } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
         let { plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
@@ -936,14 +947,17 @@ class MyPlan extends Component {
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}
                 refreshControl={
-                    <RefreshControl
-                        colors={[AppColors.zeplin.yellow]}
-                        onRefresh={() => this._handleExerciseListRefresh(false)}
-                        refreshing={isPageLoading}
-                        title={'Loading...'}
-                        titleColor={AppColors.zeplin.yellow}
-                        tintColor={AppColors.zeplin.yellow}
-                    />
+                    isFSCalculating || isPrepCalculating || isRecoverCalculating ?
+                        null
+                        :
+                        <RefreshControl
+                            colors={[AppColors.zeplin.yellow]}
+                            onRefresh={() => this._handleExerciseListRefresh(false)}
+                            refreshing={isPageLoading}
+                            title={'Loading...'}
+                            titleColor={AppColors.zeplin.yellow}
+                            tintColor={AppColors.zeplin.yellow}
+                        />
                 }
                 tabLabel={tabs[index]}
             >
@@ -1229,10 +1243,12 @@ class MyPlan extends Component {
                                     // send api
                                     this.props.patchActiveTime(user.id, selectedActiveTime)
                                         .then(response => {
+                                            this.setState({ isPrepCalculating: false, });
                                             this.props.clearCompletedExercises();
                                             this.props.clearCompletedFSExercises();
                                         })
                                         .catch(() => {
+                                            this.setState({ isPrepCalculating: false, });
                                             AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
                                         });
                                 }
@@ -1281,7 +1297,13 @@ class MyPlan extends Component {
     };
 
     renderRecover = index => {
-        let { isPageLoading, isRecoverCalculating, recover, } = this.state;
+        let {
+            isPageLoading,
+            isFSCalculating,
+            isPrepCalculating,
+            isRecoverCalculating,
+            recover,
+        } = this.state;
         let completedExercises = store.getState().plan.completedExercises;
         let { plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
@@ -1294,14 +1316,17 @@ class MyPlan extends Component {
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}
                 refreshControl={
-                    <RefreshControl
-                        colors={[AppColors.zeplin.yellow]}
-                        onRefresh={() => this._handleExerciseListRefresh(false)}
-                        refreshing={isPageLoading}
-                        title={'Loading...'}
-                        titleColor={AppColors.zeplin.yellow}
-                        tintColor={AppColors.zeplin.yellow}
-                    />
+                    isFSCalculating || isPrepCalculating || isRecoverCalculating ?
+                        null
+                        :
+                        <RefreshControl
+                            colors={[AppColors.zeplin.yellow]}
+                            onRefresh={() => this._handleExerciseListRefresh(false)}
+                            refreshing={isPageLoading}
+                            title={'Loading...'}
+                            titleColor={AppColors.zeplin.yellow}
+                            tintColor={AppColors.zeplin.yellow}
+                        />
                 }
                 tabLabel={tabs[index]}
             >
@@ -1549,10 +1574,12 @@ class MyPlan extends Component {
                                     // send api
                                     this.props.patchActiveTime(user.id, selectedActiveTime)
                                         .then(response => {
+                                            this.setState({ isRecoverCalculating: false, });
                                             this.props.clearCompletedExercises();
                                             this.props.clearCompletedFSExercises();
                                         })
                                         .catch(() => {
+                                            this.setState({ isRecoverCalculating: false, });
                                             AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
                                         });
                                 }

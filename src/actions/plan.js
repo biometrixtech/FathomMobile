@@ -146,11 +146,15 @@ const postReadinessSurvey = dailyReadinessObj => {
     return dispatch => AppAPI.post_readiness_survey.post(false, dailyReadinessObj)
         .then(myPlanData => {
             dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: myPlanData.daily_plans,
+            });
+            dispatch({
                 type: Actions.POST_READINESS_SURVEY,
                 data: myPlanData,
             });
-            return myPlanData;
-        }).then(myPlanData => Promise.resolve(myPlanData))
+            return Promise.resolve(myPlanData);
+        })
         .catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
@@ -181,25 +185,6 @@ const postSingleSensorData = dataObj => {
   * Post Session Survey Data
   */
 const postSessionSurvey = postSessionObj => {
-    // we need to clear our exercises as they will be updated
-    let currentState = store.getState();
-    let newPlan = {};
-    newPlan.daily_plans = [];
-    let newCurrentPlan = _.cloneDeep(currentState.plan.dailyPlan[0]);
-    let newTrainingSessions = _.cloneDeep(newCurrentPlan.training_sessions);
-    _.map(postSessionObj.sessions, session => {
-        let newTrainingSession = {};
-        newTrainingSession.sport_name = session && session.sport_name ? session.sport_name : null;
-        newTrainingSession.strength_and_conditioning_type = session && session.strength_and_conditioning_type ? session.strength_and_conditioning_type : null;
-        newTrainingSession.session_type = session && session.session_type ? session.session_type : null;
-        newTrainingSession.event_date = session && session.event_date ? session.event_date : null;
-        newTrainingSession.end_date = session && session.end_date ? session.end_date : null;
-        newTrainingSession.deleted = session && session.deleted ? true : false;
-        newTrainingSession.ignored = session && session.ignored ? true : false;
-        newTrainingSessions.push(newTrainingSession);
-    });
-    newCurrentPlan.training_sessions = newTrainingSessions;
-    newPlan.daily_plans.push(newCurrentPlan);
     // call api
     return dispatch => AppAPI.post_session_survey.post(false, postSessionObj)
         .then(myPlanData => {
@@ -209,11 +194,10 @@ const postSessionSurvey = postSessionObj => {
             });
             dispatch({
                 type: Actions.GET_MY_PLAN,
-                data: newPlan.daily_plans,
+                data: myPlanData.daily_plans,
             });
-            return myPlanData;
+            return Promise.resolve(myPlanData);
         })
-        .then(myPlanData => Promise.resolve(newPlan))
         .catch(err => {
             const error = AppAPI.handleError(err);
             return Promise.reject(error);
@@ -279,6 +263,10 @@ const patchActiveTime = (user_id, active_time) => {
     bodyObj.active_time = active_time;
     return dispatch => AppAPI.active_time.patch(false, bodyObj)
         .then(myPlanData => {
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: myPlanData.daily_plans,
+            });
             return Promise.resolve(myPlanData);
         })
         .catch(err => {
