@@ -975,6 +975,112 @@ const PlanLogic = {
         return { newCompletedExercises, };
     },
 
+    /**
+      * Handle MyPlan Render Train Tab Logic
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handleMyPlanRenderTrainTabLogic: (dailyPlanObj, reducerPlan) => {
+        let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+        let trainingSessions = dailyPlanObj ? dailyPlanObj.training_sessions : [];
+        let isFSEligible = dailyPlanObj && dailyPlanObj.functional_strength_eligible;
+        let functionalStrengthArray = [];
+        let functionalStrength = dailyPlanObj && dailyPlanObj.functional_strength_session ? dailyPlanObj.functional_strength_session : {};
+        if(functionalStrength.completed && functionalStrength.event_date) {
+            let newFunctionalStrength = _.cloneDeep(functionalStrength);
+            newFunctionalStrength.isFunctionalStrength = true;
+            functionalStrengthArray.push(newFunctionalStrength);
+        }
+        trainingSessions = trainingSessions.concat(functionalStrengthArray);
+        trainingSessions = _.orderBy(trainingSessions, o => moment(o.event_date), ['asc']);
+        let filteredTrainingSessions = trainingSessions && trainingSessions.length > 0 ?
+            _.filter(trainingSessions, o => !o.deleted && !o.ignored && (o.sport_name !== null || o.strength_and_conditioning_type !== null))
+            :
+            [];
+        let completedFSExercises = reducerPlan.completedFSExercises;
+        let fsExerciseList = functionalStrength ? MyPlanConstants.cleanFSExerciseList(functionalStrength) : {};
+        let offDaySelected = dailyPlanObj && !dailyPlanObj.sessions_planned || filteredTrainingSessions.length > 0;
+        let logActivityButtonOutlined = (isDailyReadinessSurveyCompleted && (isFSEligible || functionalStrength && Object.keys(functionalStrength).length > 0) && !functionalStrength.completed) || (!isDailyReadinessSurveyCompleted) ? true : false;
+        let logActivityButtonBackgroundColor = offDaySelected && functionalStrength.completed ?
+            AppColors.zeplin.yellow
+            : logActivityButtonOutlined ?
+                AppColors.white
+                :
+                AppColors.zeplin.yellow;
+        let logActivityButtonColor = offDaySelected && functionalStrength.completed ?
+            AppColors.white
+            : logActivityButtonOutlined && !isDailyReadinessSurveyCompleted ?
+                AppColors.zeplin.greyText
+                : logActivityButtonOutlined && isDailyReadinessSurveyCompleted ?
+                    AppColors.zeplin.yellow
+                    :
+                    AppColors.white;
+        let isFSCompletedValid = functionalStrength && Object.keys(functionalStrength).length > 0 && completedFSExercises ? MyPlanConstants.isFSCompletedValid(functionalStrength, completedFSExercises) : false;
+        let logActivityRightIconColor = isDailyReadinessSurveyCompleted ?
+            completedFSExercises.length > 0 ?
+                AppColors.zeplin.yellow
+                :
+                AppColors.white
+            :
+            AppColors.zeplin.greyText;
+        return {
+            completedFSExercises,
+            filteredTrainingSessions,
+            fsExerciseList,
+            functionalStrength,
+            isDailyReadinessSurveyCompleted,
+            isFSCompletedValid,
+            isFSEligible,
+            logActivityButtonBackgroundColor,
+            logActivityButtonColor,
+            logActivityButtonOutlined,
+            logActivityRightIconColor,
+            offDaySelected,
+        };
+    },
+
+    /**
+      * Handle MyPlan Render Recover Tab Logic
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handleMyPlanRenderRecoverTabLogic: dailyPlanObj => {
+        let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery ? dailyPlanObj.post_recovery : false;
+        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
+        let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
+        let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
+        let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed ? true : false;
+        return {
+            disabled,
+            exerciseList,
+            isActive,
+            isCompleted,
+            recoveryObj,
+        };
+    },
+
+    /**
+      * Handle MyPlan Render Prepare Tab Logic
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handleMyPlanRenderPrepareTabLogic: dailyPlanObj => {
+        let recoveryObj = dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
+        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
+        let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
+        let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
+        let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed  ? true : false;
+        let isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+        return {
+            disabled,
+            exerciseList,
+            isActive,
+            isCompleted,
+            isReadinessSurveyCompleted,
+            recoveryObj,
+        };
+    },
+
 };
 
 /* Export ==================================================================== */

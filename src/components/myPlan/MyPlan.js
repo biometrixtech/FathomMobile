@@ -2,20 +2,7 @@
  * MyPlan View
  */
 import React, { Component } from 'react';
-import {
-    ActivityIndicator,
-    Alert,
-    AppState,
-    BackHandler,
-    Easing,
-    Image,
-    Platform,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    TouchableWithoutFeedback,
-    View,
-} from 'react-native';
+import { AppState, BackHandler, Platform, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import PropTypes from 'prop-types';
 
 // import third-party libraries
@@ -35,7 +22,7 @@ import { store } from '../../store';
 import defaultPlanState from '../../states/plan';
 
 // Components
-import { Alerts, Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
+import { Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
 import {
     ActiveRecoveryBlocks,
     ActiveTimeSlideUpPanel,
@@ -55,12 +42,10 @@ import { Loading, } from '../general';
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
 
-// text constants
+// global constants
 const activeRecoveryDisabledText = 'Log a new activity on the Train Screen to receive an Active Recovery!';
 const errorInARAPMessage = '\nPlease Swipe Down to Refresh!';
 const highSorenessMessage = 'Based on your reported discomfort we recommend you rest & utilize self-care techniques like heat, ice, or massage to help reduce swelling, ease pain, & speed up healing.\n\nIf you have pain or swelling that gets worse or doesn\'t go away, please seek appropriate medical attention.';
-const lowSorenessPostMessage = 'Looks like you\'re all clear! Active Recovery is low-impact for now, so log another activity or we\'ll check in tomorrow to assess your ideal Recovery Plan!';
-const lowSorenessPreMessage = 'Looks like you\'re all clear for practice! Mobilize is low-impact this morning so complete your usual warm-up and we’ll pick-up with post practice recovery!';
 const offDayLoggedText = 'Make the most of your training by resting well today: hydrate, eat well and sleep early.';
 const timerDelay = 30000; // delay for X ms
 
@@ -193,6 +178,96 @@ class MyPlan extends Component {
         }
     }
 
+    componentWillUnmount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.removeEventListener('hardwareBackPress');
+        }
+        AppState.removeEventListener('change', this._handleAppStateChange);
+        // clear timer
+        clearInterval(this.state.timer);
+    }
+
+    componentDidMount = async () => {
+        AppState.addEventListener('change', this._handleAppStateChange);
+        if(!this.props.scheduledMaintenance.addressed) {
+            let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
+            let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
+            AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
+        }
+        if(this.props.notification) {
+            this._handlePushNotification(this.props);
+        }
+        // set GA variables
+        GATracker.setUser(this.props.user.id);
+        GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
+        GATracker.setAppName(`Fathom-${store.getState().init.environment}`);
+        let planObj = this.props.plan.dailyPlan[0] || {};
+        if(
+            planObj.daily_readiness_survey_completed &&
+            this.state.healthData.workouts &&
+            this.state.healthData.workouts.length > 0
+        ) {
+            this._goToScrollviewPage(1, () => {
+                this._togglePostSessionSurveyModal();
+            });
+        }
+    }
+
+    componentWillReceiveProps = nextProps => {
+        if(nextProps.notification && nextProps.notification !== this.props.notification) {
+            this._handlePushNotification(nextProps);
+        }
+        const areObjectsDifferent = _.isEqual(nextProps.plan, this.props.plan);
+        if(
+            !areObjectsDifferent &&
+            this.props.plan.dailyPlan[0] &&
+            nextProps.plan.dailyPlan[0] &&
+            nextProps.plan.dailyPlan[0].landing_screen !== this.props.plan.dailyPlan[0].landing_screen &&
+            (
+                nextProps.plan.dailyPlan[0].post_recovery_completed ||
+                nextProps.plan.dailyPlan[0].pre_recovery_completed
+            )
+        ) {
+            this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(nextProps.plan.dailyPlan[0]));
+        }
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
+        // if we have workouts, handle RS or PSS
+        if(!_.isEqual(prevProps.healthData, this.props.healthData) && this.props.healthData.workouts.length > 0) {
+            let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
+            if(dailyPlanObj.daily_readiness_survey_completed) {
+                this._goToScrollviewPage(1, () => {
+                    this.setState(
+                        { healthData: this.props.healthData, },
+                        () => this._togglePostSessionSurveyModal(),
+                    );
+                });
+            } else {
+                this.setState({ healthData: this.props.healthData, });
+            }
+        }
+        // handle if PN is delayed to come in
+        if(
+            (prevState.isFSCalculating !== this.state.isFSCalculating && this.state.isFSCalculating) ||
+            (prevState.isPrepCalculating !== this.state.isPrepCalculating && this.state.isPrepCalculating) ||
+            (prevState.isRecoverCalculating !== this.state.isRecoverCalculating && this.state.isRecoverCalculating)
+        ) {
+            // start timer
+            this.setState({
+                timer: _.delay(() => this._handleExerciseListRefresh(false, false), timerDelay),
+            });
+        } else if(
+            (prevState.isFSCalculating !== this.state.isFSCalculating && !this.state.isFSCalculating) ||
+            (prevState.isPrepCalculating !== this.state.isPrepCalculating && !this.state.isPrepCalculating) ||
+            (prevState.isRecoverCalculating !== this.state.isRecoverCalculating && !this.state.isRecoverCalculating)
+        ) {
+            // clear timer
+            clearInterval(this.state.timer);
+        }
+    }
+
     _handleEnteringApp = (hideSplashScreen, callback) => {
         // when we arrive, load MyPlan, if it hasn't been loaded today yet
         let userId = this.props.user.id;
@@ -287,94 +362,49 @@ class MyPlan extends Component {
             });
     }
 
-    componentWillUnmount = () => {
-        if (Platform.OS === 'android') {
-            BackHandler.removeEventListener('hardwareBackPress');
-        }
-        AppState.removeEventListener('change', this._handleAppStateChange);
+    _handleExerciseListRefresh = (shouldClearCompletedExercises, isFromPushNotification) => {
         // clear timer
         clearInterval(this.state.timer);
-    }
-
-    componentDidMount = async () => {
-        AppState.addEventListener('change', this._handleAppStateChange);
-        if(!this.props.scheduledMaintenance.addressed) {
-            let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
-            let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
-            AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
-        }
-        if(this.props.notification) {
-            this._handlePushNotification(this.props);
-        }
-        // set GA variables
-        GATracker.setUser(this.props.user.id);
-        GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
-        GATracker.setAppName(`Fathom-${store.getState().init.environment}`);
-        let planObj = this.props.plan.dailyPlan[0] || {};
-        if(
-            planObj.daily_readiness_survey_completed &&
-            this.state.healthData.workouts &&
-            this.state.healthData.workouts.length > 0
-        ) {
-            this._goToScrollviewPage(1, () => {
-                this._togglePostSessionSurveyModal();
-            });
-        }
-    }
-
-    componentWillReceiveProps = nextProps => {
-        if(nextProps.notification && nextProps.notification !== this.props.notification) {
-            this._handlePushNotification(nextProps);
-        }
-        const areObjectsDifferent = _.isEqual(nextProps.plan, this.props.plan);
-        if(
-            !areObjectsDifferent &&
-            this.props.plan.dailyPlan[0] &&
-            nextProps.plan.dailyPlan[0] &&
-            nextProps.plan.dailyPlan[0].landing_screen !== this.props.plan.dailyPlan[0].landing_screen &&
-            (
-                nextProps.plan.dailyPlan[0].post_recovery_completed ||
-                nextProps.plan.dailyPlan[0].pre_recovery_completed
-            )
-        ) {
-            this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(nextProps.plan.dailyPlan[0]));
-        }
-    }
-
-    componentDidUpdate = (prevProps, prevState, snapshot) => {
-        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
-        // if we have workouts, handle RS or PSS
-        if(!_.isEqual(prevProps.healthData, this.props.healthData) && this.props.healthData.workouts.length > 0) {
-            let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
-            if(dailyPlanObj.daily_readiness_survey_completed) {
-                this._goToScrollviewPage(1, () => {
-                    this.setState(
-                        { healthData: this.props.healthData, },
-                        () => this._togglePostSessionSurveyModal(),
-                    );
+        let userId = this.props.user.id;
+        this.setState({ isPageLoading: isFromPushNotification ? false : true, });
+        this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
+            .then(response => {
+                const dailyPlanObj = response.daily_plans && response.daily_plans[0] ? response.daily_plans[0] : false;
+                let prepExerciseList = dailyPlanObj.pre_recovery.display_exercises ? MyPlanConstants.cleanExerciseList(dailyPlanObj.pre_recovery) : {};
+                let recoverExerciseList = dailyPlanObj.post_recovery.display_exercises ? MyPlanConstants.cleanExerciseList(dailyPlanObj.post_recovery) : {};
+                let isPrepActive = isFromPushNotification && dailyPlanObj.pre_recovery && dailyPlanObj.pre_recovery.display_exercises && !dailyPlanObj.pre_recovery.completed && prepExerciseList.totalLength > 0 ? true : false;
+                let isRecoverActive = isFromPushNotification && dailyPlanObj.post_recovery && dailyPlanObj.post_recovery.display_exercises && !dailyPlanObj.post_recovery.completed && recoverExerciseList.totalLength > 0 ? true : false;
+                let newRecover = _.cloneDeep(this.state.recover);
+                newRecover.isActiveRecoveryCollapsed = isRecoverActive ? false : true;
+                newRecover.finished = false;
+                let newPrepare = _.cloneDeep(this.state.prepare);
+                newPrepare.isActiveRecoveryCollapsed = isPrepActive ? false : true;
+                newPrepare.isReadinessSurveyCollapsed = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+                newPrepare.isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+                let newTrain = Object.assign({}, this.state.train, {
+                    postPracticeSurveys: dailyPlanObj ? dailyPlanObj.training_sessions : [],
                 });
-            } else {
-                this.setState({ healthData: this.props.healthData, });
-            }
-        }
-        // handle if PN is delayed to come in
-        if(
-            (prevState.isFSCalculating !== this.state.isFSCalculating && this.state.isFSCalculating) ||
-            (prevState.isPrepCalculating !== this.state.isPrepCalculating && this.state.isPrepCalculating) ||
-            (prevState.isRecoverCalculating !== this.state.isRecoverCalculating && this.state.isRecoverCalculating)
-        ) {
-            // start timer
-            this.setState({
-                timer: _.delay(() => this._handleExerciseListRefresh(false, false), timerDelay),
+                _.delay(() => {
+                    this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
+                }, 500);
+                if(shouldClearCompletedExercises) {
+                    this.props.clearCompletedExercises();
+                }
+                let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
+                this.setState({
+                    dailyReadiness:       newDailyReadiness,
+                    isFSCalculating:      false,
+                    isPageLoading:        false,
+                    isPrepCalculating:    false,
+                    isRecoverCalculating: false,
+                    prepare:              newPrepare,
+                    recover:              newRecover,
+                    train:                newTrain,
+                });
+            })
+            .catch(error => {
+                this.setState({ isPageLoading: false, });
             });
-        } else if(
-            (prevState.isFSCalculating !== this.state.isFSCalculating && !this.state.isFSCalculating) ||
-            (prevState.isPrepCalculating !== this.state.isPrepCalculating && !this.state.isPrepCalculating) ||
-            (prevState.isRecoverCalculating !== this.state.isRecoverCalculating && !this.state.isRecoverCalculating)
-        ) {
-            // clear timer
-            clearInterval(this.state.timer);
-        }
     }
 
     _handleAppStateChange = nextAppState => {
@@ -638,6 +668,76 @@ class MyPlan extends Component {
             });
     }
 
+    _handleCompleteExercise = (exerciseId, setNumber, recovery_type) => {
+        let newExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
+        // add or remove exercise
+        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
+        if(newCompletedExercises && newCompletedExercises.indexOf(newExerciseId) > -1) {
+            newCompletedExercises.splice(newCompletedExercises.indexOf(newExerciseId), 1)
+        } else {
+            newCompletedExercises.push(newExerciseId);
+        }
+        // Mark Recovery as started, if logic passes
+        let clonedPlan = _.cloneDeep(this.props.plan);
+        let startDate = recovery_type === 'pre' ?
+            clonedPlan.dailyPlan[0].pre_recovery.start_date
+            : recovery_type === 'post' ?
+                clonedPlan.dailyPlan[0].post_recovery.start_date
+                :
+                true;
+        if(newCompletedExercises.length === 1 && !startDate) {
+            let newMyPlan =  _.cloneDeep(this.props.plan.dailyPlan);
+            if(recovery_type === 'pre') {
+                newMyPlan[0].pre_recovery.start_date = true;
+            } else if(recovery_type === 'post') {
+                newMyPlan[0].post_recovery.start_date = true;
+            }
+            this.props.markStartedRecovery(this.props.user.id, recovery_type, newMyPlan);
+        }
+        // continue by updating reducer and state
+        this.props.setCompletedExercises(newCompletedExercises);
+    }
+
+    _handleCompleteFSExercise = (exerciseId, setNumber) => {
+        let newFSExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
+        // add or remove exercise
+        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedFSExercises);
+        if(newCompletedExercises && newCompletedExercises.indexOf(newFSExerciseId) > -1) {
+            newCompletedExercises.splice(newCompletedExercises.indexOf(newFSExerciseId), 1)
+        } else {
+            newCompletedExercises.push(newFSExerciseId);
+        }
+        // Mark FS as started, if logic passes
+        let clonedPlan = _.cloneDeep(this.props.plan);
+        let startDate = clonedPlan.dailyPlan[0].functional_strength_session && clonedPlan.dailyPlan[0].functional_strength_session.start_date;
+        if(newCompletedExercises.length === 1 && !startDate) {
+            let newMyPlan =  _.cloneDeep(this.props.plan.dailyPlan);
+            newMyPlan[0].functional_strength_session.start_date = true;
+            this.props.markStartedFunctionalStrength(this.props.user.id, newMyPlan);
+        }
+        // continue by updating reducer and state
+        this.props.setCompletedFSExercises(newCompletedExercises);
+    }
+
+    _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
+        this.setState({
+            isSelectedExerciseModalOpen: isModalOpen,
+            selectedExercise:            exerciseObj ? exerciseObj : {},
+        });
+    }
+
+    _togglePrepareSlideUpPanel = () => {
+        this.setState({
+            isPrepareSlideUpPanelOpen: !this.state.isPrepareSlideUpPanelOpen,
+        });
+    }
+
+    _toggleRecoverSlideUpPanel = () => {
+        this.setState({
+            isRecoverSlideUpPanelOpen: !this.state.isRecoverSlideUpPanelOpen,
+        });
+    }
+
     _toggleCompletedAMPMRecoveryModal = () => {
         this.props.clearCompletedExercises();
         this.setState({
@@ -726,121 +826,6 @@ class MyPlan extends Component {
         }
     }
 
-    _handleExerciseListRefresh = (shouldClearCompletedExercises, isFromPushNotification) => {
-        // clear timer
-        clearInterval(this.state.timer);
-        let userId = this.props.user.id;
-        this.setState({ isPageLoading: isFromPushNotification ? false : true, });
-        this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
-            .then(response => {
-                const dailyPlanObj = response.daily_plans && response.daily_plans[0] ? response.daily_plans[0] : false;
-                let prepExerciseList = dailyPlanObj.pre_recovery.display_exercises ? MyPlanConstants.cleanExerciseList(dailyPlanObj.pre_recovery) : {};
-                let recoverExerciseList = dailyPlanObj.post_recovery.display_exercises ? MyPlanConstants.cleanExerciseList(dailyPlanObj.post_recovery) : {};
-                let isPrepActive = isFromPushNotification && dailyPlanObj.pre_recovery && dailyPlanObj.pre_recovery.display_exercises && !dailyPlanObj.pre_recovery.completed && prepExerciseList.totalLength > 0 ? true : false;
-                let isRecoverActive = isFromPushNotification && dailyPlanObj.post_recovery && dailyPlanObj.post_recovery.display_exercises && !dailyPlanObj.post_recovery.completed && recoverExerciseList.totalLength > 0 ? true : false;
-                let newRecover = _.cloneDeep(this.state.recover);
-                newRecover.isActiveRecoveryCollapsed = isRecoverActive ? false : true;
-                newRecover.finished = false;
-                let newPrepare = _.cloneDeep(this.state.prepare);
-                newPrepare.isActiveRecoveryCollapsed = isPrepActive ? false : true;
-                newPrepare.isReadinessSurveyCollapsed = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
-                newPrepare.isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
-                let newTrain = Object.assign({}, this.state.train, {
-                    postPracticeSurveys: dailyPlanObj ? dailyPlanObj.training_sessions : [],
-                });
-                _.delay(() => {
-                    this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
-                }, 500);
-                if(shouldClearCompletedExercises) {
-                    this.props.clearCompletedExercises();
-                }
-                let newDailyReadiness = _.cloneDeep(this.state.dailyReadiness);
-                this.setState({
-                    dailyReadiness:       newDailyReadiness,
-                    isFSCalculating:      false,
-                    isPageLoading:        false,
-                    isPrepCalculating:    false,
-                    isRecoverCalculating: false,
-                    prepare:              newPrepare,
-                    recover:              newRecover,
-                    train:                newTrain,
-                });
-            })
-            .catch(error => {
-                this.setState({ isPageLoading: false, });
-            });
-    }
-
-    _handleCompleteExercise = (exerciseId, setNumber, recovery_type) => {
-        let newExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
-        // add or remove exercise
-        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
-        if(newCompletedExercises && newCompletedExercises.indexOf(newExerciseId) > -1) {
-            newCompletedExercises.splice(newCompletedExercises.indexOf(newExerciseId), 1)
-        } else {
-            newCompletedExercises.push(newExerciseId);
-        }
-        // Mark Recovery as started, if logic passes
-        let clonedPlan = _.cloneDeep(this.props.plan);
-        let startDate = recovery_type === 'pre' ?
-            clonedPlan.dailyPlan[0].pre_recovery.start_date
-            : recovery_type === 'post' ?
-                clonedPlan.dailyPlan[0].post_recovery.start_date
-                :
-                true;
-        if(newCompletedExercises.length === 1 && !startDate) {
-            let newMyPlan =  _.cloneDeep(this.props.plan.dailyPlan);
-            if(recovery_type === 'pre') {
-                newMyPlan[0].pre_recovery.start_date = true;
-            } else if(recovery_type === 'post') {
-                newMyPlan[0].post_recovery.start_date = true;
-            }
-            this.props.markStartedRecovery(this.props.user.id, recovery_type, newMyPlan);
-        }
-        // continue by updating reducer and state
-        this.props.setCompletedExercises(newCompletedExercises);
-    }
-
-    _handleCompleteFSExercise = (exerciseId, setNumber) => {
-        let newFSExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
-        // add or remove exercise
-        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedFSExercises);
-        if(newCompletedExercises && newCompletedExercises.indexOf(newFSExerciseId) > -1) {
-            newCompletedExercises.splice(newCompletedExercises.indexOf(newFSExerciseId), 1)
-        } else {
-            newCompletedExercises.push(newFSExerciseId);
-        }
-        // Mark FS as started, if logic passes
-        let clonedPlan = _.cloneDeep(this.props.plan);
-        let startDate = clonedPlan.dailyPlan[0].functional_strength_session && clonedPlan.dailyPlan[0].functional_strength_session.start_date;
-        if(newCompletedExercises.length === 1 && !startDate) {
-            let newMyPlan =  _.cloneDeep(this.props.plan.dailyPlan);
-            newMyPlan[0].functional_strength_session.start_date = true;
-            this.props.markStartedFunctionalStrength(this.props.user.id, newMyPlan);
-        }
-        // continue by updating reducer and state
-        this.props.setCompletedFSExercises(newCompletedExercises);
-    }
-
-    _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
-        this.setState({
-            isSelectedExerciseModalOpen: isModalOpen,
-            selectedExercise:            exerciseObj ? exerciseObj : {},
-        });
-    }
-
-    _togglePrepareSlideUpPanel = () => {
-        this.setState({
-            isPrepareSlideUpPanelOpen: !this.state.isPrepareSlideUpPanelOpen,
-        });
-    }
-
-    _toggleRecoverSlideUpPanel = () => {
-        this.setState({
-            isRecoverSlideUpPanelOpen: !this.state.isRecoverSlideUpPanelOpen,
-        });
-    }
-
     _changeSelectedActiveTime = (selectedIndex, prepareOrRecover) => {
         this.setState({
             [prepareOrRecover]: selectedIndex,
@@ -893,6 +878,37 @@ class MyPlan extends Component {
         );
     }
 
+    _goToScrollviewPage = (pageIndex, callback) => {
+        // only scroll to page when we
+        // - HAVE a tabView
+        // - DO NOT HAVE: isReadinessSurveyModalOpen & isPostSessionSurveyModalOpen & loading
+        if(!pageIndex && callback) {
+            callback();
+        } else if(
+            this.tabView &&
+            !this.state.isReadinessSurveyModalOpen &&
+            !this.state.isPostSessionSurveyModalOpen &&
+            !this.state.isPrepareSessionsCompletionModalOpen &&
+            !this.state.isTrainSessionsCompletionModalOpen &&
+            !this.state.loading &&
+            pageIndex
+        ) {
+            setTimeout(() => {
+                this.tabView.goToPage(pageIndex);
+                if(callback) {
+                    callback();
+                }
+            }, 300);
+        }
+    }
+
+    _onChangeTab = tabLocation => {
+        const currentScreenName = tabLocation.i === 0 ? 'PREPARE' : tabLocation.i === 1 ? 'TRAIN' : tabLocation.i === 2 ? 'RECOVER' : '';
+        const fromScreenName = tabLocation.from === 0 ? 'PREPARE' : tabLocation.from === 1 ? 'TRAIN' : tabLocation.from === 2 ? 'RECOVER' : '';
+        GATracker.trackScreenView(currentScreenName, { from: fromScreenName, });
+        this.setState({ currentTabLocation: tabLocation.i, });
+    }
+
     renderTab = (name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) => {
         return(
             <RenderMyPlanTab
@@ -933,16 +949,17 @@ class MyPlan extends Component {
             isRecoverCalculating,
             prepare,
         } = this.state;
-        let completedExercises = store.getState().plan.completedExercises;
         let { plan, user, } = this.props;
+        let completedExercises = store.getState().plan.completedExercises;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        // assuming AM/PM is switching to something for prepared vs recover
-        let recoveryObj = dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
-        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
-        let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
-        let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
-        let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed  ? true : false;
-        let isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+        let {
+            disabled,
+            exerciseList,
+            isActive,
+            isCompleted,
+            isReadinessSurveyCompleted,
+            recoveryObj,
+        } = PlanLogic.handleMyPlanRenderPrepareTabLogic(dailyPlanObj);
         return (
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}
@@ -1304,14 +1321,16 @@ class MyPlan extends Component {
             isRecoverCalculating,
             recover,
         } = this.state;
-        let completedExercises = store.getState().plan.completedExercises;
         let { plan, user, } = this.props;
+        let completedExercises = store.getState().plan.completedExercises;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery ? dailyPlanObj.post_recovery : false;
-        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
-        let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
-        let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
-        let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed ? true : false;
+        let {
+            disabled,
+            exerciseList,
+            isActive,
+            isCompleted,
+            recoveryObj,
+        } = PlanLogic.handleMyPlanRenderRecoverTabLogic(dailyPlanObj);
         return (
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}
@@ -1621,48 +1640,20 @@ class MyPlan extends Component {
     renderTrain = index => {
         let { plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
-        let trainingSessions = dailyPlanObj ? dailyPlanObj.training_sessions : [];
-        let isFSEligible = dailyPlanObj && dailyPlanObj.functional_strength_eligible;
-        let functionalStrengthArray = [];
-        let functionalStrength = dailyPlanObj && dailyPlanObj.functional_strength_session ? dailyPlanObj.functional_strength_session : {};
-        if(functionalStrength.completed && functionalStrength.event_date) {
-            let newFunctionalStrength = _.cloneDeep(functionalStrength);
-            newFunctionalStrength.isFunctionalStrength = true;
-            functionalStrengthArray.push(newFunctionalStrength);
-        }
-        trainingSessions = trainingSessions.concat(functionalStrengthArray);
-        trainingSessions = _.orderBy(trainingSessions, o => moment(o.event_date), ['asc']);
-        let filteredTrainingSessions = trainingSessions && trainingSessions.length > 0 ?
-            _.filter(trainingSessions, o => !o.deleted && !o.ignored && (o.sport_name !== null || o.strength_and_conditioning_type !== null))
-            :
-            [];
-        let completedFSExercises = store.getState().plan.completedFSExercises;
-        let fsExerciseList = functionalStrength ? MyPlanConstants.cleanFSExerciseList(functionalStrength) : {};
-        let offDaySelected = dailyPlanObj && !dailyPlanObj.sessions_planned || filteredTrainingSessions.length > 0;
-        let logActivityButtonOutlined = (isDailyReadinessSurveyCompleted && (isFSEligible || functionalStrength && Object.keys(functionalStrength).length > 0) && !functionalStrength.completed) || (!isDailyReadinessSurveyCompleted) ? true : false;
-        let logActivityButtonBackgroundColor = offDaySelected && functionalStrength.completed ?
-            AppColors.zeplin.yellow
-            : logActivityButtonOutlined ?
-                AppColors.white
-                :
-                AppColors.zeplin.yellow;
-        let logActivityButtonColor = offDaySelected && functionalStrength.completed ?
-            AppColors.white
-            : logActivityButtonOutlined && !isDailyReadinessSurveyCompleted ?
-                AppColors.zeplin.greyText
-                : logActivityButtonOutlined && isDailyReadinessSurveyCompleted ?
-                    AppColors.zeplin.yellow
-                    :
-                    AppColors.white;
-        let isFSCompletedValid = functionalStrength && Object.keys(functionalStrength).length > 0 && completedFSExercises ? MyPlanConstants.isFSCompletedValid(functionalStrength, completedFSExercises) : false;
-        let logActivityRightIconColor = isDailyReadinessSurveyCompleted ?
-                completedFSExercises.length > 0 ?
-                    AppColors.zeplin.yellow
-                    :
-                    AppColors.white
-            :
-            AppColors.zeplin.greyText;
+        let {
+            completedFSExercises,
+            filteredTrainingSessions,
+            fsExerciseList,
+            functionalStrength,
+            isDailyReadinessSurveyCompleted,
+            isFSCompletedValid,
+            isFSEligible,
+            logActivityButtonBackgroundColor,
+            logActivityButtonColor,
+            logActivityButtonOutlined,
+            logActivityRightIconColor,
+            offDaySelected,
+        } = PlanLogic.handleMyPlanRenderTrainTabLogic(dailyPlanObj, store.getState().plan);
         return (
             <ScrollView
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}
@@ -1992,37 +1983,6 @@ class MyPlan extends Component {
             </ScrollView>
         );
     };
-
-    _goToScrollviewPage = (pageIndex, callback) => {
-        // only scroll to page when we
-        // - HAVE a tabView
-        // - DO NOT HAVE: isReadinessSurveyModalOpen & isPostSessionSurveyModalOpen & loading
-        if(!pageIndex && callback) {
-            callback();
-        } else if(
-            this.tabView &&
-            !this.state.isReadinessSurveyModalOpen &&
-            !this.state.isPostSessionSurveyModalOpen &&
-            !this.state.isPrepareSessionsCompletionModalOpen &&
-            !this.state.isTrainSessionsCompletionModalOpen &&
-            !this.state.loading &&
-            pageIndex
-        ) {
-            setTimeout(() => {
-                this.tabView.goToPage(pageIndex);
-                if(callback) {
-                    callback();
-                }
-            }, 300);
-        }
-    }
-
-    _onChangeTab = tabLocation => {
-        const currentScreenName = tabLocation.i === 0 ? 'PREPARE' : tabLocation.i === 1 ? 'TRAIN' : tabLocation.i === 2 ? 'RECOVER' : '';
-        const fromScreenName = tabLocation.from === 0 ? 'PREPARE' : tabLocation.from === 1 ? 'TRAIN' : tabLocation.from === 2 ? 'RECOVER' : '';
-        GATracker.trackScreenView(currentScreenName, { from: fromScreenName, });
-        this.setState({ currentTabLocation: tabLocation.i, });
-    }
 
     render = () => {
         // making sure we can only drag horizontally if our modals are closed and nothing is loading
