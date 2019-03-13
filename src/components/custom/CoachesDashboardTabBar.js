@@ -69,7 +69,7 @@ const CoachesDashboardTabBar = createReactClass({
             key={name}
             accessible={true}
             accessibilityLabel={name}
-            accessibilityTraits='button'
+            accessibilityTraits={'button'}
             onPress={() => onPressHandler(page)}
         >
             <View style={[styles.tab, this.props.tabStyle, ]}>

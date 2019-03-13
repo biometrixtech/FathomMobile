@@ -120,6 +120,7 @@ class UserAccountAbout extends Component {
                     items={UserAccountConstants.possibleGenders}
                     onValueChange={value => value ? clearCoachContent('', () => handleFormChange('biometric_data.sex', value)) : null}
                     placeholder={{
+                        color: AppColors.zeplin.darkSlate,
                         label: 'Sex',
                         value: null,
                     }}

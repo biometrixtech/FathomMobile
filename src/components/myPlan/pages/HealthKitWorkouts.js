@@ -297,6 +297,7 @@ class HealthKitWorkouts extends PureComponent {
                                             autoCapitalize={'none'}
                                             blurOnSubmit={true}
                                             clearButtonMode={'while-editing'}
+                                            clearTextOnFocus={true}
                                             containerStyle={[{display: 'none',}]}
                                             inputStyle={[{display: 'none',}]}
                                             keyboardType={'numeric'}

@@ -870,6 +870,7 @@ const PlanLogic = {
     // TODO: UNIT TEST ME
     handleReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPrepareObject = Object.assign({}, prepare, {
+            isActiveRecoveryCollapsed:  false,
             isReadinessSurveyCompleted: true,
         });
         let newDailyReadiness = {
@@ -899,11 +900,33 @@ const PlanLogic = {
         if(healthData.workouts && healthData.workouts.length > 0) {
             newDailyReadiness.health_sync_date = eventDate;
         }
+
+        let filteredHealthDataWorkouts = healthDataWorkouts && healthDataWorkouts.length > 0 ?
+            _.filter(healthDataWorkouts, o => !o.deleted)
+            :
+            [];
+        let filteredDailyReadinessSessions = dailyReadinessSessions && dailyReadinessSessions.length > 0 ?
+            _.filter(dailyReadinessSessions, o => !o.deleted)
+            :
+            [];
+        let nonDeletedSessions = _.concat(filteredHealthDataWorkouts, filteredDailyReadinessSessions);
+        let newDailyReadinessState = {
+            current_position:          null,
+            current_sport_name:        null,
+            readiness:                 null,
+            sessions:                  nonDeletedSessions,
+            sessions_planned:          newDailyReadiness.sessions_planned,
+            sleep_quality:             null,
+            soreness:                  [],
+            wants_functional_strength: null,
+            // won't be submitted, help with UI
+            already_trained_number:    null,
+        };
         return {
-            dailyReadinessSessions,
-            healthDataWorkouts,
             newDailyReadiness,
+            newDailyReadinessState,
             newPrepareObject,
+            nonDeletedSessions,
         };
     },
 
@@ -943,6 +966,7 @@ const PlanLogic = {
         clonedPostPracticeSurveys.push(newSurvey);
         let newTrainObject = Object.assign({}, train, {
             completedPostPracticeSurvey: true,
+            isActiveRecoveryCollapsed:   false,
             postPracticeSurveys:         clonedPostPracticeSurveys,
         });
         let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);

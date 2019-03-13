@@ -129,6 +129,7 @@ class MyPlan extends Component {
         this._readinessSurveyModalRef = {};
         this._singleExerciseItemRef = {};
         this.renderTab = this.renderTab.bind(this);
+        this.goToPageTimer = null;
     }
 
     componentWillMount = () => {
@@ -183,8 +184,9 @@ class MyPlan extends Component {
             BackHandler.removeEventListener('hardwareBackPress');
         }
         AppState.removeEventListener('change', this._handleAppStateChange);
-        // clear timer
+        // clear timers
         clearInterval(this.state.timer);
+        clearInterval(this.goToPageTime);
     }
 
     componentDidMount = async () => {
@@ -479,7 +481,7 @@ class MyPlan extends Component {
         });
     }
 
-    _handleHealthDataFormChange = (index, name, value, callback) => {
+    _handleHealthDataFormChange = (index, name, value, callback) => { console.log('HIIII',value);
         let newHealthData = _.cloneDeep(this.state.healthData.workouts);
         let newFormFields = _.update(newHealthData[index], name, () => value);
         if(name === 'deleted' && value === true) {
@@ -520,45 +522,23 @@ class MyPlan extends Component {
 
     _handleReadinessSurveySubmit = isSecondFunctionalStrength => {
         let {
-            dailyReadinessSessions,
-            healthDataWorkouts,
             newDailyReadiness,
+            newDailyReadinessState,
             newPrepareObject,
+            nonDeletedSessions,
         } = PlanLogic.handleReadinessSurveySubmitLogic(this.props.user.id, this.state.dailyReadiness, this.state.prepare, this.state.healthData);
-        _.delay(() => {
-            let filteredHealthDataWorkouts = healthDataWorkouts && healthDataWorkouts.length > 0 ?
-                _.filter(healthDataWorkouts, o => !o.deleted)
-                :
-                [];
-            let filteredDailyReadinessSessions = dailyReadinessSessions && dailyReadinessSessions.length > 0 ?
-                _.filter(dailyReadinessSessions, o => !o.deleted)
-                :
-                [];
-            let nonDeletedSessions = _.concat(filteredHealthDataWorkouts, filteredDailyReadinessSessions);
-            this.setState(
-                {
-                    dailyReadiness: {
-                        current_position:          null,
-                        current_sport_name:        null,
-                        readiness:                 null,
-                        sessions:                  nonDeletedSessions,
-                        sessions_planned:          newDailyReadiness.sessions_planned,
-                        sleep_quality:             null,
-                        soreness:                  [],
-                        wants_functional_strength: null,
-                        // won't be submitted, help with UI
-                        already_trained_number:    null,
-                    },
-                    healthData:                           [],
-                    isPrepCalculating:                    this.state.dailyReadiness.sessions_planned ? true : false,
-                    isPrepareSessionsCompletionModalOpen: nonDeletedSessions.length !== 0,
-                    isReadinessSurveyModalOpen:           false,
-                    isRecoverCalculating:                 this.state.dailyReadiness.sessions_planned ? false : true,
-                    prepare:                              newPrepareObject,
-                },
-                () => { if(!newDailyReadiness.sessions_planned && newDailyReadiness.sessions.length === 0) { this._goToScrollviewPage(2); } },
-            );
-        }, 500);
+        this.setState(
+            {
+                dailyReadiness:                       newDailyReadinessState,
+                healthData:                           [],
+                isPrepCalculating:                    newDailyReadiness.sessions_planned ? true : false,
+                isPrepareSessionsCompletionModalOpen: nonDeletedSessions.length !== 0,
+                isReadinessSurveyModalOpen:           false,
+                isRecoverCalculating:                 newDailyReadiness.sessions_planned ? false : true,
+                prepare:                              newPrepareObject,
+            },
+            () => { if(!newDailyReadiness.sessions_planned) { this._goToScrollviewPage(2); } },
+        );
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
                 this.setState({ isPrepCalculating: false, isRecoverCalculating: false, });
@@ -575,22 +555,20 @@ class MyPlan extends Component {
 
     _handlePostSessionSurveySubmit = areAllDeleted => {
         let { newPostSession, newPostSessionSessions, newTrainObject, } = PlanLogic.handlePostSessionSurveySubmitLogic(this.props.user.id, this.state.postSession, this.state.train, this.state.healthData);
-        _.delay(() => {
-            this.setState(
-                {
-                    healthData:                         [],
-                    train:                              newTrainObject,
-                    isPostSessionSurveyModalOpen:       false,
-                    isRecoverCalculating:               !areAllDeleted,
-                    isTrainSessionsCompletionModalOpen: !areAllDeleted,
-                    postSession:                        {
-                        description: '',
-                        sessions:    newPostSessionSessions,
-                        soreness:    [],
-                    },
+        this.setState(
+            {
+                healthData:                         [],
+                train:                              newTrainObject,
+                isPostSessionSurveyModalOpen:       false,
+                isRecoverCalculating:               !areAllDeleted,
+                isTrainSessionsCompletionModalOpen: !areAllDeleted,
+                postSession:                        {
+                    description: '',
+                    sessions:    newPostSessionSessions,
+                    soreness:    [],
                 },
-            );
-        }, 500);
+            },
+        );
         this.props.clearHealthKitWorkouts() // clear HK workouts right away
             .then(() => this.props.postSessionSurvey(newPostSession))
             .then(response => {
@@ -893,7 +871,7 @@ class MyPlan extends Component {
             !this.state.loading &&
             pageIndex
         ) {
-            setTimeout(() => {
+            this.goToPageTime = _.delay(() => {
                 this.tabView.goToPage(pageIndex);
                 if(callback) {
                     callback();
