@@ -18,7 +18,7 @@ import { TouchableHighlight, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
-import { Spacer, Text, } from '../../custom';
+import { Text, } from '../../custom';
 
 /* Component ==================================================================== */
 const ScaleButton = ({

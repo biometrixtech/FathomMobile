@@ -5,7 +5,6 @@
         completedExercises={this.state.completedExercises}
         exerciseList={exerciseList}
         handleCompleteExercise={this._handleCompleteExercise}
-        isLoading={this.state.loading}
         toggleCompletedAMPMRecoveryModal={this._toggleCompletedAMPMRecoveryModal}
         toggleSelectedExercise={this._toggleSelectedExercise}
     />
@@ -13,18 +12,17 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, RefreshControl, ScrollView, TouchableOpacity, View, } from 'react-native';
+import { View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, Spacer, Text, } from '../../custom';
+import { Button, Text, } from '../../custom';
 
 // Components
 import { ExerciseListItem, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
-import Modal from 'react-native-modalbox';
 
 class ExerciseList extends Component {
     constructor(props) {
@@ -38,7 +36,6 @@ class ExerciseList extends Component {
             handleCompleteExercise,
             isFSCompletedValid,
             isFunctionalStrength,
-            isLoading,
             isPrep,
             toggleCompletedAMPMRecoveryModal,
             toggleSelectedExercise,
@@ -81,21 +78,6 @@ class ExerciseList extends Component {
                         title={buttonTitle}
                     />
                 </View>
-                <Modal
-                    backdrop={false}
-                    backdropColor={'transparent'}
-                    backdropPressToClose={false}
-                    coverScreen={true}
-                    isOpen={isLoading}
-                    style={{backgroundColor: AppColors.transparent,}}
-                    swipeToClose={false}
-                >
-                    <ActivityIndicator
-                        color={AppColors.primary.yellow.hundredPercent}
-                        size={'large'}
-                        style={[AppStyles.activityIndicator]}
-                    />
-                </Modal>
             </View>
         )
     }
@@ -107,7 +89,6 @@ ExerciseList.propTypes = {
     handleCompleteExercise:           PropTypes.func.isRequired,
     isFSCompletedValid:               PropTypes.bool,
     isFunctionalStrength:             PropTypes.bool,
-    isLoading:                        PropTypes.bool.isRequired,
     isPrep:                           PropTypes.bool,
     toggleCompletedAMPMRecoveryModal: PropTypes.func.isRequired,
     toggleSelectedExercise:           PropTypes.func.isRequired,

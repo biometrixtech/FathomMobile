@@ -163,7 +163,7 @@ class TimedExercise extends PureComponent {
                             },
                             () => {
                                 if(exerciseTimer.number_of_sets === 2) { this._startSwitchSideCountdown(); }
-                                if(exerciseTimer.number_of_sets === 1) { ding.play(); }
+                                if(exerciseTimer.number_of_sets === 1) { ding.play(() => ding.play()); }
                             }
                         );
                         clearInterval(timer);
@@ -188,7 +188,7 @@ class TimedExercise extends PureComponent {
                                 startSecondSet:        false,
                                 timerSeconds:          0,
                             },
-                            () => ding.play(),
+                            () => ding.play(() => ding.play()),
                         );
                         clearInterval(timer);
                         clearInterval(delayTimerId);

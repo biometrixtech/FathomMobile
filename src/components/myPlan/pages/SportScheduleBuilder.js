@@ -18,11 +18,11 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, SectionList, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
+import { Image, SectionList, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, Spacer, TabIcon, Text, WheelScrollPicker, } from '../../custom';
+import { Button, Spacer, Text, WheelScrollPicker, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 import { BackNextButtons, ProgressPill, ScaleButton, SportBlock, } from './';
 

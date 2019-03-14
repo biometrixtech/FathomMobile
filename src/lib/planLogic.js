@@ -868,10 +868,13 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
+    handleReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPrepareObject = Object.assign({}, prepare, {
-            isActiveRecoveryCollapsed:  false,
+            isActiveRecoveryCollapsed:  dailyReadiness.sessions_planned ? false : true,
             isReadinessSurveyCompleted: true,
+        });
+        let newRecoverObject = Object.assign({}, recover, {
+            isActiveRecoveryCollapsed: dailyReadiness.sessions_planned ? true : false,
         });
         let newDailyReadiness = {
             date_time:                 eventDate,
@@ -926,6 +929,7 @@ const PlanLogic = {
             newDailyReadiness,
             newDailyReadinessState,
             newPrepareObject,
+            newRecoverObject,
             nonDeletedSessions,
         };
     },
@@ -935,7 +939,7 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handlePostSessionSurveySubmitLogic: (user_id, postSession, train, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
+    handlePostSessionSurveySubmitLogic: (user_id, postSession, train, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPostSession = {
             event_date: eventDate,
             user_id:    user_id,
@@ -976,9 +980,13 @@ const PlanLogic = {
             _.filter(newPostSession.sessions, o => !o.deleted && !o.ignored)
             :
             [PlanLogic.returnEmptySession()];
+        let newRecoverObject = Object.assign({}, recover, {
+            isActiveRecoveryCollapsed: false,
+        });
         return {
             newPostSession,
             newPostSessionSessions,
+            newRecoverObject,
             newTrainObject,
         };
     },

@@ -525,17 +525,19 @@ class MyPlan extends Component {
             newDailyReadiness,
             newDailyReadinessState,
             newPrepareObject,
+            newRecoverObject,
             nonDeletedSessions,
-        } = PlanLogic.handleReadinessSurveySubmitLogic(this.props.user.id, this.state.dailyReadiness, this.state.prepare, this.state.healthData);
+        } = PlanLogic.handleReadinessSurveySubmitLogic(this.props.user.id, this.state.dailyReadiness, this.state.prepare, this.state.recover, this.state.healthData);
         this.setState(
             {
                 dailyReadiness:                       newDailyReadinessState,
                 healthData:                           [],
-                isPrepCalculating:                    newDailyReadiness.sessions_planned ? true : false,
+                isPrepCalculating:                    newDailyReadiness.sessions_planned,
                 isPrepareSessionsCompletionModalOpen: nonDeletedSessions.length !== 0,
                 isReadinessSurveyModalOpen:           false,
-                isRecoverCalculating:                 newDailyReadiness.sessions_planned ? false : true,
+                isRecoverCalculating:                 !newDailyReadiness.sessions_planned,
                 prepare:                              newPrepareObject,
+                recover:                              newRecoverObject,
             },
             () => { if(!newDailyReadiness.sessions_planned) { this._goToScrollviewPage(2); } },
         );
@@ -554,7 +556,12 @@ class MyPlan extends Component {
     }
 
     _handlePostSessionSurveySubmit = areAllDeleted => {
-        let { newPostSession, newPostSessionSessions, newTrainObject, } = PlanLogic.handlePostSessionSurveySubmitLogic(this.props.user.id, this.state.postSession, this.state.train, this.state.healthData);
+        let {
+            newPostSession,
+            newPostSessionSessions,
+            newRecoverObject,
+            newTrainObject,
+        } = PlanLogic.handlePostSessionSurveySubmitLogic(this.props.user.id, this.state.postSession, this.state.train, this.state.recover, this.state.healthData);
         this.setState(
             {
                 healthData:                         [],
@@ -567,6 +574,7 @@ class MyPlan extends Component {
                     sessions:    newPostSessionSessions,
                     soreness:    [],
                 },
+                recover: newRecoverObject,
             },
         );
         this.props.clearHealthKitWorkouts() // clear HK workouts right away
@@ -1127,7 +1135,6 @@ class MyPlan extends Component {
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
                                     handleCompleteExercise={(exerciseId, setNumber) => this._handleCompleteExercise(exerciseId, setNumber, 'pre')}
-                                    isLoading={this.state.loading}
                                     isPrep={true}
                                     toggleCompletedAMPMRecoveryModal={() => this.setState({ isPrepareExerciseCompletionModalOpen: true, })}
                                     toggleSelectedExercise={this._toggleSelectedExercise}
@@ -1490,7 +1497,6 @@ class MyPlan extends Component {
                                     completedExercises={completedExercises}
                                     exerciseList={exerciseList}
                                     handleCompleteExercise={(exerciseId, setNumber) => this._handleCompleteExercise(exerciseId, setNumber, 'post')}
-                                    isLoading={this.state.loading}
                                     toggleCompletedAMPMRecoveryModal={() => this.setState({ isRecoverExerciseCompletionModalOpen: true, })}
                                     toggleSelectedExercise={this._toggleSelectedExercise}
                                 />
@@ -1756,7 +1762,6 @@ class MyPlan extends Component {
                         handleCompleteExercise={this._handleCompleteFSExercise}
                         isFSCompletedValid={isFSCompletedValid}
                         isFunctionalStrength={true}
-                        isLoading={this.state.loading}
                         toggleCompletedAMPMRecoveryModal={() => this.setState({ isFSExerciseCompletionModalOpen: true, })}
                         toggleSelectedExercise={this._toggleSelectedExercise}
                     />

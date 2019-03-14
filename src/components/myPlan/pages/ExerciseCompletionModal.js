@@ -23,7 +23,7 @@ import Modal from 'react-native-modalbox';
 
 // // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, ProgressCircle, Spacer, TabIcon, Text, } from '../../custom';
+import { Button, ProgressCircle, Spacer, Text, } from '../../custom';
 
 const modalWidth = (AppSizes.screen.width * 0.9);
 const thickness = 5;

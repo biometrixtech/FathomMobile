@@ -188,14 +188,17 @@ const possibleInjuryStatuses = [
 
 const possibleGenders = [
     {
+        color: 'black',
         label: 'Male',
         value: 'male',
     },
     {
+        color: 'black',
         label: 'Female',
         value: 'female',
     },
     {
+        color: 'black',
         label: 'Intersex',
         value: 'other',
     },
