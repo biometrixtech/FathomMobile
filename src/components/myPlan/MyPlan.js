@@ -1027,9 +1027,7 @@ class MyPlan extends Component {
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
-                                <ActiveRecoveryBlocks
-                                    isCalculating={isPrepCalculating}
-                                />
+                                <ActiveRecoveryBlocks />
                                 <Spacer size={12}/>
                                 <Button
                                     backgroundColor={AppColors.white}
@@ -1069,11 +1067,8 @@ class MyPlan extends Component {
                                 <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                 <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
                                     <ActiveRecoveryBlocks
-                                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                                        isSessionsModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
                                         recoveryObj={recoveryObj}
                                         toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
-                                        user={user}
                                     />
                                     <Spacer size={12}/>
                                     <Button
@@ -1108,11 +1103,8 @@ class MyPlan extends Component {
                                     <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
                                         <ActiveRecoveryBlocks
-                                            handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                                            isSessionsModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
                                             recoveryObj={recoveryObj}
                                             toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
-                                            user={user}
                                         />
                                         <Spacer size={20}/>
                                         <Text
@@ -1263,7 +1255,7 @@ class MyPlan extends Component {
                 <SessionsCompletionModal
                     isModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
                     onClose={this._closePrepareSessionsCompletionModal}
-                    sessions={dailyReadiness.sessions}
+                    sessions={dailyReadiness.sessions && dailyReadiness.sessions.length > 0 ? dailyReadiness.sessions : []}
                 />
                 <ExerciseCompletionModal
                     completedExercises={completedExercises}
@@ -1389,7 +1381,6 @@ class MyPlan extends Component {
                             <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
                                 <ActiveRecoveryBlocks
                                     after={true}
-                                    isCalculating={isRecoverCalculating}
                                 />
                                 <Spacer size={12}/>
                                 <Button
@@ -1431,10 +1422,8 @@ class MyPlan extends Component {
                                 <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
                                     <ActiveRecoveryBlocks
                                         after={true}
-                                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                                         recoveryObj={recoveryObj}
                                         toggleActiveTimeSlideUpPanel={this._toggleRecoverSlideUpPanel}
-                                        user={user}
                                     />
                                     <Spacer size={12}/>
                                     <Button
@@ -1469,10 +1458,8 @@ class MyPlan extends Component {
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
                                         <ActiveRecoveryBlocks
                                             after={true}
-                                            handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                                             recoveryObj={recoveryObj}
                                             toggleActiveTimeSlideUpPanel={this._toggleRecoverSlideUpPanel}
-                                            user={user}
                                         />
                                         <Spacer size={20}/>
                                         <Text
@@ -1618,6 +1605,18 @@ class MyPlan extends Component {
     };
 
     renderTrain = index => {
+        let {
+          healthData,
+          isFSCalculating,
+          isFSExerciseCompletionModalOpen,
+          isFunctionalStrengthCollapsed,
+          isFunctionalStrengthModalOpen,
+          isPostSessionSurveyModalOpen,
+          isSelectedExerciseModalOpen,
+          isTrainSessionsCompletionModalOpen,
+          postSession,
+          selectedExercise,
+        } = this.state;
         let { plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let {
@@ -1686,37 +1685,37 @@ class MyPlan extends Component {
                               titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
                           />
                           <View style={{ flex: 1, flexDirection: 'row', }}>
-                              <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: this.state.isFunctionalStrengthCollapsed ? AppColors.zeplin.lightGrey : AppColors.white, }}/>
+                              <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: isFunctionalStrengthCollapsed ? AppColors.zeplin.lightGrey : AppColors.white, }}/>
                               <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
                                   <ActiveRecoveryBlocks
                                       isFunctionalStrength={true}
-                                      recoveryObj={this.state.isFSCalculating ? false : functionalStrength}
+                                      recoveryObj={isFSCalculating ? false : functionalStrength}
                                   />
-                                  <Spacer size={this.state.isFunctionalStrengthCollapsed ? 12 : 20}/>
-                                  { this.state.isFunctionalStrengthCollapsed ?
+                                  <Spacer size={isFunctionalStrengthCollapsed ? 12 : 20}/>
+                                  { isFunctionalStrengthCollapsed ?
                                       <Button
-                                          backgroundColor={this.state.isFSCalculating ? AppColors.white : AppColors.zeplin.yellow}
-                                          color={this.state.isFSCalculating ? AppColors.zeplin.yellow : AppColors.white}
+                                          backgroundColor={isFSCalculating ? AppColors.white : AppColors.zeplin.yellow}
+                                          color={isFSCalculating ? AppColors.zeplin.yellow : AppColors.white}
                                           containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
                                           fontFamily={AppStyles.robotoBold.fontFamily}
                                           fontWeight={AppStyles.robotoBold.fontWeight}
                                           leftIcon={{
-                                              color: this.state.isFSCalculating ? AppColors.white : AppColors.zeplin.yellow,
+                                              color: isFSCalculating ? AppColors.white : AppColors.zeplin.yellow,
                                               name:  'chevron-right',
                                               size:  AppFonts.scaleFont(24),
                                               style: {flex: 1,},
                                           }}
-                                          loading={this.state.isFSCalculating}
+                                          loading={isFSCalculating}
                                           loadingRight={true}
                                           outlined
-                                          onPress={() => this.state.isFSCalculating ?
+                                          onPress={() => isFSCalculating ?
                                               null
                                               : (isFSEligible && functionalStrength && Object.keys(functionalStrength).length === 0) ?
                                                   this._toggleFunctionalStrengthModal()
                                                   :
                                                   this.setState({ isFunctionalStrengthCollapsed: false, })
                                           }
-                                          rightIcon={this.state.isFSCalculating ?
+                                          rightIcon={isFSCalculating ?
                                               {}
                                               :
                                               {
@@ -1727,7 +1726,7 @@ class MyPlan extends Component {
                                               }
                                           }
                                           textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
-                                          title={this.state.isFSCalculating ? 'Calculating...' : completedFSExercises.length > 0 ? 'Continue' : 'Start'}
+                                          title={isFSCalculating ? 'Calculating...' : completedFSExercises.length > 0 ? 'Continue' : 'Start'}
                                       />
                                       :
                                       <Text
@@ -1751,7 +1750,7 @@ class MyPlan extends Component {
                       :
                       null
                 }
-                { functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed && !this.state.isFunctionalStrengthCollapsed ?
+                { functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed && !isFunctionalStrengthCollapsed ?
                     <ExerciseList
                         completedExercises={completedFSExercises}
                         exerciseList={fsExerciseList}
@@ -1764,7 +1763,7 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                { this.state.isFunctionalStrengthCollapsed ?
+                { isFunctionalStrengthCollapsed ?
                     _.map(filteredTrainingSessions, (postPracticeSurvey, i) => {
                         let cleanedPostSessionName = MyPlanConstants.cleanedPostSessionName(postPracticeSurvey).fullName;
                         return(
@@ -1795,7 +1794,7 @@ class MyPlan extends Component {
                     null
                 }
                 <Spacer size={15} />
-                { this.state.isFunctionalStrengthCollapsed ?
+                { isFunctionalStrengthCollapsed ?
                     <View>
                         <Button
                             backgroundColor={logActivityButtonBackgroundColor}
@@ -1852,13 +1851,13 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                { this.state.isPostSessionSurveyModalOpen ?
+                { isPostSessionSurveyModalOpen ?
                     <Modal
                         backdropColor={AppColors.zeplin.darkNavy}
                         backdropOpacity={0.8}
                         backdropPressToClose={false}
                         coverScreen={true}
-                        isOpen={this.state.isPostSessionSurveyModalOpen}
+                        isOpen={isPostSessionSurveyModalOpen}
                         keyboardTopOffset={0}
                         ref={ref => {this._postSessionSurveyModalRef = ref;}}
                         swipeToClose={false}
@@ -1871,8 +1870,8 @@ class MyPlan extends Component {
                             handleHealthDataFormChange={this._handleHealthDataFormChange}
                             handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
                             handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                            healthKitWorkouts={this.state.healthData.workouts && this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : null}
-                            postSession={this.state.postSession}
+                            healthKitWorkouts={healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
+                            postSession={postSession}
                             soreBodyParts={this.props.plan.soreBodyParts}
                             typicalSessions={this.props.plan.typicalSessions}
                             user={user}
@@ -1881,13 +1880,13 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                { this.state.isSelectedExerciseModalOpen ?
+                { isSelectedExerciseModalOpen ?
                     <Modal
                         backdropColor={AppColors.zeplin.darkNavy}
                         backdropOpacity={0.8}
                         backdropPressToClose={true}
                         coverScreen={true}
-                        isOpen={this.state.isSelectedExerciseModalOpen}
+                        isOpen={isSelectedExerciseModalOpen}
                         keyboardTopOffset={0}
                         onClosed={() => this._toggleSelectedExercise(false, false)}
                         position={'center'}
@@ -1896,15 +1895,15 @@ class MyPlan extends Component {
                         swipeToClose={true}
                         useNativeDriver={false}
                     >
-                        { this.state.selectedExercise.library_id ?
+                        { selectedExercise.library_id ?
                             <SingleExerciseItem
                                 completedExercises={completedFSExercises}
-                                exercise={MyPlanConstants.cleanExercise(this.state.selectedExercise)}
+                                exercise={MyPlanConstants.cleanExercise(selectedExercise)}
                                 handleCompleteExercise={exerciseId => {
                                     this._handleCompleteFSExercise(exerciseId);
                                     this._singleExerciseItemRef.close();
                                 }}
-                                selectedExercise={this.state.selectedExercise.library_id}
+                                selectedExercise={selectedExercise.library_id}
                             />
                             :
                             null
@@ -1914,15 +1913,15 @@ class MyPlan extends Component {
                     null
                 }
                 <SessionsCompletionModal
-                    isModalOpen={this.state.isTrainSessionsCompletionModalOpen}
+                    isModalOpen={isTrainSessionsCompletionModalOpen}
                     onClose={this._closeTrainSessionsCompletionModal}
-                    sessions={this.state.postSession.sessions && this.state.postSession.sessions.length > 0 ? this.state.postSession.sessions : []}
+                    sessions={postSession.sessions && postSession.sessions.length > 0 ? postSession.sessions : []}
                 />
                 <ExerciseCompletionModal
                     completedExercises={completedFSExercises}
                     exerciseList={fsExerciseList}
                     isFS={true}
-                    isModalOpen={this.state.isFSExerciseCompletionModalOpen}
+                    isModalOpen={isFSExerciseCompletionModalOpen}
                     onClose={() => this.setState({ isFSExerciseCompletionModalOpen: false, })}
                     onComplete={() => {
                         this.setState({ isFSExerciseCompletionModalOpen: false, });
@@ -1942,7 +1941,7 @@ class MyPlan extends Component {
                     backdropOpacity={0.8}
                     backdropPressToClose={false}
                     coverScreen={true}
-                    isOpen={this.state.isFunctionalStrengthModalOpen}
+                    isOpen={isFunctionalStrengthModalOpen}
                     keyboardTopOffset={0}
                     swipeToClose={false}
                     useNativeDriver={false}

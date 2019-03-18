@@ -66,40 +66,38 @@ class SessionsCompletionModal extends Component {
         this.animation3 = {};
     }
 
-    componentDidUpdate = (prevProps, prevState) => {
-        if(prevProps.isModalOpen !== this.props.isModalOpen) {
-            let filteredIconSessions = _.filter(this.props.sessions, session => {
-                return (session.sport_name || session.sport_name === 0) ||
-                    (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
-            });
-            _.delay(() => {
-                let newProgressCounters = _.cloneDeep(this.state.progressCounters);
-                _.map(filteredIconSessions, (session, i) => {
-                    _.delay(() => {
-                        newProgressCounters[i] = 1;
-                        this.setState(
-                            { progressCounters: newProgressCounters, },
-                            () => {
-                                let isLast = Object.keys(this.state.progressCounters).length === (i + 1);
-                                if(
-                                    isLast &&
-                                    this.animation &&
-                                    this.animation.play &&
-                                    this.animation2 &&
-                                    this.animation2.play &&
-                                    this.animation3 &&
-                                    this.animation3.play
-                                ) {
-                                    this.animation.play();
-                                    this.animation2.play();
-                                    this.animation3.play();
-                                }
+    componentDidMount = () => {
+        let filteredIconSessions = _.filter(this.props.sessions, session => {
+            return (session.sport_name || session.sport_name === 0) ||
+                (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
+        });
+        _.delay(() => {
+            let newProgressCounters = _.cloneDeep(this.state.progressCounters);
+            _.map(filteredIconSessions, (session, i) => {
+                _.delay(() => {
+                    newProgressCounters[i] = 1;
+                    this.setState(
+                        { progressCounters: newProgressCounters, },
+                        () => {
+                            let isLast = Object.keys(this.state.progressCounters).length === (i + 1);
+                            if(
+                                isLast &&
+                                this.animation &&
+                                this.animation.play &&
+                                this.animation2 &&
+                                this.animation2.play &&
+                                this.animation3 &&
+                                this.animation3.play
+                            ) {
+                                this.animation.play();
+                                this.animation2.play();
+                                this.animation3.play();
                             }
-                        );
-                    }, 500 * i);
-                });
-            }, 1000);
-        }
+                        }
+                    );
+                }, 500 * i);
+            });
+        }, 1500);
     }
 
     componentWillMount = () => {

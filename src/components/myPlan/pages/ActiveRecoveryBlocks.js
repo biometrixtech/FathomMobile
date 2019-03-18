@@ -3,12 +3,9 @@
  *
     <ActiveRecoveryBlocks
         after={true}
-        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-        isCalculating={true}
-        isSessionsModalOpen={this.state.isPrepareSessionsCompletionModalOpen}
+        isFunctionalStrength={true}
         recoveryObj={recoveryObj}
         toggleActiveTimeSlideUpPanel={this._toggleActiveTimeSlideUpPanel}
-        user={user}
     />
  *
  */
@@ -242,7 +239,7 @@ class ActiveRecoveryBlocks extends Component {
                 <View style={{flex: 0.25,}} />
 
                 <TouchableHighlight
-                    onPress={isDisabled ? null : () => this.setState({ isEquipmentTooltipOpen: true, },)}
+                    onPress={isDisabled || !toggleActiveTimeSlideUpPanel ? null : () => this.setState({ isEquipmentTooltipOpen: true, },)}
                     style={{flex: 3.5,}}
                     underlayColor={AppColors.transparent}
                 >
@@ -297,28 +294,20 @@ class ActiveRecoveryBlocks extends Component {
 }
 
 ActiveRecoveryBlocks.propTypes = {
-    after:                           PropTypes.bool,
-    handleUpdateFirstTimeExperience: PropTypes.func,
-    isCalculating:                   PropTypes.bool,
-    isFunctionalStrength:            PropTypes.bool,
-    isSessionsModalOpen:             PropTypes.bool,
-    recoveryObj:                     PropTypes.oneOfType([
+    after:                PropTypes.bool,
+    isFunctionalStrength: PropTypes.bool,
+    recoveryObj:          PropTypes.oneOfType([
         PropTypes.object,
         PropTypes.bool,
     ]),
     toggleActiveTimeSlideUpPanel: PropTypes.func,
-    user:                         PropTypes.object,
 };
 
 ActiveRecoveryBlocks.defaultProps = {
-    after:                           false,
-    handleUpdateFirstTimeExperience: null,
-    isCalculating:                   false,
-    isFunctionalStrength:            false,
-    isSessionsModalOpen:             false,
-    recoveryObj:                     false,
-    toggleActiveTimeSlideUpPanel:    null,
-    user:                            null,
+    after:                        false,
+    isFunctionalStrength:         false,
+    recoveryObj:                  false,
+    toggleActiveTimeSlideUpPanel: null,
 };
 
 ActiveRecoveryBlocks.componentName = 'ActiveRecoveryBlocks';
