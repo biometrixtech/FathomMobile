@@ -460,6 +460,9 @@ const PlanLogic = {
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
         let sportText = pageState.step === 1 && selectedSport ? selectedSport.label.toLowerCase() : '';
         let sportImage = pageState.step === 1 && selectedSport ? selectedSport.imagePath : '';
+        if(selectedSport && selectedSport.label === 'High Intensity Interval Training') {
+            sportText = 'HIIT';
+        }
         return {
             sportImage,
             sportText,
@@ -833,6 +836,10 @@ const PlanLogic = {
         let sportStartTime = workout && workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
         let sportText = selectedSport ? `${sportStartTime} ${selectedSport.label.toLowerCase()} workout` : '';
         let sportImage = selectedSport ? selectedSport.imagePath : '';
+        if(selectedSport && sportName === 'High Intensity Interval Training') {
+            sportName = 'HIIT';
+            sportText = `${sportStartTime} ${sportName} workout`;
+        }
         return {
             partOfDay,
             sportDuration,

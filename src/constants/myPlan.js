@@ -390,7 +390,7 @@ const teamSports = [
     { index: 69, label: 'Barre', imagePath: require('../../assets/images/sports_images/icons8-pullups-200.png'), activitySection: 'studio_activities', },
     { index: 70, label: 'Core Training', imagePath: require('../../assets/images/sports_images/icons8-sit-ups-200.png'), activitySection: 'exercise_and_fitness', },
     { index: 71, label: 'Flexibility', imagePath: require('../../assets/images/sports_images/icons8-warm-up-200.png'), activitySection: 'exercise_and_fitness', },
-    { index: 72, label: 'HIIT', imagePath: require('../../assets/images/sports_images/icons8-exercise-200.png'), activitySection: 'exercise_and_fitness', },
+    { index: 72, label: 'High Intensity Interval Training', imagePath: require('../../assets/images/sports_images/icons8-exercise-200.png'), activitySection: 'exercise_and_fitness', },
     { index: 73, label: 'Jump Rope', imagePath: require('../../assets/images/sports_images/icons8-jump-200.png'), activitySection: 'exercise_and_fitness', },
     { index: 74, label: 'Pilates', imagePath: require('../../assets/images/sports_images/icons8-pilates-200.png'), activitySection: 'studio_activities', },
     { index: 75, label: 'Stairs', imagePath: require('../../assets/images/sports_images/icons8-staircase-200.png'), activitySection: 'exercise_and_fitness', },

@@ -481,7 +481,7 @@ class MyPlan extends Component {
         });
     }
 
-    _handleHealthDataFormChange = (index, name, value, callback) => { console.log('HIIII',value);
+    _handleHealthDataFormChange = (index, name, value, callback) => {
         let newHealthData = _.cloneDeep(this.state.healthData.workouts);
         let newFormFields = _.update(newHealthData[index], name, () => value);
         if(name === 'deleted' && value === true) {
