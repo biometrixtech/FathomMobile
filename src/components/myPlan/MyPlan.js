@@ -1271,14 +1271,13 @@ class MyPlan extends Component {
                     isModalOpen={this.state.isPrepareExerciseCompletionModalOpen}
                     onClose={() => this.setState({ isPrepareExerciseCompletionModalOpen: false, })}
                     onComplete={() => {
-                        this.setState({ isPrepareExerciseCompletionModalOpen: false, loading: true, });
+                        this.setState({ isPrepareExerciseCompletionModalOpen: false, });
                         let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(store.getState().plan.completedExercises);
                         this.props.patchActiveRecovery(this.props.user.id, newCompletedExercises, 'pre')
                             .then(res => {
                                 let newDailyPlanObj = store.getState().plan.dailyPlan[0];
                                 this.setState(
                                     {
-                                        loading: false,
                                         prepare: Object.assign({}, this.state.prepare, {
                                             finishedRecovery:          true,
                                             isActiveRecoveryCollapsed: true,
@@ -1288,7 +1287,6 @@ class MyPlan extends Component {
                                 )
                             })
                             .catch(() => {
-                                this.setState({ loading: false });
                                 AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
                             });
                     }}
@@ -1598,12 +1596,11 @@ class MyPlan extends Component {
                     isModalOpen={this.state.isRecoverExerciseCompletionModalOpen}
                     onClose={() => this.setState({ isRecoverExerciseCompletionModalOpen: false, })}
                     onComplete={() => {
-                        this.setState({ isRecoverExerciseCompletionModalOpen: false, loading: true, });
+                        this.setState({ isRecoverExerciseCompletionModalOpen: false, });
                         let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(store.getState().plan.completedExercises);
                         this.props.patchActiveRecovery(this.props.user.id, newCompletedExercises, 'post')
                             .then(() =>
                                 this.setState({
-                                    loading: false,
                                     recover: Object.assign({}, this.state.recover, {
                                         finished:                  !!completedExercises.length,
                                         isActiveRecoveryCollapsed: true,
@@ -1611,7 +1608,6 @@ class MyPlan extends Component {
                                 })
                             )
                             .catch(() => {
-                                this.setState({ loading: false });
                                 AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
                             });
                     }}
@@ -1929,17 +1925,13 @@ class MyPlan extends Component {
                     isModalOpen={this.state.isFSExerciseCompletionModalOpen}
                     onClose={() => this.setState({ isFSExerciseCompletionModalOpen: false, })}
                     onComplete={() => {
-                        this.setState({ isFSExerciseCompletionModalOpen: false, loading: true, });
+                        this.setState({ isFSExerciseCompletionModalOpen: false, });
                         this.props.patchFunctionalStrength(this.props.user.id, completedFSExercises)
                             .then(() => {
                                 this.props.clearCompletedFSExercises();
-                                this.setState({
-                                    isFunctionalStrengthCollapsed: true,
-                                    loading:                       false,
-                                });
+                                this.setState({ isFunctionalStrengthCollapsed: true, });
                             })
                             .catch(() => {
-                                this.setState({ loading: false, });
                                 AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
                             })
                     }}
@@ -1977,7 +1969,7 @@ class MyPlan extends Component {
                     onChangeTab={tabLocation => this._onChangeTab(tabLocation)}
                     ref={tabView => { this.tabView = tabView; }}
                     renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}} />}
-                    style={{backgroundColor: AppColors.white}}
+                    style={{backgroundColor: AppColors.white,}}
                     tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
                     tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
                     tabBarUnderlineStyle={{ height: 0 }}

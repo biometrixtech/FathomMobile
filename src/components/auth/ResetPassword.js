@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Keyboard, View, StyleSheet, TouchableOpacity, } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -31,6 +31,19 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
+const Wrapper = props => Platform.OS === 'ios' ?
+    (
+        <KeyboardAvoidingView behavior={'padding'} style={{backgroundColor: AppColors.white, flex: 1, justifyContent: 'space-between',}}>
+            {props.children}
+        </KeyboardAvoidingView>
+    )
+    :
+    (
+        <KeyboardAvoidingView style={{backgroundColor: AppColors.white, flex: 1, justifyContent: 'space-between',}}>
+            {props.children}
+        </KeyboardAvoidingView>
+    );
+
 class ResetPassword extends Component {
     static componentName = 'ResetPassword';
 
@@ -268,8 +281,8 @@ class ResetPassword extends Component {
 
     render = () => {
         return (
-            <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: AppColors.white}}>
-                <View >
+            <Wrapper>
+                <View>
                     <ProgressBar
                         currentStep={2}
                         totalSteps={3}
@@ -296,8 +309,8 @@ class ResetPassword extends Component {
                         <FormInput
                             autoCapitalize={'none'}
                             blurOnSubmit={ false }
-                            clearButtonMode = 'while-editing'
-                            inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
+                            clearButtonMode={'while-editing'}
+                            inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'email-address'}
                             onChangeText={(text) => this._handleFormChange('Email', text)}
                             onSubmitEditing={() => {
@@ -314,8 +327,8 @@ class ResetPassword extends Component {
                         <FormInput
                             autoCapitalize={'none'}
                             blurOnSubmit={ false }
-                            clearButtonMode = 'while-editing'
-                            inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
+                            clearButtonMode={'while-editing'}
+                            inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'default'}
                             onChangeText={(text) => this._handleFormChange('VerificationCode', text)}
                             onSubmitEditing={() => {
@@ -332,8 +345,8 @@ class ResetPassword extends Component {
                         <FormInput
                             autoCapitalize={'none'}
                             blurOnSubmit={ false }
-                            clearButtonMode = 'while-editing'
-                            inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
+                            clearButtonMode={'while-editing'}
+                            inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'default'}
                             onChangeText={(text) => this._handleFormChange('NewPassword', text)}
                             onSubmitEditing={() => {
@@ -351,8 +364,8 @@ class ResetPassword extends Component {
                         <FormInput
                             autoCapitalize={'none'}
                             blurOnSubmit={ true }
-                            clearButtonMode = 'while-editing'
-                            inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
+                            clearButtonMode={'while-editing'}
+                            inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'default'}
                             onChangeText={(text) => this._handleFormChange('ConfirmPassword', text)}
                             placeholder={'confirm new password'}
@@ -380,7 +393,7 @@ class ResetPassword extends Component {
                     textStyle={{ fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                     title={'Confirm'}
                 />
-            </View>
+            </Wrapper>
         );
     }
 }

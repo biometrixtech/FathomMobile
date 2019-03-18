@@ -294,8 +294,8 @@ class Login extends Component {
                     <FormInput
                         autoCapitalize={'none'}
                         blurOnSubmit={ false }
-                        clearButtonMode = 'while-editing'
-                        inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,}]}
+                        clearButtonMode={'never'}
+                        inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,}]}
                         keyboardType={'email-address'}
                         onChangeText={(text) => this._handleFormChange('email', text)}
                         onSubmitEditing={() => this._focusNextField('password')}
@@ -310,8 +310,8 @@ class Login extends Component {
                     <FormInput
                         autoCapitalize={'none'}
                         blurOnSubmit={ true }
-                        clearButtonMode = 'while-editing'
-                        inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,paddingTop: 25}]}
+                        clearButtonMode={'never'}
+                        inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,paddingTop: 25}]}
                         keyboardType={'default'}
                         onChangeText={(text) => this._handleFormChange('password', text)}
                         onSubmitEditing={() => this._handleFormSubmit()}

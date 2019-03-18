@@ -83,7 +83,7 @@ const RenderMyPlanTab = ({
         <TouchableWithoutFeedback
             accessible={true}
             accessibilityLabel={name}
-            accessibilityTraits='button'
+            accessibilityTraits={'button'}
             onPress={() => isScrollLocked ? null : onPressHandler(page)}
             onLayout={onLayoutHandler}
         >

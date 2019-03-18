@@ -143,6 +143,15 @@ const setCompletedFSExercises = exercise => {
   * Post Readiness Survey Data
   */
 const postReadinessSurvey = dailyReadinessObj => {
+    // update daily_readiness_survey_completed flag
+    let newDailyPlanObj = _.cloneDeep(store.getState().plan.dailyPlan);
+    newDailyPlanObj[0].daily_readiness_survey_completed = true;
+    // update reducer
+    store.dispatch({
+        type: Actions.GET_MY_PLAN,
+        data: newDailyPlanObj,
+    });
+    // continue logic
     return dispatch => AppAPI.post_readiness_survey.post(false, dailyReadinessObj)
         .then(myPlanData => {
             dispatch({

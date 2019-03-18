@@ -39,6 +39,7 @@ const CoachesDashboardTabBar = createReactClass({
         activeTab:         PropTypes.number,
         activeTextColor:   PropTypes.string,
         backgroundColor:   PropTypes.string,
+        disabled:          PropTypes.bool.isRequired,
         goToPage:          PropTypes.func,
         headerItems:       PropTypes.object,
         inactiveTextColor: PropTypes.string,
@@ -127,6 +128,7 @@ const CoachesDashboardTabBar = createReactClass({
                                     </FathomText>
                                     :
                                     <FathomPicker
+                                        disabled={this.props.disabled}
                                         hideIcon={false}
                                         items={this.props.headerItems.coachesTeams}
                                         itemStyle={{color: 'blue', fontSize: 100,}}

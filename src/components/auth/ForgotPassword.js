@@ -189,8 +189,8 @@ class ForgotPassword extends Component {
                         <FormInput
                             autoCapitalize={'none'}
                             blurOnSubmit={ true }
-                            clearButtonMode = 'while-editing'
-                            inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
+                            clearButtonMode={'while-editing'}
+                            inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
                             keyboardType={'email-address'}
                             onChangeText={(text) => this._handleFormChange('email', text)}
                             placeholder={'email'}
