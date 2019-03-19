@@ -23,7 +23,10 @@ const onboardingUtils = {
                 !isUpdatingUser &&
                 !this.isPasswordValid(user.password).isValid &&
                 !this.isPasswordValid(user.confirm_password).isValid
-            ) || user.password !== user.confirm_password
+            ) || (
+                !isUpdatingUser &&
+                user.password !== user.confirm_password
+            )
         ) {
             let newError = this.getPasswordRules();
             errorsArray.push(newError);

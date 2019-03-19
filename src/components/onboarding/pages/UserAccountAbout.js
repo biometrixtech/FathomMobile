@@ -85,7 +85,7 @@ class UserAccountAbout extends Component {
         } = this.props;
         return(
             <View style={[{borderTopColor: AppColors.zeplin.light, borderTopWidth: 1,}]}>
-                <Text style={[styles.inputLabel]}>{user.personal_data.birth_date.length > 0 ?'Date of Birth' : ' '}</Text>
+                <Text style={[styles.inputLabel]}>{user.personal_data.birth_date.length > 0 ?'Date of birth' : ' '}</Text>
                 <DatePicker
                     cancelBtnText={'Cancel'}
                     confirmBtnText={'Confirm'}
@@ -99,7 +99,7 @@ class UserAccountAbout extends Component {
                     format={'MM/DD/YYYY'}
                     mode={'date'}
                     onDateChange={date => clearCoachContent('', () => handleFormChange('personal_data.birth_date', date))}
-                    placeholder={'Date of Birth'}
+                    placeholder={'Date of birth'}
                     ref={input => {this.inputs.birth_date = input;}}
                     showIcon={false}
                     style={{width: '100%'}}

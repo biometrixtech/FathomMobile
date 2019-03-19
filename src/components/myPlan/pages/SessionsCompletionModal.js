@@ -247,9 +247,7 @@ class SessionsCompletionModal extends Component {
                                 <LottieView
                                     loop={false}
                                     onAnimationFinish={() => this.setState({ isConfettiAnimationVisible: false, })}
-                                    ref={animation => {
-                                        this.animation = animation;
-                                    }}
+                                    ref={animation => {this.animation = animation;}}
                                     source={require('../../../../assets/animation/confetti.json')}
                                 />
                                 :
@@ -259,9 +257,7 @@ class SessionsCompletionModal extends Component {
                                 <LottieView
                                     loop={false}
                                     onAnimationFinish={() => this.setState({ isConfettiAnimation2Visible: false, })}
-                                    ref={animation => {
-                                        this.animation2 = animation;
-                                    }}
+                                    ref={animation => {this.animation2 = animation;}}
                                     source={require('../../../../assets/animation/confetti.json')}
                                     speed={2}
                                 />
@@ -272,9 +268,7 @@ class SessionsCompletionModal extends Component {
                                 <LottieView
                                     loop={false}
                                     onAnimationFinish={() => this.setState({ isConfettiAnimation3Visible: false, })}
-                                    ref={animation => {
-                                        this.animation3 = animation;
-                                    }}
+                                    ref={animation => {this.animation3 = animation;}}
                                     source={require('../../../../assets/animation/confetti.json')}
                                     speed={3}
                                 />
