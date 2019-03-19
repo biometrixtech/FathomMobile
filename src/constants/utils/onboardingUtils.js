@@ -19,12 +19,9 @@ const onboardingUtils = {
             errorsArray.push(newError);
             isValid = false;
         } else if(
+            !isUpdatingUser &&
             (
-                !isUpdatingUser &&
-                !this.isPasswordValid(user.password).isValid &&
-                !this.isPasswordValid(user.confirm_password).isValid
-            ) || (
-                !isUpdatingUser &&
+                (!this.isPasswordValid(user.password).isValid && !this.isPasswordValid(user.confirm_password).isValid) ||
                 user.password !== user.confirm_password
             )
         ) {
