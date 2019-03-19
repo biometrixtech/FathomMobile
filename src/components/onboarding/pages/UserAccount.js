@@ -63,11 +63,12 @@ class UserAccount extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            accordionSection: 0,
-            coachContent:     '',
-            isAboutFormValid: false,
-            isInfoFormValid:  false,
-            isPasswordSecure: true,
+            accordionSection:        0,
+            coachContent:            '',
+            isAboutFormValid:        false,
+            isConfirmPasswordSecure: true,
+            isInfoFormValid:         false,
+            isPasswordSecure:        true,
         };
 
         this.scrollViewRef = {};
@@ -122,7 +123,7 @@ class UserAccount extends Component {
                 { section.index === 1 || (section.index === 2 && this.state.accordionSection === 1) ?
                     <View
                         style={{
-                            borderColor:     AppColors.border,
+                            borderColor:     AppColors.zeplin.light,
                             borderLeftWidth: 1,
                             height:          20,
                             marginLeft:      10,
@@ -139,7 +140,7 @@ class UserAccount extends Component {
         let errorMsg = this.props.error && this.props.error.length > 0 ? this.props.error : this.state.coachContent && this.state.coachContent.length > 0 ? this.state.coachContent : '';
         return(
             <View>
-                <View style={{marginLeft: 10, borderLeftWidth: 1, borderColor: AppColors.border,}}>
+                <View style={{borderColor: AppColors.zeplin.light, borderLeftWidth: 1, marginLeft: 10,}}>
                     <Alerts
                         leftAlignText
                         error={errorMsg}
@@ -191,8 +192,12 @@ class UserAccount extends Component {
         }
     };
 
-    _toggleShowPassword = () => {
-        this.setState({ isPasswordSecure: !this.state.isPasswordSecure});
+    _toggleShowPassword = isConfirmPassword => {
+        if(isConfirmPassword) {
+            this.setState({ isConfirmPasswordSecure: !this.state.isConfirmPasswordSecure, });
+        } else {
+            this.setState({ isPasswordSecure: !this.state.isPasswordSecure, });
+        }
     };
 
     _updateErrorMessage = (isAbout) => {
@@ -235,6 +240,7 @@ class UserAccount extends Component {
                 content: <UserAccountInfo
                     clearCoachContent={this._clearCoachContent}
                     handleFormChange={handleFormChange}
+                    isConfirmPasswordSecure={this.state.isConfirmPasswordSecure}
                     isPasswordSecure={this.state.isPasswordSecure}
                     isUpdatingUser={isUpdatingUser}
                     setAccordionSection={this._setAccordionSection}

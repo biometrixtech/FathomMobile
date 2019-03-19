@@ -18,7 +18,13 @@ const onboardingUtils = {
             let newError = 'Your Email must be a valid email format';
             errorsArray.push(newError);
             isValid = false;
-        } else if( !isUpdatingUser && !this.isPasswordValid(user.password).isValid ) {
+        } else if(
+            (
+                !isUpdatingUser &&
+                !this.isPasswordValid(user.password).isValid &&
+                !this.isPasswordValid(user.confirm_password).isValid
+            ) || user.password !== user.confirm_password
+        ) {
             let newError = this.getPasswordRules();
             errorsArray.push(newError);
             isValid = false;
@@ -108,7 +114,10 @@ const onboardingUtils = {
         if(
             user.password.length >= 8 &&
             user.password.length <= 16 &&
-            numbersRegex.test(user.password)
+            numbersRegex.test(user.password) &&
+            user.confirm_password.length >= 8 &&
+            user.confirm_password.length <= 16 &&
+            numbersRegex.test(user.confirm_password)
         ) { count = count + 1; }
         if( this.isEmailValid(user.personal_data.email) ) { count = count + 1; }
         // if(user.personal_data.zip_code.length > 0) { count = count + 1; }

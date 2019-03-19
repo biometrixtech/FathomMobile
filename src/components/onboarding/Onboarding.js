@@ -92,13 +92,8 @@ class Onboarding extends Component {
                 user: {
                     // agreed_terms_of_use:   false, // boolean
                     // agreed_privacy_policy: false, // boolean
-                    account_code:          this.props.accountCode,
-                    health_enabled:        user.health_enabled ? user.health_enabled : false,
-                    cleared_to_play:       false, // boolean
-                    first_time_experience: user.first_time_experience ? user.first_time_experience : [],
-                    onboarding_status:     user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    password:              '',
-                    biometric_data:        {
+                    account_code:   this.props.accountCode,
+                    biometric_data: {
                         height: {
                             in: user.biometric_data && user.biometric_data.height.ft_in ?
                                 ((user.biometric_data.height.ft_in[0] * 12) + user.biometric_data.height.ft_in[1]).toString()
@@ -117,7 +112,15 @@ class Onboarding extends Component {
                         },
                         sex: user.biometric_data && user.biometric_data.sex ? user.biometric_data.sex : '',
                     },
-                    personal_data: {
+                    cleared_to_play:       false, // boolean
+                    confirm_password:      '',
+                    first_time_experience: user.first_time_experience ? user.first_time_experience : [],
+                    health_enabled:        user.health_enabled ? user.health_enabled : false,
+                    injuries:              {}, // COMING SOON
+                    injury_status:         user.injury_status ? user.injury_status : '',
+                    onboarding_status:     user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
+                    password:              '',
+                    personal_data:         {
                         account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                         account_type:   'free', // 'paid', 'free'
                         birth_date:     user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'MM/DD/YYYY').format('MM/DD/YYYY') : '',
@@ -128,9 +131,8 @@ class Onboarding extends Component {
                         zip_code:       user.personal_data && user.personal_data.zip_code ? user.personal_data.zip_code : '',
                     },
                     role:                           this.props.accountRole,
+                    sports:                         [sportArray],
                     // system_type:                    '1-sensor', // '1-sensor', '3-sensor'
-                    injury_status:                  user.injury_status ? user.injury_status : '',
-                    injuries:                       {}, // COMING SOON
                     training_groups:                [], // COMING SOON
                     training_schedule:              {},
                     training_strength_conditioning: {
@@ -139,7 +141,6 @@ class Onboarding extends Component {
                         durations:      '',
                         totalDurations: '',
                     },
-                    sports:                   [sportArray],
                     workout_outside_practice: null,
                 }
             },

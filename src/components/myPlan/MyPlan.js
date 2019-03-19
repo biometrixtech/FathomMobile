@@ -1178,49 +1178,47 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                {
-                    this.state.isSelectedExerciseModalOpen
-                        ?
-                        <Modal
-                            backdropColor={AppColors.zeplin.darkBlue}
-                            backdropOpacity={0.9}
-                            backdropPressToClose={false}
-                            coverScreen={true}
-                            isOpen={this.state.isSelectedExerciseModalOpen}
-                            keyboardTopOffset={0}
-                            onClosed={() => this._toggleSelectedExercise(false, false)}
-                            position={'center'}
-                            ref={ref => {this._singleExerciseItemRef = ref;}}
-                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent,}]}
-                            swipeToClose={false}
-                            useNativeDriver={false}
-                        >
-                            { this.state.selectedExercise.library_id ?
-                                <Exercises
-                                    closeModal={() => this._singleExerciseItemRef.close()}
-                                    completedExercises={completedExercises}
-                                    exerciseList={exerciseList}
-                                    handleCompleteExercise={(exerciseId, setNumber, hasNextExercise, isUnChecked) => {
-                                        this._handleCompleteExercise(exerciseId, setNumber, 'pre');
-                                        if(!hasNextExercise && isUnChecked) {
-                                            this._singleExerciseItemRef.close();
-                                            _.delay(() => {
-                                                this.setState({ isPrepareExerciseCompletionModalOpen: true, });
-                                            }, 750);
-                                        }
-                                    }}
-                                    handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                                    selectedExercise={this.state.selectedExercise}
-                                    user={this.props.user}
+                { this.state.isSelectedExerciseModalOpen ?
+                    <Modal
+                        backdropColor={AppColors.zeplin.darkBlue}
+                        backdropOpacity={0.9}
+                        backdropPressToClose={false}
+                        coverScreen={true}
+                        isOpen={this.state.isSelectedExerciseModalOpen}
+                        keyboardTopOffset={0}
+                        onClosed={() => this._toggleSelectedExercise(false, false)}
+                        position={'center'}
+                        ref={ref => {this._singleExerciseItemRef = ref;}}
+                        style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent,}]}
+                        swipeToClose={false}
+                        useNativeDriver={false}
+                    >
+                        { this.state.selectedExercise.library_id ?
+                            <Exercises
+                                closeModal={() => this._singleExerciseItemRef.close()}
+                                completedExercises={completedExercises}
+                                exerciseList={exerciseList}
+                                handleCompleteExercise={(exerciseId, setNumber, hasNextExercise, isUnChecked) => {
+                                    this._handleCompleteExercise(exerciseId, setNumber, 'pre');
+                                    if(!hasNextExercise && isUnChecked) {
+                                        this._singleExerciseItemRef.close();
+                                        _.delay(() => {
+                                            this.setState({ isPrepareExerciseCompletionModalOpen: true, });
+                                        }, 750);
+                                    }
+                                }}
+                                handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                                selectedExercise={this.state.selectedExercise}
+                                user={this.props.user}
 
-                                    updateSelectedExercise={selectedExercise => this.setState({selectedExercise,})}
-                                />
-                                :
-                                null
-                            }
-                        </Modal>
-                        :
-                        null
+                                updateSelectedExercise={selectedExercise => this.setState({selectedExercise,})}
+                            />
+                            :
+                            null
+                        }
+                    </Modal>
+                    :
+                    null
                 }
                 <ActiveTimeSlideUpPanel
                     changeSelectedActiveTime={(selectedIndex) => this._changeSelectedActiveTime(selectedIndex, 'prepareSelectedActiveTime')}

@@ -13,10 +13,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FormLabel } from 'react-native-elements';
-
-// Consts and Libs
-import { AppColors, AppFonts } from '../../constants';
+import { FormLabel, } from 'react-native-elements';
 
 /* Component ==================================================================== */
 class CustomFormLabel extends Component {
@@ -43,12 +40,7 @@ class CustomFormLabel extends Component {
         const props = {
             ...this.props,
             containerStyle: [{}],
-            labelStyle:     [{
-                ...AppFonts.oswaldMedium,
-                color:      AppColors.zeplin.lightSlate,
-                fontSize:   AppFonts.scaleFont(14),
-                lineHeight: AppFonts.scaleFont(16),
-            }],
+            labelStyle:     [{}],
         };
 
         if (this.props.containerStyle) {

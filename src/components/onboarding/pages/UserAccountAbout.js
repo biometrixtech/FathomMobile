@@ -17,7 +17,7 @@ import { StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, UserAccount as UserAccountConstants, } from '../../../constants';
-import { FathomPicker, FormInput, FormLabel, Spacer, Text, } from '../../custom';
+import { FathomInput, FathomPicker, Spacer, Text, } from '../../custom';
 import { onboardingUtils, } from '../../../constants/utils';
 
 // import third-party libraries
@@ -27,11 +27,18 @@ import DatePicker from 'react-native-datepicker';
 const styles = StyleSheet.create({
     androidViewContainer: {
         borderBottomWidth: 1,
-        borderBottomColor: AppColors.border,
+        borderBottomColor: AppColors.zeplin.light,
         height:            40,
         justifyContent:    'center',
         marginRight:       20,
-        paddingLeft:       11,
+    },
+    inputLabel: {
+        ...AppFonts.robotoRegular,
+        color:       AppColors.zeplin.lightSlate,
+        fontSize:    AppFonts.scaleFont(11),
+        margin:      0,
+        paddingLeft: AppSizes.paddingSml,
+        paddingTop:  AppSizes.paddingSml,
     },
     pickerSelectAndroid: {
         color: AppColors.black,
@@ -42,17 +49,16 @@ const styles = StyleSheet.create({
         fontSize:       AppFonts.scaleFont(16),
         height:         40,
         justifyContent: 'center',
-        paddingLeft:    10,
     },
     reusableCustomSpacing: {
         alignItems:        'flex-start',
         borderBottomWidth: 1,
-        borderColor:       AppColors.border,
+        borderColor:       AppColors.zeplin.light,
         borderLeftWidth:   0,
         borderRightWidth:  0,
         borderTopWidth:    0,
         marginRight:       20,
-        paddingLeft:       20,
+        paddingLeft:       AppSizes.paddingSml,
     },
 });
 
@@ -78,15 +84,15 @@ class UserAccountAbout extends Component {
             user,
         } = this.props;
         return(
-            <View style={[{borderTopWidth: 1, borderTopColor: AppColors.border,}]}>
-                <FormLabel>{user.personal_data.birth_date.length > 0 ?'DATE OF BIRTH' : ' '}</FormLabel>
+            <View style={[{borderTopColor: AppColors.zeplin.light, borderTopWidth: 1,}]}>
+                <Text style={[styles.inputLabel]}>{user.personal_data.birth_date.length > 0 ?'Date of Birth' : ' '}</Text>
                 <DatePicker
                     cancelBtnText={'Cancel'}
                     confirmBtnText={'Confirm'}
                     customStyles={{
                         dateInput:       styles.reusableCustomSpacing,
                         dateText:        {...AppFonts.robotoRegular, color: AppColors.black, fontSize: AppFonts.scaleFont(16),},
-                        placeholderText: {color: AppColors.zeplin.lightGrey, fontSize: AppFonts.scaleFont(16), ...AppFonts.robotoRegular, },
+                        placeholderText: {color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(16), ...AppFonts.robotoRegular, },
                         btnTextConfirm:  {color: AppColors.zeplin.yellow},
                     }}
                     date={user.personal_data.birth_date || ''}
@@ -94,27 +100,24 @@ class UserAccountAbout extends Component {
                     mode={'date'}
                     onDateChange={date => clearCoachContent('', () => handleFormChange('personal_data.birth_date', date))}
                     placeholder={'Date of Birth'}
-                    ref={input => {
-                        this.inputs.birth_date = input;
-                    }}
+                    ref={input => {this.inputs.birth_date = input;}}
                     showIcon={false}
                     style={{width: '100%'}}
                 />
-                <FormLabel>{user.biometric_data.mass.lb.length > 0 ? 'WEIGHT (LBS)' : ' '}</FormLabel>
-                <FormInput
-                    blurOnSubmit={ true }
-                    containerStyle={{marginLeft: 0, paddingLeft: 10}}
+                <FathomInput
+                    blurOnSubmit={true}
+                    inputContainerStyle={{paddingLeft: AppSizes.paddingSml,}}
                     keyboardType={'number-pad'}
                     onChangeText={text => clearCoachContent('', () => handleFormChange('biometric_data.mass.lb', text))}
+                    label={user.biometric_data.mass.lb.length > 0 ? 'Weight (lbs)' : ' '}
+                    labelStyle={[styles.inputLabel]}
                     placeholder={'Weight (lbs)'}
-                    placeholderTextColor={AppColors.zeplin.lightGrey}
+                    placeholderTextColor={AppColors.zeplin.lightSlate}
                     returnKeyType={'done'}
-                    textInputRef={input => {
-                        this.inputs.mass = input;
-                    }}
+                    textInputRef={input => {this.inputs.mass = input;}}
                     value={user.biometric_data.mass.lb}
                 />
-                <FormLabel>{user.biometric_data.sex.length > 0 ? 'SEX' : ' '}</FormLabel>
+                <Text style={[styles.inputLabel]}>{user.biometric_data.sex.length > 0 ? 'Sex' : ' '}</Text>
                 <FathomPicker
                     hideIcon={true}
                     items={UserAccountConstants.possibleGenders}
@@ -127,7 +130,7 @@ class UserAccountAbout extends Component {
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
                         inputIOS:         [styles.pickerSelectIOS],
-                        placeholderColor: AppColors.zeplin.lightGrey,
+                        placeholderColor: AppColors.zeplin.lightSlate,
                         viewContainer:    [styles.androidViewContainer],
                     }}
                     value={user.biometric_data.sex}
