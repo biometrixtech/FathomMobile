@@ -111,8 +111,8 @@ class UserAccountAbout extends Component {
                     labelStyle={[styles.inputLabel]}
                     placeholder={'Weight (lbs)'}
                     placeholderTextColor={AppColors.zeplin.lightSlate}
+                    ref={input => {this.inputs.mass = input;}}
                     returnKeyType={'done'}
-                    textInputRef={input => {this.inputs.mass = input;}}
                     value={user.biometric_data.mass.lb}
                 />
                 <Text style={[styles.inputLabel]}>{user.biometric_data.sex.length > 0 ? 'Sex' : ' '}</Text>

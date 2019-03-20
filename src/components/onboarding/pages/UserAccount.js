@@ -34,9 +34,6 @@ import Collapsible from 'react-native-collapsible';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    background: {
-        // width: AppSizes.screen.width,
-    },
     headerWrapper: {
         alignItems:    'center',
         flexDirection: 'row',
@@ -282,7 +279,7 @@ class UserAccount extends Component {
                             sections={SECTIONS}
                             underlayColor={AppColors.transparent}
                         />
-                        <View style={{flex: 1, paddingBottom: AppSizes.padding,}}>
+                        <View style={{flex: 1, paddingVertical: AppSizes.padding,}}>
                             <Button
                                 backgroundColor={isFormValid ? AppColors.zeplin.yellow : AppColors.white}
                                 buttonStyle={{alignSelf: 'center', width: '75%',}}

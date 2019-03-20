@@ -55,7 +55,7 @@ class UserAccountInfo extends Component {
         this.inputs = {};
     }
 
-    focusNextField(id) {
+    focusNextField = id => {
         this.inputs[id].focus();
     }
 
@@ -86,8 +86,8 @@ class UserAccountInfo extends Component {
                             labelStyle={[styles.inputLabel]}
                             placeholder={'First name'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
+                            ref={input => {this.inputs.first_name = input;}}
                             returnKeyType={'next'}
-                            textInputRef={input => {this.inputs.first_name = input;}}
                             value={user.personal_data.first_name}
                         />
                     </View>
@@ -102,8 +102,8 @@ class UserAccountInfo extends Component {
                             labelStyle={[styles.inputLabel]}
                             placeholder={'Last name'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
+                            ref={input => {this.inputs.last_name = input;}}
                             returnKeyType={'next'}
-                            textInputRef={input => {this.inputs.last_name = input;}}
                             value={user.personal_data.last_name}
                         />
                     </View>
@@ -122,8 +122,8 @@ class UserAccountInfo extends Component {
                             labelStyle={[styles.inputLabel]}
                             placeholder={'E-mail address'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
+                            ref={input => {this.inputs.email = input;}}
                             returnKeyType={'next'}
-                            textInputRef={input => {this.inputs.email = input;}}
                             value={user.personal_data.email}
                         />
                         <FathomInput
@@ -139,6 +139,7 @@ class UserAccountInfo extends Component {
                             labelStyle={[styles.inputLabel]}
                             placeholder={'Password'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
+                            ref={input => {this.inputs.password = input;}}
                             returnKeyType={'next'}
                             rightIcon={
                                 <View style={{flexDirection: 'row',}}>
@@ -165,7 +166,6 @@ class UserAccountInfo extends Component {
                                 </View>
                             }
                             secureTextEntry={isPasswordSecure}
-                            textInputRef={input => {this.inputs.password = input;}}
                             value={user.password}
                         />
                         <FathomInput
@@ -178,6 +178,7 @@ class UserAccountInfo extends Component {
                             labelStyle={[styles.inputLabel]}
                             placeholder={'Confirm password'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
+                            ref={input => {this.inputs.confirm_password = input;}}
                             returnKeyType={'done'}
                             rightIcon={
                                 <View style={{flexDirection: 'row',}}>
@@ -206,7 +207,6 @@ class UserAccountInfo extends Component {
                                 </View>
                             }
                             secureTextEntry={isConfirmPasswordSecure}
-                            textInputRef={input => {this.inputs.confirm_password = input;}}
                             value={user.confirm_password}
                         />
                     </View>

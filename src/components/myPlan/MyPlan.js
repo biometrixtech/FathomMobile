@@ -798,9 +798,7 @@ class MyPlan extends Component {
     }
 
     _changeSelectedActiveTime = (selectedIndex, prepareOrRecover) => {
-        this.setState({
-            [prepareOrRecover]: selectedIndex,
-        });
+        this.setState({ [prepareOrRecover]: selectedIndex, });
     }
 
     _closePrepareSessionsCompletionModal = () => {

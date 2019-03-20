@@ -4,21 +4,20 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Alert, BackHandler, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { ActivityIndicator, Alert, BackHandler, Platform, ScrollView, StyleSheet, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
-import Modal from 'react-native-modalbox';
 import moment from 'moment';
 
 // Consts, Libs, and Utils
 import { AppAPI, AppUtil, } from '../../lib';
-import { AppColors, AppStyles, AppSizes, UserAccount as UserAccountConstants, } from '../../constants';
+import { AppColors, AppStyles, AppSizes, } from '../../constants';
 import { onboardingUtils, } from '../../constants/utils';
 
 // Components
-import { Alerts, ProgressBar, Text, WebViewPage, } from '../custom/';
+import { ProgressBar, } from '../custom/';
 import { EnableAppleHealthKit, PrivacyPolicyModal, } from '../general';
 import { UserAccount, } from './pages/';
 
@@ -494,17 +493,19 @@ class Onboarding extends Component {
                     currentStep={onboardingUtils.getCurrentStep(form_fields.user)}
                     totalSteps={onboardingUtils.getTotalSteps(form_fields.user)}
                 />
-                <UserAccount
-                    componentStep={2}
-                    currentStep={step}
-                    error={resultMsg.error}
-                    handleFormChange={this._handleUserFormChange}
-                    handleFormSubmit={this._handleFormSubmit}
-                    isFormValid={isFormValid}
-                    isUpdatingUser={this.props.user.id ? true : false}
-                    togglePrivacyPolicyWebView={this._togglePrivacyPolicyWebView}
-                    user={form_fields.user}
-                />
+                <ScrollView>
+                    <UserAccount
+                        componentStep={2}
+                        currentStep={step}
+                        error={resultMsg.error}
+                        handleFormChange={this._handleUserFormChange}
+                        handleFormSubmit={this._handleFormSubmit}
+                        isFormValid={isFormValid}
+                        isUpdatingUser={this.props.user.id ? true : false}
+                        togglePrivacyPolicyWebView={this._togglePrivacyPolicyWebView}
+                        user={form_fields.user}
+                    />
+                </ScrollView>
                 { this.state.loading ?
                     <ActivityIndicator
                         color={AppColors.zeplin.yellow}
