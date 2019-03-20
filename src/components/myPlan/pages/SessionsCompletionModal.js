@@ -63,35 +63,37 @@ class SessionsCompletionModal extends Component {
         this.animation3 = {};
     }
 
-    componentDidMount = () => {
-        let filteredIconSessions = _.filter(this.props.sessions, session => {
-            return (session.sport_name || session.sport_name === 0) ||
-                (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
-        });
-        _.delay(() => {
-            let newProgressCounters = _.cloneDeep(this.state.progressCounters);
-            _.map(filteredIconSessions, (session, i) => {
-                _.delay(() => {
-                    newProgressCounters[i] = 1;
-                    this.setState(
-                        { progressCounters: newProgressCounters, },
-                        () => {
-                            if(this.state.progressCounters.length === (i + 1)) {
-                                if(this.animation && this.animation.play) {
-                                    this.animation.play();
-                                }
-                                if(this.animation2 && this.animation2.play) {
-                                    this.animation2.play();
-                                }
-                                if(this.animation3 && this.animation3.play) {
-                                    this.animation3.play();
+    componentDidUpdate = (prevProps, prevState) => {
+        if(prevProps.isModalOpen !== this.props.isModalOpen) {
+            let filteredIconSessions = _.filter(this.props.sessions, session => {
+                return (session.sport_name || session.sport_name === 0) ||
+                    (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
+            });
+            _.delay(() => {
+                let newProgressCounters = _.cloneDeep(this.state.progressCounters);
+                _.map(filteredIconSessions, (session, i) => {
+                    _.delay(() => {
+                        newProgressCounters[i] = 1;
+                        this.setState(
+                            { progressCounters: newProgressCounters, },
+                            () => {
+                                if(this.state.progressCounters.length === (i + 1)) {
+                                    if(this.animation && this.animation.play) {
+                                        this.animation.play();
+                                    }
+                                    if(this.animation2 && this.animation2.play) {
+                                        this.animation2.play();
+                                    }
+                                    if(this.animation3 && this.animation3.play) {
+                                        this.animation3.play();
+                                    }
                                 }
                             }
-                        }
-                    );
-                }, 500 * i);
-            });
-        }, 1500);
+                        );
+                    }, 500 * i);
+                });
+            }, 1500);
+        }
     }
 
     componentWillMount = () => {
