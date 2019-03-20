@@ -137,8 +137,11 @@ const BackNextButtons = ({
                     AppStyles.paddingVerticalSml,
                     styles.submitBtn,
                     showAddBtn ? {} : { marginRight: AppSizes.paddingMed, },
-                    isValid ? {} : { borderColor: AppColors.zeplin.lightGrey, borderWidth: 1, },
-                    { backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white, }
+                    {
+                        backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white,
+                        borderColor:     isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey,
+                        borderWidth:     1,
+                    }
                 ]}
                 underlayColor={AppColors.transparent}
             >

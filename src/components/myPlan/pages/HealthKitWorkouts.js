@@ -93,11 +93,12 @@ class HealthKitWorkouts extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            delayTimerId:       null,
-            isEditingDuration:  false,
-            isSlideUpPanelOpen: false,
-            pageIndex:          0,
-            showRPEPicker:      false,
+            delayTimerId:        null,
+            isEditingDuration:   false,
+            isSlideUpPanelOpen:  false,
+            pageIndex:           0,
+            showAddContinueBtns: false,
+            showRPEPicker:       false,
         };
         this._activityRPERef = {};
         this.pages = {};
@@ -134,20 +135,24 @@ class HealthKitWorkouts extends PureComponent {
     }
 
     _renderNextPage = currentPage => {
+        const { handleNextStep, handleToggleSurvey, workouts, } = this.props;
         Keyboard.dismiss();
-        let numberOfNonDeletedWorkouts = _.filter(this.props.workouts, ['deleted', false]);
+        let numberOfNonDeletedWorkouts = _.filter(workouts, ['deleted', false]);
         if(numberOfNonDeletedWorkouts.length === 0) {
-            this.props.handleToggleSurvey(true);
-        } else if(currentPage === this.props.workouts.length || (currentPage + 1) > numberOfNonDeletedWorkouts.length) {
-            this.props.handleNextStep(true);
+            handleToggleSurvey(true);
+        } else if(currentPage === workouts.length || (currentPage + 1) > numberOfNonDeletedWorkouts.length) {
+            handleNextStep(true);
         } else {
-            this.pages.scrollToPage(currentPage + 1);
+            let nextNonDeletedWorkout = (_.findIndex(workouts, (workout, i) => !workout.deleted && (currentPage - 1) < i) + 1);
+            let moreNonDeletedWorkouts = _.filter(workouts, (workout, i) => !workout.deleted && (nextNonDeletedWorkout - 1) < i);
+            this.pages.scrollToPage(nextNonDeletedWorkout);
             this.setState({
                 delayTimerId: _.delay(() => {
                     this.setState({
-                        isEditingDuration: false,
-                        pageIndex:         (currentPage + 1),
-                        showRPEPicker:     false,
+                        isEditingDuration:   false,
+                        pageIndex:           nextNonDeletedWorkout,
+                        showAddContinueBtns: moreNonDeletedWorkouts.length === 0,
+                        showRPEPicker:       false,
                     });
                     this._scrollTo({x: 0, y: 0});
                 }, 500)
@@ -207,9 +212,8 @@ class HealthKitWorkouts extends PureComponent {
 
     render = () => {
         const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, workouts, } = this.props;
-        const { isEditingDuration, isSlideUpPanelOpen, pageIndex, showRPEPicker, } = this.state;
+        const { isEditingDuration, isSlideUpPanelOpen, pageIndex, showAddContinueBtns, showRPEPicker, } = this.state;
         let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
-        let filteredWorkouts = _.filter(workouts, ['deleted', false]);
         return(
             <View style={{flex: 1,}}>
 
@@ -274,7 +278,10 @@ class HealthKitWorkouts extends PureComponent {
                         </View>
                     </ScrollView>
 
-                    { filteredWorkouts && filteredWorkouts.length > 0 ? _.map(filteredWorkouts, (workout, index) => {
+                    { workouts && workouts.length > 0 ? _.map(workouts, (workout, index) => {
+                        if(workout.deleted) {
+                            return(<View key={index} />)
+                        }
                         let { sportDuration, sportImage, sportName, sportText, } = PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout);
                         return(
                             <ScrollView
@@ -296,7 +303,8 @@ class HealthKitWorkouts extends PureComponent {
                                         <FormInput
                                             autoCapitalize={'none'}
                                             blurOnSubmit={true}
-                                            clearButtonMode={'while-editing'}
+                                            clearButtonMode={'never'}
+                                            clearTextOnFocus={true}
                                             containerStyle={[{display: 'none',}]}
                                             inputStyle={[{display: 'none',}]}
                                             keyboardType={'numeric'}
@@ -401,10 +409,10 @@ class HealthKitWorkouts extends PureComponent {
                                                                         sorenessPainMappingLength={MyPlanConstants.postSessionFeel.length}
                                                                         updateStateAndForm={() => {
                                                                             handleHealthDataFormChange((pageIndex - 1), 'post_session_survey.RPE', key);
-                                                                            if(filteredWorkouts.length !== pageIndex) {
-                                                                                this._renderNextPage(pageIndex);
-                                                                            } else {
+                                                                            if(showAddContinueBtns) {
                                                                                 this._scrollToBottom(this.scrollViewHealthKitRef[index]);
+                                                                            } else {
+                                                                                this._renderNextPage(pageIndex);
                                                                             }
                                                                         }}
                                                                     />
@@ -432,7 +440,7 @@ class HealthKitWorkouts extends PureComponent {
                                     }
                                 </View>
 
-                                { filteredWorkouts.length === pageIndex && showRPEPicker ?
+                                { showAddContinueBtns && showRPEPicker ?
                                     <View>
                                         <BackNextButtons
                                             addBtnText={'Add another session'}

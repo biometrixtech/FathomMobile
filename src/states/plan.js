@@ -26,7 +26,11 @@ const defaultPlanState = {
         current_sport_name: null,
         event_date:         `${moment().toISOString(true).split('.')[0]}Z`,
     },
-    healthData:                           {},
+    healthData: {
+        ignoredWorkouts: [],
+        sleep:           [],
+        workouts:        [],
+    },
     isCompletedAMPMRecoveryModalOpen:     true,
     isFunctionalStrengthCollapsed:        true,
     isFunctionalStrengthModalOpen:        false,
@@ -66,11 +70,12 @@ const defaultPlanState = {
     recoverSelectedActiveTime: 2,
     selectedExercise:          {},
     showLoadingText:           false,
+    timer:                     null,
     train:                     {
         completedPostPracticeSurvey: false,
         postPracticeSurveys:         [],
     },
-    trainLoadingScreenText: 'Loading workouts...',
+    trainLoadingScreenText: 'LOADING WORKOUTS...',
     loading:                false,
 };
 

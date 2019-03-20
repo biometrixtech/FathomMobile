@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:27:15 
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-06-28 16:48:55
- */
-
 /**
  * Loading Screen
  *
@@ -13,37 +6,50 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Modal, View, } from 'react-native';
 
 // Consts and Libs
-import { AppStyles } from '../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 
 // Components
-import { Spacer, Text } from '../custom';
+import { Spacer, Text, } from '../custom';
 
 /* Component ==================================================================== */
-const Loading = ({ text, transparent }) => (
-    <View
-        style={[
-            AppStyles.container,
-            AppStyles.containerCentered,
-            transparent && { backgroundColor: 'rgba(255,255,255,0.75)' },
-        ]}
+const Loading = ({ text, }) => (
+    <Modal
+        animationType={'slide'}
+        onRequestClose={() => {}}
+        transparent={true}
+        visible={true}
     >
-        <ActivityIndicator
-            animating
-            size={'large'}
-            color={transparent ? '#000' : '#AAA'}
-        />
-
-        <Spacer />
-
-        {!!text && <Text>{text}</Text>}
-    </View>
+        <View
+            style={{
+                alignItems:      'center',
+                backgroundColor: AppColors.zeplin.superLight,
+                flex:            1,
+                justifyContent:  'center',
+                opacity:         0.8,
+            }}
+        >
+            <ActivityIndicator
+                animating
+                color={AppColors.zeplin.yellow}
+                size={'large'}
+            />
+            <Spacer size={AppSizes.padding} />
+            {!!text && <Text oswaldMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14),}}>{text}</Text>}
+        </View>
+    </Modal>
 );
 
-Loading.propTypes = { text: PropTypes.string, transparent: PropTypes.bool };
-Loading.defaultProps = { text: null, transparent: false };
+Loading.propTypes = {
+    text: PropTypes.string,
+};
+
+Loading.defaultProps = {
+    text: null,
+};
+
 Loading.componentName = 'Loading';
 
 /* Export Component ==================================================================== */

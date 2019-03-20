@@ -51,6 +51,7 @@ class Settings extends Component {
         this.state = {
             isJoinATeamFormSubmitting: false,
             isJoinATeamModalOpen:      false,
+            isLogoutBtnDisabled:       false,
             isPrivacyPolicyOpen:       false,
             isUnpairing:               false,
             resultMsg:                 {
@@ -473,6 +474,7 @@ class Settings extends Component {
                 <ListItem
                     chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                    disabled={this.state.isLogoutBtnDisabled}
                     leftIcon={
                         <TabIcon
                             color={AppColors.black}
@@ -481,9 +483,18 @@ class Settings extends Component {
                         />
                     }
                     onPress={() =>
-                        this.props.logout(this.props.user.id)
-                            .then(() => {Actions.start();})
-                            .catch(err => this._handleLogoutAlert(err))
+                        this.setState(
+                            { isLogoutBtnDisabled: true, },
+                            () => this.props.logout(this.props.user.id)
+                                .then(() => {
+                                    this.setState({ isLogoutBtnDisabled: false, });
+                                    Actions.start();
+                                })
+                                .catch(err => {
+                                    this.setState({ isLogoutBtnDisabled: false, });
+                                    this._handleLogoutAlert(err);
+                                })
+                        )
                     }
                     title={'LOGOUT'}
                     titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}

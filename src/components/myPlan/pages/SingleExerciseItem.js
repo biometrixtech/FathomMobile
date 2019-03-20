@@ -17,9 +17,9 @@ import { Platform, TouchableOpacity, View, } from 'react-native';
 import Video from 'react-native-video';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
 import { Checkbox, Spacer, TabIcon, Text, } from '../../custom';
-import { Error } from '../../general';
+import { Error, } from '../../general';
 
 /* Component ==================================================================== */
 class SingleExerciseItem extends Component {

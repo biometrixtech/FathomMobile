@@ -46,18 +46,19 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const ProgressPills = ({ availableSectionsCount, cleanedExerciseList, completedExercises, }) => (
+const ProgressPills = ({ availableSectionsCount, cleanedExerciseList, completedExercises, listLength, }) => (
     <View style={[styles.progressPillsWrapper, availableSectionsCount === 2 ? {paddingHorizontal: AppSizes.paddingLrg,} : {}]}>
         {_.map(cleanedExerciseList, (exerciseList, index) => {
             let progressLength = (_.filter(exerciseList, o => completedExercises.indexOf(`${o.library_id}-${o.set_number}`) > -1).length / exerciseList.length);
             let progressWidth = progressLength ? parseInt(progressLength * 100, 10) : 0;
+            let wrapperWidth = (exerciseList.length / listLength);
             return(
                 exerciseList.length > 0 ?
                     <View
                         key={index}
                         style={{
                             alignItems: 'center',
-                            flex:       availableSectionsCount === 1 ? 10 : availableSectionsCount === 2 ? 5 : 3,
+                            flex:       wrapperWidth,
                         }}
                     >
                         <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{index}</Text>
@@ -201,6 +202,7 @@ class Exercises extends PureComponent {
                         availableSectionsCount={availableSectionsCount}
                         cleanedExerciseList={cleanedExerciseList}
                         completedExercises={completedExercises}
+                        listLength={flatListExercises.length}
                     />
                 </View>
                 <View style={{flex: 9,}}>

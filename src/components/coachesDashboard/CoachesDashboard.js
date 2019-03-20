@@ -198,13 +198,15 @@ class CoachesDashboard extends Component {
     _handleEnteringApp = () => {
         // fetch coaches dashboard data
         let userId = this.props.user.id;
-        this.setState({ isPageLoading: true, });
-        this.props.getCoachesDashboardData(userId)
-            .then(res => this.setState({ isPageLoading: false, }))
-            .catch(err => {
-                this.setState({ isPageLoading: false, });
-                AppUtil.handleAPIErrorAlert(ErrorMessages.coachesDashboardData);
-            });
+        if(!this.state.isPageLoading) {
+            this.setState({ isPageLoading: true, });
+            this.props.getCoachesDashboardData(userId)
+                .then(res => this.setState({ isPageLoading: false, }))
+                .catch(err => {
+                    this.setState({ isPageLoading: false, });
+                    AppUtil.handleAPIErrorAlert(ErrorMessages.coachesDashboardData);
+                });
+        }
     }
 
     renderTab = (name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle, selectedTeam) => {
@@ -871,6 +873,7 @@ class CoachesDashboard extends Component {
                     ref={tabView => { this.tabView = tabView; }}
                     renderTabBar={() =>
                         <CoachesDashboardTabBar
+                            disabled={isPageLoading}
                             headerItems={{
                                 coachesTeams,
                                 onRefresh:   () => this._handleEnteringApp(),

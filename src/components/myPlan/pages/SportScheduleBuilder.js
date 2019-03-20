@@ -18,11 +18,11 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, SectionList, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
+import { Image, SectionList, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, Spacer, TabIcon, Text, WheelScrollPicker, } from '../../custom';
+import { Button, Spacer, Text, WheelScrollPicker, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 import { BackNextButtons, ProgressPill, ScaleButton, SportBlock, } from './';
 
@@ -75,6 +75,7 @@ class SportScheduleBuilder extends PureComponent {
             },
             isFormValid:       false,
             pickerScrollCount: 0,
+            showMoreOptions:   this.props.typicalSessions.length === 0,
             step:              0,
             timeValueGroups:   {
                 hours:   2,
@@ -203,7 +204,7 @@ class SportScheduleBuilder extends PureComponent {
             postSession,
             typicalSessions,
         } = this.props;
-        const { durationValueGroups, isFormValid, step, } = this.state;
+        const { durationValueGroups, isFormValid, showMoreOptions, step, } = this.state;
         let { sportImage, sportText, } = PlanLogic.handleSportScheduleBuilderRenderLogic(postSession, this.state);
         let cleanedActivitiesList = MyPlanConstants.cleanedActivitiesList();
         let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
@@ -263,7 +264,8 @@ class SportScheduleBuilder extends PureComponent {
                                         displayName={'More options'}
                                         filteredSession={{icon: 'add', iconType: 'material',}}
                                         onPress={() => this.setState({
-                                            delayTimerId: _.delay(() => this._scrollTo(this._moreOptionsRef, 10))
+                                            delayTimerId:    _.delay(() => this._scrollTo(this._moreOptionsRef, 10)),
+                                            showMoreOptions: true,
                                         })}
                                     />
                                 </View>
@@ -273,41 +275,45 @@ class SportScheduleBuilder extends PureComponent {
                         </View>
                         <View onLayout={event => {this._moreOptionsRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}}>
                             <Spacer size={30} />
-                            <SectionList
-                                keyExtractor={(item, index) => item + index}
-                                renderItem={({item, index, section}) =>
-                                    <TouchableOpacity
-                                        key={index}
-                                        onPress={() => {
-                                            this._nextStep(1);
-                                            handleFormChange('sport_name', item.index);
-                                            handleFormChange('session_type', 6);
-                                            this.setState({
-                                                delayTimerId: _.delay(() => this._scrollToTop(),500)
-                                            });
-                                        }}
-                                        style={[
-                                            (index+1) === section.data.length ? {} : {borderBottomColor: AppColors.zeplin.shadow, borderBottomWidth: 1,},
-                                            {alignItems: 'center', flexDirection: 'row', paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed,}
-                                        ]}
-                                    >
-                                        <Image
-                                            source={item.imagePath}
-                                            style={{height: 25, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.seaBlue, width: 25,}}
-                                        />
-                                        <Text robotoMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15),}}>{item.label}</Text>
-                                    </TouchableOpacity>
-                                }
-                                renderSectionHeader={({section: {title}}) =>
-                                    <Text
-                                        oswaldMedium
-                                        style={{backgroundColor: AppColors.zeplin.lightSlate, color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}}
-                                    >
-                                        {title.toUpperCase()}
-                                    </Text>
-                                }
-                                sections={cleanedActivitiesList}
-                            />
+                            { showMoreOptions ?
+                                <SectionList
+                                    keyExtractor={(item, index) => item + index}
+                                    renderItem={({item, index, section}) =>
+                                        <TouchableOpacity
+                                            key={index}
+                                            onPress={() => {
+                                                this._nextStep(1);
+                                                handleFormChange('sport_name', item.index);
+                                                handleFormChange('session_type', 6);
+                                                this.setState({
+                                                    delayTimerId: _.delay(() => this._scrollToTop(),500)
+                                                });
+                                            }}
+                                            style={[
+                                                (index+1) === section.data.length ? {} : {borderBottomColor: AppColors.zeplin.shadow, borderBottomWidth: 1,},
+                                                {alignItems: 'center', flexDirection: 'row', paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed,}
+                                            ]}
+                                        >
+                                            <Image
+                                                source={item.imagePath}
+                                                style={{height: 25, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.seaBlue, width: 25,}}
+                                            />
+                                            <Text robotoMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15),}}>{item.label}</Text>
+                                        </TouchableOpacity>
+                                    }
+                                    renderSectionHeader={({section: {title}}) =>
+                                        <Text
+                                            oswaldMedium
+                                            style={{backgroundColor: AppColors.zeplin.lightSlate, color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}}
+                                        >
+                                            {title.toUpperCase()}
+                                        </Text>
+                                    }
+                                    sections={cleanedActivitiesList}
+                                />
+                                :
+                                null
+                            }
                         </View>
                     </View>
                     : step === 1 ?

@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import { ScrollView, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
+import { AppColors, AppSizes, MyPlan as MyPlanConstants, } from '../../../constants';
 import { Pages, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 

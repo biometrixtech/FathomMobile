@@ -12,7 +12,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, ScrollView, View, } from 'react-native';
+import { ScrollView, View, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';

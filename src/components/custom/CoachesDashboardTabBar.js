@@ -39,6 +39,7 @@ const CoachesDashboardTabBar = createReactClass({
         activeTab:         PropTypes.number,
         activeTextColor:   PropTypes.string,
         backgroundColor:   PropTypes.string,
+        disabled:          PropTypes.bool.isRequired,
         goToPage:          PropTypes.func,
         headerItems:       PropTypes.object,
         inactiveTextColor: PropTypes.string,
@@ -69,7 +70,7 @@ const CoachesDashboardTabBar = createReactClass({
             key={name}
             accessible={true}
             accessibilityLabel={name}
-            accessibilityTraits='button'
+            accessibilityTraits={'button'}
             onPress={() => onPressHandler(page)}
         >
             <View style={[styles.tab, this.props.tabStyle, ]}>
@@ -127,6 +128,7 @@ const CoachesDashboardTabBar = createReactClass({
                                     </FathomText>
                                     :
                                     <FathomPicker
+                                        disabled={this.props.disabled}
                                         hideIcon={false}
                                         items={this.props.headerItems.coachesTeams}
                                         itemStyle={{color: 'blue', fontSize: 100,}}

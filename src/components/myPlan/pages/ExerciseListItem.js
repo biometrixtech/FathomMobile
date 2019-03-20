@@ -62,7 +62,7 @@ class ExerciseListItem extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => toggleSelectedExercise(exercise, true)}
-                        style={[AppStyles.paddingVerticalXSml, {flex: 6, justifyContent: 'center',}]}
+                        style={[AppStyles.paddingVerticalXSml, {flex: 7, justifyContent: 'center',}]}
                     >
                         <Text
                             oswaldMedium
@@ -84,14 +84,6 @@ class ExerciseListItem extends Component {
                             {this.state.dosage}
                         </Text>
                     </TouchableOpacity>
-                    <TabIcon
-                        color={completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.black}
-                        containerStyle={[{flex: 1, justifyContent: 'center',}]}
-                        icon={'arrow-right'}
-                        onPress={() => toggleSelectedExercise(exercise, true)}
-                        size={18}
-                        type={'simple-line-icon'}
-                    />
                 </View>
             </View>
         )
