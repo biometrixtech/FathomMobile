@@ -22,11 +22,10 @@ const styles = {
     container: {
         width: '100%',
     },
-    inputContainer: theme => ({
-        alignItems:        'center',
-        borderBottomWidth: 1,
-        borderColor:       AppColors.zeplin.light,
-        flexDirection:     'row',
+    error: theme => ({
+        color:    AppColors.zeplin.coachesDashError,
+        fontSize: 12,
+        margin:   5,
     }),
     iconContainer: {
         alignItems:     'center',
@@ -41,10 +40,11 @@ const styles = {
         fontSize:  18,
         minHeight: 40,
     },
-    error: theme => ({
-        color:    AppColors.zeplin.coachesDashError,
-        fontSize: 12,
-        margin:   5,
+    inputContainer: theme => ({
+        alignItems:        'center',
+        borderBottomWidth: 1,
+        borderColor:       AppColors.zeplin.light,
+        flexDirection:     'row',
     }),
     label: theme => ({
         color:    AppColors.zeplin.superLight,

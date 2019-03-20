@@ -155,12 +155,8 @@ const postReadinessSurvey = dailyReadinessObj => {
     return dispatch => AppAPI.post_readiness_survey.post(false, dailyReadinessObj)
         .then(myPlanData => {
             dispatch({
-                type: Actions.GET_MY_PLAN,
-                data: myPlanData.daily_plans,
-            });
-            dispatch({
                 type: Actions.POST_READINESS_SURVEY,
-                data: myPlanData,
+                data: myPlanData.daily_plans,
             });
             return Promise.resolve(myPlanData);
         })
@@ -199,10 +195,6 @@ const postSessionSurvey = postSessionObj => {
         .then(myPlanData => {
             dispatch({
                 type: Actions.POST_SESSION_SURVEY,
-                data: postSessionObj,
-            });
-            dispatch({
-                type: Actions.GET_MY_PLAN,
                 data: myPlanData.daily_plans,
             });
             return Promise.resolve(myPlanData);

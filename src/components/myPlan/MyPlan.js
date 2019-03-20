@@ -215,27 +215,26 @@ class MyPlan extends Component {
         }
     }
 
-    componentWillReceiveProps = nextProps => {
-        if(nextProps.notification && nextProps.notification !== this.props.notification) {
-            this._handlePushNotification(nextProps);
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
+        // handle PN
+        if(prevProps.notification && prevProps.notification !== this.props.notification) {
+            this._handlePushNotification(prevProps);
         }
-        const areObjectsDifferent = _.isEqual(nextProps.plan, this.props.plan);
+        // navigate to new page if we have a new plan
+        const areObjectsDifferent = _.isEqual(prevProps.plan, this.props.plan);
         if(
             !areObjectsDifferent &&
             this.props.plan.dailyPlan[0] &&
-            nextProps.plan.dailyPlan[0] &&
-            nextProps.plan.dailyPlan[0].landing_screen !== this.props.plan.dailyPlan[0].landing_screen &&
+            prevProps.plan.dailyPlan[0] &&
+            prevProps.plan.dailyPlan[0].landing_screen !== this.props.plan.dailyPlan[0].landing_screen &&
             (
-                nextProps.plan.dailyPlan[0].post_recovery_completed ||
-                nextProps.plan.dailyPlan[0].pre_recovery_completed
+                prevProps.plan.dailyPlan[0].post_recovery_completed ||
+                prevProps.plan.dailyPlan[0].pre_recovery_completed
             )
         ) {
-            this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(nextProps.plan.dailyPlan[0]));
+            this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(prevProps.plan.dailyPlan[0]));
         }
-    }
-
-    componentDidUpdate = (prevProps, prevState, snapshot) => {
-        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
         // if we have workouts, handle RS or PSS
         if(!_.isEqual(prevProps.healthData, this.props.healthData) && this.props.healthData.workouts.length > 0) {
             let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
@@ -469,16 +468,12 @@ class MyPlan extends Component {
 
     _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate) => {
         const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.dailyReadiness, isClearCandidate);
-        this.setState({
-            dailyReadiness: newFormFields
-        });
+        this.setState({ dailyReadiness: newFormFields, });
     }
 
     _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate) => {
         const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.postSession, isClearCandidate);
-        this.setState({
-            postSession: newFormFields
-        });
+        this.setState({ postSession: newFormFields, });
     }
 
     _handleHealthDataFormChange = (index, name, value, callback) => {
@@ -501,9 +496,7 @@ class MyPlan extends Component {
 
     _handleFSFormChange = (name, value) => {
         const newFormFields = _.update(this.state.functionalStrength, name, () => value);
-        this.setState({
-            functionalStrength: newFormFields
-        });
+        this.setState({ functionalStrength: newFormFields, });
     }
 
     _handleFSFormSubmit = () => {
@@ -543,7 +536,9 @@ class MyPlan extends Component {
         );
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
-                this.setState({ isPrepCalculating: false, isRecoverCalculating: false, });
+                if(nonDeletedSessions.length === 0) {
+                    this.setState({ isPrepCalculating: false, isRecoverCalculating: false, });
+                }
                 this.props.clearHealthKitWorkouts();
                 this.props.clearCompletedExercises();
                 this.props.clearCompletedFSExercises();
@@ -604,13 +599,9 @@ class MyPlan extends Component {
         let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isAllGood, this.props.plan.soreBodyParts, resetSections);
         let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);
         if (isDailyReadiness) {
-            this.setState({
-                dailyReadiness: newFormFields,
-            });
+            this.setState({ dailyReadiness: newFormFields, });
         } else {
-            this.setState({
-                postSession: newFormFields,
-            });
+            this.setState({ postSession: newFormFields, });
         }
     }
 
@@ -713,22 +704,16 @@ class MyPlan extends Component {
     }
 
     _togglePrepareSlideUpPanel = () => {
-        this.setState({
-            isPrepareSlideUpPanelOpen: !this.state.isPrepareSlideUpPanelOpen,
-        });
+        this.setState({ isPrepareSlideUpPanelOpen: !this.state.isPrepareSlideUpPanelOpen, });
     }
 
     _toggleRecoverSlideUpPanel = () => {
-        this.setState({
-            isRecoverSlideUpPanelOpen: !this.state.isRecoverSlideUpPanelOpen,
-        });
+        this.setState({ isRecoverSlideUpPanelOpen: !this.state.isRecoverSlideUpPanelOpen, });
     }
 
     _toggleCompletedAMPMRecoveryModal = () => {
         this.props.clearCompletedExercises();
-        this.setState({
-            isCompletedAMPMRecoveryModalOpen: !this.state.isCompletedAMPMRecoveryModalOpen
-        });
+        this.setState({ isCompletedAMPMRecoveryModalOpen: !this.state.isCompletedAMPMRecoveryModalOpen, });
     }
 
     _togglePostSessionSurveyModal = () => {
@@ -821,44 +806,27 @@ class MyPlan extends Component {
     _closePrepareSessionsCompletionModal = () => {
         const { dailyReadiness, } = this.state;
         _.delay(() => {
-            if(!dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
-                this.setState(
-                    {
-                        dailyReadiness: {
-                            readiness:        0,
-                            sessions:         [],
-                            sessions_planned: false,
-                            sleep_quality:    0,
-                            soreness:         [],
-                        },
-                        isPrepareSessionsCompletionModalOpen: false,
-                    },
-                    () => this._goToScrollviewPage(2)
-                );
-            } else if(dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) {
-                this.setState({
-                    dailyReadiness: {
-                        readiness:        0,
-                        sessions:         [],
-                        sessions_planned: false,
-                        sleep_quality:    0,
-                        soreness:         [],
-                    },
+            let newDailyReadinessState = _.cloneDeep(defaultPlanState.dailyReadiness);
+            this.setState(
+                {
+                    dailyReadiness:                       newDailyReadinessState,
+                    isPrepCalculating:                    false,
                     isPrepareSessionsCompletionModalOpen: false,
-                });
-            }
+                    isRecoverCalculating:                 false,
+                },
+                () => {
+                    if(!dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) { this._goToScrollviewPage(2); }
+                }
+            );
         }, 500);
     }
 
     _closeTrainSessionsCompletionModal = () => {
+        let newPostSessionState = _.cloneDeep(defaultPlanState.postSession);
         this.setState(
             {
                 isTrainSessionsCompletionModalOpen: false,
-                postSession:                        {
-                    description: '',
-                    sessions:    [PlanLogic.returnEmptySession()],
-                    soreness:    [],
-                },
+                postSession:                        newPostSessionState,
             },
             () => _.delay(() => { this._goToScrollviewPage(2) }, 500)
         );

@@ -58,9 +58,6 @@ class ExerciseCompletionModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            modalStyle: {
-                height: 200,
-            },
             progressCounters: {},
         };
         this.animation = [];
@@ -167,9 +164,7 @@ class ExerciseCompletionModal extends Component {
                                                     <View style={{flex: 1, width: iconViewWrapperWidth,}}>
                                                         <LottieView
                                                             loop={false}
-                                                            ref={animation => {
-                                                                this.animation[group] = animation;
-                                                            }}
+                                                            ref={animation => {this.animation[group] = animation;}}
                                                             source={require('../../../../assets/animation/stars.json')}
                                                         />
                                                     </View>

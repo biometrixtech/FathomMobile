@@ -46,6 +46,11 @@ const styles = StyleSheet.create({
 class UserAccountInfo extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            isConfirmPasswordEditedOnce: false,
+            isPasswordEditedOnce:        false,
+            showPasswordErrorText:       false,
+        };
         this.focusNextField = this.focusNextField.bind(this);
         this.inputs = {};
     }
@@ -66,6 +71,7 @@ class UserAccountInfo extends Component {
             updateErrorMessage,
             user,
         } = this.props;
+        const { isConfirmPasswordEditedOnce, isPasswordEditedOnce, showPasswordErrorText, } = this.state;
         return(
             <View>
                 <View style={{borderTopColor: AppColors.zeplin.light, borderTopWidth: 1, flexDirection: 'row',}}>
@@ -122,12 +128,16 @@ class UserAccountInfo extends Component {
                         />
                         <FathomInput
                             blurOnSubmit={true}
+                            errorMessage={showPasswordErrorText ? '8+ characters, 1 number' : ''}
+                            errorStyle={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(13), paddingLeft: AppSizes.paddingXSml,}}
                             inputContainerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
                             onChangeText={(text) => clearCoachContent('', () => handleFormChange('password', text))}
+                            onEndEditing={() => this.setState({ showPasswordErrorText: false, isPasswordEditedOnce: true, })}
+                            onFocus={() => this.setState({ showPasswordErrorText: true, })}
                             onSubmitEditing={() => this.focusNextField('confirm_password')}
-                            label={user.password.length > 0 ? 'Password (8+ characters, 1 number)' : ' '}
+                            label={user.password.length > 0 ? 'Password' : ' '}
                             labelStyle={[styles.inputLabel]}
-                            placeholder={'Password (8+ characters, 1 number)'}
+                            placeholder={'Password'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
                             returnKeyType={'next'}
                             rightIcon={
@@ -140,7 +150,15 @@ class UserAccountInfo extends Component {
                                         size={24}
                                     />
                                     <TabIcon
-                                        color={onboardingUtils.isPasswordValid(user.password).isValid ? AppColors.zeplin.success : AppColors.zeplin.coachesDashError}
+                                        color={
+                                            isPasswordEditedOnce ?
+                                                onboardingUtils.isPasswordValid(user.password).isValid ?
+                                                    AppColors.zeplin.success
+                                                    :
+                                                    AppColors.zeplin.coachesDashError
+                                                :
+                                                AppColors.white
+                                        }
                                         icon={onboardingUtils.isPasswordValid(user.password).isValid ? 'check' : 'close'}
                                         size={24}
                                     />
@@ -154,6 +172,7 @@ class UserAccountInfo extends Component {
                             blurOnSubmit={true}
                             inputContainerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
                             onChangeText={(text) => clearCoachContent('', () => handleFormChange('confirm_password', text))}
+                            onEndEditing={() => this.setState({ isConfirmPasswordEditedOnce: true, })}
                             onSubmitEditing={() => onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid ? setAccordionSection(0, 1) : updateErrorMessage()}
                             label={user.confirm_password.length > 0 ? 'Confirm password' : ' '}
                             labelStyle={[styles.inputLabel]}
@@ -170,7 +189,17 @@ class UserAccountInfo extends Component {
                                         size={24}
                                     />
                                     <TabIcon
-                                        color={onboardingUtils.isPasswordValid(user.password).isValid && onboardingUtils.isPasswordValid(user.confirm_password).isValid && user.password === user.confirm_password ? AppColors.zeplin.success : AppColors.zeplin.coachesDashError}
+                                        color={
+                                            isConfirmPasswordEditedOnce ?
+                                                onboardingUtils.isPasswordValid(user.password).isValid &&
+                                                onboardingUtils.isPasswordValid(user.confirm_password).isValid &&
+                                                user.password === user.confirm_password ?
+                                                    AppColors.zeplin.success
+                                                    :
+                                                    AppColors.zeplin.coachesDashError
+                                                :
+                                                AppColors.white
+                                        }
                                         icon={onboardingUtils.isPasswordValid(user.password).isValid && onboardingUtils.isPasswordValid(user.confirm_password).isValid && user.password === user.confirm_password ? 'check' : 'close'}
                                         size={24}
                                     />

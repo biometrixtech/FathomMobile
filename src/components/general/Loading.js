@@ -18,6 +18,7 @@ import { Spacer, Text, } from '../custom';
 const Loading = ({ text, }) => (
     <Modal
         animationType={'slide'}
+        onRequestClose={() => {}}
         transparent={true}
         visible={true}
     >

@@ -13,7 +13,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, } from 'react-native';
+import { Platform, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, UserAccount as UserAccountConstants, } from '../../../constants';
@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
         borderBottomColor: AppColors.zeplin.light,
         height:            40,
         justifyContent:    'center',
-        marginRight:       20,
     },
     inputLabel: {
         ...AppFonts.robotoRegular,
@@ -57,7 +56,6 @@ const styles = StyleSheet.create({
         borderLeftWidth:   0,
         borderRightWidth:  0,
         borderTopWidth:    0,
-        marginRight:       20,
         paddingLeft:       AppSizes.paddingSml,
     },
 });
@@ -131,7 +129,7 @@ class UserAccountAbout extends Component {
                         inputAndroid:     [styles.pickerSelectAndroid],
                         inputIOS:         [styles.pickerSelectIOS],
                         placeholderColor: AppColors.zeplin.lightSlate,
-                        viewContainer:    [styles.androidViewContainer],
+                        viewContainer:    [styles.androidViewContainer, Platform.OS === 'ios' ? {paddingLeft: AppSizes.paddingSml,} : {}],
                     }}
                     value={user.biometric_data.sex}
                 />
