@@ -16,7 +16,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, StyleSheet, View, } from 'react-native';
+import { StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';

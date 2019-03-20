@@ -251,9 +251,18 @@ class MyPlan extends Component {
         }
         // handle if PN is delayed to come in
         if(
-            (prevState.isFSCalculating !== this.state.isFSCalculating && this.state.isFSCalculating) ||
-            (prevState.isPrepCalculating !== this.state.isPrepCalculating && this.state.isPrepCalculating) ||
-            (prevState.isRecoverCalculating !== this.state.isRecoverCalculating && this.state.isRecoverCalculating)
+            (
+                (prevState.isFSCalculating !== this.state.isFSCalculating && this.state.isFSCalculating) ||
+                (prevState.isPrepCalculating !== this.state.isPrepCalculating && this.state.isPrepCalculating) ||
+                (prevState.isRecoverCalculating !== this.state.isRecoverCalculating && this.state.isRecoverCalculating)
+            ) &&
+            (
+                this.state.isReadinessSurveyModalOpen ||
+                this.state.isPostSessionSurveyModalOpen ||
+                this.state.isPrepareSessionsCompletionModalOpen ||
+                this.state.isTrainSessionsCompletionModalOpen ||
+                this.state.loading
+            )
         ) {
             // start timer
             this.setState({
@@ -508,7 +517,6 @@ class MyPlan extends Component {
         this.props.activateFunctionalStrength(payload)
             .then(response => this.setState({ isFSCalculating: false, }))
             .catch(error => {
-                console.log('error',error);
                 AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
             });
     }
@@ -523,16 +531,22 @@ class MyPlan extends Component {
         } = PlanLogic.handleReadinessSurveySubmitLogic(this.props.user.id, this.state.dailyReadiness, this.state.prepare, this.state.recover, this.state.healthData);
         this.setState(
             {
-                dailyReadiness:                       newDailyReadinessState,
-                healthData:                           [],
-                isPrepCalculating:                    newDailyReadiness.sessions_planned,
-                isPrepareSessionsCompletionModalOpen: nonDeletedSessions.length !== 0,
-                isReadinessSurveyModalOpen:           false,
-                isRecoverCalculating:                 !newDailyReadiness.sessions_planned,
-                prepare:                              newPrepareObject,
-                recover:                              newRecoverObject,
+                dailyReadiness:             newDailyReadinessState,
+                healthData:                 _.cloneDeep(defaultPlanState.healthData),
+                isPrepCalculating:          newDailyReadiness.sessions_planned,
+                isReadinessSurveyModalOpen: false,
+                isRecoverCalculating:       !newDailyReadiness.sessions_planned,
+                prepare:                    newPrepareObject,
+                recover:                    newRecoverObject,
             },
-            () => { if(!newDailyReadiness.sessions_planned) { this._goToScrollviewPage(2); } },
+            () => {
+                _.delay(() => {
+                    this.setState(
+                        { isPrepareSessionsCompletionModalOpen: nonDeletedSessions.length !== 0, },
+                        () => { if(!newDailyReadiness.sessions_planned) { this._goToScrollviewPage(2); } }
+                    );
+                }, 500)
+            },
         );
         this.props.postReadinessSurvey(newDailyReadiness)
             .then(response => {
@@ -545,7 +559,6 @@ class MyPlan extends Component {
             })
             .catch(error => {
                 this.setState({ isPrepCalculating: false, isRecoverCalculating: false, });
-                console.log('error',error);
                 AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey);
             });
     }
@@ -589,7 +602,6 @@ class MyPlan extends Component {
             })
             .catch(error => {
                 this.setState({ isRecoverCalculating: false, });
-                console.log('error',error);
                 AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey);
             });
     }

@@ -16,9 +16,8 @@ import PropTypes from 'prop-types';
 import { Platform, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles, UserAccount as UserAccountConstants, } from '../../../constants';
-import { FathomInput, FathomPicker, Spacer, Text, } from '../../custom';
-import { onboardingUtils, } from '../../../constants/utils';
+import { AppColors, AppFonts, AppSizes, UserAccount as UserAccountConstants, } from '../../../constants';
+import { FathomInput, FathomPicker, Text, } from '../../custom';
 
 // import third-party libraries
 import DatePicker from 'react-native-datepicker';

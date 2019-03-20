@@ -16,19 +16,18 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, StyleSheet, TouchableHighlight, View, } from 'react-native';
+import { StyleSheet, TouchableHighlight, View, } from 'react-native';
 
 // Consts, Libs, and Utils
-import { AppColors, AppFonts, AppSizes, AppStyles } from '../../../constants';
-import { onboardingUtils } from '../../../constants/utils';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
+import { onboardingUtils, } from '../../../constants/utils';
 import { Alerts, Button, Spacer, TabIcon, Text, } from '../../custom';
 
 // import components
-import { UserAccountAbout, UserAccountInfo, UserSports } from './';
+import { UserAccountAbout, UserAccountInfo, } from './';
 
 // import third-party libraries
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
-import _ from 'lodash';
 import Accordion from 'react-native-collapsible/Accordion';
 import Collapsible from 'react-native-collapsible';
 
