@@ -475,13 +475,13 @@ class MyPlan extends Component {
         );
     }
 
-    _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate) => {
-        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.dailyReadiness, isClearCandidate);
+    _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue) => {
+        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.dailyReadiness, isClearCandidate, isMovementValue);
         this.setState({ dailyReadiness: newFormFields, });
     }
 
-    _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate) => {
-        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.postSession, isClearCandidate);
+    _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue) => {
+        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.postSession, isClearCandidate, isMovementValue);
         this.setState({ postSession: newFormFields, });
     }
 

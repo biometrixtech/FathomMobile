@@ -607,8 +607,8 @@ class ReadinessSurvey extends Component {
                                         bodyPart={bodyPart}
                                         bodyPartSide={bodyPart.side}
                                         firstTimeExperience={user.first_time_experience}
-                                        handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                            handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide, bodyPart.isClearCandidate);
+                                        handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll, isMovementValue) => {
+                                            handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide, bodyPart.isClearCandidate, isMovementValue);
                                             if(shouldScroll && (i + 1) === (newSoreBodyParts.length - 1)) {
                                                 this._scrollToBottom(this.scrollViewPrevSorenessRef);
                                             } else if(shouldScroll) {
@@ -720,8 +720,8 @@ class ReadinessSurvey extends Component {
                                     bodyPartSide={area.side}
                                     firstTimeExperience={user.first_time_experience}
                                     handleFormChange={handleFormChange}
-                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                        handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide);
+                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll, isMovementValue) => {
+                                        handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide, false, isMovementValue);
                                         if(!(i === (areaOfSorenessClicked.length - 1)) && shouldScroll && (i + 1) === (areaOfSorenessClicked.length - 1)) {
                                             this._scrollToBottom(this.scrollViewClickedSorenessRef);
                                         } else if(!(i === (areaOfSorenessClicked.length - 1)) && shouldScroll) {

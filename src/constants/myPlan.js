@@ -90,6 +90,11 @@ const jointLevels = [
     'Too Painful to Move',
 ];
 
+const muscleJointLevels = {
+    soreness: ['MILD', 'MODERATE', 'SEVERE'],
+    movement: ['NOT\nLIMITED', 'LIMITED', 'VERY\nLIMITED'],
+};
+
 function sorenessPainScaleMapping(type, value, isJoint) {
     let newValue = 0;
     if(type === 'soreness') {
@@ -798,6 +803,7 @@ export default {
     fathomSliderText,
     isFSCompletedValid,
     jointLevels,
+    muscleJointLevels,
     muscleLevels,
     overallReadiness,
     painSorenessMessage,
