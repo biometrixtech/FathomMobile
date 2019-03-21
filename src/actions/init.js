@@ -10,12 +10,12 @@
  */
 
 import jwtDecode from 'jwt-decode';
-import { Actions, ErrorMessages } from '../constants';
-import { AppAPI, AppUtil } from '../lib';
+import { Actions, ErrorMessages, } from '../constants';
+import { AppAPI, AppUtil, } from '../lib';
 import { store } from '../store';
 
 // Components
-import { Platform } from 'react-native';
+import { Platform, } from 'react-native';
 
 // import third-party libraries
 import moment from 'moment';
@@ -24,7 +24,7 @@ import moment from 'moment';
   * Ping Maintenance API
   * - to know of upcoming, current, and future maintenance windows
   */
-const getMaintenanceWindow = (updateReducer) => {
+const getMaintenanceWindow = updateReducer => {
     return AppAPI.maintenance_status.get()
         .then(response => {
             if(updateReducer) {
@@ -259,7 +259,7 @@ const logout = user_id => {
 /**
   * POST Forgot Password Email
   */
-const forgotPassword = (email) => {
+const forgotPassword = email => {
     return dispatch => AppAPI.forgot_password.post(false, { personal_data: email })
         .then(result => {
             dispatch({
@@ -306,7 +306,7 @@ const resetPassword = dataObj => {
 /**
   * POST SignUp form data
   */
-const signUp = (credentials) => {
+const signUp = credentials => {
     return dispatch => AppAPI.user.post(credentials)
         .then(result => {
             dispatch({
@@ -335,7 +335,7 @@ const setAccountCode = (accountCode, accountRole = 'athlete') => {
  *
  * @param {new environment to be used} environment
  */
-const setEnvironment = (environment) => {
+const setEnvironment = environment => {
     return dispatch => Promise.resolve(dispatch({
         type: Actions.SET_ENVIRONMENT,
         environment
@@ -346,7 +346,7 @@ const setEnvironment = (environment) => {
  *
  * @param {push notification token for device} token
  */
-const sendDeviceToken = (token) => {
+const sendDeviceToken = token => {
     return dispatch => Promise.resolve(dispatch({
         type: Actions.SEND_DEVICE_TOKEN,
         token

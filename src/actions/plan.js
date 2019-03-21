@@ -13,7 +13,7 @@
 import { Platform, } from 'react-native';
 
 // consts & libs
-import { Actions } from '../constants';
+import { Actions, } from '../constants';
 import { store } from '../store';
 import { AppAPI, } from '../lib';
 
@@ -279,7 +279,7 @@ const patchActiveTime = (user_id, active_time) => {
 /**
   * No Session
   */
-const noSessions = (user_id) => {
+const noSessions = user_id => {
     let bodyObj = {};
     bodyObj.user_id = user_id;
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
@@ -375,7 +375,7 @@ const markStartedFunctionalStrength = (user_id, newMyPlan) => {
 /**
   * Get Coaches Dashboard Data
   */
-const getCoachesDashboardData = (user_id) => {
+const getCoachesDashboardData = user_id => {
     return dispatch => AppAPI.coach_dashboard.get({user_id})
         .then(coachesDashboardData => {
             let cleanedTeams = [];
@@ -450,7 +450,7 @@ const postSurvey = (userId, payload) => {
 /**
   * Post Health Data
   */
-const postHealthData = (payload) => {
+const postHealthData = payload => {
     return AppAPI.health_data.post(false, payload)
         .then(data => Promise.resolve(data))
         .catch(err => {

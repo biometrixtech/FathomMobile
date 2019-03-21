@@ -9,8 +9,8 @@
  * User Actions
  */
 
-import { Actions } from '../constants';
-import { AppAPI, AppUtil } from '../lib';
+import { Actions, } from '../constants';
+import { AppAPI, AppUtil, } from '../lib';
 import { store } from '../store';
 
 // import third-party libraries
@@ -19,7 +19,7 @@ import moment from 'moment';
 /**
   * Get My User Data
   */
-const getUser = (userId) => {
+const getUser = userId => {
     return dispatch => AppAPI.get_user.get({userId})
         .then(userData => {
             dispatch({
@@ -101,7 +101,7 @@ const userJoinAccount = (userId, payload) => {
 /**
   * Check Account Code
   */
-const checkAccountCode = (account_code) => {
+const checkAccountCode = account_code => {
     return dispatch => AppAPI.check_account_code.get({account_code})
         .then(userData => Promise.resolve(userData))
         .catch(err => Promise.reject(err));
@@ -147,7 +147,7 @@ const getTrainingGroups = () => {
 /**
  * Create Training Group
  */
-const createTrainingGroup = (trainingGroup) => {
+const createTrainingGroup = trainingGroup => {
     trainingGroup = Object.assign({}, trainingGroup, {
         user_ids: Object.keys(trainingGroup.user_ids)
     });
@@ -161,7 +161,7 @@ const createTrainingGroup = (trainingGroup) => {
 /**
  * Patch Training Group
  */
-const patchTrainingGroup = (trainingGroup) => {
+const patchTrainingGroup = trainingGroup => {
     let id = trainingGroup.id;
     delete trainingGroup.id;
     trainingGroup.user_ids = Object.entries(trainingGroup.user_ids).filter(group => group[1]).map(group => group[0]);
@@ -175,7 +175,7 @@ const patchTrainingGroup = (trainingGroup) => {
 /**
  * Remove Training Group
  */
-const removeTrainingGroup = (trainingGroupId) => {
+const removeTrainingGroup = trainingGroupId => {
     return dispatch => AppAPI.training_groups.delete(trainingGroupId)
         .then(() => dispatch({
             type: Actions.REMOVE_TRAINING_GROUP,
@@ -183,21 +183,21 @@ const removeTrainingGroup = (trainingGroupId) => {
         }));
 };
 
-const teamSelect = (index) => {
+const teamSelect = index => {
     return dispatch => dispatch({
         type: Actions.TEAM_SELECT,
         index
     });
 };
 
-const userSelect = (index) => {
+const userSelect = index => {
     return dispatch => dispatch({
         type: Actions.USER_SELECT,
         index
     });
 }
 
-const selectTrainingGroup = (trainingGroup) => {
+const selectTrainingGroup = trainingGroup => {
     return dispatch => dispatch({
         type: Actions.TRAINING_GROUP_SELECT,
         data: trainingGroup
@@ -216,7 +216,7 @@ const removeUser = (trainingGroupId, userId) => {
         }));
 };
 
-const startSession = (accessoryId) => {
+const startSession = accessoryId => {
     return dispatch => AppAPI.start_session.post({ accessoryId }, { capture_mode: 'log' })
         .then(() => AppAPI.accessories.get())
         .then(accessories => dispatch({
@@ -226,7 +226,7 @@ const startSession = (accessoryId) => {
         .catch(err => Promise.reject(err));
 };
 
-const stopSession = (accessoryId) => {
+const stopSession = accessoryId => {
     return dispatch => AppAPI.stop_session.post({ accessoryId })
         .then(() => AppAPI.accessories.get())
         .then(accessories => dispatch({
@@ -236,7 +236,7 @@ const stopSession = (accessoryId) => {
         .catch(err => Promise.reject(err));
 };
 
-const getStartAndEndDate = (weekOffset) => {
+const getStartAndEndDate = weekOffset => {
     let date = new Date();
     date.setTime(date.getTime() + weekOffset * AppUtil.MS_IN_WEEK);
     let dayOfWeek = date.getDay();
@@ -357,7 +357,7 @@ const stopRequest = () => {
     }));
 };
 
-const selectGraph = (selectedGraphIndex) => {
+const selectGraph = selectedGraphIndex => {
     return dispatch => Promise.resolve(dispatch({
         type: Actions.SELECT_GRAPH,
         selectedGraphIndex,

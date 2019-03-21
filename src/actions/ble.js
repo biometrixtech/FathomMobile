@@ -9,8 +9,8 @@
  * Bluetooth Actions
  */
 // constants, libs, store, ...
-import { Actions, AppConfig, BLEConfig } from '../constants';
-import { AppAPI, AppUtil } from '../lib';
+import { Actions, AppConfig, BLEConfig, } from '../constants';
+import { AppAPI, AppUtil, } from '../lib';
 import { store } from '../store';
 
 // import third-party libraries
@@ -67,7 +67,7 @@ const write = (id, data) => {
   *   'test'
   *   [116,101,115,116]
   */
-const convertStringToByteArray = (string) => {
+const convertStringToByteArray = string => {
     return string.split('').map(char => char.charCodeAt(0));
 };
 
@@ -77,19 +77,19 @@ const convertStringToByteArray = (string) => {
   *   [116,101,115,116]
   *   'test'
   */
-const convertByteArrayToString = (array) => {
+const convertByteArrayToString = array => {
     return array.map(byte =>  byte && byte > 31 && byte < 127 ? String.fromCharCode(byte) : '').join('');
 };
 
-const convertDecimal = (array) => {
+const convertDecimal = array => {
     return array.map(byte => `0${byte.toString(16).toUpperCase()}`.slice(-2)).join(':');
 };
 
-const convertHex = (value) => {
+const convertHex = value => {
     return parseInt(value, 16);
 };
 
-const convertToUnsigned32BitIntByteArray = (value) => {
+const convertToUnsigned32BitIntByteArray = value => {
     return value.toString(16).match(/.{1,2}/g).map(val => convertHex(val));
 };
 
@@ -102,7 +102,7 @@ const sleeper = (ms = 500) => {
 // Creating a promise wrapper for setTimeout
 // const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay));
 
-const getOwnerFlag = (id) => {
+const getOwnerFlag = id => {
     let dataArray = [commands.GET_OWNER_FLAG, convertHex('0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
@@ -113,7 +113,7 @@ const getOwnerFlag = (id) => {
         });
 };
 
-const getKitName = (id) => {
+const getKitName = id => {
     let dataArray = [commands.GET_KIT_NAME, convertHex('0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
@@ -127,7 +127,7 @@ const getKitName = (id) => {
         })
 }
 
-const assignType = (type) => {
+const assignType = type => {
     return dispatch => dispatch({
         type: Actions.ASSIGN_TYPE,
         data: type
@@ -141,7 +141,7 @@ const checkState = () => {
         }));
 };
 
-const changeState = (kitState) => {
+const changeState = kitState => {
     return dispatch => dispatch({
         type: Actions.CHANGE_STATE,
         data: kitState
@@ -187,7 +187,7 @@ const stopScan = () => {
         .catch(err => { console.log(err); return Promise.reject(err); });
 };
 
-const deviceFound = (data) => {
+const deviceFound = data => {
     return dispatch => dispatch({
         type: Actions.DEVICE_FOUND,
         data
@@ -212,7 +212,7 @@ const stopConnect = () => {
         .catch(err => Promise.reject(err));
 };
 
-const setKitTime = (id) => {
+const setKitTime = id => {
     let dataArray = [commands.SET_TIME, convertHex('0x04')];
     dataArray = dataArray.concat(convertToUnsigned32BitIntByteArray(Math.round((new Date()).getTime() / 1000))); // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
     console.log(id, dataArray);
@@ -317,7 +317,7 @@ const convertDurationToInt = array => {
   * NEW FUNCTIONS
   * - 1 Sensor System
   */
-const connectToAccessory = (data) => {
+const connectToAccessory = data => {
     const getSetupModeArray = [commands.IS_SINGLE_SENSOR_IN_SETUP_MODE, convertHex('0x00')];
     let setKitTimeArray = [commands.SET_TIME, convertHex('0x04')];
     setKitTimeArray = setKitTimeArray.concat(convertToUnsigned32BitIntByteArray(Math.round((new Date()).getTime() / 1000))); // unholy command to convert current time since epoch to a hex string to an array of hex to an array of decimal representations of the hex values to send
@@ -340,7 +340,7 @@ const connectToAccessory = (data) => {
         .catch(err => Promise.reject(err));
 };
 
-const getUserSensorData = (userId) => {
+const getUserSensorData = userId => {
     return dispatch => new Promise((resolve, reject) => {
         return AppAPI.get_user.get({userId})
             .then(result => {
@@ -362,7 +362,7 @@ const getUserSensorData = (userId) => {
     });
 };
 
-const postUserSensorData = (userId) => {
+const postUserSensorData = userId => {
     return dispatch => new Promise((resolve, reject) => {
         let currentState = store.getState();
         // mobile uuid
@@ -416,7 +416,7 @@ const deleteUserSensorData = () => {
     });
 };
 
-const getSingleSensorStatus = (sensorId) => {
+const getSingleSensorStatus = sensorId => {
     // NOTE: timeout function added due to - 'Attempts to connect to a peripheral do not time out' (iOS documentation)
     let timeout = null;
     let gettingSensorStatus = new Promise((resolve, reject) => {
@@ -513,7 +513,7 @@ const getAllPracticeDetails = (sensorId, practiceIndex = 0) => {
         .catch(err => Promise.reject(err));
 };
 
-const deleteAllSingleSensorPractices = (sensorId) => {
+const deleteAllSingleSensorPractices = sensorId => {
     // NOTE: timeout function added due to - 'Attempts to connect to a peripheral do not time out' (iOS documentation)
     let timeout = null;
     let deletingAllPractices = new Promise((resolve, reject) => {
@@ -559,7 +559,7 @@ const deleteSinglePractice = (sensorId, practiceIndex = 0) => {
   * OLD FUNCTIONS
   * - 3 Sensor System
   */
-const loginToAccessory = (accessoryData) => {
+const loginToAccessory = accessoryData => {
     let dataArray = [commands.LOGIN, convertHex('0x04')];
     if (!accessoryData.settingsKey) {
         return dispatch => BleManager.disconnect(accessoryData.id)
@@ -674,7 +674,7 @@ const connectWiFi = (id, networkType) => {
         });
 };
 
-const readSSID = (id) => {
+const readSSID = id => {
     return id ? dispatch => read(id)
         .then(response => {
             console.log(response);
@@ -686,7 +686,7 @@ const readSSID = (id) => {
         .catch(err => console.log(err)) : null;
 };
 
-const scanWiFi = (id) => {
+const scanWiFi = id => {
     let dataArray = [commands.WIFI_SCAN, convertHex('0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
@@ -697,7 +697,7 @@ const scanWiFi = (id) => {
         .catch(err => Promise.reject(err));
 };
 
-const resetAccessory = (accessory) => {
+const resetAccessory = accessory => {
     let dataArray = [commands.FACTORY_RESET, convertHex('0x00')];
     return dispatch => write(accessory.id, dataArray)
         .then(response => {
@@ -718,7 +718,7 @@ const resetAccessory = (accessory) => {
         });
 };
 
-const systemReset = (id) => {
+const systemReset = id => {
     let resetCmd = [commands.SYS_RESET, convertHex('0x00')];
     return dispatch => write(id, resetCmd)
         .then(response => {
@@ -751,7 +751,7 @@ const assignKitName = (id, name) => {
         });
 };
 
-const storeParams = (accessory) => {
+const storeParams = accessory => {
     let dataArray = [commands.STORE_PARAMS, convertHex('0X00')];
     return dispatch => write(accessory.id, dataArray)
         .then(response => {
@@ -821,7 +821,7 @@ const setKitState = (id, stateUsed) => {
         .catch(err => Promise.reject(err));
 };
 
-const disconnect = (id) => {
+const disconnect = id => {
     let dataArray = [commands.SET_STATE, convertHex('0x01'), state.APP_IDLE];
     return dispatch => write(id, dataArray)
         .catch(err => console.log(err))
@@ -833,7 +833,7 @@ const disconnect = (id) => {
         .catch(err => Promise.reject(err));
 };
 
-const handleDisconnect = (id) => {
+const handleDisconnect = id => {
     return dispatch => BleManager.isPeripheralConnected(id, [])
         .then(isConnected => isConnected ? null : BleManager.connect(id))
         .then(() => BleManager.retrieveServices(id))
@@ -842,7 +842,7 @@ const handleDisconnect = (id) => {
         }));
 };
 
-const getWifiMacAddress = (id) => {
+const getWifiMacAddress = id => {
     let dataArray = [commands.GET_MAC_ADDRESS, convertHex('0x00')];
     return dispatch => write(id, dataArray)
         .then(response => {
