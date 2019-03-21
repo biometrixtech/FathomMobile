@@ -18,7 +18,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
+import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';

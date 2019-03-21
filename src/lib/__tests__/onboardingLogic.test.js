@@ -295,6 +295,7 @@ it('Is User Account Information Validation - valid input', () => {
     user.personal_data.email = 'mazen@fathomai.com';
     user.personal_data.phone_number = '1234567890';
     user.password = 'Fathom123';
+    user.confirm_password = 'Fathom123';
     let isUpdatingUser = false;
     expect(onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid).toEqual(true);
 });

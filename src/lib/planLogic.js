@@ -460,6 +460,9 @@ const PlanLogic = {
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
         let sportText = pageState.step === 1 && selectedSport ? selectedSport.label.toLowerCase() : '';
         let sportImage = pageState.step === 1 && selectedSport ? selectedSport.imagePath : '';
+        if(selectedSport && selectedSport.label === 'High Intensity Interval Training') {
+            sportText = 'HIIT';
+        }
         return {
             sportImage,
             sportText,
@@ -833,6 +836,10 @@ const PlanLogic = {
         let sportStartTime = workout && workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
         let sportText = selectedSport ? `${sportStartTime} ${selectedSport.label.toLowerCase()} workout` : '';
         let sportImage = selectedSport ? selectedSport.imagePath : '';
+        if(selectedSport && sportName === 'High Intensity Interval Training') {
+            sportName = 'HIIT';
+            sportText = `${sportStartTime} ${sportName} workout`;
+        }
         return {
             partOfDay,
             sportDuration,
@@ -868,9 +875,13 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
+    handleReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPrepareObject = Object.assign({}, prepare, {
+            isActiveRecoveryCollapsed:  dailyReadiness.sessions_planned ? false : true,
             isReadinessSurveyCompleted: true,
+        });
+        let newRecoverObject = Object.assign({}, recover, {
+            isActiveRecoveryCollapsed: dailyReadiness.sessions_planned ? true : false,
         });
         let newDailyReadiness = {
             date_time:                 eventDate,
@@ -899,11 +910,34 @@ const PlanLogic = {
         if(healthData.workouts && healthData.workouts.length > 0) {
             newDailyReadiness.health_sync_date = eventDate;
         }
+
+        let filteredHealthDataWorkouts = healthDataWorkouts && healthDataWorkouts.length > 0 ?
+            _.filter(healthDataWorkouts, o => !o.deleted)
+            :
+            [];
+        let filteredDailyReadinessSessions = dailyReadinessSessions && dailyReadinessSessions.length > 0 ?
+            _.filter(dailyReadinessSessions, o => !o.deleted)
+            :
+            [];
+        let nonDeletedSessions = _.concat(filteredHealthDataWorkouts, filteredDailyReadinessSessions);
+        let newDailyReadinessState = {
+            current_position:          null,
+            current_sport_name:        null,
+            readiness:                 null,
+            sessions:                  nonDeletedSessions,
+            sessions_planned:          newDailyReadiness.sessions_planned,
+            sleep_quality:             null,
+            soreness:                  [],
+            wants_functional_strength: null,
+            // won't be submitted, help with UI
+            already_trained_number:    null,
+        };
         return {
-            dailyReadinessSessions,
-            healthDataWorkouts,
             newDailyReadiness,
+            newDailyReadinessState,
             newPrepareObject,
+            newRecoverObject,
+            nonDeletedSessions,
         };
     },
 
@@ -912,7 +946,7 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handlePostSessionSurveySubmitLogic: (user_id, postSession, train, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
+    handlePostSessionSurveySubmitLogic: (user_id, postSession, train, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPostSession = {
             event_date: eventDate,
             user_id:    user_id,
@@ -943,6 +977,7 @@ const PlanLogic = {
         clonedPostPracticeSurveys.push(newSurvey);
         let newTrainObject = Object.assign({}, train, {
             completedPostPracticeSurvey: true,
+            isActiveRecoveryCollapsed:   false,
             postPracticeSurveys:         clonedPostPracticeSurveys,
         });
         let postPracticeSurveysLastIndex = _.findLastIndex(newTrainObject.postPracticeSurveys);
@@ -952,9 +987,13 @@ const PlanLogic = {
             _.filter(newPostSession.sessions, o => !o.deleted && !o.ignored)
             :
             [PlanLogic.returnEmptySession()];
+        let newRecoverObject = Object.assign({}, recover, {
+            isActiveRecoveryCollapsed: false,
+        });
         return {
             newPostSession,
             newPostSessionSessions,
+            newRecoverObject,
             newTrainObject,
         };
     },
@@ -973,6 +1012,112 @@ const PlanLogic = {
         });
         newCompletedExercises = _.uniq(newCompletedExercises);
         return { newCompletedExercises, };
+    },
+
+    /**
+      * Handle MyPlan Render Train Tab Logic
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handleMyPlanRenderTrainTabLogic: (dailyPlanObj, reducerPlan) => {
+        let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+        let trainingSessions = dailyPlanObj ? dailyPlanObj.training_sessions : [];
+        let isFSEligible = dailyPlanObj && dailyPlanObj.functional_strength_eligible;
+        let functionalStrengthArray = [];
+        let functionalStrength = dailyPlanObj && dailyPlanObj.functional_strength_session ? dailyPlanObj.functional_strength_session : {};
+        if(functionalStrength.completed && functionalStrength.event_date) {
+            let newFunctionalStrength = _.cloneDeep(functionalStrength);
+            newFunctionalStrength.isFunctionalStrength = true;
+            functionalStrengthArray.push(newFunctionalStrength);
+        }
+        trainingSessions = trainingSessions.concat(functionalStrengthArray);
+        trainingSessions = _.orderBy(trainingSessions, o => moment(o.event_date), ['asc']);
+        let filteredTrainingSessions = trainingSessions && trainingSessions.length > 0 ?
+            _.filter(trainingSessions, o => !o.deleted && !o.ignored && (o.sport_name !== null || o.strength_and_conditioning_type !== null))
+            :
+            [];
+        let completedFSExercises = reducerPlan.completedFSExercises;
+        let fsExerciseList = functionalStrength ? MyPlanConstants.cleanFSExerciseList(functionalStrength) : {};
+        let offDaySelected = dailyPlanObj && !dailyPlanObj.sessions_planned || filteredTrainingSessions.length > 0;
+        let logActivityButtonOutlined = (isDailyReadinessSurveyCompleted && (isFSEligible || functionalStrength && Object.keys(functionalStrength).length > 0) && !functionalStrength.completed) || (!isDailyReadinessSurveyCompleted) ? true : false;
+        let logActivityButtonBackgroundColor = offDaySelected && functionalStrength.completed ?
+            AppColors.zeplin.yellow
+            : logActivityButtonOutlined ?
+                AppColors.white
+                :
+                AppColors.zeplin.yellow;
+        let logActivityButtonColor = offDaySelected && functionalStrength.completed ?
+            AppColors.white
+            : logActivityButtonOutlined && !isDailyReadinessSurveyCompleted ?
+                AppColors.zeplin.greyText
+                : logActivityButtonOutlined && isDailyReadinessSurveyCompleted ?
+                    AppColors.zeplin.yellow
+                    :
+                    AppColors.white;
+        let isFSCompletedValid = functionalStrength && Object.keys(functionalStrength).length > 0 && completedFSExercises ? MyPlanConstants.isFSCompletedValid(functionalStrength, completedFSExercises) : false;
+        let logActivityRightIconColor = isDailyReadinessSurveyCompleted ?
+            completedFSExercises.length > 0 ?
+                AppColors.zeplin.yellow
+                :
+                AppColors.white
+            :
+            AppColors.zeplin.greyText;
+        return {
+            completedFSExercises,
+            filteredTrainingSessions,
+            fsExerciseList,
+            functionalStrength,
+            isDailyReadinessSurveyCompleted,
+            isFSCompletedValid,
+            isFSEligible,
+            logActivityButtonBackgroundColor,
+            logActivityButtonColor,
+            logActivityButtonOutlined,
+            logActivityRightIconColor,
+            offDaySelected,
+        };
+    },
+
+    /**
+      * Handle MyPlan Render Recover Tab Logic
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handleMyPlanRenderRecoverTabLogic: dailyPlanObj => {
+        let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery ? dailyPlanObj.post_recovery : false;
+        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
+        let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
+        let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
+        let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed ? true : false;
+        return {
+            disabled,
+            exerciseList,
+            isActive,
+            isCompleted,
+            recoveryObj,
+        };
+    },
+
+    /**
+      * Handle MyPlan Render Prepare Tab Logic
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handleMyPlanRenderPrepareTabLogic: dailyPlanObj => {
+        let recoveryObj = dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
+        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
+        let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
+        let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
+        let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed  ? true : false;
+        let isReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
+        return {
+            disabled,
+            exerciseList,
+            isActive,
+            isCompleted,
+            isReadinessSurveyCompleted,
+            recoveryObj,
+        };
     },
 
 };

@@ -62,9 +62,13 @@ export default function planReducer(state = initialState, action) {
             },
         });
     case Actions.POST_READINESS_SURVEY:
-        return Object.assign({}, state, {});
+        return Object.assign({}, state, {
+            dailyPlan: action.data,
+        });
     case Actions.POST_SESSION_SURVEY:
-        return Object.assign({}, state, {});
+        return Object.assign({}, state, {
+            dailyPlan: action.data,
+        });
     case Actions.UPDATE_LAST_OPENED:
         return Object.assign({}, state, {
             lastOpened: {

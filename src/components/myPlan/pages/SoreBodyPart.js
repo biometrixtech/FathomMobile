@@ -22,7 +22,7 @@ import { TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { FathomSlider, SVGImage, Spacer, TabIcon, Text, Tooltip, } from '../../custom';
+import { SVGImage, Spacer, TabIcon, Text, Tooltip, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 import { ScaleButton } from './';
 

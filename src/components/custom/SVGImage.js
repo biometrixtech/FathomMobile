@@ -232,7 +232,7 @@ class SVGImage extends Component {
                         style={{
                             ...StyleSheet.absoluteFillObject,
                             alignItems:      'center',
-                            backgroundColor: 'rgba(43, 43, 43, 0.5)',
+                            backgroundColor: 'rgba(8, 24, 50, 0.5)',
                             borderRadius:    AppSizes.screen.widthQuarter + 5,
                             flex:            1,
                             height:          '100%',

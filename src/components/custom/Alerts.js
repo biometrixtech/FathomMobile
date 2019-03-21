@@ -17,10 +17,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-    View,
-    StyleSheet,
-} from 'react-native';
+import { StyleSheet, View, } from 'react-native';
 
 // Components
 import { Text } from './';
@@ -48,7 +45,7 @@ const styles = StyleSheet.create({
 
     // Error
     msgError: {
-        backgroundColor: AppColors.alerts.errorBackground,
+        backgroundColor: AppColors.zeplin.coachesDashError,
     },
     msgError_text: {
         color: AppColors.white,

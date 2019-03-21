@@ -56,10 +56,7 @@ class SessionsCompletionModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isConfettiAnimationVisible:  true,
-            isConfettiAnimation2Visible: true,
-            isConfettiAnimation3Visible: true,
-            progressCounters:            {},
+            progressCounters: [],
         };
         this.animation = {};
         this.animation2 = {};
@@ -80,25 +77,22 @@ class SessionsCompletionModal extends Component {
                         this.setState(
                             { progressCounters: newProgressCounters, },
                             () => {
-                                let isLast = Object.keys(this.state.progressCounters).length === (i + 1);
-                                if(
-                                    isLast &&
-                                    this.animation &&
-                                    this.animation.play &&
-                                    this.animation2 &&
-                                    this.animation2.play &&
-                                    this.animation3 &&
-                                    this.animation3.play
-                                ) {
-                                    this.animation.play();
-                                    this.animation2.play();
-                                    this.animation3.play();
+                                if(this.state.progressCounters.length === (i + 1)) {
+                                    if(this.animation && this.animation.play) {
+                                        this.animation.play();
+                                    }
+                                    if(this.animation2 && this.animation2.play) {
+                                        this.animation2.play();
+                                    }
+                                    if(this.animation3 && this.animation3.play) {
+                                        this.animation3.play();
+                                    }
                                 }
                             }
                         );
                     }, 500 * i);
                 });
-            }, 1000);
+            }, 1500);
         }
     }
 
@@ -110,9 +104,7 @@ class SessionsCompletionModal extends Component {
         let newProgressCounters = _.cloneDeep(this.state.progressCounters);
         _.map(filteredIconSessions, (session, i) => {
             newProgressCounters[i] = 0;
-            this.setState({
-                progressCounters: newProgressCounters,
-            });
+            this.setState({ progressCounters: newProgressCounters, });
         });
     }
 
@@ -122,20 +114,13 @@ class SessionsCompletionModal extends Component {
             return (session.sport_name || session.sport_name === 0) ||
                 (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
         });
-        let newProgressCounters = _.cloneDeep(this.state.progressCounters);
         _.map(filteredIconSessions, (session, i) => {
-            newProgressCounters[i] = 0;
             this.setState(
-                {
-                    isConfettiAnimationVisible:  true,
-                    isConfettiAnimation2Visible: true,
-                    isConfettiAnimation3Visible: true,
-                    progressCounters:            {},
-                },
+                { progressCounters: [], },
                 () => {
-                    this.animation = {};
-                    this.animation2 = {};
-                    this.animation3 = {};
+                    if(this.animation && this.animation.reset) { this.animation.reset(); }
+                    if(this.animation2 && this.animation2.reset) { this.animation2.reset(); }
+                    if(this.animation3 && this.animation3.reset) { this.animation3.reset(); }
                 }
             );
         });
@@ -147,12 +132,7 @@ class SessionsCompletionModal extends Component {
             isModalOpen,
             sessions,
         } = this.props;
-        const {
-            isConfettiAnimationVisible,
-            isConfettiAnimation2Visible,
-            isConfettiAnimation3Visible,
-            progressCounters,
-        } = this.state;
+        const { progressCounters, } = this.state;
         let filteredIconSessions = _.filter(sessions, session => {
             return (session.sport_name || session.sport_name === 0) ||
                 (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
@@ -245,44 +225,23 @@ class SessionsCompletionModal extends Component {
                             <Spacer size={AppSizes.paddingSml} />
                             <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>{modalText.subtext}</Text>
                             <Spacer size={AppSizes.padding} />
-                            { isConfettiAnimationVisible ?
-                                <LottieView
-                                    loop={false}
-                                    onAnimationFinish={() => this.setState({ isConfettiAnimationVisible: false, })}
-                                    ref={animation => {
-                                        this.animation = animation;
-                                    }}
-                                    source={require('../../../../assets/animation/confetti.json')}
-                                />
-                                :
-                                null
-                            }
-                            { isConfettiAnimation2Visible ?
-                                <LottieView
-                                    loop={false}
-                                    onAnimationFinish={() => this.setState({ isConfettiAnimation2Visible: false, })}
-                                    ref={animation => {
-                                        this.animation2 = animation;
-                                    }}
-                                    source={require('../../../../assets/animation/confetti.json')}
-                                    speed={2}
-                                />
-                                :
-                                null
-                            }
-                            { isConfettiAnimation3Visible ?
-                                <LottieView
-                                    loop={false}
-                                    onAnimationFinish={() => this.setState({ isConfettiAnimation3Visible: false, })}
-                                    ref={animation => {
-                                        this.animation3 = animation;
-                                    }}
-                                    source={require('../../../../assets/animation/confetti.json')}
-                                    speed={3}
-                                />
-                                :
-                                null
-                            }
+                            <LottieView
+                                loop={false}
+                                ref={animation => {this.animation = animation;}}
+                                source={require('../../../../assets/animation/confetti.json')}
+                            />
+                            <LottieView
+                                loop={false}
+                                ref={animation => {this.animation2 = animation;}}
+                                source={require('../../../../assets/animation/confetti.json')}
+                                speed={2}
+                            />
+                            <LottieView
+                                loop={false}
+                                ref={animation => {this.animation3 = animation;}}
+                                source={require('../../../../assets/animation/confetti.json')}
+                                speed={3}
+                            />
                             <Button
                                 backgroundColor={AppColors.zeplin.yellow}
                                 buttonStyle={{alignSelf: 'center', borderRadius: 5, width: (modalWidth - (AppSizes.padding * 2)),}}

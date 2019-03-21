@@ -147,10 +147,7 @@ describe('Systems Tests for Persona 1', () => {
         expect(newNewDailyReadiness).toEqual(helperFunctions.newNewDailyReadinessExpectedResult(loginRes, true, [], sorenessArray, clearCandidatesArray));
         // make sure we are successful & valid - Readiness Survey Submit
         const readinessSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_readiness_survey'), helperFunctions.apiReqs('post', newDailyReadiness, loginRes.authorization.jwt));
-        expect(readinessSurveyRes.message).toEqual('success');
-        // simulate delay as we wait for 'notification' -> getMyPlan
-        const secondDailyPlanRes = await helperFunctions.fetcher(helperFunctions.getURL('get_my_plan'), helperFunctions.apiReqs('post', myPlanObj, loginRes.authorization.jwt), true);
-        let dailyPlanObj = secondDailyPlanRes.daily_plans[0];
+        let dailyPlanObj = readinessSurveyRes.daily_plans[0];
         let exerciseList = _.concat(dailyPlanObj.pre_recovery.inhibit_exercises, dailyPlanObj.pre_recovery.lengthen_exercises, dailyPlanObj.pre_recovery.activate_exercises);
         expect(dailyPlanObj.daily_readiness_survey_completed).toEqual(true);
         expect(dailyPlanObj.landing_screen).toEqual(0);
@@ -193,10 +190,7 @@ describe('Systems Tests for Persona 1', () => {
         postSessionObj = PlanLogic.handleDailyReadinessAndPostSessionFormChange('sessions[0].post_session_survey.RPE', 3, null, null, null, postSessionObj);
         let { newPostSession, } = PlanLogic.handlePostSessionSurveySubmitLogic(loginRes.user.id, postSessionObj, trainObj, healthData);
         const postSessionSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_session_survey'), helperFunctions.apiReqs('post', newPostSession, loginRes.authorization.jwt));
-        expect(postSessionSurveyRes.message).toEqual('success');
-        // simulate delay as we wait for 'notification' -> getMyPlan
-        const thirdDailyPlanRes = await helperFunctions.fetcher(helperFunctions.getURL('get_my_plan'), helperFunctions.apiReqs('post', myPlanObj, loginRes.authorization.jwt), true);
-        let thirdDailyPlanObj = thirdDailyPlanRes.daily_plans[0];
+        let thirdDailyPlanObj = postSessionSurveyRes.daily_plans[0];
         let newExerciseList = _.concat(thirdDailyPlanObj.pre_recovery.inhibit_exercises, thirdDailyPlanObj.pre_recovery.lengthen_exercises, thirdDailyPlanObj.pre_recovery.activate_exercises);
         expect(thirdDailyPlanObj.daily_readiness_survey_completed).toEqual(true);
         expect(thirdDailyPlanObj.landing_screen).toEqual(2);
@@ -277,10 +271,7 @@ describe('Systems Tests for Persona 1', () => {
         expect(newNewDailyReadiness).toEqual(helperFunctions.newNewDailyReadinessExpectedResult(loginRes, true, [], sorenessArray, clearCandidatesArray));
         // make sure we are successful & valid - Readiness Survey Submit
         const readinessSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_readiness_survey'), helperFunctions.apiReqs('post', newDailyReadiness, loginRes.authorization.jwt));
-        expect(readinessSurveyRes.message).toEqual('success');
-        // simulate delay as we wait for 'notification' -> getMyPlan
-        const secondDailyPlanRes = await helperFunctions.fetcher(helperFunctions.getURL('get_my_plan'), helperFunctions.apiReqs('post', myPlanObj, loginRes.authorization.jwt), true);
-        let dailyPlanObj = secondDailyPlanRes.daily_plans[0];
+        let dailyPlanObj = readinessSurveyRes.daily_plans[0];
         let exerciseList = _.concat(dailyPlanObj.pre_recovery.inhibit_exercises, dailyPlanObj.pre_recovery.lengthen_exercises, dailyPlanObj.pre_recovery.activate_exercises);
         expect(dailyPlanObj.daily_readiness_survey_completed).toEqual(true);
         expect(dailyPlanObj.landing_screen).toEqual(0);
@@ -358,10 +349,7 @@ describe('Systems Tests for Persona 1', () => {
         expect(newNewDailyReadiness).toEqual(helperFunctions.newNewDailyReadinessExpectedResult(loginRes, false, [], sorenessArray, clearCandidatesArray));
         // make sure we are successful & valid - Readiness Survey Submit
         const readinessSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_readiness_survey'), helperFunctions.apiReqs('post', newDailyReadiness, loginRes.authorization.jwt));
-        expect(readinessSurveyRes.message).toEqual('success');
-        // simulate delay as we wait for 'notification' -> getMyPlan
-        const secondDailyPlanRes = await helperFunctions.fetcher(helperFunctions.getURL('get_my_plan'), helperFunctions.apiReqs('post', myPlanObj, loginRes.authorization.jwt), true);
-        let dailyPlanObj = secondDailyPlanRes.daily_plans[0];
+        let dailyPlanObj = readinessSurveyRes.daily_plans[0];
         let exerciseList = _.concat(dailyPlanObj.post_recovery.inhibit_exercises, dailyPlanObj.post_recovery.lengthen_exercises, dailyPlanObj.post_recovery.activate_exercises);
         expect(dailyPlanObj.daily_readiness_survey_completed).toEqual(true);
         expect(dailyPlanObj.landing_screen).toEqual(2);
@@ -461,10 +449,7 @@ describe('Systems Tests for Persona 1', () => {
         expect(newNewDailyReadiness).toEqual(helperFunctions.newNewDailyReadinessExpectedResult(loginRes, true, sessionsArray, sorenessArray, clearCandidatesArray));
         // make sure we are successful & valid - Readiness Survey Submit
         const readinessSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_readiness_survey'), helperFunctions.apiReqs('post', newDailyReadiness, loginRes.authorization.jwt));
-        expect(readinessSurveyRes.message).toEqual('success');
-        // simulate delay as we wait for 'notification' -> getMyPlan
-        const secondDailyPlanRes = await helperFunctions.fetcher(helperFunctions.getURL('get_my_plan'), helperFunctions.apiReqs('post', myPlanObj, loginRes.authorization.jwt), true);
-        let dailyPlanObj = secondDailyPlanRes.daily_plans[0];
+        let dailyPlanObj = readinessSurveyRes.daily_plans[0];
         let exerciseList = _.concat(dailyPlanObj.pre_recovery.inhibit_exercises, dailyPlanObj.pre_recovery.lengthen_exercises, dailyPlanObj.pre_recovery.activate_exercises);
         expect(dailyPlanObj.daily_readiness_survey_completed).toEqual(true);
         expect(dailyPlanObj.landing_screen).toEqual(0);
@@ -531,10 +516,7 @@ describe('Systems Tests for Persona 1', () => {
         ];
         expect(newPostSession).toEqual(helperFunctions.newPostSessionExpectedResult(loginRes, eventDate, newSessionsArray));
         const postSessionSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_session_survey'), helperFunctions.apiReqs('post', newPostSession, loginRes.authorization.jwt));
-        expect(postSessionSurveyRes.message).toEqual('success');
-        // simulate delay as we wait for 'notification' -> getMyPlan
-        const thirdDailyPlanRes = await helperFunctions.fetcher(helperFunctions.getURL('get_my_plan'), helperFunctions.apiReqs('post', myPlanObj, loginRes.authorization.jwt), true);
-        let thirdDailyPlanObj = thirdDailyPlanRes.daily_plans[0];
+        let thirdDailyPlanObj = postSessionSurveyRes.daily_plans[0];
         let thirdExerciseList = _.concat(thirdDailyPlanObj.post_recovery.inhibit_exercises, thirdDailyPlanObj.post_recovery.lengthen_exercises, thirdDailyPlanObj.post_recovery.activate_exercises);
         expect(thirdDailyPlanObj.daily_readiness_survey_completed).toEqual(true);
         expect(thirdDailyPlanObj.landing_screen).toEqual(2);

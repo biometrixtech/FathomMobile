@@ -124,8 +124,8 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 25
-        versionName "2.9.0"
+        versionCode 26
+        versionName "2.10.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -204,6 +204,7 @@ dependencies {
     implementation project(':react-native-google-analytics-bridge')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-webview')
+    implementation project(':react-native-sound')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation 'com.facebook.react:react-native:+' // From node_modules
