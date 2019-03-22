@@ -646,8 +646,16 @@ const helperFunctions = {
 
     muscleLevelsOfSorenessAndPain: isSoreness => {
         return {
-            soreness: ['MILD', 'MODERATE', 'SEVERE'],
-            movement: ['NOT\nLIMITED', 'LIMITED', 'VERY\nLIMITED'],
+            soreness: [
+                { label: 'MILD', value: 1,},
+                { label: 'MODERATE', value: 3,},
+                { label: 'SEVERE', value: 5,},
+            ],
+            movement: [
+                { label: 'NOT\nLIMITED', value: 1,},
+                { label: 'LIMITED', value: 3,},
+                { label: 'VERY\nLIMITED', value: 5,},
+            ],
         };
     },
 
