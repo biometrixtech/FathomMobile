@@ -11,7 +11,7 @@
 
 // what {version} are we on?
 const metaAPIVersion = '/meta/1_0';
-const plansAPIVersion = '/plans/3_0';
+const plansAPIVersion = '/plans/3_1';
 const usersAPIVersion = '/users/2_1';
 
 export default {
@@ -43,7 +43,7 @@ export default {
         ['get_user',           `${usersAPIVersion}/user/{userId}`],
         ['join_account',       `${usersAPIVersion}/user/{userId}/join_account`], // POST
         ['login',              `${usersAPIVersion}/user/login`], // If you change the key, update the reference below
-        ['logout',             `${usersAPIVersion}/user/{user_id}/logout`], // POST
+        ['logout',             `${usersAPIVersion}/user/{userId}/logout`], // POST
         ['register_device',    `${usersAPIVersion}/device/{device_uuid}`],
         ['reset_password',     `${usersAPIVersion}/user/reset_password`],
         ['update_user',        `${usersAPIVersion}/user/{userId}`],
@@ -53,7 +53,7 @@ export default {
         ['active_time',           `${plansAPIVersion}/active_recovery/active_time`], // PATCH
         ['app_logs',              `${plansAPIVersion}/misc/app_logs`], // POST
         ['clear_user_data',       `${plansAPIVersion}/misc/clear_user_data`], // POST
-        ['coach_dashboard',       `${plansAPIVersion}/coach/{user_id}/dashboard`], // GET
+        ['coach_dashboard',       `${plansAPIVersion}/coach/{userId}/dashboard`], // GET
         ['functional_strength',   `${plansAPIVersion}/functional_strength`], // POST/PATCH
         ['get_my_plan',           `${plansAPIVersion}/daily_plan`], // POST
         ['get_sore_body_parts',   `${plansAPIVersion}/daily_readiness/previous`], // POST

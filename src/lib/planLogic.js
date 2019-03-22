@@ -307,8 +307,8 @@ const PlanLogic = {
             return doesItInclude.length > 0;
         });
         let areQuestionsValid = postSession.RPE >= 0 && postSession.event_date ? true : false;
-        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => (o.severity > 0 || o.severity === 0) && (o.movement > 0 || o.movement === 0)).length === combinedSoreBodyParts.length : true;
-        let areAreasOfSorenessValid = _.filter(filteredAreasOfSoreness, o => (o.severity > 0 || o.severity === 0) && (o.movement > 0 || o.movement === 0)).length > 0;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => (o.severity === 0 && o.movement === null) || (o.severity > 0 && o.movement > 0)).length === combinedSoreBodyParts.length : true;
+        let areAreasOfSorenessValid = _.filter(filteredAreasOfSoreness, o => (o.severity === 0 && o.movement === null) || (o.severity > 0 && o.movement > 0)).length > 0;
         let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;
         let isFormValidItems = {
             areAreasOfSorenessValid,
@@ -343,8 +343,15 @@ const PlanLogic = {
             return doesItInclude.length > 0;
         });
         let areQuestionsValid = dailyReadiness.readiness > 0 && dailyReadiness.sleep_quality > 0;
-        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => (o.severity > 0 || o.severity === 0) && (o.movement > 0 || o.movement === 0)).length === combinedSoreBodyParts.length : true;
-        let areAreasOfSorenessValid = _.filter(filteredAreasOfSoreness, o => (o.severity > 0 || o.severity === 0) && o.movement > 0 || o.movement === 0).length > 0;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ?
+            _.filter(filteredSoreBodyParts, o =>
+                (o.severity === 0 && o.movement === null) || (o.severity > 0 && o.movement > 0)
+            ).length === combinedSoreBodyParts.length
+            :
+            true;
+        let areAreasOfSorenessValid = _.filter(filteredAreasOfSoreness, o =>
+            (o.severity === 0 && o.movement === null) || (o.severity > 0 && o.movement > 0)
+        ).length > 0;
         let foundSport = _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name);
         let selectedSportPositions = dailyReadiness.current_sport_name !== null && foundSport ? foundSport.positions : [];
         const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
@@ -439,18 +446,11 @@ const PlanLogic = {
             helpingVerb = 'has';
         }
         let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'Left ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'Right ' : ''}${mainBodyPartName}`;
-        let showScaleButtons = bodyPartGroup && (pageStateType === 'soreness' || pageStateType === 'pain');
-        let isBodyPartJoint = bodyPartGroup === 'joint';
-        let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
-        let backNextHeight = ((AppSizes.backNextButtonsHeight) + (AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed));
         return {
-            backNextHeight,
+            bodyPartGroup,
             bodyPartMap,
             bodyPartName,
             helpingVerb,
-            isBodyPartJoint,
-            pillsHeight,
-            showScaleButtons,
             sorenessPainMapping,
         };
     },
@@ -884,7 +884,7 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
+    handleReadinessSurveySubmitLogic: (dailyReadiness, prepare, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPrepareObject = Object.assign({}, prepare, {
             isActiveRecoveryCollapsed:  dailyReadiness.sessions_planned ? false : true,
             isReadinessSurveyCompleted: true,
@@ -894,7 +894,6 @@ const PlanLogic = {
         });
         let newDailyReadiness = {
             date_time:                 eventDate,
-            user_id:                   user_id,
             soreness:                  _.filter(dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
             clear_candidates:          _.filter(dailyReadiness.soreness, {isClearCandidate: true}),
             sleep_quality:             dailyReadiness.sleep_quality,
@@ -955,10 +954,9 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handlePostSessionSurveySubmitLogic: (user_id, postSession, train, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
+    handlePostSessionSurveySubmitLogic: (postSession, train, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPostSession = {
             event_date: eventDate,
-            user_id:    user_id,
             sessions:   [],
         };
         let healthDataWorkouts = healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : [];

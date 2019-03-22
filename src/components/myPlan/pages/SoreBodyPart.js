@@ -97,6 +97,7 @@ class SoreBodyPart extends Component {
                     isPain = bodyPart.pain;
                 }
                 handleFormChange('soreness', value, isPain, bodyPartMap.index, bodyPartSide, value === 0 ? true : false);
+                handleFormChange('soreness', null, isPain, bodyPartMap.index, bodyPartSide, value === 0 ? true : false, true); // set movement to null
             });
         }
     }
@@ -178,15 +179,15 @@ class SoreBodyPart extends Component {
             toggleSlideUpPanel,
         } = this.props;
         let {
-            backNextHeight,
+            bodyPartGroup,
             bodyPartMap,
             bodyPartName,
             helpingVerb,
-            isBodyPartJoint,
-            pillsHeight,
-            showScaleButtons,
             sorenessPainMapping,
         } = PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, this.state.type);
+        let showScaleButtons = bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain');
+        let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
+        let backNextHeight = ((AppSizes.backNextButtonsHeight) + (AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed));
         return(
             <View
                 style={{
@@ -268,7 +269,7 @@ class SoreBodyPart extends Component {
                             label={'ALL\nGOOD'}
                             updateStateAndForm={() => this._handleAllGoodBtnPressed(bodyPartMap)}
                         />
-                        { !isBodyPartJoint &&
+                        { bodyPartGroup !== 'joint' &&
                             <SoreBodyPartScaleButton
                                 extraStyles={{marginRight: AppSizes.padding,}}
                                 isSelected={this.state.type === 'soreness'}
@@ -291,16 +292,18 @@ class SoreBodyPart extends Component {
                             {' is...'}
                         </Text>
                         <View style={[AppStyles.paddingVerticalMed, {flexDirection: 'row', justifyContent: 'center',}]}>
-                            {_.map(sorenessPainMapping.soreness, (value, key) => {
-                                let isSelected = this.state.painSorenessValue === key;
+                            {_.map(sorenessPainMapping.soreness, (sorenessObj, key) => {
+                                let label = sorenessObj.label;
+                                let newValue = sorenessObj.value;
+                                let isSelected = this.state.painSorenessValue === newValue;
                                 let extraStyles = key === 0 || key === 1 ? {marginRight: AppSizes.padding,} : {};
                                 return(
                                     <SoreBodyPartScaleButton
                                         extraStyles={extraStyles}
                                         isSelected={isSelected}
                                         key={key}
-                                        label={value}
-                                        updateStateAndForm={() => this._handlePainSorenessValueBtnPressed(bodyPartMap, key)}
+                                        label={label}
+                                        updateStateAndForm={() => this._handlePainSorenessValueBtnPressed(bodyPartMap, newValue)}
                                     />
                                 );
                             })}
@@ -311,16 +314,18 @@ class SoreBodyPart extends Component {
                             {' is...'}
                         </Text>
                         <View style={[AppStyles.paddingVerticalMed, {flexDirection: 'row', justifyContent: 'center',}]}>
-                            {_.map(sorenessPainMapping.movement, (value, key) => {
-                                let isSelected = this.state.movementValue === key;
+                            {_.map(sorenessPainMapping.movement, (movementObj, key) => {
+                                let label = movementObj.label;
+                                let newValue = movementObj.value;
+                                let isSelected = this.state.movementValue === newValue;
                                 let extraStyles = key === 0 || key === 1 ? {marginRight: AppSizes.padding,} : {};
                                 return(
                                     <SoreBodyPartScaleButton
                                         extraStyles={extraStyles}
                                         isSelected={isSelected}
                                         key={key}
-                                        label={value}
-                                        updateStateAndForm={() => this._handleMovementValueBtnPressed(bodyPartMap, key)}
+                                        label={label}
+                                        updateStateAndForm={() => this._handleMovementValueBtnPressed(bodyPartMap, newValue)}
                                     />
                                 );
                             })}
@@ -335,58 +340,6 @@ class SoreBodyPart extends Component {
                         {'What\'s the difference?'}
                     </Text>
                 }
-                {/*<View style={{flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.padding}}>
-                    { showScaleButtons ?
-                        _.map(sorenessPainMapping., (value, key) => {
-                            if(key === 0) { return; }
-                            let sorenessPainScaleMappingValue = (
-                                isBodyPartJoint
-                            ) ?
-                                MyPlanConstants.sorenessPainScaleMapping(false, key, true)
-                                :
-                                MyPlanConstants.sorenessPainScaleMapping(this.state.type, key);
-
-                            let isSelected = this.state.value === key;
-                            let opacity = isSelected ? 1 : (key * 0.2);
-                            /*eslint consistent-return: 0*
-                            return(
-                                <SoreBodyPartScaleButton
-                                    isSelected={isSelected}
-                                    key={value+key}
-                                    keyLabel={key}
-                                    opacity={opacity}
-                                    sorenessPainMappingLength={sorenessPainMapping.length}
-                                    updateStateAndForm={() => {
-                                        let newType = this.state.type === 'all-good' ? '' : this.state.type;
-                                        let newKey = sorenessPainScaleMappingValue === this.state.value ? null : key;
-                                        sorenessPainScaleMappingValue = sorenessPainScaleMappingValue === this.state.value ? null : sorenessPainScaleMappingValue;
-                                        let isPain = bodyPartMap.group === 'joint' || this.state.type === 'pain';
-                                        if(bodyPart.isClearCandidate) {
-                                            isPain = bodyPart.pain;
-                                        }
-                                        this.setState({
-                                            type:  newType,
-                                            value: newKey,
-                                        }, () => {
-                                            handleFormChange('soreness', sorenessPainScaleMappingValue, isPain, bodyPartMap.index, bodyPartSide, sorenessPainScaleMappingValue === null ? false : true);
-                                        });
-                                    }}
-                                    valueLabel={value}
-                                />
-                            )
-                        })
-                        : showWhatsTheDifferenceLink ?
-                            <Text
-                                onPress={() => toggleSlideUpPanel(false)}
-                                robotoLight
-                                style={{color: AppColors.primary.yellow.hundredPercent, textDecorationLine: 'underline',}}
-                            >
-                                {'What\'s the difference?'}
-                            </Text>
-                            :
-                            null
-                    }
-                </View>*/}
                 <Spacer size={isFirst && !isLast && !showScaleButtons ? pillsHeight : 0} />
             </View>
         )

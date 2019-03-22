@@ -234,9 +234,9 @@ const startLogin = (credentials, reload) => {
 /**
   * Logout
   */
-const logout = user_id => {
+const logout = userId => {
     return dispatch => new Promise((resolve, reject) => {
-        return AppAPI.logout.post({ user_id })
+        return AppAPI.logout.post({userId})
             .then(() => {
                 return resolve(
                     dispatch({

@@ -528,7 +528,7 @@ class MyPlan extends Component {
             newPrepareObject,
             newRecoverObject,
             nonDeletedSessions,
-        } = PlanLogic.handleReadinessSurveySubmitLogic(this.props.user.id, this.state.dailyReadiness, this.state.prepare, this.state.recover, this.state.healthData);
+        } = PlanLogic.handleReadinessSurveySubmitLogic(this.state.dailyReadiness, this.state.prepare, this.state.recover, this.state.healthData);
         this.setState(
             {
                 dailyReadiness:             newDailyReadinessState,
@@ -569,7 +569,7 @@ class MyPlan extends Component {
             newPostSessionSessions,
             newRecoverObject,
             newTrainObject,
-        } = PlanLogic.handlePostSessionSurveySubmitLogic(this.props.user.id, this.state.postSession, this.state.train, this.state.recover, this.state.healthData);
+        } = PlanLogic.handlePostSessionSurveySubmitLogic(this.state.postSession, this.state.train, this.state.recover, this.state.healthData);
         this.setState(
             {
                 healthData:                         [],
@@ -681,7 +681,7 @@ class MyPlan extends Component {
             } else if(recovery_type === 'post') {
                 newMyPlan[0].post_recovery.start_date = true;
             }
-            this.props.markStartedRecovery(this.props.user.id, recovery_type, newMyPlan);
+            this.props.markStartedRecovery(recovery_type, newMyPlan);
         }
         // continue by updating reducer and state
         this.props.setCompletedExercises(newCompletedExercises);
@@ -702,7 +702,7 @@ class MyPlan extends Component {
         if(newCompletedExercises.length === 1 && !startDate) {
             let newMyPlan =  _.cloneDeep(this.props.plan.dailyPlan);
             newMyPlan[0].functional_strength_session.start_date = true;
-            this.props.markStartedFunctionalStrength(this.props.user.id, newMyPlan);
+            this.props.markStartedFunctionalStrength(newMyPlan);
         }
         // continue by updating reducer and state
         this.props.setCompletedFSExercises(newCompletedExercises);
@@ -1211,7 +1211,7 @@ class MyPlan extends Component {
                                 { isPrepCalculating: true, },
                                 () => {
                                     // send api
-                                    this.props.patchActiveTime(user.id, selectedActiveTime)
+                                    this.props.patchActiveTime(selectedActiveTime)
                                         .then(response => {
                                             this.setState({ isPrepCalculating: false, });
                                             this.props.clearCompletedExercises();
@@ -1241,7 +1241,7 @@ class MyPlan extends Component {
                     onComplete={() => {
                         this.setState({ isPrepareExerciseCompletionModalOpen: false, });
                         let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(store.getState().plan.completedExercises);
-                        this.props.patchActiveRecovery(this.props.user.id, newCompletedExercises, 'pre')
+                        this.props.patchActiveRecovery(newCompletedExercises, 'pre')
                             .then(res => {
                                 let newDailyPlanObj = store.getState().plan.dailyPlan[0];
                                 this.setState(
@@ -1536,7 +1536,7 @@ class MyPlan extends Component {
                                 { isRecoverCalculating: true, },
                                 () => {
                                     // send api
-                                    this.props.patchActiveTime(user.id, selectedActiveTime)
+                                    this.props.patchActiveTime(selectedActiveTime)
                                         .then(response => {
                                             this.setState({ isRecoverCalculating: false, });
                                             this.props.clearCompletedExercises();
@@ -1561,7 +1561,7 @@ class MyPlan extends Component {
                     onComplete={() => {
                         this.setState({ isRecoverExerciseCompletionModalOpen: false, });
                         let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(store.getState().plan.completedExercises);
-                        this.props.patchActiveRecovery(this.props.user.id, newCompletedExercises, 'post')
+                        this.props.patchActiveRecovery(newCompletedExercises, 'post')
                             .then(() =>
                                 this.setState({
                                     recover: Object.assign({}, this.state.recover, {
@@ -1809,7 +1809,7 @@ class MyPlan extends Component {
                                     name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
                                     size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
                                 }}
-                                onPress={() => isDailyReadinessSurveyCompleted ? this.props.noSessions(this.props.user.id).catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)) : null}
+                                onPress={() => isDailyReadinessSurveyCompleted ? this.props.noSessions().catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)) : null}
                                 outlined
                                 raised={false}
                                 rightIcon={{
@@ -1901,7 +1901,7 @@ class MyPlan extends Component {
                     onClose={() => this.setState({ isFSExerciseCompletionModalOpen: false, })}
                     onComplete={() => {
                         this.setState({ isFSExerciseCompletionModalOpen: false, });
-                        this.props.patchFunctionalStrength(this.props.user.id, completedFSExercises)
+                        this.props.patchFunctionalStrength(completedFSExercises)
                             .then(() => {
                                 this.props.clearCompletedFSExercises();
                                 this.setState({ isFunctionalStrengthCollapsed: true, });

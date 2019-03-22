@@ -39,10 +39,8 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
         date:   moment().format(),
     });
     // continue logic
-    let currentState = store.getState();
     let myPlanObj = {};
     // Defaulting user id to whatever is in the store if nothing is sent for Push Notifications
-    myPlanObj.user_id = userId || currentState.user.id;
     myPlanObj.start_date = startDate ? startDate : moment().format('YYYY-MM-DD');
     if(endDate) {
         myPlanObj.end_date = endDate;
@@ -208,7 +206,7 @@ const postSessionSurvey = postSessionObj => {
 /**
   * Get Sore Body Parts Data
   */
-const getSoreBodyParts = user_id => {
+const getSoreBodyParts = () => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.get_sore_body_parts.post(false, bodyObj)
@@ -231,9 +229,8 @@ const getSoreBodyParts = user_id => {
 /**
   * Patch Active Recovery
   */
-const patchActiveRecovery = (user_id, completed_exercises, recovery_type) => {
+const patchActiveRecovery = (completed_exercises, recovery_type) => {
     let bodyObj = {};
-    bodyObj.user_id = user_id;
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.recovery_type = recovery_type;
     bodyObj.completed_exercises = completed_exercises;
@@ -257,9 +254,8 @@ const patchActiveRecovery = (user_id, completed_exercises, recovery_type) => {
 /**
   * Patch Active Time
   */
-const patchActiveTime = (user_id, active_time) => {
+const patchActiveTime = active_time => {
     let bodyObj = {};
-    bodyObj.user_id = user_id;
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.active_time = active_time;
     return dispatch => AppAPI.active_time.patch(false, bodyObj)
@@ -279,9 +275,8 @@ const patchActiveTime = (user_id, active_time) => {
 /**
   * No Session
   */
-const noSessions = user_id => {
+const noSessions = () => {
     let bodyObj = {};
-    bodyObj.user_id = user_id;
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.no_sessions.post(false, bodyObj)
         .then(data => {
@@ -301,9 +296,8 @@ const noSessions = user_id => {
 /**
   * Patch Functional Strength
   */
-const patchFunctionalStrength = (user_id, completed_exercises) => {
+const patchFunctionalStrength = completed_exercises => {
     let bodyObj = {};
-    bodyObj.user_id = user_id;
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.completed_exercises = completed_exercises;
     return dispatch => AppAPI.functional_strength.patch(false, bodyObj)
@@ -344,9 +338,8 @@ const activateFunctionalStrength = payload => {
 /**
   * Mark Started Recovery - recovery_type of pre or post
   */
-const markStartedRecovery = (user_id, recovery_type, newMyPlan) => {
+const markStartedRecovery = (recovery_type, newMyPlan) => {
     let bodyObj = {};
-    bodyObj.user_id = user_id;
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.recovery_type = recovery_type;
     return dispatch => AppAPI.active_recovery.post(false, bodyObj)
@@ -360,9 +353,8 @@ const markStartedRecovery = (user_id, recovery_type, newMyPlan) => {
 /**
   * Mark Started Functional Strength
   */
-const markStartedFunctionalStrength = (user_id, newMyPlan) => {
+const markStartedFunctionalStrength = newMyPlan => {
     let bodyObj = {};
-    bodyObj.user_id = user_id;
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.functional_strength.post(false, bodyObj)
         .then(response => Promise.resolve(response))
@@ -375,8 +367,8 @@ const markStartedFunctionalStrength = (user_id, newMyPlan) => {
 /**
   * Get Coaches Dashboard Data
   */
-const getCoachesDashboardData = user_id => {
-    return dispatch => AppAPI.coach_dashboard.get({user_id})
+const getCoachesDashboardData = userId => {
+    return dispatch => AppAPI.coach_dashboard.get({userId})
         .then(coachesDashboardData => {
             let cleanedTeams = [];
             _.map(coachesDashboardData.teams, (team, key) => {
@@ -408,7 +400,7 @@ const getCoachesDashboardData = user_id => {
             // update last opened flag
             store.dispatch({
                 type:   Actions.UPDATE_LAST_OPENED,
-                userId: user_id,
+                userId: userId,
                 date:   moment().format(),
             });
             return Promise.resolve(coachesDashboardData);
